@@ -46,30 +46,32 @@ namespace PowerSDR
 {
 	public class Setup : System.Windows.Forms.Form
 	{
-		#region Variable Declaration
-		
-		private Console console;
-		private Progress progress;
+        #region Variable Declaration
+      
+        //	private Console console;  // was this
+        public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
+       
+
+        private Progress progress;
 		private ArrayList KeyList;
 		private int sound_card;
 		private bool initializing;
         private bool dax_audio_setup_enum = false;
-
-		private System.Windows.Forms.TabPage tpDSP;
-		private System.Windows.Forms.TabPage tpDisplay;
+        public TabPage tpDSP;
+        private System.Windows.Forms.TabPage tpDisplay;
 		private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
 		private System.Windows.Forms.NumericUpDownTS udDisplayGridMin;
 		private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
 		private System.Windows.Forms.LabelTS lblDisplayGridStep;
 		private System.Windows.Forms.LabelTS lblDisplayGridMin;
 		private System.Windows.Forms.LabelTS lblDisplayGridMax;
-		private System.Windows.Forms.TabPage tpGeneral;
-		private System.Windows.Forms.ComboBoxTS comboGeneralLPTAddr;
+        public TabPage tpGeneral;
+        private System.Windows.Forms.ComboBoxTS comboGeneralLPTAddr;
 		private System.Windows.Forms.GroupBoxTS grpDisplaySpectrumGrid;
 		private System.Windows.Forms.ButtonTS btnOK;
 		private System.Windows.Forms.ButtonTS btnCancel;
-		private System.Windows.Forms.ButtonTS btnApply;
-		public System.Windows.Forms.CheckBoxTS chkGeneralSpurRed;
+        public ButtonTS btnApply;
+        public System.Windows.Forms.CheckBoxTS chkGeneralSpurRed;
 		private System.Windows.Forms.LabelTS lblGeneralLPTAddr;
 		private System.Windows.Forms.NumericUpDownTS udGeneralLPTDelay;
 		private System.Windows.Forms.LabelTS lblGeneralLPTDelay;
@@ -126,8 +128,8 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS lblClockCorrection;
 		private System.Windows.Forms.NumericUpDownTS udDDSCorrection;
 		public System.Windows.Forms.TabPage tpAudio;
-		private System.Windows.Forms.TabPage tpTransmit;
-		private System.Windows.Forms.NumericUpDownTS udTXFilterHigh;
+        public TabPage tpTransmit;
+        private System.Windows.Forms.NumericUpDownTS udTXFilterHigh;
 		private System.Windows.Forms.LabelTS lblTXFilterLow;
 		private System.Windows.Forms.LabelTS lblTXFilterHigh;
 		private System.Windows.Forms.NumericUpDownTS udTXFilterLow;
@@ -163,12 +165,12 @@ namespace PowerSDR
 		private System.Windows.Forms.NumericUpDownTS udDisplayCPUMeter;
 		private System.Windows.Forms.LabelTS lblDisplayCPUMeter;
 		private System.Windows.Forms.ComboBoxTS comboGeneralXVTR;
-		private System.Windows.Forms.GroupBoxTS grpDisplayWaterfall;
-		private System.Windows.Forms.NumericUpDownTS udDisplayWaterfallHighLevel;
+        public GroupBoxTS grpDisplayWaterfall;
+        private System.Windows.Forms.NumericUpDownTS udDisplayWaterfallHighLevel;
 		private System.Windows.Forms.LabelTS lblDisplayWaterfallHighLevel;
 		private System.Windows.Forms.LabelTS lblDisplayWaterfallLowLevel;
-		private System.Windows.Forms.NumericUpDownTS udDisplayWaterfallLowLevel;
-		private System.Windows.Forms.LabelTS lblDisplayWaterfallLowColor;
+        public NumericUpDownTS udDisplayWaterfallLowLevel;
+        private System.Windows.Forms.LabelTS lblDisplayWaterfallLowColor;
 		private System.Windows.Forms.CheckBoxTS chkGeneralPAPresent;
 		private System.Windows.Forms.ButtonTS btnGeneralCalLevelStart;
 		private System.Windows.Forms.ButtonTS btnGeneralCalFreqStart;
@@ -472,7 +474,7 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkExtRX805;
 		private System.Windows.Forms.CheckBoxTS chkExtRX804;
 		private System.Windows.Forms.ButtonTS btnCATTest;
-		private System.Windows.Forms.TabControl tcAudio;
+		public System.Windows.Forms.TabControl tcAudio;               // ke9ns change
 		private System.Windows.Forms.NumericUpDownTS udAudioLineIn1;
 		private System.Windows.Forms.ButtonTS btnAudioVoltTest1;
 		private System.Windows.Forms.NumericUpDownTS udAudioVoltage1;
@@ -534,8 +536,8 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS lblDSPCWPitchFreq;
 		private System.Windows.Forms.NumericUpDownTS udDSPCWPitch;
 		private System.Windows.Forms.CheckBoxTS chkDSPKeyerSidetone;
-		private System.Windows.Forms.TabControl tcDSP;
-		private System.Windows.Forms.TabPage tpDSPImageReject;
+        public TabControl tcDSP;
+        private System.Windows.Forms.TabPage tpDSPImageReject;
 		private System.Windows.Forms.GroupBoxTS grpDSPImageRejectTX;
 		private System.Windows.Forms.LabelTS lblDSPGainValTX;
 		private System.Windows.Forms.LabelTS lblDSPPhaseValTX;
@@ -676,7 +678,7 @@ namespace PowerSDR
 		private System.Windows.Forms.NumericUpDownTS udGeneralCalFreq2;
 		private System.Windows.Forms.NumericUpDownTS udSoftRockCenterFreq;
 		private System.Windows.Forms.GroupBoxTS grpHWSoftRock;
-		private System.Windows.Forms.TabPage tpVAC;
+		public System.Windows.Forms.TabPage tpVAC;                       // ke9ns mod
 		public System.Windows.Forms.CheckBoxTS chkAudioEnableVAC;
 		private System.Windows.Forms.GroupBoxTS grpAudio2Stereo;
 		private System.Windows.Forms.GroupBoxTS grpBoxTS1;
@@ -747,8 +749,8 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS lblOptMaxFilterShift;
 		private System.Windows.Forms.CheckBoxTS chkOptFilterSaveChanges;
 		private System.Windows.Forms.CheckBoxTS chkOptEnableKBShortcuts;
-		private System.Windows.Forms.TabControl tcAppearance;
-		private System.Windows.Forms.TabPage tpAppearanceGeneral;
+        public TabControl tcAppearance;
+        private System.Windows.Forms.TabPage tpAppearanceGeneral;
 		private System.Windows.Forms.TabPage tpAppearanceDisplay;
 		private System.Windows.Forms.TabPage tpAppearanceMeter;
 		private System.Windows.Forms.GroupBoxTS grpAppearanceVFO;
@@ -775,8 +777,8 @@ namespace PowerSDR
         private PowerSDR.ColorButton clrbtnBandSegmentBox;
 		private System.Windows.Forms.LabelTS lblBandEdge;
 		private System.Windows.Forms.CheckBoxTS chkShowFreqOffset;
-		private System.Windows.Forms.ComboBoxTS comboMeterType;
-		private PowerSDR.ColorButton clrbtnMeterEdgeBackground;
+        public ComboBoxTS comboMeterType;
+        private PowerSDR.ColorButton clrbtnMeterEdgeBackground;
 		private PowerSDR.ColorButton clrbtnMeterEdgeHigh;
 		private PowerSDR.ColorButton clrbtnMeterEdgeLow;
 		private System.Windows.Forms.GroupBoxTS grpGenCalRXImage;
@@ -863,8 +865,8 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkGenAllModeMicPTT;
 		private System.Windows.Forms.CheckBoxTS chkDigUIsUSB;
 		private System.Windows.Forms.GroupBoxTS grpGenCustomTitleText;
-		private System.Windows.Forms.TextBoxTS txtGenCustomTitle;
-		private System.Windows.Forms.CheckBoxTS chkGenFLEX5000ExtRef;
+        public TextBoxTS txtGenCustomTitle;
+        private System.Windows.Forms.CheckBoxTS chkGenFLEX5000ExtRef;
 		private System.Windows.Forms.CheckBoxTS chkFPInstalled;
 		private System.Windows.Forms.NumericUpDownTS udLMSNRLeak;
 		private System.Windows.Forms.NumericUpDownTS udLMSANFLeak;
@@ -909,8 +911,8 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkRX2AutoMuteRX2OnVFOATX;
 		private System.Windows.Forms.GroupBoxTS grpDirectIQOutput;
 		private System.Windows.Forms.CheckBoxTS chkAudioCorrectIQ;
-		private System.Windows.Forms.CheckBoxTS chkAudioIQtoVAC;
-		private System.Windows.Forms.CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
+        public CheckBoxTS chkAudioIQtoVAC;
+        private System.Windows.Forms.CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
 		private System.Windows.Forms.ListBox lstTXProfileDef;
         private System.Windows.Forms.GroupBoxTS grpTXProfileDef;
 		private System.Windows.Forms.ButtonTS btnTXProfileDefImport;
@@ -965,10 +967,10 @@ namespace PowerSDR
         private LabelTS lblFlexControlRev1K;
         private LabelTS lblFlexControlRev1500;
         private ComboBoxTS comboDSPCWTXBuf;
-        private TabPage tpVAC2;
+        public TabPage tpVAC2;                          // ke9ns mod
         private GroupBoxTS grpVAC2DirectIQ;
         private CheckBoxTS chkVAC2DirectIQCal;
-        private CheckBoxTS chkVAC2DirectIQ;
+        public CheckBoxTS chkVAC2DirectIQ;
         private CheckBoxTS chkVAC2Combine;
         private GroupBoxTS grpVAC2AutoEnable;
         private CheckBoxTS chkVAC2AutoEnable;
@@ -1011,16 +1013,29 @@ namespace PowerSDR
         private NumericUpDownTS udBandSegmentBoxLineWidth;
         private LabelTS lblBandSegmentBoxLineWidth;
         private CheckBoxTS chkRememberTXProfileOnModeChange;
-        private CheckBoxTS chkWeakSignalWaterfallSettings;        
-		private System.ComponentModel.IContainer components;
+        private CheckBoxTS chkWeakSignalWaterfallSettings;
+        private TabPage tpUserInterface;
+        private GroupBox groupBox1;
+        private Label label1;
+        private Button btnConfigure;
+        private ComboBox cbConsoleSelect;
+        private LabelTS labelTS6;
+        public NumericUpDownTS udDisplayWaterfallMicLevel;
+        public NumericUpDownTS udDisplayWaterfallRX2Level;
+        private LabelTS labelTS5;
+        public CheckBoxTS checkWaterMoveSize;
+        public CheckBoxTS gridBoxTS;
+        private System.ComponentModel.IContainer components;
 
 		#endregion
 
 		#region Constructor and Destructor
 
 		public Setup(Console c)
-		{            
-			InitializeComponent();
+		{
+   
+            InitializeComponent();
+                                                     
             console = c;
             openFileDialog1.InitialDirectory = String.Empty;
             openFileDialog1.InitialDirectory = console.AppDataPath;
@@ -1036,10 +1051,13 @@ namespace PowerSDR
 			initializing = true;
 
 			InitWindowTypes();
+
 			GetMixerDevices();
+
 			GetHosts();
-			
-			KeyList = new ArrayList();
+
+        
+            KeyList = new ArrayList();
 			SetupKeyMap();
 
 			GetTxProfiles();
@@ -1081,7 +1099,7 @@ namespace PowerSDR
 			comboKeyerConnPTTLine.SelectedIndex = 0;
 			comboKeyerConnPrimary.SelectedIndex = 0;
 			comboTXTUNMeter.SelectedIndex = 0;
-			comboMeterType.Text = "Edge";
+			comboMeterType.Text = "Analog";
 			if(comboCATPort.Items.Count > 0) comboCATPort.SelectedIndex = 0;
 			if(comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
 			comboCATbaud.Text = "1200";
@@ -1140,10 +1158,10 @@ namespace PowerSDR
 			initializing = false;
 			udDisplayScopeTime_ValueChanged(this, EventArgs.Empty);
 
-			if(comboTXProfileName.SelectedIndex < 0 &&
-				comboTXProfileName.Items.Count > 0)
-				comboTXProfileName.SelectedIndex = 0;
-			current_profile = comboTXProfileName.Text;
+			if(comboTXProfileName.SelectedIndex < 0 &&	comboTXProfileName.Items.Count > 0)		comboTXProfileName.SelectedIndex = 0;
+
+
+            current_profile = comboTXProfileName.Text;
 
 			if(chkCATEnable.Checked)
 			{
@@ -1195,7 +1213,15 @@ namespace PowerSDR
 
 			tkbarTestGenFreq.Value = console.CWPitch;
             FlexControlManager.DeviceCountChanged += new FlexControlManager.DeviceCountChangedHandler(FlexControlManager_DeviceCountChanged);
-		}
+
+            // Mod DH1TW
+
+            InitDJConsoles();
+
+            // End MOD
+        
+        
+        }
 
 		protected override void Dispose( bool disposing )
 		{
@@ -1351,6 +1377,11 @@ namespace PowerSDR
             this.grpOptSpaceNav = new System.Windows.Forms.GroupBoxTS();
             this.chkSpaceNavFlyPanadapter = new System.Windows.Forms.CheckBoxTS();
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
+            this.tpUserInterface = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnConfigure = new System.Windows.Forms.Button();
+            this.cbConsoleSelect = new System.Windows.Forms.ComboBox();
             this.tpAudio = new System.Windows.Forms.TabPage();
             this.tcAudio = new System.Windows.Forms.TabControl();
             this.tpAudioCard1 = new System.Windows.Forms.TabPage();
@@ -1469,6 +1500,11 @@ namespace PowerSDR
             this.udDisplayScopeTime = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayScopeTime = new System.Windows.Forms.LabelTS();
             this.grpDisplayWaterfall = new System.Windows.Forms.GroupBoxTS();
+            this.checkWaterMoveSize = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS6 = new System.Windows.Forms.LabelTS();
+            this.udDisplayWaterfallMicLevel = new System.Windows.Forms.NumericUpDownTS();
+            this.udDisplayWaterfallRX2Level = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.chkWeakSignalWaterfallSettings = new System.Windows.Forms.CheckBoxTS();
             this.lblWaterfallLevels = new System.Windows.Forms.Label();
             this.txtWaterFallBandLevel = new System.Windows.Forms.TextBox();
@@ -1483,6 +1519,7 @@ namespace PowerSDR
             this.lblDisplayWaterfallHighLevel = new System.Windows.Forms.LabelTS();
             this.udDisplayWaterfallHighLevel = new System.Windows.Forms.NumericUpDownTS();
             this.grpDisplayRefreshRates = new System.Windows.Forms.GroupBoxTS();
+            this.gridBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayPanFill = new System.Windows.Forms.CheckBoxTS();
             this.udDisplayCPUMeter = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayCPUMeter = new System.Windows.Forms.LabelTS();
@@ -2219,6 +2256,8 @@ namespace PowerSDR
             this.tpRX2.SuspendLayout();
             this.tpGeneralNavigation.SuspendLayout();
             this.grpOptSpaceNav.SuspendLayout();
+            this.tpUserInterface.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.tpAudio.SuspendLayout();
             this.tcAudio.SuspendLayout();
             this.tpAudioCard1.SuspendLayout();
@@ -2271,6 +2310,8 @@ namespace PowerSDR
             this.grpDisplayScopeMode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayScopeTime)).BeginInit();
             this.grpDisplayWaterfall.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallMicLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallRX2Level)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallAvgTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).BeginInit();
@@ -2460,10 +2501,10 @@ namespace PowerSDR
             this.tcSetup.Controls.Add(this.tpExtCtrl);
             this.tcSetup.Controls.Add(this.tpCAT);
             this.tcSetup.Controls.Add(this.tpTests);
-            this.tcSetup.Location = new System.Drawing.Point(8, 8);
+            this.tcSetup.Location = new System.Drawing.Point(8, 12);
             this.tcSetup.Name = "tcSetup";
             this.tcSetup.SelectedIndex = 0;
-            this.tcSetup.Size = new System.Drawing.Size(592, 312);
+            this.tcSetup.Size = new System.Drawing.Size(592, 348);
             this.tcSetup.TabIndex = 16;
             // 
             // tpGeneral
@@ -2471,7 +2512,7 @@ namespace PowerSDR
             this.tpGeneral.Controls.Add(this.tcGeneral);
             this.tpGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpGeneral.Name = "tpGeneral";
-            this.tpGeneral.Size = new System.Drawing.Size(584, 286);
+            this.tpGeneral.Size = new System.Drawing.Size(584, 322);
             this.tpGeneral.TabIndex = 3;
             this.tpGeneral.Text = "General";
             // 
@@ -2483,6 +2524,7 @@ namespace PowerSDR
             this.tcGeneral.Controls.Add(this.tpFilters);
             this.tcGeneral.Controls.Add(this.tpRX2);
             this.tcGeneral.Controls.Add(this.tpGeneralNavigation);
+            this.tcGeneral.Controls.Add(this.tpUserInterface);
             this.tcGeneral.Location = new System.Drawing.Point(0, 0);
             this.tcGeneral.Name = "tcGeneral";
             this.tcGeneral.SelectedIndex = 0;
@@ -3116,9 +3158,9 @@ namespace PowerSDR
             this.comboGeneralLPTAddr.TabIndex = 0;
             this.comboGeneralLPTAddr.Text = "378";
             this.toolTip1.SetToolTip(this.comboGeneralLPTAddr, "Parallel Port Address");
-            this.comboGeneralLPTAddr.LostFocus += new System.EventHandler(this.comboGeneralLPTAddr_LostFocus);
             this.comboGeneralLPTAddr.SelectedIndexChanged += new System.EventHandler(this.comboGeneralLPTAddr_SelectedIndexChanged);
             this.comboGeneralLPTAddr.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboGeneralLPTAddr_KeyDown);
+            this.comboGeneralLPTAddr.LostFocus += new System.EventHandler(this.comboGeneralLPTAddr_LostFocus);
             // 
             // comboGeneralXVTR
             // 
@@ -3133,7 +3175,7 @@ namespace PowerSDR
             this.comboGeneralXVTR.Size = new System.Drawing.Size(136, 21);
             this.comboGeneralXVTR.TabIndex = 5;
             this.toolTip1.SetToolTip(this.comboGeneralXVTR, "XVTR TR Logic Selection -- Negative for XVTR FlexRadio Systems provides.  Positiv" +
-                    "e for 25W version.  No TR logic for other XVTRs.");
+        "e for 25W version.  No TR logic for other XVTRs.");
             this.comboGeneralXVTR.Visible = false;
             this.comboGeneralXVTR.SelectedIndexChanged += new System.EventHandler(this.comboGeneralXVTR_SelectedIndexChanged);
             // 
@@ -3253,7 +3295,7 @@ namespace PowerSDR
             this.chkImportDBRestrict.TabIndex = 31;
             this.chkImportDBRestrict.Text = "Strict DB Import Compliance";
             this.toolTip1.SetToolTip(this.chkImportDBRestrict, "Uncheck this box to allow DB import using a DB from a earlier or later version of" +
-                    " PowerSDR.  May cause import errors");
+        " PowerSDR.  May cause import errors");
             // 
             // grpOptUSBBuf
             // 
@@ -3294,7 +3336,7 @@ namespace PowerSDR
             this.tbOptUSBBuf.Location = new System.Drawing.Point(22, 20);
             this.tbOptUSBBuf.Maximum = 4;
             this.tbOptUSBBuf.Name = "tbOptUSBBuf";
-            this.tbOptUSBBuf.Size = new System.Drawing.Size(112, 42);
+            this.tbOptUSBBuf.Size = new System.Drawing.Size(112, 45);
             this.tbOptUSBBuf.TabIndex = 0;
             this.tbOptUSBBuf.Value = 1;
             this.tbOptUSBBuf.Scroll += new System.EventHandler(this.tbOptUSBBuf_Scroll);
@@ -3342,7 +3384,7 @@ namespace PowerSDR
             this.chkWheelTuneVFOB.TabIndex = 5;
             this.chkWheelTuneVFOB.Text = "Wheel Tunes VFOB (red x-hairs)";
             this.toolTip1.SetToolTip(this.chkWheelTuneVFOB, "When checked, the mouse wheel will tune VFO B when the red crosshairs are active." +
-                    "");
+        "");
             this.chkWheelTuneVFOB.CheckedChanged += new System.EventHandler(this.chkWheelTuneVFOB_CheckedChanged);
             // 
             // chkMouseTuneStep
@@ -3365,7 +3407,7 @@ namespace PowerSDR
             this.chkZeroBeatRIT.TabIndex = 3;
             this.chkZeroBeatRIT.Text = "Zero Beat -  RIT";
             this.toolTip1.SetToolTip(this.chkZeroBeatRIT, "When checked, the zero beat function uses RIT instead of adjusting the VFO direct" +
-                    "ly.  This leaves the transmit frequency alone.");
+        "ly.  This leaves the transmit frequency alone.");
             this.chkZeroBeatRIT.CheckedChanged += new System.EventHandler(this.chkZeroBeatRIT_CheckedChanged);
             // 
             // chkSnapClickTune
@@ -3425,7 +3467,7 @@ namespace PowerSDR
             this.chkOptEnableKBShortcuts.TabIndex = 1;
             this.chkOptEnableKBShortcuts.Text = "Enable Shortcuts";
             this.toolTip1.SetToolTip(this.chkOptEnableKBShortcuts, "Enable keyboard shortcuts.  If this box is not checked, none of the keyboard shor" +
-                    "tcuts other than those that are built into windows will function.");
+        "tcuts other than those that are built into windows will function.");
             this.chkOptEnableKBShortcuts.CheckedChanged += new System.EventHandler(this.chkOptEnableKBShortcuts_CheckedChanged);
             // 
             // chkOptQuickQSY
@@ -3439,7 +3481,7 @@ namespace PowerSDR
             this.chkOptQuickQSY.TabIndex = 0;
             this.chkOptQuickQSY.Text = "Quick QSY";
             this.toolTip1.SetToolTip(this.chkOptQuickQSY, "Enabled the Quick QSY feature -- directly enter the frequency in MHz while the ma" +
-                    "in form has the focus and hit enter.");
+        "in form has the focus and hit enter.");
             this.chkOptQuickQSY.CheckedChanged += new System.EventHandler(this.chkOptQuickQSY_CheckedChanged);
             // 
             // grpGenAutoMute
@@ -3461,7 +3503,7 @@ namespace PowerSDR
             this.chkGenAutoMute.TabIndex = 0;
             this.chkGenAutoMute.Text = "Enabled";
             this.toolTip1.SetToolTip(this.chkGenAutoMute, "Check this box to enable the software to poll Pin X2-12 to look for a signal to m" +
-                    "ute the radio.");
+        "ute the radio.");
             this.chkGenAutoMute.CheckedChanged += new System.EventHandler(this.chkGenAutoMute_CheckedChanged);
             // 
             // grpGenTuningOptions
@@ -3499,7 +3541,7 @@ namespace PowerSDR
             this.udOptClickTuneOffsetDIGU.Size = new System.Drawing.Size(56, 20);
             this.udOptClickTuneOffsetDIGU.TabIndex = 0;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGU, "Determines the frequency offset for click tuning and \r\nthe RX filter\'s center fre" +
-                    "quency");
+        "quency");
             this.udOptClickTuneOffsetDIGU.Value = new decimal(new int[] {
             1500,
             0,
@@ -3517,7 +3559,7 @@ namespace PowerSDR
             this.lblOptClickTuneDIGL.TabIndex = 12;
             this.lblOptClickTuneDIGL.Text = "DIGL (Hz):";
             this.toolTip1.SetToolTip(this.lblOptClickTuneDIGL, "Determines the frequency offset for click tuning and \r\nthe RX filter\'s center fre" +
-                    "quency");
+        "quency");
             // 
             // udOptClickTuneOffsetDIGL
             // 
@@ -3541,7 +3583,7 @@ namespace PowerSDR
             this.udOptClickTuneOffsetDIGL.Size = new System.Drawing.Size(56, 20);
             this.udOptClickTuneOffsetDIGL.TabIndex = 11;
             this.toolTip1.SetToolTip(this.udOptClickTuneOffsetDIGL, "Determines the frequency offset for click tuning and \r\nthe RX filter\'s center fre" +
-                    "quency");
+        "quency");
             this.udOptClickTuneOffsetDIGL.Value = new decimal(new int[] {
             2210,
             0,
@@ -3559,7 +3601,7 @@ namespace PowerSDR
             this.lblOptClickTuneDIGU.TabIndex = 10;
             this.lblOptClickTuneDIGU.Text = "DIGU (Hz):";
             this.toolTip1.SetToolTip(this.lblOptClickTuneDIGU, "Determines the frequency offset for click tuning and \r\nthe RX filter\'s center fre" +
-                    "quency");
+        "quency");
             // 
             // grpGeneralOptions
             // 
@@ -3604,7 +3646,6 @@ namespace PowerSDR
             this.udGenTX1Delay.Name = "udGenTX1Delay";
             this.udGenTX1Delay.Size = new System.Drawing.Size(48, 20);
             this.udGenTX1Delay.TabIndex = 15;
-            this.toolTip1.SetToolTip(this.udGenTX1Delay, resources.GetString("udGenTX1Delay.ToolTip"));
             this.udGenTX1Delay.Value = new decimal(new int[] {
             1,
             0,
@@ -3645,7 +3686,7 @@ namespace PowerSDR
             this.chkGenTX1Delay.TabIndex = 13;
             this.chkGenTX1Delay.Text = "Enable TX Out Delay";
             this.toolTip1.SetToolTip(this.chkGenTX1Delay, "Check this box to delay after switching TX Out (before switch TR) with the value " +
-                    "set below.");
+        "set below.");
             this.chkGenTX1Delay.Visible = false;
             this.chkGenTX1Delay.CheckedChanged += new System.EventHandler(this.chkGenTX1Delay_CheckedChanged);
             // 
@@ -3684,7 +3725,7 @@ namespace PowerSDR
             this.chkGeneralCustomFilter.TabIndex = 10;
             this.chkGeneralCustomFilter.Text = "Enable 300kHz Filter";
             this.toolTip1.SetToolTip(this.chkGeneralCustomFilter, "If the custom filter bank on the RFE is configured for 300kHz LPF, use this setti" +
-                    "ng.");
+        "ng.");
             this.chkGeneralCustomFilter.CheckedChanged += new System.EventHandler(this.chkGeneralCustomFilter_CheckedChanged);
             // 
             // lblGeneralX2Delay
@@ -3884,7 +3925,7 @@ namespace PowerSDR
             this.btnGeneralCalImageStart.TabIndex = 7;
             this.btnGeneralCalImageStart.Text = "Start";
             this.toolTip1.SetToolTip(this.btnGeneralCalImageStart, "Click to start the RX Image rejection calibration using the above frequency refer" +
-                    "ence.");
+        "ence.");
             this.btnGeneralCalImageStart.Click += new System.EventHandler(this.btnGeneralCalImageStart_Click);
             // 
             // grpGenCalLevel
@@ -3987,7 +4028,7 @@ namespace PowerSDR
             this.btnGeneralCalLevelStart.TabIndex = 4;
             this.btnGeneralCalLevelStart.Text = "Start";
             this.toolTip1.SetToolTip(this.btnGeneralCalLevelStart, "Click to start the level calibration using the frequency and level references abo" +
-                    "ve.");
+        "ve.");
             this.btnGeneralCalLevelStart.Click += new System.EventHandler(this.btnGeneralCalLevelStart_Click);
             // 
             // grpGeneralCalibration
@@ -4153,7 +4194,7 @@ namespace PowerSDR
             this.udOptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
             this.udOptMaxFilterShift.TabIndex = 13;
             this.toolTip1.SetToolTip(this.udOptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
-                    "ntrol");
+        "ntrol");
             this.udOptMaxFilterShift.Value = new decimal(new int[] {
             9999,
             0,
@@ -4245,7 +4286,7 @@ namespace PowerSDR
             this.chkOptFilterSaveChanges.TabIndex = 15;
             this.chkOptFilterSaveChanges.Text = "Save Slider/Display Changes";
             this.toolTip1.SetToolTip(this.chkOptFilterSaveChanges, "If checked, changes made to the filters via the display or sliders will be saved " +
-                    "in the Variable filter.");
+        "in the Variable filter.");
             this.chkOptFilterSaveChanges.CheckedChanged += new System.EventHandler(this.chkOptFilterSaveChanges_CheckedChanged);
             // 
             // tpRX2
@@ -4271,7 +4312,7 @@ namespace PowerSDR
             this.chkRX2DisconnectOnTX.TabIndex = 2;
             this.chkRX2DisconnectOnTX.Text = "Disconnect RX2 RF Input on TX";
             this.toolTip1.SetToolTip(this.chkRX2DisconnectOnTX, "Disconnects the RX2 RF signal path when transmitting to prevent front-end overloa" +
-                    "d when checked.");
+        "d when checked.");
             this.chkRX2DisconnectOnTX.CheckedChanged += new System.EventHandler(this.chkRX2DisconnectOnTX_CheckedChanged);
             // 
             // chkRX2AutoMuteRX1OnVFOBTX
@@ -4285,7 +4326,7 @@ namespace PowerSDR
             this.chkRX2AutoMuteRX1OnVFOBTX.TabIndex = 1;
             this.chkRX2AutoMuteRX1OnVFOBTX.Text = "Auto Mute RX1 on VFO B TX";
             this.toolTip1.SetToolTip(this.chkRX2AutoMuteRX1OnVFOBTX, "Mutes RX1 when transmitting on VFO B when checked.  Uncheck to continue to hear R" +
-                    "X1 while operating with VFO B TX enabled");
+        "X1 while operating with VFO B TX enabled");
             this.chkRX2AutoMuteRX1OnVFOBTX.CheckedChanged += new System.EventHandler(this.chkRX2AutoMuteRX1OnVFOBTX_CheckedChanged);
             // 
             // chkRX2AutoMuteRX2OnVFOATX
@@ -4299,7 +4340,7 @@ namespace PowerSDR
             this.chkRX2AutoMuteRX2OnVFOATX.TabIndex = 0;
             this.chkRX2AutoMuteRX2OnVFOATX.Text = "Auto Mute RX2 on VFO A TX";
             this.toolTip1.SetToolTip(this.chkRX2AutoMuteRX2OnVFOATX, "Mutes RX2 when transmitting when checked.  Uncheck to monitor your transmit signa" +
-                    "l or other signals with RX2 while transmitting");
+        "l or other signals with RX2 while transmitting");
             this.chkRX2AutoMuteRX2OnVFOATX.CheckedChanged += new System.EventHandler(this.chkRX2AutoMuteRX2OnVFOATX_CheckedChanged);
             // 
             // tpGeneralNavigation
@@ -4347,12 +4388,62 @@ namespace PowerSDR
             this.chkSpaceNavControlVFOs.Text = "VFO Control";
             this.chkSpaceNavControlVFOs.UseVisualStyleBackColor = true;
             // 
+            // tpUserInterface
+            // 
+            this.tpUserInterface.Controls.Add(this.groupBox1);
+            this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
+            this.tpUserInterface.Name = "tpUserInterface";
+            this.tpUserInterface.Size = new System.Drawing.Size(592, 318);
+            this.tpUserInterface.TabIndex = 6;
+            this.tpUserInterface.Text = "User Interface";
+            this.tpUserInterface.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.btnConfigure);
+            this.groupBox1.Controls.Add(this.cbConsoleSelect);
+            this.groupBox1.Location = new System.Drawing.Point(32, 30);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(307, 135);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "User Interface Controller";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(20, 37);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Controller:";
+            // 
+            // btnConfigure
+            // 
+            this.btnConfigure.Location = new System.Drawing.Point(23, 86);
+            this.btnConfigure.Name = "btnConfigure";
+            this.btnConfigure.Size = new System.Drawing.Size(272, 30);
+            this.btnConfigure.TabIndex = 5;
+            this.btnConfigure.Text = "Configure ";
+            this.btnConfigure.UseVisualStyleBackColor = true;
+            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
+            // 
+            // cbConsoleSelect
+            // 
+            this.cbConsoleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbConsoleSelect.FormattingEnabled = true;
+            this.cbConsoleSelect.Location = new System.Drawing.Point(80, 34);
+            this.cbConsoleSelect.Name = "cbConsoleSelect";
+            this.cbConsoleSelect.Size = new System.Drawing.Size(215, 21);
+            this.cbConsoleSelect.TabIndex = 4;
+            // 
             // tpAudio
             // 
             this.tpAudio.Controls.Add(this.tcAudio);
             this.tpAudio.Location = new System.Drawing.Point(4, 22);
             this.tpAudio.Name = "tpAudio";
-            this.tpAudio.Size = new System.Drawing.Size(584, 286);
+            this.tpAudio.Size = new System.Drawing.Size(584, 322);
             this.tpAudio.TabIndex = 0;
             this.tpAudio.Text = "Audio";
             // 
@@ -4531,7 +4622,7 @@ namespace PowerSDR
             this.btnAudioVoltTest1.TabIndex = 2;
             this.btnAudioVoltTest1.Text = "Test";
             this.toolTip1.SetToolTip(this.btnAudioVoltTest1, "Outputs a full scale sinewave at the CW pitch for determining the RMS Voltage of " +
-                    "the sound card.");
+        "the sound card.");
             this.btnAudioVoltTest1.Click += new System.EventHandler(this.btnAudioVoltTest1_Click);
             // 
             // udAudioVoltage1
@@ -4758,8 +4849,8 @@ namespace PowerSDR
             this.udAudioLatency1.Size = new System.Drawing.Size(48, 20);
             this.udAudioLatency1.TabIndex = 0;
             this.toolTip1.SetToolTip(this.udAudioLatency1, "Adds latency/stability to the audio subsystem.  Not needed when using ASIO driver" +
-                    ".  Mainly for compatibility.  The Manual setting should only be used for unsuppo" +
-                    "rted cards.");
+        ".  Mainly for compatibility.  The Manual setting should only be used for unsuppo" +
+        "rted cards.");
             this.udAudioLatency1.Value = new decimal(new int[] {
             120,
             0,
@@ -4799,7 +4890,7 @@ namespace PowerSDR
             this.comboAudioSoundCard.Size = new System.Drawing.Size(184, 21);
             this.comboAudioSoundCard.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboAudioSoundCard, "Sound Card Selection (use Unsupported Card if your card isn\'t in the list -- this" +
-                    " will require manual setup of the below controls).");
+        " will require manual setup of the below controls).");
             this.comboAudioSoundCard.SelectedIndexChanged += new System.EventHandler(this.comboAudioSoundCard_SelectedIndexChanged);
             // 
             // grpAudioBufferSize1
@@ -4850,7 +4941,7 @@ namespace PowerSDR
             this.comboAudioSampleRate1.Size = new System.Drawing.Size(64, 21);
             this.comboAudioSampleRate1.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboAudioSampleRate1, "Sample Rate -- Higher sampling rates yield a wider panadapter and less latency at" +
-                    " a cost of CPU% and filter sharpness");
+        " a cost of CPU% and filter sharpness");
             this.comboAudioSampleRate1.SelectedIndexChanged += new System.EventHandler(this.comboAudioSampleRate1_SelectedIndexChanged);
             // 
             // tpVAC
@@ -4929,7 +5020,7 @@ namespace PowerSDR
             this.chkVACCombine.TabIndex = 76;
             this.chkVACCombine.Text = "Combine VAC Input Channels";
             this.toolTip1.SetToolTip(this.chkVACCombine, "When this feature is enabled, the left and right VAC channels are combined into t" +
-                    "he DSP transmit channel (left).");
+        "he DSP transmit channel (left).");
             this.chkVACCombine.CheckedChanged += new System.EventHandler(this.chkVACCombine_CheckedChanged);
             // 
             // chkVACAllowBypass
@@ -4943,7 +5034,7 @@ namespace PowerSDR
             this.chkVACAllowBypass.TabIndex = 75;
             this.chkVACAllowBypass.Text = "Allow PTT to override/bypass VAC for Phone";
             this.toolTip1.SetToolTip(this.chkVACAllowBypass, "Using the hardware PTT inputs will override the PTT input to allow for easy phone" +
-                    " operation while VAC is enabled.");
+        " operation while VAC is enabled.");
             this.chkVACAllowBypass.CheckedChanged += new System.EventHandler(this.chkVACAllowBypass_CheckedChanged);
             // 
             // grpAudioVACAutoEnable
@@ -4965,7 +5056,7 @@ namespace PowerSDR
             this.chkAudioVACAutoEnable.TabIndex = 0;
             this.chkAudioVACAutoEnable.Text = "Enable for Digital modes on Mode change.  Disable for all other modes.";
             this.toolTip1.SetToolTip(this.chkAudioVACAutoEnable, "Click this button to automatically enable VAC when in Digital modes (DIGL, DIGU, " +
-                    "DRM)");
+        "DRM)");
             this.chkAudioVACAutoEnable.CheckedChanged += new System.EventHandler(this.chkAudioVACAutoEnable_CheckedChanged);
             // 
             // grpAudioVACGain
@@ -5051,7 +5142,7 @@ namespace PowerSDR
             this.udAudioVACGainRX.Size = new System.Drawing.Size(40, 20);
             this.udAudioVACGainRX.TabIndex = 36;
             this.toolTip1.SetToolTip(this.udAudioVACGainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
-                    "plication.");
+        "plication.");
             this.udAudioVACGainRX.Value = new decimal(new int[] {
             0,
             0,
@@ -5079,7 +5170,7 @@ namespace PowerSDR
             this.chkAudio2Stereo.TabIndex = 0;
             this.chkAudio2Stereo.Text = "Stereo";
             this.toolTip1.SetToolTip(this.chkAudio2Stereo, "Click this button if the third party software will open the Virtual Audio Cable i" +
-                    "n 2 channel (stereo) mode.");
+        "n 2 channel (stereo) mode.");
             this.chkAudio2Stereo.CheckedChanged += new System.EventHandler(this.chkAudio2Stereo_CheckedChanged);
             // 
             // grpAudioLatency2
@@ -5128,7 +5219,7 @@ namespace PowerSDR
             this.udAudioLatency2.Size = new System.Drawing.Size(48, 20);
             this.udAudioLatency2.TabIndex = 36;
             this.toolTip1.SetToolTip(this.udAudioLatency2, "Buffer latency for VAC1 audio stream.  Set to 0 for lowest latency.  \r\nIncrease t" +
-                    "his value if audio quality becomes unreliable or glitches");
+        "his value if audio quality becomes unreliable or glitches");
             this.udAudioLatency2.Value = new decimal(new int[] {
             120,
             0,
@@ -5165,7 +5256,6 @@ namespace PowerSDR
             this.comboAudioSampleRate2.Name = "comboAudioSampleRate2";
             this.comboAudioSampleRate2.Size = new System.Drawing.Size(64, 21);
             this.comboAudioSampleRate2.TabIndex = 60;
-            this.toolTip1.SetToolTip(this.comboAudioSampleRate2, resources.GetString("comboAudioSampleRate2.ToolTip"));
             this.comboAudioSampleRate2.SelectedIndexChanged += new System.EventHandler(this.comboAudioSampleRate2_SelectedIndexChanged);
             // 
             // grpAudioBuffer2
@@ -5363,7 +5453,7 @@ namespace PowerSDR
             this.chkVAC2Combine.TabIndex = 88;
             this.chkVAC2Combine.Text = "Combine VAC Input Channels";
             this.toolTip1.SetToolTip(this.chkVAC2Combine, "When this feature is enabled, the left and right VAC channels are combined into t" +
-                    "he DSP transmit channel (left).");
+        "he DSP transmit channel (left).");
             // 
             // grpVAC2AutoEnable
             // 
@@ -5385,7 +5475,7 @@ namespace PowerSDR
             this.chkVAC2AutoEnable.TabIndex = 0;
             this.chkVAC2AutoEnable.Text = "Enable for Digital modes on Mode change.  Disable for all other modes.";
             this.toolTip1.SetToolTip(this.chkVAC2AutoEnable, "Click this button to automatically enable VAC when in Digital modes (DIGL, DIGU, " +
-                    "DRM)");
+        "DRM)");
             this.chkVAC2AutoEnable.CheckedChanged += new System.EventHandler(this.chkVAC2AutoEnable_CheckedChanged);
             // 
             // grpVAC2Gain
@@ -5470,7 +5560,7 @@ namespace PowerSDR
             this.udVAC2GainRX.Size = new System.Drawing.Size(40, 20);
             this.udVAC2GainRX.TabIndex = 36;
             this.toolTip1.SetToolTip(this.udVAC2GainRX, "Controls the gain applied to the RX audio before it is sent to the third party ap" +
-                    "plication.");
+        "plication.");
             this.udVAC2GainRX.Value = new decimal(new int[] {
             0,
             0,
@@ -5497,7 +5587,7 @@ namespace PowerSDR
             this.chkAudioStereo3.TabIndex = 0;
             this.chkAudioStereo3.Text = "Stereo";
             this.toolTip1.SetToolTip(this.chkAudioStereo3, "Click this button if the third party software will open the Virtual Audio Cable i" +
-                    "n 2 channel (stereo) mode.");
+        "n 2 channel (stereo) mode.");
             this.chkAudioStereo3.CheckedChanged += new System.EventHandler(this.chkAudioStereo3_CheckedChanged);
             // 
             // grpVAC2Latency
@@ -5546,7 +5636,7 @@ namespace PowerSDR
             this.udVAC2Latency.Size = new System.Drawing.Size(48, 20);
             this.udVAC2Latency.TabIndex = 36;
             this.toolTip1.SetToolTip(this.udVAC2Latency, "Buffer latency for VAC2 audio stream.  Set to 0 for lowest latency.  \r\nIncrease t" +
-                    "his value if audio quality becomes unreliable or glitches ");
+        "his value if audio quality becomes unreliable or glitches ");
             this.udVAC2Latency.Value = new decimal(new int[] {
             120,
             0,
@@ -5583,7 +5673,6 @@ namespace PowerSDR
             this.comboAudioSampleRate3.Name = "comboAudioSampleRate3";
             this.comboAudioSampleRate3.Size = new System.Drawing.Size(64, 21);
             this.comboAudioSampleRate3.TabIndex = 60;
-            this.toolTip1.SetToolTip(this.comboAudioSampleRate3, resources.GetString("comboAudioSampleRate3.ToolTip"));
             this.comboAudioSampleRate3.SelectedIndexChanged += new System.EventHandler(this.comboAudioSampleRate3_SelectedIndexChanged);
             // 
             // grpAudioBuffer3
@@ -5715,7 +5804,7 @@ namespace PowerSDR
             this.tpDisplay.Controls.Add(this.grpDisplaySpectrumGrid);
             this.tpDisplay.Location = new System.Drawing.Point(4, 22);
             this.tpDisplay.Name = "tpDisplay";
-            this.tpDisplay.Size = new System.Drawing.Size(584, 286);
+            this.tpDisplay.Size = new System.Drawing.Size(584, 322);
             this.tpDisplay.TabIndex = 2;
             this.tpDisplay.Text = "Display";
             // 
@@ -5732,9 +5821,9 @@ namespace PowerSDR
             this.grpDisplayMultimeter.Controls.Add(this.lblDisplayMultiPeakHoldTime);
             this.grpDisplayMultimeter.Controls.Add(this.udDisplayMeterDelay);
             this.grpDisplayMultimeter.Controls.Add(this.lblDisplayMeterDelay);
-            this.grpDisplayMultimeter.Location = new System.Drawing.Point(272, 144);
+            this.grpDisplayMultimeter.Location = new System.Drawing.Point(272, 140);
             this.grpDisplayMultimeter.Name = "grpDisplayMultimeter";
-            this.grpDisplayMultimeter.Size = new System.Drawing.Size(304, 136);
+            this.grpDisplayMultimeter.Size = new System.Drawing.Size(304, 175);
             this.grpDisplayMultimeter.TabIndex = 41;
             this.grpDisplayMultimeter.TabStop = false;
             this.grpDisplayMultimeter.Text = "Multimeter";
@@ -5850,7 +5939,7 @@ namespace PowerSDR
             this.udDisplayMultiTextHoldTime.Size = new System.Drawing.Size(56, 20);
             this.udDisplayMultiTextHoldTime.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udDisplayMultiTextHoldTime, "Controls how long the meter will hold the digital peak value when in the Peak Pow" +
-                    "er mode.");
+        "er mode.");
             this.udDisplayMultiTextHoldTime.Value = new decimal(new int[] {
             500,
             0,
@@ -5989,7 +6078,7 @@ namespace PowerSDR
             this.chkSpectrumPolyphase.TabIndex = 39;
             this.chkSpectrumPolyphase.Text = "Enable";
             this.toolTip1.SetToolTip(this.chkSpectrumPolyphase, "Check to enable polyphase spectrum display mode.  While adding latency, this adds" +
-                    " resolution to the display.");
+        " resolution to the display.");
             this.chkSpectrumPolyphase.CheckedChanged += new System.EventHandler(this.chkSpectrumPolyphase_CheckedChanged);
             // 
             // grpDisplayScopeMode
@@ -6044,6 +6133,11 @@ namespace PowerSDR
             // 
             // grpDisplayWaterfall
             // 
+            this.grpDisplayWaterfall.Controls.Add(this.checkWaterMoveSize);
+            this.grpDisplayWaterfall.Controls.Add(this.labelTS6);
+            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallMicLevel);
+            this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallRX2Level);
+            this.grpDisplayWaterfall.Controls.Add(this.labelTS5);
             this.grpDisplayWaterfall.Controls.Add(this.chkWeakSignalWaterfallSettings);
             this.grpDisplayWaterfall.Controls.Add(this.lblWaterfallLevels);
             this.grpDisplayWaterfall.Controls.Add(this.txtWaterFallBandLevel);
@@ -6057,17 +6151,107 @@ namespace PowerSDR
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallLowLevel);
             this.grpDisplayWaterfall.Controls.Add(this.lblDisplayWaterfallHighLevel);
             this.grpDisplayWaterfall.Controls.Add(this.udDisplayWaterfallHighLevel);
-            this.grpDisplayWaterfall.Location = new System.Drawing.Point(8, 144);
+            this.grpDisplayWaterfall.Location = new System.Drawing.Point(8, 140);
             this.grpDisplayWaterfall.Name = "grpDisplayWaterfall";
-            this.grpDisplayWaterfall.Size = new System.Drawing.Size(256, 136);
+            this.grpDisplayWaterfall.Size = new System.Drawing.Size(256, 175);
             this.grpDisplayWaterfall.TabIndex = 40;
             this.grpDisplayWaterfall.TabStop = false;
             this.grpDisplayWaterfall.Text = "Waterfall";
             // 
+            // checkWaterMoveSize
+            // 
+            this.checkWaterMoveSize.Image = null;
+            this.checkWaterMoveSize.Location = new System.Drawing.Point(11, 157);
+            this.checkWaterMoveSize.Name = "checkWaterMoveSize";
+            this.checkWaterMoveSize.Size = new System.Drawing.Size(204, 18);
+            this.checkWaterMoveSize.TabIndex = 80;
+            this.checkWaterMoveSize.Text = "Enable wider waterfall before refresh";
+            this.toolTip1.SetToolTip(this.checkWaterMoveSize, "Check to enable a wider moving waterfall history.\r\nThis allows for more scanning " +
+        "left/right before a waterfall \r\nrefresh is needed. But takes more time to displa" +
+        "y.");
+            this.checkWaterMoveSize.CheckedChanged += new System.EventHandler(this.checkWaterMoveSize_CheckedChanged);
+            // 
+            // labelTS6
+            // 
+            this.labelTS6.Image = null;
+            this.labelTS6.Location = new System.Drawing.Point(126, 66);
+            this.labelTS6.Name = "labelTS6";
+            this.labelTS6.Size = new System.Drawing.Size(64, 23);
+            this.labelTS6.TabIndex = 79;
+            this.labelTS6.Text = "TX Level:";
+            // 
+            // udDisplayWaterfallMicLevel
+            // 
+            this.udDisplayWaterfallMicLevel.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallMicLevel.Location = new System.Drawing.Point(192, 66);
+            this.udDisplayWaterfallMicLevel.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallMicLevel.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallMicLevel.Name = "udDisplayWaterfallMicLevel";
+            this.udDisplayWaterfallMicLevel.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallMicLevel.TabIndex = 78;
+            this.toolTip1.SetToolTip(this.udDisplayWaterfallMicLevel, "Waterfall TX Low Signal - Show Low Color below this value (gradient in between).");
+            this.udDisplayWaterfallMicLevel.Value = new decimal(new int[] {
+            110,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallMicLevel.ValueChanged += new System.EventHandler(this.udDisplayWaterfallMicLevel_ValueChanged);
+            // 
+            // udDisplayWaterfallRX2Level
+            // 
+            this.udDisplayWaterfallRX2Level.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallRX2Level.Location = new System.Drawing.Point(72, 66);
+            this.udDisplayWaterfallRX2Level.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.udDisplayWaterfallRX2Level.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallRX2Level.Name = "udDisplayWaterfallRX2Level";
+            this.udDisplayWaterfallRX2Level.Size = new System.Drawing.Size(48, 20);
+            this.udDisplayWaterfallRX2Level.TabIndex = 77;
+            this.toolTip1.SetToolTip(this.udDisplayWaterfallRX2Level, "Waterfall RX2 Low Signal - Show Low Color below this value (gradient in between)." +
+        "");
+            this.udDisplayWaterfallRX2Level.Value = new decimal(new int[] {
+            110,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayWaterfallRX2Level.ValueChanged += new System.EventHandler(this.udDisplayWaterfallRX2Level_ValueChanged);
+            // 
+            // labelTS5
+            // 
+            this.labelTS5.Image = null;
+            this.labelTS5.Location = new System.Drawing.Point(8, 69);
+            this.labelTS5.Name = "labelTS5";
+            this.labelTS5.Size = new System.Drawing.Size(64, 23);
+            this.labelTS5.TabIndex = 76;
+            this.labelTS5.Text = "RX2 Level:";
+            // 
             // chkWeakSignalWaterfallSettings
             // 
             this.chkWeakSignalWaterfallSettings.Image = null;
-            this.chkWeakSignalWaterfallSettings.Location = new System.Drawing.Point(11, 114);
+            this.chkWeakSignalWaterfallSettings.Location = new System.Drawing.Point(11, 134);
             this.chkWeakSignalWaterfallSettings.Name = "chkWeakSignalWaterfallSettings";
             this.chkWeakSignalWaterfallSettings.Size = new System.Drawing.Size(225, 18);
             this.chkWeakSignalWaterfallSettings.TabIndex = 75;
@@ -6084,7 +6268,7 @@ namespace PowerSDR
             this.lblWaterfallLevels.TabIndex = 74;
             this.lblWaterfallLevels.Text = "Band for Low/High Levels:";
             this.toolTip1.SetToolTip(this.lblWaterfallLevels, "Waterfall Low/High levels can be set by band.  RX2 bands inherit RX1 band\'s Water" +
-                    "fall Settings.");
+        "fall Settings.");
             // 
             // txtWaterFallBandLevel
             // 
@@ -6103,7 +6287,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(192, 88);
+            this.udDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(192, 114);
             this.udDisplayWaterfallUpdatePeriod.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -6118,7 +6302,7 @@ namespace PowerSDR
             this.udDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(48, 20);
             this.udDisplayWaterfallUpdatePeriod.TabIndex = 71;
             this.toolTip1.SetToolTip(this.udDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-                    "hat this is tamed by the FPS setting.");
+        "hat this is tamed by the FPS setting.");
             this.udDisplayWaterfallUpdatePeriod.Value = new decimal(new int[] {
             50,
             0,
@@ -6129,13 +6313,13 @@ namespace PowerSDR
             // lblDisplayWaterfallUpdatePeriod
             // 
             this.lblDisplayWaterfallUpdatePeriod.Image = null;
-            this.lblDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(79, 90);
+            this.lblDisplayWaterfallUpdatePeriod.Location = new System.Drawing.Point(83, 116);
             this.lblDisplayWaterfallUpdatePeriod.Name = "lblDisplayWaterfallUpdatePeriod";
             this.lblDisplayWaterfallUpdatePeriod.Size = new System.Drawing.Size(118, 18);
             this.lblDisplayWaterfallUpdatePeriod.TabIndex = 72;
             this.lblDisplayWaterfallUpdatePeriod.Text = "Update Period (ms):";
             this.toolTip1.SetToolTip(this.lblDisplayWaterfallUpdatePeriod, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
-                    "hat this is tamed by the FPS setting.");
+        "hat this is tamed by the FPS setting.");
             // 
             // udDisplayWaterfallAvgTime
             // 
@@ -6144,7 +6328,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayWaterfallAvgTime.Location = new System.Drawing.Point(192, 64);
+            this.udDisplayWaterfallAvgTime.Location = new System.Drawing.Point(192, 90);
             this.udDisplayWaterfallAvgTime.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -6169,7 +6353,7 @@ namespace PowerSDR
             // lblDisplayWaterfallAverageTime
             // 
             this.lblDisplayWaterfallAverageTime.Image = null;
-            this.lblDisplayWaterfallAverageTime.Location = new System.Drawing.Point(79, 66);
+            this.lblDisplayWaterfallAverageTime.Location = new System.Drawing.Point(83, 92);
             this.lblDisplayWaterfallAverageTime.Name = "lblDisplayWaterfallAverageTime";
             this.lblDisplayWaterfallAverageTime.Size = new System.Drawing.Size(118, 18);
             this.lblDisplayWaterfallAverageTime.TabIndex = 70;
@@ -6181,7 +6365,7 @@ namespace PowerSDR
             this.clrbtnWaterfallLow.Automatic = "Automatic";
             this.clrbtnWaterfallLow.Color = System.Drawing.Color.Transparent;
             this.clrbtnWaterfallLow.Image = null;
-            this.clrbtnWaterfallLow.Location = new System.Drawing.Point(9, 85);
+            this.clrbtnWaterfallLow.Location = new System.Drawing.Point(11, 105);
             this.clrbtnWaterfallLow.MoreColors = "More Colors...";
             this.clrbtnWaterfallLow.Name = "clrbtnWaterfallLow";
             this.clrbtnWaterfallLow.Size = new System.Drawing.Size(40, 23);
@@ -6192,7 +6376,7 @@ namespace PowerSDR
             // lblDisplayWaterfallLowColor
             // 
             this.lblDisplayWaterfallLowColor.Image = null;
-            this.lblDisplayWaterfallLowColor.Location = new System.Drawing.Point(8, 66);
+            this.lblDisplayWaterfallLowColor.Location = new System.Drawing.Point(6, 92);
             this.lblDisplayWaterfallLowColor.Name = "lblDisplayWaterfallLowColor";
             this.lblDisplayWaterfallLowColor.Size = new System.Drawing.Size(64, 16);
             this.lblDisplayWaterfallLowColor.TabIndex = 57;
@@ -6278,6 +6462,7 @@ namespace PowerSDR
             // 
             // grpDisplayRefreshRates
             // 
+            this.grpDisplayRefreshRates.Controls.Add(this.gridBoxTS);
             this.grpDisplayRefreshRates.Controls.Add(this.chkDisplayPanFill);
             this.grpDisplayRefreshRates.Controls.Add(this.udDisplayCPUMeter);
             this.grpDisplayRefreshRates.Controls.Add(this.lblDisplayCPUMeter);
@@ -6292,12 +6477,23 @@ namespace PowerSDR
             this.grpDisplayRefreshRates.TabStop = false;
             this.grpDisplayRefreshRates.Text = "Refresh Rates";
             // 
+            // gridBoxTS
+            // 
+            this.gridBoxTS.Image = null;
+            this.gridBoxTS.Location = new System.Drawing.Point(19, 106);
+            this.gridBoxTS.Name = "gridBoxTS";
+            this.gridBoxTS.Size = new System.Drawing.Size(101, 16);
+            this.gridBoxTS.TabIndex = 41;
+            this.gridBoxTS.Text = "Grid Lines OFF";
+            this.toolTip1.SetToolTip(this.gridBoxTS, "Check to turn off Grid Lines (if you Skin gets in the way of the grid lines)");
+            this.gridBoxTS.CheckedChanged += new System.EventHandler(this.gridBoxTS_CheckedChanged);
+            // 
             // chkDisplayPanFill
             // 
             this.chkDisplayPanFill.Checked = true;
             this.chkDisplayPanFill.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDisplayPanFill.Image = null;
-            this.chkDisplayPanFill.Location = new System.Drawing.Point(19, 47);
+            this.chkDisplayPanFill.Location = new System.Drawing.Point(19, 43);
             this.chkDisplayPanFill.Name = "chkDisplayPanFill";
             this.chkDisplayPanFill.Size = new System.Drawing.Size(101, 16);
             this.chkDisplayPanFill.TabIndex = 40;
@@ -6312,7 +6508,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayCPUMeter.Location = new System.Drawing.Point(120, 96);
+            this.udDisplayCPUMeter.Location = new System.Drawing.Point(120, 86);
             this.udDisplayCPUMeter.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -6338,7 +6534,7 @@ namespace PowerSDR
             // lblDisplayCPUMeter
             // 
             this.lblDisplayCPUMeter.Image = null;
-            this.lblDisplayCPUMeter.Location = new System.Drawing.Point(16, 96);
+            this.lblDisplayCPUMeter.Location = new System.Drawing.Point(16, 85);
             this.lblDisplayCPUMeter.Name = "lblDisplayCPUMeter";
             this.lblDisplayCPUMeter.Size = new System.Drawing.Size(100, 23);
             this.lblDisplayCPUMeter.TabIndex = 37;
@@ -6351,7 +6547,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayPeakText.Location = new System.Drawing.Point(120, 72);
+            this.udDisplayPeakText.Location = new System.Drawing.Point(120, 64);
             this.udDisplayPeakText.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -6377,7 +6573,7 @@ namespace PowerSDR
             // lblDisplayPeakText
             // 
             this.lblDisplayPeakText.Image = null;
-            this.lblDisplayPeakText.Location = new System.Drawing.Point(16, 72);
+            this.lblDisplayPeakText.Location = new System.Drawing.Point(16, 66);
             this.lblDisplayPeakText.Name = "lblDisplayPeakText";
             this.lblDisplayPeakText.Size = new System.Drawing.Size(100, 23);
             this.lblDisplayPeakText.TabIndex = 35;
@@ -6587,7 +6783,7 @@ namespace PowerSDR
             this.udDisplayGridStep.Size = new System.Drawing.Size(56, 20);
             this.udDisplayGridStep.TabIndex = 25;
             this.toolTip1.SetToolTip(this.udDisplayGridStep, "Horizontal Grid Step Size in dBm for the full screen Panadapter.  Split screen mo" +
-                    "des will display a grid step size 2x greater.");
+        "des will display a grid step size 2x greater.");
             this.udDisplayGridStep.Value = new decimal(new int[] {
             10,
             0,
@@ -6688,7 +6884,7 @@ namespace PowerSDR
             this.tpDSP.Controls.Add(this.tcDSP);
             this.tpDSP.Location = new System.Drawing.Point(4, 22);
             this.tpDSP.Name = "tpDSP";
-            this.tpDSP.Size = new System.Drawing.Size(584, 286);
+            this.tpDSP.Size = new System.Drawing.Size(584, 322);
             this.tpDSP.TabIndex = 1;
             this.tpDSP.Text = "DSP";
             // 
@@ -7145,7 +7341,7 @@ namespace PowerSDR
             this.udLMSNRdelay.Size = new System.Drawing.Size(48, 20);
             this.udLMSNRdelay.TabIndex = 6;
             this.toolTip1.SetToolTip(this.udLMSNRdelay, "Determines how far back you look in the signal before you begin to compute a cohe" +
-                    "rent signal enhancement filter.  ");
+        "rent signal enhancement filter.  ");
             this.udLMSNRdelay.Value = new decimal(new int[] {
             30,
             0,
@@ -7288,7 +7484,7 @@ namespace PowerSDR
             this.udLMSANFdelay.Size = new System.Drawing.Size(48, 20);
             this.udLMSANFdelay.TabIndex = 2;
             this.toolTip1.SetToolTip(this.udLMSANFdelay, "Determines how far back you look in the signal before you begin to compute a canc" +
-                    "ellation filter");
+        "ellation filter");
             this.udLMSANFdelay.Value = new decimal(new int[] {
             60,
             0,
@@ -7355,7 +7551,7 @@ namespace PowerSDR
             this.comboDSPWindow.Size = new System.Drawing.Size(88, 21);
             this.comboDSPWindow.TabIndex = 0;
             this.toolTip1.SetToolTip(this.comboDSPWindow, "Selects the DSP windowing function that will be applied to the power spectrum in " +
-                    "the main display when in Spectrum, Panadapter, and Waterfall modes.   ");
+        "the main display when in Spectrum, Panadapter, and Waterfall modes.   ");
             this.comboDSPWindow.SelectedIndexChanged += new System.EventHandler(this.comboDSPWindow_SelectedIndexChanged);
             // 
             // grpDSPNB2
@@ -7455,7 +7651,7 @@ namespace PowerSDR
             this.checkboxTXImagCal.TabIndex = 37;
             this.checkboxTXImagCal.Text = "Enable TX Image Tone";
             this.toolTip1.SetToolTip(this.checkboxTXImagCal, "Check this box while in MOX on USB to calibrate the Transmit Rejection using the " +
-                    "controls above.");
+        "controls above.");
             this.checkboxTXImagCal.CheckedChanged += new System.EventHandler(this.chkTXImagCal_CheckedChanged);
             // 
             // lblDSPGainValTX
@@ -7554,7 +7750,7 @@ namespace PowerSDR
             this.tbDSPImagePhaseTX.Maximum = 400;
             this.tbDSPImagePhaseTX.Minimum = -400;
             this.tbDSPImagePhaseTX.Name = "tbDSPImagePhaseTX";
-            this.tbDSPImagePhaseTX.Size = new System.Drawing.Size(160, 42);
+            this.tbDSPImagePhaseTX.Size = new System.Drawing.Size(160, 45);
             this.tbDSPImagePhaseTX.TabIndex = 3;
             this.tbDSPImagePhaseTX.TickFrequency = 50;
             this.toolTip1.SetToolTip(this.tbDSPImagePhaseTX, "Sets the phase offset between the I and Q channels.  ");
@@ -7576,7 +7772,7 @@ namespace PowerSDR
             this.tbDSPImageGainTX.Maximum = 500;
             this.tbDSPImageGainTX.Minimum = -500;
             this.tbDSPImageGainTX.Name = "tbDSPImageGainTX";
-            this.tbDSPImageGainTX.Size = new System.Drawing.Size(160, 42);
+            this.tbDSPImageGainTX.Size = new System.Drawing.Size(160, 45);
             this.tbDSPImageGainTX.TabIndex = 4;
             this.tbDSPImageGainTX.TickFrequency = 50;
             this.toolTip1.SetToolTip(this.tbDSPImageGainTX, "Sets the amplitude/gain offset between the I and Q channels.  ");
@@ -7608,7 +7804,7 @@ namespace PowerSDR
             this.chkCWDisableUI.TabIndex = 42;
             this.chkCWDisableUI.Text = "Disable UI MOX Changes";
             this.toolTip1.SetToolTip(this.chkCWDisableUI, "If enabled, will automatically switch to CW mode when paddles are used no matter " +
-                    "the current mode ");
+        "the current mode ");
             this.chkCWDisableUI.CheckedChanged += new System.EventHandler(this.chkCWDisableUI_CheckedChanged);
             // 
             // grpKeyerConnections
@@ -7658,7 +7854,7 @@ namespace PowerSDR
             this.comboKeyerConnSecondary.Size = new System.Drawing.Size(64, 21);
             this.comboKeyerConnSecondary.TabIndex = 53;
             this.toolTip1.SetToolTip(this.comboKeyerConnSecondary, "Sets Keyer Input COM port.  This can be an external keyer or a virtual COM port b" +
-                    "eing driven by a third party program.");
+        "eing driven by a third party program.");
             this.comboKeyerConnSecondary.ValueMember = "None";
             this.comboKeyerConnSecondary.SelectedIndexChanged += new System.EventHandler(this.comboKeyerConnSecondary_SelectedIndexChanged);
             // 
@@ -7834,7 +8030,7 @@ namespace PowerSDR
             this.chkCWKeyerMonoCable.TabIndex = 42;
             this.chkCWKeyerMonoCable.Text = "2-Wire Cable";
             this.toolTip1.SetToolTip(this.chkCWKeyerMonoCable, "Allows the use of a straight key and other devices suce as paddles on the \r\nFLEX-" +
-                    "xx00 series of radios that use only 2 wires to make the connection.");
+        "xx00 series of radios that use only 2 wires to make the connection.");
             this.chkCWKeyerMonoCable.CheckedChanged += new System.EventHandler(this.chkCWKeyerMonoCable_CheckedChanged);
             // 
             // chkCWKeyerMode
@@ -7901,7 +8097,7 @@ namespace PowerSDR
             this.chkCWAutoSwitchMode.TabIndex = 41;
             this.chkCWAutoSwitchMode.Text = "Auto Mode Swch";
             this.toolTip1.SetToolTip(this.chkCWAutoSwitchMode, "If enabled, will automatically switch to CW mode when paddles are used no matter " +
-                    "the current mode ");
+        "the current mode ");
             this.chkCWAutoSwitchMode.CheckedChanged += new System.EventHandler(this.chkCWAutoSwitchMode_CheckedChanged);
             // 
             // grpDSPKeyerSignalShaping
@@ -8176,7 +8372,7 @@ namespace PowerSDR
             this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerThreshold.TabIndex = 6;
             this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-                    "in over this Max Gain is applied.");
+        "in over this Max Gain is applied.");
             this.udDSPLevelerThreshold.Value = new decimal(new int[] {
             5,
             0,
@@ -8428,7 +8624,7 @@ namespace PowerSDR
             this.udDSPALCThreshold.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCThreshold.TabIndex = 6;
             this.toolTip1.SetToolTip(this.udDSPALCThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-                    "in over this Max Gain is applied.");
+        "in over this Max Gain is applied.");
             this.udDSPALCThreshold.Value = new decimal(new int[] {
             120,
             0,
@@ -8669,7 +8865,7 @@ namespace PowerSDR
             this.udDSPAGCMaxGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCMaxGaindB.TabIndex = 6;
             this.toolTip1.SetToolTip(this.udDSPAGCMaxGaindB, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-                    "in over this Max Gain is applied.");
+        "in over this Max Gain is applied.");
             this.udDSPAGCMaxGaindB.Value = new decimal(new int[] {
             90,
             0,
@@ -8826,7 +9022,7 @@ namespace PowerSDR
             this.udDSPAGCFixedGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCFixedGaindB.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udDSPAGCFixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
-                    " signal.");
+        " signal.");
             this.udDSPAGCFixedGaindB.Value = new decimal(new int[] {
             75,
             0,
@@ -8864,7 +9060,7 @@ namespace PowerSDR
             this.tpTransmit.Controls.Add(this.grpTX1500);
             this.tpTransmit.Location = new System.Drawing.Point(4, 22);
             this.tpTransmit.Name = "tpTransmit";
-            this.tpTransmit.Size = new System.Drawing.Size(584, 286);
+            this.tpTransmit.Size = new System.Drawing.Size(584, 322);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
@@ -8922,7 +9118,7 @@ namespace PowerSDR
             this.chkTXLimitSlew.TabIndex = 57;
             this.chkTXLimitSlew.Text = "Limit Slew";
             this.toolTip1.SetToolTip(this.chkTXLimitSlew, "Ramps key-up to avoid unkey artifacts (induces additional delay) - This is useful" +
-                    " to avoid tripping amplifiers");
+        " to avoid tripping amplifiers");
             this.chkTXLimitSlew.CheckedChanged += new System.EventHandler(this.chkTXLimitSlew_CheckedChanged);
             // 
             // chkTXExpert
@@ -8957,7 +9153,7 @@ namespace PowerSDR
             this.btnTXProfileDefImport.TabIndex = 54;
             this.btnTXProfileDefImport.Text = "Import";
             this.toolTip1.SetToolTip(this.btnTXProfileDefImport, "Highlight an additional preset TX Profile and then click on Import to add it to y" +
-                    "our active profiles");
+        "our active profiles");
             this.btnTXProfileDefImport.Click += new System.EventHandler(this.btnTXProfileDefImport_Click);
             // 
             // lstTXProfileDef
@@ -9010,7 +9206,7 @@ namespace PowerSDR
             this.udTXAMCarrierLevel.Size = new System.Drawing.Size(56, 20);
             this.udTXAMCarrierLevel.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udTXAMCarrierLevel, "Adjusts the carrier level on AM (in approximate watts with Drive Level = 100 usin" +
-                    "g a 100W SDR) .");
+        "g a 100W SDR) .");
             this.udTXAMCarrierLevel.Value = new decimal(new int[] {
             25,
             0,
@@ -9130,7 +9326,7 @@ namespace PowerSDR
             this.chkTXNoiseGateEnabled.TabIndex = 49;
             this.chkTXNoiseGateEnabled.Text = "Enabled";
             this.toolTip1.SetToolTip(this.chkTXNoiseGateEnabled, "Enables the Downward Expander/Noise Gate to operate by setting the Threshold and " +
-                    "the Attenuate percentage factor");
+        "the Attenuate percentage factor");
             this.chkTXNoiseGateEnabled.CheckedChanged += new System.EventHandler(this.chkTXNoiseGateEnabled_CheckedChanged);
             // 
             // udTXNoiseGate
@@ -9442,7 +9638,7 @@ namespace PowerSDR
             this.udTXVOXHangTime.Size = new System.Drawing.Size(56, 20);
             this.udTXVOXHangTime.TabIndex = 51;
             this.toolTip1.SetToolTip(this.udTXVOXHangTime, "The amount of time in ms to stay in TX mode after the last signal above the thres" +
-                    "hold.");
+        "hold.");
             this.udTXVOXHangTime.Value = new decimal(new int[] {
             250,
             0,
@@ -9544,7 +9740,7 @@ namespace PowerSDR
             this.udTX1500PhoneBlanking.Size = new System.Drawing.Size(48, 20);
             this.udTX1500PhoneBlanking.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udTX1500PhoneBlanking, "Sets the time to blank the audio during RX/TX transitions.  The optimal value for" +
-                    " this will vary depending on the system and driver in use.");
+        " this will vary depending on the system and driver in use.");
             this.udTX1500PhoneBlanking.Value = new decimal(new int[] {
             200,
             0,
@@ -9560,7 +9756,7 @@ namespace PowerSDR
             this.tpPowerAmplifier.Controls.Add(this.grpPAGainByBand);
             this.tpPowerAmplifier.Location = new System.Drawing.Point(4, 22);
             this.tpPowerAmplifier.Name = "tpPowerAmplifier";
-            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 286);
+            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 322);
             this.tpPowerAmplifier.TabIndex = 8;
             this.tpPowerAmplifier.Text = "PA Settings";
             // 
@@ -9572,7 +9768,7 @@ namespace PowerSDR
             this.rtxtPACalReq.ReadOnly = true;
             this.rtxtPACalReq.Size = new System.Drawing.Size(224, 112);
             this.rtxtPACalReq.TabIndex = 82;
-            this.rtxtPACalReq.Text = resources.GetString("rtxtPACalReq.Text");
+            this.rtxtPACalReq.Text = "";
             // 
             // grpPABandOffset
             // 
@@ -10614,7 +10810,7 @@ namespace PowerSDR
             this.tpAppearance.Controls.Add(this.tcAppearance);
             this.tpAppearance.Location = new System.Drawing.Point(4, 22);
             this.tpAppearance.Name = "tpAppearance";
-            this.tpAppearance.Size = new System.Drawing.Size(584, 286);
+            this.tpAppearance.Size = new System.Drawing.Size(584, 322);
             this.tpAppearance.TabIndex = 6;
             this.tpAppearance.Text = "Appearance";
             // 
@@ -10677,6 +10873,7 @@ namespace PowerSDR
             this.comboAppSkin.Size = new System.Drawing.Size(116, 21);
             this.comboAppSkin.TabIndex = 0;
             this.comboAppSkin.SelectedIndexChanged += new System.EventHandler(this.comboAppSkin_SelectedIndexChanged);
+            this.comboAppSkin.MouseDown += new System.Windows.Forms.MouseEventHandler(this.comboAppSkin_MouseDown);
             // 
             // lblGenBackground
             // 
@@ -11224,7 +11421,7 @@ namespace PowerSDR
             this.chkShowFreqOffset.TabIndex = 77;
             this.chkShowFreqOffset.Text = "Show Freq Offset";
             this.toolTip1.SetToolTip(this.chkShowFreqOffset, "Show the frequency offset from the VFO rather than the actual frequency in MHz on" +
-                    " the display.");
+        " the display.");
             this.chkShowFreqOffset.CheckedChanged += new System.EventHandler(this.chkShowFreqOffset_CheckedChanged);
             // 
             // tbMultiRXFilterAlpha
@@ -11551,7 +11748,6 @@ namespace PowerSDR
             this.clrbtnMeterEdgeHigh.Name = "clrbtnMeterEdgeHigh";
             this.clrbtnMeterEdgeHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterEdgeHigh.TabIndex = 75;
-            this.clrbtnMeterEdgeHigh.Changed += new System.EventHandler(this.clrbtnMeterEdgeHigh_Changed);
             // 
             // lblMeterEdgeHigh
             // 
@@ -11674,9 +11870,11 @@ namespace PowerSDR
             // 
             this.comboMeterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterType.DropDownWidth = 80;
+            this.comboMeterType.ForeColor = System.Drawing.SystemColors.WindowText;
             this.comboMeterType.Items.AddRange(new object[] {
-            "Original",
-            "Edge"});
+            "AnalogTR7",
+            "Edge",
+            "Analog"});
             this.comboMeterType.Location = new System.Drawing.Point(80, 16);
             this.comboMeterType.Name = "comboMeterType";
             this.comboMeterType.Size = new System.Drawing.Size(80, 21);
@@ -11695,7 +11893,7 @@ namespace PowerSDR
             this.tpKeyboard.Controls.Add(this.grpKBCW);
             this.tpKeyboard.Location = new System.Drawing.Point(4, 22);
             this.tpKeyboard.Name = "tpKeyboard";
-            this.tpKeyboard.Size = new System.Drawing.Size(584, 286);
+            this.tpKeyboard.Size = new System.Drawing.Size(584, 322);
             this.tpKeyboard.TabIndex = 4;
             this.tpKeyboard.Text = "Keyboard";
             // 
@@ -12323,7 +12521,7 @@ namespace PowerSDR
             this.tpExtCtrl.Controls.Add(this.grpExtRX);
             this.tpExtCtrl.Location = new System.Drawing.Point(4, 22);
             this.tpExtCtrl.Name = "tpExtCtrl";
-            this.tpExtCtrl.Size = new System.Drawing.Size(584, 286);
+            this.tpExtCtrl.Size = new System.Drawing.Size(584, 322);
             this.tpExtCtrl.TabIndex = 11;
             this.tpExtCtrl.Text = "Ext. Ctrl";
             // 
@@ -14225,7 +14423,7 @@ namespace PowerSDR
             this.tpCAT.Controls.Add(this.grpRTTYOffset);
             this.tpCAT.Location = new System.Drawing.Point(4, 22);
             this.tpCAT.Name = "tpCAT";
-            this.tpCAT.Size = new System.Drawing.Size(584, 286);
+            this.tpCAT.Size = new System.Drawing.Size(584, 322);
             this.tpCAT.TabIndex = 10;
             this.tpCAT.Text = "CAT Control";
             // 
@@ -14633,7 +14831,7 @@ namespace PowerSDR
             this.tpTests.Controls.Add(this.grpImpulseTest);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
-            this.tpTests.Size = new System.Drawing.Size(584, 286);
+            this.tpTests.Size = new System.Drawing.Size(584, 322);
             this.tpTests.TabIndex = 7;
             this.tpTests.Text = "Tests";
             // 
@@ -14931,14 +15129,14 @@ namespace PowerSDR
             this.lblTestSigGenFreqCallout.Size = new System.Drawing.Size(336, 16);
             this.lblTestSigGenFreqCallout.TabIndex = 90;
             this.lblTestSigGenFreqCallout.Text = "0                                                 10k                            " +
-                "                   20k";
+    "                   20k";
             // 
             // tkbarTestGenFreq
             // 
             this.tkbarTestGenFreq.Location = new System.Drawing.Point(16, 104);
             this.tkbarTestGenFreq.Maximum = 20000;
             this.tkbarTestGenFreq.Name = "tkbarTestGenFreq";
-            this.tkbarTestGenFreq.Size = new System.Drawing.Size(344, 42);
+            this.tkbarTestGenFreq.Size = new System.Drawing.Size(344, 45);
             this.tkbarTestGenFreq.TabIndex = 1;
             this.tkbarTestGenFreq.TickFrequency = 1000;
             this.toolTip1.SetToolTip(this.tkbarTestGenFreq, "Sets the frequency of the signal.");
@@ -15068,7 +15266,7 @@ namespace PowerSDR
             this.btnTestGenSweep.TabIndex = 0;
             this.btnTestGenSweep.Text = "Sweep";
             this.toolTip1.SetToolTip(this.btnTestGenSweep, "Click this button to sweep from the Low setting to the High setting using the Hz/" +
-                    "Sec setting.");
+        "Sec setting.");
             this.btnTestGenSweep.Click += new System.EventHandler(this.buttonTestGenSweep_Click);
             // 
             // ckEnableSigGen
@@ -15376,7 +15574,7 @@ namespace PowerSDR
             // btnExportDB
             // 
             this.btnExportDB.Image = null;
-            this.btnExportDB.Location = new System.Drawing.Point(224, 328);
+            this.btnExportDB.Location = new System.Drawing.Point(224, 366);
             this.btnExportDB.Name = "btnExportDB";
             this.btnExportDB.Size = new System.Drawing.Size(112, 23);
             this.btnExportDB.TabIndex = 22;
@@ -15387,7 +15585,7 @@ namespace PowerSDR
             // btnImportDB
             // 
             this.btnImportDB.Image = null;
-            this.btnImportDB.Location = new System.Drawing.Point(108, 328);
+            this.btnImportDB.Location = new System.Drawing.Point(106, 366);
             this.btnImportDB.Name = "btnImportDB";
             this.btnImportDB.Size = new System.Drawing.Size(112, 23);
             this.btnImportDB.TabIndex = 21;
@@ -15398,19 +15596,19 @@ namespace PowerSDR
             // btnResetDB
             // 
             this.btnResetDB.Image = null;
-            this.btnResetDB.Location = new System.Drawing.Point(8, 328);
+            this.btnResetDB.Location = new System.Drawing.Point(4, 366);
             this.btnResetDB.Name = "btnResetDB";
             this.btnResetDB.Size = new System.Drawing.Size(96, 23);
             this.btnResetDB.TabIndex = 20;
             this.btnResetDB.Text = "Factory Defaults";
             this.toolTip1.SetToolTip(this.btnResetDB, "Copies the current database to the desktop and resets to the defaults (after rest" +
-                    "arting)");
+        "arting)");
             this.btnResetDB.Click += new System.EventHandler(this.btnResetDB_Click);
             // 
             // btnApply
             // 
             this.btnApply.Image = null;
-            this.btnApply.Location = new System.Drawing.Point(524, 328);
+            this.btnApply.Location = new System.Drawing.Point(523, 366);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 19;
@@ -15421,7 +15619,7 @@ namespace PowerSDR
             // btnCancel
             // 
             this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(443, 328);
+            this.btnCancel.Location = new System.Drawing.Point(442, 366);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 18;
@@ -15432,7 +15630,7 @@ namespace PowerSDR
             // btnOK
             // 
             this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(362, 328);
+            this.btnOK.Location = new System.Drawing.Point(361, 366);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 17;
@@ -15453,7 +15651,7 @@ namespace PowerSDR
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(616, 357);
+            this.ClientSize = new System.Drawing.Size(616, 392);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
             this.Controls.Add(this.btnResetDB);
@@ -15517,6 +15715,9 @@ namespace PowerSDR
             this.tpGeneralNavigation.ResumeLayout(false);
             this.grpOptSpaceNav.ResumeLayout(false);
             this.grpOptSpaceNav.PerformLayout();
+            this.tpUserInterface.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tpAudio.ResumeLayout(false);
             this.tcAudio.ResumeLayout(false);
             this.tpAudioCard1.ResumeLayout(false);
@@ -15570,6 +15771,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayScopeTime)).EndInit();
             this.grpDisplayWaterfall.ResumeLayout(false);
             this.grpDisplayWaterfall.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallMicLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallRX2Level)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallUpdatePeriod)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallAvgTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWaterfallLowLevel)).EndInit();
@@ -16018,73 +16221,98 @@ namespace PowerSDR
 				comboDSPWindow.Items.Add(s);
 			}
 		}
-
-		private void GetHosts()
+//===========================================================================
+		private void GetHosts()  // do one time at startup
 		{
 			comboAudioDriver1.Items.Clear();
 			comboAudioDriver2.Items.Clear();
             comboAudioDriver3.Items.Clear();
 
 			int host_index = 0;
-			foreach(string PAHostName in Audio.GetPAHosts())
+            
+            
+			foreach( string PAHostName in Audio.GetPAHosts() )
 			{
-				if(Audio.GetPAInputDevices(host_index).Count > 0 ||
-					Audio.GetPAOutputDevices(host_index).Count > 0)
+				if(Audio.GetPAInputDevices(host_index).Count > 0 ||	Audio.GetPAOutputDevices(host_index).Count > 0)
 				{
 					comboAudioDriver1.Items.Add(new PADeviceInfo(PAHostName, host_index));
                     if (PAHostName != "Windows WASAPI" && PAHostName !="ASIO")
                     {
                         PADeviceInfo devinfo = new PADeviceInfo(PAHostName, host_index);
-                        comboAudioDriver2.Items.Add(devinfo);
-                        comboAudioDriver3.Items.Add(devinfo);
+
+                        comboAudioDriver2.Items.Add(devinfo); // vac1 populate lists
+                        comboAudioDriver3.Items.Add(devinfo); // vac2
+
+                        //Trace.WriteLine("vac1 " + host_index + " devinfo "+ devinfo ); // SOUND DRIVERS: (0=MME, 1=Windows Direct Sound, 4=Windows WDM-KS
+
                         dax_audio_setup_enum = true;
                     }
 				}
 				host_index++; //Increment host index
-			}
+			} // for
+
             if (!dax_audio_setup_enum)
             {
-                chkAudioEnableVAC.Enabled = false;
-                chkVAC2Enable.Enabled = false;
+                chkAudioEnableVAC.Enabled = false; // VAC1
+                chkVAC2Enable.Enabled = false;     // VAC2
                 console.DisableDAX();
             }
             else
             {
-                chkAudioEnableVAC.Enabled = true;
+                chkAudioEnableVAC.Enabled = true; // VAC1
                 console.EnableDAX();
             }
 	
-		}
+		} // gethosts
 
-		private void GetDevices1()
+		private void GetDevices1()  // PRIMARY
 		{
 			comboAudioInput1.Items.Clear();
 			comboAudioOutput1.Items.Clear();
+
 			int host = ((PADeviceInfo)comboAudioDriver1.SelectedItem).Index;
-			ArrayList a = Audio.GetPAInputDevices(host);
-            foreach (PADeviceInfo p in a)
+
+            ArrayList a = Audio.GetPAInputDevices(host);
+
+            foreach (PADeviceInfo p in a)               // try each device and create list of inputs and outputs
+            {
                 comboAudioInput1.Items.Add(p);
+              //  Trace.WriteLine("pri " + p + " in "); // SOUND input: ASIO FlexRadio 
+            }
+            a = Audio.GetPAOutputDevices(host);
 
-			a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a)
+            {
                 comboAudioOutput1.Items.Add(p);
-		}
 
-		private void GetDevices2()
+              //  Trace.WriteLine("pri " + p + " out "); // SOUND out: ASIO FlexRadio 
+            }
+
+        } // getdevices 1
+
+        private void GetDevices2()  // VAC1
 		{
 			comboAudioInput2.Items.Clear();
 			comboAudioOutput2.Items.Clear();
 			int host = ((PADeviceInfo)comboAudioDriver2.SelectedItem).Index;
 			ArrayList a = Audio.GetPAInputDevices(host);
             foreach (PADeviceInfo p in a)
+            {
                 comboAudioInput2.Items.Add(p);
+              //   Trace.WriteLine("vac1 " + p + " in "); // SOUND input: (Microsoft Sound Mapper - Input,CABLE Output (VB-Audio Virtual, Mic in at front panel (Pink) (R
 
-			a = Audio.GetPAOutputDevices(host);
+            }
+
+            a = Audio.GetPAOutputDevices(host);
             foreach (PADeviceInfo p in a)
+            {
                 comboAudioOutput2.Items.Add(p);
-		}
+              //   Trace.WriteLine("vac1 " + p + " out "); // SOUND output: (Microsoft Sound Mapper - Output,Speakers (Realtek High Definiti,CABLE Input (VB-Audio Virtual C )
 
-        private void GetDevices3()
+            }
+        }
+
+        private void GetDevices3()  // VAC2
         {
             comboAudioInput3.Items.Clear();
             comboAudioOutput3.Items.Clear();
@@ -16690,7 +16918,9 @@ namespace PowerSDR
             udBandSegmentBoxLineWidth_ValueChanged(this, e);
 			clrbtnMeterLeft_Changed(this, e);
 			clrbtnMeterRight_Changed(this, e);
-		}
+
+     
+		} // force all events
 
 		public string[] GetTXProfileStrings()
 		{
@@ -16700,7 +16930,8 @@ namespace PowerSDR
             return s;
 		}
 
-		public string TXProfile
+       
+        public string TXProfile
 		{
 			get 
 			{
@@ -16710,7 +16941,32 @@ namespace PowerSDR
 			set { if(comboTXProfileName != null) comboTXProfileName.Text = value; }
 		}
 
-		public void GetTxProfiles()
+
+        //==========================================================
+        //==========================================================
+        // ke9ns add: used to pass meter type selection from console to setup.
+        //==========================================================
+        //==========================================================
+        public string MTRSet // ke9ns add
+        {
+            get
+            {
+                if (comboMeterType != null) return comboMeterType.Text;
+                else return "";
+            }
+            set {
+
+                if (comboMeterType != null)
+                {
+                    comboMeterType.Text = value;
+                 //   Trace.WriteLine("meter change via click " + value);
+                }
+
+            }
+        }  
+
+//========================================================================
+        public void GetTxProfiles()
 		{
 			comboTXProfileName.Items.Clear();
             foreach (DataRow dr in DB.ds.Tables["TxProfile"].Rows)
@@ -16730,8 +16986,7 @@ namespace PowerSDR
 			{
 				if(dr.RowState != DataRowState.Deleted)
 				{
-					if(!lstTXProfileDef.Items.Contains(dr["Name"]))
-						lstTXProfileDef.Items.Add(dr["name"]);
+					if(!lstTXProfileDef.Items.Contains(dr["Name"]))			lstTXProfileDef.Items.Add(dr["name"]);
 				}
 			}
 		}
@@ -16943,7 +17198,24 @@ namespace PowerSDR
                     case Band.B10M: txtWaterFallBandLevel.Text = "10 meters"; break;
                     case Band.B6M: txtWaterFallBandLevel.Text = "6 meters"; break;
                     case Band.WWV: txtWaterFallBandLevel.Text = "WWV"; break;
+
+                    case Band.BLMF: txtWaterFallBandLevel.Text = "LW/MW bands"; break; // ke9ns add
+                    case Band.B120M: txtWaterFallBandLevel.Text = "120 meters"; break;
+                    case Band.B90M: txtWaterFallBandLevel.Text = "90 meters"; break;
+                    case Band.B61M: txtWaterFallBandLevel.Text = "60 meters"; break;
+                    case Band.B49M: txtWaterFallBandLevel.Text = "49 meters"; break;
+                    case Band.B41M: txtWaterFallBandLevel.Text = "41 meters"; break;
+                    case Band.B31M: txtWaterFallBandLevel.Text = "31 meters"; break;
+                    case Band.B25M: txtWaterFallBandLevel.Text = "25 meters"; break;
+                    case Band.B22M: txtWaterFallBandLevel.Text = "22 meters"; break;
+                    case Band.B19M: txtWaterFallBandLevel.Text = "19 meters"; break;
+                    case Band.B16M: txtWaterFallBandLevel.Text = "16 meters"; break;
+                    case Band.B14M: txtWaterFallBandLevel.Text = "14 meters"; break;
+                    case Band.B13M: txtWaterFallBandLevel.Text = "13 meters"; break;
+                    case Band.B11M: txtWaterFallBandLevel.Text = "11 meters"; break;
+
                     case Band.GEN: txtWaterFallBandLevel.Text = "General"; break;
+
                     default: txtWaterFallBandLevel.Text = "2M & VHF+"; break;
                 }
             }
@@ -17701,6 +17973,7 @@ namespace PowerSDR
 				grpAudioVolts1.Enabled = !mox;
 				grpAudioLatency1.Enabled = !mox;
 				chkAudioEnableVAC.Enabled = !mox;
+
 				if(chkAudioEnableVAC.Checked)
 				{
 					grpAudioDetails2.Enabled = !mox;
@@ -17969,6 +18242,12 @@ namespace PowerSDR
             set { udDisplayWaterfallLowLevel.Value = (decimal)value; }
         }
 
+        //==================================================================================
+        public float WaterfallLowRX2Threshold      // ke9ns ADD RX2
+        {
+            get { return (float)udDisplayWaterfallRX2Level.Value; }
+            set { udDisplayWaterfallRX2Level.Value = (decimal)value; }
+        }
         public float WaterfallHighThreshold
         {
             get { return (float)udDisplayWaterfallHighLevel.Value; }
@@ -17980,6 +18259,7 @@ namespace PowerSDR
             get { return chkWeakSignalWaterfallSettings.Checked; }
             set { chkWeakSignalWaterfallSettings.Checked = value; }
         }
+
 
         // Added 06/21/05 BT for CAT commands
 		public int CATNB1Threshold
@@ -18294,11 +18574,12 @@ namespace PowerSDR
                             grpGeneralHardwareFLEX5000.Text = "FLEX-3000 Config";
                             lblRFIORev.Visible = false;
                             chkGenFLEX5000ExtRef.Visible = false;
-                            udTXFilterHigh.Maximum = 4500;
-                            if (comboAudioSampleRate1.Items.Contains(192000))
-                                comboAudioSampleRate1.Items.Remove(192000);
-                            if (comboAudioSampleRate1.SelectedIndex == -1)
-                                comboAudioSampleRate1.SelectedIndex = 1;
+                            udTXFilterHigh.Maximum = 10000;     // ke9ns mod was 4500;
+
+                         //   if (comboAudioSampleRate1.Items.Contains(192000))     comboAudioSampleRate1.Items.Remove(192000);
+
+                            if (comboAudioSampleRate1.SelectedIndex == -1)     comboAudioSampleRate1.SelectedIndex = 1;
+
                             lblF3KFanTempThresh.Visible = true;
                             udF3KFanTempThresh.Visible = true;
                             chkGenTX1Delay.Visible = true;
@@ -18379,13 +18660,18 @@ namespace PowerSDR
 
                     if (dax_audio_setup_enum)
                     {
-                        chkVAC2Enable.Enabled = rx2_ok;
-                        chkVAC2AutoEnable.Enabled = rx2_ok;
+                        chkVAC2Enable.Enabled = rx2_ok;   //ke9ns  this turns on the enable checkbox
+                        chkVAC2AutoEnable.Enabled = rx2_ok;  //
                     }
 
                     if (console.CurrentModel == Model.FLEX5000)
+                    {
                         FWC.GetATUOK(out atu_ok);
-                    else atu_ok = true;
+                    }
+                    else
+                    {
+                        atu_ok = true;
+                    }
 
                     switch (FWCEEPROM.Model)
                     {
@@ -18603,7 +18889,7 @@ namespace PowerSDR
 
                     if (!console.TestEquip)
                     {
-                        udTXFilterHigh.Maximum = 3650;
+                        udTXFilterHigh.Maximum = 10000; //  ke9ns mod was 3650;
                     }
                     else
                     {
@@ -19008,10 +19294,12 @@ namespace PowerSDR
 				}
 			}
                 
-			if(console.RXOnly != rx_only)
-                console.RXOnly = rx_only;
+			if(console.RXOnly != rx_only)  console.RXOnly = rx_only;
+
             tpTransmit.Enabled = !rx_only;
+
             tpPowerAmplifier.Enabled = !rx_only;
+
             grpTestTXIMD.Enabled = !rx_only;
 		}
 
@@ -19412,7 +19700,12 @@ namespace PowerSDR
             }
 		}
 
-		private void comboAudioInput1_SelectedIndexChanged(object sender, System.EventArgs e)
+
+        //==========================================================================================
+        // ke9ns primary audio input select (audio mixer in the flex itself)
+        //       this would choose which to send over firewire to the pc for DSP
+        //==========================================================================================
+        private void comboAudioInput1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioInput1.SelectedIndex < 0) return;
 
@@ -19427,9 +19720,9 @@ namespace PowerSDR
 			}
 
 			console.AudioInputIndex1 = new_input;
-			Audio.Input1 = new_input;
-			if(comboAudioInput1.SelectedIndex == 0 &&
-				comboAudioDriver1.SelectedIndex < 2)
+			Audio.Input1 = new_input;                      // ke9ns tell audio.cs your primary input device
+
+			if(comboAudioInput1.SelectedIndex == 0 && comboAudioDriver1.SelectedIndex < 2)
 			{
 				comboAudioMixer1.SelectedIndex = 0;
 			}
@@ -19445,9 +19738,16 @@ namespace PowerSDR
 			}
 
 			if(power && old_input != new_input) console.PowerOn = true;
-		}
 
-		private void comboAudioOutput1_SelectedIndexChanged(object sender, System.EventArgs e)
+        } // comboAudioInput1_SelectedIndexChanged
+
+
+
+        //==========================================================================================
+        // ke9ns primary audio output select (audio mixer in the flex itself)
+        //       this would choose which to send over firewire to the pc for DSP
+        //==========================================================================================
+        private void comboAudioOutput1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioOutput1.SelectedIndex < 0) return;
 
@@ -19462,10 +19762,13 @@ namespace PowerSDR
 			}
 
 			console.AudioOutputIndex1 = new_output;
-			Audio.Output1 = new_output;
+			Audio.Output1 = new_output;                      // ke9ns tell audio.cs your primary output device
 
-			if(power && new_output != old_output) console.PowerOn = true;
+            if (power && new_output != old_output) console.PowerOn = true;
 		}
+
+
+
 
 		private void comboAudioMixer1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -19474,6 +19777,7 @@ namespace PowerSDR
 			console.MixerID1 = comboAudioMixer1.SelectedIndex;
 		}	
 
+        //=============================================================================
 		private void comboAudioReceive1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioReceive1.SelectedIndex < 0) return;
@@ -19495,8 +19799,7 @@ namespace PowerSDR
 
 			if(val)
 			{
-				if(comboAudioDriver2.SelectedIndex < 0 && 
-					comboAudioDriver2.Items.Count > 0)
+				if(comboAudioDriver2.SelectedIndex < 0 && comboAudioDriver2.Items.Count > 0)
 					comboAudioDriver2.SelectedIndex = 0;
 			}
 
@@ -19512,43 +19815,56 @@ namespace PowerSDR
 
 			console.VACEnabled = val;
 			if(power && val != old_val)console.PowerOn = true;
-		}
 
+        } // chkAudioEnableVAC_CheckedChanged
+
+
+
+        //=======================================================================================
+        // ke9ns  select VAC2 enable
+        //=======================================================================================
         private void chkVAC2Enable_CheckedChanged(object sender, EventArgs e)
         {
             bool val = chkVAC2Enable.Checked;
             bool old_val = console.VAC2Enabled;
 
-            if (!radGenModelFLEX5000.Checked || !FWCEEPROM.RX2OK)
+       
+           if (!radGenModelFLEX5000.Checked || !FWCEEPROM.RX2OK)
             {
-                if (chkVAC2Enable.Checked)
-                    chkVAC2Enable.Checked = false;
+               if (chkVAC2Enable.Checked)   chkVAC2Enable.Checked = false;
                 console.VAC2Enabled = false;
-                return;
-            }
+               return;
+           }
 
             if (val)
             {
-                if (comboAudioDriver3.SelectedIndex < 0 &&
-                    comboAudioDriver3.Items.Count > 0)
+                if (comboAudioDriver3.SelectedIndex < 0 &&   comboAudioDriver3.Items.Count > 0)
                     comboAudioDriver3.SelectedIndex = 0;
             }
 
             bool power = console.PowerOn;
+
             if (power && val != old_val)
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
             }
 
-            if (chkVAC2DirectIQ.Checked)
-                console.SpurReduction = false;
+            if (chkVAC2DirectIQ.Checked)    console.SpurReduction = false;
 
             console.VAC2Enabled = val;
-            if (power && val != old_val) console.PowerOn = true;
-        }
 
-		private void comboAudioChannels1_SelectedIndexChanged(object sender, System.EventArgs e)
+            if (power && val != old_val) console.PowerOn = true;
+
+
+        } // chkVAC2Enable_CheckedChanged
+
+
+
+        //=======================================================================================
+        // ke9ns  select primary
+        //=======================================================================================
+        private void comboAudioChannels1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioChannels1.SelectedIndex < 0) return;
 
@@ -19566,11 +19882,14 @@ namespace PowerSDR
 			Audio.NumChannels = new_chan;
 
 			//DSP.SetThreadNumber((uint)new_chan/2);
-			if(power && chkAudioEnableVAC.Checked && old_chan != new_chan)
-				console.PowerOn = true;
+			if(power && chkAudioEnableVAC.Checked && old_chan != new_chan)	console.PowerOn = true;
 		}
 
-		private void comboAudioDriver2_SelectedIndexChanged(object sender, System.EventArgs e)
+
+        //=======================================================================================
+        // ke9ns  select VAC1 host devices
+        //=======================================================================================
+        private void comboAudioDriver2_SelectedIndexChanged(object sender, System.EventArgs e)
 		 {
 			if(comboAudioDriver2.SelectedIndex < 0) return;
 
@@ -19602,16 +19921,21 @@ namespace PowerSDR
             console.AudioDriverIndex2 = new_driver;
 			Audio.Host2 = new_driver;
 
-			GetDevices2();
-			if(comboAudioInput2.Items.Count != 0)
-				comboAudioInput2.SelectedIndex = 0;
-			if(comboAudioOutput2.Items.Count != 0)
-				comboAudioOutput2.SelectedIndex = 0;
+			GetDevices2();  // vac1
+
+			if(comboAudioInput2.Items.Count != 0)	comboAudioInput2.SelectedIndex = 0;
+			if(comboAudioOutput2.Items.Count != 0)	comboAudioOutput2.SelectedIndex = 0;
 
 			if(power && chkAudioEnableVAC.Checked && old_driver != new_driver) 
 				console.PowerOn = true;
-		}
+		} // VAC2 changed driver
 
+
+
+
+        //=======================================================================================
+        // ke9ns  select VAC2 host devices
+        //=======================================================================================
         private void comboAudioDriver3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboAudioDriver3.SelectedIndex < 0) return;
@@ -19651,9 +19975,14 @@ namespace PowerSDR
 
             if (power && chkVAC2Enable.Checked && old_driver != new_driver)
                 console.PowerOn = true;
-        }        
+        }
 
-		private void comboAudioInput2_SelectedIndexChanged(object sender, System.EventArgs e)
+
+
+        //=======================================================================================
+        // ke9ns  select VAC1 in device
+        //=======================================================================================
+        private void comboAudioInput2_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioInput2.SelectedIndex < 0) return;
 
@@ -19674,6 +20003,10 @@ namespace PowerSDR
 				console.PowerOn = true;
 		}
 
+
+        //=======================================================================================
+        // ke9ns  select VAC2 in device
+        //=======================================================================================
         private void comboAudioInput3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboAudioInput3.SelectedIndex < 0) return;
@@ -19693,9 +20026,12 @@ namespace PowerSDR
 
             if (power && chkVAC2Enable.Checked && old_input != new_input)
                 console.PowerOn = true;
-        }        
+        }
 
-		private void comboAudioOutput2_SelectedIndexChanged(object sender, System.EventArgs e)
+        //=======================================================================================
+        // ke9ns  select VAC1 out device
+        //=======================================================================================
+        private void comboAudioOutput2_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioOutput2.SelectedIndex < 0) return;
 
@@ -19715,6 +20051,10 @@ namespace PowerSDR
 				console.PowerOn = true;
 		}
 
+
+        //=======================================================================================
+        // ke9ns  select VAC2 out device
+        //=======================================================================================
         private void comboAudioOutput3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboAudioOutput3.SelectedIndex < 0) return;
@@ -19735,6 +20075,9 @@ namespace PowerSDR
                 console.PowerOn = true;
         }
 
+        //=============================================================================================
+        // ke9ns mod  can the 3000 use 192000 ?
+
 		private void comboAudioSampleRate1_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(comboAudioSampleRate1.SelectedIndex < 0) return;
@@ -19742,11 +20085,13 @@ namespace PowerSDR
 			int old_rate = console.SampleRate1;
 			int new_rate = Int32.Parse(comboAudioSampleRate1.Text);
 
+            
             if (console.CurrentModel == Model.FLEX3000 && new_rate == 192000)
             {
-                comboAudioSampleRate1.Text = "96000";
-                new_rate = 96000;
+              //  comboAudioSampleRate1.Text = "96000";
+              //  new_rate = 96000;
             }
+           
             else if (console.CurrentModel == Model.FLEX1500 && new_rate > 48000)
             {
                 comboAudioSampleRate1.Text = "48000";
@@ -20309,10 +20654,8 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 1.274M;					
-					if(comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Remove(96000);
-					if(comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Remove(192000);
+					if(comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Remove(96000);
+					if(comboAudioSampleRate1.Items.Contains(192000)) comboAudioSampleRate1.Items.Remove(192000);
 					comboAudioSampleRate1.Text = "48000";
 					foreach(PADeviceInfo p in comboAudioDriver1.Items)
 					{
@@ -20669,10 +21012,9 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 1.96M;
-					if(!comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Add(96000);
-					if(comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Remove(192000);
+					if(!comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Add(96000);
+					if(comboAudioSampleRate1.Items.Contains(192000))	comboAudioSampleRate1.Items.Remove(192000);
+
 					comboAudioSampleRate1.Text = "48000";
 					foreach(PADeviceInfo p in comboAudioDriver1.Items)
 					{
@@ -20770,10 +21112,8 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 0.982M;
-					if(comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Remove(96000);
-					if(comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Remove(192000);
+					if(comboAudioSampleRate1.Items.Contains(96000))		comboAudioSampleRate1.Items.Remove(96000);
+					if(comboAudioSampleRate1.Items.Contains(192000))	comboAudioSampleRate1.Items.Remove(192000);
 					comboAudioSampleRate1.Text = "48000";
 					foreach(PADeviceInfo p in comboAudioDriver1.Items)
 					{
@@ -20893,13 +21233,12 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 0.98M;
-					if(!comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Add(96000);
-					if(comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Remove(192000);
-					if(comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)
-						comboAudioSampleRate1.Text = "48000";
-					foreach(PADeviceInfo p in comboAudioDriver1.Items)
+					if(!comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Add(96000);
+					if(comboAudioSampleRate1.Items.Contains(192000))    comboAudioSampleRate1.Items.Remove(192000);
+
+                    if (comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)	comboAudioSampleRate1.Text = "48000";
+
+                    foreach (PADeviceInfo p in comboAudioDriver1.Items)
 					{
 						if(p.Name == "ASIO")
 						{
@@ -20948,13 +21287,13 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 6.39M;
-					if(!comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Add(96000);
-					if(comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Remove(192000);
-					if(comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)
+					if(!comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Add(96000);
+					if(comboAudioSampleRate1.Items.Contains(192000))	comboAudioSampleRate1.Items.Remove(192000);
+
+                    if (comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)
 						comboAudioSampleRate1.Text = "48000";
-					foreach(PADeviceInfo p in comboAudioDriver1.Items)
+
+                    foreach (PADeviceInfo p in comboAudioDriver1.Items)
 					{
 						if(p.Name == "ASIO")
 						{
@@ -21007,13 +21346,12 @@ namespace PowerSDR
 					grpAudioDetails1.Enabled = false;
 					grpAudioVolts1.Visible = chkAudioExpert.Checked;
 					udAudioVoltage1.Value = 2.27M;
-					if(!comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Add(96000);
-					if(!comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Add(192000);
-					if(comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)
-						comboAudioSampleRate1.Text = "192000";
-					foreach(PADeviceInfo p in comboAudioDriver1.Items)
+					if(!comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Add(96000);
+					if(!comboAudioSampleRate1.Items.Contains(192000))	comboAudioSampleRate1.Items.Add(192000);
+
+                    if (comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)		comboAudioSampleRate1.Text = "192000";
+
+                    foreach (PADeviceInfo p in comboAudioDriver1.Items)
 					{
 						if(p.Name == "ASIO")
 						{
@@ -21080,12 +21418,10 @@ namespace PowerSDR
 					grpAudioVolts1.Visible = true;
 					if(comboAudioSoundCard.Focused)
 						chkGeneralRXOnly.Checked = true;
-					if(!comboAudioSampleRate1.Items.Contains(96000))
-						comboAudioSampleRate1.Items.Add(96000);
-					if(!comboAudioSampleRate1.Items.Contains(192000))
-						comboAudioSampleRate1.Items.Add(192000);
-					if(comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)
-						comboAudioSampleRate1.Text = "48000";
+					if(!comboAudioSampleRate1.Items.Contains(96000))	comboAudioSampleRate1.Items.Add(96000);
+					if(!comboAudioSampleRate1.Items.Contains(192000))	comboAudioSampleRate1.Items.Add(192000);
+
+                    if (comboAudioSoundCard.Focused || comboAudioSampleRate1.SelectedIndex < 0)	comboAudioSampleRate1.Text = "48000";
 					grpAudioDetails1.Enabled = true;
 					grpAudioMicInGain1.Enabled = true;
 					grpAudioLineInGain1.Enabled = true;
@@ -21181,10 +21517,14 @@ namespace PowerSDR
 			Display.PhaseNumPts = (int)udDisplayPhasePts.Value;
 		}
 
+        //=================================================================================
+        // ke9ns  avg time value for both rx1 and rx2 panadapter and waterfall
 		private void udDisplayAVGTime_ValueChanged(object sender, System.EventArgs e)
 		{
 			double display_time = 1/(double)udDisplayFPS.Value;
+
 			int buffersToAvg = (int)((float)udDisplayAVGTime.Value * 0.001 / display_time);
+
 			Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg);
 		}
 
@@ -21208,9 +21548,11 @@ namespace PowerSDR
 			Display.WaterfallLowColor = clrbtnWaterfallLow.Color;
 		}
 
-		private void udDisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
+		public void udDisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
 		{
+
             UpdateWaterfallBandInfo();
+
             switch(console.RX1Band)
             {
                 case Band.B160M:
@@ -21220,7 +21562,7 @@ namespace PowerSDR
                 case Band.B80M:
                     console.WaterfallLowThreshold80m = (float)udDisplayWaterfallLowLevel.Value;
                     Display.WaterfallLowThreshold = console.WaterfallLowThreshold80m;
-                    break;
+                     break;
                 case Band.B60M:
                     console.WaterfallLowThreshold60m = (float)udDisplayWaterfallLowLevel.Value;
                     Display.WaterfallLowThreshold = console.WaterfallLowThreshold60m;
@@ -21271,9 +21613,10 @@ namespace PowerSDR
                     break;
             }
             // Display.WaterfallLowThreshold = (float)udDisplayWaterfallLowLevel.Value;
-		}
-        
-		private void udDisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
+
+        } //  udDisplayWaterfallLowLevel_ValueChanged
+
+        private void udDisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
 		{
             UpdateWaterfallBandInfo();
             switch (console.RX1Band)
@@ -21410,6 +21753,9 @@ namespace PowerSDR
 			console.dsp.GetDSPRX(0, 1).CurrentWindow = (Window)comboDSPWindow.SelectedIndex;
 		}
 
+
+        //===============================================================================================
+        // ke9ns changes RX buffer size for sharper receive filtering
 		private void comboDSPPhoneRXBuf_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			console.DSPBufPhoneRX = int.Parse(comboDSPPhoneRXBuf.Text);
@@ -21837,13 +22183,13 @@ namespace PowerSDR
 				return;
 			}
 
-			if(udTXFilterHigh.Focused &&
-				(udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
+            /*
+			if(udTXFilterHigh.Focused && (udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
 				(console.TXFilterHigh - console.TXFilterLow) <= 3000)
 			{
 				(new Thread(new ThreadStart(TXBW))).Start();
 			}
-
+            */
 			console.TXFilterHigh = (int)udTXFilterHigh.Value;
 			
 		}
@@ -21910,7 +22256,9 @@ namespace PowerSDR
                         return;
                 }
             }
+
 			console.TXProfile = comboTXProfileName.Text;
+
 			DataRow[] rows = DB.ds.Tables["TxProfile"].Select(
 				"'"+comboTXProfileName.Text+"' = Name");
 
@@ -23486,7 +23834,10 @@ namespace PowerSDR
 			Audio.SineFreq1 = tkbarTestGenFreq.Value;
 		}
 
-		private void cmboSigGenRXMode_SelectedIndexChanged(object sender, System.EventArgs e)
+
+
+        //======================================================================================= receiver device select: RADIO means the receiver will output to the speaker from the Radio as a source
+        private void cmboSigGenRXMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(cmboSigGenRXMode.SelectedIndex < 0) return;
 
@@ -23519,14 +23870,12 @@ namespace PowerSDR
 
 			if(chkSigGenRX2.Checked)
 			{
-				if(rdSigGenRXInput.Checked)
-					Audio.RX2InputSignal = source;
+				if(rdSigGenRXInput.Checked)	Audio.RX2InputSignal = source;
 				else Audio.RX2OutputSignal = source;
 			}
 			else
 			{
-				if(rdSigGenRXInput.Checked)
-					Audio.RX1InputSignal = source;
+				if(rdSigGenRXInput.Checked)	Audio.RX1InputSignal = source;
 				else Audio.RX1OutputSignal = source;
 			}
 
@@ -23534,7 +23883,8 @@ namespace PowerSDR
             UpdateSigGenPulseVisible();
 		}
 
-		private void rdSigGenRXInput_CheckedChanged(object sender, System.EventArgs e)
+        //======================================================================================= receiver input radio button
+        private void rdSigGenRXInput_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(rdSigGenRXInput.Checked)
 			{
@@ -23544,6 +23894,7 @@ namespace PowerSDR
 			}
 		}
 
+        //======================================================================================= receiver output radio button
 		private void rdSigGenRXOutput_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(rdSigGenRXOutput.Checked)
@@ -23605,7 +23956,8 @@ namespace PowerSDR
 
 
 
-		private void cmboSigGenTXMode_SelectedIndexChanged(object sender, System.EventArgs e)
+        //======================================================================================= Transmitter device select (Radio means the mic on the radio is the Transmitte output signal)
+        private void cmboSigGenTXMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(cmboSigGenTXMode.SelectedIndex < 0) return;
 
@@ -23723,7 +24075,10 @@ namespace PowerSDR
 			this.Hide();
 		}
 
-		private void btnApply_Click(object sender, System.EventArgs e)
+
+        //ke9ns mod
+
+		public void btnApply_Click(object sender, System.EventArgs e)
 		{
 			Thread t = new Thread(new ThreadStart(ApplyOptions));
 			t.Name = "Save Options Thread";
@@ -23910,7 +24265,8 @@ namespace PowerSDR
 			udTransmitTunePower_ValueChanged(this, EventArgs.Empty);
 
             MessageBox.Show("Database Import Complete");
-		}
+
+		} // completeimport
 
 		#endregion				
 
@@ -24557,29 +24913,47 @@ namespace PowerSDR
             Display.BandBoxColor = clrbtnBandSegmentBox.Color;
         }
 
-		private void comboMeterType_SelectedIndexChanged(object sender, System.EventArgs e)
+     
+        
+        //==ke9ns mod=================================================================================
+        public void comboMeterType_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-			if(comboMeterType.Text == "") return;
-			switch(comboMeterType.Text)
+            // see MTRset  (setupform.MTRset in console.cs)
+          
+            if (comboMeterType.Text == "") return;
+          
+            switch (comboMeterType.Text)
 			{
-				case "Original":
-					console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Original;
-					break;
-				case "Edge":
-					console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Edge;
-					break;
-				case "Analog":
-					console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Analog;
-					break;
-			}
-		}
+     
+                case "AnalogTR7":
+                    console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Original;
+                     comboMeterType.SelectedItem = MultiMeterDisplayMode.Original;
+                     break;
 
-		private void clrbtnMeterEdgeLow_Changed(object sender, System.EventArgs e)
+                case "Edge":
+                    console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Edge;
+                    comboMeterType.SelectedItem = MultiMeterDisplayMode.Edge;
+                    break;
+
+                case "Analog":
+                    console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Analog;
+                    comboMeterType.SelectedItem = MultiMeterDisplayMode.Analog;
+                    break;
+            }
+   
+
+        }  // meter selected
+
+   
+        //================================================================================
+
+
+        private void clrbtnMeterEdgeLow_Changed(object sender, System.EventArgs e)
 		{
 			console.EdgeLowColor = clrbtnMeterEdgeLow.Color;
 		}
 
-		private void clrbtnMeterEdgeHigh_Changed(object sender, System.EventArgs e)
+		private void clrbtnMeterEdgeHighChanged(object sender, System.EventArgs e)
 		{
 			console.EdgeHighColor = clrbtnMeterEdgeHigh.Color;
 		}
@@ -24652,6 +25026,7 @@ namespace PowerSDR
             {
                 udDisplayWaterfallAvgTime.Value = 750;
                 udDisplayWaterfallUpdatePeriod.Value = 100;
+
                 switch (Display.CurrentDisplayMode)
                 {
                     case DisplayMode.WATERFALL:
@@ -24665,6 +25040,7 @@ namespace PowerSDR
             {
                 if (udDisplayWaterfallAvgTime.Value != 200)
                     udDisplayWaterfallAvgTime.Value = 200;
+
                 if (udDisplayWaterfallUpdatePeriod.Value != 50)
                     udDisplayWaterfallUpdatePeriod.Value = 50;
                 
@@ -24672,11 +25048,9 @@ namespace PowerSDR
                 {
                     case DisplayMode.WATERFALL:
                     case DisplayMode.PANAFALL:
-                        if (console.DisplayAVG == true)
-                            console.DisplayAVG = false;
+                        if (console.DisplayAVG == true)   console.DisplayAVG = false;
 
-                        if (console.RX2DisplayAVG == true)
-                            console.RX2DisplayAVG = false;
+                        if (console.RX2DisplayAVG == true)  console.RX2DisplayAVG = false;
                         break;
                 }
             }
@@ -24927,16 +25301,26 @@ namespace PowerSDR
         public void UpdateCustomTitle()
         {
             txtGenCustomTitle_TextChanged(this, EventArgs.Empty);
+           
         }
 
-		private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
+        
+
+        private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
 		{
 			string title = console.Text;
+
 			int index = title.IndexOf("   --   ");
+
 			if(index >= 0) title = title.Substring(0, index);
-			if(txtGenCustomTitle.Text != "" && txtGenCustomTitle.Text != null)
-	            title += "   --   "+txtGenCustomTitle.Text;
+
+            if (txtGenCustomTitle.Text != "" && txtGenCustomTitle.Text != null)
+            {
+                title += "   --   " + txtGenCustomTitle.Text;
+            }
+
 			console.Text = title;
+            
 		}
 
 		private void chkGenFLEX5000ExtRef_CheckedChanged(object sender, System.EventArgs e)
@@ -25129,6 +25513,8 @@ namespace PowerSDR
 			}
 		}
 
+
+        //=============================================================================
 		private void btnResetDB_Click(object sender, System.EventArgs e)
 		{
 			DialogResult dr = MessageBox.Show("This will close the program, make a copy of the current\n"+
@@ -25151,9 +25537,12 @@ namespace PowerSDR
             }
 
 			console.Close();
-		}
+        } // btnResetDB_Click
 
-		private void chkDisplayMeterShowDecimal_CheckedChanged(object sender, System.EventArgs e)
+
+
+
+        private void chkDisplayMeterShowDecimal_CheckedChanged(object sender, System.EventArgs e)
 		{
 			console.MeterDetail = chkDisplayMeterShowDecimal.Checked;
 		}
@@ -25257,8 +25646,7 @@ namespace PowerSDR
 				return;
 
 			string name = lstTXProfileDef.Text;
-            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select(
-				"'"+name+"' = Name");
+            DataRow[] rows = DB.ds.Tables["TxProfileDef"].Select("'"+name+"' = Name");
 
 			if(rows.Length != 1)
 			{
@@ -25308,6 +25696,7 @@ namespace PowerSDR
 
 			console.UpdateTXProfile(name);
 		}
+
 
 		private void Setup_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
@@ -25598,11 +25987,328 @@ namespace PowerSDR
         {
 
         }
-	}
 
-	#region PADeviceInfo Helper Class
+#if (NO_DJ)
+        //mod DH1TW
 
-	public class PADeviceInfo
+        private DJConsoleMK2Config ConfigWindowMK2;
+        private DJConsoleMP3e2Config ConfigWindowMP3e2;
+        private DJConsoleMP3LEConfig ConfigWindowMP3LE;
+#endif
+        private void btnSelectUserInterface_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DJConfiguratorClosed(object sender, FormClosedEventArgs e)
+        {
+   #if (NO_DJ)
+            console.DJConsoleConfigurator = null;
+#endif
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void InitDJConsoles()
+        {
+ #if (NO_DJ)
+            if (console.DJConsoleObj == null) return;
+            if (console.DJConsoleObj.connectedConsoles.Count > 0)
+            {
+                cbConsoleSelect.DataSource = new BindingSource(console.DJConsoleObj.connectedConsoles, null);
+                cbConsoleSelect.DisplayMember = "Value";
+                cbConsoleSelect.ValueMember = "Key";
+                console.DJConsoleObj.SelectedConsole = (int)cbConsoleSelect.SelectedValue;
+                this.cbConsoleSelect.SelectedIndexChanged += new System.EventHandler(this.cbConsoleSelect_SelectedIndexChanged);
+            }
+            else
+            {
+                //MessageBox.Show("Sorry, no compatible device detected", "Error");
+                //this.Dispose();
+            }
+#endif
+        } // initDJ
+
+        private void btnConfigure_Click(object sender, EventArgs e)
+        {
+
+            #if (NO_DJ)
+            if (console.DJConsoleObj.SelectedConsole == (int)DJConsoleModels.NotSupported)
+            {
+                // MessageBox.Show("not supported");
+                return;
+            }
+
+
+            if (console.DJConsoleObj.SelectedConsole == (int)DJConsoleModels.HerculesMP3e2)
+            {
+                if (ConfigWindowMP3e2 == null)
+                {
+                    ConfigWindowMP3e2 = new DJConsoleMP3e2Config(console);
+                    ConfigWindowMP3e2.Show();
+                    ConfigWindowMP3e2.Focus();
+                    ConfigWindowMP3e2.FormClosed += new FormClosedEventHandler(ConfigWindowMP3e2Closed);
+                }
+                return;
+            }
+
+
+            if (console.DJConsoleObj.SelectedConsole == (int)DJConsoleModels.HerculesMK2)
+            {
+                if (ConfigWindowMK2 == null)
+                {
+                    ConfigWindowMK2 = new DJConsoleMK2Config(console);
+                    ConfigWindowMK2.Show();
+                    ConfigWindowMK2.Focus();
+                    ConfigWindowMK2.FormClosed += new FormClosedEventHandler(ConfigWindowMK2Closed);
+                }
+                return;
+            }
+
+            if (console.DJConsoleObj.SelectedConsole == (int)DJConsoleModels.HerculesMP3LE)
+            {
+                if (ConfigWindowMP3LE == null)
+                {
+                    ConfigWindowMP3LE = new DJConsoleMP3LEConfig(console);
+                    ConfigWindowMP3LE.Show();
+                    ConfigWindowMP3LE.Focus();
+                    ConfigWindowMP3LE.FormClosed += new FormClosedEventHandler(ConfigWindowMP3LEClosed);
+                }
+                return;
+
+            }
+
+            else
+            {
+                MessageBox.Show("Please select a Console", "Error");
+            }
+#endif
+        }// button click
+
+#if (NO_DJ)
+        private void ConfigWindowMK2Closed(object sender, FormClosedEventArgs e)
+        {
+            if (ConfigWindowMK2 != null)
+            {
+                ConfigWindowMK2 = null;
+            }
+        }
+
+        private void ConfigWindowMP3e2Closed(object sender, FormClosedEventArgs e)
+        {
+            if (ConfigWindowMP3e2 != null)
+            {
+                ConfigWindowMP3e2 = null;
+            }
+        }
+
+        private void ConfigWindowMP3LEClosed(object sender, FormClosedEventArgs e)
+        {
+            if (ConfigWindowMP3LE != null)
+            {
+                ConfigWindowMP3LE = null;
+            }
+        }
+
+
+#endif
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+#if (NO_DJ)
+            if (cbConsoleSelect.SelectedItem != null)
+            {
+                console.DJConsoleObj.SelectedConsole = (int)cbConsoleSelect.SelectedValue;
+                console.DJConsoleObj.Reload();
+            }
+#endif
+        }
+
+        private void cbConsoleSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+#if (NO_DJ)
+            if (cbConsoleSelect.SelectedItem != null)
+            {
+                console.DJConsoleObj.SelectedConsole = (int)cbConsoleSelect.SelectedValue;
+                console.DJConsoleObj.Reload();
+            }
+
+#endif
+        }
+
+        // end mod DH1TW
+
+
+        //============================================================================================================
+        //============================================================================================================
+        // ke9ns add  for RX2 low level waterfall (but it gets its value from the stored RX1 band low level data) no need to store seperate
+        //============================================================================================================
+        //============================================================================================================
+        public void udDisplayWaterfallRX2Level_ValueChanged(object sender, EventArgs e) // ke9ns ADD
+        {
+           
+            switch (console.RX2Band)
+            {
+                case Band.B160M:
+                    console.WaterfallLowRX2Threshold160m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold160m;
+                    break;
+                case Band.B80M:
+                    console.WaterfallLowRX2Threshold80m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold80m;
+                    break;
+                case Band.B60M:
+                    console.WaterfallLowRX2Threshold60m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold60m;
+                    break;
+                case Band.B40M:
+                    console.WaterfallLowRX2Threshold40m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold40m;
+                    break;
+                case Band.B30M:
+                    console.WaterfallLowRX2Threshold30m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold30m;
+                    break;
+                case Band.B20M:
+                    console.WaterfallLowRX2Threshold20m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold20m;
+                    break;
+                case Band.B17M:
+                    console.WaterfallLowRX2Threshold17m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold17m;
+                    break;
+                case Band.B15M:
+                    console.WaterfallLowRX2Threshold15m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold15m;
+                    break;
+                case Band.B12M:
+                    console.WaterfallLowRX2Threshold12m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold12m;
+                    break;
+                case Band.B10M:
+                    console.WaterfallLowRX2Threshold10m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold10m;
+                    break;
+                case Band.B6M:
+                    console.WaterfallLowRX2Threshold6m = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2Threshold6m;
+                    break;
+                case Band.WWV:
+                    console.WaterfallLowRX2ThresholdWWV = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2ThresholdWWV;
+                    break;
+                case Band.GEN:
+                    console.WaterfallLowRX2ThresholdGEN = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2ThresholdGEN;
+                    break;
+                default:
+                    console.WaterfallLowRX2ThresholdXVTR = (float)udDisplayWaterfallRX2Level.Value;
+                    Display.WaterfallLowRX2Threshold = console.WaterfallLowRX2ThresholdXVTR;
+                    break;
+            }
+
+        }// rx2 water level
+
+        //============================================================================================================
+        //============================================================================================================
+        // ke9ns add  selects a TX low waterfall level
+        //============================================================================================================
+        //============================================================================================================
+        public void udDisplayWaterfallMicLevel_ValueChanged(object sender, EventArgs e) // ke9ns Add
+        {
+            console.WaterfallLowThresholdMic = (float)udDisplayWaterfallMicLevel.Value;
+            Display.WaterfallLowMicThreshold = console.WaterfallLowThresholdMic;  // value passed into display.cs file
+
+        } // tx waterfall level
+
+
+        //============================================================================================================
+        //============================================================================================================
+        // ke9ns add  This selects a wider waterfall (so less refreshing, but slower)
+        //============================================================================================================
+        //============================================================================================================
+        public void checkWaterMoveSize_CheckedChanged(object sender, EventArgs e)// ke9ns Add
+        {
+            if (checkWaterMoveSize.Checked)
+            {
+                Display.WMS = 1;  // value passed into display.cs file (lare waterall width x5,1) .0222 seconds full waterfall line
+            }
+            else
+            {
+                Display.WMS = 0;  // value passed into display.cs file (small waterfall width x3,1) .0163 seconds full waterfall line
+            }
+        } //checkWaterMoveSize
+
+
+        //=======================================================================
+        // ke9ns add  open up folder to skins
+        private void comboAppSkin_MouseHover(object sender, EventArgs e)
+        {
+          
+
+        
+           
+
+        } // comboAppSkin_MouseHover
+
+        private void grpAppSkins_MouseHover(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void comboAppSkin_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                Trace.WriteLine("right click ");
+
+                //  string filePath = "%COMMONAPPDATAROOT%\\FlexRadio Systems\\PowerSDR\\Skins\\Default 2012";
+
+                string filePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\FlexRadio Systems\\PowerSDR\\Skins";
+
+                if (!Directory.Exists(filePath))
+                {
+                    Trace.WriteLine("problem1 ");
+                    return;
+                }
+
+                string argument = @"/select, " + filePath;
+
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+
+
+            }
+            if (me.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+
+
+            }
+        } // comboAppSkin_MouseDown
+
+
+
+        //===================================================================================
+        // ke9ns add  turn on/off grid lines in panadapter
+        public void gridBoxTS_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (gridBoxTS.Checked == true)  Display.GridOff = 1;
+            else Display.GridOff = 0;
+
+        }
+
+
+
+    } // class setup
+
+    #region PADeviceInfo Helper Class
+
+    public class PADeviceInfo
 	{
 		private string 	_Name;
 		private int		_Index;
@@ -25629,5 +26335,5 @@ namespace PowerSDR
 		}
 	}
 
-	#endregion
+#endregion
 }

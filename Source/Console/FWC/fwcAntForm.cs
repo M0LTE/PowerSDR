@@ -244,6 +244,7 @@ namespace PowerSDR
             "10m",
             "6m",
             "WWV",
+
             "VU 2m",
             "VU 70cm",
             "VHF2",
@@ -257,7 +258,25 @@ namespace PowerSDR
             "VHF10",
             "VHF11",
             "VHF12",
-            "VHF13"});
+            "VHF13",
+
+            "LMF",
+            "120m",
+            "90m",
+            "61m",
+            "49m",
+            "41m",
+            "31m",
+            "25m",
+            "22m",
+            "19m",
+            "16m",
+            "14m",
+            "13m",
+            "11m"
+
+
+            });
             this.comboBand.Location = new System.Drawing.Point(189, 24);
             this.comboBand.Name = "comboBand";
             this.comboBand.Size = new System.Drawing.Size(68, 21);
@@ -795,6 +814,7 @@ namespace PowerSDR
 				case Band.B10M: ret_val = "10m"; break;
 				case Band.B6M: ret_val = "6m"; break;
 				case Band.WWV: ret_val = "WWV"; break;
+
 				case Band.VHF0: ret_val = "VU 2m"; break;
 				case Band.VHF1: ret_val = "VU 70cm"; break;
 				case Band.VHF2: ret_val = "VHF2"; break;
@@ -809,7 +829,25 @@ namespace PowerSDR
 				case Band.VHF11: ret_val = "VHF11"; break;
 				case Band.VHF12: ret_val = "VHF12"; break;
 				case Band.VHF13: ret_val = "VHF13"; break;
-			}
+
+                case Band.BLMF: ret_val = "LMF"; break;  // ke9ns add
+                case Band.B120M: ret_val = "120m"; break;
+                case Band.B90M: ret_val = "90m"; break;
+                case Band.B61M: ret_val = "61m"; break;
+                case Band.B49M: ret_val = "49m"; break;
+                case Band.B41M: ret_val = "41m"; break;
+                case Band.B31M: ret_val = "31m"; break;
+                case Band.B25M: ret_val = "25m"; break;
+                case Band.B22M: ret_val = "22m"; break;
+                case Band.B19M: ret_val = "19m"; break;
+                case Band.B16M: ret_val = "16m"; break;
+                case Band.B14M: ret_val = "14m"; break;
+                case Band.B13M: ret_val = "13m"; break;
+                case Band.B11M: ret_val = "11m"; break;
+
+
+
+            }
 			return ret_val;
 		}
 
@@ -831,6 +869,7 @@ namespace PowerSDR
 				case "10m": b = Band.B10M; break;
 				case "6m": b = Band.B6M; break;
 				case "WWV": b = Band.WWV; break;
+
 				case "VU 2m": b = Band.VHF0; break;
 				case "VU 70cm": b = Band.VHF1; break;
 				case "VHF2": b = Band.VHF2; break;
@@ -845,7 +884,23 @@ namespace PowerSDR
 				case "VHF11": b = Band.VHF11; break;
 				case "VHF12": b = Band.VHF12; break;
 				case "VHF13": b = Band.VHF13; break;
-			}
+
+                case "LMF": b = Band.BLMF; break; // ke9ns add
+                case "120m": b = Band.B120M; break;
+                case "90m": b = Band.B90M; break;
+                case "61m": b = Band.B61M; break;
+                case "49m": b = Band.B49M; break;
+                case "41m": b = Band.B41M; break;
+                case "31m": b = Band.B31M; break;
+                case "25m": b = Band.B25M; break;
+                case "22m": b = Band.B22M; break;
+                case "19m": b = Band.B19M; break;
+                case "16m": b = Band.B16M; break;
+                case "14m": b = Band.B14M; break;
+                case "13m": b = Band.B13M; break;
+                case "11m": b = Band.B11M; break;
+
+            }
 			return b;
 		}
 
@@ -952,6 +1007,7 @@ namespace PowerSDR
 			}
 		}
 
+        //========================================================================================================
 		private void comboBand_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			Band band = StringToBand(comboBand.Text);
@@ -1022,6 +1078,8 @@ namespace PowerSDR
 				}
 			}
 		}
+
+
 
 		private void comboRX1Ant_SelectedIndexChanged(object sender, System.EventArgs e)
 		{

@@ -80,8 +80,9 @@ DiversityControl diversity;
 //int MAX_NOTCHES_IN_PASSBAND = 18;
 extern struct _uni
 {
-	REAL samplerate;
-	int buflen;
+	REAL samplerate;  // ke9ns makes sense
+	
+	int buflen;       // ke9ns makes sense
 
 	struct
 	{
@@ -90,6 +91,7 @@ extern struct _uni
 	} mode;
 
 	METERBlock meter;
+
 	SpecBlock spec;
 
 	struct
@@ -120,9 +122,11 @@ extern struct _uni
 			REAL gain;
 		} rx, tx;
 	} mix;
+
 	int cpdlen;
 	long tick,oldtick;
 	WBIR_STATE wbir_state;
+
 } uni[3];
 
 //------------------------------------------------------------------------
@@ -360,6 +364,10 @@ typedef enum _runmode
 	RUN_MUTE, RUN_PASS, RUN_PLAY, RUN_SWCH
 } RUNMODE;
 
+
+//============================================================================================
+// ke9ns  top[3] 
+//============================================================================================
 extern struct _top
 {
 	DWORD pid;
@@ -377,10 +385,12 @@ extern struct _top
 		{
 			float *l, *r;
 		} aux, buf;
+
 		struct
 		{
 			unsigned int frames, bytes;
 		} size;
+
 	} hold;
 
 	struct
@@ -388,7 +398,8 @@ extern struct _top
 		char *path;
 		HANDLE fd;
 		HANDLE fp;
-		char buff[4096];
+		char buff[4096];		// KE9NS LOOK this maybe the limiter for 4096 data points received by display ????? how about 8192
+
 	} parm;
 
 	struct
@@ -432,6 +443,7 @@ extern struct _top
 			} rb;
 			int xr;
 		} blow;
+
 	} jack;
 
 	// update io
@@ -452,6 +464,8 @@ extern struct _top
 		} buf, upd, mon, pws, mtr, scope;
 	} sync;
 
+
+
 	// TRX switching
 #if 0
 	struct
@@ -471,6 +485,7 @@ extern struct _top
 		int fade, tail;
 	} swch;
 #endif
+
 
 
 	// TRX switching
@@ -517,7 +532,7 @@ extern struct _top
 	BOOLEAN susp;
 	int offset;
 
-} top[3];
+} top[3];  // ke9ns only 3 threads
 
 
 #endif

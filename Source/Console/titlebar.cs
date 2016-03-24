@@ -34,9 +34,15 @@ namespace PowerSDR
 {
     class TitleBar
     {
-        public const string BUILT_BY = "Built by [CALLSIGN]";
 
-        public const string VERSION_SUFFIX = " Base"; // Make this "" for production
+#if (NO_DJ)
+      //  public const string BUILT_BY = "Mods Compiled by [KE9NS]";
+        public const string BUILT_BY = "dh1tw DJ-CONSOLE 0.997 & Mods by KE9NS"; //PowerSDR-UI 0.997
+#else
+        
+         public const string BUILT_BY = "Mods Compiled by [KE9NS]";
+#endif    
+        public const string VERSION_SUFFIX = " 032216R12"; // Make this "" for production
 
         public const string ALPHABETA = "Beta"; // change to "Alpha" or "" as appropriate
 

@@ -51,21 +51,34 @@ namespace PowerSDR
         {
             set { file_name = value; }
         }
-      
-		#endregion
+        
+        
+        //=========================================================================
+            // ke9ns add my own database
+        private static string file_name1 = "";
+        public static string FileName1
+        {
+            set { file_name1 = value; }
+        }
 
-		#region Private Member Functions
-// ======================================================
-// Private Member Functions
-// ======================================================
 
-		private static void VerifyTables(Model model)
+        #endregion
+
+        #region Private Member Functions
+        // ======================================================
+        // Private Member Functions
+        // ======================================================
+
+        private static void VerifyTables(Model model)
 		{
 			if(!ds.Tables.Contains("BandText"))
 				AddBandTextTable();
 
-			if(!ds.Tables.Contains("BandStack"))
-				AddBandStackTable();
+            if (!ds.Tables.Contains("BandStack"))
+            {
+                AddBandStackTable();
+                AddBandStackSWL(); // ke9ns add
+            }
 
 			if(!ds.Tables.Contains("Memory"))
 				AddMemoryTable();
@@ -95,14 +108,14 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                2.500000, 2.500000, "WWV",						false,
-								5.000000, 5.000000, "WWV",						false,
-								10.000000, 10.000000, "WWV",					false,
-								15.000000, 15.000000, "WWV",					false,
-								20.000000, 20.000000, "WWV",					false,
-                                3.330000, 3.330000, "CHU",                      false,
-                                7.850000, 7.850000, "CHU",                      false,
-                                14.670000, 14.670000, "CHU",                    false,
+                                2.500000, 2.500000, "WWV Time",						false,
+								5.000000, 5.000000, "WWV Time",						false,
+								10.000000, 10.000000, "WWV Time",					false,
+								15.000000, 15.000000, "WWV Time",					false,
+								20.000000, 20.000000, "WWV Time",					false,
+                                3.330000, 3.330000, "CHU Time",                      false,
+                                7.850000, 7.850000, "CHU Time",                      false,
+                                14.670000, 14.670000, "CHU Time",                    false,
                                 4.996000, 4.996000, "RWM",                      false,
                                 9.996000, 9.996000, "RWM",                     	false,
                                 14.996000, 14.996000, "RWM",                   	false,
@@ -122,16 +135,16 @@ namespace PowerSDR
                                 4.996001, 4.997999, "60M Short Wave",			false,
                                 4.998001, 4.999999, "60M Short Wave",			false,
                                 5.000001, 5.060000, "60M Short Wave",			false,
-								5.900000, 6.200000, "49M Short Wave",			false,
+								5.900000, 7.000000, "49M Short Wave",			false,
 								7.300000, 7.350000, "41M Short Wave",			false,
-								9.400000, 9.900000, "31M Short Wave",			false,
+								7.360000, 9.900000, "31M Short Wave",			false,
 								11.600000, 12.100000, "25M Short Wave",			false,
 								13.570000, 13.870000, "22M Short Wave",			false,
 								15.100000, 15.800000, "19M Short Wave",			false,
 								17.480000, 17.900000, "16M Short Wave",			false,
 								18.900000, 19.020000, "15M Short Wave",			false,
 								21.450000, 21.850000, "13M Short Wave",			false,
-								25.600000, 26.100000, "11M Short Wave",			false,
+								25.600000, 27.900000, "11M Short Wave",			false,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -149,6 +162,116 @@ namespace PowerSDR
         {
             ds.Tables["BandText"].Clear();
         }
+
+        //===============================================================================================
+        // ke9ns add needed to add to RevQ database
+        private static void AddBandStackSWL()
+        {
+
+          //  DataRow dr = ds.Tables["BandStack"].NewRow();
+         //   dr["BandName"] = band;
+         //   dr["Mode"] = mode;
+          //  dr["Filter"] = filter;
+          //  dr["Freq"] = freq;
+          //  ds.Tables["BandStack"].Rows.Add(dr);
+
+
+            // ds.Tables.Add("BandStack");
+          //  DataTable t = ds.Tables["BandStack"];
+
+        //    t.Columns.Add("BandName", typeof(string));
+         //   t.Columns.Add("Mode", typeof(string));
+          //  t.Columns.Add("Filter", typeof(string));
+         //   t.Columns.Add("Freq", typeof(double));
+
+            object[] data = {
+                                
+                                "LMF", "SAM", "F4", 0.560000,  
+                                "LMF", "SAM", "F4", 0.720000,
+                                "LMF", "SAM", "F4", 0.780000,
+                                "LMF", "SAM", "F4", 1.000000,
+                                "LMF", "SAM", "F4", 1.700000,
+
+                                "120M", "SAM", "F4", 2.400000,
+                                "120M", "SAM", "F4", 2.410000,
+                                "120M", "SAM", "F4", 2.420000,
+
+                                "90M", "SAM", "F4", 3.300000,
+                                "90M", "SAM", "F4", 3.310000,
+                                "90M", "SAM", "F4", 3.320000,
+
+                                "61M", "SAM", "F4", 4.700000,
+                                "61M", "SAM", "F4", 4.800000,
+                                "61M", "SAM", "F4", 4.820000,
+
+                                "49M", "SAM", "F4", 5.600000,
+                                "49M", "SAM", "F4", 5.700000,
+                                "49M", "SAM", "F4", 5.800000,
+                                "49M", "SAM", "F4", 5.900000,
+                                "49M", "SAM", "F4", 6.000000,
+                                "49M", "SAM", "F4", 6.200000,
+                                
+
+                                "41M", "SAM", "F4", 7.310000,
+                                "41M", "SAM", "F4", 7.400000,
+                                "41M", "SAM", "F4", 7.500000,
+
+
+                                "31M", "SAM", "F4", 9.100000,
+                                "31M", "SAM", "F4", 9.200000,
+                                "31M", "SAM", "F4", 9.300000,
+                                "31M", "SAM", "F4", 9.400000,
+                                "31M", "SAM", "F4", 9.500000,
+                                "31M", "SAM", "F4", 9.600000,
+
+
+                                "25M", "SAM", "F4", 11.700000,
+                                "25M", "SAM", "F4", 11.800000,
+                                "25M", "SAM", "F4", 11.900000,
+
+                                "22M", "SAM", "F4", 13.600000,
+                                "22M", "SAM", "F4", 13.700000,
+                                "22M", "SAM", "F4", 13.800000,
+
+                                "19M", "SAM", "F4", 15.200000,
+                                "19M", "SAM", "F4", 15.300000,
+                                "19M", "SAM", "F4", 15.400000,
+
+                                "16M", "SAM", "F4", 17.500000,
+                                "16M", "SAM", "F4", 17.600000,
+                                "16M", "SAM", "F4", 17.700000,
+
+                                "14M", "SAM", "F4", 18.900000,
+                                "14M", "SAM", "F4", 19.000000,
+                                "14M", "SAM", "F4", 19.100000,
+
+                                "13M", "SAM", "F4", 21.500000,
+                                "13M", "SAM", "F4", 21.600000,
+                                "13M", "SAM", "F4", 21.700000,
+
+                                "11M", "SAM", "F4", 25.700000,
+                                "11M", "SAM", "F4", 26.000000,
+                                "11M", "SAM", "F4", 26.500000,
+                                "11M", "SAM", "F4", 27.000000,
+                                "11M", "SAM", "F4", 27.500000,
+                                "11M", "SAM", "F4", 27.800000
+
+            };
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = ds.Tables["BandStack"].NewRow();
+                dr["BandName"] = (string)data[i * 4 + 0];
+                dr["Mode"] = (string)data[i * 4 + 1];
+                dr["Filter"] = (string)data[i * 4 + 2];
+                dr["Freq"] = ((double)data[i * 4 + 3]).ToString("f6");
+                ds.Tables["BandStack"].Rows.Add(dr);
+            }
+
+        } //ke9ns addbandstackSWL
+
+
+
 
         #region IARU Region 1 BandText
 
@@ -1954,7 +2077,7 @@ namespace PowerSDR
         #endregion
 
         #region IARU Regions 1-3 Bandstack
-
+        
         private static void AddBandStackTable()
 		{
 			ds.Tables.Add("BandStack");
@@ -2017,7 +2140,9 @@ namespace PowerSDR
                                 "GEN", "SAM", "F5", 5.975000,
                                 "GEN", "SAM", "F5", 3.250000,
 								"GEN", "SAM", "F4", 0.590000,
-			};
+
+
+            };
 
 			for(int i= 0; i<data.Length/4; i++)
 			{
@@ -2028,7 +2153,7 @@ namespace PowerSDR
 				dr["Freq"] = ((double)data[i*4+3]).ToString("f6");
 				ds.Tables["BandStack"].Rows.Add(dr);
 			}
-		}
+		} //addbandstacktable
 
         private static void AddRegion1BandStack()
         {
@@ -2085,7 +2210,10 @@ namespace PowerSDR
 								"GEN", "SAM", "F7", 9.550000,
                                 "GEN", "SAM", "F7", 3.850000,
                                 "GEN", "SAM", "F8", 0.590000,
-			};
+
+
+
+            };
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -2153,7 +2281,10 @@ namespace PowerSDR
 								"GEN", "SAM", "F7", 9.550000,
                                 "GEN", "SAM", "F7", 3.850000,
                                 "GEN", "SAM", "F8", 0.590000,
-			};
+
+
+
+            };
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -2229,7 +2360,11 @@ namespace PowerSDR
 								"GEN", "SAM", "F7", 9.550000,
                                 "GEN", "SAM", "F7", 3.850000,
                                 "GEN", "SAM", "F8", 0.590000,
-			};
+
+
+                             
+
+            };
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -2298,7 +2433,9 @@ namespace PowerSDR
 								"GEN", "SAM", "F7", 9.550000,
                                 "GEN", "SAM", "F7", 3.850000,
                                 "GEN", "SAM", "F8", 0.590000,
-			};
+
+
+            };
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -5398,18 +5535,33 @@ namespace PowerSDR
 
 		public static bool Init(Model model)
 		{
+
+            if (file_name.Contains("database_F")|| file_name.Contains("database_D")) // ke9ns add  make sure your now looking at RevQ database only
+            {
+                file_name1 = file_name; // ke9ns use your original to copy into new RevQ database as starting point
+
+                file_name = file_name.Replace("database_", "database_RevQ_");
+            }
+
             string backup_filename1 = file_name.Remove(file_name.Length - 4) + "_sbu.xml";     // current session backup (sbu)
             string backup_filename2 = file_name.Remove(file_name.Length - 4) + "_bak1.xml";    // 1st gen BU, copy of SBU
             string backup_filename3 = file_name.Remove(file_name.Length - 4) + "_bak2.xml";    // 2nd gen BU, copy of bak
             string backup_filename4 = file_name.Remove(file_name.Length - 4) + "_bak3.xml";    // 3rd gen BU, copy of bak2
+
             bool database_exists = false;
 
             ds = new DataSet("Data");
 
-            if (File.Exists(file_name))
-            {   
+          
+
+            if (File.Exists(file_name))  // ke9ns mod  file_name is now looking for RevQ database first
+            {
+             //   Trace.WriteLine("reading RevQ database " + file_name);
+
+
                 try
                 {
+                  
                     ds.ReadXml(file_name);
                     database_exists = true;
                 }
@@ -5441,10 +5593,68 @@ namespace PowerSDR
                             "ERROR: Database Backup is Unusable",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                }
-            }
-           
-			VerifyTables(model);
+                } // catch
+
+            } // if file exists
+
+            else // ke9ns add copy over your good original Flex database into RevQdatabase.xml so we dont touch the original just in case
+            {
+
+             //   Trace.WriteLine("Must copy original Database " + file_name1); // file_name1 is old database.xml file
+             //  Trace.WriteLine("To new REVQ database " + file_name); // file_name1 is old database.xml file
+
+                if (File.Exists(file_name1)) File.Copy(file_name1, file_name, true);  // ke9ns add   File.Copy(old, new)
+
+
+                if (File.Exists(file_name))  // ke9ns mod  file_name is now looking for RevQ database first
+                {
+                 //   Trace.WriteLine("Now we have RevQ database " + file_name);
+                 
+                    try
+                    {
+
+                        ds.ReadXml(file_name);
+                        database_exists = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("The database schema is corrupted and unusable.  " +
+                            "The database exception error was:\n\n" + ex.Message + "\n\n" +
+                            "Auto database recovery using the most recent valid database backup will be attempted.",
+                            "ERROR: Database is Unusable",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        string recovery_db = "";
+
+                        if (File.Exists(backup_filename4)) recovery_db = backup_filename4;
+                        if (File.Exists(backup_filename3)) recovery_db = backup_filename3;
+                        if (File.Exists(backup_filename2)) recovery_db = backup_filename2;
+                        if (File.Exists(backup_filename1)) recovery_db = backup_filename1;
+
+                        try
+                        {
+                            ds.ReadXml(recovery_db);
+                            database_exists = true;
+                        }
+                        catch (Exception ex2)
+                        {
+                            MessageBox.Show("A database backup does not exist or the backup database schema is corrupted.  " +
+                                "The database exception error was:\n\n " + ex2.Message + "\n\n" +
+                                "A new default database will be created.",
+                                "ERROR: Database Backup is Unusable",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    } // catch
+
+                    if (database_exists == true)
+                    {
+                         AddBandStackSWL(); // ke9ns add put in database just copied over from original
+                    }
+
+                } // if file exists
+            } // file did not exist
+
+            VerifyTables(model); // setup database
 
 			CheckBandTextValid();
 
@@ -5533,17 +5743,22 @@ namespace PowerSDR
 			}
 		}
 
-		public static int[] GetBandStackNum()
+
+
+
+		public static int[] GetBandStackNum() // ke9ns mod for GEN SWL bands
 		{
 			string[] band_list = {"160M", "80M", "60M", "40M", "30M", "20M", "17M",
 									 "15M", "12M", "10M", "6M", "2M", "WWV", "GEN",
-									 "VHF0", "VHF1", "VHF2", "VHF3", "VHF4", "VHF5",
+                                      "LMF","120M","90M","61M","49M","41M","31M","25M",
+                                     "22M","19M","16M","14M","13M","11M",
+                                     "VHF0", "VHF1", "VHF2", "VHF3", "VHF4", "VHF5",
 									 "VHF6", "VHF7", "VHF8", "VHF9", "VHF10", "VHF11",
 									 "VHF12", "VHF13" };
 
 			int[] retvals = new int[band_list.Length];
 
-			for(int i= 0; i<band_list.Length; i++)
+			for(int i= 0; i < band_list.Length; i++)
 			{
 				string s = band_list[i];
 				DataRow[] rows = ds.Tables["BandStack"].Select("'"+s+"' = BandName");
@@ -5551,9 +5766,13 @@ namespace PowerSDR
 			}
 
 			return retvals;
-		}
+        } //  GetBandStackNum
 
-		public static bool GetBandStack(string band, int index, out string mode, out string filter, out double freq)
+
+
+
+        //==================================================================================================
+        public static bool GetBandStack(string band, int index, out string mode, out string filter, out double freq)
 		{
 			DataRow[] rows = ds.Tables["BandStack"].Select("'"+band+"' = BandName");
 
@@ -5573,9 +5792,13 @@ namespace PowerSDR
 			filter = (string)((DataRow)rows[index])["Filter"];
 			freq = (double)((DataRow)rows[index])["Freq"];
 			return true;
-		}
+        } //GetBandStack
 
-		public static void AddBandStack(string band, string mode, string filter, double freq)
+
+
+
+        //==================================================================================================
+        public static void AddBandStack(string band, string mode, string filter, double freq)
 		{
 			DataRow dr = ds.Tables["BandStack"].NewRow();
 			dr["BandName"] = band;
@@ -5584,6 +5807,10 @@ namespace PowerSDR
 			dr["Freq"] = freq;
 			ds.Tables["BandStack"].Rows.Add(dr);
 		}
+
+
+
+
 
 		public static void SaveBandStack(string band, int index, string mode, string filter, double freq)
 		{
@@ -5609,6 +5836,9 @@ namespace PowerSDR
 			d["Filter"] = filter;
 			d["Freq"] = freq;
 		}
+
+
+
 
         // This removes the notches from the state database so we can rewrite all of them without
         // having one that was previously deleted staying in the database
@@ -5666,7 +5896,7 @@ namespace PowerSDR
 
 			DataTable t = ds.Tables[tableName];
 
-			for(int i= 0; i<t.Rows.Count; i++)
+			for(int i= 0; i < t.Rows.Count; i++)
 			{
 				list.Add(t.Rows[i][0].ToString()+"/"+t.Rows[i][1].ToString());
 			}
@@ -5708,6 +5938,7 @@ namespace PowerSDR
                 case FRSRegion.Slovakia:
                 case FRSRegion.France:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5727,6 +5958,7 @@ namespace PowerSDR
 
                 case FRSRegion.Europe:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5746,6 +5978,7 @@ namespace PowerSDR
 
                 case FRSRegion.Italy:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddItalyBandText160m();
                     AddRegion1BandText80m();
@@ -5765,6 +5998,7 @@ namespace PowerSDR
 
                 case FRSRegion.UK_Plus:
                     AddUK_PlusBandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5785,6 +6019,7 @@ namespace PowerSDR
                 case FRSRegion.Norway:
                 case FRSRegion.Denmark:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5804,6 +6039,7 @@ namespace PowerSDR
 
                 case FRSRegion.Latvia:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5823,6 +6059,7 @@ namespace PowerSDR
 
                 case FRSRegion.Bulgaria:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
@@ -5842,6 +6079,7 @@ namespace PowerSDR
 
                 case FRSRegion.Greece:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
@@ -5861,6 +6099,7 @@ namespace PowerSDR
 
                 case FRSRegion.Hungary:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5880,6 +6119,7 @@ namespace PowerSDR
 
                 case FRSRegion.Netherlands:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddNetherlandsBandText160m();
                     AddRegion1BandText80m();
@@ -5899,6 +6139,7 @@ namespace PowerSDR
 
                 case FRSRegion.Russia:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5919,6 +6160,7 @@ namespace PowerSDR
 
                 case FRSRegion.Sweden:
                     AddSwedenBandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
@@ -5938,6 +6180,7 @@ namespace PowerSDR
 
                 case FRSRegion.Region_3:
                     AddRegion3BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion3BandText160m();
                     AddRegion3BandText80m();
@@ -5956,6 +6199,7 @@ namespace PowerSDR
 
                 case FRSRegion.Japan:
                     AddRegion3BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddJapanBandText160m();
                     AddJapanBandText80m();
@@ -5975,6 +6219,7 @@ namespace PowerSDR
 
                 case FRSRegion.Italy_Plus:
                     AddRegion1BandStack();
+                    AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddItalyBandText160m();
                     AddRegion1BandText80m();
@@ -5991,11 +6236,11 @@ namespace PowerSDR
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
                     break;
-            }
+            } // switch
 
             CheckBandTextValid();
             Update();
-        }
+        } // updateregion
 
 		#endregion
 	}

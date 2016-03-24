@@ -1057,21 +1057,29 @@ namespace PowerSDR
                 Thread t;
 
                
-                if (File.Exists(Application.StartupPath + "\\" + "atu.dll\\"))
+                if (File.Exists(Application.StartupPath + "\\" + "atu.dll")) // ke9ns fix  atu.dll\\ was a mistake not caught until I applied NET4.5.2
                 {
                     console.oldATU = false;
+                  
                 }
                 else
                 {
                     console.oldATU = true;
+
+                  
                 }
                 
+
+
                 if (console.oldATU)
                 {
+                   
                     t = new Thread(new ThreadStart(Tune));
+
                 }
                 else
                 {
+                   
                     tuningDLL = true;
                     t = new Thread(new ThreadStart(TuneATU));
                 }
@@ -2438,12 +2446,15 @@ namespace PowerSDR
         {
             if (console.oldATU)
             {
-
+            
             }
             try
             {
 #if(!NO_NEW_ATU)
                 ATUClass obj = new ATUClass();
+
+             
+
                 string version = console.getVersion();
                 MemoryTune.Hide();
                 ////////////

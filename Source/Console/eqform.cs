@@ -1377,20 +1377,21 @@ namespace PowerSDR
 			}
 			picRXEQ.Invalidate();
 		}
-
-		private void tbTXEQ_Scroll(object sender, System.EventArgs e)
+//===============================================================================
+		private void tbTXEQ_Scroll(object sender, System.EventArgs e) //  ALL EQ slider changes come here
 		{
-			int[] txeq = TXEQ;
+			int[] txeq = TXEQ; // get all the slider values here and put in array of ints
+
 			if(rad3Band.Checked) 
 			{
 				console.dsp.GetDSPTX(0).TXEQ3 = txeq;
 			}
 			else
 			{
-				console.dsp.GetDSPTX(0).TXEQ10 = txeq;
-			}
+				console.dsp.GetDSPTX(0).TXEQ10 = txeq; // refers back to console.dsp.dsp_tx[thread].DttSP.DttSP.SetGrphTXEQ10(thread, tx_eq10);
+            }
 			picTXEQ.Invalidate();
-		}
+		} // touched a TX EQ scroll bar
 
 		private void picRXEQ_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{

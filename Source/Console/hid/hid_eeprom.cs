@@ -40,7 +40,7 @@ namespace PowerSDR
 
 		public static void Init()
 		{
-			USBHID.GetSerialNum(out serial_number); // get serial number
+			USBHID.GetSerialNum(out serial_number); // get serial number 
 
             USBHID.GetTRXSN(out trx_serial);
             USBHID.GetTRXRev(out trx_rev);

@@ -81,6 +81,7 @@ typedef struct _spec_block
   int planbits;
   fftwf_plan plan;
   BOOLEAN polyphase;
+
 } SpecBlock;
 
 extern void init_spectrum (SpecBlock * sb);

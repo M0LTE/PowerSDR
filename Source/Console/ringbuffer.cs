@@ -176,6 +176,7 @@ namespace PowerSDR
             return to_read;
         }
 
+        //========================================================================================
         /// <summary>
         /// Writes from the src array into the ringbuffer.
         /// </summary>
@@ -185,11 +186,15 @@ namespace PowerSDR
         public int Write(float[] src, int cnt)
         {
             int free_cnt = WriteSpace();
+
             if (free_cnt == 0) return 0;
 
-            int to_write = cnt > free_cnt ? free_cnt : cnt;
+            int to_write = cnt > free_cnt ? free_cnt : cnt;  // if cnt > free_cnt then to_write= free_cnt, otherwise cnt
+
             int cnt2 = wptr + to_write;
-            int n1 = 0, n2 = 0;
+
+            int n1 = 0;
+            int n2 = 0;
 
             if (cnt2 > size)
             {
@@ -202,7 +207,8 @@ namespace PowerSDR
                 n2 = 0;
             }
 
-            Array.Copy(src, 0, buf, wptr, n1);
+            
+            Array.Copy(src, 0, buf, wptr, n1); //   copy   source, source index to start at, dest, dest index to copy to, length to copy 
             wptr = (wptr + n1) & mask;
 
             if (n2 != 0)

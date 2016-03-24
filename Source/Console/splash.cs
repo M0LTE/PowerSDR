@@ -75,6 +75,7 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS lblStatus;
 		private System.Windows.Forms.Panel pnlStatus;
         private System.Windows.Forms.Timer timer1;
+        private TextBox textBox1;
         private System.ComponentModel.IContainer components = null;
 
 		#endregion
@@ -84,7 +85,10 @@ namespace PowerSDR
 		public Splash()
 		{
 			InitializeComponent();
-			this.Opacity = .00;
+
+           
+
+            this.Opacity = .00;
 			timer1.Interval = TIMER_INTERVAL;
 			timer1.Start();
 			this.ClientSize = this.BackgroundImage.Size;
@@ -110,6 +114,7 @@ namespace PowerSDR
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Splash));
             this.pnlStatus = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.lblTimeRemaining = new System.Windows.Forms.LabelTS();
             this.lblStatus = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
@@ -127,6 +132,17 @@ namespace PowerSDR
             // 
             this.timer1.Interval = 50;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.Silver;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(164, 160);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(58, 20);
+            this.textBox1.TabIndex = 3;
+            this.textBox1.Text = "Rev R12";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // lblTimeRemaining
             // 
@@ -156,6 +172,7 @@ namespace PowerSDR
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(600, 384);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblTimeRemaining);
             this.Controls.Add(this.lblStatus);
@@ -166,6 +183,7 @@ namespace PowerSDR
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Splash";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -434,13 +452,18 @@ namespace PowerSDR
 			CloseForm();
 		}
 
-		#endregion
-	}	
+        #endregion
 
-	#region Registry Access Class
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
 
-	/// A class for managing registry access.
-	public class RegistryAccess
+        }
+    }
+
+    #region Registry Access Class
+
+    /// A class for managing registry access.
+    public class RegistryAccess
 	{
 		private const string SOFTWARE_KEY = "Software";
 		private const string COMPANY_NAME = "FlexRadio";

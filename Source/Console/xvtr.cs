@@ -371,10 +371,10 @@ namespace PowerSDR
                 //FWC.SetEN2M(true); //XVINT
                 udUCBAddr0.Value = 0;
                 txtButtonText0.Text = "2m";
-                udLOOffset0.Value = 125;
+                udLOOffset0.Value = 125;              // ke9ns was 125
                 udLOError0.Value = 0;
-                udFreqBegin0.Value = 144;
-                udFreqEnd0.Value = 148;
+                udFreqBegin0.Value = 144;            // ke9ns was 144
+                udFreqEnd0.Value = 148;              // ke9ns was 148
                 //udRXGain0.Value = 32;
                 //chkRXOnly0.Checked = false;
                 //udPower0.Value = 100;
@@ -1273,6 +1273,7 @@ namespace PowerSDR
             0,
             0,
             0});
+            this.udLOOffset0.ValueChanged += new System.EventHandler(this.udLOOffset0_ValueChanged);
             // 
             // txtButtonText1
             // 
@@ -5442,15 +5443,13 @@ namespace PowerSDR
 		/// input freq.</returns>
 		public double TranslateFreq(double freq)
 		{
-			for(int i=0; i<16; i++)
+			for(int i=0; i < 16; i++)
 			{
 				if(enabled[i].Checked)
 				{
 					if(freq >= (double)begin[i].Value && freq <= (double)end[i].Value)
 					{
-						return (double)(freq - 
-							(double)lo_offset[i].Value +
-							((double)lo_error[i].Value / 1000.0));
+						return (double)(freq - (double)lo_offset[i].Value + ((double)lo_error[i].Value / 1000.0));
 					}
 				}
 			}
@@ -6176,5 +6175,10 @@ namespace PowerSDR
             int index = int.Parse(((Control)sender).Name.Substring(7));
             console.SetPower((Band)((int)Band.VHF0 + index), (int)((NumericUpDownTS)sender).Value);
         }
-	}
+
+        private void udLOOffset0_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

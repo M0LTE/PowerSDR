@@ -17,11 +17,11 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+		        Name="Debug|Win32"
 			OutputDirectory="../../temp/Debug/DttSP"
 			IntermediateDirectory="../../temp/Debug/DttSP"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -105,11 +105,12 @@
 			/>
 		</Configuration>
 		<Configuration
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			Name="Release|Win32"
 			OutputDirectory="../../temp/Release/DttSP"
 			IntermediateDirectory="../../temp/Release/DttSP"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+
 			CharacterSet="0"
 			>
 			<Tool
@@ -450,7 +451,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Fftw\fftw3.h"
+				RelativePath=".\fftw3.h"
 				>
 			</File>
 			<File
@@ -526,7 +527,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\pthread\pthread.h"
+				RelativePath=".\pthread.h"
 				>
 			</File>
 			<File
@@ -546,7 +547,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\pthread\sched.h"
+				RelativePath=".\sched.h"
 				>
 			</File>
 			<File
@@ -554,7 +555,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\pthread\semaphore.h"
+				RelativePath=".\semaphore.h"
 				>
 			</File>
 			<File

@@ -81,6 +81,9 @@ namespace PowerSDR
 
         #region Routines
 
+
+
+        //======================================================================================================================
         private void Save(string file_name)
         {
         TextWriter writer = new StreamWriter(file_name);
@@ -98,7 +101,9 @@ namespace PowerSDR
 
             writer.Close();
         }
+ 
         
+        //======================================================================================================================
         public void Save()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\";
@@ -107,6 +112,8 @@ namespace PowerSDR
             Save(file_name);
         }
 
+
+        //======================================================================================================================
         public static MemoryList Restore()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\";
@@ -114,6 +121,7 @@ namespace PowerSDR
             string bak_file_name = path + "memory_bak.xml";
 
             MemoryList mem_list = new MemoryList();
+
             StreamReader reader;
 
             try
@@ -125,8 +133,8 @@ namespace PowerSDR
 
                 reader = new StreamReader(file_name);
 
-                XmlSerializer ser = new XmlSerializer(typeof(MemoryList),
-                    new Type[] { typeof(MemoryRecord), typeof(SortableBindingList<MemoryRecord>), typeof(int) });
+                XmlSerializer ser = new XmlSerializer( typeof(MemoryList), new Type[] { typeof(MemoryRecord), typeof(SortableBindingList<MemoryRecord>), typeof(int) } );
+
                 mem_list = (MemoryList)ser.Deserialize(reader);
 
                 // save backup file
@@ -155,14 +163,16 @@ namespace PowerSDR
 
             reader.Close();
 
-            return mem_list;
-        }
+            return mem_list;  // return memory listing to memory form window datagridview1
 
+        } // restore
+
+
+
+        //======================================================================================================================
         public void CheckVersion()
         {
-            if (this.major_version == MemoryList.current_major_version &&
-                this.minor_version == MemoryList.current_minor_version)
-                return;
+            if (this.major_version == MemoryList.current_major_version && this.minor_version == MemoryList.current_minor_version)  return;
 
             if (this.major_version == 1 && this.minor_version == 0)
             {

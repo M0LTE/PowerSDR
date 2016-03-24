@@ -1548,8 +1548,7 @@ namespace PowerSDR
 
 		public static bool SetMux(int mixerID, int index)
 		{
-			if(mixerID > mixerGetNumDevs()-1 ||
-				mixerID < 0)
+			if(mixerID > mixerGetNumDevs()-1 ||	mixerID < 0)
 				return false;
 
 			int mixer;

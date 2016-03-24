@@ -838,11 +838,17 @@ namespace PowerSDR
 
 		#region Input Event Handlers
 
+
+        //====================================================================
+        // ke9ns MIC input from Flex radio
+        //====================================================================
 		private void tbMic_Scroll(object sender, System.EventArgs e)
 		{
 			if(chkMicSel.Checked && !chkInputMuteAll.Checked)
 				FWC.WriteCodecReg(0x16, InputSliderToRegVal(tbMic.Value));
 		}
+
+
 
 		private void tbLineInRCA_Scroll(object sender, System.EventArgs e)
 		{

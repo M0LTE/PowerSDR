@@ -51,7 +51,7 @@ namespace PowerSDR
         {
             if (F1500 == null)
             {
-                Flex1500USB.D_ATTACH_DETACH_CALLBACK attach = attachCallback;
+                Flex1500USB.D_ATTACH_DETACH_CALLBACK attach = attachCallback;  
                 Flex1500USB.D_ATTACH_DETACH_CALLBACK detach = detachCallback;
                 F1500 = new Flex1500USB(attach, detach);
                 Thread.Sleep(1000);

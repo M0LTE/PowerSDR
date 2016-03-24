@@ -453,7 +453,7 @@ namespace PowerSDR
 
         public static int SetTest(bool b)
         {
-            return Flex1500.WriteOp(Opcode.USB_OP_SET_TEST, Convert.ToUInt32(b), 0);
+            return Flex1500.WriteOp(Opcode.USB_OP_SET_TEST, Convert.ToUInt32(b), 0); 
         }
 
         public static int SetGen(bool b)
@@ -588,21 +588,26 @@ namespace PowerSDR
             return Flex1500.ReadEEPROM(addr, num_bytes, out buf);
         }
 
-       public static int SetMicSel(bool b)
+        public static int SetMicSel(bool b)
         {
             return Flex1500.WriteOp(Opcode.USB_OP_SET_MIC_SEL, b?(uint)1:(uint)0, 0);
         }
+
 
         public static int SetTXGain(int val)
         {
             return Flex1500.WriteOp(Opcode.USB_OP_SET_TX_GAIN, (uint)val, 0);
         }
 
+        // ===================================================================
+        //ke9ns this is the phones jack on the flex 1500
         public static int SetSpkOn(bool b)
         {
             return Flex1500.WriteOp(Opcode.USB_OP_SET_SPK_ON, Convert.ToUInt32(b), 0);
         }
 
+        // ===================================================================
+        //ke9ns this is the phones jack on the flex 1500
         public static int SetSpkGain(int val)
         {
             return Flex1500.WriteOp(Opcode.USB_OP_SET_SPK_GAIN, (uint)val, 0);
@@ -619,10 +624,15 @@ namespace PowerSDR
             return Flex1500.WriteOp(Opcode.USB_OP_SET_LINE_OUT_GAIN, (uint)val, 0);
         }
 
+
+        //================================================================
+        // ke9ns  MON turned on here, 
         public static int SetMon(bool b)
         {
             return Flex1500.WriteOp(Opcode.USB_OP_SET_MON, Convert.ToUInt32(b), 0);
         }
+
+
 
         public static int SetMonGain(byte b)
         {
@@ -630,5 +640,7 @@ namespace PowerSDR
         }
 
         #endregion
-    }
-}
+
+    } // USBHID
+
+} //POWERSDR

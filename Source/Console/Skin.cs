@@ -110,9 +110,21 @@ namespace PowerSDR
             Skin.path = p + "\\" + name;
             Skin.name = name;
 
+
+            f.Name = f.Name.Replace("btnBandHF1", "btnBandHF"); // ke9ns add so we can use other band png file for the SWL bands
+            f.Name = f.Name.Replace("GN", "VHF"); // ke9ns add
+
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
+            {
                 f.BackgroundImage = Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
-            else f.BackgroundImage = null;
+            }
+            else
+            {
+                             
+                    f.BackgroundImage = null;
+              //  Trace.WriteLine("image missing");
+               
+            }
 
             foreach (Control c in f.Controls) // load in images
                 ReadImages(c);
@@ -650,12 +662,27 @@ namespace PowerSDR
             ctrl.ImageList.ImageSize = ctrl.Size; // may be an issue with smaller images
             ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 
+
+
+        
             // load images into image list property
             string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+
+            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add
+            s = s.Replace("GN", "VHF"); // ke9ns add 
+
             for (int i = 0; i < 8; i++)
             {
+               
                 if (File.Exists(s + i.ToString() + pic_file_ext))
+                {
                     ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(s + i.ToString() + pic_file_ext));
+                }
+                else
+                {
+                  //  Trace.WriteLine("no image "+s);
+                }
+
             }
             EventHandler handler = new EventHandler(Button_StateChanged);
             ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
@@ -831,7 +858,11 @@ namespace PowerSDR
 
             // load images into image list property
             string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
-            for(int i=0; i<8; i++)
+
+            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add
+            s = s.Replace("GN", "VHF"); // ke9ns add
+
+            for (int i=0; i < 8; i++)
             {
                 if (File.Exists(s + i.ToString() + pic_file_ext))
                     ctrl.ImageList.Images.Add(((ImageState)i).ToString(), Image.FromFile(s + i.ToString() + pic_file_ext));
@@ -1146,6 +1177,9 @@ namespace PowerSDR
             writer.WriteEndElement();
         }
 
+
+
+
         private static void RestoreRadioButton(RadioButton ctrl, XmlDocument doc)
         {
             XmlNodeList matches = doc.GetElementsByTagName(ctrl.Name);
@@ -1209,6 +1243,9 @@ namespace PowerSDR
             }
         }
 
+
+
+        //==============================================================================================
         private static void SetupRadioButtonImages(RadioButton ctrl)
         {
             if (ctrl.ImageList == null)
@@ -1219,6 +1256,10 @@ namespace PowerSDR
 
             // load images into image list property
             string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+
+            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add
+            s =  s.Replace("GN", "VHF"); // ke9ns add
+
             for (int i = 0; i < 8; i++)
             {
                 if (File.Exists(s + i.ToString() + pic_file_ext))
@@ -1246,6 +1287,9 @@ namespace PowerSDR
             ctrl.BackgroundImage = null;
             RadioButton_StateChanged(ctrl, EventArgs.Empty);
         }
+
+
+
 
         private static void RadioButton_StateChanged(object sender, EventArgs e)
         {
@@ -1280,6 +1324,9 @@ namespace PowerSDR
 
             SetRadioButtonImageState(ctrl, state);
         }
+
+
+
 
         private static void RadioButton_MouseEnter(object sender, EventArgs e)
         {
@@ -1410,6 +1457,10 @@ namespace PowerSDR
         {
             // load images
             string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+
+            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add
+            s = s.Replace("GN", "VHF"); // ke9ns add
+
             if (File.Exists(s + "back" + pic_file_ext))
                 ctrl.BackgroundImage = Image.FromFile(s + "back" + pic_file_ext);
             else ctrl.BackgroundImage = null;
@@ -1543,6 +1594,9 @@ namespace PowerSDR
 
         private static void SetBackgroundImage(Control c)
         {
+
+            c.Name = c.Name.Replace("GN", "VHF"); // ke9ns add
+
             if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
                 c.BackgroundImage = Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
             else c.BackgroundImage = null;

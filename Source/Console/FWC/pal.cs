@@ -26,6 +26,10 @@
 //    USA
 //=================================================================
 
+
+// ke9ns  must be a way to send data over Firewire connection???
+
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -33,36 +37,55 @@ namespace PowerSDR
 {
 	public class Pal
 	{
+
 #if(!NO_PAL)
+
         [DllImport("pal.dll", EntryPoint = "Init", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool Init();				// initialize PAL system
 
+
         [DllImport("pal.dll", EntryPoint = "GetNumDevices", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int GetNumDevices();
+
+
 
         [DllImport("pal.dll", EntryPoint = "GetDeviceInfo", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool GetDeviceInfo(uint index, out uint model, out uint sn);
 
+
+
         [DllImport("pal.dll", EntryPoint = "SelectDevice", CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool SelectDevice(uint index);
 
+
+
         [DllImport("pal.dll", EntryPoint = "WriteOp", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int WriteOp(FWC.Opcode opcode, uint data1, uint data2);
+
+
 
         [DllImport("pal.dll", EntryPoint = "WriteOp", CallingConvention = CallingConvention.Cdecl)]
         public static extern int WriteOp(FWC.Opcode opcode, int data1, int data2);
 
+
+
         [DllImport("pal.dll", EntryPoint = "WriteOp", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int WriteOp(FWC.Opcode opcode, uint data1, float data2);
+
+
 
         [DllImport("pal.dll", EntryPoint = "WriteOp", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int WriteOp(FWC.Opcode opcode, float data1, uint data2);
 
+
+
         [DllImport("pal.dll", EntryPoint = "ReadOp", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out uint rtn);
+
+
 
         [DllImport("pal.dll", EntryPoint = "ReadOp", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out float rtn);
@@ -70,17 +93,27 @@ namespace PowerSDR
         [DllImport("pal.dll", EntryPoint = "Exit", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void Exit();				// cleanup and leave system in a stable state
 
+
+
         [DllImport("pal.dll", EntryPoint = "SetCallback", CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SetCallback(NotificationCallback callback);
+
+
 
         [DllImport("pal.dll", EntryPoint = "SetBufferSize", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetBufferSize(uint val);
 
+
+
 		public delegate void NotificationCallback(uint bitmap);
+
 
         public static Radio[] Scan()
         {
-            int devs = Pal.GetNumDevices();
+            int devs = Pal.GetNumDevices();                 // get numer of radios found 
+
+        //    System.Diagnostics.Trace.WriteLine("pal=============================");
+
             if (devs == 0) return null;
 
             Radio[] radios = new Radio[devs];
@@ -89,20 +122,23 @@ namespace PowerSDR
             {
                 uint model;
                 uint sn;
-                if(!Pal.GetDeviceInfo(i, out model, out sn))
-                    return null;
+
+                if(!Pal.GetDeviceInfo(i, out model, out sn))   return null;
 
                 Model m = Model.FLEX5000;
-                if (model == 3)
-                    m = Model.FLEX3000;
+                if (model == 3)   m = Model.FLEX3000;
 
-                string serial = FWCEEPROM.SerialToString(sn);
+                string serial = FWCEEPROM.SerialToString(sn);   // radios serial#
 
                 radios[i] = new Radio(m, i, serial, true);
             }
 
             return radios;
-        }
+
+
+        } // Scan()
+
+
 #else
 		public static bool Init()
         {
@@ -181,5 +217,7 @@ namespace PowerSDR
 
 		public delegate void NotificationCallback(uint bitmap); 
 #endif
-    }
-}
+    } // class pal
+
+
+} // PowerSDR

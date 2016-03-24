@@ -36,17 +36,20 @@ Bridgewater, NJ 08807
 #include <bufvec.h>
 #include <fftw3.h>
 #include <fftw3_fix.h>
+
+//=================================================================================
 // snapshot of current signal
-void
-snap_spectrum (SpecBlock * sb, int label)
+//=================================================================================
+void snap_spectrum (SpecBlock * sb, int label)
 {
 	int i, j;
 
-	// where most recent signal started
-	j = sb->fill;
+	
+	j = sb->fill;                      // where most recent signal started
 
 	// copy starting from there in circular fashion,
 	// applying window as we go
+	
 	if (!sb->polyphase)
 	{
 		for (i = 0; i < sb->size; i++)

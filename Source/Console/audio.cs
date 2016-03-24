@@ -113,8 +113,8 @@ namespace PowerSDR
 			set { rx1_input_signal = value; }
 		}
 
-		private static SignalSource rx1_output_signal = SignalSource.RADIO;
-		public static SignalSource RX1OutputSignal
+		private static SignalSource rx1_output_signal = SignalSource.RADIO; 
+		public static SignalSource RX1OutputSignal  // ke9ns this is from the setup test screen for Receiver select Radio as default
 		{
 			get { return rx1_output_signal; }
 			set { rx1_output_signal = value; }
@@ -228,9 +228,14 @@ namespace PowerSDR
 			set
 			{
 				//Debug.WriteLine("monitor_volume: "+value.ToString("f3"));
-				monitor_volume = value;
-			}
-		}
+				
+              
+                    monitor_volume = value;
+               
+               //   Trace.WriteLine("monvolume " + value);
+
+            }
+        }
 
 		private static double radio_volume = 0.0;
 		public static double RadioVolume
@@ -372,8 +377,8 @@ namespace PowerSDR
 		public static bool wave_playback = false;
 		public static WaveFileWriter wave_file_writer;
         public static WaveFileWriter wave_file_writer2;
-		public static WaveFileReader wave_file_reader;
-        public static WaveFileReader wave_file_reader2;
+		public static WaveFileReader wave_file_reader;    // ke9ns   RX1 WaveFileReader
+        public static WaveFileReader wave_file_reader2;   // ke9ns   RX2 
 		public static bool two_tone = false;
 		//public static Mutex phase_mutex = new Mutex();
 		public static bool testing = false;
@@ -458,7 +463,21 @@ namespace PowerSDR
 			set { mon = value; }
 		}
 
-		private static bool full_duplex = false;
+
+        //==========================================================
+        // ke9ns add true = pre-processes, false=standard post-process (except for AM/FM since they dont work in pre)
+        private static byte monpre = 0;
+        public static byte MON_PRE
+        {
+            set
+            {
+                monpre = value;
+            }
+            get { return monpre; }
+        }
+
+
+        private static bool full_duplex = false;
 		public static bool FullDuplex
 		{
 			set { full_duplex = value; }
@@ -576,6 +595,8 @@ namespace PowerSDR
 			set { tx_dsp_mode = value; }
 		}
 
+        //===================================================
+        // ke9ns check sample rate for primary audio
 		private static int sample_rate1 = 48000;
 		public static int SampleRate1
 		{
@@ -587,8 +608,11 @@ namespace PowerSDR
 				SineFreq2 = sine_freq2;
 			}
 		}
-
-		private static int sample_rate2 = 48000;
+        
+        
+        //===================================================
+        // ke9ns check sample rate for vac1 audio
+        private static int sample_rate2 = 48000;
 		public static int SampleRate2
 		{
 			get { return sample_rate2; }
@@ -599,6 +623,8 @@ namespace PowerSDR
 			}			
 		}
 
+        //===================================================
+        // ke9ns check sample rate for vac2 audio
         private static int sample_rate3 = 48000;
         public static int SampleRate3
         {
@@ -749,15 +775,21 @@ namespace PowerSDR
 		public static int Input1
 		{
 			get { return input_dev1; }
-			set { input_dev1 = value; }
-		}
+			set { input_dev1 = value; } // ke9ns primary audio input to transmit with  setup int new_input = ((PADeviceInfo)comboAudioInput1.SelectedItem).Index;
 
-		private static int input_dev2 = 0;
+        }
+
+
+        //===========================================
+        // ke9ns input device from VAC1
+        //==========================================
+        private static int input_dev2 = 0;
 		public static int Input2
 		{
 			get { return input_dev2; }
-			set { input_dev2 = value; }
-		}
+			set { input_dev2 = value; }        // ke9ns 	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;  in setup form
+
+        }
 
         private static int input_dev3 = 0;
         public static int Input3
@@ -770,10 +802,11 @@ namespace PowerSDR
 		public static int Output1
 		{
 			get { return output_dev1; }
-			set { output_dev1 = value; }
-		}
+			set { output_dev1 = value; } // ke9ns primaary output device to receive to  setup 	int new_output = ((PADeviceInfo)comboAudioOutput1.SelectedItem).Index;
 
-		private static int output_dev2 = 0;
+        }
+
+        private static int output_dev2 = 0;
 		public static int Output2
 		{
 			get { return output_dev2; }
@@ -881,19 +914,22 @@ namespace PowerSDR
             }
         }
 
-		#endregion
+        #endregion
 
-		#region Callback Routines
-		// ======================================================
-		// Callback Routines
-		// ======================================================
+        #region Callback Routines
 
-		unsafe public static int Callback1(void* input, void* output, int frameCount,
-			PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void *userData)
+
+
+
+        //==============================================================================================================         
+        // ke9ns   not used for Flex radios (use callback2 or callback1500)
+        //==============================================================================================================         
+        unsafe public static int Callback1(void* input, void* output, int frameCount,	PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void *userData)
 		{
 #if(TIMER)
 			t1.Start();
 #endif
+         //   Trace.WriteLine("Callback1=================================");
 
 			int* array_ptr = (int *)input;
 			float* in_l_ptr1 = (float *)array_ptr[0];
@@ -912,12 +948,10 @@ namespace PowerSDR
 
             localmox = mox;
 
+       
+			if(wave_playback)	wave_file_reader.GetPlayBuffer(in_l_ptr1, in_r_ptr1);
 
-			if(wave_playback)
-				wave_file_reader.GetPlayBuffer(in_l_ptr1, in_r_ptr1);
-
-            if ((wave_record && !localmox && record_rx_preprocessed) ||
-                (wave_record && localmox && record_tx_preprocessed))
+            if ((wave_record && !localmox && record_rx_preprocessed) || (wave_record && localmox && record_tx_preprocessed))
 				wave_file_writer.AddWriteBuffer(in_l_ptr1, in_r_ptr1);			
 
 			if(phase)
@@ -928,9 +962,8 @@ namespace PowerSDR
 				//phase_mutex.ReleaseMutex();
 			}
 
-			// handle VAC Input
-            if (vac_enabled &&
-                rb_vacOUT_l != null && rb_vacOUT_r != null)
+			// handle VAC1 Input
+            if (vac_enabled && rb_vacOUT_l != null && rb_vacOUT_r != null)
             {
                 if (vac_bypass || !localmox) // drain VAC Input ring buffer
                 {
@@ -963,11 +996,13 @@ namespace PowerSDR
                         VACDebug("rb_vacIN underflow 4inTX");
                     }
                 }
-            }
+
+            } // vac1 on 
+
+
 
             // handle VAC2 Input
-            if (vac2_enabled &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            if (vac2_enabled && rb_vac2OUT_l != null && rb_vac2OUT_r != null)
             {
                 if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
                 {
@@ -979,7 +1014,7 @@ namespace PowerSDR
                         Win32.LeaveCriticalSection(cs_vac2);
                     }
                 }
-                else // VAC is on -- copy data for transmit mode if VFO B TX is selected
+                else // VAC2 is on -- copy data for transmit mode if VFO B TX is selected
                 {
                     if (vfob_tx && rb_vac2IN_l.ReadSpace() >= frameCount)
                     {
@@ -1000,7 +1035,9 @@ namespace PowerSDR
                         VACDebug("rb_vac2IN underflow 4inTX");
                     }
                 }
-            }
+            } // vac2 on
+
+
 
             min_in_l = Math.Min(min_in_l, MinSample(in_l, frameCount));
             min_in_r = Math.Min(min_in_r, MinSample(in_r, frameCount));
@@ -1051,7 +1088,7 @@ namespace PowerSDR
 
 			if(!localmox)
 			{
-				switch(rx1_input_signal)
+				switch(rx1_input_signal)  // ke9ns selected from setup->test->receiver screen
 				{
 					case SignalSource.RADIO:
 						break;
@@ -1096,8 +1133,8 @@ namespace PowerSDR
 			}
 			else
 			{
-				switch(tx_input_signal)
-				{
+				switch(tx_input_signal) // ke9ns selected from setup->test->transmitter screen
+                {
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
@@ -1145,7 +1182,7 @@ namespace PowerSDR
 #if(MINMAX)
 			Debug.Write(MaxSample(in_l, in_r, frameCount).ToString("f6")+",");
 #endif
-            // handle VAC output if doing Direct IQ
+            // handle VAC1 output if doing Direct IQ
             if (vac_enabled && vac_output_iq &&
                 rb_vacOUT_l != null && rb_vacOUT_r != null &&
                 in_l != null && in_r != null)
@@ -1179,7 +1216,9 @@ namespace PowerSDR
                         vac_rb_reset = true;
                     }
                 }
-            }
+            } // vac1 IQ on
+
+
 
             // handle VAC2 output if doing Direct IQ
             if (vac2_enabled && vac2_output_iq &&
@@ -1215,7 +1254,9 @@ namespace PowerSDR
                         vac2_rb_reset = true;
                     }
                 }
-            }
+            } // vac2 IQ on
+
+
             
             //DttSP.ExchangeSamples(in_l, in_r, out_l, out_r, frameCount);
 
@@ -1243,8 +1284,9 @@ namespace PowerSDR
 
 			if(!localmox)
 			{
-				switch(rx1_output_signal)
-				{
+				switch(rx1_output_signal)  // ke9ns selected from setup->test->receiver screen
+
+                {
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
@@ -1288,8 +1330,8 @@ namespace PowerSDR
 			}
 			else
 			{
-				switch(tx_output_signal)
-				{
+				switch(tx_output_signal) // ke9ns selected from setup->test->transmitter screen
+                {
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
@@ -1334,9 +1376,9 @@ namespace PowerSDR
 
 			#endregion
 
-			DoScope(out_l_ptr1, frameCount);
+			DoScope(out_l_ptr1, frameCount);   // ke9ns   show in scope mode ?
 
-            if (wave_record)
+            if (wave_record)  // ke9ns using audio recorder
             {
                 if (!localmox)
                 {
@@ -1354,20 +1396,34 @@ namespace PowerSDR
                 }
             }
 
-            // scale output for VAC -- use input as spare buffer
+
+            // scale output for VAC1 -- use input as spare buffer
 			if(vac_enabled && !vac_output_iq &&
 				rb_vacIN_l != null && rb_vacIN_r != null && 
 				rb_vacOUT_l != null && rb_vacOUT_r != null)
 			{
                 if (!localmox)
                 {
-                    ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale);
-                    ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+
+                        ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale);
+                        ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+                    
                 }
                 else if (mon)
                 {
-                    ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale);
-                    ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+                    if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM)  // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(in_l_ptr1, in_l, frameCount, (float)vac_rx_scale); // ke9ns add dont have a tx_in_l
+                        ScaleBuffer(in_r_ptr1, in_r, frameCount, (float)vac_rx_scale);
+
+                     //   Trace.Write("help====");
+
+                    }
+                    else
+                    {
+                        ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale);
+                        ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+                    }
                 }
                 else // zero samples going back to VAC since TX monitor is off
                 {
@@ -1375,21 +1431,24 @@ namespace PowerSDR
                     ScaleBuffer(out_r, in_r, frameCount, 0.0f);
                 }
 
-				if (sample_rate2 == sample_rate1) // no resample necessary
+				if (sample_rate2 == sample_rate1) // no resample necessary  ke9ns (if primary audio and vac1 match then do below)
 				{
 					if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
 					{
-						Win32.EnterCriticalSection(cs_vac);
-						rb_vacOUT_l.WritePtr(in_l, frameCount);
-						rb_vacOUT_r.WritePtr(in_r, frameCount);
-						Win32.LeaveCriticalSection(cs_vac);
+                       
+                            Win32.EnterCriticalSection(cs_vac);        // ke9ns Waits for ownership of the specified critical section object
+                            rb_vacOUT_l.WritePtr(in_l, frameCount);  // 
+                            rb_vacOUT_r.WritePtr(in_r, frameCount);
+                            Win32.LeaveCriticalSection(cs_vac);
+                        
+
 					}
 					else 
 					{
 						VACDebug("rb_vacOUT_l overflow");
 						VACDebug("rb_vacOUT_r overflow");
 					}
-				} 
+				} // match SR 
 				else 
 				{
 					if (vac_stereo) 
@@ -1435,7 +1494,11 @@ namespace PowerSDR
 						}
 					}
 				}
-			}
+
+			} // vac1 on
+
+
+
 
             // scale output for VAC2 -- use input as spare buffer
             if (vac2_enabled && !vac2_output_iq &&
@@ -1507,23 +1570,25 @@ namespace PowerSDR
                 }
             }
 
+          
+
             double vol = monitor_volume;
+
+           
+
             if (localmox)
             {
-                if (tx_output_signal != SignalSource.RADIO)
-                    vol = 1.0f;
-                else
-                    vol = TXScale;
+                if (tx_output_signal != SignalSource.RADIO)   vol = 1.0f;
+                else   vol = TXScale;
             }
             else // receive
             {
-                if (rx1_output_signal != SignalSource.RADIO)
-                    vol = 1.0f;
+                if (rx1_output_signal != SignalSource.RADIO)  vol = 1.0f;  // ke9ns do this is you dont select the radio as the output of audio that goes to the speaker
             }
 
             if (vol != 1.0)
             {
-                ScaleBuffer(out_l, out_l, frameCount, (float)vol);
+                ScaleBuffer(out_l, out_l, frameCount, (float)vol);  // ke9ns do this if Radio is where the speaker audio comes from (setup->test->receiver->radio)
                 ScaleBuffer(out_r, out_r, frameCount, (float)vol);
             }
 
@@ -1549,15 +1614,22 @@ namespace PowerSDR
             max_out_r = Math.Max(max_out_r, MaxSample(out_r, frameCount));
 
 			return callback_return;
-		}        
+		}  // Callback1
 
-        unsafe public static int Callback1500(float[] AudioInBuf1, float[] AudioInBuf2,
-            float[] AudioOutBuf1, float[] AudioOutBuf2, uint paFlags)
+
+      
+        
+        //==============================================================================================================         
+        // ke9ns routine for flex1500 (instead of callback2 below)
+        //==============================================================================================================         
+        unsafe public static int Callback1500(float[] AudioInBuf1, float[] AudioInBuf2,float[] AudioOutBuf1, float[] AudioOutBuf2, uint paFlags)
         {
 #if(TIMER)
 			t1.Start();
 #endif
-            
+         //   Trace.Write("1500============");
+
+
             /*int* array_ptr = (int*)input;
             float* in_l_ptr1 = (float*)array_ptr[0];
             float* in_r_ptr1 = (float*)array_ptr[1];
@@ -1570,14 +1642,24 @@ namespace PowerSDR
             Debug.Assert(AudioInBuf1.Length == AudioOutBuf1.Length);
 
             int frameCount = AudioInBuf1.Length;
+
             localmox = mox;
 
-            fixed(float* in_l_ptr1 = &AudioInBuf1[0])
+
+             float[] audiotemp = new float[frameCount+1]; // ke9ns add
+             float[] audiotemp1 = new float[frameCount + 1]; // ke9ns add
+
+            fixed (float* in_tl_ptr1 = &audiotemp[0]) // ke9ns add temp ptr to preprocessed data
+            fixed (float* in_tr_ptr1 = &audiotemp1[0]) // ke9ns add temp ptr to preprocessed data
+
+            fixed (float* in_l_ptr1 = &AudioInBuf1[0])
             fixed(float* in_r_ptr1 = &AudioInBuf2[0])
             fixed(float* out_l_ptr1 = &AudioOutBuf1[0])
             fixed(float* out_r_ptr1 = &AudioOutBuf2[0])
             {
                 float* in_l = null, in_r = null, out_l = null, out_r = null;
+
+                float* in_t = null; //ke9ns add temp pointer
 
                 //ClearBuffer(in_l_ptr1, frameCount);
                 //ClearBuffer(in_r_ptr1, frameCount);
@@ -1588,12 +1670,19 @@ namespace PowerSDR
                 out_l = out_l_ptr1;
                 out_r = out_r_ptr1;
 
-                if (wave_playback)
-                    wave_file_reader.GetPlayBuffer(in_l_ptr1, in_r_ptr1);
+              
 
-                if ((wave_record && !mox && record_rx_preprocessed) ||
-                    (wave_record && mox && record_tx_preprocessed))
-                    wave_file_writer.AddWriteBuffer(in_l_ptr1, in_r_ptr1);
+                if (wave_playback)
+                {
+                    wave_file_reader.GetPlayBuffer(in_l_ptr1, in_r_ptr1);
+                }
+
+                if ((wave_record && !mox && record_rx_preprocessed) || (wave_record && mox && record_tx_preprocessed))
+                {
+                    wave_file_writer.AddWriteBuffer(in_l_ptr1, in_r_ptr1); // ke9ns this is preprocessed audio
+                }
+
+
 
                 if (phase)
                 {
@@ -1603,9 +1692,11 @@ namespace PowerSDR
                     //phase_mutex.ReleaseMutex();
                 }
 
+
+
+                //============================================================================
                 // handle VAC Input
-                if (vac_enabled &&
-                    rb_vacOUT_l != null && rb_vacOUT_r != null)
+                if (vac_enabled && rb_vacOUT_l != null && rb_vacOUT_r != null)
                 {
                     if (vac_bypass || !localmox) // drain VAC Input ring buffer
                     {
@@ -1638,11 +1729,25 @@ namespace PowerSDR
                             VACDebug("rb_vacIN underflow 4inTX");
                         }
                     }
-                }
+                } // VAC1 on 
 
+             //   if (mon && mox) // ke9ns this needs to be here(below VAC1 input) to grab the redirect from the VAC1
+              //  {
+
+                //    if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM)  // ke9ns add  use pre-processed audio for MON function in these modes only
+                 //   {
+                        //  Trace.Write("first=======");
+                   //     ScaleBuffer(in_l_ptr1, in_tl_ptr1, frameCount, 1.0f); // ke9ns add save a copy of the preprocess audio for MON output at the bottom of this routine
+                    //    ScaleBuffer(in_r_ptr1, in_tr_ptr1, frameCount, 1.0f); // ke9ns add save a copy of the preprocess audio for MON output at the bottom of this routine
+
+                  //  }
+
+
+              //  }
+
+                //===============================================================================================
                 // handle VAC2 Input
-                if (vac2_enabled &&
-                    rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+                if (vac2_enabled &&  rb_vac2OUT_l != null && rb_vac2OUT_r != null)
                 {
                     if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
                     {
@@ -1675,7 +1780,10 @@ namespace PowerSDR
                             VACDebug("rb_vacIN underflow 4inTX");
                         }
                     }
-                }
+                } // VAC2 on
+
+
+
 
                 min_in_l = Math.Min(min_in_l, MinSample(in_l, frameCount));
                 min_in_r = Math.Min(min_in_r, MinSample(in_r, frameCount));
@@ -1830,6 +1938,8 @@ namespace PowerSDR
 #if(MINMAX)
 			Debug.Write(MaxSample(in_l, in_r, frameCount).ToString("f6")+",");
 #endif
+               
+                //=========================================================================
                 //handle VAC if Direct IQ is on
                 if (vac_enabled && vac_output_iq &&
                 rb_vacOUT_l != null && rb_vacOUT_r != null &&
@@ -1866,6 +1976,9 @@ namespace PowerSDR
                     }
                 }
 
+
+
+                //================================================================================================
                 //handle VAC2 if Direct IQ is on
                 if (vac2_enabled && vac2_output_iq &&
                     rb_vac2OUT_l != null && rb_vac2OUT_r != null &&
@@ -1902,7 +2015,10 @@ namespace PowerSDR
                             vac2_rb_reset = true;
                         }
                     }
-                }
+                } // vac2 on with IQ
+
+
+            //========================================================================
               
                 if (localmox && (tx_dsp_mode == DSPMode.CWL || tx_dsp_mode == DSPMode.CWU))
                 {
@@ -2003,6 +2119,24 @@ namespace PowerSDR
                     switch (tx_output_signal)
                     {
                         case SignalSource.RADIO:
+
+                         //   if (mon && mox)
+                           // {
+                             //   if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM)  // ke9ns add  use pre-processed audio for MON function in these modes only
+                              //  {
+                                //    DoScope(out_l_ptr1, frameCount); // do above the reroute
+
+                                //        Trace.Write("PRI==");
+                                 //   ScaleBuffer(in_tl_ptr1, out_l_ptr1, frameCount, 1.0f); // ke9ns add pre processed MON
+                                //    ScaleBuffer(in_tl_ptr1, out_r_ptr1, frameCount, 1.0f); // ke9ns add pre processed MON
+
+                                 //   ScaleBuffer(in_tr_ptr1, in_r, frameCount, (float)vac_rx_scale);
+                                 //   ScaleBuffer(in_tr_ptr1, in_l, frameCount, (float)vac_rx_scale);
+
+                              //  }
+                         //   }
+                          
+
                             break;
                         case SignalSource.SINE:
                             SineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
@@ -2052,7 +2186,11 @@ namespace PowerSDR
                     ClearBuffer(out_r_ptr1, frameCount);
                 }
 
-                DoScope(out_l_ptr1, frameCount);
+               // if (tx_dsp_mode != DSPMode.AM && tx_dsp_mode != DSPMode.SAM && tx_dsp_mode != DSPMode.FM)  // ke9ns add  use pre-processed audio for MON function in these modes only
+               // {
+
+                    DoScope(out_l_ptr1, frameCount); // do up above if in AM/FM instead of here
+               // }
 
                 if (wave_record)
                 {
@@ -2072,7 +2210,9 @@ namespace PowerSDR
                     }
                 }
 
-                // scale output for VAC -- use input as spare buffer
+
+                //=========================================================================================
+                // scale output for VAC1 -- use input as spare buffer ke9ns this buffer is the VAC back to your PC speaker
                 if (vac_enabled && !vac_output_iq &&
                     rb_vacIN_l != null && rb_vacIN_r != null &&
                     rb_vacOUT_l != null && rb_vacOUT_r != null)
@@ -2084,14 +2224,30 @@ namespace PowerSDR
                     }
                     else if (mon)
                     {
-                        ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale);
-                        ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+                        if ((monpre ==1) ||(tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM))  // ke9ns add  use pre-processed audio for MON function in these modes only
+                        {
+
+                            ScaleBuffer(in_l_ptr1, in_l, frameCount, (float)vac_rx_scale); // ke9ns add pre processed MON over VAC
+                            ScaleBuffer(in_r_ptr1, in_r, frameCount, (float)vac_rx_scale);
+                          // Trace.Write("vac==");
+
+                        }
+                        else
+                        {
+                            ScaleBuffer(out_l, in_l, frameCount, (float)vac_rx_scale); // ke9ns post processed MON
+                            ScaleBuffer(out_r, in_r, frameCount, (float)vac_rx_scale);
+                        }
+
+
                     }
                     else // zero samples going back to VAC since TX monitor is off
                     {
                         ScaleBuffer(out_l, in_l, frameCount, 0.0f);
                         ScaleBuffer(out_r, in_r, frameCount, 0.0f);
                     }
+
+
+
 
                     if (sample_rate2 == sample_rate1) // no resample necessary
                     {
@@ -2153,7 +2309,7 @@ namespace PowerSDR
                             }
                         }
                     }
-                }
+                } // VAC1 on
 
                 // scale output for VAC2 -- use input as spare buffer
                 /*if (vac2_enabled && !vac2_output_iq &&
@@ -2225,7 +2381,9 @@ namespace PowerSDR
                     }
                 }*/
 
-                double vol = monitor_volume;                
+                double vol = monitor_volume;
+
+               
 
                 if (mox)
                 {
@@ -2242,7 +2400,7 @@ namespace PowerSDR
 
                 if (vol != 1.0)
                 {
-                    ScaleBuffer(out_l, out_l, frameCount, (float)vol);
+                    ScaleBuffer(out_l, out_l, frameCount, (float)vol); // ke9ns out to the transmitter
                     ScaleBuffer(out_r, out_r, frameCount, (float)vol);
                 }
 
@@ -2268,7 +2426,13 @@ namespace PowerSDR
             }           
 
             return callback_return;
-        }
+
+
+        } // callback1500
+
+
+
+
 
 #if(TIMER)
 		private static HiPerfTimer t1 = new HiPerfTimer();
@@ -2358,8 +2522,7 @@ namespace PowerSDR
 				in_r = (float *)array_ptr_input[3];
 			}
 
-			if(wave_playback)
-				wave_file_reader.GetPlayBuffer(in_l, in_r);
+			if(wave_playback)	wave_file_reader.GetPlayBuffer(in_l, in_r);
 			if(wave_record)
 			{
 				if(!localmox)
@@ -2813,8 +2976,16 @@ namespace PowerSDR
 				}
 				else if(mon)
 				{
-					ScaleBuffer(out_l2, out_l1, frameCount, (float)vac_rx_scale);
-					ScaleBuffer(out_r2, out_r1, frameCount, (float)vac_rx_scale);
+                    if( (monpre == 1) || (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM) ) // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(in_l_ptr1, out_l1, frameCount, (float)vac_rx_scale);  // ke9ns add preprocess
+                        ScaleBuffer(in_r_ptr1, out_r1, frameCount, (float)vac_rx_scale);
+                    }
+                    else
+                    {
+                        ScaleBuffer(out_l2, out_l1, frameCount, (float)vac_rx_scale); // ke9ns postprocess
+                        ScaleBuffer(out_r2, out_r1, frameCount, (float)vac_rx_scale);
+                    }
 				}
 				else // zero samples going back to VAC since TX monitor is off
 				{
@@ -2910,8 +3081,17 @@ namespace PowerSDR
                 }
                 else if (mon)
                 {
-                    ScaleBuffer(out_l2, out_l1, frameCount, (float)vac2_rx_scale);
-                    ScaleBuffer(out_r2, out_r1, frameCount, (float)vac2_rx_scale);
+                    if ((monpre == 1) || (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM) ) // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+
+                        ScaleBuffer(in_l_ptr1, out_l1, frameCount, (float)vac2_rx_scale); // ke9ns add preprocess
+                        ScaleBuffer(in_r_ptr1, out_r1, frameCount, (float)vac2_rx_scale);
+                    }
+                    else
+                    {
+                        ScaleBuffer(out_l2, out_l1, frameCount, (float)vac2_rx_scale); // ke9ns postprocess
+                        ScaleBuffer(out_r2, out_r1, frameCount, (float)vac2_rx_scale);
+                    }
                 }
                 else // zero samples going back to VAC since TX monitor is off
                 {
@@ -3006,11 +3186,13 @@ namespace PowerSDR
 			else
 			{
 				double tx_vol = TXScale;
-				if(tx_output_signal != SignalSource.RADIO)
-					tx_vol = 1.0;
+
+				if(tx_output_signal != SignalSource.RADIO)		tx_vol = 1.0;
 				
 				ScaleBuffer(out_l2, out_l1, frameCount, (float)monitor_volume);
 				ScaleBuffer(out_l2, out_l2, frameCount, (float)tx_vol);
+
+
 				ScaleBuffer(out_r2, out_r1, frameCount, (float)monitor_volume);
 				ScaleBuffer(out_r2, out_r2, frameCount, (float)tx_vol);
 			}
@@ -3082,9 +3264,9 @@ namespace PowerSDR
 			Debug.WriteLine(t1.Duration);
 #endif
 			return callback_return;
-		}
+		} // callback4port
 
-#if(MINMAX)
+#if (MINMAX)
 		private static float max = float.MinValue;
 #endif
         //private static HiPerfTimer t2 = new HiPerfTimer();
@@ -3092,146 +3274,173 @@ namespace PowerSDR
         //private static HiPerfTimer t3 = new HiPerfTimer();
         //private static ArrayList list = new ArrayList();
 
-		unsafe public static int Callback2(void* input, void* output, int frameCount,
-			PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void *userData)
-		{
-#if(TIMER)
+
+
+
+
+        //==============================================================================================================         
+        // ke9ns  (callback8) called to setup RX and TX streams (to and from the flex radio)
+        //        input here input_dev1 from setup.cs
+        //        output here output_dev1 from setup.cs
+        //==============================================================================================================         
+        unsafe public static int Callback2(void* input, void* output, int frameCount, PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
+        {
+#if (TIMER)
 			t1.Start();
 #endif
             //t2.Start();
-			float* in_l = null, in_r = null;
-			float* out_l1 = null, out_r1 = null, out_l2 = null, out_r2 = null;
-			float* out_l3 = null, out_r3 = null, out_l4 = null, out_r4 = null;
-			float* rx1_in_l = null, rx1_in_r = null, tx_in_l = null, tx_in_r = null;
-			float* rx2_in_l = null, rx2_in_r = null;
-			float* rx1_out_l = null, rx1_out_r = null, tx_out_l = null, tx_out_r = null;
-			float* rx2_out_l = null, rx2_out_r = null;
-			localmox = mox;
+            float* in_l = null, in_r = null;
+            float* out_l1 = null, out_r1 = null, out_l2 = null, out_r2 = null;
+            float* out_l3 = null, out_r3 = null, out_l4 = null, out_r4 = null;
+            float* rx1_in_l = null, rx1_in_r = null, tx_in_l = null, tx_in_r = null;
+            float* rx2_in_l = null, rx2_in_r = null;
+            float* rx1_out_l = null, rx1_out_r = null, tx_out_l = null, tx_out_r = null;
+            float* rx2_out_l = null, rx2_out_r = null;
 
-			void* ex_input  = (int *)input;
-			void* ex_output = (int *)output;
-			int* array_ptr_input = (int *)input;
-			float* in_l_ptr1 = (float *)array_ptr_input[0];
-			float* in_r_ptr1 = (float *)array_ptr_input[1];
-			float* in_l_ptr2 = (float *)array_ptr_input[2];
-			float* in_r_ptr2 = (float *)array_ptr_input[3];
-			float* in_l_ptr3 = (float *)array_ptr_input[4];
-			float* in_r_ptr3 = (float *)array_ptr_input[5];
-			float* in_l_ptr4 = (float *)array_ptr_input[6];
-			float* in_r_ptr4 = (float *)array_ptr_input[7];
-			int* array_ptr_output = (int *)output;
-			float* out_l_ptr1 = (float *)array_ptr_output[0];
-			float* out_r_ptr1 = (float *)array_ptr_output[1];
-			float* out_l_ptr2 = (float *)array_ptr_output[2];
-			float* out_r_ptr2 = (float *)array_ptr_output[3];
-			float* out_l_ptr3 = (float *)array_ptr_output[4];
-			float* out_r_ptr3 = (float *)array_ptr_output[5];
-			float* out_l_ptr4 = (float *)array_ptr_output[6];
-			float* out_r_ptr4 = (float *)array_ptr_output[7];
-			
-			// arrange input buffers in the following order:
-			// RX1 Left, RX1 Right, TX Left, TX Right, RX2 Left, RX2 Right
-			//int* array_ptr = (int *)input;
-			switch(in_rx1_l)
-			{
-				case 0: array_ptr_input[0] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[0] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[0] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[0] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[0] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[0] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[0] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[0] = (int)in_r_ptr4; break;
-			}
+            localmox = mox;
 
-			switch(in_rx1_r)
-			{
-				case 0: array_ptr_input[1] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[1] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[1] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[1] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[1] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[1] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[1] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[1] = (int)in_r_ptr4; break;
-			}
-			
-			switch(in_tx_l)
-			{
-				case 0: array_ptr_input[2] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[2] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[2] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[2] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[2] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[2] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[2] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[2] = (int)in_r_ptr4; break;
-			}
+            void* ex_input = (int*)input;
+            void* ex_output = (int*)output;
 
-			switch(in_tx_r)
-			{
-				case 0: array_ptr_input[3] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[3] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[3] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[3] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[3] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[3] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[3] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[3] = (int)in_r_ptr4; break;
-			}
-			
-			switch(in_rx2_l)
-			{
-				case 0: array_ptr_input[4] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[4] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[4] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[4] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[4] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[4] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[4] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[4] = (int)in_r_ptr4; break;
-			}
-			switch(in_rx2_r)
-			{
-				case 0: array_ptr_input[5] = (int)in_l_ptr1; break;
-				case 1: array_ptr_input[5] = (int)in_r_ptr1; break;
-				case 2: array_ptr_input[5] = (int)in_l_ptr2; break;
-				case 3: array_ptr_input[5] = (int)in_r_ptr2; break;
-				case 4: array_ptr_input[5] = (int)in_l_ptr3; break;
-				case 5: array_ptr_input[5] = (int)in_r_ptr3; break;
-				case 6: array_ptr_input[5] = (int)in_l_ptr4; break;
-				case 7: array_ptr_input[5] = (int)in_r_ptr4; break;
-			}
+            int* array_ptr_input = (int*)input;
 
-			rx1_in_l = (float *)array_ptr_input[0];
-			rx1_in_r = (float *)array_ptr_input[1];
-			tx_in_l = (float *)array_ptr_input[2];
-			tx_in_r = (float *)array_ptr_input[3];
-			rx2_in_l = (float *)array_ptr_input[4];
-			rx2_in_r = (float *)array_ptr_input[5];
+            float* in_l_ptr1 = (float*)array_ptr_input[0];
+            float* in_r_ptr1 = (float*)array_ptr_input[1];
+            float* in_l_ptr2 = (float*)array_ptr_input[2];
+            float* in_r_ptr2 = (float*)array_ptr_input[3];
+            float* in_l_ptr3 = (float*)array_ptr_input[4];
+            float* in_r_ptr3 = (float*)array_ptr_input[5];
+            float* in_l_ptr4 = (float*)array_ptr_input[6];
+            float* in_r_ptr4 = (float*)array_ptr_input[7];
 
-			rx1_out_l = (float *)array_ptr_output[0];
-			rx1_out_r = (float *)array_ptr_output[1];
-			tx_out_l = (float *)array_ptr_output[2];
-			tx_out_r = (float *)array_ptr_output[3];
-			rx2_out_l = (float *)array_ptr_output[4];
-			rx2_out_r = (float *)array_ptr_output[5];
+            int* array_ptr_output = (int*)output;
 
-			if(!localmox)
-			{
-				in_l = rx1_in_l;
-				in_r = rx1_in_r;
-			}
-			else
-			{
-				in_l = tx_in_l;
-				in_r = tx_in_r;
-			}
+            float* out_l_ptr1 = (float*)array_ptr_output[0];
+            float* out_r_ptr1 = (float*)array_ptr_output[1];
+            float* out_l_ptr2 = (float*)array_ptr_output[2];
+            float* out_r_ptr2 = (float*)array_ptr_output[3];
+            float* out_l_ptr3 = (float*)array_ptr_output[4];
+            float* out_r_ptr3 = (float*)array_ptr_output[5];
+            float* out_l_ptr4 = (float*)array_ptr_output[6];
+            float* out_r_ptr4 = (float*)array_ptr_output[7];
 
-            float sum = SumBuffer(rx1_in_l, frameCount);
+            // arrange input buffers in the following order:
+            // RX1 Left, RX1 Right, TX Left, TX Right, RX2 Left, RX2 Right
+            //int* array_ptr = (int *)input;
+            switch (in_rx1_l)
+            {
+                case 0: array_ptr_input[0] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[0] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[0] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[0] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[0] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[0] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[0] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[0] = (int)in_r_ptr4; break;
+            }
+
+            switch (in_rx1_r)
+            {
+                case 0: array_ptr_input[1] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[1] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[1] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[1] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[1] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[1] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[1] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[1] = (int)in_r_ptr4; break;
+            }
+
+            switch (in_tx_l)
+            {
+                case 0: array_ptr_input[2] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[2] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[2] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[2] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[2] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[2] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[2] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[2] = (int)in_r_ptr4; break;
+            }
+
+            switch (in_tx_r)
+            {
+                case 0: array_ptr_input[3] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[3] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[3] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[3] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[3] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[3] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[3] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[3] = (int)in_r_ptr4; break;
+            }
+
+            switch (in_rx2_l)
+            {
+                case 0: array_ptr_input[4] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[4] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[4] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[4] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[4] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[4] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[4] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[4] = (int)in_r_ptr4; break;
+            }
+            switch (in_rx2_r)
+            {
+                case 0: array_ptr_input[5] = (int)in_l_ptr1; break;
+                case 1: array_ptr_input[5] = (int)in_r_ptr1; break;
+                case 2: array_ptr_input[5] = (int)in_l_ptr2; break;
+                case 3: array_ptr_input[5] = (int)in_r_ptr2; break;
+                case 4: array_ptr_input[5] = (int)in_l_ptr3; break;
+                case 5: array_ptr_input[5] = (int)in_r_ptr3; break;
+                case 6: array_ptr_input[5] = (int)in_l_ptr4; break;
+                case 7: array_ptr_input[5] = (int)in_r_ptr4; break;
+            }
+
+            rx1_in_l = (float*)array_ptr_input[0];
+            rx1_in_r = (float*)array_ptr_input[1];
+            tx_in_l = (float*)array_ptr_input[2];
+            tx_in_r = (float*)array_ptr_input[3];
+            rx2_in_l = (float*)array_ptr_input[4];
+            rx2_in_r = (float*)array_ptr_input[5];
+
+            rx1_out_l = (float*)array_ptr_output[0];
+            rx1_out_r = (float*)array_ptr_output[1];
+            tx_out_l = (float*)array_ptr_output[2];
+            tx_out_r = (float*)array_ptr_output[3];
+            rx2_out_l = (float*)array_ptr_output[4];
+            rx2_out_r = (float*)array_ptr_output[5];
+
+
+
+            //=============================================================================================
+            //=============================================================================================
+            // ke9ns below is wher the INPUT audio is played
+            //=============================================================================================
+            //=============================================================================================
+
+            if (!localmox)
+            {
+                in_l = rx1_in_l;  // ke9ns if Receiving
+                in_r = rx1_in_r;
+            }
+            else
+            {
+                in_l = tx_in_l;   // ke9ns if transmitting
+                in_r = tx_in_r;
+            }
+
+            float sum = SumBuffer(rx1_in_l, frameCount); // ke9ns sum up the entire sample to see if anything in it
+
             if (sum == 0.0f)
+            {
                 empty_buffers++;
-            else empty_buffers = 0;
+            }
+            else
+            {
+                empty_buffers = 0;
+            }
 
 #if true // EHR RX2 QSK
             if (localmox && rx2_enabled && rx2_auto_mute_tx)
@@ -3241,87 +3450,97 @@ namespace PowerSDR
             }
 #endif
 
-			if(wave_playback)
-			{
-				wave_file_reader.GetPlayBuffer(in_l, in_r);
-				if(rx2_enabled)
-				{
+            if (wave_playback)                  // ke9ns  audio playback
+            {
+                wave_file_reader.GetPlayBuffer(in_l, in_r);
+
+                if (rx2_enabled)
+                {
                     if (wave_file_reader2 != null)
                     {
                         wave_file_reader2.GetPlayBuffer(rx2_in_l, rx2_in_r);
                     }
-                    else if(!localmox)
+                    else if (!localmox)
                     {
                         CopyBuffer(in_l, rx2_in_l, frameCount);
                         CopyBuffer(in_r, rx2_in_r, frameCount);
                     }
-				}
-			}
-			
-            if(wave_record)
-			{
-				if(!localmox)
-				{
-					if(record_rx_preprocessed)
-					{
+                }
+            } // audio file playback
+
+            if (wave_record)                           // ke9ns  audio playback
+            {
+                if (!localmox)
+                {
+                    if (record_rx_preprocessed)
+                    {
                         wave_file_writer.AddWriteBuffer(rx1_in_l, rx1_in_r);
+
                         if (wave_file_writer2 != null)
                             wave_file_writer2.AddWriteBuffer(rx2_in_l, rx2_in_r);
-					}
-				}
-				else
-				{
-					if(record_tx_preprocessed)
-					{
-                        wave_file_writer.AddWriteBuffer(tx_in_l, tx_in_r);
-					}
-				}
-			}
+                    }
+                }
+                else
+                {
+                    if (record_tx_preprocessed)
+                    {
+                        wave_file_writer.AddWriteBuffer(tx_in_l, tx_in_r); // this audio is still real audio , where the section further down is post processed and AM mode is in AM mode
+                         //   Trace.Write("pretest====");
 
-			if(phase)
-			{
-				//phase_mutex.WaitOne();
-				Marshal.Copy(new IntPtr(in_l), phase_buf_l, 0, frameCount);
-				Marshal.Copy(new IntPtr(in_r), phase_buf_r, 0, frameCount);
-				//phase_mutex.ReleaseMutex();
-			}
+                    }
+                }
+            } // audio file record
 
-			// handle VAC Input
-			if(vac_enabled && 
-				rb_vacOUT_l != null && rb_vacOUT_r != null)
-			{
-				if(vac_bypass || !localmox) // drain VAC Input ring buffer
-				{
-					if ((rb_vacIN_l.ReadSpace() >= frameCount)&&(rb_vacIN_r.ReadSpace() >= frameCount))
-					{
-						Win32.EnterCriticalSection(cs_vac);
-						rb_vacIN_l.ReadPtr(out_l_ptr2, frameCount);
-						rb_vacIN_r.ReadPtr(out_r_ptr2, frameCount);
-						Win32.LeaveCriticalSection(cs_vac);
-					}
-				}
-				else
-				{
-					if(rb_vacIN_l.ReadSpace() >= frameCount) 
-					{
-						Win32.EnterCriticalSection(cs_vac);
-						rb_vacIN_l.ReadPtr(tx_in_l, frameCount);
-						rb_vacIN_r.ReadPtr(tx_in_r, frameCount);
-						Win32.LeaveCriticalSection(cs_vac);
-						if(vac_combine_input)
-							AddBuffer(tx_in_l, tx_in_r, frameCount);
-					}
-					else
-					{
-						ClearBuffer(tx_in_l, frameCount);
-						ClearBuffer(tx_in_r, frameCount);
-						VACDebug("rb_vacIN underflow 4inTX");
-					}
-					ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
-					ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
-				}
-			}
+            if (phase)
+            {
+                //phase_mutex.WaitOne();
+                Marshal.Copy(new IntPtr(in_l), phase_buf_l, 0, frameCount);
+                Marshal.Copy(new IntPtr(in_r), phase_buf_r, 0, frameCount);
+                //phase_mutex.ReleaseMutex();
+            }
 
+
+            //---------------------------------------------------------------------------------
+            // handle VAC1 Input
+            if (vac_enabled && rb_vacOUT_l != null && rb_vacOUT_r != null)
+            {
+                if (vac_bypass || !localmox) // drain VAC Input ring buffer
+                {
+                    if ((rb_vacIN_l.ReadSpace() >= frameCount) && (rb_vacIN_r.ReadSpace() >= frameCount))
+                    {
+                        Win32.EnterCriticalSection(cs_vac);
+                        rb_vacIN_l.ReadPtr(out_l_ptr2, frameCount);
+                        rb_vacIN_r.ReadPtr(out_r_ptr2, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac);
+                    }
+                }
+                else
+                {
+                    if (rb_vacIN_l.ReadSpace() >= frameCount)
+                    {
+                        Win32.EnterCriticalSection(cs_vac);  // ke9ns used to make sure you have control
+                        rb_vacIN_l.ReadPtr(tx_in_l, frameCount);
+                        rb_vacIN_r.ReadPtr(tx_in_r, frameCount);
+                        Win32.LeaveCriticalSection(cs_vac);
+
+                        if (vac_combine_input) AddBuffer(tx_in_l, tx_in_r, frameCount);
+                    }
+                    else
+                    {
+                        ClearBuffer(tx_in_l, frameCount);
+                        ClearBuffer(tx_in_r, frameCount);
+                        VACDebug("rb_vacIN underflow 4inTX");
+                    }
+
+                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
+                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
+                }
+
+            } // vac1 on 
+
+
+
+            //---------------------------------------------------------------------------------
             // handle VAC2 Input
             if (vac2_enabled &&
                 rb_vac2OUT_l != null && rb_vac2OUT_r != null)
@@ -3344,8 +3563,8 @@ namespace PowerSDR
                         rb_vac2IN_l.ReadPtr(tx_in_l, frameCount);
                         rb_vac2IN_r.ReadPtr(tx_in_r, frameCount);
                         Win32.LeaveCriticalSection(cs_vac2);
-                        if (vac2_combine_input)
-                            AddBuffer(tx_in_l, tx_in_r, frameCount);
+
+                        if (vac2_combine_input) AddBuffer(tx_in_l, tx_in_r, frameCount);
 
                         ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac2_tx_scale);
                         ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac2_tx_scale);
@@ -3357,193 +3576,194 @@ namespace PowerSDR
                         VACDebug("rb_vac2IN underflow 4inTX");
                     }
                 }
-            }
+            } // vac2 on 
 
-			#region VOX
-			if(vox_enabled)
-			{
-				if(tx_dsp_mode == DSPMode.LSB ||
-					tx_dsp_mode == DSPMode.USB ||
-					tx_dsp_mode == DSPMode.DSB ||
-					tx_dsp_mode == DSPMode.AM  ||
-					tx_dsp_mode == DSPMode.SAM ||
+
+            #region VOX
+            if (vox_enabled)
+            {
+                if (tx_dsp_mode == DSPMode.LSB ||
+                    tx_dsp_mode == DSPMode.USB ||
+                    tx_dsp_mode == DSPMode.DSB ||
+                    tx_dsp_mode == DSPMode.AM ||
+                    tx_dsp_mode == DSPMode.SAM ||
                     tx_dsp_mode == DSPMode.FM ||
                     tx_dsp_mode == DSPMode.DIGL ||
                     tx_dsp_mode == DSPMode.DIGU)
-				{
-					peak = MaxSample(tx_in_l, tx_in_r, frameCount);
+                {
+                    peak = MaxSample(tx_in_l, tx_in_r, frameCount);
 
-					// compare power to threshold
-					if(peak > vox_threshold) 
-						vox_active = true;
-					else 
-						vox_active = false;
-				}
-			}
-			#endregion
+                    // compare power to threshold
+                    if (peak > vox_threshold)
+                        vox_active = true;
+                    else
+                        vox_active = false;
+                }
+            }
+            #endregion
 
-			// scale input with mic preamp
-			if((!vac_enabled &&
-				(tx_dsp_mode == DSPMode.LSB ||
-				tx_dsp_mode == DSPMode.USB ||
-				tx_dsp_mode == DSPMode.DSB ||
-				tx_dsp_mode == DSPMode.AM  ||
-				tx_dsp_mode == DSPMode.SAM ||
-				tx_dsp_mode == DSPMode.FM ||
-				tx_dsp_mode == DSPMode.DIGL ||
-				tx_dsp_mode == DSPMode.DIGU)) ||
-				(vac_enabled && vac_bypass &&
-				(tx_dsp_mode == DSPMode.DIGL ||
-				tx_dsp_mode == DSPMode.DIGU ||
-				tx_dsp_mode == DSPMode.LSB ||
-				tx_dsp_mode == DSPMode.USB ||
-				tx_dsp_mode == DSPMode.DSB ||
-				tx_dsp_mode == DSPMode.AM ||
-				tx_dsp_mode == DSPMode.SAM ||
-				tx_dsp_mode == DSPMode.FM)))
-			{
-				if(wave_playback)
-				{
-					ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
-					ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
-				}
-				else
-				{
-					if(!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
-					{
-						ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
-						ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
-					}
-					else
-					{
-						ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)mic_preamp);
-						ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)mic_preamp);
-					}
-				}
-			}
+            // scale input with mic preamp
+            if ((!vac_enabled &&
+                (tx_dsp_mode == DSPMode.LSB ||
+                tx_dsp_mode == DSPMode.USB ||
+                tx_dsp_mode == DSPMode.DSB ||
+                tx_dsp_mode == DSPMode.AM ||
+                tx_dsp_mode == DSPMode.SAM ||
+                tx_dsp_mode == DSPMode.FM ||
+                tx_dsp_mode == DSPMode.DIGL ||
+                tx_dsp_mode == DSPMode.DIGU)) ||
+                (vac_enabled && vac_bypass &&
+                (tx_dsp_mode == DSPMode.DIGL ||
+                tx_dsp_mode == DSPMode.DIGU ||
+                tx_dsp_mode == DSPMode.LSB ||
+                tx_dsp_mode == DSPMode.USB ||
+                tx_dsp_mode == DSPMode.DSB ||
+                tx_dsp_mode == DSPMode.AM ||
+                tx_dsp_mode == DSPMode.SAM ||
+                tx_dsp_mode == DSPMode.FM)))
+            {
+                if (wave_playback)
+                {
+                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
+                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
+                }
+                else
+                {
+                    if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
+                    {
+                        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
+                        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
+                    }
+                    else
+                    {
+                        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)mic_preamp);
+                        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)mic_preamp);
+                    }
+                }
+            }
 
-			#region Input Signal Source
+            #region Input Signal Source
 
-			switch(rx1_input_signal)
-			{
-				case SignalSource.RADIO:
-					break;
-				case SignalSource.SINE:
-					SineWave(rx1_in_l, frameCount, phase_accumulator1, sine_freq1);
-					phase_accumulator1 = CosineWave(rx1_in_r, frameCount, phase_accumulator1, sine_freq1);
+            switch (rx1_input_signal)
+            {
+                case SignalSource.RADIO:
+                    break;
+                case SignalSource.SINE:
+                    SineWave(rx1_in_l, frameCount, phase_accumulator1, sine_freq1);
+                    phase_accumulator1 = CosineWave(rx1_in_r, frameCount, phase_accumulator1, sine_freq1);
                     ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
                     ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.SINE_TWO_TONE:
-					double dump;
-					SineWave2Tone(rx1_in_l, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out dump, out dump);
-					CosineWave2Tone(rx1_in_r, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-					ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
-					ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.SINE_LEFT_ONLY:
-					phase_accumulator1 = SineWave(rx1_in_l, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
-					ClearBuffer(rx1_in_r, frameCount);
-					break;
-				case SignalSource.SINE_RIGHT_ONLY:
-					phase_accumulator1 = SineWave(rx1_in_r, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
-					ClearBuffer(rx1_in_l, frameCount);
-					break;
-				case SignalSource.NOISE:
-					Noise(rx1_in_l, frameCount);
-					Noise(rx1_in_r, frameCount);
-					break;
-				case SignalSource.TRIANGLE:
-					Triangle(rx1_in_l, frameCount, sine_freq1);
-					CopyBuffer(rx1_in_l, rx1_in_r, frameCount);
-					break;
-				case SignalSource.SAWTOOTH:
-					Sawtooth(rx1_in_l, frameCount, sine_freq1);
-					CopyBuffer(rx1_in_l, rx1_in_r, frameCount);
-					break;
+                    break;
+                case SignalSource.SINE_TWO_TONE:
+                    double dump;
+                    SineWave2Tone(rx1_in_l, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out dump, out dump);
+                    CosineWave2Tone(rx1_in_r, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                    ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
+                    ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.SINE_LEFT_ONLY:
+                    phase_accumulator1 = SineWave(rx1_in_l, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
+                    ClearBuffer(rx1_in_r, frameCount);
+                    break;
+                case SignalSource.SINE_RIGHT_ONLY:
+                    phase_accumulator1 = SineWave(rx1_in_r, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
+                    ClearBuffer(rx1_in_l, frameCount);
+                    break;
+                case SignalSource.NOISE:
+                    Noise(rx1_in_l, frameCount);
+                    Noise(rx1_in_r, frameCount);
+                    break;
+                case SignalSource.TRIANGLE:
+                    Triangle(rx1_in_l, frameCount, sine_freq1);
+                    CopyBuffer(rx1_in_l, rx1_in_r, frameCount);
+                    break;
+                case SignalSource.SAWTOOTH:
+                    Sawtooth(rx1_in_l, frameCount, sine_freq1);
+                    CopyBuffer(rx1_in_l, rx1_in_r, frameCount);
+                    break;
                 case SignalSource.PULSE:
                     Pulse(rx1_in_l, frameCount);
                     CopyBuffer(rx1_in_l, rx1_in_r, frameCount);
                     ScaleBuffer(rx1_in_l, rx1_in_l, frameCount, (float)source_scale);
                     ScaleBuffer(rx1_in_r, rx1_in_r, frameCount, (float)source_scale);
                     break;
-				case SignalSource.SILENCE:
-					ClearBuffer(rx1_in_l, frameCount);
-					ClearBuffer(rx1_in_r, frameCount);
-					break;
-			}
+                case SignalSource.SILENCE:
+                    ClearBuffer(rx1_in_l, frameCount);
+                    ClearBuffer(rx1_in_r, frameCount);
+                    break;
+            }
 
-			if(rx2_enabled)
-			{
-				switch(rx2_input_signal)
-				{
-					case SignalSource.RADIO:
-						break;
-					case SignalSource.SINE:
-						SineWave(rx2_in_l, frameCount, phase_accumulator1, sine_freq1);
-						phase_accumulator1 = CosineWave(rx2_in_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
-						ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
-						break;
-					case SignalSource.SINE_TWO_TONE:
-						double dump;
-						SineWave2Tone(rx2_in_l, frameCount, phase_accumulator1, phase_accumulator2,
-							sine_freq1, sine_freq2, out dump, out dump);
-						CosineWave2Tone(rx2_in_r, frameCount, phase_accumulator1, phase_accumulator2,
-							sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-						ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
-						ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
-						break;
-					case SignalSource.SINE_LEFT_ONLY:
-						phase_accumulator1 = SineWave(rx2_in_l, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
-						ClearBuffer(rx2_in_r, frameCount);
-						break;
-					case SignalSource.SINE_RIGHT_ONLY:
-						phase_accumulator1 = SineWave(rx2_in_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
-						ClearBuffer(rx2_in_l, frameCount);
-						break;
-					case SignalSource.NOISE:
-						Noise(rx2_in_l, frameCount);
-						Noise(rx2_in_r, frameCount);
-						break;
-					case SignalSource.TRIANGLE:
-						Triangle(rx2_in_l, frameCount, sine_freq1);
-						CopyBuffer(rx2_in_l, rx2_in_r, frameCount);
-						break;
-					case SignalSource.SAWTOOTH:
-						Sawtooth(rx2_in_l, frameCount, sine_freq1);
-						CopyBuffer(rx2_in_l, rx2_in_r, frameCount);
-						break;
+            if (rx2_enabled)
+            {
+                switch (rx2_input_signal)
+                {
+                    case SignalSource.RADIO:
+                        break;
+                    case SignalSource.SINE:
+                        SineWave(rx2_in_l, frameCount, phase_accumulator1, sine_freq1);
+                        phase_accumulator1 = CosineWave(rx2_in_r, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
+                        ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
+                        break;
+                    case SignalSource.SINE_TWO_TONE:
+                        double dump;
+                        SineWave2Tone(rx2_in_l, frameCount, phase_accumulator1, phase_accumulator2,
+                            sine_freq1, sine_freq2, out dump, out dump);
+                        CosineWave2Tone(rx2_in_r, frameCount, phase_accumulator1, phase_accumulator2,
+                            sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                        ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
+                        ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
+                        break;
+                    case SignalSource.SINE_LEFT_ONLY:
+                        phase_accumulator1 = SineWave(rx2_in_l, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
+                        ClearBuffer(rx2_in_r, frameCount);
+                        break;
+                    case SignalSource.SINE_RIGHT_ONLY:
+                        phase_accumulator1 = SineWave(rx2_in_r, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
+                        ClearBuffer(rx2_in_l, frameCount);
+                        break;
+                    case SignalSource.NOISE:
+                        Noise(rx2_in_l, frameCount);
+                        Noise(rx2_in_r, frameCount);
+                        break;
+                    case SignalSource.TRIANGLE:
+                        Triangle(rx2_in_l, frameCount, sine_freq1);
+                        CopyBuffer(rx2_in_l, rx2_in_r, frameCount);
+                        break;
+                    case SignalSource.SAWTOOTH:
+                        Sawtooth(rx2_in_l, frameCount, sine_freq1);
+                        CopyBuffer(rx2_in_l, rx2_in_r, frameCount);
+                        break;
                     case SignalSource.PULSE:
                         Pulse(rx2_in_l, frameCount);
                         CopyBuffer(rx2_in_l, rx2_in_r, frameCount);
                         ScaleBuffer(rx2_in_l, rx2_in_l, frameCount, (float)source_scale);
                         ScaleBuffer(rx2_in_r, rx2_in_r, frameCount, (float)source_scale);
                         break;
-					case SignalSource.SILENCE:
-						ClearBuffer(rx2_in_l, frameCount);
-						ClearBuffer(rx2_in_r, frameCount);
-						break;
-				}
-			}
+                    case SignalSource.SILENCE:
+                        ClearBuffer(rx2_in_l, frameCount);
+                        ClearBuffer(rx2_in_r, frameCount);
+                        break;
+                }
+            }
 
-			switch(tx_input_signal)
-			{
-				case SignalSource.RADIO:
-					break;
-				case SignalSource.SINE:
-					SineWave(tx_in_l, frameCount, phase_accumulator1, sine_freq1);
-					phase_accumulator1 = CosineWave(tx_in_r, frameCount, phase_accumulator1, sine_freq1);
+            switch (tx_input_signal)
+            {
+                case SignalSource.RADIO:
+                    break;
+                case SignalSource.SINE:
+                    SineWave(tx_in_l, frameCount, phase_accumulator1, sine_freq1);
+                    phase_accumulator1 = CosineWave(tx_in_r, frameCount, phase_accumulator1, sine_freq1);
                     /*if (!ramp_down)
                     {*/
-                        ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
-                        ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
+                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
+                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
                     /*}
                     else
                     {
@@ -3554,44 +3774,44 @@ namespace PowerSDR
                             tx_input_signal = SignalSource.RADIO;
                             ramp_down = false;
                         }
-                    }*/					
-					break;
-				case SignalSource.SINE_TWO_TONE:
-					double dump;
-					SineWave2Tone(tx_in_l, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out dump, out dump);
-					CosineWave2Tone(tx_in_r, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-					ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
-					ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.NOISE:
-					Noise(tx_in_l, frameCount);
-					Noise(tx_in_r, frameCount);
-					break;
-				case SignalSource.TRIANGLE:
-					Triangle(tx_in_l, frameCount, sine_freq1);
-					CopyBuffer(tx_in_l, tx_in_r, frameCount);
-					break;
-				case SignalSource.SAWTOOTH:
-					Sawtooth(tx_in_l, frameCount, sine_freq1);
-					CopyBuffer(tx_in_l, tx_in_r, frameCount);
-					break;
+                    }*/
+                    break;
+                case SignalSource.SINE_TWO_TONE:
+                    double dump;
+                    SineWave2Tone(tx_in_l, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out dump, out dump);
+                    CosineWave2Tone(tx_in_r, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
+                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.NOISE:
+                    Noise(tx_in_l, frameCount);
+                    Noise(tx_in_r, frameCount);
+                    break;
+                case SignalSource.TRIANGLE:
+                    Triangle(tx_in_l, frameCount, sine_freq1);
+                    CopyBuffer(tx_in_l, tx_in_r, frameCount);
+                    break;
+                case SignalSource.SAWTOOTH:
+                    Sawtooth(tx_in_l, frameCount, sine_freq1);
+                    CopyBuffer(tx_in_l, tx_in_r, frameCount);
+                    break;
                 case SignalSource.PULSE:
                     Pulse(tx_in_l, frameCount);
                     CopyBuffer(tx_in_l, tx_in_r, frameCount);
                     ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
                     ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
                     break;
-				case SignalSource.SILENCE:
-					ClearBuffer(tx_in_l, frameCount);
-					ClearBuffer(tx_in_r, frameCount);
-					break;
-			}
+                case SignalSource.SILENCE:
+                    ClearBuffer(tx_in_l, frameCount);
+                    ClearBuffer(tx_in_r, frameCount);
+                    break;
+            }
 
-			#endregion
+            #endregion
 
-#if(MINMAX)
+#if (MINMAX)
 			/*float local_max = MaxSample(in_l, in_r, frameCount);
 			if(local_max > max)
 			{
@@ -3601,31 +3821,34 @@ namespace PowerSDR
 
 			Debug.Write(MaxSample(in_l, in_r, frameCount).ToString("f6")+",");
 #endif
-            // handle Direct IQ for VAC
-			if (vac_enabled && vac_output_iq &&
-				rb_vacOUT_l != null && rb_vacOUT_r != null &&
-				rx1_in_l != null && rx1_in_r != null)
-			{
-				if ((rb_vacOUT_l.WriteSpace()>=frameCount)&&(rb_vacOUT_r.WriteSpace()>=frameCount))
-				{
-					if (vac_correct_iq)
-						fixed(float *res_outl_ptr = &(res_outl[0]))
-							fixed(float *res_outr_ptr = &(res_outr[0]))
-							{
-                                if (vac_output_rx2)
-                                    CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
-                                else
-                                    CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
 
-								Win32.EnterCriticalSection(cs_vac);
-                                rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
-								rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount);
-								Win32.LeaveCriticalSection(cs_vac);
 
-							}
-					else
-					{
-						Win32.EnterCriticalSection(cs_vac);
+            //---------------------------------------------------------------------------------
+            // handle Direct IQ for VAC1
+            if (vac_enabled && vac_output_iq &&
+                rb_vacOUT_l != null && rb_vacOUT_r != null &&
+                rx1_in_l != null && rx1_in_r != null)
+            {
+                if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
+                {
+                    if (vac_correct_iq)
+                        fixed (float* res_outl_ptr = &(res_outl[0]))
+                            fixed (float* res_outr_ptr = &(res_outr[0]))
+                        {
+                            if (vac_output_rx2)
+                                CorrectIQBuffer(rx2_in_l, rx2_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+                            else
+                                CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
+
+                            Win32.EnterCriticalSection(cs_vac);
+                            rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
+                            rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount);
+                            Win32.LeaveCriticalSection(cs_vac);
+
+                        }
+                    else
+                    {
+                        Win32.EnterCriticalSection(cs_vac);
                         if (vac_output_rx2)
                         {
                             rb_vacOUT_l.WritePtr(rx2_in_r, frameCount);
@@ -3636,16 +3859,19 @@ namespace PowerSDR
                             rb_vacOUT_l.WritePtr(rx1_in_r, frameCount);
                             rb_vacOUT_r.WritePtr(rx1_in_l, frameCount);
                         }
-						Win32.LeaveCriticalSection(cs_vac);
-					}
-				}
-				else 
-				{
-					VACDebug("rb_vacOUT_l I/Q overflow ");
-					vac_rb_reset = true;
-				}
-			}
+                        Win32.LeaveCriticalSection(cs_vac);
+                    }
+                }
+                else
+                {
+                    VACDebug("rb_vacOUT_l I/Q overflow ");
+                    vac_rb_reset = true;
+                }
+            } // vac1 with IQ ON
 
+
+
+            //---------------------------------------------------------------------------------
             // handle Direct IQ for VAC2
             if (vac2_enabled && vac2_output_iq &&
                 rb_vac2OUT_l != null && rb_vac2OUT_r != null)
@@ -3688,11 +3914,14 @@ namespace PowerSDR
                     VACDebug("rb_vac2OUT_l I/Q overflow ");
                     vac2_rb_reset = true;
                 }
-            }
+            } // Vac2 with IQ on
+
+
+
 
             if (localmox && (tx_dsp_mode == DSPMode.CWL || tx_dsp_mode == DSPMode.CWU))
             {
-                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);
+                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);   
 
                 double time = CWSensorItem.GetCurrentTime();
                 CWSynth.Advance(tx_out_l, tx_out_r, frameCount, time);
@@ -3706,170 +3935,180 @@ namespace PowerSDR
             }
             else
             {
-                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);
+                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);            // ke9ns for standard audio do this routine found in  winmain.c as Audio_Callback2
             }
-#if(MINMAX)
+
+
+
+#if (MINMAX)
 			Debug.Write(MaxSample(out_l_ptr2, frameCount).ToString("f6")+",");
 			Debug.Write(MaxSample(out_r_ptr2, frameCount).ToString("f6")+"\n");
 #endif
 
-			#region Output Signal Source
+            //=============================================================================================
+            //=============================================================================================
+            // ke9ns below is wher the OUTPUT audio is played
+            //=============================================================================================
+            //=============================================================================================
 
-			switch(rx1_output_signal)
-			{
-				case SignalSource.RADIO:
-					break;
-				case SignalSource.SINE:
-					SineWave(rx1_out_l, frameCount, phase_accumulator1, sine_freq1);
-					phase_accumulator1 = CosineWave(rx1_out_r, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
-					ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.SINE_TWO_TONE:
-					double dump;
-					SineWave2Tone(rx1_out_l, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out dump, out dump);
-					CosineWave2Tone(rx1_out_r, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-					ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
-					ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.SINE_LEFT_ONLY:
-					phase_accumulator1 = SineWave(rx1_out_l, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
-					ClearBuffer(rx1_out_r, frameCount);
-					break;
-				case SignalSource.SINE_RIGHT_ONLY:
-					phase_accumulator1 = SineWave(rx1_out_r, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
-					ClearBuffer(rx1_out_l, frameCount);
-					break;
-				case SignalSource.NOISE:
-					Noise(rx1_out_l, frameCount);
-					Noise(rx1_out_r, frameCount);
-					break;
-				case SignalSource.TRIANGLE:
-					Triangle(rx1_out_l, frameCount, sine_freq1);
-					CopyBuffer(rx1_out_l, rx1_out_r, frameCount);
-					break;
-				case SignalSource.SAWTOOTH:
-					Sawtooth(rx1_out_l, frameCount, sine_freq1);
-					CopyBuffer(rx1_out_l, rx1_out_r, frameCount);
-					break;
+
+            #region Output Signal Source
+
+            switch (rx1_output_signal)
+            {
+                case SignalSource.RADIO:
+                    break;
+                case SignalSource.SINE:
+                    SineWave(rx1_out_l, frameCount, phase_accumulator1, sine_freq1);
+                    phase_accumulator1 = CosineWave(rx1_out_r, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
+                    ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.SINE_TWO_TONE:
+                    double dump;
+                    SineWave2Tone(rx1_out_l, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out dump, out dump);
+                    CosineWave2Tone(rx1_out_r, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                    ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
+                    ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.SINE_LEFT_ONLY:
+                    phase_accumulator1 = SineWave(rx1_out_l, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
+                    ClearBuffer(rx1_out_r, frameCount);
+                    break;
+                case SignalSource.SINE_RIGHT_ONLY:
+                    phase_accumulator1 = SineWave(rx1_out_r, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
+                    ClearBuffer(rx1_out_l, frameCount);
+                    break;
+                case SignalSource.NOISE:
+                    Noise(rx1_out_l, frameCount);
+                    Noise(rx1_out_r, frameCount);
+                    break;
+                case SignalSource.TRIANGLE:
+                    Triangle(rx1_out_l, frameCount, sine_freq1);
+                    CopyBuffer(rx1_out_l, rx1_out_r, frameCount);
+                    break;
+                case SignalSource.SAWTOOTH:
+                    Sawtooth(rx1_out_l, frameCount, sine_freq1);
+                    CopyBuffer(rx1_out_l, rx1_out_r, frameCount);
+                    break;
                 case SignalSource.PULSE:
                     Pulse(rx1_out_l, frameCount);
                     CopyBuffer(rx1_out_l, rx1_out_r, frameCount);
                     ScaleBuffer(rx1_out_l, rx1_out_l, frameCount, (float)source_scale);
                     ScaleBuffer(rx1_out_r, rx1_out_r, frameCount, (float)source_scale);
                     break;
-				case SignalSource.SILENCE:
-					ClearBuffer(rx1_out_l, frameCount);
-					ClearBuffer(rx1_out_r, frameCount);
-					break;
-			}
+                case SignalSource.SILENCE:
+                    ClearBuffer(rx1_out_l, frameCount);
+                    ClearBuffer(rx1_out_r, frameCount);
+                    break;
+            }
 
-			if(rx2_enabled)
-			{
-				switch(rx2_output_signal)
-				{
-					case SignalSource.RADIO:
-						break;
-					case SignalSource.SINE:
-						SineWave(rx2_out_l, frameCount, phase_accumulator1, sine_freq1);
-						phase_accumulator1 = CosineWave(rx2_out_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
-						ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
-						break;
-					case SignalSource.SINE_TWO_TONE:
-						double dump;
-						SineWave2Tone(rx2_out_l, frameCount, phase_accumulator1, phase_accumulator2,
-							sine_freq1, sine_freq2, out dump, out dump);
-						CosineWave2Tone(rx2_out_r, frameCount, phase_accumulator1, phase_accumulator2,
-							sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-						ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
-						ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
-						break;
-					case SignalSource.SINE_LEFT_ONLY:
-						phase_accumulator1 = SineWave(rx2_out_l, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
-						ClearBuffer(rx2_out_r, frameCount);
-						break;
-					case SignalSource.SINE_RIGHT_ONLY:
-						phase_accumulator1 = SineWave(rx2_out_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
-						ClearBuffer(rx2_out_l, frameCount);
-						break;
-					case SignalSource.NOISE:
-						Noise(rx2_out_l, frameCount);
-						Noise(rx2_out_r, frameCount);
-						break;
-					case SignalSource.TRIANGLE:
-						Triangle(rx2_out_l, frameCount, sine_freq1);
-						CopyBuffer(rx2_out_l, rx2_out_r, frameCount);
-						break;
-					case SignalSource.SAWTOOTH:
-						Sawtooth(rx2_out_l, frameCount, sine_freq1);
-						CopyBuffer(rx2_out_l, rx2_out_r, frameCount);
-						break;
+            if (rx2_enabled)
+            {
+                switch (rx2_output_signal)
+                {
+                    case SignalSource.RADIO:
+                        break;
+                    case SignalSource.SINE:
+                        SineWave(rx2_out_l, frameCount, phase_accumulator1, sine_freq1);
+                        phase_accumulator1 = CosineWave(rx2_out_r, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
+                        ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
+                        break;
+                    case SignalSource.SINE_TWO_TONE:
+                        double dump;
+                        SineWave2Tone(rx2_out_l, frameCount, phase_accumulator1, phase_accumulator2,
+                            sine_freq1, sine_freq2, out dump, out dump);
+                        CosineWave2Tone(rx2_out_r, frameCount, phase_accumulator1, phase_accumulator2,
+                            sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                        ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
+                        ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
+                        break;
+                    case SignalSource.SINE_LEFT_ONLY:
+                        phase_accumulator1 = SineWave(rx2_out_l, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
+                        ClearBuffer(rx2_out_r, frameCount);
+                        break;
+                    case SignalSource.SINE_RIGHT_ONLY:
+                        phase_accumulator1 = SineWave(rx2_out_r, frameCount, phase_accumulator1, sine_freq1);
+                        ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
+                        ClearBuffer(rx2_out_l, frameCount);
+                        break;
+                    case SignalSource.NOISE:
+                        Noise(rx2_out_l, frameCount);
+                        Noise(rx2_out_r, frameCount);
+                        break;
+                    case SignalSource.TRIANGLE:
+                        Triangle(rx2_out_l, frameCount, sine_freq1);
+                        CopyBuffer(rx2_out_l, rx2_out_r, frameCount);
+                        break;
+                    case SignalSource.SAWTOOTH:
+                        Sawtooth(rx2_out_l, frameCount, sine_freq1);
+                        CopyBuffer(rx2_out_l, rx2_out_r, frameCount);
+                        break;
                     case SignalSource.PULSE:
                         Pulse(rx2_out_l, frameCount);
                         CopyBuffer(rx2_out_l, rx2_out_r, frameCount);
                         ScaleBuffer(rx2_out_l, rx2_out_l, frameCount, (float)source_scale);
                         ScaleBuffer(rx2_out_r, rx2_out_r, frameCount, (float)source_scale);
                         break;
-					case SignalSource.SILENCE:
-						ClearBuffer(rx2_out_l, frameCount);
-						ClearBuffer(rx2_out_r, frameCount);
-						break;
-				}
-			}
+                    case SignalSource.SILENCE:
+                        ClearBuffer(rx2_out_l, frameCount);
+                        ClearBuffer(rx2_out_r, frameCount);
+                        break;
+                }
+            }
 
-			switch(tx_output_signal)
-			{
-				case SignalSource.RADIO:
-					break;
-				case SignalSource.SINE:
-					SineWave(tx_out_l, frameCount, phase_accumulator1, sine_freq1);
-					phase_accumulator1 = CosineWave(tx_out_r, frameCount, phase_accumulator1, sine_freq1);
-					ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
-					ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.SINE_TWO_TONE:
-					double dump;
-					SineWave2Tone(tx_out_l, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out dump, out dump);
-					CosineWave2Tone(tx_out_r, frameCount, phase_accumulator1, phase_accumulator2,
-						sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
-					ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
-					ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
-					break;
-				case SignalSource.NOISE:
-					Noise(tx_out_l, frameCount);
-					Noise(tx_out_r, frameCount);
-					break;
-				case SignalSource.TRIANGLE:
-					Triangle(tx_out_l, frameCount, sine_freq1);
-					CopyBuffer(tx_out_l, tx_out_r, frameCount);
-					break;
-				case SignalSource.SAWTOOTH:
-					Sawtooth(tx_out_l, frameCount, sine_freq1);
-					CopyBuffer(tx_out_l, tx_out_r, frameCount);
-					break;
+            switch (tx_output_signal)
+            {
+                case SignalSource.RADIO:
+                    break;
+                case SignalSource.SINE:
+                    SineWave(tx_out_l, frameCount, phase_accumulator1, sine_freq1);
+                    phase_accumulator1 = CosineWave(tx_out_r, frameCount, phase_accumulator1, sine_freq1);
+                    ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
+                    ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.SINE_TWO_TONE:
+                    double dump;
+                    SineWave2Tone(tx_out_l, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out dump, out dump);
+                    CosineWave2Tone(tx_out_r, frameCount, phase_accumulator1, phase_accumulator2,
+                        sine_freq1, sine_freq2, out phase_accumulator1, out phase_accumulator2);
+                    ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
+                    ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
+                    break;
+                case SignalSource.NOISE:
+                    Noise(tx_out_l, frameCount);
+                    Noise(tx_out_r, frameCount);
+                    break;
+                case SignalSource.TRIANGLE:
+                    Triangle(tx_out_l, frameCount, sine_freq1);
+                    CopyBuffer(tx_out_l, tx_out_r, frameCount);
+                    break;
+                case SignalSource.SAWTOOTH:
+                    Sawtooth(tx_out_l, frameCount, sine_freq1);
+                    CopyBuffer(tx_out_l, tx_out_r, frameCount);
+                    break;
                 case SignalSource.PULSE:
                     Pulse(tx_out_l, frameCount);
                     CopyBuffer(tx_out_l, tx_out_r, frameCount);
                     ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
                     ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
                     break;
-				case SignalSource.SILENCE:
-					ClearBuffer(tx_out_l, frameCount);
-					ClearBuffer(tx_out_r, frameCount);
-					break;
-			}
+                case SignalSource.SILENCE:
+                    ClearBuffer(tx_out_l, frameCount);
+                    ClearBuffer(tx_out_r, frameCount);
+                    break;
+            }
 
-			#endregion
+            #endregion
 
-            if (localmox && ramp)
+            if (localmox && ramp)  // ke9ns ramp up function to give amps time to come on line
             {
                 for (int i = 0; i < frameCount; i++)
                 {
@@ -3895,8 +4134,24 @@ namespace PowerSDR
                 }
             }
 
-			if(!localmox) DoScope(out_l_ptr1, frameCount); // why on separate channels for RX/TX?
-			else DoScope(out_l_ptr2, frameCount);
+            if (Display.CurrentDisplayMode == DisplayMode.SCOPE || Display.CurrentDisplayMode == DisplayMode.PANASCOPE)  // ke9ns add  no need to do scope if your not using it.
+            { 
+                if (!localmox)
+                {
+
+                    // ke9ns this produces scope screan data in Receive out_l_ptr1 = rx1_out_l  = OUT_L1
+
+                    DoScope(out_l_ptr1, frameCount); // why on separate channels for RX/TX?
+
+                }
+                else
+                {
+                    // ke9ns this produces scope screan data in Transmit, and yet MON audio in AM mode the audio has an envelope
+
+                    DoScope(out_l_ptr2, frameCount);  // ke9ns out_L_ptr2 = tx_out_L = OUT_L2 (this shows AM signal just fine, but audio out is bad)
+                }
+
+           } // do only if needing scope
 
 			if(wave_record)
 			{
@@ -3905,43 +4160,75 @@ namespace PowerSDR
 					if(!record_rx_preprocessed)
 					{
 						wave_file_writer.AddWriteBuffer(out_l_ptr1, out_r_ptr1);
-                        if (wave_file_writer2 != null)
-                            wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);
+                        if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);
 					}
 				}
 				else
 				{
-					if(!record_tx_preprocessed)
+					if(!record_tx_preprocessed)               // ke9ns either do here or up above
 					{
-						wave_file_writer.AddWriteBuffer(out_l_ptr2, out_r_ptr2);
-					}
+						wave_file_writer.AddWriteBuffer(out_l_ptr2, out_r_ptr2); // ke9ns post process audio and so AM mode is modulated here (above wave_record section is pre process so its not modulated)
+                    
+                    //    Trace.Write("test====");
+
+                    }
 				}
-			}
 
-			out_l1 = rx1_out_l;
-			out_r1 = rx1_out_r;
-			out_l2 = out_l_ptr2;
-			out_r2 = out_r_ptr2;
-			out_l3 = out_l_ptr3;
-			out_r3 = out_r_ptr3;
-			out_l4 = out_l_ptr4;
-			out_r4 = out_r_ptr4;
+			} // wave_record
 
-			// scale output for VAC -- use chan 4 as spare buffer
-			if(vac_enabled && !vac_output_iq && 
+
+
+			out_l1 = rx1_out_l;   // ke9ns RX1 receive signal (from radio unless setup->test->receiver is changed) out_l_ptr1
+			out_r1 = rx1_out_r;  // out_r_ptr1
+
+			out_l2 = out_l_ptr2;  // ke9ns transmit signal (from mic) tx_out_l (also sent out to headphones in MON mode)
+			out_r2 = out_r_ptr2;  // tx_out_R (also sent out to headphones in MON mode)
+
+            out_l3 = out_l_ptr3;  // ke9ns RX2 receive signal (also sent out to ext speaker in MON mode)as in out_l2 copied to out_l3
+            out_r3 = out_r_ptr3;  // ke9ns (also sent out to ext speaker in MON mode)
+
+            out_l4 = out_l_ptr4;  // ke9ns extra unused buffer  (used for LINE OUT channel as in out_l2 copied to out_l4 in MON mode)
+			out_r4 = out_r_ptr4;  // ke9ns internal speaker (which was never used) out_r2 copied to out_r4
+
+         
+         
+
+            //---------------------------------------------------------------------------------
+            // scale output for VAC1 -- use chan 4 as spare buffer
+            if (vac_enabled && !vac_output_iq && 
 				rb_vacIN_l != null && rb_vacIN_r != null && 
 				rb_vacOUT_l != null && rb_vacOUT_r != null)
 			{
 				if(!localmox)
 				{
-					ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
-					ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
+
+                  //  if (monitor_volume == 0) // ke9ns test to mute vac1 audio from the mute button (it works, but that is not the intent of the MUT button as flex designed it)
+                   // {
+                  //      ScaleBuffer(out_l2, out_l4, frameCount, 0.0f);
+                   //     ScaleBuffer(out_r2, out_r4, frameCount, 0.0f);
+                       
+                   // }
+                   // else
+                   // {
+                        ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
+                        ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
+                   // }
 				}
                 else if(mon)
 				{
-					ScaleBuffer(out_l2, out_l4, frameCount, (float)vac_rx_scale);
-					ScaleBuffer(out_r2, out_r4, frameCount, (float)vac_rx_scale);
-				}
+
+                    if ((monpre == 1) || (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM)) // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(tx_in_l, out_l4, frameCount, (float)vac_rx_scale); // ke9ns add pre process 
+                        ScaleBuffer(tx_in_r, out_r4, frameCount, (float)vac_rx_scale);
+                    }
+                    else
+                    {
+                        ScaleBuffer(out_l2, out_l4, frameCount, (float)vac_rx_scale); // ke9ns  post process so doesnt work (modulated AM here)
+                        ScaleBuffer(out_r2, out_r4, frameCount, (float)vac_rx_scale);
+                    }
+
+                }
 				else // zero samples going back to VAC since TX monitor is off
 				{
 					ScaleBuffer(out_l2, out_l4, frameCount, 0.0f);
@@ -3950,10 +4237,10 @@ namespace PowerSDR
 
 				if (sample_rate2 == sample_rate1) 
 				{
-					if ((rb_vacOUT_l.WriteSpace()>=frameCount)&&(rb_vacOUT_r.WriteSpace()>=frameCount))
+					if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
 					{
-						Win32.EnterCriticalSection(cs_vac);
-						rb_vacOUT_l.WritePtr(out_l4, frameCount);
+						Win32.EnterCriticalSection(cs_vac);              // ke9ns wait for control
+						rb_vacOUT_l.WritePtr(out_l4, frameCount);        // ke9ns send out_L4 to ringbuffer vac1out L
 						rb_vacOUT_r.WritePtr(out_r4, frameCount);
 						Win32.LeaveCriticalSection(cs_vac);
 					}
@@ -3973,6 +4260,7 @@ namespace PowerSDR
 								int outsamps;
 								DttSP.DoResamplerF(out_l4, res_outl_ptr, frameCount, &outsamps, resampPtrOut_l);
 								DttSP.DoResamplerF(out_r4, res_outr_ptr, frameCount, &outsamps, resampPtrOut_r);
+
 								if((rb_vacOUT_l.WriteSpace() >= outsamps) && (rb_vacOUT_r.WriteSpace() >= outsamps))
 								{
 									Win32.EnterCriticalSection(cs_vac);
@@ -4008,8 +4296,13 @@ namespace PowerSDR
 						}
 					}
 				}
-			}
 
+			} // vac1 ON output
+
+
+
+
+            //---------------------------------------------------------------------------------
             // scale output for VAC2 -- use chan 4 as spare buffer
             if (vac2_enabled && !vac2_output_iq &&
                 rb_vac2IN_l != null && rb_vac2IN_r != null &&
@@ -4030,8 +4323,18 @@ namespace PowerSDR
                 }
                 else if (mon)
                 {
-                    ScaleBuffer(out_l2, out_l4, frameCount, (float)vac2_rx_scale);
-                    ScaleBuffer(out_r2, out_r4, frameCount, (float)vac2_rx_scale);
+                    if( (monpre == 1) || (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM || tx_dsp_mode == DSPMode.FM))  // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(tx_in_l, out_l4, frameCount, (float)vac2_rx_scale); // ke9ns add pre process so AM is still PCM
+                        ScaleBuffer(tx_in_r, out_r4, frameCount, (float)vac2_rx_scale);
+                    }
+                    else
+                    {
+
+                        ScaleBuffer(out_l2, out_l4, frameCount, (float)vac2_rx_scale); // ke9ns post process so AM is modulated here
+                        ScaleBuffer(out_r2, out_r4, frameCount, (float)vac2_rx_scale);
+                    }
+
                 }
                 else // zero samples going back to VAC since TX monitor is off
                 {
@@ -4044,7 +4347,7 @@ namespace PowerSDR
                     if ((rb_vac2OUT_l.WriteSpace() >= frameCount) && (rb_vac2OUT_r.WriteSpace() >= frameCount))
                     {
                         Win32.EnterCriticalSection(cs_vac2);
-                        rb_vac2OUT_l.WritePtr(out_l4, frameCount);
+                        rb_vac2OUT_l.WritePtr(out_l4, frameCount);       // ke9ns send audio to ringbuffer for VAC2
                         rb_vac2OUT_r.WritePtr(out_r4, frameCount);
                         Win32.LeaveCriticalSection(cs_vac2);
                     }
@@ -4099,11 +4402,20 @@ namespace PowerSDR
                         }
                     }
                 }
-            }
+            } // vac2 ON and output
+
 
 			double tx_vol = FWCTXScale;
-			if(tx_output_signal != SignalSource.RADIO)
-				tx_vol = 1.0;
+
+            if (tx_output_signal != SignalSource.RADIO)	tx_vol = 1.0;
+
+
+            //=============================================================================================
+            //=============================================================================================
+            // ke9ns below is 
+            //=============================================================================================
+            //=============================================================================================
+
 
             // output from DSP is organized as follows
             //=========================================================
@@ -4128,7 +4440,7 @@ namespace PowerSDR
             // if not in some kind of TX mode, clear the QSE output
             if (!localmox && !full_duplex)
             {
-                ClearBuffer(out_l1, frameCount);
+                ClearBuffer(out_l1, frameCount); // receive and normal opeation
                 ClearBuffer(out_r1, frameCount);
             }
             else // otherwise, scale using power/swr factors
@@ -4162,13 +4474,30 @@ namespace PowerSDR
                     CopyBuffer(out_r2, out_r3, frameCount);
 
                     // Copy the output for the Int Spkr
-                    CopyBuffer(out_r2, out_r4, frameCount);
+                    CopyBuffer(out_r2, out_r4, frameCount); 
                 }
                 else if (mon) // TX + Monitor -- B (RED)
                 {
                     // scale monitor output to match receiver level (half scale)
-                    ScaleBuffer(out_l2, out_l2, frameCount, 0.5f);
-                    ScaleBuffer(out_r2, out_r2, frameCount, 0.5f);
+                    //   Trace.Write("mon====");
+
+
+                    if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM)  // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add   preprocess
+                        ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
+
+                    }
+                    else if ((monpre == 1) || (tx_dsp_mode == DSPMode.FM)) // ke9ns add  use pre-processed audio for MON function in these modes only
+                    {
+                        ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add preprocess
+                        ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
+                    }
+                    else
+                    {
+                        ScaleBuffer(out_l2, out_l2, frameCount, 1.0f); // ke9ns post process
+                        ScaleBuffer(out_r2, out_r2, frameCount, 1.0f);
+                    }
 
                     // if RX2 is present, combine the outputs
                     if (rx2_enabled && !rx2_auto_mute_tx)
@@ -4236,8 +4565,24 @@ namespace PowerSDR
                     if (mon) // --- GRE
                     {
                         // scale monitor output to match receiver level (half scale)
-                        ScaleBuffer(out_l2, out_l2, frameCount, 0.5f);
-                        ScaleBuffer(out_r2, out_r2, frameCount, 0.5f);
+                        
+                        if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM )  // ke9ns add  use pre-processed audio for MON function in these modes only
+                        {
+                            ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add preprocess
+                            ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
+                        }
+                        else if ((monpre == 1) || (tx_dsp_mode == DSPMode.FM))  // ke9ns add  use pre-processed audio for MON function in these modes only
+                        {
+                            ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add preprocess
+                            ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
+                        }
+                        else
+                        {
+
+                            ScaleBuffer(out_l2, out_l2, frameCount, 0.5f); // ke9ns post process
+                            ScaleBuffer(out_r2, out_r2, frameCount, 0.5f);
+                        }
+
 
                         // copy the non-scaled output to the Line Out channel
                         CopyBuffer(out_l2, out_l4, frameCount);
@@ -4293,8 +4638,22 @@ namespace PowerSDR
                     else if (mon) // monitor is on, should hear RX1 + TX audio -- BLU
                     {
                         // scale monitor output to match receiver level (half scale)
-                        ScaleBuffer(out_l2, out_l2, frameCount, 0.5f);
-                        ScaleBuffer(out_r2, out_r2, frameCount, 0.5f);
+
+                        if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM )  // ke9ns add  use pre-processed audio for MON function in these modes only
+                        {
+                            ScaleBuffer(tx_in_l, out_l2, frameCount, 0.5f); // ke9ns add preprocess
+                            ScaleBuffer(tx_in_l, out_r2, frameCount, 0.5f);
+                        }
+                        else if( (monpre == 1) || (tx_dsp_mode == DSPMode.FM) ) // ke9ns add  use pre-processed audio for MON function in these modes only
+                        {
+                            ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add preprocess
+                            ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
+                        }
+                        else
+                        {
+                            ScaleBuffer(out_l2, out_l2, frameCount, 0.5f); // ke9ns post process
+                            ScaleBuffer(out_r2, out_r2, frameCount, 0.5f);
+                        }
 
                         // combine the RX1 and TX audio
                         AddBuffer(out_l4, out_l2, frameCount);
@@ -4490,35 +4849,54 @@ namespace PowerSDR
             }*/
 
 			return callback_return;
-		}
-		// The VAC callback from 1.8.0 untouched in any way.
-		unsafe public static int CallbackVAC(void* input, void* output, int frameCount,
+
+		} // callback2
+
+
+
+
+        //=====================================================================================================
+        // ke9ns used to input output VAC1 streams
+        //=====================================================================================================
+        // The VAC callback from 1.8.0 untouched in any way.
+        unsafe public static int CallbackVAC(void* input, void* output, int frameCount,
 			PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void *userData)
 		{
             if (!vac_enabled) return 0;
 
 			int* array_ptr = (int *)input;
-			float* in_l_ptr1 = (float *)array_ptr[0];
-			float* in_r_ptr1 = null;
-			if(vac_stereo || vac_output_iq) in_r_ptr1 = (float *)array_ptr[1];
-			array_ptr = (int *)output;
-			float* out_l_ptr1 = (float *)array_ptr[0];
-			float* out_r_ptr1 = null;
-			if(vac_stereo || vac_output_iq) out_r_ptr1 = (float *)array_ptr[1];
+
+            float* in_l_ptr1 = (float *)array_ptr[0];  // ke9ns this is the inpu from VAC1	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
+
+            float* in_r_ptr1 = null;
+
+            if (vac_stereo || vac_output_iq) in_r_ptr1 = (float *)array_ptr[1];
+
+            array_ptr = (int *)output;
+
+            float* out_l_ptr1 = (float *)array_ptr[0]; // ke9ns this is the output to VAC1 int new_output = ((PADeviceInfo)comboAudioOutput2.SelectedItem).Index;
+            float* out_r_ptr1 = null;
+
+            if (vac_stereo || vac_output_iq) out_r_ptr1 = (float *)array_ptr[1];
 
 			if (vac_rb_reset)
 			{
 				vac_rb_reset = false;
 				ClearBuffer(out_l_ptr1,frameCount);
-				if (vac_stereo || vac_output_iq) ClearBuffer(out_r_ptr1, frameCount);
-				Win32.EnterCriticalSection(cs_vac);
+
+                if (vac_stereo || vac_output_iq) ClearBuffer(out_r_ptr1, frameCount);
+
+                Win32.EnterCriticalSection(cs_vac);
 				rb_vacIN_l.Reset();
 				rb_vacIN_r.Reset();
-				rb_vacOUT_l.Reset();
+
+                rb_vacOUT_l.Reset();
 				rb_vacOUT_r.Reset();
 				Win32.LeaveCriticalSection(cs_vac);
-				return 0;
+
+                return 0;
 			}
+
 			if (vac_stereo || vac_output_iq)
 			{
 				if (vac_resample) 
@@ -4548,7 +4926,7 @@ namespace PowerSDR
 					if ((rb_vacIN_l.WriteSpace() >= frameCount) && (rb_vacIN_r.WriteSpace() >= frameCount))
 					{
 						Win32.EnterCriticalSection(cs_vac);
-						rb_vacIN_l.WritePtr(in_l_ptr1,frameCount);
+						rb_vacIN_l.WritePtr(in_l_ptr1,frameCount);  // ke9ns this is where you normally would come for VAC1. This sets the VAC1 input stream up 
 						rb_vacIN_r.WritePtr(in_r_ptr1,frameCount);
 						Win32.LeaveCriticalSection(cs_vac);
 					}
@@ -4562,8 +4940,8 @@ namespace PowerSDR
 				if ((rb_vacOUT_l.ReadSpace() >= frameCount) && (rb_vacOUT_r.ReadSpace() >= frameCount))
 				{
 					Win32.EnterCriticalSection(cs_vac);
-					rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);
-					rb_vacOUT_r.ReadPtr(out_r_ptr1, frameCount);
+					rb_vacOUT_l.ReadPtr(out_l_ptr1, frameCount);  // ke9ns this is where you normally would come for VAC1. This sets the VAC1 output stream up
+                    rb_vacOUT_r.ReadPtr(out_r_ptr1, frameCount);
 					Win32.LeaveCriticalSection(cs_vac);
 				}
 				else
@@ -4625,8 +5003,14 @@ namespace PowerSDR
 			}
 
 			return 0;
-		}
 
+        } //  CallbackVAC
+
+
+
+        //=====================================================================================================
+        // ke9ns used to input output VAC2 streams
+        //=====================================================================================================
         unsafe public static int CallbackVAC2(void* input, void* output, int frameCount,
             PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void* userData)
         {
@@ -5514,11 +5898,17 @@ namespace PowerSDR
             return false;
         }
 
-		public static bool Start()
+
+        //=============================================================================================================
+        // ke9ns pick your PA routine (callback8 which is really callback2)
+        //=============================================================================================================
+
+        public static bool Start()
 		{            
 			bool retval = false;
 			phase_buf_l = new float[block_size1];
 			phase_buf_r = new float[block_size1];
+
 			if(console.fwc_init && (console.CurrentModel == Model.FLEX5000 || console.CurrentModel == Model.FLEX3000))
 			{
 				switch(console.CurrentModel)
@@ -5535,14 +5925,15 @@ namespace PowerSDR
 
 				in_rx2_l = 2;
 				in_rx2_r = 3;
+
 				/*in_tx_l = 5;
 				in_tx_r = 6;*/
                 
-                retval = StartAudio(ref callback8, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, 8, 0, latency1);
-			}
+                retval = StartAudio(ref callback8, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, 8, 0, latency1);    // ke9ns use primary input_dev1 device
+            }
             else if (console.hid_init && console.CurrentModel == Model.FLEX1500)
             {
-                // do nothing -- handle audio through windriver, not PortAudio
+                // do nothing -- handle audio through windriver, not PortAudio (PA)
                 retval = true;
             }
             else
@@ -5550,7 +5941,7 @@ namespace PowerSDR
                 try
                 {
                     if (num_channels == 2)
-                        retval = StartAudio(ref callback1, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, num_channels, 0, latency1);
+                        retval = StartAudio(ref callback1, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, num_channels, 0, latency1);  // ke9ns use primary input_dev1 device
                     else if (num_channels == 4)
                         retval = StartAudio(ref callback4port, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, num_channels, 0, latency1);
                 }
@@ -5567,7 +5958,7 @@ namespace PowerSDR
 			
 			if(!retval) return retval;
 
-			if(vac_enabled)
+			if(vac_enabled) // ke9ns  VAC1 that is
 			{
 				int num_chan = 1;
 				// ehr add for multirate iq to vac
@@ -5584,9 +5975,10 @@ namespace PowerSDR
 				else if(vac_stereo) num_chan = 2;
 				// ehr end				
 				vac_rb_reset = true;
-                try
+
+                try   // ke9ns 	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
                 {
-                    retval = StartAudio(ref callbackVAC, (uint)block_size, sample_rate, host2, input_dev2, output_dev2, num_chan, 1, latency);
+                    retval = StartAudio(ref callbackVAC, (uint)block_size, sample_rate, host2, input_dev2, output_dev2, num_chan, 1, latency);  // ke9ns use VAC1 input_dev2 device
                 }
                 catch (Exception)
                 {
@@ -5597,7 +5989,7 @@ namespace PowerSDR
                         MessageBoxIcon.Error);
                     return false;
                 }
-			}
+			} // ke9ns VAC1 on
 
             if (vac2_enabled)
             {
@@ -5618,7 +6010,7 @@ namespace PowerSDR
                 vac2_rb_reset = true;
                 try
                 {
-                    retval = StartAudio(ref callbackVAC2, (uint)block_size, sample_rate, host3, input_dev3, output_dev3, num_chan, 2, latency);
+                    retval = StartAudio(ref callbackVAC2, (uint)block_size, sample_rate, host3, input_dev3, output_dev3, num_chan, 2, latency);  // ke9ns use VAC2 input_dev3 device
                 }
                 catch (Exception)
                 {
@@ -5632,10 +6024,13 @@ namespace PowerSDR
             }
 
 			return retval;
-		 }
+		 } // Start()
 
-		public unsafe static bool StartAudio(ref PA19.PaStreamCallback callback,
-			uint block_size, double sample_rate, int host_api_index, int input_dev_index,
+
+
+//=================================================================================================
+// ke9ns not called by flex1500
+		public unsafe static bool StartAudio(ref PA19.PaStreamCallback callback, uint block_size, double sample_rate, int host_api_index, int input_dev_index,
 			int output_dev_index, int num_channels, int callback_num, int latency_ms)
 		{
             empty_buffers = 0;
@@ -5670,11 +6065,14 @@ namespace PowerSDR
 
             // be prepared to restart the audio if it fails, but only for the 1500.  This is only
             // for port audio and can be removed when we are back on a custom driver
+
             int RETRY_AUDIO_START_TIMES = (console.CurrentModel == Model.FLEX1500 ? 25 : 1);
+
             int i;
             // in case we fail, try multiple times (FLEX1500)
             for (i = 0; i < RETRY_AUDIO_START_TIMES; i++)
             {
+             
                 switch (callback_num)
                 {
                     case 1: // VAC1
@@ -5685,6 +6083,7 @@ namespace PowerSDR
                         break;
                     default:
                         error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0);
+                      //  Trace.WriteLine("start=====");
                         break;
                 }
 /*
@@ -5696,7 +6095,10 @@ namespace PowerSDR
                 if (error == 0) break; // stop if no error
             }
 
+         
+
             if (console.CurrentModel == Model.FLEX1500) Debug.WriteLine("audio start retry = "+i+" times");
+
             //if (console.CurrentModel == Model.FLEX1500)
                 //Flex1500.StartListener(); // restart listening to commands to start audio
             if (error != 0)
@@ -5704,9 +6106,10 @@ namespace PowerSDR
                 PortAudioErrorMessageBox(error);
 				return false;
 			}
-
+        
             switch (callback_num)
             {
+                
                 case 1:
                     error = PA19.PA_StartStream(stream2);                    
                     break;
@@ -5729,7 +6132,10 @@ namespace PowerSDR
 				return false;
 			}
 			return true;
-		}
+		} // StartAudio
+
+
+
 
         private static void PortAudioErrorMessageBox(int error)
         {
@@ -5795,7 +6201,9 @@ namespace PowerSDR
 		private static int scope_pixel_index = 0;
 		private static float scope_pixel_min = float.MaxValue;
 		private static float scope_pixel_max = float.MinValue;
-		private static float[] scope_min;
+
+        private static float[] scope_min;
+
 		public static float[] ScopeMin
 		{
 			set { scope_min = value; }
@@ -5806,43 +6214,65 @@ namespace PowerSDR
 			set { scope_max = value; }
 		}
 
-		unsafe private static void DoScope(float* buf, int frameCount)
+
+        //======================================================================================
+        // ke9ns this is for scope and Panascope only
+        //======================================================================================
+        unsafe private static void DoScope(float* buf, int frameCount)
 		{
-			if(scope_min == null || scope_min.Length < scope_display_width) 
-			{
-				if(Display.ScopeMin == null || Display.ScopeMin.Length < scope_display_width)
-					Display.ScopeMin = new float[scope_display_width];
-				scope_min = Display.ScopeMin;
+
+            if (Display.CurrentDisplayMode != DisplayMode.SCOPE && Display.CurrentDisplayMode != DisplayMode.PANASCOPE) return; // ke9ns add  no need to do scope if your not using it.
+
+            if (scope_min == null || scope_min.Length < scope_display_width) // ke9ns check for screen size change
+            {
+                
+                if (Display.ScopeMin == null || Display.ScopeMin.Length < scope_display_width)
+                {
+                    Display.ScopeMin = new float[scope_display_width];
+                }
+
+				scope_min = Display.ScopeMin; 
 			}
-			if(scope_max == null || scope_max.Length < scope_display_width)
+
+			if(scope_max == null || scope_max.Length < scope_display_width)  // ke9ns check for screen size change
 			{
-				if(Display.ScopeMax == null || Display.ScopeMax.Length < scope_display_width)
-					Display.ScopeMax = new float[scope_display_width];
+                if (Display.ScopeMax == null || Display.ScopeMax.Length < scope_display_width)
+                {
+                    Display.ScopeMax = new float[scope_display_width];
+                }
+
 				scope_max = Display.ScopeMax;
 			}
 
-			for(int i=0; i<frameCount; i++)
+			for(int i=0; i < frameCount; i++)
 			{
 				if(buf[i] < scope_pixel_min) scope_pixel_min = buf[i];
+
 				if(buf[i] > scope_pixel_max) scope_pixel_max = buf[i];
 
 				scope_sample_index++;
+
 				if(scope_sample_index >= scope_samples_per_pixel)
 				{
 					scope_sample_index = 0;
-					scope_min[scope_pixel_index] = scope_pixel_min;
+
+					scope_min[scope_pixel_index] = scope_pixel_min;  // ke9ns fill array with scope min max fa
+
 					scope_max[scope_pixel_index] = scope_pixel_max;
 
 					scope_pixel_min = float.MaxValue;
 					scope_pixel_max = float.MinValue;
 
 					scope_pixel_index++;
-					if(scope_pixel_index >= scope_display_width)
-						scope_pixel_index = 0;
+
+					if(scope_pixel_index >= scope_display_width) scope_pixel_index = 0;
 				}
 			}
-		}
+
+		} // doscope
 
 		#endregion
-	}
-}
+
+	} // audio class
+
+} // powersdr

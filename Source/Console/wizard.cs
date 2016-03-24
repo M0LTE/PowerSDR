@@ -1494,7 +1494,8 @@ namespace PowerSDR
 
 			done = true;
 			this.Close();
-		}
+
+		} // btnfinished
 
 		private void SetupWizard_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{

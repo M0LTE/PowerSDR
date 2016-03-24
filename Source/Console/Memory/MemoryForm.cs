@@ -54,19 +54,20 @@ namespace PowerSDR
         public MemoryForm(Console c)
         {
             InitializeComponent();
-
             console = c;
-            Common.RestoreForm(this, "MemoryForm", true);
+            Common.RestoreForm(this, "MemoryForm", true); // ke9ns bring up memory window in place you left it last time
+
+
 
             dataGridView1.RowHeadersVisible = true;
-            dataGridView1.DataSource = console.MemoryList.List;
 
-            dataGridView1.RowHeadersWidthSizeMode =
-                DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridView1.ColumnHeadersHeightSizeMode =
-                DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.DataSource = console.MemoryList.List; // ke9ns get list of memories from memorylist.cs is where the file is opened and saved
+
+            dataGridView1.RowHeadersWidthSizeMode =  DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+
+            dataGridView1.ColumnHeadersHeightSizeMode =  DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            dataGridView1.AutoSizeColumnsMode =   DataGridViewAutoSizeColumnsMode.AllCells;
 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
@@ -138,7 +139,9 @@ namespace PowerSDR
             comboboxColumnDSPMode.Items.Add(DSPMode.DRM);
 
             for (int i = 0; i < console.TuneStepList.Count; i++)
+            {
                 comboboxColumnTuneStep.Items.Add(console.TuneStepList[i].Name);
+            }
 
             comboboxColumnRPTR.Items.Add(FMTXMode.High);
             comboboxColumnRPTR.Items.Add(FMTXMode.Simplex);
@@ -170,6 +173,7 @@ namespace PowerSDR
             dataGridView1.Columns.Remove("RPTR");
             dataGridView1.Columns.Insert(index, comboboxColumnRPTR);
 
+            
             index = dataGridView1.Columns["CTCSSFreq"].Index;
             dataGridView1.Columns.Remove("CTCSSFreq");
             dataGridView1.Columns.Insert(index, comboboxColumnCTCSS);
@@ -203,13 +207,123 @@ namespace PowerSDR
             dataGridView1.Columns["TXFreq"].DefaultCellStyle.Format = "f6";
             dataGridView1.Columns["RPTROffset"].DefaultCellStyle.Format = "f";
 
-            this.dataGridView1.Columns["Scan"].Visible = false;
+            this.dataGridView1.Columns["Scan"].Visible = false;//
 
             dataGridView1.CellValidating += new DataGridViewCellValidatingEventHandler(dataGridView1_CellValidating);
-        }
 
-        void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+      
+       
+        } //memoryform
+
+
+
+        public static string URLTEXT;
+        public string droppedUrl;
+
+        public static string[] filename;
+
+        //==============================================================================================
+        //ke9ns add AS YOU DRAG YOUR URL ALONG WITH YOUR MOUSE INTO THE MEMORY FORM WINDOW
+        private void dataGridView1_DragEnter(object sender, DragEventArgs e)
         {
+
+          //  Trace.WriteLine("Dragenter");
+           
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) // ke9ns check for file dragdrop
+            {
+              
+                e.Effect = DragDropEffects.Copy;
+                e.Effect = DragDropEffects.All;
+
+                filename = (string[])e.Data.GetData(DataFormats.FileDrop);
+     
+                URLTEXT = filename[0]; // grab file name
+
+                return;
+            }
+
+
+            droppedUrl = ReadURL(e.Data); // ke9ns check for URL e.data is the data received during the drag/drop
+
+            if ((droppedUrl != null) && ( droppedUrl.Trim().Length != 0))
+            {
+               //  Trace.WriteLine("dragdrop URL>" + droppedUrl);
+                URLTEXT = droppedUrl;
+                e.Effect = DragDropEffects.Link; // must activate the EFFECT before the _dragdrop will work
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+
+
+        } //   Trace.WriteLine("Dragover");
+
+
+         //==============================================================================================
+        //ke9ns add ONCE DRAGENTER VALIDATES YOUR URL, YOU RELEASE YOUR MOUSE OVER THE WINDOW AND COMMENT FIELD IS UPDATED WITH THE URL
+        private void dataGridView1_DragDrop(object sender, DragEventArgs e)
+        {
+        //    Trace.WriteLine("datagrid drag and drop");
+       
+                dataGridView1["comments",RIndex].Value = URLTEXT;
+  
+        } // dataGridView1_DragDrop
+
+
+        //==============================================================================================
+        //ke9ns add USED TO OPEN WEB BROWSER if comment field has URL
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
+            MouseEventArgs me = (MouseEventArgs)e;
+         
+            if (me.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+  
+                try
+                {
+                    System.Diagnostics.Process.Start((string)dataGridView1["comments", RIndex].Value);   // System.Diagnostics.Process.Start("http://www.microsoft.com");
+                }
+                catch
+                {
+                    // if not a URL then ignore
+                }
+
+
+            } // right mouse button click
+            else if (me.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                //   Trace.WriteLine("left click ");
+
+            }
+
+        } //dataGridView1_CellMouseDown
+
+
+        public static int RIndex = 0;
+        public static int CIndex = 0;
+
+        //============================================================================================================================================
+        // ke9ns add COMES HERE AFTER YOU CLICK ON A FIELD BOX TO DETERMINE WHICH ROW YOU ARE WORKING IN
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+        //    Trace.WriteLine("cell click");
+
+       //     Trace.WriteLine("Cell Name " + dataGridView1.Columns[e.ColumnIndex].Name);  // this causes fault if you click in the far left column
+       //    Trace.WriteLine("Call Value " + dataGridView1[e.ColumnIndex, e.RowIndex].Value); // 
+
+            RIndex = e.RowIndex; // last row you clicked on 
+         //   CIndex = e.ColumnIndex; // last column you clicked on 
+
+
+        } // dataGridView1_CellClick
+
+
+        //============================================================================================================================================
+         void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+     
             // handle floating point fields
             if (dataGridView1.Columns[e.ColumnIndex].Name == "RXFreq" ||
                 dataGridView1.Columns[e.ColumnIndex].Name == "TXFreq" ||
@@ -232,12 +346,77 @@ namespace PowerSDR
                     dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0;
                 return;
             }
-        }
 
-        #endregion        
+      
+        } // dataGridView1_CellValidating
+
+        #endregion
 
         #region Event Handlers
 
+
+        //============================================================================================================================================
+        // ke9ns add YOU DRAG YOUR URL ALONG WITH YOUR MOUSE OVER THE ADD BUTTON
+        private void MemoryRecordAdd_DragEnter(object sender, DragEventArgs e)
+        {
+
+            //  Trace.WriteLine("add dragenter");
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) // ke9ns check for file dragdrop
+            {
+
+                e.Effect = DragDropEffects.Copy;
+                e.Effect = DragDropEffects.All;
+
+                filename = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                URLTEXT = filename[0]; // grab file name
+
+                return;
+            }
+
+
+            droppedUrl = ReadURL(e.Data);
+
+            if (droppedUrl != null && droppedUrl.Trim().Length != 0)
+            {
+                  URLTEXT = droppedUrl;
+             
+                e.Effect = DragDropEffects.Link; // got a URL so activate the drop event when mouse button released
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+
+
+        } //MemoryRecordAdd_DragEnter
+
+
+        //=========================================================================================================================================
+        // Ke9ns add YOUR URL (after being VERIFIED) YOU LET GO THE LEFT MOUSE BUTTON TO DROP ONTO THE ADD BUTTON
+        private void MemoryRecordAdd_DragDrop(object sender, DragEventArgs e)
+        {
+                    
+                string mem_name = Convert.ToString(console.VFOAFreq);   //W4TME
+
+                // ke9ns Below URLTEXT goes where normally the comment goes with a ""
+
+            console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
+                console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
+                (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
+                console.RX1FilterHigh, URLTEXT, console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+
+            Common.SaveForm(this, "MemoryForm");    // w4tme
+            console.MemoryList.Save();              // w4tme 
+        
+
+
+        } // MemoryRecordAdd_DragDrop
+
+
+        //=========================================================================================================================================
+        // Ke9ns  this is the ADD button
         /// <summary>
         /// Add a new Memory entry based on the current console settings.
         /// </summary>
@@ -246,6 +425,7 @@ namespace PowerSDR
         private void MemoryRecordAdd_Click(object sender, EventArgs e)
         {
             string mem_name = Convert.ToString(console.VFOAFreq);   //W4TME
+
             console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
                 console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
                 (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow, 
@@ -254,6 +434,9 @@ namespace PowerSDR
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
         }
+
+
+        //=========================================================================================================================================
 
         /// <summary>
         /// Copy an existing row into a new one.
@@ -269,6 +452,8 @@ namespace PowerSDR
             console.MemoryList.Save();              // w4tme 
         }
 
+
+        //=========================================================================================================================================
         /// <summary>
         /// Delete the current row (after confirmation).
         /// </summary>
@@ -303,7 +488,12 @@ namespace PowerSDR
 
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
+           
         }
+
+
+        //===========================================================================================================================
+        // ke9ns  memory  when you select an index line of your memory list
 
         /// <summary>
         /// Makes the selected row active -- sends it to console
@@ -312,14 +502,25 @@ namespace PowerSDR
         /// <param name="e"></param>
         private void btnSelect_Click(object sender, EventArgs e)
         {
+
             if (console.MemoryList.List.Count == 0) return; // nothing in the list, exit
+
+
             int index = dataGridView1.CurrentCell.RowIndex;
+
+
             if (index < 0 || index > console.MemoryList.List.Count - 1) // index out of range
                 return;
 
-            console.changeComboFMMemory(index);
+            console.changeComboFMMemory(index); // ke9ns this will call recallmemory in console 
 
-            if (chkMemoryFormClose.Checked)
+            Trace.WriteLine("INDEX clicked "+index);
+           
+          //  Trace.WriteLine("INDEX clicked " + dataGridView1.);
+
+
+
+            if (chkMemoryFormClose.Checked) // ke9ns this saves position of memory form window on your screen when you closed it.
             {
                 Common.SaveForm(this, "MemoryForm");    // w4tme
                 console.MemoryList.Save();              // w4tme 
@@ -327,7 +528,11 @@ namespace PowerSDR
             }
 
             //console.RecallMemory(MemoryList.List[index]);
-        }
+
+        } // btnselect_click
+
+
+
 
         /// <summary>
         /// Don't actually close the form, just hide it and save the position/size.
@@ -342,7 +547,88 @@ namespace PowerSDR
             console.MemoryList.Save();
         }
 
-        #endregion        
+        #endregion
 
-    }
-}
+
+    
+
+
+
+
+
+
+        //===================================================================================================
+        //===================================================================================================
+        //KE9NS ADD below is used to determine the URL from a drag and drop onto the memory form
+        //===================================================================================================
+        //===================================================================================================
+
+        private const string _asciiUrlDataFormatName = "UniformResourceLocator";
+        private static readonly Encoding _asciiUrlEncoding = Encoding.ASCII;
+
+        private const string _unicodeUrlDataFormatName = "UniformResourceLocatorW";
+        private static readonly Encoding _unicodeUrlEncoding = Encoding.Unicode;
+
+
+        //==================================================================================================
+        // ke9ns look for URL or file
+        private string ReadURL(IDataObject data)  // try reading as unicode URL  (data comes from the e.data of the drag/drop operation and is supposed to contain a URL or FILE
+        {
+           // try unicode first then ascii
+            string unicodetest = Readurl(data, _unicodeUrlDataFormatName, _unicodeUrlEncoding); // _unicodeUrlDataFormatName = "UniformResourceLocatorW"; Encoding _unicodeUrlEncoding = Encoding.Unicode;
+
+            if (unicodetest != null) 
+            {
+                return unicodetest;   // Unicode URL found from the data 
+            }
+               
+            return Readurl(data, _asciiUrlDataFormatName, _asciiUrlEncoding); // ASCII URL found _asciiUrlDataFormatName = "UniformResourceLocator";   Encoding _asciiUrlEncoding = Encoding.ASCII
+
+        } // UNICODE & ASCII testing
+        
+        //==================================================================================================
+        private string Readurl(IDataObject data, string urlDataFormatName, Encoding urlEncoding)    // try reading as ASCII URL
+        {
+            // Check whether the data contains a URL
+
+            // dataformat is either   UniformResourceLocator     or      UniformResourceLocatorW 
+            // encoding is either     Encoding.ASCII           or       Encoding.Unicode;
+
+            if (!DoesDragDropDataContainUrl1(data, urlDataFormatName))
+            {
+                return null;
+            }
+
+            string url;
+
+            using (Stream urlStream = (Stream)data.GetData(urlDataFormatName)) // use drap/drop data
+            {
+                using (TextReader reader = new StreamReader(urlStream, urlEncoding))
+                {
+                    url = reader.ReadToEnd();  // Read the URL from the data
+                }
+            }
+           
+            return url.TrimEnd('\0');  // URLs in drag/drop data are often padded with null characters so remove these
+
+        } // ASCII URL
+
+      
+        //==================================================================================================
+        private static bool DoesDragDropDataContainUrl1(IDataObject data, string urlDataFormatName)
+        {
+            
+            return (data != null) && (data.GetDataPresent(urlDataFormatName)); // return true = yes URL or file is in specified format
+
+        }
+
+
+
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    } // memoryform
+
+} // powerSDR

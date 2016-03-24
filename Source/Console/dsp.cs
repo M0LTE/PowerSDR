@@ -286,7 +286,9 @@ namespace PowerSDR
 			set { force = value; }
 		}
 
-		private int buffer_size_dsp = 2048;
+
+        //================================================================================= DSPRX Class
+        private int buffer_size_dsp = 2048;
 		private int buffer_size = 2048;
 		public int BufferSize
 		{
@@ -299,13 +301,14 @@ namespace PowerSDR
 					if(value != buffer_size_dsp || force)
 					{
 						//Debug.WriteLine("RX "+thread+":"+subrx+" "+value);
-						DttSP.ResizeSDR(thread, value);
+						DttSP.ResizeSDR(thread, value);  // ke9ns calls setdspbuflen in update.c
 						buffer_size_dsp = value;
 						//SyncAll();
 					}
 				}
 			}
-		}
+		} // buffersize
+
 
 		private int audio_size_dsp = 2048;
 		private int audio_size = 2048;
@@ -1510,9 +1513,10 @@ namespace PowerSDR
 			get { return tx_eq10; }
 			set
 			{
-				for(int i=0; i<tx_eq10.Length && i<value.Length; i++)
+				for(int i=0; i < tx_eq10.Length && i < value.Length; i++)
 					tx_eq10[i] = value[i];
-				if(update)
+
+                if (update)
 				{
 					/*bool need_update = false;
 					for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
@@ -1527,12 +1531,14 @@ namespace PowerSDR
 					if(need_update)
 					{*/
 						DttSP.SetGrphTXEQ10(thread, tx_eq10);
-						for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
+                    
+
+						for(int i=0; i < tx_eq10_dsp.Length && i < value.Length; i++)
 							tx_eq10_dsp[i] = value[i];
 					//}
-				}
-			}
-		}
+				} // update
+			} // set
+		} // TXEQ10
 
 		private bool tx_eq_on_dsp = false;
 		private bool tx_eq_on = false;

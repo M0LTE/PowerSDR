@@ -24,7 +24,7 @@
 //    4616 W. Howard Lane  Suite 1-150
 //    Austin, TX 78728
 //    USA
-//=================================================================ke9ns
+//=================================================================
 
 using System;
 using System.Collections.Generic;
@@ -140,6 +140,16 @@ namespace PowerSDR
         }
 
         private void tableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void labelVersion_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
         }

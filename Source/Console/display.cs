@@ -35,6 +35,11 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
+using System.Text;  // ke9ns add for stringbuilder
+using System.Text.RegularExpressions;
+using System.Globalization;
+
+
 #if(!NO_TNF)
 using Flex.TNF;
 #endif
@@ -50,23 +55,37 @@ namespace PowerSDR
 		#region Variable Declaration
 
 		public static Console console;
+
+        public static SpotControl spot;                         // ke9ns add  communications with spot.cs and dx spotter
+
 		//private static Mutex background_image_mutex;			// used to lock the base display image
 		//private static Bitmap background_bmp;					// saved background picture for display
 		//private static Bitmap display_bmp;					// Bitmap for use when drawing
-		private static int waterfall_counter;
-		private static Bitmap waterfall_bmp;					// saved waterfall picture for display
-		private static Bitmap waterfall_bmp2;
+		//private static int waterfall_counter;
+		private static Bitmap waterfall_bmp;					// RX1 saved waterfall picture for display
+		private static Bitmap waterfall_bmp2;                   // RX2
 		private static int[] histogram_data;					// histogram display buffer
 		private static int[] histogram_history;					// histogram counter
 		//private static Graphics display_graphics;				// GDI graphics object
 		public const float CLEAR_FLAG = -999.999F;				// for resetting buffers
-		public const int BUFFER_SIZE = 4096;
-		public static float[] new_display_data;					// Buffer used to store the new data from the DSP for the display
-		public static float[] current_display_data;				// Buffer used to store the current data for the display
-		public static float[] new_display_data_bottom;
-		public static float[] current_display_data_bottom;
-		
-		public static float[] rx1_average_buffer;					// Averaged display data buffer
+
+		public const int BUFFER_SIZE = 4096;                    // ke9ns   this buffer size is always the same ?? 4096 data points across the display area always ???
+
+        public const int DATA_BUFFER_SIZE = 4096;               // ke9ns add  every place in this file with 4096 was substitued with this const
+
+        public const int abright = 5;                           // ke9ns add  used by auto water level, how much db to subtract from the actual avg determined by a scan of the panadapter
+
+
+        public static float[] new_display_data;					// Buffer used to store the new data from the DSP for the display
+		public static float[] current_display_data;             // Buffer used to store the current data for the display
+        public static float[] current_display_data1;            // ke9ns add this is data that is never avg
+
+        public static float[] new_display_data_bottom;          //  RX2
+		public static float[] current_display_data_bottom;      // RX2 
+        public static float[] current_display_data_bottom1;     // ke9ns add this is data that is never avg
+
+
+        public static float[] rx1_average_buffer;					// Averaged display data buffer
 		public static float[] rx2_average_buffer;
 		public static float[] rx1_peak_buffer;						// Peak hold display data buffer
 		public static float[] rx2_peak_buffer;
@@ -175,12 +194,44 @@ namespace PowerSDR
 			get { return current_display_mode_bottom; }
 			set
 			{
-				current_display_mode_bottom = value; 
-				if(split_display) DrawBackground();
-			}
-		}
+				current_display_mode_bottom = value;
 
-		private static int rx1_filter_low;
+                if (console.chkRX2.Checked) // dont check auto wtr level if rx2 isnt even on
+                {
+                    switch (current_display_mode_bottom)  //ke9ns add  (change visability of autobrightbox on console
+                    {
+
+                        case DisplayMode.PANAFALL:
+                        case DisplayMode.WATERFALL:
+                            console.autoBrightBox.Text = "Auto Wtr Level";
+                            autoBright5 = 1;
+
+                            break;
+                        default:
+                            if (continuum == 0)
+                            {
+                                if (autoBright4 == 0)
+                                {
+                                    console.autoBrightBox.Text = "";
+                                    //   Trace.WriteLine("off======");
+                                }
+                            }
+                            autoBright5 = 0;
+                            break;
+
+                    }
+
+                   //   Trace.WriteLine("ab4 " + autoBright4 + " ab5 " + autoBright5);
+
+                }
+                else autoBright5 = 0;
+
+
+                if (split_display) DrawBackground();
+			}
+        } // DisplayMode CurrentDisplayModeBottom
+
+        private static int rx1_filter_low;
 		public static int RX1FilterLow
 		{
 			get { return rx1_filter_low; }
@@ -398,9 +449,37 @@ namespace PowerSDR
 			set { cw_pitch = value; }
 		}
 
-		private static int H = 0;	// target height
-		private static int W = 0;	// target width
-		private static Control target = null;
+       
+		private static int H = 0;   // target height
+        private static int W = 0;   // target width
+
+        //=======================================================
+
+        private static PixelFormat WtrColor = PixelFormat.Format24bppRgb;  //          
+
+      
+        private static int H1 = 0;  //  ke9ns used to fool draw routines when displaying in 3rds 
+        private static int H2 = 0;  //  ke9ns used to fool draw routines when displaying in 4ths   
+
+        private static int K9 = 0;  // ke9ns rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
+        private static int K10 = 0; // ke9ns rx2 display mode selector:1=water,2=pan, 5=panfall
+
+        private static int K11 = 0; // ke9ns set to 5 in RX1 in panfall, otherwise 0
+     
+    
+        private static int K10LAST = 0; // ke9ns flag to check for only changes in display mode rx2
+        private static int K9LAST = 0;  // ke9ns flag to check for only changes in display mode rx1
+
+        private static int K13 = 0; // ke9ns original H size before being reduced and past onto drawwaterfall to create bmp file size correctly
+        public static int K14 = 0; // ke9ns used to draw the bmp waterfall 1 time when you changed display modes.
+        private static int K15 = 1; // ke9ns used to pass the divider factor back to the init() routine to keep the bmp waterfall size correct
+
+        private static float temp_low_threshold = 0; // ke9ns to switch between TX and RX low level waterfall levels
+        private static float temp_high_threshold = 0; // ke9ns for TX upper level
+
+        //========================================================
+
+        private static Control target = null;
 		public static Control Target
 		{
 			get { return target; }
@@ -546,7 +625,13 @@ namespace PowerSDR
 			set { rx2_dsp_mode = value; }
 		}
 
-		private static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
+
+        public static byte continuum = 0; // ke9ns add
+
+        public static byte autoBright4 = 0; // ke9ns add
+        public static byte autoBright5 = 0; // ke9ns add
+
+        private static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
 		public static DisplayMode CurrentDisplayMode
 		{
 			get { return current_display_mode; }
@@ -556,7 +641,50 @@ namespace PowerSDR
 
 				current_display_mode = value;
 
-				/*switch(current_display_mode)
+              
+                switch (current_display_mode)  //ke9ns add  (change visability of autobrightbox on console
+                {
+                   
+
+                    case DisplayMode.PANAFALL:
+                    case DisplayMode.WATERFALL:
+                         console.autoBrightBox.Text = "Auto Wtr Level";
+                         autoBright4 = 1;
+                        
+
+                         break;
+                    default:
+                        if (continuum == 0)
+                        {
+
+                            if (autoBright5 == 0)
+                            {
+                                console.autoBrightBox.Text = "";
+                                //  Trace.WriteLine("1off======");
+                            }
+                        }
+                        autoBright4 = 0;
+                        break;
+
+                }
+
+
+                if (current_display_mode == DisplayMode.CONTINUUM)
+                {
+                    continuum = 1; // ke9ns add  this is a waterfall mode where the data is MaxY txtDisplayPeakPower data from the console.
+                    current_display_mode = DisplayMode.WATERFALL;
+
+                }
+                else
+                {
+                    continuum = 0; // ke9ns add continuum mode is off
+                }
+
+
+
+              //  Trace.WriteLine("1ab4 " + autoBright4 + " 1ab5 " + autoBright5);
+
+                /*switch(current_display_mode)
 				{
 					case DisplayMode.PANADAPTER:
 					case DisplayMode.WATERFALL:
@@ -569,7 +697,7 @@ namespace PowerSDR
 						break;
 				}*/
 
-				switch(current_display_mode)
+                switch (current_display_mode)
 				{
 					case DisplayMode.PHASE2:
 						Audio.phase = true;
@@ -584,9 +712,10 @@ namespace PowerSDR
 
 				DrawBackground();
 			}
-		}
 
-		private static float max_x;								// x-coord of maxmimum over one display pass
+        } // DisplayMode CurrentDisplayMode
+
+        private static float max_x;								// x-coord of maxmimum over one display pass
 		public static float MaxX
 		{
 			get { return max_x; }
@@ -672,7 +801,7 @@ namespace PowerSDR
 			}
 		}
 
-		public static float waterfall_avg_mult_old = 1 - (float)1/18;
+		public static float waterfall_avg_mult_old = 1 - (float)1/18;  // ke9ns ?
 		public static float waterfall_avg_mult_new = (float)1/18;
 		private static int waterfall_avg_num_blocks = 18;
 		public static int WaterfallAvgBlocks
@@ -686,24 +815,29 @@ namespace PowerSDR
 			}
 		}
 
-		private static int spectrum_grid_max = 0;
+
+
+        private static int spectrum_grid_max1 = 0; // ke9ns add
+        private static int spectrum_grid_max = 0;
 		public static int SpectrumGridMax
 		{
 			get{ return spectrum_grid_max;}
 			set
-			{	
-				spectrum_grid_max = value;
+			{
+                spectrum_grid_max1 = spectrum_grid_max = value;
 				DrawBackground();
 			}
 		}
 
-		private static int spectrum_grid_min = -160;
+
+        private static int spectrum_grid_min1 = -160; // ke9ns add
+        private static int spectrum_grid_min = -160;
 		public static int SpectrumGridMin
 		{
 			get{ return spectrum_grid_min;}
 			set
 			{
-				spectrum_grid_min = value;
+                spectrum_grid_min1 = spectrum_grid_min = value;
 				DrawBackground();
 			}
 		}
@@ -730,7 +864,7 @@ namespace PowerSDR
 			}
 		}
 
-		private static Color grid_zero_color = Color.Red;
+		private static Color grid_zero_color = Color.Red; // ke9ns this is the 0hz red line
 		public static Color GridZeroColor
 		{
 			get{ return grid_zero_color;}
@@ -853,9 +987,166 @@ namespace PowerSDR
 		{
 			get { return waterfall_low_threshold; }
 			set { waterfall_low_threshold = value; }
-		}
+       
+          
+        }
 
-		private static float display_line_width = 1.0F;
+        private static float waterfall_lowRX2_threshold = -130.0F; // ke9ns ADD for RX2
+        public static float WaterfallLowRX2Threshold
+        {
+            get { return waterfall_lowRX2_threshold; }
+            set { waterfall_lowRX2_threshold = value; }
+        }
+
+        private static float waterfall_lowMic_threshold = -100.0F; //  ke9ns ADD
+        public static float WaterfallLowMicThreshold
+        {
+            get { return waterfall_lowMic_threshold; }
+            set { waterfall_lowMic_threshold = value; }
+        }
+
+        //================================================================
+        // ke9ns add signal from console about Grayscale ON/OFF
+        private static byte Gray_Scale = 0; //  ke9ns ADD from console 0=RGB  1=Gray
+        public static byte GrayScale       // this is called or set in console
+        {
+            get { return Gray_Scale; }
+            set {
+                    Gray_Scale = value;
+              } // set
+        } // grayscale
+
+
+        //================================================================
+        // kes9ns add signal from setup grid lines on/off
+        private static byte grid_off = 0; //  ke9ns ADD from setup 0=normal  1=gridlines off
+        public static byte GridOff       // this is called or set in setup
+        {
+            get { return grid_off; }
+            set
+            {
+                grid_off = value;
+            } // set
+
+        } // grid_off
+
+
+        //================================================================
+        //ke9ns 1=automatic bright adjustment (takes a snapshot of the overall avg and adjust RX1 and RX2 Low threshold for proper value, every time you push the button.)
+        //      request comes from console.
+        private static byte autobright = 0; //  ke9ns ADD from console rx1 waterfall bright adjust
+        private static byte autobright2 = 0; //  ke9ns ADD from console rx2 waterfall bright adjust
+        private static byte autobright3 = 0; //  ke9ns ADD from console TX waterfall bright adjust
+
+        public static byte AutoBright       // this is called or set in console
+        {
+            get { return autobright; }
+            set
+            {
+                if (mox)
+                {
+                    autobright3 = 1;   // ke9ns TX water adjust
+                    autobright = autobright2 = 0;
+                }
+                else
+                {
+                    autobright3 = 0;
+
+                    if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.WATERFALL) || (current_display_mode == DisplayMode.PANAFALL))) autobright = value; // RX1 adjust
+                    else autobright = 0;
+
+                    if ( (console.chkRX2.Checked) && ((current_display_mode_bottom == DisplayMode.WATERFALL) || (current_display_mode_bottom == DisplayMode.PANAFALL)))   autobright2 = value;   // RX2 adjust
+                    else autobright2 = 0;
+
+                    
+                }
+
+             //   Trace.WriteLine("hereasdfadsf===========");
+
+            } // set
+
+        } // autobright
+
+
+        //================================================================
+        // signal from console about wider watermove ON/OFF
+        private static byte wm = 0; //  ke9ns ADD from console 0=RGB  1=Gray
+        public static byte WMS       // this is called or set in console
+        {
+            get { return wm; }
+            set
+            {
+                if (value == 1)
+                {
+                    WaterMove = 5;
+                    WaterMove1 = 2;
+                    K9LAST = 0;
+                }
+                else
+                {
+                    WaterMove = 3;
+                    WaterMove1 = 1;
+                    K9LAST = 0;
+                }
+
+
+            } // set
+        } // watermove
+
+        //================================================================
+        // signal from console chkPower switch ON/OFF
+        private static byte DP = 0; //  ke9ns ADD  0=OFF, 1=ON
+        public static byte Power           // this is called or set in console
+        {
+            get { return DP; }
+            set
+            {
+                DP = value;
+
+            } // set
+        } // Power
+
+        //================================================================
+        // signal from console waterfall ID transmit
+    //    private static byte TX_ID = 0; //  ke9ns ADD from console 0=off  1=TX
+     //   public static byte TXID            // this is called or set in console
+      //  {
+          //  get { return TX_ID; }
+          //  set
+          //  {
+             //   TX_ID = value;
+
+          //  } // set
+      //  } // tx id
+
+        //================================================================
+        // RX1 signal from console if "Panafall Mode" AVG mode  ( 0=no panafall mode and/or avg ON waterfall if its on panadater, 1=panafall mode and avg off in waterfall)
+        private static byte pw_avg = 0; //  ke9ns ADD 
+        public static  byte PW_AVG  // this is called or set in console
+        {
+            get { return pw_avg; }
+            set
+            {
+                pw_avg = value;
+
+            } // set
+        } // pw_avg
+
+        //================================================================
+        // RX2 signal from console if "Panafall Mode" AVG mode 
+        private static byte pw_avg2 = 0; //  ke9ns ADD 
+        public static byte PW_AVG2  // this is called or set in console
+        {
+            get { return pw_avg2; }
+            set
+            {
+                pw_avg2 = value;
+
+            } // set
+        } // pw_avg2
+
+
+        private static float display_line_width = 1.0F;
 		public static float DisplayLineWidth
 		{
 			get { return display_line_width; }
@@ -892,18 +1183,43 @@ namespace PowerSDR
 		{
 			histogram_data = new int[W];
 			histogram_history = new int[W];
-			for(int i=0; i<W; i++)
+			for(int i=0; i < W; i++)
 			{
 				histogram_data[i] = Int32.MaxValue;
 				histogram_history[i] = 0;
 			}
 
-			//display_bmp = new Bitmap(W, H);
-			//display_graphics = Graphics.FromImage(display_bmp);
-			waterfall_bmp = new Bitmap(W, H-16, PixelFormat.Format24bppRgb);	// initialize waterfall display
-			waterfall_bmp2 = new Bitmap(W, H-16, PixelFormat.Format24bppRgb);
+            //display_bmp = new Bitmap(W, H);
+            //display_graphics = Graphics.FromImage(display_bmp);
 
-			rx1_average_buffer = new float[BUFFER_SIZE];	// initialize averaging buffer array
+
+            //    waterfall_bmp = new Bitmap(W, H/K15 - 16, PixelFormat.Format24bppRgb);  // initialize waterfall display
+            //    waterfall_bmp2 = new Bitmap(W, H/K15 - 16, PixelFormat.Format24bppRgb);  // ke9ns BMP
+
+            if (WaterMove == 0)
+            {
+                waterfall_bmp = new Bitmap(W, H / K15 - 16, WtrColor);  // initialize waterfall display
+                waterfall_bmp2 = new Bitmap(W, H / K15 - 16, WtrColor);  // ke9ns BMP
+            }
+            else if (continuum == 1)
+            {
+                waterfall_bmp = new Bitmap(W, H / K15 - 16, WtrColor);  // initialize waterfall display for continuum
+                waterfall_bmp2 = new Bitmap(W * WaterMove, H / K15 - 16, WtrColor);  // was *3 ke9ns BMP
+
+            }
+            else
+            { 
+                waterfall_bmp = new Bitmap(W * WaterMove, H / K15 - 16, WtrColor);  // was *3 initialize waterfall display
+                waterfall_bmp2 = new Bitmap(W * WaterMove, H / K15 - 16, WtrColor);  // was *3 ke9ns BMP
+
+             //   waterfall_bmp.MakeTransparent(Color.FromArgb(0,0, 0, 0)); // ke9ns test
+
+
+            }
+
+
+
+            rx1_average_buffer = new float[BUFFER_SIZE];	// initialize averaging buffer array
 			rx1_average_buffer[0] = CLEAR_FLAG;		// set the clear flag
 
 			rx2_average_buffer = new float[BUFFER_SIZE];	// initialize averaging buffer array
@@ -919,15 +1235,19 @@ namespace PowerSDR
 
 			new_display_data = new float[BUFFER_SIZE];
 			current_display_data = new float[BUFFER_SIZE];
-			new_display_data_bottom = new float[BUFFER_SIZE];
+            current_display_data1 = new float[BUFFER_SIZE];  // ke9ns add
+            new_display_data_bottom = new float[BUFFER_SIZE];
 			current_display_data_bottom = new float[BUFFER_SIZE];
+            current_display_data_bottom1 = new float[BUFFER_SIZE]; // ke9ns add
 
-			for(int i=0; i<BUFFER_SIZE; i++)
+            for (int i=0; i < BUFFER_SIZE; i++) // fill the buffer with base data
 			{
 				new_display_data[i] = -200.0f;
-				current_display_data[i] = -200.0f;
+                current_display_data1[i] = -200.0f;// ke9ns add
+                current_display_data[i] = -200.0f;
 				new_display_data_bottom[i] = -200.0f;
-				current_display_data_bottom[i] = -200.0f;
+                current_display_data_bottom1[i] = -200.0f;// ke9ns add
+                current_display_data_bottom[i] = -200.0f;
 			}
 
 			/*if(!DirectXInit()) console.SetupForm.DirectX = false;
@@ -1207,7 +1527,9 @@ namespace PowerSDR
 
 		unsafe public static void RenderGDIPlus(ref PaintEventArgs e)
 		{
-			/*BitmapData display_bmpData = display_bmp.LockBits(
+
+             
+            /*BitmapData display_bmpData = display_bmp.LockBits(
 				new Rectangle(0, 0, W, H),
 				ImageLockMode.WriteOnly,
 				display_bmp.PixelFormat);
@@ -1235,112 +1557,290 @@ namespace PowerSDR
 			//g.SmoothingMode = SmoothingMode.AntiAlias;
 			bool update = true;
 			
+//======================================================
+// ke9ns RX1 only TOP of panel to bottom of panel H
+//======================================================
+
+            K13 = H;  // used to create special BMP file size
+
 			if(!split_display)
 			{
-				switch(current_display_mode) 
+				switch(current_display_mode) // ke9ns full screen display (only RX1)
 				{
 					case DisplayMode.SPECTRUM:
+                        K9 = 4;
+                        K11 = 0;
 						update = DrawSpectrum(e.Graphics, W, H, false);
 						break;
 					case DisplayMode.PANADAPTER:
+                        K9 = 2;
+                        K11 = 0;
 						update = DrawPanadapter(e.Graphics, W, H, 1, false);
 						break;
 					case DisplayMode.SCOPE:
+                        K9 = 4;
+                        K11 = 0;
 						update = DrawScope(e.Graphics, W, H, false);
 						break;
 					case DisplayMode.PHASE:
+                        K9 = 4;
+                        K11 = 0;
 						update = DrawPhase(e.Graphics, W, H, false);
 						break;
 					case DisplayMode.PHASE2:
+                        K9 = 4;
+                        K11 = 0;
 						DrawPhase2(e.Graphics, W, H, false);
 						break;
-					case DisplayMode.WATERFALL:
-						update = DrawWaterfall(e.Graphics, W, H, 1, false);
+					case DisplayMode.WATERFALL:   // RX1: full H waterfall
+                        K9 = 1;
+                        K11 = 0;
+                     	update = DrawWaterfall(e.Graphics, W, H, 1, false); // ke9ns was just H, false
 						break;
 					case DisplayMode.HISTOGRAM:
+                        K9 = 4;
+                        K11 = 0;
 						update = DrawHistogram(e.Graphics, W, H);
 						break;
 					case DisplayMode.PANAFALL:
-						split_display = true;
-						update = DrawPanadapter(e.Graphics, W, H/2, 1, false);
-						update = DrawWaterfall(e.Graphics, W, H/2, 1, true);
+                        K9 = 3;
+                        K11 = 0;
+                     
+                     	split_display = true; // use wide vertgrid because your saying split
+						update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //top half 
+						update = DrawWaterfall(e.Graphics, W, H/2, 1, true); // bottom half RX2 is not on
 						split_display = false;
+
 						break;
+
 					case DisplayMode.PANASCOPE:
+                        K9 = 4;
+                        K11 = 0;
 						split_display = true;
 						update = DrawPanadapter(e.Graphics, W, H/2, 1, false);
 						update = DrawScope(e.Graphics, W, H/2, true);
 						split_display = false;
 						break;
 					case DisplayMode.OFF:
+                        K9 = 0;
+                        K11 = 0;
 						//Thread.Sleep(1000);
 						break;
 					default:
 						break;
 				}
-			}
+			} // !split_display
 			else
 			{
-				switch(current_display_mode)
+
+        //======================================================
+        // ke9ns RX1 TOP of panel and RX2 bottom of panel H
+        // this is only RX1 here, RX2 is futher down below
+        //======================================================
+                
+
+				switch(current_display_mode) // ke9ns split display (RX1 top  and RX2 on bottom)
 				{
 					case DisplayMode.SPECTRUM:
+                          K9 = 4;
+                          K11 = 0;
 						update = DrawSpectrum(e.Graphics, W, H/2, false);
 						break;
 					case DisplayMode.PANADAPTER:
+                        K9 = 2;
+                        K11 = 0;
 						update = DrawPanadapter(e.Graphics, W, H/2, 1, false);
 						break;
 					case DisplayMode.SCOPE:
+                          K9 = 4;
+                          K11 = 0;
 						update = DrawScope(e.Graphics, W, H/2, false);
 						break;
 					case DisplayMode.PHASE:
+                          K9 = 4;
+                          K11 = 0;
 						update = DrawPhase(e.Graphics, W, H/2, false);
 						break;
 					case DisplayMode.PHASE2:
+                          K9 = 4;
+                          K11 = 0;
 						DrawPhase2(e.Graphics, W, H/2, false);
 						break;
 					case DisplayMode.WATERFALL:
-						update = DrawWaterfall(e.Graphics, W, H/2, 1, false);
+                        K9 = 6;
+                        K11 = 0;
+						update = DrawWaterfall(e.Graphics, W, H/2, 1, false);  // ke9ns was /2
 						break;
+
 					case DisplayMode.HISTOGRAM:
+                          K9 = 4;
+                          K11 = 0;
 						update = DrawHistogram(e.Graphics, W, H/2);
 						break;
+                 
+                    
+                    
+                    case DisplayMode.PANAFALL:   // ke9ns pan (KE9NS ADDED CODE)
+                        K9 = 5;
+                        K11 = 5;
+                       
+                        switch (current_display_mode_bottom)  // ke9ns check RX2 to see what to do with both RX1 and RX2
+                        {
+                            case DisplayMode.PANADAPTER:
+                                K10 = 2;
+                                 update = DrawPanadapter(e.Graphics, W, H/3, 1, false); // RX1 panadapter top 1/3
+                                 update = DrawWaterfall(e.Graphics, W, H/3, 1, true);     // RX1 waterfall middle 1/3
+
+                              	update = DrawPanadapter(e.Graphics, W, 2*H/3, 2, true); // RX2  bottom 1/3
+					
+                                break;
+
+                            case DisplayMode.WATERFALL:
+                                K10 = 1;
+
+                                 update = DrawPanadapter(e.Graphics, W, H/3, 1, false); // RX1 panadapter top 1/3
+                                 update = DrawWaterfall(e.Graphics, W, H/3, 1, true);     // RX1 waterfall middle 1/3
+
+                                update = DrawWaterfall(e.Graphics, W, 2*H/3, 2, true);  // RX2 bottom 1/3
+
+                                break;
+                            case DisplayMode.PANAFALL:   // ke9ns pan (KE9NS ADDED CODE)  rx2 panafall with RX1 panafall as well
+                                K10 = 5;
+                                 update = DrawPanadapter(e.Graphics, W, H/4, 1, false); // RX1 panadapter top 1/4
+                                 update = DrawWaterfall(e.Graphics, W, H/4, 1, true);     // RX1 waterfall middle 1/4
+
+                                 update = DrawPanadapter(e.Graphics, W, 2*H/4, 2, true);
+                                 update = DrawWaterfall(e.Graphics, W, 3*H/4, 2, true);
+                      
+                                break;
+
+                            case DisplayMode.OFF:
+                                K10 = 0;
+                                DrawOffBackground(e.Graphics, W, H / 2, true);
+                                K9 = 3;
+                                K11 = 0;
+                     
+                     	        split_display = true; // use wide vertgrid because your saying split
+						        update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //top half 
+						        update = DrawWaterfall(e.Graphics, W, H/2, 1, true); // bottom half RX2 is not on
+						        split_display = false;
+
+                            break; // rx2 off
+
+
+                        } // switch (current_display_mode_bottom)
+				      
+                    break;  // rx1 panafall
+
+
 					case DisplayMode.OFF:
+                        K9 = 0;
+                        K11 = 0;
 						DrawOffBackground(e.Graphics, W, H/2, false);
 						break;
-					default:
-						break;
-				}
+    
 
-				switch(current_display_mode_bottom)
-				{
-					case DisplayMode.SPECTRUM:
-						update = DrawSpectrum(e.Graphics, W, H/2, true);
-						break;
-					case DisplayMode.PANADAPTER:
-						update = DrawPanadapter(e.Graphics, W, H/2, 2, true);
-						break;
-					case DisplayMode.SCOPE:
-						update = DrawScope(e.Graphics, W, H/2, true);
-						break;
-					case DisplayMode.PHASE:
-						update = DrawPhase(e.Graphics, W, H/2, true);
-						break;
-					case DisplayMode.PHASE2:
-						DrawPhase2(e.Graphics, W, H/2, true);
-						break;
-					case DisplayMode.WATERFALL:
-						update = DrawWaterfall(e.Graphics, W, H/2, 2, true);
-						break;
-					case DisplayMode.HISTOGRAM:
-						update = DrawHistogram(e.Graphics, W, H/2);
-						break;
-					case DisplayMode.OFF:
-						DrawOffBackground(e.Graphics, W, H/2, true);
-						break;
 					default:
+                       
+
 						break;
-				}
-			}
+
+                } // ke9ns split display (RX1 top  and RX2 on bottom)
+
+    //=========================================
+    // ke9ns display RX2 on bottom of screen
+    //=========================================
+                if (K11 == 0)
+                {
+                    switch (current_display_mode_bottom)  // ke9ns pan
+                    {
+                        case DisplayMode.SPECTRUM:
+                            K10 = 0;
+                            update = DrawSpectrum(e.Graphics, W, H / 2, true);   // RX1 on bottom half of screen
+                            break;
+                        case DisplayMode.PANADAPTER:
+                            K10 = 2;
+                            update = DrawPanadapter(e.Graphics, W, H / 2, 2, true); // RX2  (standard mode)
+                            break;
+                        case DisplayMode.SCOPE:
+                            K10 = 0;
+                            update = DrawScope(e.Graphics, W, H / 2, true);     // RX1 on bottom half of screen
+                            break;
+                        case DisplayMode.PHASE:
+                            K10 = 0;
+                            update = DrawPhase(e.Graphics, W, H / 2, true);  // RX1 on bottom half of screen
+                            break;
+                        case DisplayMode.PHASE2:
+                            K10 = 0;
+                            DrawPhase2(e.Graphics, W, H / 2, true);  // RX1 on bottom half of screen
+                            break;
+
+                        case DisplayMode.WATERFALL:
+                            K10 = 1;
+                            update = DrawWaterfall(e.Graphics, W, H / 2, 2, true);  // RX2
+                            break;
+
+                        case DisplayMode.HISTOGRAM:
+                            K10 = 0;
+                            update = DrawHistogram(e.Graphics, W, H / 2);  // RX1 on bottom half of screen
+                            break;
+                        case DisplayMode.OFF:
+                            K10 = 0;
+                            DrawOffBackground(e.Graphics, W, H / 2, true);
+
+                            switch (current_display_mode) // ke9ns split display (RX1 top  and RX2 on bottom)
+                            {
+
+                                case DisplayMode.PANAFALL:
+                                    K9 = 3;
+                                    K11 = 0;
+
+                                    split_display = true; // use wide vertgrid because your saying split
+                                    update = DrawPanadapter(e.Graphics, W, H / 2, 1, false); //top half 
+                                    update = DrawWaterfall(e.Graphics, W, H / 2, 1, true); // bottom half RX2 is not on
+                                    split_display = false;
+
+                                    break;
+                            }
+
+
+                            break; // RX2 OFF
+
+                        case DisplayMode.PANAFALL:
+                            K10 = 2;
+                            update = DrawPanadapter(e.Graphics, W, H / 2, 2, true); // RX2  (standard mode)
+                            break;
+                        default:
+                             K10 = 2;
+                            update = DrawPanadapter(e.Graphics, W, H / 2, 2, true); // RX2  (standard mode)
+                            break;
+
+                           
+                    } // switch(current_display_mode_bottom)
+                } // K11 == 0
+                else
+                {
+                    switch (current_display_mode_bottom)  // ke9ns pan
+                    {
+
+                        case DisplayMode.OFF:
+                            K10 = 0;
+                            DrawOffBackground(e.Graphics, W, H / 2, true);
+
+                           
+
+
+                            break; // RX2 OFF
+
+
+
+                    }
+
+
+                } // K11==5
+
+			} // split_display
+
 
 			if(update)
 			{
@@ -1350,19 +1850,20 @@ namespace PowerSDR
 			{
 				Debug.WriteLine("display update = false");
 			}
-		}
+		} // renderGDIPLUs
+
 
 		private static void UpdateDisplayPeak(float[] buffer, float[] new_data) 
 		{
 			if(buffer[0] == CLEAR_FLAG)
 			{
 				//Debug.WriteLine("Clearing peak buf"); 
-				for(int i=0; i<BUFFER_SIZE; i++)
+				for(int i=0; i < BUFFER_SIZE; i++)
 					buffer[i] = new_data[i];
 			}
 			else
 			{
-				for(int i=0; i<BUFFER_SIZE; i++)
+				for(int i=0; i < BUFFER_SIZE; i++)
 				{
 					if(new_data[i] > buffer[i])
 						buffer[i] = new_data[i];
@@ -1414,9 +1915,14 @@ namespace PowerSDR
 				g.DrawString("High SWR", new System.Drawing.Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Red), 245, 20);
 		}
 
+//================================================
+// ke9ns spectrum
+//================================================
+
+
 		private static void DrawSpectrumGrid(ref Graphics g, int W, int H, bool bottom)
 		{
-			System.Drawing.Font font = new System.Drawing.Font("Arial", 9);
+			System.Drawing.Font font = new System.Drawing.Font("Swis721 BT", 9, FontStyle.Italic);
 			SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
 			Pen grid_pen = new Pen(grid_color);
 
@@ -1431,7 +1937,7 @@ namespace PowerSDR
 
 			if(!mox)
 			{
-				low = rx_display_low;				// get RX display limits
+				low = rx_display_low;				// get RX display limits  based on sample rate  (left to right freq range)
 				high = rx_display_high;
 			}
 			else
@@ -1455,6 +1961,7 @@ namespace PowerSDR
 			int freq_step_size = 50;
 			int y_range = spectrum_grid_max - spectrum_grid_min;
 			int grid_step = spectrum_grid_step;
+
 			if(split_display) grid_step *= 2;
 
 			if(high == 0)
@@ -1474,11 +1981,13 @@ namespace PowerSDR
 				// Draw vertical lines
 				for(int i=1; i<=num_steps; i++)
 				{
-					int x = W-(int)Math.Floor(i*pixel_step_size);	// for negative numbers
-					
-					if(bottom) g.DrawLine(grid_pen, x, H, x, H+H);
-					else g.DrawLine(grid_pen, x, 0, x, H);				// draw right line
-				
+					int x = W-(int)Math.Floor(i*pixel_step_size);   // for negative numbers
+
+                   
+                        if (bottom) g.DrawLine(grid_pen, x, H, x, H + H);
+                        else g.DrawLine(grid_pen, x, 0, x, H);              // draw right line
+                   
+
 					// Draw vertical line labels
 					int num = i*freq_step_size;
 					string label = num.ToString();
@@ -1770,9 +2279,20 @@ namespace PowerSDR
         static float zoom_height = 1.5f;   // Should be > 1.  H = H/zoom_height
 #endif
 
+
+ //=========================================================
+ // ke9ns draw panadapter grid
+ //=========================================================
 		private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
 		{
-			// draw background
+          
+
+            if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan dislay in 1/3 instead of 1/2
+
+            if ((K9 == 5) && (K10 == 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan dislay in 1/4 instead of 1/2
+
+
+            // draw background
 			/*if(bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);
 			else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);*/
 
@@ -1787,8 +2307,20 @@ namespace PowerSDR
 			int step_index = 0;
 			int freq_step_size = 50;
             int inbetweenies = 5;
-			int grid_step = spectrum_grid_step;
-			if(split_display) grid_step *= 2;
+
+			int grid_step = spectrum_grid_step;  // 5
+
+
+            if (split_display) grid_step = grid_step * 2; // increase grid_step since you have less space on screen
+
+
+            if ((K9 == 5) && (K10 != 5) && (bottom)) grid_step = spectrum_grid_step ; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
+         
+            if ((K9 == 5) && (K10 == 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
+            
+
+          //  if (bottom) Trace.WriteLine("bottom...top " + top + " H " + H);
+          //  else Trace.WriteLine("top...top " + top + " H " + H);
 
             bool is_first = true;
             int _x = 0;
@@ -1796,18 +2328,21 @@ namespace PowerSDR
             int _width = 0;
             int _height = 0;
 
-            //g.SmoothingMode = SmoothingMode.AntiAlias;
-			System.Drawing.Font font = new System.Drawing.Font("Arial", 9);
+            System.Drawing.Font font = new System.Drawing.Font("Swis721 BT", 9, FontStyle.Italic);
 			SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
-			//Pen grid_pen = new Pen(grid_color);
+			
             Pen grid_pen = new Pen(Color.FromArgb(42, Color.White));
             Pen grid_pen_dark = new Pen(Color.FromArgb(16, Color.White));
-            //display_filter_color = Color.FromArgb(40, 255, 255, 255);
+           
 			Pen tx_filter_pen = new Pen(display_filter_tx_color);
-			int y_range = spectrum_grid_max - spectrum_grid_min;
-			int filter_low, filter_high;            
 
-			int center_line_x = (int)(-(double)Low/(High-Low)*W);
+
+			int y_range = spectrum_grid_max - spectrum_grid_min; // ke9ns H grid span min to max
+			
+
+            int filter_low, filter_high;     // filter bandwidth        
+
+			int center_line_x = (int)(-(double)Low/(High-Low)*W); // center of display window
 
 			if(local_mox) // get filter limits
 			{
@@ -1825,34 +2360,60 @@ namespace PowerSDR
 				filter_high = rx2_filter_high;
 			}
 
-			if((rx1_dsp_mode == DSPMode.DRM && rx==1) ||
-				(rx2_dsp_mode == DSPMode.DRM && rx==2))
+			if((rx1_dsp_mode == DSPMode.DRM && rx==1) || (rx2_dsp_mode == DSPMode.DRM && rx==2))
 			{
 				filter_low = -5000;
 				filter_high = 5000;
 			}
 
-			// Calculate horizontal step size
+
+            //===========================================================
+            // Calculate horizontal step size
+            //===========================================================
+            
 			int width = High-Low;
 			while(width/freq_step_size > 10)
 			{
                 /*inbetweenies = step_list[step_index] / 10;
                 if (inbetweenies == 1) inbetweenies = 10;*/
-				freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
-				step_index = (step_index+1)%4;
+				freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
+				step_index = (step_index+1) % 4;
 				if(step_index == 0) step_power++;
 			}
-			double w_pixel_step = (double)W*freq_step_size/width;
-			int w_steps = width/freq_step_size;
+			double w_pixel_step = (double)W * freq_step_size / width;
+			int w_steps = width / freq_step_size;
 
-			// calculate vertical step size
-			int h_steps = (spectrum_grid_max - spectrum_grid_min)/grid_step;
-			double h_pixel_step = (double)H/h_steps;
-			int top = (int)((double)grid_step*H/y_range);
+         
 
-			if(!local_mox && sub_rx1_enabled && rx==1)
+            //===========================================================
+            // calculate vertical step size
+            //===========================================================
+			int h_steps = (spectrum_grid_max - spectrum_grid_min) / grid_step; // if display area shrinks, grid step goes up, so h_steps goes down.
+
+			double h_pixel_step = (double)H / h_steps; // ke9ns ?
+
+            if ((K9 == 5) && (K10 != 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2) ; // ke9ns ADDED CODE area are in thirds so hstep for RX1 and RX2 should be the same
+           
+            if ((K9 == 5) && (K10 == 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2); // ke9ns ADDED CODE area are in 1/4rs so hstep for RX1 and RX2 should be the same
+
+			int top = (int)((double)grid_step * H / y_range); // find top of each window for the panadapter
+
+
+            //  if (bottom) Trace.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top);
+            //   else Trace.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top);
+
+
+
+
+
+
+            //===========================================================
+            // draw sub filter
+            //===========================================================
+            if (!local_mox && sub_rx1_enabled && rx==1)
 			{
-				// draw Sub RX filter
+				
+                // draw Sub RX filter
 				// get filter screen coordinates
 				int filter_left_x = (int)((float)(filter_low-Low+vfoa_sub_hz-vfoa_hz-rit_hz)/(High-Low)*W);
 				int filter_right_x = (int)((float)(filter_high-Low+vfoa_sub_hz-vfoa_hz-rit_hz)/(High-Low)*W);
@@ -1872,24 +2433,37 @@ namespace PowerSDR
 						filter_left_x, top, filter_right_x-filter_left_x, H-top);
 				}
 
-				// draw Sub RX 0Hz line
-				int x = (int)((float)(vfoa_sub_hz-vfoa_hz-Low)/(High-Low)*W);
-				if(bottom)
+                //===============================================================
+                // draw Sub RX 0Hz line
+                //===============================================================
+				int x = (int)((float)(vfoa_sub_hz-vfoa_hz-Low)/(High-Low)*W);  // ke9ns draw red line
+				
+                if(bottom)
 				{
-					g.DrawLine(new Pen(sub_rx_zero_line_color), x, H+top, x, H+H);
+                    g.DrawLine(new Pen(sub_rx_zero_line_color), x, H + top, x, H + H);// ke9ns draw red line
 					g.DrawLine(new Pen(sub_rx_zero_line_color), x-1, H+top, x-1, H+H);
 				}
 				else
 				{
-					g.DrawLine(new Pen(sub_rx_zero_line_color), x, top, x, H);
+                    g.DrawLine(new Pen(sub_rx_zero_line_color), x, top, x, H);         // ke9ns draw red line
 					g.DrawLine(new Pen(sub_rx_zero_line_color), x-1, top, x-1, H);
 				}
-			}
 
-			if(!(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
+
+
+
+
+            } // draw sub filter
+
+
+
+
+
+            if (!(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
 			{
 				// get filter screen coordinates
 				int filter_left_x = (int)((float)(filter_low-Low)/(High-Low)*W);
+
 				int filter_right_x = (int)((float)(filter_high-Low)/(High-Low)*W);
 
 				// make the filter display at least one pixel wide.
@@ -1906,10 +2480,9 @@ namespace PowerSDR
 					g.FillRectangle(new SolidBrush(display_filter_color),	// draw filter overlay
 						filter_left_x, top, filter_right_x-filter_left_x, H-top);
 				}
-			}
+			} // filter
 
-			if(!local_mox && draw_tx_filter &&
-				(rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
+			if(!local_mox && draw_tx_filter &&	(rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
 			{
 				// get tx filter limits
 				int filter_left_x; 
@@ -1942,48 +2515,57 @@ namespace PowerSDR
 					}
 				}
 				
-				if(bottom && tx_on_vfob)
+				if(bottom && tx_on_vfob)  // if transmitting on RX2 then draw lines on bottom
 				{
+                 
 					g.DrawLine(tx_filter_pen, filter_left_x, H+top, filter_left_x, H+H);		// draw tx filter overlay
 					g.DrawLine(tx_filter_pen, filter_left_x+1, H+top, filter_left_x+1, H+H);	// draw tx filter overlay
 					g.DrawLine(tx_filter_pen, filter_right_x, H+top, filter_right_x, H+H);	// draw tx filter overlay
 					g.DrawLine(tx_filter_pen, filter_right_x+1, H+top, filter_right_x+1, H+H);// draw tx filter overlay
 				}
-				else if(!tx_on_vfob)
+                else if ((!tx_on_vfob) && (!bottom)) // ke9ns if transmitting on normal RX1 draw lines // KE9NS ADD  fix mistake made by flex
 				{
-					g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);		// draw tx filter overlay
+
+                    // ke9ns pgrid ORANGE LEFT and RIGHT TX WIDTH LINES for TRANSMITTER ONLY
+                   
+					g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);		// LEFT draw tx filter overlay
 					g.DrawLine(tx_filter_pen, filter_left_x+1, top, filter_left_x+1, H);	// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x, top, filter_right_x, H);	// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x+1, top, filter_right_x+1, H);// draw tx filter overlay
+				
+                    g.DrawLine(tx_filter_pen, filter_right_x, top, filter_right_x, H);	    // RIGHT draw tx filter overlay
+					g.DrawLine(tx_filter_pen, filter_right_x+1, top, filter_right_x+1, H);   // draw tx filter overlay
 				}
-			}
+			} // draw filter width lines
 		
-			if(!local_mox && draw_tx_cw_freq &&
-				(rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
+			if(!local_mox && draw_tx_cw_freq &&	(rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
 			{
 				int pitch = cw_pitch;
-				if(rx1_dsp_mode == DSPMode.CWL)
-					pitch = -cw_pitch;
+
+				if(rx1_dsp_mode == DSPMode.CWL)	pitch = -cw_pitch;
+                else if(rx2_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
 
 				int cw_line_x;
-				if(!split_enabled)
-					cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz)/(High - Low) * W);
+
+				if(!split_enabled)	cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz)/(High - Low) * W);
 				else
 					cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
 
-				if(bottom)
+                if ((bottom) && tx_on_vfob) // KE9NS ADD  fix mistake made by flex
 				{
 					g.DrawLine(tx_filter_pen, cw_line_x, H+top, cw_line_x, H+H);
 					g.DrawLine(tx_filter_pen, cw_line_x+1, H+top, cw_line_x+1, H+H);
 				}
-				else
+				else if ((!tx_on_vfob) && (!bottom)) 
 				{
 					g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x, H);
 					g.DrawLine(tx_filter_pen, cw_line_x+1, top, cw_line_x+1, H);
 				}
-			}
 
+			} // cw filter lines
+
+            //===============================================================
             // draw 60m channels if in view
+            //===============================================================
+          
             foreach (Channel c in channels_60m)
             {
                 long rf_freq = vfoa_hz;
@@ -2041,6 +2623,8 @@ namespace PowerSDR
                         }
                     }
 
+
+                    
                     int chan_left_x = (int)((float)(c.Freq * 1e6 - rf_freq - c.BW / 2 - Low - rit) / (High - Low) * W);
                     int chan_right_x = (int)((float)(c.Freq * 1e6 - rf_freq + c.BW / 2 - Low - rit) / (High - Low) * W);
 
@@ -2066,9 +2650,15 @@ namespace PowerSDR
                     //else
                     //    drawNotchStatus(g, n, (notch_left_x + notch_right_x) / 2, top + 75, W, H);
                 }
-            }
+            }  // 60m channels
 
 #if(!NO_TNF)
+
+            //===============================================================
+            // Draw TNF NOTCH
+            //===============================================================
+  
+
             // draw notches if in RX
             if (!local_mox)
             {
@@ -2078,6 +2668,7 @@ namespace PowerSDR
                 else
                     notches = NotchList.NotchesInBW((double)vfob_hz * 1e-6, Low, High);
 
+             
                 //draw notch bars in this for loop
                 foreach (Notch n in notches)
                 {
@@ -2120,9 +2711,7 @@ namespace PowerSDR
                     if (notch_right_x == notch_left_x)
                         notch_right_x = notch_left_x + 1;
 
-                    if (tnf_zoom && n.Details &&
-                        ((bottom && n.RX == 2) ||
-                        (!bottom && n.RX == 1)))
+                    if (tnf_zoom && n.Details && ((bottom && n.RX == 2) || (!bottom && n.RX == 1)))
                     {
                         int zoomed_notch_center_freq = (int)(notch_zoom_start_freq * 1e6 - rf_freq - rit);
 
@@ -2185,7 +2774,7 @@ namespace PowerSDR
                             g.FillRectangle(new SolidBrush(Color.FromArgb(160, 0, 0, 0)), 0, H + H/ zoom_height, zoom_bw_left_x, H + H - H / zoom_height);
                             g.FillRectangle(new SolidBrush(Color.FromArgb(160, 0, 0, 0)), zoom_bw_right_x, H + H/ zoom_height, W - zoom_bw_right_x, H + H - H / zoom_height);
                         }
-                    }
+                    } // tnf zoom
 
                     // decide colors to draw notch
                     Color c1 = notch_on_color;
@@ -2258,8 +2847,15 @@ namespace PowerSDR
                             drawNotchStatus(g, n, (notch_left_x + notch_right_x) / 2, top + 75, W, H);
                     }
                 }
-            }
-#endif
+            } // tnf
+#endif // TNF
+
+
+
+            //===============================================================
+            // Draw VFO
+            //===============================================================
+  
 			double vfo;
             if (rx == 1)
             {
@@ -2309,12 +2905,16 @@ namespace PowerSDR
                 }
             }
 
-			long vfo_round = ((long)(vfo/freq_step_size))*freq_step_size;
+            //===============================================================
+            // Draw vertical lines - band edge markers and freq text
+            //===============================================================
+            
+            long vfo_round = ((long)(vfo / freq_step_size)) * freq_step_size;
 			long vfo_delta = (long)(vfo - vfo_round);
 
 			int f_steps = (width/freq_step_size)+1;
-			
-            // Draw vertical lines - band edge markers and freq text
+
+         
             switch (console.CurrentRegion)
             {
                 case FRSRegion.US:
@@ -2363,15 +2963,22 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                    
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
 
                                 int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
                                 int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
@@ -2379,9 +2986,12 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
 
                                 // make freq grid labels
@@ -2398,12 +3008,16 @@ namespace PowerSDR
                                 if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
                                 else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
                             }
-                        }
+                        } 
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
 
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
@@ -2416,7 +3030,8 @@ namespace PowerSDR
                                 else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
                             }
                         }
-                    }
+                    } // for loop
+
 
                     int[] band_edge_list_r2 = { 18068000, 18168000, 1800000, 2000000, 3500000, 4000000,
 				                                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
@@ -2431,9 +3046,11 @@ namespace PowerSDR
                             if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H + top, temp_vline, H + H);//wa6ahl
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
-                    }
-                    break;
+                    } // for loop
 
+                break; // USA band edges
+
+            //===============================================
                 case FRSRegion.UK_Plus:
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -2480,9 +3097,12 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
@@ -2496,9 +3116,12 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
 
                                 double actual_fgrid_label = Math.Round(actual_fgrid, 4);
@@ -2517,9 +3140,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
 
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
@@ -2590,8 +3216,11 @@ namespace PowerSDR
                             }
                         }             
                      }
-                    break;
-
+                break; // europe band edges
+               
+                
+                //===============================================
+            
                 case FRSRegion.Sweden:
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -2638,15 +3267,21 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
 
                                 int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
                                 int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
@@ -2654,9 +3289,12 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
 
                                 double actual_fgrid_label = Math.Round(actual_fgrid, 4);
@@ -2675,10 +3313,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
                             label = fgrid.ToString();
@@ -2745,8 +3385,10 @@ namespace PowerSDR
                             }
                         }
                     }
-                    break;
-                
+                    break;  // sweden band edges
+
+
+                //===============================================
                 case FRSRegion.Spain_UK:
                 case FRSRegion.Europe:
                 case FRSRegion.Italy:
@@ -2760,6 +3402,7 @@ namespace PowerSDR
                 case FRSRegion.Netherlands:
                 case FRSRegion.France:
                 case FRSRegion.Russia:
+
                     for (int i = 0; i < f_steps + 1; i++)
                     {
                         string label;
@@ -2805,15 +3448,21 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
 
                                 int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
                                 int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
@@ -2821,9 +3470,12 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                                 
                                 double actual_fgrid_label = Math.Round(actual_fgrid, 4);
@@ -2842,10 +3494,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
                             label = fgrid.ToString();
@@ -2921,25 +3575,33 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
                                 int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
                                 int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
                                 float scale = (float)(x_2 - vgrid) / inbetweenies;
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
 
                                 double actual_fgrid_label = Math.Round(actual_fgrid, 4);
@@ -2958,10 +3620,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
                             label = fgrid.ToString();
@@ -2989,8 +3653,10 @@ namespace PowerSDR
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
                     }
-                    break;
+                    break; // russia band edges
 
+
+                //===============================================
                 case FRSRegion.Region_3:
                 case FRSRegion.Japan:
 
@@ -3039,25 +3705,33 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
                                 int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
                                 int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
                                 float scale = (float)(x_2 - vgrid) / inbetweenies;
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    float x3 = (float)vgrid + (j * scale);
-                                    if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
-                                    else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
                                 }
 
                                 double actual_fgrid_label = Math.Round(actual_fgrid, 4);
@@ -3076,10 +3750,12 @@ namespace PowerSDR
                         }
                         else
                         {
-                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
                             double new_fgrid = (vfoa_hz + fgrid) / 1000000;
 
                             label = fgrid.ToString();
@@ -3107,25 +3783,57 @@ namespace PowerSDR
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
                     }
-                    break;
-            }
+                    break;  // Japan Region 3 band edges
 
-			// Draw horizontal lines
-			for(int i=1; i<h_steps; i++)
-			{
+
+                //===============================================
+
+            } // Band edges (all regions)
+
+
+
+            //===============================================================
+            // Draw horizontal lines  ke9ns hstep
+            //===============================================================
+          
+			for(int i=1; i< h_steps; i++)  // h_steps number of times
+     		{
 				int xOffset = 0;
-				int num = spectrum_grid_max - i*grid_step;
-				int y = (int)((double)(spectrum_grid_max - num)*H/y_range);
-				if(bottom) g.DrawLine(grid_pen, 0, H+y, W, H+y);
-				else g.DrawLine(grid_pen, 0, y, W, y);
 
-				// Draw horizontal line labels
+                int num;
+
+                if ((K9 == 5) & (K10 != 5) && (bottom))  num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  //ke9ns mod we want RX2 step to be the same as RX1 while in panafall
+                else if ((K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  // ke9ns mod we want RX2 step to be the same as RX1 while in panafall 
+                else  num = spectrum_grid_max - (i * grid_step);                // generate the proper db number
+
+                int y;
+                if ((K9 == 5) & (K10 != 5) && (bottom)) y = (int)((double)(spectrum_grid_max - num) * H1 / y_range);   // ke9ns mod
+                else if ((K9 == 5) & (K10 == 5) && (bottom)) y = (int)((double)(spectrum_grid_max - num) * H1 / y_range); // ke9ns mod
+			    else y = (int)((double)(spectrum_grid_max - num) * H / y_range);
+
+                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                {
+                    if (bottom) g.DrawLine(grid_pen, 0, H + y, W, H + y);  // draw lines 
+                    else g.DrawLine(grid_pen, 0, y, W, y);
+                }
+                
+               //   if (bottom) Trace.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top + " num "+num + " gstep "+ grid_step + " Y "+ y + " yrange " + y_range);
+               //   else Trace.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top + " num " + num + " gstep " + grid_step + " Y " + y + " yrange " + y_range);
+
+
+            //===============================================================
+            // Draw horizontal line labels
+            //===============================================================
 				if(i != 1) // avoid intersecting vertical and horizontal labels
 				{
-					num = spectrum_grid_max - i*grid_step;
+
+                    if ((K9 == 5) & (K10 != 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod (lines based on area of panadapter and waterfall etc)
+                    else if ((K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod
+                    else  num = spectrum_grid_max - (i * grid_step);
+
 					string label = num.ToString();
-					if(label.Length == 3)
-						xOffset = (int)g.MeasureString("-", font).Width - 2;
+					if(label.Length == 3)	xOffset = (int)g.MeasureString("-", font).Width - 2;
+
 					int offset = (int)(label.Length*4.1);
 					SizeF size = g.MeasureString(label, font);
 
@@ -3154,11 +3862,29 @@ namespace PowerSDR
 					{
 						if(bottom) g.DrawString(label, font, grid_text_brush, x, H+y);
 						else g.DrawString(label, font, grid_text_brush, x, y);
-					}
-				}
-			}
 
-			// Draw 0Hz vertical line if visible
+                        if (grid_off == 1) // ke9ns add  (when grid off then draw db number on right side for sure)
+                        {
+                            x = (int)(W - size.Width - 3);
+
+                            if (bottom) g.DrawString(label, font, grid_text_brush, x, H + y);
+                            else g.DrawString(label, font, grid_text_brush, x, y);
+                        }
+
+                    }
+
+
+
+                } // i != 0
+
+			} // for loop to draw hor lines and db numbers
+
+
+
+            //===============================================================
+            // Draw 0Hz vertical line if visible
+            //===============================================================
+  		
 			if(center_line_x >= 0 && center_line_x <= W)
 			{
 				if(bottom)
@@ -3181,31 +3907,355 @@ namespace PowerSDR
 
 			if(high_swr && rx==1)
 				g.DrawString("High SWR", new System.Drawing.Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Red), 245, 20);
-		}
 
-		private static void DrawWaterfallGrid(ref Graphics g, int W, int H, int rx, bool bottom)
+
+
+
+            //=====================================================================
+            //=====================================================================
+            // ke9ns add DRAW SWL SPOTS ON PANADAPTER
+            //=====================================================================
+            //=====================================================================
+
+         
+            if ( (SpotControl.SP1_Active != 0) && (!mox) && (console.chkPower.Checked == true) && (vfoa_hz < 30000000))// do SWL spot if active and not transmitting
+            {
+                 
+                Font font1 = new Font("Ariel", 9, FontStyle.Regular);
+                Pen p = new Pen(Color.Purple, 2.0f); // color for vert line of SWL list
+
+                int VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
+                int VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
+                int VFODiff = VFOHigh - VFOLow; // diff in hz
+            
+                byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
+                byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
+
+
+                int iii = 0; // stairstep the swl stations on the screen
+   
+                int L_index = 0;                                              // 0Mhz in index
+                if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB-1]; // Left side  index position corresponding to the Left side Mhz
+                int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
+
+                float XPOS = (float)W / (float)VFODiff;
+                
+                int H1a = H*2 / 3; // vert line length from top down
+
+
+                DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+                int UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
+
+                if ((!bottom) && (VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
+                {
+                  
+                    SpotControl.VFOHLast = VFOHigh;
+                    SpotControl.Lindex = 0; // bottom of index to display spots
+                    SpotControl.Hindex = 0; // top of index to display spots
+
+                    Console.SXK = 0;
+
+
+                    for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
+                    {
+                        if ((SpotControl.SWL_Freq[ii] > VFOHigh))
+                        {
+                            SpotControl.Hindex = ii--; // get top index spot
+                            break; // once a SWL spot if found off the right side of screen then DONE
+                        }
+                       
+                            if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
+                            {
+                                if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
+
+                                if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                                {
+                                    int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+
+                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                    g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+
+                                if (Console.SXK < 99)
+                                {
+                                    Console.SXW[Console.SXK] = (int)length.Width;
+                                    Console.SXH[Console.SXK] = (int)length.Height;
+                                    Console.SXX[Console.SXK] = VFO_SWLPos;
+                                    Console.SXY[Console.SXK] = 20 + iii;
+                                    Console.SXS[Console.SXK] = SpotControl.SWL_Station[ii];
+
+                                    Console.SXK++;
+                                }
+
+                                    iii = iii + 11; // stairstep spots
+                                    if (iii > 90) iii = 0;
+
+                                } // check time
+                        } // make sure spot is > then left side of screen
+   
+                    } // for loop through SWL_Index
+                }
+                else // if you dont change freq, then do below
+                {
+
+                    if (!bottom)
+                    {
+                       
+                        for (int ii = SpotControl.Lindex; ii < SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                        {
+
+                            if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                            {
+                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+
+                                SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+                             
+                                iii = iii + 11; // stairstep spots
+                                if (iii > 90) iii = 0;
+
+                            } // check time
+
+                        } // for loop to display all current swl spots
+                    } // RX1 only
+
+                } //do this above until you move freq again
+
+       
+
+
+            } // SP1_Active SWL CLUSTER
+
+
+
+            //=====================================================================
+            //=====================================================================
+            // ke9ns add draw DX SPOTS on pandapter
+            //=====================================================================
+            //=====================================================================
+
+          
+            if (SpotControl.SP_Active != 0)
+            {
+                Font font1 = new Font("Ariel", 9, FontStyle.Regular);     // call sign font style
+                Pen p = new Pen(Color.YellowGreen, 2.0f);                // vert line color and thickness
+
+                int iii = 0; // stairstep holder
+                byte low = 0; // 1=LSB, 0=USB
+
+                int rx2 = 0;
+
+                int kk = 0;
+
+                int[] holder = new int[100];  // used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+                int[] holder1 = new int[100];
+
+                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
+
+                int H1a = H / 2;            // length of vertical line
+                int H1b = 20;               // starting point of vertical line
+
+                // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                if (bottom)                 // if your drawing to the bottom 
+                {
+                  if ((K9 == 2) && (K10 == 2))  H1a = H + (H/2); // long
+                  else H1a = H + (H / 4); // short
+
+                    H1b = H + 20;
+
+                    vfo_hz = (int)vfob_hz;
+                    Console.DXK2 = 0; // index to allow call signs to draw after all the vert lines on the screen
+
+                }
+                else Console.DXK = 0; // index to allow call signs to draw after all the vert lines on the screen
+
+
+
+                int VFOLow = vfo_hz + RXDisplayLow; // low freq (left side) in hz
+                int VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                int VFODiff = VFOHigh - VFOLow; // diff in hz
+
+             
+                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) // check for bands using LSB
+                {
+                    low = 1; // LSB
+                }
+                else low = 0; // usb
+
+
+                SizeF length; // length of call sign so we can do usb/lsb and define a box to click into
+
+
+                //--------------------------------------------------------------------------------------------
+                for (int ii = 0; ii < SpotControl.DX_Index; ii++) // draw vert lines first
+                {
+                  
+                    if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
+                    {
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] - VFOLow)));
+                      
+                        holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
+                        holder1[kk] = VFO_DXPos;
+
+                        kk++; 
+                      
+                        g.DrawLine(p, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
+                       
+                    }
+
+                } // for loop through DX_Index
+
+
+                if (bottom) Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
+                else Console.DXK= kk;
+
+              
+                //--------------------------------------------------------------------------------------------
+                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
+                {
+
+                    // font
+                    if (low == 1) // 1=LSB so draw on left side of line
+                    {
+
+                        if (Console.DXR == 0)
+                        {
+                            length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
+                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - length.Width, H1b + iii);
+                        }
+                        else
+                        {
+                            length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
+                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii] - length.Width, H1b + iii);
+
+                        }
+
+                        if (bottom) rx2 = 50;
+                        else rx2 = 0;
+
+                        if (!mox) // only do when not transmitting
+                        {
+                            Console.DXW[ii + rx2] = (int)length.Width;
+                            Console.DXH[ii + rx2] = (int)length.Height;
+                            Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
+                            Console.DXY[ii + rx2] = H1b + iii;
+                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
+                            
+                        }
+                        
+
+                    }
+                    else   // 0=usb so draw on righ side of line (normal)
+                    {
+                        if (Console.DXR == 0)
+                        {
+                            length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
+                        }
+                        else
+                        {
+                            length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
+
+                        }
+
+                        if (bottom) rx2 = 50;
+                        else rx2 = 0;
+
+                        if (!mox) // only do when not transmitting
+                        {
+                            Console.DXW[ii + rx2] = (int)length.Width;
+                            Console.DXH[ii + rx2] = (int)length.Height;
+                            Console.DXX[ii + rx2] = holder1[ii];
+                            Console.DXY[ii + rx2] = H1b + iii;
+                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
+                        }
+
+
+                        if (vfo_hz >= 50000000) // 50000000 or 50mhz
+                        {
+                            iii = iii + 11;
+                            g.DrawString(SpotControl.DX_Grid[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX grid name
+                        }
+
+
+                    }
+
+                    iii = iii + 11;
+
+                    if (iii > 90) iii = 0;
+                   
+
+                }// for loop through DX_Index
+
+             
+
+            } // SP_Active DX SSB CLUSTER
+
+
+
+        } // draw panadapter grid
+
+
+
+
+      //==========================================================================================================================================
+        //================================================================
+        // ke9ns drawwaterfall text
+        //       continuum mode draws db numbers instead of freq
+        //================================================================
+
+        private static void DrawWaterfallGrid(ref Graphics g, int W, int H, int rx, bool bottom)
 		{
 			// draw background
-			if(bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);
-			else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);
+            // full screen W = 1607, H = 541  (shurnk W=1168, H=303)
 
-			int low = rx_display_low;					// initialize variables
-			int high = rx_display_high;
-			int mid_w = W/2;
+         //  Trace.WriteLine("KE9NS DRAWWATERFALLGRID....H................. "+ H);
+         //   Trace.WriteLine("KE9NS DRAWWATERFALLGRID....W................. " + W);
+
+           
+        // ke9ns this assures a black line for the waterfall frequencies to go into
+            if (bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);  // fill black on bottom half of display
+            else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);  // fill black into entire display
+            
+
+            
+            // Low frequency to High frequency ?
+            int low = rx_display_low;	// ke9ns  BASED ON SAMPLE RATE (192000, or 96000, etc) -4000 initial  but reads -97370 
+			int high = rx_display_high; //  = 4000 initial but reads 79371
+
+			int mid_w = W/2; // mid point of display window (horizontal)
+
 			int[] step_list = {10, 20, 25, 50};
+
 			int step_power = 1;
 			int step_index = 0;
 			int freq_step_size = 50;
 
-			System.Drawing.Font font = new System.Drawing.Font("Arial", 9);
-			SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
+
+             
+			System.Drawing.Font font = new System.Drawing.Font("Swis721 BT", 9, FontStyle.Italic); // Arial size and style of freq text for waterfall
+
+            SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
 			Pen grid_pen = new Pen(grid_color);
 			Pen tx_filter_pen = new Pen(display_filter_tx_color);
-			int y_range = spectrum_grid_max - spectrum_grid_min;
-			int filter_low, filter_high;
 
-			int center_line_x = (int)(-(double)low/(high-low)*W);
+			
+            int y_range = spectrum_grid_max - spectrum_grid_min; // ke9ns 0 - -160 :     y_range = 160 default, but reads 120
 
+
+			int filter_low, filter_high;  // ke9ns based on your audio filter settings
+
+			int center_line_x = (int)(-(double)low/(high-low)*W); // ke9ns 885 full screen (shrunk 643) =(97370/(176741))*1607
+
+          //  Trace.WriteLine("KE9NS Y-Range................. " + y_range);
+
+          //  Trace.WriteLine("KE9NS Centerlinex................. " + center_line_x);
+            
 			if(mox) // get filter limits
 			{
 				filter_low = tx_filter_low;
@@ -3229,100 +4279,120 @@ namespace PowerSDR
 				filter_high = 5000;
 			}
 
-			// Calculate horizontal step size
-			int width = high-low;
+			// Calculate hor step size (left to right)
+			int width = high-low; // high freq - low freq
+
 			while(width/freq_step_size > 10)
 			{
 				freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
-				step_index = (step_index+1)%4;
+				step_index = (step_index+1) % 4;
 				if(step_index == 0) step_power++;
 			}
-			double w_pixel_step = (double)W*freq_step_size/width;
-			int w_steps = width/freq_step_size;
+			double w_pixel_step = (double)W * freq_step_size / width;
+			int w_steps = width / freq_step_size;
+
+
+            //================================================================
+            // ke9ns drawwaterfall vertical tick marks
+            //================================================================
 
 			// calculate vertical step size
 			int h_steps = (spectrum_grid_max - spectrum_grid_min)/spectrum_grid_step;
-			double h_pixel_step = (double)H/h_steps;
-			int top = (int)((double)spectrum_grid_step*H/y_range);
-			if(bottom) top *= 2;
 
-			if(!bottom)
-			{
-				if(!mox && sub_rx1_enabled)
-				{
-					// draw Sub RX 0Hz line
-					int x = (int)((float)(vfoa_sub_hz-vfoa_hz-low)/(high-low)*W);
-					g.DrawLine(new Pen(sub_rx_zero_line_color), x, 0, x, top);
-					g.DrawLine(new Pen(sub_rx_zero_line_color), x-1, 0, x-1, top);
+            if ((rx == 1) && (continuum == 1)) // ke9ns add (20 db steps listed on the top line)
+            {
+                h_steps = 20;
+            }
 
-					// draw Sub RX filter
-					// get filter screen coordinates
-					int filter_left_x = (int)((float)(filter_low-low+vfoa_sub_hz-vfoa_hz)/(high-low)*W);
-					int filter_right_x = (int)((float)(filter_high-low+vfoa_sub_hz-vfoa_hz)/(high-low)*W);
+            double h_pixel_step = (double)H / h_steps;
 
-					// make the filter display at least one pixel wide.
-					if(filter_left_x == filter_right_x) filter_right_x = filter_left_x+1;
+			int top = (int)((double)spectrum_grid_step * H / y_range); // ke9ns top=12
+	
+            if(bottom) top = top * 2;
 
-					// draw rx filter
-					g.FillRectangle(new SolidBrush(sub_rx_filter_color),	// draw filter overlay
-						filter_left_x, 0, filter_right_x-filter_left_x, top);
-				}
+            //   Trace.WriteLine("KE9NS top................. " + top);
 
-				if(!(mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
-				{
-					// get filter screen coordinates
-					int filter_left_x = (int)((float)(filter_low-low)/(high-low)*W);
-					int filter_right_x = (int)((float)(filter_high-low)/(high-low)*W);
+            if ((continuum == 0) || (rx==2))
+            {
+                if (!bottom)
+                {
+                    if (!mox && sub_rx1_enabled)
+                    {
+                        // draw Sub RX 0Hz line
+                        int x = (int)((float)(vfoa_sub_hz - vfoa_hz - low) / (high - low) * W);
 
-					// make the filter display at least one pixel wide.
-					if(filter_left_x == filter_right_x) filter_right_x = filter_left_x+1;
+                        g.DrawLine(new Pen(sub_rx_zero_line_color), x, 0, x, top);
+                        g.DrawLine(new Pen(sub_rx_zero_line_color), x - 1, 0, x - 1, top);
 
-					// draw rx filter
-					g.FillRectangle(new SolidBrush(display_filter_color),	// draw filter overlay
-						filter_left_x, 0, filter_right_x-filter_left_x, top);
-				}
+                        // draw Sub RX filter
+                        // get filter screen coordinates
+                        int filter_left_x = (int)((float)(filter_low - low + vfoa_sub_hz - vfoa_hz) / (high - low) * W);
+                        int filter_right_x = (int)((float)(filter_high - low + vfoa_sub_hz - vfoa_hz) / (high - low) * W);
 
-				if(!mox && draw_tx_filter &&
-					(rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
-				{
-					// get tx filter limits
-					int filter_left_x; 
-					int filter_right_x;
+                        // make the filter display at least one pixel wide.
+                        if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
 
-					if(!split_enabled)
-					{
-						filter_left_x = (int)((float)(tx_filter_low-low+xit_hz)/(high-low)*W);
-						filter_right_x = (int)((float)(tx_filter_high-low+xit_hz)/(high-low)*W);
-					}
-					else
-					{
-						filter_left_x = (int)((float)(tx_filter_low-low+xit_hz+(vfoa_sub_hz-vfoa_hz))/(high-low)*W);
-						filter_right_x = (int)((float)(tx_filter_high-low+xit_hz+(vfoa_sub_hz-vfoa_hz))/(high-low)*W);
-					}
-				
-					g.DrawLine(tx_filter_pen, filter_left_x, H, filter_left_x, H+top);		// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_left_x+1, H, filter_left_x+1, H+top);	// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x, H, filter_right_x, H+top);		// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x+1, H, filter_right_x+1, H+top);	// draw tx filter overlay
-				}
-		
-				if(!mox && draw_tx_cw_freq &&
-					(rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-				{
-					int pitch = cw_pitch;
-					if(rx1_dsp_mode == DSPMode.CWL)
-						pitch = -cw_pitch;
+                        // draw rx filter
+                        g.FillRectangle(new SolidBrush(sub_rx_filter_color),    // draw filter overlay
+                            filter_left_x, 0, filter_right_x - filter_left_x, top);
+                    } // sub rx1 on
 
-					int cw_line_x;
-					if(!split_enabled)
-						cw_line_x = (int)((float)(pitch-low+xit_hz)/(high-low)*W);
-					else
-						cw_line_x = (int)((float)(pitch-low+xit_hz+(vfoa_sub_hz-vfoa_hz))/(high-low)*W);
+                    if (!(mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
+                    {
+                        // get filter screen coordinates
+                        int filter_left_x = (int)((float)(filter_low - low) / (high - low) * W);
+                        int filter_right_x = (int)((float)(filter_high - low) / (high - low) * W);
 
-					g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x, H);
-					g.DrawLine(tx_filter_pen, cw_line_x+1, top, cw_line_x+1, H);
-				}
-			}
+                        // make the filter display at least one pixel wide.
+                        if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+                        // draw rx filter
+                        g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                            filter_left_x, 0, filter_right_x - filter_left_x, top);
+                    } // cw
+
+                    if (!mox && draw_tx_filter && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
+                    {
+                        // get tx filter limits
+                        int filter_left_x;
+                        int filter_right_x;
+
+                        if (!split_enabled)
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - low + xit_hz) / (high - low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - low + xit_hz) / (high - low) * W);
+                        }
+                        else
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+                        }
+
+                        g.DrawLine(tx_filter_pen, filter_left_x, H, filter_left_x, H + top);        // draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_left_x + 1, H, filter_left_x + 1, H + top);    // draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_right_x, H, filter_right_x, H + top);      // draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_right_x + 1, H, filter_right_x + 1, H + top);  // draw tx filter overlay
+                    } // 
+
+                    if (!mox && draw_tx_cw_freq && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
+                    {
+                        int pitch = cw_pitch;
+                        if (rx1_dsp_mode == DSPMode.CWL)
+                            pitch = -cw_pitch;
+
+                        int cw_line_x;
+                        if (!split_enabled)
+                            cw_line_x = (int)((float)(pitch - low + xit_hz) / (high - low) * W);
+                        else
+                            cw_line_x = (int)((float)(pitch - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+
+                        g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x, H);
+                        g.DrawLine(tx_filter_pen, cw_line_x + 1, top, cw_line_x + 1, H);
+                    }
+
+                } // TOP of screen (full screen )
+
+            } // no continuum mode
 
 			double vfo;
 			
@@ -3355,300 +4425,347 @@ namespace PowerSDR
 					break;
 			}
 
-			long vfo_round = ((long)(vfo/freq_step_size))*freq_step_size;
-			long vfo_delta = (long)(vfo - vfo_round);
+			long vfo_round = ((long)(vfo/freq_step_size))*freq_step_size;  // round freq you are currently on
+			long vfo_delta = (long)(vfo - vfo_round); // difference between real and rounded
 
-			// Draw vertical lines
-            switch (console.CurrentRegion)
+            //   Trace.WriteLine("round " + vfo_round);
+            //   Trace.WriteLine("delta " + vfo_delta);
+            //  Trace.WriteLine("vfo " + vfo);
+
+
+
+            if ((rx == 1) && (continuum == 1)) // ke9ns add
             {
-                case FRSRegion.US:
-                    for (int i = 0; i <= h_steps + 1; i++)
-                    {
-                        string label;
-                        int offsetL;
-                        int offsetR;
 
-                        int fgrid = i * freq_step_size + (low / freq_step_size) * freq_step_size;
-                        double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;
-                        int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
+                for (int i = 0; i <= h_steps + 1; i++)  // ke9ns draw freq numbers in line just above waterfall
+                {
+               
+                    int temp = (W) / h_steps;
 
-                        if (!show_freq_offset)
+                    int temp1 = i * temp; //ke9ns x pixel position to print text string (left to right: 0 to W*3)  (W = 1388, so W*3 = 4164)
+
+                    int temp2 = (W) - temp1;                                     // ke9ns add reverse function (left to right: W*3 to 0)
+                                                                                     //  int temp4 = (int)(50)* 1;          // ke9ns add (50)
+
+                    int temp3 = (int)((float)temp2 * ((float)150 / (float)(W)));     // ke9ns add (4164*(107 / 4164))                               convert postition to -dbm 
+
+                    string label1 = temp3.ToString("d3");
+
+                    g.DrawString(label1, font, grid_text_brush, temp1, (float)Math.Floor(H * .01)); // ke9ns shift labels over 100 to allow room for time stamp on left side
+
+              
+                    //  Trace.WriteLine("W " + W + " temp " + temp + " temp1 " + temp1 + " temp2 " + temp2 + " temp3 " + temp3);
+                } // horz steps
+
+            } // continuum mode
+
+            else // not in continuum mode
+            {
+
+                // Draw vertical lines
+                switch (console.CurrentRegion)
+                {
+                    case FRSRegion.US:
+                        //  Trace.Write("low " + waterfall_low_threshold + " high " + waterfall_high_threshold);
+
+                        for (int i = 0; i <= h_steps + 1; i++)  // ke9ns draw freq numbers in line just above waterfall
                         {
-                            if (actual_fgrid == 1.8 || actual_fgrid == 2.0 ||
-                                actual_fgrid == 3.5 || actual_fgrid == 4.0 ||
-                                actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
-                                actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
-                                actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
-                                actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
-                                actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
-                                actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
-                                actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
-                                actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
-                                actual_fgrid == 144.0 || actual_fgrid == 148.0)
+                            string label;
+                            int offsetL;
+                            int offsetR;
+
+                            int fgrid = i * freq_step_size + (low / freq_step_size) * freq_step_size;
+                            double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;  // freq to print out
+                            int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
+
+                            //   Trace.WriteLine("fgrid " + fgrid);
+                            //   Trace.WriteLine("Afgrid " + actual_fgrid);
+                            //   Trace.WriteLine("vgrid " + vgrid);
+
+
+                            if (!show_freq_offset)
                             {
-                                if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
-
-                                label = actual_fgrid.ToString("f4");
-                                label = label.Replace(",", ".");    // handle Windows localization issues
-                                int offset = label.IndexOf('.') + 4;
-                                label = label.Insert(offset, ".");
-
-                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length) * 4.1) - 8;
-
-                                /* if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
-
-                                if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
-                            }
-                            else
-                            {
-
-                                if (freq_step_size >= 2000)
+                                if (actual_fgrid == 1.8 || actual_fgrid == 2.0 ||   //band edges
+                                    actual_fgrid == 3.5 || actual_fgrid == 4.0 ||
+                                    actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
+                                    actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
+                                    actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
+                                    actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
+                                    actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
+                                    actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
+                                    actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
+                                    actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
+                                    actual_fgrid == 144.0 || actual_fgrid == 148.0)
                                 {
-                                    double t100;
-                                    double t1000;
-                                    t100 = (actual_fgrid * 100);
-                                    t1000 = (actual_fgrid * 1000);
 
-                                    int it100 = (int)t100;
-                                    int it1000 = (int)t1000;
+                                    if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // ke9ns draw little tick lines under freq at band edges only
+                                    else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
-                                    int it100x10 = it100 * 10;
-
-                                    if (it100x10 == it1000)
-                                    {
-                                    }
-                                    else
-                                    {
-                                        grid_pen.DashStyle = DashStyle.Dot;
-                                    }
-                                }
-                                else
-                                {
-                                    if (freq_step_size == 1000)
-                                    {
-                                        double t200;
-                                        double t2000;
-                                        t200 = (actual_fgrid * 200);
-                                        t2000 = (actual_fgrid * 2000);
-
-                                        int it200 = (int)t200;
-                                        int it2000 = (int)t2000;
-
-                                        int it200x10 = it200 * 10;
-
-                                        if (it200x10 == it2000)
-                                        {
-                                        }
-                                        else
-                                        {
-                                            grid_pen.DashStyle = DashStyle.Dot;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        double t1000;
-                                        double t10000;
-                                        t1000 = (actual_fgrid * 1000);
-                                        t10000 = (actual_fgrid * 10000);
-
-                                        int it1000 = (int)t1000;
-                                        int it10000 = (int)t10000;
-
-                                        int it1000x10 = it1000 * 10;
-
-                                        if (it1000x10 == it10000)
-                                        {
-                                        }
-                                        else
-                                        {
-                                            grid_pen.DashStyle = DashStyle.Dot;
-                                        }
-                                    }
-                                }
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-                                grid_pen.DashStyle = DashStyle.Solid;
-
-                                double actual_fgrid_label = Math.Round(actual_fgrid, 4);
-                                label = actual_fgrid_label.ToString("f4");
-                                label = label.Replace(",", ".");    // handle Windows localization issues
-                                int offset = label.IndexOf('.') + 4;
-                                label = label.Insert(offset, ".");
-
-                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length) * 4.1) - 8;
-                                
-                                /* if (((double)((int)(actual_fgrid * 1000))) == actual_fgrid * 1000)
-                                {
-                                    label = actual_fgrid.ToString("f3"); //wa6ahl
-
-                                    //if(actual_fgrid > 1300.0)
-                                    //	label = label.Substring(label.Length-4);
-
-                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
-                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                    else offsetL = (int)((label.Length + 1) * 4.1) - 8;
-                                }
-                                else
-                                {
-                                    string temp_string;
-                                    int jper;
                                     label = actual_fgrid.ToString("f4");
-                                    temp_string = label;
-                                    jper = label.IndexOf('.') + 4;
-                                    label = label.Insert(jper, " ");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
 
-                                    //if(actual_fgrid > 1300.0)
-                                    //	label = label.Substring(label.Length-4);
-
-                                    if (actual_fgrid < 10) offsetL = (int)((label.Length) * 4.1) - 14;
-                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length) * 4.1) - 11;
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
                                     else offsetL = (int)((label.Length) * 4.1) - 8;
-                                } */
 
-                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
-                            }
-                        }
-                        else
-                        {
-                            vgrid = Convert.ToInt32((double)-(fgrid - low) / (low - high) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
+                                    /* if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
 
-                            double new_fgrid = (vfoa_hz + fgrid) / 1000000;
+                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01)); // ke9ns draw frequency at band edges in RED
+                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
 
-                            label = fgrid.ToString();
-                            offsetL = (int)((label.Length + 1) * 4.1);
-                            offsetR = (int)(label.Length * 4.1);
-                            if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
-                            {
-                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
-                            }
-                        }
-                    }
-
-                    int[] band_edge_list_r2 = { 18068000, 18168000, 1800000, 2000000, 3500000, 4000000,
-									   7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
-									   24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
-
-                    for (int i = 0; i < band_edge_list_r2.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r2[i] - vfo;
-                        if (band_edge_offset >= low && band_edge_offset <= high)
-                        {
-                            int temp_vline = (int)((double)(band_edge_offset - low) / (high - low) * W);//wa6ahl
-                            if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H, temp_vline, H + top);//wa6ahl
-                            else g.DrawLine(new Pen(band_edge_color), temp_vline, 0, temp_vline, top);
-                        }
-                        if (i == 1 && !show_freq_offset) break;
-                    }
-                    break;
-
-                case FRSRegion.Spain_UK:
-                case FRSRegion.Europe:
-                case FRSRegion.UK_Plus:
-                case FRSRegion.Italy_Plus:
-                case FRSRegion.Norway:
-                case FRSRegion.Denmark:
-                case FRSRegion.Latvia:
-                case FRSRegion.Slovakia:
-                case FRSRegion.Bulgaria:
-                case FRSRegion.Greece:
-                case FRSRegion.Hungary:
-                case FRSRegion.Netherlands:
-                case FRSRegion.France:
-                case FRSRegion.Russia:
-                case FRSRegion.Sweden:
-                    for (int i = 0; i <= h_steps + 1; i++)
-                    {
-                        string label;
-                        int offsetL;
-                        int offsetR;
-
-                        int fgrid = i * freq_step_size + (low / freq_step_size) * freq_step_size;
-                        double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;
-                        int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
-
-                        if (!show_freq_offset)
-                        {
-                            if (actual_fgrid == 1.81 || actual_fgrid == 2.0 ||
-                                actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
-                                actual_fgrid == 7.0 || actual_fgrid == 7.2 ||
-                                actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
-                                actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
-                                actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
-                                actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
-                                actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
-                                actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
-                                actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
-                                actual_fgrid == 144.0 || actual_fgrid == 146.0)
-                            {
-                                if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
-
-                                label = actual_fgrid.ToString("f4");
-                                label = label.Replace(",", ".");    // handle Windows localization issues
-                                int offset = label.IndexOf('.') + 4;
-                                label = label.Insert(offset, ".");
-
-                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length) * 4.1) - 8;
-
-                                /* if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
-
-                                if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
-                            }
-                            else
-                            {
-
-                                if (freq_step_size >= 2000)
+                                } // actual_fgrid
+                                else
                                 {
-                                    double t100;
-                                    double t1000;
-                                    t100 = (actual_fgrid * 100);
-                                    t1000 = (actual_fgrid * 1000);
 
-                                    int it100 = (int)t100;
-                                    int it1000 = (int)t1000;
-
-                                    int it100x10 = it100 * 10;
-
-                                    if (it100x10 == it1000)
+                                    if (freq_step_size >= 2000)
                                     {
+                                        double t100;
+                                        double t1000;
+                                        t100 = (actual_fgrid * 100);
+                                        t1000 = (actual_fgrid * 1000);
+
+                                        int it100 = (int)t100;
+                                        int it1000 = (int)t1000;
+
+                                        int it100x10 = it100 * 10;
+
+                                        if (it100x10 == it1000)
+                                        {
+                                        }
+                                        else
+                                        {
+                                            grid_pen.DashStyle = DashStyle.Dot;
+                                        }
                                     }
                                     else
                                     {
-                                        grid_pen.DashStyle = DashStyle.Dot;
+                                        if (freq_step_size == 1000)
+                                        {
+                                            double t200;
+                                            double t2000;
+                                            t200 = (actual_fgrid * 200);
+                                            t2000 = (actual_fgrid * 2000);
+
+                                            int it200 = (int)t200;
+                                            int it2000 = (int)t2000;
+
+                                            int it200x10 = it200 * 10;
+
+                                            if (it200x10 == it2000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            double t1000;
+                                            double t10000;
+                                            t1000 = (actual_fgrid * 1000);
+                                            t10000 = (actual_fgrid * 10000);
+
+                                            int it1000 = (int)t1000;
+                                            int it10000 = (int)t10000;
+
+                                            int it1000x10 = it1000 * 10;
+
+                                            if (it1000x10 == it10000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
+                                        }
                                     }
+
+
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+
+                                    grid_pen.DashStyle = DashStyle.Solid;
+
+                                    double actual_fgrid_label = Math.Round(actual_fgrid, 4);
+                                    label = actual_fgrid_label.ToString("f4");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
+
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                    /* if (((double)((int)(actual_fgrid * 1000))) == actual_fgrid * 1000)
+                                    {
+                                        label = actual_fgrid.ToString("f3"); //wa6ahl
+
+                                        //if(actual_fgrid > 1300.0)
+                                        //	label = label.Substring(label.Length-4);
+
+                                        if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
+                                        else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                        else offsetL = (int)((label.Length + 1) * 4.1) - 8;
+                                    }
+                                    else
+                                    {
+                                        string temp_string;
+                                        int jper;
+                                        label = actual_fgrid.ToString("f4");
+                                        temp_string = label;
+                                        jper = label.IndexOf('.') + 4;
+                                        label = label.Insert(jper, " ");
+
+                                        //if(actual_fgrid > 1300.0)
+                                        //	label = label.Substring(label.Length-4);
+
+                                        if (actual_fgrid < 10) offsetL = (int)((label.Length) * 4.1) - 14;
+                                        else if (actual_fgrid < 100.0) offsetL = (int)((label.Length) * 4.1) - 11;
+                                        else offsetL = (int)((label.Length) * 4.1) - 8;
+                                    } */
+
+                                    //================================================================
+                                    // ke9ns drawwaterfall actually draw text
+                                    //================================================================
+
+                                    if (bottom)
+                                    {
+                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                    }
+                                    else
+                                    {
+                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    }
+
+                                    // Trace.WriteLine("KE9NS H................. " + H);
+
+                                } // no actual fgrid (these are the remaining frequences to show in the strip above the waterfall)
+
+                            } // no showfreqoffset
+                            else
+                            {
+                                vgrid = Convert.ToInt32((double)-(fgrid - low) / (low - high) * W); //wa6ahl
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+
+                                double new_fgrid = (vfoa_hz + fgrid) / 1000000;
+
+                                label = fgrid.ToString();
+                                offsetL = (int)((label.Length + 1) * 4.1);
+                                offsetR = (int)(label.Length * 4.1);
+                                if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
+                                {
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                }
+                            } // show freq offset
+
+
+                        } // for i loop
+
+
+
+                        int[] band_edge_list_r2 = { 18068000, 18168000, 1800000, 2000000, 3500000, 4000000,
+                                       7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
+                                       24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
+
+                        for (int i = 0; i < band_edge_list_r2.Length; i++)
+                        {
+                            double band_edge_offset = band_edge_list_r2[i] - vfo;
+                            if (band_edge_offset >= low && band_edge_offset <= high)
+                            {
+                                int temp_vline = (int)((double)(band_edge_offset - low) / (high - low) * W);//wa6ahl
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H, temp_vline, H + top);//wa6ahl
+                                else g.DrawLine(new Pen(band_edge_color), temp_vline, 0, temp_vline, top);
+                            }
+                            if (i == 1 && !show_freq_offset) break;
+                        }
+
+
+                        break;  // ke9ns US region end of drawing freq values for waterfall
+
+
+                    case FRSRegion.Spain_UK:
+                    case FRSRegion.Europe:
+                    case FRSRegion.UK_Plus:
+                    case FRSRegion.Italy_Plus:
+                    case FRSRegion.Norway:
+                    case FRSRegion.Denmark:
+                    case FRSRegion.Latvia:
+                    case FRSRegion.Slovakia:
+                    case FRSRegion.Bulgaria:
+                    case FRSRegion.Greece:
+                    case FRSRegion.Hungary:
+                    case FRSRegion.Netherlands:
+                    case FRSRegion.France:
+                    case FRSRegion.Russia:
+                    case FRSRegion.Sweden:
+
+
+                        for (int i = 0; i <= h_steps + 1; i++)
+                        {
+                            string label;
+                            int offsetL;
+                            int offsetR;
+
+                            int fgrid = i * freq_step_size + (low / freq_step_size) * freq_step_size;
+                            double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;
+                            int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
+
+                            if (!show_freq_offset)
+                            {
+                                if (actual_fgrid == 1.81 || actual_fgrid == 2.0 ||
+                                    actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
+                                    actual_fgrid == 7.0 || actual_fgrid == 7.2 ||
+                                    actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
+                                    actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
+                                    actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
+                                    actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
+                                    actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
+                                    actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
+                                    actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
+                                    actual_fgrid == 144.0 || actual_fgrid == 146.0)
+                                {
+                                    if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
+
+                                    label = actual_fgrid.ToString("f4");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
+
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                    /* if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
+
+                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
                                 }
                                 else
                                 {
-                                    if (freq_step_size == 1000)
+
+                                    if (freq_step_size >= 2000)
                                     {
-                                        double t200;
-                                        double t2000;
-                                        t200 = (actual_fgrid * 200);
-                                        t2000 = (actual_fgrid * 2000);
+                                        double t100;
+                                        double t1000;
+                                        t100 = (actual_fgrid * 100);
+                                        t1000 = (actual_fgrid * 1000);
 
-                                        int it200 = (int)t200;
-                                        int it2000 = (int)t2000;
+                                        int it100 = (int)t100;
+                                        int it1000 = (int)t1000;
 
-                                        int it200x10 = it200 * 10;
+                                        int it100x10 = it100 * 10;
 
-                                        if (it200x10 == it2000)
+                                        if (it100x10 == it1000)
                                         {
                                         }
                                         else
@@ -3658,82 +4775,110 @@ namespace PowerSDR
                                     }
                                     else
                                     {
-                                        double t1000;
-                                        double t10000;
-                                        t1000 = (actual_fgrid * 1000);
-                                        t10000 = (actual_fgrid * 10000);
-
-                                        int it1000 = (int)t1000;
-                                        int it10000 = (int)t10000;
-
-                                        int it1000x10 = it1000 * 10;
-
-                                        if (it1000x10 == it10000)
+                                        if (freq_step_size == 1000)
                                         {
+                                            double t200;
+                                            double t2000;
+                                            t200 = (actual_fgrid * 200);
+                                            t2000 = (actual_fgrid * 2000);
+
+                                            int it200 = (int)t200;
+                                            int it2000 = (int)t2000;
+
+                                            int it200x10 = it200 * 10;
+
+                                            if (it200x10 == it2000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
                                         }
                                         else
                                         {
-                                            grid_pen.DashStyle = DashStyle.Dot;
+                                            double t1000;
+                                            double t10000;
+                                            t1000 = (actual_fgrid * 1000);
+                                            t10000 = (actual_fgrid * 10000);
+
+                                            int it1000 = (int)t1000;
+                                            int it10000 = (int)t10000;
+
+                                            int it1000x10 = it1000 * 10;
+
+                                            if (it1000x10 == it10000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
                                         }
                                     }
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                    grid_pen.DashStyle = DashStyle.Solid;
+
+                                    // make freq grid labels
+                                    double actual_fgrid_label = Math.Round(actual_fgrid, 4);
+                                    label = actual_fgrid_label.ToString("f4");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
+
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
                                 }
-                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-                                grid_pen.DashStyle = DashStyle.Solid;
-
-                                // make freq grid labels
-                                double actual_fgrid_label = Math.Round(actual_fgrid, 4);
-                                label = actual_fgrid_label.ToString("f4");
-                                label = label.Replace(",", ".");    // handle Windows localization issues
-                                int offset = label.IndexOf('.') + 4;
-                                label = label.Insert(offset, ".");
-
-                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
-                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                                else offsetL = (int)((label.Length) * 4.1) - 8;
-
-                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
                             }
-                        }
-                        else
-                        {
-                            vgrid = Convert.ToInt32((double)-(fgrid - low) / (low - high) * W);	//wa6ahl
-                            if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
-                            else g.DrawLine(grid_pen, vgrid, top, vgrid, H);			//wa6ahl
-
-                            double new_fgrid = (vfoa_hz + fgrid) / 1000000;
-
-                            label = fgrid.ToString();
-                            offsetL = (int)((label.Length + 1) * 4.1);
-                            offsetR = (int)(label.Length * 4.1);
-                            if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
+                            else
                             {
-                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                vgrid = Convert.ToInt32((double)-(fgrid - low) / (low - high) * W); //wa6ahl
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+
+                                double new_fgrid = (vfoa_hz + fgrid) / 1000000;
+
+                                label = fgrid.ToString();
+                                offsetL = (int)((label.Length + 1) * 4.1);
+                                offsetR = (int)(label.Length * 4.1);
+                                if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
+                                {
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                }
                             }
                         }
-                    }
 
-                    int[] band_edge_list_r1 = { 18068000, 18168000, 1810000, 2000000, 3500000, 3800000,
-									   7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
-									   24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 };
+                        int[] band_edge_list_r1 = { 18068000, 18168000, 1810000, 2000000, 3500000, 3800000,
+                                       7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
+                                       24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 };
 
-                    for (int i = 0; i < band_edge_list_r1.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r1[i] - vfo;
-                        if (band_edge_offset >= low && band_edge_offset <= high)
+                        for (int i = 0; i < band_edge_list_r1.Length; i++)
                         {
-                            int temp_vline = (int)((double)(band_edge_offset - low) / (high - low) * W);//wa6ahl
-                            if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H, temp_vline, H + top);//wa6ahl
-                            else g.DrawLine(new Pen(band_edge_color), temp_vline, 0, temp_vline, top);
+                            double band_edge_offset = band_edge_list_r1[i] - vfo;
+                            if (band_edge_offset >= low && band_edge_offset <= high)
+                            {
+                                int temp_vline = (int)((double)(band_edge_offset - low) / (high - low) * W);//wa6ahl
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H, temp_vline, H + top);//wa6ahl
+                                else g.DrawLine(new Pen(band_edge_color), temp_vline, 0, temp_vline, top);
+                            }
+                            if (i == 1 && !show_freq_offset) break;
                         }
-                        if (i == 1 && !show_freq_offset) break;
-                    }
-                    break;
-            }
 
-			/*// Draw horizontal lines
+                        break; // Europe Region for drawing waterfall freq number
+
+                } // check region for drawing waterfall freq numbers
+
+            } // not in continuum mode
+
+
+
+            /*// Draw horizontal lines
 			for(int i=1; i<h_steps; i++)
 			{
 				int xOffset = 0;
@@ -3781,32 +4926,57 @@ namespace PowerSDR
 				}
 			}*/
 
-			// Draw 0Hz vertical line if visible
-			if(center_line_x >= 0 && center_line_x <= W)
-			{
-				if(!bottom)
-				{
-					g.DrawLine(new Pen(grid_zero_color), center_line_x, 0, center_line_x, top);
-					g.DrawLine(new Pen(grid_zero_color), center_line_x+1, 0, center_line_x+1, top);
-				}
-				else
-				{
-					g.DrawLine(new Pen(grid_zero_color), center_line_x, H, center_line_x, H+top);
-					g.DrawLine(new Pen(grid_zero_color), center_line_x+1, H, center_line_x+1, H+top);
-				}
-			}
+            //=======================================================================
+            // ke9ns ADD tick
+            //=======================================================================
 
-			if(show_freq_offset)
-			{
-				if(bottom) g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x-5, H+(float)Math.Floor(H*.01));
-				else g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x-5, (float)Math.Floor(H*.01));
-			}
+
+            //   int fgrid = (low / freq_step_size) * freq_step_size;
+            //   double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;  // freq to print out
+            //   int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W); // 
+
+            //  if (bottom) g.DrawLine(new Pen(Color.DarkSeaGreen), vgrid, H + top, vgrid, H + H); // ke9ns draw little tick lines under freq at band edges only
+            //  else g.DrawLine(new Pen(Color.DarkSeaGreen), vgrid, top, vgrid, H);
+
+
+            if ((continuum == 0)|| (rx==2)) // ke9ns add
+            {
+                //=======================================================================
+                // Draw 0Hz vertical line if visible
+                if (center_line_x >= 0 && center_line_x <= W)
+                {
+                    if (!bottom)
+                    {
+                        g.DrawLine(new Pen(grid_zero_color), center_line_x, 0, center_line_x, top);
+                        g.DrawLine(new Pen(grid_zero_color), center_line_x + 1, 0, center_line_x + 1, top);
+                    }
+                    else
+                    {
+                        g.DrawLine(new Pen(grid_zero_color), center_line_x, H, center_line_x, H + top);
+                        g.DrawLine(new Pen(grid_zero_color), center_line_x + 1, H, center_line_x + 1, H + top);
+                    }
+                }
+
+                if (show_freq_offset)
+                {
+                    if (bottom) g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, H + (float)Math.Floor(H * .01));
+                    else g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, (float)Math.Floor(H * .01));
+                }
+
+            } // no continuum mode
 
 			if(high_swr && !bottom)
 				g.DrawString("High SWR", new System.Drawing.Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Red), 245, 20);
-		}
 
-		private static void DrawOffBackground(Graphics g, int W, int H, bool bottom)
+        }// draw waterfall grid
+
+
+
+        //=======================================================================
+
+        //========================================================================================
+
+        private static void DrawOffBackground(Graphics g, int W, int H, bool bottom)
 		{
 			// draw background
 			if(bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);
@@ -3828,13 +4998,16 @@ namespace PowerSDR
 			get { return scope_max; }
 			set { scope_max = value; }
 		}
+
+        //================================================================================================
 		unsafe private static bool DrawScope(Graphics g, int W, int H, bool bottom)
 		{
 			if(scope_min.Length < W) 
 			{
 				scope_min = new float[W];
-				Audio.ScopeMin = scope_min;
+				Audio.ScopeMin = scope_min;  // ke9ns from DoScope() routine
 			}
+
 			if(scope_max.Length < W)
 			{
 				scope_max = new float[W];
@@ -3843,12 +5016,15 @@ namespace PowerSDR
 
 			DrawScopeGrid(ref g, W, H, bottom);
 
-			Point[] points = new Point[W*2];			// create Point array
-			for(int i=0; i<W; i++)						// fill point array
+			Point[] points = new Point[W*2];            // create Point array
+
+            for (int i=0; i < W; i++)						// fill point array
 			{	
 				int pixel = 0;
+
 				if(bottom) pixel = (int)(H/2 * scope_max[i]);
 				else pixel = (int)(H/2 * scope_max[i]);
+
 				int y = H/2 - pixel;
 				points[i].X = i;
 				points[i].Y = y;
@@ -3856,6 +5032,7 @@ namespace PowerSDR
 
 				if(bottom) pixel = (int)(H/2 * scope_min[i]);
 				else pixel = (int)(H/2 * scope_min[i]);
+
 				y = H/2 - pixel;
 				points[W*2-1-i].X = i;
 				points[W*2-1-i].Y = y;
@@ -3881,7 +5058,11 @@ namespace PowerSDR
 			}
 
 			return true;
-		}
+		} // draw scope
+
+
+
+
 
 		unsafe private static bool DrawPhase(Graphics g, int W, int H, bool bottom)
 		{
@@ -4043,7 +5224,7 @@ namespace PowerSDR
 				}
 				else
 				{
-					fixed(void *rptr = &new_display_data[0])
+					fixed(void *rptr = &new_display_data[0]) // spectrum
 						fixed(void *wptr = &current_display_data[0])
 							Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
 
@@ -4061,7 +5242,7 @@ namespace PowerSDR
 				}
 				else*/
 				{
-					fixed(void *rptr = &new_display_data_bottom[0])
+					fixed(void *rptr = &new_display_data_bottom[0]) // spectrum
 						fixed(void *wptr = &current_display_data_bottom[0])
 							Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
 
@@ -4139,9 +5320,9 @@ namespace PowerSDR
 				if(bottom) points[i].Y += H;
 			}
 
-			if(!bottom) max_y = local_max_y;
+			if(!bottom) max_y = local_max_y; // if top
 
-			g.DrawLines(data_line_pen, points);
+			g.DrawLines(data_line_pen, points); // ke9ns draw spectrum
 
 			// draw long cursor
 			if(current_click_tune_mode != ClickTuneMode.Off)
@@ -4163,11 +5344,57 @@ namespace PowerSDR
 			}
 
 			return true;
-		}
+		
+        }  // drawspectrum
 
-		unsafe static private bool DrawPanadapter(Graphics g, int W, int H, int rx, bool bottom)
+        //==============================================================
+        //==============================================================
+        //==============================================================
+        // ke9ns mod panadapter
+        //==============================================================
+        //==============================================================
+        //==============================================================
+        unsafe static private bool DrawPanadapter(Graphics g, int W, int H, int rx, bool bottom)
 		{
-			DrawPanadapterGrid(ref g, W, H, rx, bottom);
+            bool local_mox = false;                 // whether you are transmitting or not
+
+            if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
+            if (rx == 2 && tx_on_vfob && mox) local_mox = true;
+
+
+            if (local_mox) // ke9ns ADD reset panadapter to TX mic levels , then set it back when back to RX
+            {
+              
+                if ((tx_on_vfob) && (rx == 2))
+                {
+
+                        spectrum_grid_max = 0;// TX high level db
+                      //  spectrum_grid_min = -140; // TX low level db
+
+                }
+                else if ((!tx_on_vfob) && (rx == 1))
+                {
+                       spectrum_grid_max = 0;// TX high level db
+                      //  spectrum_grid_min = -140; // TX low level db
+                }
+                else
+                {
+                   //  Trace.WriteLine("never ");
+                }
+            }
+            else
+            {
+                spectrum_grid_max = spectrum_grid_max1;  //ke9ns put back normal RX grids 
+                spectrum_grid_min = spectrum_grid_min1;
+
+            }
+
+                DrawPanadapterGrid(ref g, W, H, rx, bottom);
+
+            if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // for display in 1/3 area instead of 1/2
+
+            if ((K9 == 5) && (K10 == 5) && (bottom)) H2 = H - (H / 2); // for display in 1/4 area instead of 1/2
+
             if (pan_fill)
             {
                 if (points == null || points.Length < W + 2)
@@ -4178,110 +5405,165 @@ namespace PowerSDR
                 if (points == null || points.Length < W)
                     points = new Point[W];			// array of points to display
             }
+
 			float slope = 0.0F;						// samples to process per pixel
 			int num_samples = 0;					// number of samples to process
 			int start_sample_index = 0;				// index to begin looking at samples
-			int Low = rx_display_low;
-			int High = rx_display_high;
-			int yRange = spectrum_grid_max - spectrum_grid_min;
-			float local_max_y = float.MinValue;
-            bool local_mox = false;
-            if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
-            if (rx == 2 && tx_on_vfob && mox) local_mox = true;
 
+			int Low = rx_display_low;               // low freqency on display window (left side)
+			int High = rx_display_high;             // high freqency on display window (right side)
+
+            int yRange = spectrum_grid_max - spectrum_grid_min; // find vertical range of panadapter (around 120dbm)
+
+			float local_max_y = float.MinValue; 
+           
 			if(rx1_dsp_mode == DSPMode.DRM)
 			{
-				Low += 12000;
-				High += 12000;
+				Low = Low + 12000;                       // drm shifts freq range up for some reason ???
+				High = High + 12000;
 			}
 
-			if(rx == 1 && data_ready)
+      //=================================================================
+      //get line of spectrum data (if new data available)
+      //=================================================================
+
+            if (rx == 1 && data_ready)
 			{
 				if(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
 				{
-					for(int i=0; i<current_display_data.Length; i++)
+                    for (int i = 0; i < current_display_data.Length; i++)
+                    {
                         current_display_data[i] = spectrum_grid_min - rx1_display_cal_offset;
+                    }
 				}
 				else
 				{
-					fixed(void *rptr = &new_display_data[0])
-						fixed(void *wptr = &current_display_data[0])
-							Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
+					fixed(void *rptr = &new_display_data[0])                       // panadapter allows for a C pointer usage
+                    {
+                        fixed (void* wptr = &current_display_data[0])              // new line of RX data comeing and and being copied into current display
+                        {
+                            Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));  // dest,source  # of bytes to copy 4096 float sized bytes
+                        }
 
-					if ( current_model == Model.SOFTROCK40 ) 
+                        fixed (void* wptr = &current_display_data1[0])              // ke9ns add for RX1 no AVG waterfall option
+                        {
+                            Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));  // dest,source  # of bytes to copy 4096 float sized bytes
+                        }
+                    }
+                    // ke9ns data
+                   
+
+                    if ( current_model == Model.SOFTROCK40 ) 
 						console.AdjustDisplayDataForBandEdge(ref current_display_data);
 				}
 				data_ready = false;
-			}
-			else if(rx == 2 && data_ready_bottom)
-			{
-                if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
-                {
-                    for (int i = 0; i < current_display_data_bottom.Length; i++)
-                        current_display_data_bottom[i] = spectrum_grid_min - rx2_display_cal_offset;
-                }
-                else
-                {
-                    fixed (void* rptr = &new_display_data_bottom[0])
-                    fixed (void* wptr = &current_display_data_bottom[0])
-                        Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));
 
-                    if (current_model == Model.SOFTROCK40)
-                        console.AdjustDisplayDataForBandEdge(ref current_display_data_bottom);
+            } // RX1 get new data
+            else if(rx == 2 && data_ready_bottom)
+			{
+
+                if ((current_display_mode_bottom != DisplayMode.WATERFALL)) //ke9ns add dont do below if RX2 only waterfall mode (no need to waste time)
+                {
+
+                    if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
+                    {
+                        for (int i = 0; i < current_display_data_bottom.Length; i++)
+                        {
+                            current_display_data_bottom[i] = spectrum_grid_min - rx2_display_cal_offset;
+                        }
+                    }
+                    else
+                    {
+
+
+                        fixed (void* rptr = &new_display_data_bottom[0]) //  panadapter
+                        {
+                            fixed (void* wptr = &current_display_data_bottom[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));  // update rx2 current display data
+                            }
+
+
+                            fixed (void* wptr = &current_display_data_bottom1[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));  // ke9ns ADD rX2 no waterfall avg data
+                            }
+
+                        }
+
+
+                        if (current_model == Model.SOFTROCK40)
+                            console.AdjustDisplayDataForBandEdge(ref current_display_data_bottom);
+                    }
                 }
 
 				data_ready_bottom = false;
-			}
+			} // RX2 get new data
 
-			if(rx==1 && average_on)
-				console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
-			else if(rx==2 && rx2_avg_on)
-				console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
+        //=================================================================
+        // convert data ke9ns data
+        //=================================================================
 
-			if(rx==1 && peak_on)
-				UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
-			else if(rx==2 && rx2_peak_on)
-				UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
+            if (rx==1 && average_on)		console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
+			else if(rx==2 && rx2_avg_on)	console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
 
-			start_sample_index = (BUFFER_SIZE>>1) +(int)((Low * BUFFER_SIZE) / sample_rate);
-			num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);
-			if (start_sample_index < 0) start_sample_index += 4096;
-			if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
-				num_samples = BUFFER_SIZE-start_sample_index;
+			if(rx==1 && peak_on)	UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
+			else if(rx==2 && rx2_peak_on)	UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
 
-			//Debug.WriteLine("start_sample_index: "+start_sample_index);
-			slope = (float)num_samples/(float)W;
-			for(int i=0; i<W; i++)
+            //=================================================================
+            // determine how to divide out the actual RX data to pixels on the screen
+            //=================================================================
+
+            // since can zoom in/out figure out where the left side of the screen starts relative to freq.
+            start_sample_index = (BUFFER_SIZE >> 1) +(int)((Low * BUFFER_SIZE) / sample_rate);  // (size/2)  + ((left side * size) / 192000)
+
+            // determine the number of samples you need to cover the zoomed screen based on sample rate and buffer size
+			num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);                      // ((right - left) * size)/192000
+			
+            if (start_sample_index < 0) start_sample_index = start_sample_index + DATA_BUFFER_SIZE;  // ke9ns was 4096
+              
+			if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))	num_samples = BUFFER_SIZE-start_sample_index;
+
+			
+			slope = (float)num_samples/(float)W;                            // slope = number of samples need to fill left to right / width of screen in pixels
+                                                                            // this is determined by the ZOOM level of the screen
+                                                                            // x1 zoom =  slope = ~1 (that means 1 sample per pixel)
+                                                                            // slope > 1 is when you zoom all the way out too see as much as possible (large freq range)
+        
+//=================================================================
+// draw line that makes up spectrum (width of window)
+//=================================================================
+            for(int i=0; i < W; i++)
 			{
-				float max = float.MinValue;
-				float dval = i*slope + start_sample_index;
-				int lindex = (int)Math.Floor(dval);
-				int rindex = (int)Math.Floor(dval + slope);
+				float max = float.MinValue;                             // max = y point determined by RX data of spectrum as you go from 0 to W
+				float dval = i * slope + start_sample_index;            // dval = how many digital values per pixel (going left to right)
+				int lindex = (int)Math.Floor(dval);                     // L index = int of dval
+				int rindex = (int)Math.Floor(dval + slope);             // R index = int of dval + slope ?
 
 				if(rx == 1)
 				{
-					if (slope <= 1.0 || lindex == rindex) 
+					if (slope <= 1.0 || lindex == rindex)   // if your zoom in there is less than 1 digital value per pixel so fake it.
 					{
-						max =  current_display_data[lindex%4096]*((float)lindex-dval+1) + current_display_data[(lindex+1)%4096]*(dval-(float)lindex);
+						max =  current_display_data[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data[(lindex+1) % DATA_BUFFER_SIZE] * (dval -(float)lindex);
 					}
-					else 
+					else // otherwise there is more than 1 digital value per pixel so take the largest value ?
 					{					
-						for(int j=lindex; j<rindex; j++)
-							if (current_display_data[j%4096] > max) max=current_display_data[j%4096];
+						for(int j=lindex; j < rindex; j++)
+							if (current_display_data[j % DATA_BUFFER_SIZE] > max) max = current_display_data[j % DATA_BUFFER_SIZE]; // % modulus (i.e. remainder only)
 					}
-				}
+				} // rx1
 				else if(rx == 2)
 				{
 					if (slope <= 1.0 || lindex == rindex) 
 					{
-						max =  current_display_data_bottom[lindex%4096]*((float)lindex-dval+1) + current_display_data_bottom[(lindex+1)%4096]*(dval-(float)lindex);
+						max =  current_display_data_bottom[lindex % DATA_BUFFER_SIZE] *((float)lindex-dval + 1) + current_display_data_bottom[(lindex+1) % DATA_BUFFER_SIZE] *(dval-(float)lindex);
 					}
 					else 
 					{					
-						for(int j=lindex; j<rindex; j++)
-							if (current_display_data_bottom[j%4096] > max) max=current_display_data_bottom[j%4096];
+						for(int j=lindex; j < rindex; j++)
+							if (current_display_data_bottom[j % DATA_BUFFER_SIZE] > max) max=current_display_data_bottom[j % DATA_BUFFER_SIZE];
 					}
-				}
+				} // rx2
 
 				if(rx==1) max += rx1_display_cal_offset;
 				else if(rx==2) max += rx2_display_cal_offset;
@@ -4298,15 +5580,28 @@ namespace PowerSDR
 					max_x = i;
 				}
 
-				points[i].X = i;
-				points[i].Y = (int)(Math.Floor((spectrum_grid_max - max)*H/yRange));
-                points[i].Y = Math.Min(points[i].Y, H);
-				if(bottom) points[i].Y += H;
-			} 
-			
-			if(!bottom) max_y = local_max_y;
+				points[i].X = i; //  position as you progress left to right
 
-            if (pan_fill)
+                if ((K9 == 5) && (K10 != 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H1 / yRange));  // display in 3rds
+                else if ((K9 == 5) && (K10 == 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H2 / yRange));  // dispaly in 4ths
+		        else points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H / yRange));  // display normal
+
+                points[i].Y = Math.Min(points[i].Y, H); // returns smaller of the 2 numbers
+
+               
+                if ((K9 == 5) && (K10 != 5) && (bottom)) points[i].Y = points[i].Y + H;
+                else if ((K9 == 5) && (K10 == 5) && (bottom)) points[i].Y = points[i].Y + H; // was H
+
+                else if ((bottom)) points[i].Y = points[i].Y + H; // this is the origina only line
+
+			}  // for loop from 0 to W wide
+
+//================================================================
+
+
+			if(!bottom) max_y = local_max_y;                // used in TNF function
+
+            if (pan_fill)                               // trace spectrum line and fill under it
             {
                 points[W].X = W; points[W].Y = H;
                 points[W+1].X = 0; points[W+1].Y = H;
@@ -4322,7 +5617,7 @@ namespace PowerSDR
                 data_line_pen.Color = data_line_color;
                 g.DrawLines(data_line_pen, points);                
             }
-            else g.DrawLines(data_line_pen, points);
+            else g.DrawLines(data_line_pen, points);                                 // trace spectrum line to screen
 
             
             // draw notch zoom if enabled
@@ -4346,9 +5641,7 @@ namespace PowerSDR
                     }
                 }
 
-                if (notch != null && 
-                    ((bottom && notch.RX == 2) ||
-                    (!bottom && notch.RX == 1)))
+                if (notch != null &&  ((bottom && notch.RX == 2) ||  (!bottom && notch.RX == 1)))
                 {
                     // draw zoom background
                     if (bottom) g.FillRectangle(new SolidBrush(Color.FromArgb(230, 0, 0, 0)), 0, H, W, H / zoom_height);
@@ -4430,21 +5723,21 @@ namespace PowerSDR
                         notch_zoom_right_x = notch_zoom_left_x + 1;
 
                     //draw zoomed notch bars
-                    if (!bottom)
-                        drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, 0, (int)(H / zoom_height), c1, c2);
-                    else
-                        drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, H, (int)(H / zoom_height), c1, c2);
+                    if (!bottom)         drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, 0, (int)(H / zoom_height), c1, c2);
+                    else                       drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, H, (int)(H / zoom_height), c1, c2);
 
                     // draw data
                     start_sample_index = (BUFFER_SIZE >> 1) + (int)((low * BUFFER_SIZE) / sample_rate);
                     num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
-                    if (start_sample_index < 0) start_sample_index += 4096;
+                    if (start_sample_index < 0) start_sample_index += DATA_BUFFER_SIZE;
                     if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1))
                         num_samples = BUFFER_SIZE - start_sample_index;
 
                     //Debug.WriteLine("start_sample_index: "+start_sample_index);
                     slope = (float)num_samples / (float)W;
                     //int grid_max = spectrum_grid_min + (spectrum_grid_max - spectrum_grid_min) / 2;
+                  
+                    
                     for (int i = 0; i < W; i++)
                     {
                         float max = float.MinValue;
@@ -4456,24 +5749,24 @@ namespace PowerSDR
                         {
                             if (slope <= 1.0 || lindex == rindex)
                             {
-                                max = current_display_data[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % 4096] * (dval - (float)lindex);
+                                max = current_display_data[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
                             }
                             else
                             {
                                 for (int j = lindex; j < rindex; j++)
-                                    if (current_display_data[j % 4096] > max) max = current_display_data[j % 4096];
+                                    if (current_display_data[j % DATA_BUFFER_SIZE] > max) max = current_display_data[j % DATA_BUFFER_SIZE];
                             }
                         }
                         else if (rx == 2)
                         {
                             if (slope <= 1.0 || lindex == rindex)
                             {
-                                max = current_display_data_bottom[lindex % 4096] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % 4096] * (dval - (float)lindex);
+                                max = current_display_data_bottom[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
                             }
                             else
                             {
                                 for (int j = lindex; j < rindex; j++)
-                                    if (current_display_data_bottom[j % 4096] > max) max = current_display_data_bottom[j % 4096];
+                                    if (current_display_data_bottom[j % DATA_BUFFER_SIZE] > max) max = current_display_data_bottom[j % DATA_BUFFER_SIZE];
                             }
                         }
 
@@ -4495,6 +5788,7 @@ namespace PowerSDR
                         points[i].X = i;
                         points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H / zoom_height / yRange));    //used to be 6
                         points[i].Y = Math.Min(points[i].Y, H);
+                     
                         if (bottom) points[i].Y += H;
                     }
 
@@ -4516,19 +5810,29 @@ namespace PowerSDR
                     }
                     else g.DrawLines(data_line_pen, points);
                 }
-            }
-#endif
+            }  // TNF ZOOM
+#endif //TNF option
 
 			points = null;
 
-			// draw long cursor
-			if(current_click_tune_mode != ClickTuneMode.Off)
+
+
+
+
+
+            //=====================================================================
+            // draw long cursor
+            //=====================================================================
+
+
+            if (current_click_tune_mode != ClickTuneMode.Off)
 			{
 				Pen p;
 				if(current_click_tune_mode == ClickTuneMode.VFOA)
 					p = new Pen(grid_text_color);
 				else p = new Pen(Color.Red);
-				if(bottom)
+				
+                if(bottom)
 				{
 					if(display_cursor_y > H)
 					{
@@ -4547,7 +5851,13 @@ namespace PowerSDR
 			}
 
 			return true;
-		}
+
+		}  // drawpanadapter
+
+
+        
+//=====================================================================
+//=====================================================================
 
 		private static int waterfall_update_period = 50; // in ms
 		public static int WaterfallUpdatePeriod
@@ -4556,52 +5866,341 @@ namespace PowerSDR
 			set { waterfall_update_period = value; }
 		}
 
+
+//=============================================================================
+// ke9ns drawwaterfall
+//  W,H = position of top of waterfall ?
+// rx = receiver 1 or 2
+// bottom = yes or no
+//=============================================================================
+        
+        
 		private static HiPerfTimer timer_waterfall = new HiPerfTimer();
 		private static HiPerfTimer timer_waterfall2 = new HiPerfTimer();
 		private static float[] waterfall_data;
-		unsafe static private bool DrawWaterfall(Graphics g, int W, int H, int rx, bool bottom)
+
+    
+        //WaterMove=5,2 you get scan0 301662208 total size 6351696 W 1123 bitmapData.Stride  16848  (.0000200 sec for black routine) (.0222519 for drawwaterfall )
+        //waterMove=3,1 you get scan0 301662208 total size 6351696 W 1123 bitmapData.Stride  16848   (  black routine) (.0163125 for drawwaterfall) 
+
+        private static int WaterMove = 3;  // 3,or 5 ke9ns ADD How many panels in watermove function, 0=OFF
+        private static int WaterMove1 = 1;  //1, or 2 ke9ns ADD how many panels over to center starting point
+        private static int WaterMove2 = 0;   // always W * 3 * WaterMove1
+
+        private static int Wtemp = 0;     // ke9ns
+        private static int WMtemp = 0;  // ke9ns
+
+        private static int W2temp = 0;  // ke9ns
+        private static int M2temp = 0;  // ke9ns
+        private static int WM = W;      // ke9ns ADD WM is the watermove width of the bitmap. = W * WaterMove
+        private static int WM1 = 0;     // ke9ns ADD tracks VFOA the +/- freq movement to shift the waterfall display bitmap on the screen
+        private static int WM2 = 0;     // ke9ns ADD tracks VFOB the +/- freq movement to shift the waterfall display bitmap on the screen
+        private static int WM1F = 0;    // ke9ns ADD rx1 draw shift
+        private static int WM2F = 0;   // ke9ns ADD rx2 draw shift
+
+        private static byte F2A = 0;   // ke9ns
+        private static byte F2B = 0;  // ke9ns
+
+        private static byte F3A = 0; // delay updating waterfall for scroll timing issues
+        private static byte F3B = 0;  // ke9ns
+
+        private static byte F5A = 0; // to take care of windows resizeing
+
+        private static long WM2A = 0;     // ke9ns rx1  how many pixels to move the bmp frame -=going down in freq +=going up in freq
+        private static long WM2B = 0;     // ke9ns rx2 how many pixels to move the bmp frame -=going down in freq +=going up in freq
+
+        private static long WM2A_DIFF = 0;// ke9ns rx1
+        private static long WM2B_DIFF = 0;// ke9ns rx2 
+
+        private static long WM2A_LAST = 0;// ke9ns rx1
+        private static long WM2B_LAST = 0;// ke9ns rx2
+
+        private static float WM4 = 0;// ke9ns rx1 number of hz on screen
+        private static float WM5 = 0;// ke9ns rx2 number of hz on screen
+
+        // RX1
+        private static long AB = 0; // ke9ns for autobright
+        private static long[] AB1 = new long[10];// ke9ns
+      //  private static byte ab2 = 0; // ke9ns
+        private static float AB3 = 0; // ke9ns
+
+        // RX2
+        private static long A2B = 0; // ke9ns for autobright
+        private static long[] A2B1 = new long[10];// ke9ns
+      //  private static byte a2b2 = 0; // ke9ns
+        private static float A2B3 = 0; // ke9ns
+
+        // TX
+        private static long A3B = 0; // ke9ns for autobright
+        private static long[] A3B1 = new long[10];// ke9ns
+      //  private static byte a3b2 = 0;        // ke9ns
+        private static float A3B3 = 0;       // ke9ns
+        private static int A4B = 0;          // ke9ns for autobright
+
+        private static int itemp = 0; // ke9ns add continuum mode
+        private static int itemp_last = 0; // ke9ns add continuum mode
+        private static int timerflag = 0; // ke9ns add
+        private static DateTime DT, DT1; // ke9ns add
+       
+        //================================================================================================================================
+
+        unsafe static private bool DrawWaterfall(Graphics g, int W, int H, int rx, bool bottom)
 		{
-			DrawWaterfallGrid(ref g, W, H, rx, bottom);
-			if(waterfall_data == null || waterfall_data.Length < W)
-				waterfall_data = new float[W];		// array of points to display
+
+          //  Stopwatch stopWatch = new Stopwatch();
+          //  stopWatch.Start();
+
+
+            if (WaterMove == 0)
+            {
+                WM = W;  // standard old way 
+            }
+            else
+            {
+                WM = WaterMove * W;  // ke9ns ADD  bitmap width (usually 3 times the W)  WM = 5 * 1123 = over 6000 pixels        
+            }
+                    
+            DrawWaterfallGrid(ref g, W, H, rx, bottom);  // ke9ns draw frequency text on line above waterfall
+
+            // ke9ns add  this is used to keep track of rx thresholds when switching to tx threshold
+
+            temp_low_threshold = waterfall_low_threshold;  // store original low rx1 threshold
+            temp_high_threshold = waterfall_high_threshold; // store original high rx1/rx2 threshold
+
+
+            //================================================
+            // STEP 1) ke9ns change waterfall bitmap size to mode your in
+            //==================================================
+
+            if ((K9 != K9LAST)|| (K10 != K10LAST))  // check for only changes in display mode
+            {
+                K10LAST = K10;
+                K9LAST = K9;
+                K14 = 0;
+
+                F2A = 1;  // reset values
+                F2B = 1;
+
+                F3A = 1;
+                F3B = 1;
+
+                WM2A_LAST = 0;
+                WM2B_LAST = 0;
+                WM2A = vfoa_hz; // ke9ns ADD freq vfoA when bitmap created
+                WM2B = vfob_hz; // ke9ns ADD freq vfoB when bitmap created
+       
+            }
+
+
+        // ke9ns add check for window resizing messing up bitmap size.
+
+            if (DP==1) // power on
+            {
+                F5A = 0; // power on, so reset counter to allow time
+                DP = 0;
+            }
+            else // power off
+            {
+              // Trace.WriteLine("OFF   ");
+             
+            }
+          
+            if (F5A == 2)// if power turned ON, then wait 1 or 2 cycles before waterfall starts to allow vfo to update
+            {
+             //  Trace.WriteLine("RESET waterfall  ");
+                F5A = 3;
+
+                F2A = 1;
+                F2B = 1;
+
+                F3A = 1;
+                F3B = 1;
+
+                WM2A_LAST = 0;
+                WM2B_LAST = 0;
+                WM2A = vfoa_hz; // ke9ns ADD freq vfoA when bitmap created
+                WM2B = vfob_hz; // ke9ns ADD freq vfoB when bitmap created
+
+            }
+            else if (F5A < 2)  F5A++; // allow time
+          
+
+            // K13 is original H size before H is divided and passed into this drawwaterfall routine
+            
+            if ((continuum == 1) && (split_display) && (K14 == 0))  // RX1:  1/2 water, RX2:  1/2 water
+            {
+                waterfall_bmp = new Bitmap(W, K13 / 2 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13 / 2 - 16, WtrColor);  // ke9ns BMP
+                K15 = 2;
+                K14 = 1;
+              //  Trace.Write("1   ");
+
+            }
+            else if ((continuum == 1) && (K14 == 0))
+            {
+                waterfall_bmp = new Bitmap(W, K13 - 16, WtrColor);  // initialize waterfall display for continuum which only is W wide since it does not move left to right
+                waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+                K15 = 1;
+                K14 = 1;
+              //  Trace.Write("2   ");
+            }
+            else if ((K9 == 5)&&(K10 == 1)&&(K14 == 0))  // RX1: 1/3 pan + 1/3 water, RX2: water 1/3
+            {
+                waterfall_bmp = new Bitmap(WM, K13/3 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13/3 - 16, WtrColor);  // ke9ns BMP
+                K15 = 3; // divide factor for the init() routine
+                K14 = 1; // do only 1 time
+            }
+            else if ((K9 == 5) && (K10 == 5) && (K14 == 0))  // RX1: 1/4 pan + 1/4 water, RX2: pan 1/4 + 1/4 water
+            {
+                waterfall_bmp = new Bitmap(WM, K13/4 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13/4 - 16, WtrColor);  // ke9ns BMP
+                K15 = 4;
+                K14 = 1;
+            }
+            else if ((K9 == 5) && (K10 == 2) && (K14 == 0))  // RX1: 1/3 pan + 1/3 water, RX2: pan 1/3
+            {
+                 waterfall_bmp = new Bitmap(WM, K13/3 - 16, WtrColor);  // initialize waterfall display
+                 // waterfall_bmp2 = new Bitmap(W, K13/3 - 16, PixelFormat.Format24bppRgb);  // ke9ns BMP
+                K15 =  3;
+                K14 = 1;
+            }
+            else if ((K9 == 5) && (K10 == 3) && (K14 == 0))  // RX1: 1/4 pan + 1/4 water, RX2: pan 1/4 + 1/4 water
+            {
+                waterfall_bmp = new Bitmap(WM, K13 / 4 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13 / 4 - 16, WtrColor);  // ke9ns BMP
+                K15 =  4;
+                K14 = 1;
+            }
+            else if ((split_display) && (K9 == 6) && (K10 == 1) && (K14 == 0))  // RX1:  1/2 water, RX2:  1/2 water
+            {
+                waterfall_bmp = new Bitmap(WM, K13/2  - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13/2 - 16, WtrColor);  // ke9ns BMP
+                K15 = 2;
+                K14 = 1;
+            }
+            else if ((split_display) && (K9 == 2) && (K10 == 1) && (K14 == 0))  // RX1:  1/2 pan, RX2:  1/2 water
+            {
+               // waterfall_bmp = new Bitmap(WM, K13 - 16, PixelFormat.Format24bppRgb);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13/2 - 16, WtrColor);  // ke9ns BMP
+                K15 =  2;
+                K14 = 1;
+              
+            }
+            else if ((split_display) && (K9 == 6) && (K10 == 2) && (K14 == 0))  // RX1:  1/2 water, RX2:  1/2 pan
+            {
+                waterfall_bmp = new Bitmap(WM, K13/2 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13/2 - 16, WtrColor);  // ke9ns BMP
+                K15 =  2;
+                K14 = 1;
+            }
+            else if ((K9==1)&& (K14 == 0))// waterfall on rx1 only
+            {
+                waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+             //   waterfall_bmp.MakeTransparent(Color.FromArgb(0,0, 0, 0)); // ke9ns test
+
+                K15 = 1;
+                K14 = 1;
+            }
+            else if ((K9 == 3) && (K14 == 0))// waterfall on rx1 only
+            {
+               
+                waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+               // waterfall_bmp.MakeTransparent(Color.FromArgb(0,0,0,0)); // ke9ns test
+
+                K15 = 1;
+                K14 = 1;
+                 
+            }
+            else if ((K14 == 0))// all else
+            {
+                waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
+                waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+                K15 = 1;
+                K14 = 1;
+            }
+
+
+
+            //================================================
+            // STEP 2) set up waterfall
+            //==================================================
+
+            if (waterfall_data == null || waterfall_data.Length < W)
+            {
+                waterfall_data = new float[W];      // array of points to display
+            }
+
 			float slope = 0.0F;						// samples to process per pixel
 			int num_samples = 0;					// number of samples to process
-			int start_sample_index = 0;				// index to begin looking at samples
-			int Low = rx_display_low;
-			int High = rx_display_high;
-			int yRange = spectrum_grid_max - spectrum_grid_min;
-			float local_max_y = float.MinValue;
-            bool local_mox = false;
-            if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
-            if (rx == 2 && tx_on_vfob && mox) local_mox = true;
+			int start_sample_index = 0;				// index to begin looking at samples based on left side low freq and right side high freq
+
+			int Low = rx_display_low;               // left side low freq
+            int High = rx_display_high;             // right side high freq
+            int yRange = spectrum_grid_max - spectrum_grid_min;   // grid range  (around 120db)
+
+           
+			float local_max_y = float.MinValue;     // top of waterfall
+            bool local_mox = false;                 // transmitting or not
+
+            if (rx == 1 && !tx_on_vfob && mox) local_mox = true;  // check rx1 if transmitting on rx1
+
+            if (rx == 2 && tx_on_vfob && mox) local_mox = true;   // check rx2 if transmitting on rx2
 			
-			if((rx1_dsp_mode == DSPMode.DRM && rx==1) ||
-				(rx2_dsp_mode == DSPMode.DRM && rx==2))
+			if((rx1_dsp_mode == DSPMode.DRM && rx==1) || (rx2_dsp_mode == DSPMode.DRM && rx==2))
 			{
-				Low += 12000;
+				Low += 12000;   // shift left and right freq in DRM mode up 12k ???
 				High += 12000;
 			}
 
-			if(rx==1 && data_ready)
+            //================================================
+            // STEP 3) GET RX1 & RX2 FRAME of DATA (new_display_data)
+            //         copy it into current_display_data so it does not get clobbered
+            //==================================================
+
+            if (rx==1 && data_ready)
 			{
 				if(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
 				{
-					for(int i=0; i<current_display_data.Length; i++)
+					for(int i=0; i < current_display_data.Length; i++)
                         current_display_data[i] = spectrum_grid_min - rx1_display_cal_offset;
 				}
 				else
 				{
-					fixed(void *rptr = &new_display_data[0])
-						fixed(void *wptr = &current_display_data[0])
-							Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
 
-					if ( current_model == Model.SOFTROCK40 ) 
+                    if (((pw_avg & 1) == 0) || (current_display_mode == DisplayMode.WATERFALL)) // water avg on
+                    {
+                        fixed (void* rptr = &new_display_data[0])            // new display data waterfall
+                        {
+                            fixed (void* wptr = &current_display_data[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float)); // copy new data into the current buffer
+                            }
+                        }
+                    }
+                    else  // water avg off
+                    {
+                        fixed (void* rptr = &new_display_data[0])            // this avoids averaging
+                        {
+                            fixed (void* wptr = &current_display_data1[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float)); // ke9ns add copy new data into the current buffer
+                            }
+                        }
+
+                    }
+
+                    if ( current_model == Model.SOFTROCK40 ) 
 						console.AdjustDisplayDataForBandEdge(ref current_display_data);
 				}
 				data_ready = false;
-			}
+			} // RX1
 			else if(rx==2 && data_ready_bottom)
 			{
+
+               
                 if (local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU))
                 {
                     for (int i = 0; i < current_display_data_bottom.Length; i++)
@@ -4609,31 +6208,77 @@ namespace PowerSDR
                 }
                 else
                 {
-                    fixed (void* rptr = &new_display_data_bottom[0])
-                    fixed (void* wptr = &current_display_data_bottom[0])
-                        Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float));
 
+                    if (((pw_avg2 & 1) == 0) || (current_display_mode_bottom == DisplayMode.WATERFALL)) // water avg on
+                    {
+                        fixed (void* rptr = &new_display_data_bottom[0])
+                        {
+                            fixed (void* wptr = &current_display_data_bottom[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float)); // copy new data into the current buffer (to, from , #bytes)
+                            }
+                        }
+
+                    }
+                    else  // water avg off
+                    {
+                        fixed (void* rptr = &new_display_data_bottom[0])
+                        {
+                            fixed (void* wptr = &current_display_data_bottom1[0])
+                            {
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE * sizeof(float)); // ke9ns add this avoids averaging
+                            }
+                        }
+
+                    }
                     if (current_model == Model.SOFTROCK40)
                         console.AdjustDisplayDataForBandEdge(ref current_display_data_bottom);
                 }
 
 				data_ready_bottom = false;
-			}
+			} // RX2
 
-            if (current_display_mode != DisplayMode.PANAFALL) // don't do twice - in panafall avg already done in DrawPanadapter
+       //================================================
+       // STEP 4) More Waterfall setup including timers for how fast to move the waterfall and for avgB or avgP (which is also found in drawpanadapter)
+       //==================================================
+      
+            if (current_display_mode != DisplayMode.PANAFALL) // don't do twice - in panafall avg already done in DrawPanadapter (ke9ns : if just RX1 water or RX2 water come here)
             {
+                // RX1 must be in waterfall only mode
+
                 if (rx == 1 && average_on)
+                {
                     console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
+                }
                 else if (rx == 2 && rx2_avg_on)
+                {
                     console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
+                }
 
                 if (rx == 1 && peak_on)
+                {
                     UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
+                }
                 else if (rx == 2 && rx2_peak_on)
+                {
                     UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
-            }
+                }
+
+            } // check if just waterfall only rx1
+            else if (current_display_mode_bottom == DisplayMode.WATERFALL) // ke9ns add  this assume you came here because RX1 is in PANAFALL mode
+            {
+                 if (rx == 2 && rx2_avg_on)
+                {
+                    console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
+                }
+                else if (rx == 2 && rx2_peak_on)
+                {
+                    UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
+                }
+            } // rx2
 
 			int duration = 0;
+
 			if(rx == 1)
 			{
 				timer_waterfall.Stop();
@@ -4645,57 +6290,288 @@ namespace PowerSDR
 				duration = (int)timer_waterfall2.DurationMsec;
 			}
 
-			if(duration > waterfall_update_period)
+
+            //================================================
+            // STEP 5) wait until its time to update waterfall with new line at top of bmp
+            //==================================================
+
+
+            if (duration > waterfall_update_period)
 			{
 				if(rx == 1) timer_waterfall.Start();
 				else if(rx == 2) timer_waterfall2.Start();
-				num_samples = (High - Low);
 
-				start_sample_index = (BUFFER_SIZE>>1) +(int)((Low * BUFFER_SIZE) / sample_rate);
-				num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);
-				if (start_sample_index < 0) start_sample_index += 4096;
-				if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
-					num_samples = BUFFER_SIZE-start_sample_index;
+				num_samples = (High - Low);     // right side high freq - left side low freq
 
-				slope = (float)num_samples/(float)W;
-				for(int i=0; i<W; i++)
+				start_sample_index = (BUFFER_SIZE >> 1) +(int)((Low * BUFFER_SIZE) / sample_rate);
+
+				num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);  // same as in panadapter draw
+
+				if (start_sample_index < 0) start_sample_index += DATA_BUFFER_SIZE;
+
+				if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1)) num_samples = BUFFER_SIZE - start_sample_index;
+
+				slope = (float)num_samples/(float)W;               // find number of samples / pixel (zoom x4 = .26 @ 192k) (zoom .5 = 2.3 @ 192k)
+
+
+
+                //=================================================================
+                // STEP 5a) ke9ns ADD compute offset in BMP
+                //=================================================================
+
+                WaterMove2 = W * 3 * WaterMove1; // find the absolute center of the bitmap row[WaterMove2] array specifically 
+                                                    // 3 bytes per pixel
+                
+
+                if (rx == 1)
+                {
+                    if (F2A == 2)  // wait for freq to be set and 1 extra cycle because of the timing between freq set and getting here first.
+                    {
+                        if ((WM2A_LAST != vfoa_hz))
+                        {
+
+                            if (F3A == 2) // routine to delay 2 cycle updating the watermove because of timing error. Also RESIZE resets this
+                            {
+                                F3A = 0;
+
+                                WM2A_LAST = vfoa_hz;               // new last value
+                                WM2A_DIFF = WM2A_LAST - WM2A; //  difference from original spot in bmp
+
+                                WM4 = (float)((float)(High - Low) / (float)num_samples); // number of hz on screen
+
+                                WM1 = (int)((float)WM2A_DIFF / WM4 / slope); // how many pixels to move the bmp frame -=going down in freq +=going up in freq
+
+                             //    Trace.WriteLine("wm1 " + WM1);// pixels at this point not row[bytes] 
+                             //     Trace.WriteLine("watermove2 " + WaterMove2);
+                              //     Trace.WriteLine("W " + W);
+
+                                if ((WM1 >= ((W*(WaterMove1))-2 )) || (WM1 <= (-(W*WaterMove1)+2 ))) // either you move W beyond or -W below
+                                {
+                                    K9LAST = 0; // redraw bitmap
+                                    WM1 = 0;
+                                  //  Trace.WriteLine("===================OVER EDGE=========================");
+
+                                } // reset the bitmap
+
+                                WM1F = WM1;  // for drawimage
+                                WM1 = (WM1F * 3) + WaterMove2; // for row[wm1]  for RGB (WM1F * 3) + (3 * W);
+                                                                    // this adds in the 3bytes per pixel  (24bit mode RGB)
+
+                            } // F3A
+                            else   F3A++;
+
+                             Wtemp = (W * 3) / 4;
+                             WMtemp = (W * 3 * WaterMove) / 4;// used by black routine
+
+                        } // (WM2A_LAST != vfoa_hz)
+
+
+                    } // F2A == 2
+                    else // set new freq but wait before moving
+                    {
+                        F2A++;
+                       WM1 = (WM1F *3) + WaterMove2; // for RGB(WM1F * 3) + (3 * W)
+                   }
+                 
+
+                } //rx == 1
+                else  // rx2
+                {
+
+                  
+                      if (F2B == 2)                // wait for freq to be set and 1 extra cycle because of the timing between freq set and getting here first.
+                      {
+                   
+                            if ((WM2B_LAST != vfob_hz))
+                            {
+
+                            if (F3B == 2) // routine to delay 1 cycle updating the watermove because of timing error.
+                            {
+
+                                F3B = 0;
+
+                                WM2B_LAST = vfob_hz; // new last value
+
+                                WM2B_DIFF = WM2B_LAST - WM2B; //  difference from original spot in bmp
+
+                                WM5 = (float)((float)(High - Low) / (float)num_samples); // number of hz on screen
+
+                                WM2 = (int)((float)WM2B_DIFF / WM5 / slope); // how many pixels to move the bmp frame -=going down in freq +=going up in freq
+
+                                //  Trace.WriteLine("wm2 " + WM2);
+                                //    Trace.WriteLine("wm5 " + WM5);
+                                //    Trace.WriteLine("WM2B " + WM2B);
+
+                                if ((WM2 >= ((W * WaterMove1)-2)) || (WM2 <= (-(W * WaterMove1)+2)))  // either you move W beyond or -W below
+                                {
+                                    K10LAST = 0; // redraw bitmap
+                                    WM2 = 0;
+
+                                } // reset the bitmap
+
+                                // this is the position to place the upper left corner of the 3W bitmap so WM2 appears in the upper left corner of the display window 
+                                // WM2F = the pixel offset from the original freq when the bitmap was created.
+
+                                WM2F = WM2;
+
+                                // final WM2 = Position within the 3W bitmap that you start writing too.
+                                // WM2F*3 = # of RGB pixels to shift +/-
+                                // 3*w = start at the center of the 3Wide bitmap
+                                WM2 = (WM2F *3) + WaterMove2; //(WM2F * 3) + (3 * W);
+
+                            } // F3B
+                            else F3B++;
+
+                             W2temp = (W * 3) / 4;
+                             M2temp = (W * 3 * WaterMove) / 4; // used by black routine
+
+                        } // vfoB moved in freq
+                    }
+                    else
+                    {
+                        F2B++;
+                        WM2 = (WM2F * 3) + WaterMove2; // for RGB (WM2F * 3) + (3 * W);
+                    }
+
+                } // rx2
+
+
+             //   Trace.WriteLine("pw2 " + pw_avg2 + " pw1 "+pw_avg);  // water avg on)
+
+
+            //================================================
+            // STEP 6) convert 1 line of RX current data into a buffer waterfall_data[] W = width of the viewing area in pixels
+            //==================================================
+
+                A3B = A2B = AB = 0;    // ke9ns auto brightness
+                A4B = 1;               // ke9ns add tx counter
+               
+
+                if ((rx ==1) && (continuum == 1)) // ke9ns add (get the current Peak dbm value and convert to pixel location left=waterfall_low_threshold , right=waterall_high_threshold
+                {
+                    if ((MaxY < 20)&& (MaxY > -150) )
+                    {  
+                        itemp = (int)(150 - Math.Abs(MaxY)) ; // ke9ns add reverse db for plotting
+                        itemp = itemp * (int)((float)W / (float)150);
+                    }
+                    else
+                    {
+                        // use last itemp value.
+                    }
+
+                    WM1 = 0; // ke9ns no water move while in continuum mode
+                    Pen p = new Pen(Color.AntiqueWhite, 1);                // pen color white
+
+                    Graphics g1 = Graphics.FromImage(waterfall_bmp); // ke9ns add get access to waterfall bitmap to write timestamp into it.
+                    System.Drawing.Font font = new System.Drawing.Font("Swis721 BT", 9, FontStyle.Italic); // Arial size and style of freq text for waterfall
+                    SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
+                  
+
+                    if (timerflag == 0) // set timer for every 5 seconds
+                    {
+                        DT1 = DT = DateTime.Now;
+                        timerflag = 1;
+                    }
+                    else
+                    {
+                        DT1 = DateTime.Now;
+                    }
+
+                 
+                 //   Trace.Write("diff "+ DT1.Subtract(DT).TotalSeconds);
+                  // Trace.Write("ts " + ts);
+
+                    if ((DT1.Subtract(DT).TotalSeconds) >= 5)
+                    {
+                         g1.DrawString(string.Format("{0:yyyy-MM-dd_hh-mm-ss}", DateTime.Now), font, grid_text_brush, 1, 10); // ke9ns add continuum
+                         timerflag = 0;
+                    }
+
+                 //   g1.DrawLine(p,itemp,1,itemp_last,0); // ke9ns draw line
+                 //   itemp_last = itemp;
+
+
+                } // in continuum mode
+
+             
+                //========================================================================
+
+                for (int i=0; i < W; i++)
 				{
-					float max = float.MinValue;
-					float dval = i*slope + start_sample_index;
+					float max = float.MinValue;                      // storage for actual RX value 
+					float dval = i * slope + start_sample_index;    // same as in draw panadapter
 					int lindex = (int)Math.Floor(dval);
 					int rindex = (int)Math.Floor(dval + slope);
 
 					if(rx==1)
 					{
-						if (slope <= 1.0 || lindex == rindex) 
+						if (slope <= 1.0 || lindex == rindex)  // means high zoom level which means zooming into not enough resolution
 						{
-							max =  current_display_data[lindex%4096]*((float)lindex-dval+1) + current_display_data[(lindex+1)%4096]*(dval-(float)lindex);
+                            // find location in current display buffer to represent location on screen (left to right)
+                            // less than 1 sample per pixel
+
+                            if ( ((pw_avg & 1) == 0) ||  (current_display_mode == DisplayMode.WATERFALL) )  // water avg on
+                            {
+                                max = current_display_data[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                            }
+                            else
+                            {
+                                max = current_display_data1[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data1[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                            }
+                        }
+						else  // at least over 1 sample per pixel
+						{
+                            if (((pw_avg & 1) == 0) || (current_display_mode == DisplayMode.WATERFALL)) // water avg on
+                            {
+                                for (int j = lindex; j < rindex; j++)
+                                {
+                                    if (current_display_data[j % DATA_BUFFER_SIZE] > max) max = current_display_data[j % DATA_BUFFER_SIZE];
+                                }
+                            }
+                            else
+                            {
+                                for (int j = lindex; j < rindex; j++)
+                                {
+                                    if (current_display_data1[j % DATA_BUFFER_SIZE] > max) max = current_display_data1[j % DATA_BUFFER_SIZE];
+                                }
+                            }
 						}
-						else 
-						{					
-							for(int j=lindex; j<rindex; j++)
-								if (current_display_data[j%4096] > max) max=current_display_data[j%4096];
-						}
-					}
+					} // rx1
 					else if(rx==2)
 					{
 						if (slope <= 1.0 || lindex == rindex) 
 						{
-							max =  current_display_data_bottom[lindex%4096]*((float)lindex-dval+1) + current_display_data_bottom[(lindex+1)%4096]*(dval-(float)lindex);
-						}
-						else 
-						{					
-							for(int j=lindex; j<rindex; j++)
-								if (current_display_data_bottom[j%4096] > max) max=current_display_data_bottom[j%4096];
-						}
-					}
+                            if (((pw_avg2 & 1) == 0) || (current_display_mode_bottom == DisplayMode.WATERFALL))  // water avg on
+                            {
+                                max = current_display_data_bottom[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                            }
+                            else // water avg off
+                            {
+                                max = current_display_data_bottom1[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data_bottom1[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                            }
+
+                        }
+                        else 
+						{
+                            if ( ((pw_avg2 & 1) == 0) || (current_display_mode_bottom == DisplayMode.WATERFALL)) // water avg on
+                            {
+                                for (int j = lindex; j < rindex; j++)
+                                    if (current_display_data_bottom[j % DATA_BUFFER_SIZE] > max) max = current_display_data_bottom[j % DATA_BUFFER_SIZE];
+                            }
+                            else
+                            {
+                                for (int j = lindex; j < rindex; j++)
+                                    if (current_display_data_bottom1[j % DATA_BUFFER_SIZE] > max) max = current_display_data_bottom1[j % DATA_BUFFER_SIZE];
+                            }
+                        }
+					} // rx2
 
 					if(rx==1) max += rx1_display_cal_offset;
 					else if(rx==2) max += rx2_display_cal_offset;
 
 					if(!mox) 
 					{
-						if(rx==1) max += rx1_preamp_offset;
+						if(rx==1) max += rx1_preamp_offset;         // adjust for preamp on/off
 						else if(rx==2) max += rx2_preamp_offset;
 					}
 
@@ -4705,181 +6581,620 @@ namespace PowerSDR
 						max_x = i;
 					}
 
-					waterfall_data[i] = max;
-				}
 
-				if(!bottom) max_y = local_max_y;
 
-				BitmapData bitmapData;
-				if(rx == 1)
+                    if ((continuum == 0) || (rx==2)) // ke9ns add special Peak Power db shown vs Time
+                    {
+                                                                            // ke9ns this is the actual brightness data per pixel to draw to the screen (either color or gray)
+                        waterfall_data[i] = max;                            // RX signal strength per pixel of data 0 to i = 0 to W wide (1 line of waterfall data)
+                    }
+                    else // continuum mode here
+                    {
+                        if (rx == 1)
+                        {
+
+                            //   Trace.Write("last " + itemp_last + " itemp " + itemp);
+
+
+                            waterfall_data[i] = waterfall_low_threshold; // ke9ns add no line shown
+
+                            
+                            if (itemp > itemp_last)
+                            {
+                                if ((i <= itemp) && (i >= itemp_last))
+                                {
+                                    waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                }
+                                else
+                                {
+                                  waterfall_data[i] = waterfall_low_threshold; // ke9ns add no line shown
+                                }
+
+                            }
+                            else // itemp < itemp_last
+                            {
+                                if ((i >= itemp) && (i <= itemp_last))
+                                {
+                                    waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                }
+                                else
+                                {
+                                   waterfall_data[i] = waterfall_low_threshold; // ke9ns add no line shown
+                                }
+
+                            }
+                           
+
+                        } // rx == 1
+                       
+                    } // continuum mode here
+
+                    //-----------------------------------------------------
+                    // ke9ns add collect data to average for auto bright 
+
+                    if (autobright == 1) // RX1
+                    {
+                        if ((!mox)  && (rx == 1)) AB = AB + (long)max; // ke9ns add autobright feature 
+
+                    }
+                    else if (autobright2 == 1) // RX2
+                    {
+                        if ((!mox) && (rx == 2)) A2B = A2B + (long)max; // ke9ns add autobright feature 
+                    }
+                    else if (autobright3 == 1)  // TX
+                    {
+                        if (mox)
+                        {
+
+                          //  Trace.WriteLine("VALS ==  " + max);
+
+                            if (max > -100)  // use only mic data
+                            {
+                                A3B = A3B + (long)max; // ke9ns add autobright feature 
+                                A4B++;
+                            }
+
+
+                        }
+
+                    } // autobright3 = 1
+
+
+                } // for i loop (W wide)
+
+               if ((continuum == 1) && (rx==1))  itemp_last = itemp; // ke9ns add used to draw to screen
+               
+               
+               
+                //=========================================================================
+                // ke9ns add autobright (auto water leve) feature
+                //=========================================================================
+
+                if (mox)
+                {
+                    if (autobright3 == 1)
+                    {
+                        A3B1[0] = A3B / A4B; // get avg of the entire read
+
+                        A3B3 = (float)(A3B1[0]);
+
+                        autobright = autobright2 = autobright3 = 0; // turn off feature
+
+
+                        if ((A3B3 > -100) || (A3B3 < -10))
+                        {
+                            WaterfallLowMicThreshold = A3B3 - abright; //  console.setupForm.WaterfallLowMicThreshold
+                            console.setupForm.udDisplayWaterfallMicLevel.Value = (decimal)WaterfallLowMicThreshold;
+                        }
+                        //  Trace.WriteLine("TX value " + A3B3);
+                        //   console.setupForm.udDisplayWaterfallRX2Level.Invalidate();
+
+                    } // autobright3 = 1
+
+                }
+                else if (rx == 1)
+                {
+                    if (autobright == 1)
+                    {
+                        AB1[0] = AB / W; // get avg of the entire read
+
+                        AB3 = (float)(AB1[0]);
+
+                        autobright3 = autobright = 0; // turn off feature
+
+                        if ((AB3 > -140) && (AB3 < -50))
+                        {
+                            console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright;
+                            console.setupForm.udDisplayWaterfallLowLevel.Value = (decimal)WaterfallLowThreshold;
+
+                            //  console.setupForm.udDisplayWaterfallLowLevel.Invalidate();
+                        }
+                        //  Trace.WriteLine("rx1 value " + AB3);
+
+                    } // autobright = 1
+
+                }
+                else if (rx == 2)
+                {
+
+                    if (autobright2 == 1)
+                    {
+                        A2B1[0] = A2B / W; // get avg of the entire read
+
+
+                        A2B3 = (float)(A2B1[0]);
+
+                        autobright3 = autobright2 = 0; // turn off feature
+
+                        if ((A2B3 > -140) && (A2B3 < -50))
+                        {
+                            console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright;
+                            console.setupForm.udDisplayWaterfallRX2Level.Value = (decimal)WaterfallLowRX2Threshold;
+                        }
+                         //  Trace.WriteLine("rx2 value " + A2B3 );
+                        //   console.setupForm.udDisplayWaterfallRX2Level.Invalidate();
+
+                    } // autobright2 = 1
+                } // rx 2
+
+  
+
+                //================================================
+                // Process waterfall_data[] into line of bmp data
+                //==================================================
+
+                if (!bottom) max_y = local_max_y;  // ke9ns   if top half then max y
+
+
+                BitmapData bitmapData;  //  specifies attributes of image
+
+        //=================================================================
+        // STEP 7) This LOCKS the screen as-is so you can copy, modify, copy back and display later
+        //=================================================================
+
+                if (rx == 1) 
 				{
-					bitmapData = waterfall_bmp.LockBits(
-						new Rectangle(0, 0, waterfall_bmp.Width, waterfall_bmp.Height),
-						ImageLockMode.ReadWrite,
-						waterfall_bmp.PixelFormat);
+                    
+                     bitmapData = waterfall_bmp.LockBits(new Rectangle(0, 0,  waterfall_bmp.Width,  (waterfall_bmp.Height)), 
+                        ImageLockMode.ReadWrite,  waterfall_bmp.PixelFormat);
 				}
 				else
 				{
-					bitmapData = waterfall_bmp2.LockBits(
-						new Rectangle(0, 0, waterfall_bmp2.Width, waterfall_bmp2.Height),
-						ImageLockMode.ReadWrite,
-						waterfall_bmp2.PixelFormat);
+					bitmapData = waterfall_bmp2.LockBits(new Rectangle(0, 0,  waterfall_bmp2.Width,  waterfall_bmp2.Height), 
+                        ImageLockMode.ReadWrite,  waterfall_bmp2.PixelFormat);
 				}
 
-				int pixel_size = 3;
-				byte* row = null;
-
-				// first scroll image
-				int total_size = bitmapData.Stride * bitmapData.Height;		// find buffer size
-				Win32.memcpy(new IntPtr((int)bitmapData.Scan0+bitmapData.Stride).ToPointer(),
-					bitmapData.Scan0.ToPointer(),
-					total_size-bitmapData.Stride);
-
-				row = (byte *)bitmapData.Scan0;
+				int pixel_size = 3;       // step size through bitmap 3 bytes per pixel for color RGB or grayscal 
+                                          // but now used as a holder for the pixel location in the row
 				
-				// draw new data
-				for(int i=0; i<W; i++)	// for each pixel in the new line
-				{
-					int R, G, B;		// variables to save Red, Green and Blue component values
+                byte* row = null;       // row as a pointer
+                int* row1 = null;
 
-					/*if(waterfall_data[i] <= waterfall_low_threshold)		// if less than low threshold, just use low color
-					{
-						R = waterfall_low_color.R;
-						G = waterfall_low_color.G;
-						B = waterfall_low_color.B;
-					}
-					else if(waterfall_data[i] >= waterfall_high_threshold)// if more than high threshold, just use high color
-					{
-						R = waterfall_high_color.R;
-						G = waterfall_high_color.G;
-						B = waterfall_high_color.B;
-					}
-					else // use a color between high and low
-					{
-						float percent = (waterfall_data[i] - waterfall_low_threshold)/(waterfall_high_threshold - waterfall_low_threshold);
-						if(percent <= 0.5)	// use a gradient between low and mid colors
-						{
-							percent *= 2;
+                //=================================================================
+                // STEP 8) Copy the entire bitmap down 1 line 
+                // which makes the water appear to FALL, but current top line still has last old data in it
+                //=================================================================
 
-							R = (int)((1-percent)*waterfall_low_color.R + percent*waterfall_mid_color.R);
-							G = (int)((1-percent)*waterfall_low_color.G + percent*waterfall_mid_color.G);
-							B = (int)((1-percent)*waterfall_low_color.B + percent*waterfall_mid_color.B);
-						}
-						else				// use a gradient between mid and high colors
-						{
-							percent = (float)(percent-0.5)*2;
+                int total_size = bitmapData.Stride * bitmapData.Height;                 // find buffer size (stride = scan width) ke9ns height = 281 or 525 full screen 
 
-							R = (int)((1-percent)*waterfall_mid_color.R + percent*waterfall_high_color.R);
-							G = (int)((1-percent)*waterfall_mid_color.G + percent*waterfall_high_color.G);
-							B = (int)((1-percent)*waterfall_mid_color.B + percent*waterfall_high_color.B);
-						}
-					}*/
-				
-					//waterfall_data[i] = (float)i/W*(waterfall_high_threshold - waterfall_low_threshold) + waterfall_low_threshold;
+               Win32.memcpy(
+                   new IntPtr((int)bitmapData.Scan0 + (bitmapData.Stride)).ToPointer(),  // + stride is 1 row down
+                 bitmapData.Scan0 .ToPointer(),
+                   total_size - bitmapData.Stride
+                   );  // copy (dest, source, count)
 
-					if(waterfall_data[i] <= waterfall_low_threshold)
-					{
-						R = waterfall_low_color.R;
-						G = waterfall_low_color.G;
-						B = waterfall_low_color.B;
-					}
-					else if(waterfall_data[i] >= waterfall_high_threshold)
-					{
-						R = 192;
-						G = 124;
-						B = 255;
-					}
-					else // value is between low and high
-					{
-						float range = waterfall_high_threshold - waterfall_low_threshold;
-						float offset = waterfall_data[i] - waterfall_low_threshold;
-						float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+              
+                   row = (byte*)bitmapData.Scan0 ;    // ke9ns  first row but W over to the right since the Width of the bmp is 3times the real viewing area
+                   row1 = (int*)bitmapData.Scan0;     // ke9ns used for faster clearing out of bad data
 
-						if(overall_percent < (float)2/9) // background to blue
-						{
-							float local_percent = overall_percent / ((float)2/9);
-							R = (int)((1.0-local_percent)*waterfall_low_color.R);
-							G = (int)((1.0-local_percent)*waterfall_low_color.G);
-							B = (int)(waterfall_low_color.B + local_percent*(255-waterfall_low_color.B));
-						}
-						else if(overall_percent < (float)3/9) // blue to blue-green
-						{
-							float local_percent = (overall_percent - (float)2/9) / ((float)1/9);
-							R = 0;
-							G = (int)(local_percent*255);
-							B = 255;
-						}
-						else if(overall_percent < (float)4/9) // blue-green to green
-						{
-							float local_percent = (overall_percent - (float)3/9) / ((float)1/9);
-							R = 0;
-							G = 255;
-							B = (int)((1.0-local_percent)*255);
-						}
-						else if(overall_percent < (float)5/9) // green to red-green
-						{
-							float local_percent = (overall_percent - (float)4/9) / ((float)1/9);
-							R = (int)(local_percent*255);
-							G = 255;
-							B = 0;
-						}
-						else if(overall_percent < (float)7/9) // red-green to red
-						{
-							float local_percent = (overall_percent - (float)5/9) / ((float)2/9);
-							R = 255;
-							G = (int)((1.0-local_percent)*255);
-							B = 0;
-						}
-						else if(overall_percent < (float)8/9) // red to red-blue
-						{
-							float local_percent = (overall_percent - (float)7/9) / ((float)1/9);
-							R = 255;
-							G = 0;
-							B = (int)(local_percent*255);
-						}
-						else // red-blue to purple end
-						{
-							float local_percent = (overall_percent - (float)8/9) / ((float)1/9);
-							R = (int)((0.75 + 0.25*(1.0-local_percent))*255);
-							G = (int)(local_percent*255*0.5);
-							B = 255;
-						}
-					}
+              //  Trace.WriteLine("scan0 " + bitmapData.Scan0 + " total size " + total_size + " W " + W +" bitmapData.Stride  "+bitmapData.Stride);
+              
+                
+                //=================================================================
+                // ke9ns ADD BLACK or CLEAR out the part of the bitmap that is not on the screen
+                //=================================================================
 
-					// set pixel color
-					row[i*pixel_size + 0] = (byte)B;	// set color in memory
-					row[i*pixel_size + 1] = (byte)G;
-					row[i*pixel_size + 2] = (byte)R;
-				}
-				if(rx == 1)
-					waterfall_bmp.UnlockBits(bitmapData);
+                if (WaterMove != 0) // do if waterfall move option is turned ON 
+                {
+
+                   
+                        if ((rx == 1) && (continuum==0))  // RX1
+                        {
+
+                            int WM1temp = WM1 >> 2;
+
+                            for (int i = 0; i < WM1temp; i++)               //  wm1 represents number of bytes away from center of bitmap
+                            {
+                                row1[i] = 0; // 4 bytes long
+                            }
+                            for (int i = WM1temp + Wtemp; i < WMtemp; i++) //sca
+                            {
+                                row1[i] = 0; // 4 bytes long
+                            }
+
+                        }
+                        else if (rx==2) // for RX2
+                        {
+                            int WM2temp = WM2 >> 2;
+
+                            for (int i = 0; i < WM2temp; i++)              //  wm1 represents number of bytes away from center of bitmap
+                            {
+                                row1[i] = 0; // 4 bytes long
+                            }
+                            for (int i = WM2temp + W2temp; i < M2temp; i++) //
+                            {
+                                row1[i] = 0; // 4 bytes long
+                            }
+
+
+                        }// rx2
+                   
+
+                } // watermove
+
+                //=================================================================
+                // ke9ns choose a threshold for RX or TX
+                //=================================================================
+                if (local_mox)
+                {
+                    if ((tx_on_vfob) && (rx == 2))
+                    {
+                        waterfall_low_threshold = waterfall_lowMic_threshold;  // TX low level db
+                        waterfall_high_threshold = 0;
+
+                    }
+                    else if ((!tx_on_vfob) && (rx == 1))
+                    {
+                        waterfall_low_threshold = waterfall_lowMic_threshold; // TX low level
+                        waterfall_high_threshold = 0;
+                    }
+                    else
+                    {
+                        waterfall_low_threshold = -200; // if you dont have a low level use -200
+                     //   Trace.WriteLine("never ");
+                    }
+
+                }
+                else  // if in RX mode
+                {
+                    if (rx == 1)
+                    {
+                        waterfall_low_threshold = temp_low_threshold;  // rx1 db
+                        waterfall_high_threshold = temp_high_threshold;  // rx1 db
+                    }
+                    else
+                    {
+                        waterfall_low_threshold = waterfall_lowRX2_threshold; // rx2
+                        waterfall_high_threshold = temp_high_threshold;  // rx1 db
+                    }
+            
+                }
+
+
+
+        //============================================
+        // convert to RGB or Grayscale data
+        // draw new line of data (left to right)
+        //============================================
+
+                float range = waterfall_high_threshold - waterfall_low_threshold; // diff in high to low db values
+
+                int Maxcolor = 255; // 255
+
+
+                if (Gray_Scale == 0) // RGB
+                {
+                                      
+                    for (int i = 0; i < W; i++) // for each pixel in the new line
+                    {
+                        int R, G, B;        // variables to save Red, Green and Blue component values
+                      
+
+                        if (waterfall_data[i] <= waterfall_low_threshold) // if RX strength of sample is below low threshold, only go down to low end of color
+                        {
+                            R = waterfall_low_color.R;  // default of black by default which would be zero for all 3 colors
+                            G = waterfall_low_color.G;
+                            B = waterfall_low_color.B;
+                        }
+                        else if (waterfall_data[i] >= waterfall_high_threshold) // if strength exceeds high value, then dont go beyond max color values
+                        {
+                            R = 192;            // 192
+                            G = 124;       // 124     
+                            B = Maxcolor; // 255
+                        }
+                        else // value is between low and high
+                        {
+                            //  float range = waterfall_high_threshold - waterfall_low_threshold;  // found up above now
+
+                            float offset = waterfall_data[i] - waterfall_low_threshold;
+
+                            float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+                            if (overall_percent < (float)2 / 9) // background to blue
+                            {
+                                float local_percent = overall_percent / ((float)2 / 9);
+                                R = (int)((1.0 - local_percent) * waterfall_low_color.R);
+                                G = (int)((1.0 - local_percent) * waterfall_low_color.G);
+                                B = (int)(waterfall_low_color.B + local_percent * (Maxcolor - waterfall_low_color.B));
+                            }
+                            else if (overall_percent < (float)3 / 9) // blue to blue-green
+                            {
+                                float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9);
+                                R = 0;
+                                G = (int)(local_percent * Maxcolor);
+                                B = Maxcolor;
+                            }
+                            else if (overall_percent < (float)4 / 9) // blue-green to green
+                            {
+                                float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9);
+                                R = 0;
+                                G = Maxcolor;
+                                B = (int)((1.0 - local_percent) * Maxcolor);
+                            }
+                            else if (overall_percent < (float)5 / 9) // green to red-green
+                            {
+                                float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9);
+                                R = (int)(local_percent * Maxcolor);
+                                G = Maxcolor;
+                                B = 0;
+                            }
+                            else if (overall_percent < (float)7 / 9) // red-green to red
+                            {
+                                float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9);
+                                R = Maxcolor;
+                                G = (int)((1.0 - local_percent) * Maxcolor);
+                                B = 0;
+                            }
+                            else if (overall_percent < (float)8 / 9) // red to red-blue
+                            {
+                                float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9);
+                                R = 255;
+                                G = 0;
+                                B = (int)(local_percent * Maxcolor);
+                            }
+                            else // red-blue to purple end
+                            {
+                                float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9);
+                                R = (int)((0.75 + 0.25 * (1.0 - local_percent)) * Maxcolor);
+                                G = (int)(local_percent * Maxcolor * 0.5);
+                                B = Maxcolor;
+                            }
+                        } // // value is between low and high
+
+
+
+                        // set pixel color
+                        //  if (WaterMove == 0)wm1
+                        //  {
+                        //    pixel_size = (i * 3);
+                       //     row[ pixel_size + 0] = (byte)B;  // set color in memory
+                       //     row[ pixel_size + 1] = (byte)G;
+                       //     row[ pixel_size + 2] = (byte)R;
+                       //  }
+                       //  else
+                       //  {
+
+                            if (rx == 1)
+                            {
+
+                                pixel_size = (i * 3) + WM1; // 
+
+                                row[ pixel_size + 0 ] = (byte)B;  //  ke9ns ADD draw new image only in the center portion of the 3 Wide bitmap
+                                row[ pixel_size + 1 ] = (byte)G; //  WM1 = number of pixels to offset for the part of the 3Wide bitmap that is actually in the display area
+                                row[ pixel_size + 2 ] = (byte)R; //  WM1 = (WM1F * 3) + (3 * W); where 3W=start at center of bitmap, 3WM1F=+/- pixel shift in the bitmap
+
+                            }
+                            else
+                            {
+                                pixel_size = (i * 3) + WM2;
+
+                                row[ pixel_size + 0 ] = (byte)B;  //  ke9ns ADD draw new image only in the center portion of the 3 Wide bitmap
+                                row[ pixel_size + 1 ] = (byte)G;
+                                row[ pixel_size + 2 ] = (byte)R;
+
+                            }
+
+                     //   }
+                        
+
+                    } // for loop 0 to W wide
+
+                }
+                else  // Gray=0 RGB scale
+                {
+                  
+                   
+                  
+                     Byte Gray = 0;        // Gray scale 0 to 255
+                     float offset = 0;
+
+                    for (int i = 0; i < W; i++) // for each pixel in the new line
+                    {
+                     
+
+                        if (waterfall_data[i] <= waterfall_low_threshold) // if RX strength of sample is below low threshold, only go down to low end of color
+                        {
+                             Gray = 0;
+                        }
+                        else if (waterfall_data[i] >= waterfall_high_threshold) // if strength exceeds high value, then dont go beyond max color values
+                        {
+
+                            Gray = 255;  //  255;// max value
+                        }                        else // value is between low and high
+                        {
+                           
+                             offset = waterfall_data[i] - waterfall_low_threshold;  // typical data -110 - 120 = almost 0
+
+                            float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+                            Gray = (Byte)(overall_percent * 255);   // 255);
+                           
+                            
+                        }  // value is between low and high
+
+                        //   Trace.WriteLine("water "+ waterfall_data[i] + " offset " + offset + " range " + range + " Gray " + Gray+" Gray1 " + Gray1 + " Gray2 "+ Gray2);
+
+
+
+
+                        //  if (WaterMove == 0)
+                        //  {
+                        //       pixel_size = (i * 3);
+                        //      row[ pixel_size + 0] = Gray; // R
+                        //      row[ pixel_size + 1] = Gray;  // G
+                        //      row[ pixel_size + 2] = Gray;  // B
+                        //
+                        //  }
+                        //  else
+                        // {
+                        if (rx == 1)
+                            {
+                                pixel_size = (i * 3) + WM1;
+
+                                row[ pixel_size + 0 ] = Gray; // R // ke9ns ADD draw new image only in the center portion of the 3 Wide bitmap
+                                row[ pixel_size + 1 ] = Gray;  // G
+                                row[ pixel_size + 2 ] = Gray;  // B
+                            }
+                            else
+                            {
+                                pixel_size = (i * 3) + WM2;
+
+                                row[ pixel_size + 0 ] = Gray; // R // ke9ns ADD draw new image only in the center portion of the 3 Wide bitmap
+                                row[ pixel_size + 1 ] = Gray;  // G
+                                row[ pixel_size + 2 ] = Gray;  // B
+
+                            }
+                      //  }
+
+                        //   byte Gray = (byte)((float)(R * .299) + (float)(G * .587) + (float)(B * .114));
+
+                    } // for loop 0 to W wide
+
+                } // Gray = 1 Gray scale
+
+
+              
+                //=======================================
+                // UNLOCK SCREEN which will now display the new data
+                //=======================================
+
+                if (rx == 1)
+					waterfall_bmp.UnlockBits(bitmapData);  // RX1
 				else
-					waterfall_bmp2.UnlockBits(bitmapData);
-			}
+					waterfall_bmp2.UnlockBits(bitmapData);  // RX2
 
-			if(bottom) 
+
+                waterfall_low_threshold = temp_low_threshold;  // KE9NS reset low thres back to rx db
+                waterfall_high_threshold = temp_high_threshold; // ke9ns reset high back to rx level
+
+
+            } // if(duration > waterfall_update_period) STEP 5) waiting period
+
+
+
+        //=======================================
+        // Draw BITMAP image to screen (whatever data is now in the bitmap)
+        //=======================================
+
+            if (bottom)  // ke9ns if bottom half of screen start drawing image just below waterfall text + 16
 			{
-				if(rx == 1) g.DrawImageUnscaled(waterfall_bmp, 0, H+16);
-				else if(rx == 2) g.DrawImageUnscaled(waterfall_bmp2, 0, H+16);
-			}
+                if (rx == 1)
+                {
+
+                    //  if (WaterMove == 0)
+                    //   {
+                    //   g.DrawImageUnscaled(waterfall_bmp, 0, H + 16); // original  16 is the space for the freq text above the waterfall
+                    //  }
+                    //  else
+                    // {
+                    if (continuum == 0)
+                    {
+                        g.DrawImageUnscaled(waterfall_bmp, (-(W * WaterMove1)) - WM1F, H + 16); // ke9ns  this draws only the center WIDTH of the 3 Wide bitmap
+                    }
+                    else
+                    {
+                        g.DrawImageUnscaled(waterfall_bmp, 0, 16);  // ke9ns draw image shift down 16 and over to the right 100 to allow for time stamp and db values	
+
+                    }
+                    //  }
+
+
+                }
+                else if (rx == 2)
+                {
+                  //  if (WaterMove == 0)
+                  //  {
+                  //      g.DrawImageUnscaled(waterfall_bmp2, 0, H + 16); // original
+                  //  }
+                  //  else
+                   // {
+                        g.DrawImageUnscaled(waterfall_bmp2, (-(W* WaterMove1)) - WM2F, H + 16);
+                   // }
+
+
+                }
+
+			} // bottom
 			else
 			{
-				if(rx == 1) g.DrawImageUnscaled(waterfall_bmp, 0, 16);	// draw the image on the background	
-				else if(rx == 2) g.DrawImageUnscaled(waterfall_bmp2, 0, 16);	// draw the image on the background	
-			}
+                if (rx == 1)
+                {
+                    // if (WaterMove == 0)
+                    //  {
+                    //      g.DrawImageUnscaled(waterfall_bmp, 0, 16);  // draw the image on the background	
+                    //  }
+                    //  else
+                    //  {
 
-			waterfall_counter++;
+                    if (continuum == 0)
+                    {
+                        g.DrawImageUnscaled(waterfall_bmp, (-(W * WaterMove1)) - WM1F, 16);  // draw the image on the background	
+                    }
+                    else
+                    {
+                        g.DrawImageUnscaled(waterfall_bmp, 0, 16);  // ke9ns draw image shift down 16 and over to the right 100 to allow for time stamp and db values	
+                    }
 
-			// draw long cursor
-			if(current_click_tune_mode != ClickTuneMode.Off)
+                  //  }
+                }
+                else if (rx == 2)
+                {
+                  //  if (WaterMove == 0)
+                  //  {
+                  //      g.DrawImageUnscaled(waterfall_bmp2, 0, 16); // draw the image on the backgroun
+                  //  }
+                  //  else
+                  //  {
+                        g.DrawImageUnscaled(waterfall_bmp2, (-(W* WaterMove)) - WM2F, 16); // draw the image on the backgroun	
+                   // }
+                }
+
+
+             //   g.DrawImageUnscaled(waterfall_bmp, new Rectangle(0, 50, W, 100));
+
+			} // top
+
+            //	waterfall_counter++; // ke9ns not used ?
+
+          //  stopWatch.Stop();
+          //  TimeSpan ts = stopWatch.Elapsed;
+
+         //   if (rx==1)  Trace.WriteLine("RunTime1 " + ts);
+         //   else Trace.WriteLine("RunTime2 " + ts);
+
+
+            //=======================================
+            // draw long cursor
+            //=======================================
+
+            if (current_click_tune_mode != ClickTuneMode.Off)
 			{
 				Pen p;
 				if(current_click_tune_mode == ClickTuneMode.VFOA)
 					p = new Pen(grid_text_color);
 				else p = new Pen(Color.Red);
                 if (bottom)
-                {
-                    if (display_cursor_y > H)
+                {                    if (display_cursor_y > H)
                     {
                         g.DrawLine(p, display_cursor_x, 0, display_cursor_x, H + H);
                         g.DrawLine(p, 0, display_cursor_y, W, display_cursor_y);
@@ -4928,12 +7243,12 @@ namespace PowerSDR
 				high = 21500;
 			}
 
-			int yRange = spectrum_grid_max - spectrum_grid_min;
+			int yRange = spectrum_grid_max - spectrum_grid_min;  
 
 			if(data_ready)
 			{
 				// get new data
-				fixed(void *rptr = &new_display_data[0])
+				fixed(void *rptr = &new_display_data[0]) // histogram
 					fixed(void *wptr = &current_display_data[0])
 						Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
 						
@@ -5082,979 +7397,983 @@ namespace PowerSDR
 			rx2_peak_buffer[0] = CLEAR_FLAG; // set reset flag
 		}
 
-		#endregion
-
-		#endregion
-
-		#region DirectX
-/*
-		#region Variable Declaration
-
-		private static Device dx_device = null;
-		private static VertexBuffer dx_data_vb = null;
-		private static VertexBuffer dx_mouse_vb = null;
-
-		private static Background current_background;
-		private static Microsoft.DirectX.Direct3D.Font bg_string_font;
-
-		private static float[] data = null;
-		private static CustomVertex.TransformedColored[] verts = null;
-		
-		#endregion
-
-		#region Properties
-
-		private static RenderType directx_render_type = RenderType.NONE;
-		public static RenderType DirectXRenderType
-		{
-			get { return directx_render_type; }
-			set { directx_render_type = value; }
-		}
-
-		#endregion
-
-		#region Routines
-
-		public static bool DirectXInit()
-		{
-			// Now let's setup our D3D stuff
-			PresentParameters presentParams = new PresentParameters();
-			presentParams.Windowed = true;
-			presentParams.SwapEffect = SwapEffect.Discard;
-			try
-			{
-				dx_device = new Device(0,
-					DeviceType.Hardware, 
-					target, 
-					CreateFlags.HardwareVertexProcessing | CreateFlags.FpuPreserve, 
-					presentParams);
-				directx_render_type = RenderType.HARDWARE;
-			}
-			catch(DirectXException)
-			{
-				try
-				{
-					dx_device = new Device(0, 
-						DeviceType.Hardware, 
-						target, 
-						CreateFlags.SoftwareVertexProcessing | CreateFlags.FpuPreserve, 
-						presentParams);
-					directx_render_type = RenderType.SOFTWARE;
-				}
-				catch(DirectXException)
-				{
-					directx_render_type = RenderType.NONE;
-					return false;
-				}
-			}
-			OnCreateDirectXDevice(dx_device, null);
-			dx_device.RenderState.Lighting = false;
-			bg_string_font = new Microsoft.DirectX.Direct3D.Font(
-				dx_device, new System.Drawing.Font("Arial", 9.0f));
-			
-			return true;
-		}
-
-		public static void DirectXRelease()
-		{
-			dx_device = null;
-			dx_data_vb = null;
-			dx_mouse_vb = null;
-
-			current_background = null;
-			bg_string_font = null;
-
-			data = null;
-			verts = null;
-		}
-		
-		public static void PrepareDisplayVars(DisplayMode mode)
-		{
-			switch(console.CurrentDisplayEngine)
-			{
-				case DisplayEngine.DIRECT_X:
-					int data_length = 0;
-					int num_verts = 0;
-					
-					switch(mode)
-					{
-						case DisplayMode.PANADAPTER:
-						case DisplayMode.SPECTRUM:
-						case DisplayMode.SCOPE:
-							data_length = W;
-							num_verts = W;
-							break;
-					}
-
-					verts = new CustomVertex.TransformedColored[num_verts];
-					data = new float[data_length];
-					break;
-			}
-		}
-
-		public static void OnCreateDirectXDevice(object sender, EventArgs e)
-		{
-			Device dev = (Device)sender;
-
-			dx_data_vb = new VertexBuffer(
-				typeof(CustomVertex.TransformedColored),
-				W,
-				dev,
-				Usage.WriteOnly,
-				CustomVertex.TransformedColored.Format,
-				Pool.Managed);
-
-			dx_mouse_vb = new VertexBuffer(
-				typeof(CustomVertex.TransformedColored),
-				4,
-				dev,
-				Usage.WriteOnly,
-				CustomVertex.TransformedColored.Format,
-				Pool.Managed);
-		}
-
-		public static void UpdateDataVertexBuffer(object sender, float[] data)
-		{
-			VertexBuffer vb = (VertexBuffer)sender;
-			//CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[W];
-
-			int color = data_line_color.ToArgb();
-			for(int i=0; i<W; i++)
-			{
-				verts[i].X = i;
-				verts[i].Y = data[i];
-				verts[i].Z = 0.0f;
-				verts[i].Rhw = 1; 
-				verts[i].Color = color;
-			}
-
-			//GraphicsStream stm = vb.Lock(0, 0, 0);
-			//stm.Write(verts);
-			//vb.Unlock();
-			vb.SetData(verts, 0, LockFlags.None);
-		}
-
-		public static void UpdateDataVertexBuffer(object sender, Point[] data)
-		{
-			VertexBuffer vb = (VertexBuffer)sender;
-			CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[data.Length];
-
-			for(int i=0; i<data.Length; i++)
-			{
-				verts[i].X = data[i].X;
-				verts[i].Y = data[i].Y;
-				verts[i].Z = 0.0f;
-				verts[i].Rhw = 1; 
-				verts[i].Color = data_line_color.ToArgb();
-			}
-
-			//GraphicsStream stm = vb.Lock(0, 0, 0);
-			//stm.Write(verts);
-			//vb.Unlock();
-			vb.SetData(verts, 0, LockFlags.None);
-		}
-
-		public static void UpdateMouseVertexBuffer(object sender, int x, int y)
-		{
-			VertexBuffer vb = (VertexBuffer)sender;
-			CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[4];
-
-			verts[0].X = 0.0f;
-			verts[0].Y = (float)y;
-			verts[0].Z = 0.0f;
-			verts[0].Rhw = 1;
-			verts[0].Color = grid_text_color.ToArgb();
-				
-			verts[1].X = (float)W;
-			verts[1].Y = (float)y;
-			verts[1].Z = 0.0f;
-			verts[1].Rhw = 1;
-			verts[1].Color = grid_text_color.ToArgb();
-
-			verts[2].X = (float)x;
-			verts[2].Y = 0.0f;
-			verts[2].Z = 0.0f;
-			verts[2].Rhw = 1;
-			verts[2].Color = grid_text_color.ToArgb();
-				
-			verts[3].X = (float)x;
-			verts[3].Y = (float)H;
-			verts[3].Z = 0.0f;
-			verts[3].Rhw = 1;
-			verts[3].Color = grid_text_color.ToArgb();
-
-			//GraphicsStream stm = vb.Lock(0, 0, 0);
-			//stm.Write(verts);
-			//vb.Unlock();
-			vb.SetData(verts, 0, LockFlags.None);
-		}
-
-		public static void RenderDXBackground()
-		{
-			if(current_background != null)
-			{		
-				// draw grid lines
-				foreach(DXLine l in current_background.lines)
-				{
-					l.Draw();
-				}
-	
-				if(bg_string_font != null) // ensure the font has been instantiated
-				{
-					//verify background object string content
-					Debug.Assert(current_background.str_loc.Count == current_background.strings.Count);
-
-					// draw each string at the indicated points
-					for(int i=0; i<current_background.strings.Count; i++)
-					{
-						bg_string_font.DrawText(
-							null, 
-							(string)current_background.strings[i], 
-							((Point)current_background.str_loc[i]).X, 
-							((Point)current_background.str_loc[i]).Y, 
-							grid_text_color);
-					}
-				}				
-			}
-		}
-
-		public static void RenderDirectX()
-		{
-			if(dx_device == null) return;
-
-			// setup data
-			switch(current_display_mode)
-			{
-				case DisplayMode.PANADAPTER:
-					ConvertDataForPanadapter();
-					break;
-				case DisplayMode.SPECTRUM:
-					ConvertDataForSpectrum();
-					break;
-				case DisplayMode.PHASE:
-					ConvertDataForPhase();
-					break;
-				case DisplayMode.SCOPE:
-					ConvertDataForScope();
-					break;
-			}
-			if(console.LongCrosshair)
-				UpdateMouseVertexBuffer(dx_mouse_vb, console.DisplayCursorX, console.DisplayCursorY);
-
-			dx_device.Clear(ClearFlags.Target, display_background_color, 0.0f, 0);
-
-			//Begin the scene
-			dx_device.BeginScene();			
-
-			//dx_device.SetTexture(0, dx_texture);
-			//dx_device.SetStreamSource(0, dx_background_vb, 0);
-			//dx_device.VertexFormat = CustomVertex.TransformedTextured.Format;
-			//dx_device.DrawPrimitives(PrimitiveType.TriangleFan, 0, 2);
-			//dx_device.SetTexture(0, null);
-
-			RenderDXBackground();
-
-			dx_device.SetStreamSource(0, dx_data_vb, 0);
-			dx_device.VertexFormat = CustomVertex.TransformedColored.Format;
-			
-			switch(current_display_mode)
-			{
-				case DisplayMode.PANADAPTER:
-				case DisplayMode.SPECTRUM:
-				case DisplayMode.SCOPE:
-					dx_device.DrawPrimitives(PrimitiveType.LineStrip, 0, W-1);
-					break;
-				case DisplayMode.PHASE:
-					dx_device.DrawPrimitives(PrimitiveType.PointList, 0, phase_num_pts);
-					break;
-			}
-
-			if(console.LongCrosshair)
-			{
-				dx_device.SetStreamSource(0, dx_mouse_vb, 0);
-				dx_device.DrawPrimitives(PrimitiveType.LineStrip, 0, 1);
-				dx_device.DrawPrimitives(PrimitiveType.LineStrip, 2, 1);
-			}
-
-			/*Microsoft.DirectX.Direct3D.Font font = new Microsoft.DirectX.Direct3D.Font(
-				dx_device, 
-				new System.Drawing.Font("Arial", 14.0f, FontStyle.Bold));
-			font.DrawText(null, string.Format("Testing"), new Rectangle(256, 20, 0, 0), DrawTextFormat.NoClip, Color.Red);
-
-			//if(console.HighSWR)
-			//{
-			//	if(directx_render_type == RenderType.HARDWARE)
-			//	{
-			//		Microsoft.DirectX.Direct3D.Font high_swr_font = new Microsoft.DirectX.Direct3D.Font(dx_device, new System.Drawing.Font("Arial", 14.0f, FontStyle.Bold));
-			//		high_swr_font.DrawText(null, string.Format("High SWR"), new Rectangle(245, 20, 0, 0), DrawTextFormat.NoClip, Color.Red);
-			//	}
-			//}
-
-			//End the scene
-			dx_device.EndScene();
-			dx_device.Present();
-		}
-
-		unsafe private static void ConvertDataForPanadapter()
-		{
-			//float[] data = new float[W];			// array of points to display
-			float slope = 0.0f;						// samples to process per pixel
-			int num_samples = 0;					// number of samples to process
-			int start_sample_index = 0;				// index to begin looking at samples
-			int Low = -10000;
-			int High = 10000;
-			int yRange = spectrum_grid_max - spectrum_grid_min;
-
-			if(console.CurrentDSPMode == DSPMode.DRM)
-			{
-				Low = 2000;
-				High = 22000;
-			}
-
-			max_y = Int32.MinValue;
-
-			if(data_ready)
-			{
-				// get new data
-				fixed(void *rptr = &new_display_data[0])
-					fixed(void *wptr = &current_display_data[0])
-						Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
-						
-				// kb9yig sr mod starts 
-				if ( console.CurrentModel == Model.SOFTROCK40 ) 
-					console.AdjustDisplayDataForBandEdge(ref current_display_data);
-				// end kb9yig sr mods 
-
-				data_ready = false;
-			}
-
-			if(average_on)
-				console.UpdateDisplayAverage();
-			if(peak_on)
-				UpdateDisplayPeak();
-
-			num_samples = (High - Low);
-
-			start_sample_index = (BUFFER_SIZE>>1) +(int)((Low * BUFFER_SIZE) / sample_rate);
-			num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);
-			if (start_sample_index < 0) start_sample_index = 0;
-			if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
-				num_samples = BUFFER_SIZE-start_sample_index;
-
-			slope = (float)num_samples/(float)W;
-			for(int i=0; i<W; i++)
-			{
-				float max = float.MinValue;
-				float dval = i*slope + start_sample_index;
-				int lindex = (int)Math.Floor(dval);
-				int rindex = (int)Math.Floor(dval + slope);
-				if (rindex > BUFFER_SIZE) rindex = BUFFER_SIZE;
-				
-				for(int j=lindex;j<rindex;j++)
-					if (current_display_data[j] > max) max=current_display_data[j];
-
-				max = max +
-					console.DisplayCalOffset + 
-					console.PreampOffset;
-
-				if(max > max_y)
-				{
-					max_y = max;
-					max_x = i;
-				}
-
-				data[i] = (int)(Math.Floor((spectrum_grid_max - max)*H/yRange));
-			} 
-
-			UpdateDataVertexBuffer(dx_data_vb, data);
-		}
-
-		unsafe static private void ConvertDataForSpectrum()
-		{
-			//float[] data = new float[W];			// array of points to display
-			float slope = 0.0f;						// samples to process per pixel
-			int num_samples = 0;					// number of samples to process
-			int start_sample_index = 0;				// index to begin looking at samples
-			int low = 0;
-			int high = 0;
-
-			max_y = Int32.MinValue;
-
-			if(!console.MOX)
-			{
-				low = rx_display_low;
-				high = rx_display_high;
-			}
-			else
-			{
-				low = tx_display_low;
-				high = tx_display_high;
-			}
-
-			if(console.CurrentDSPMode == DSPMode.DRM)
-			{
-				low = 2000;
-				high = 22000;
-			}
-
-			int yRange = spectrum_grid_max - spectrum_grid_min;
-
-			if(data_ready)
-			{
-				// get new data
-				fixed(void *rptr = &new_display_data[0])
-					fixed(void *wptr = &current_display_data[0])
-						Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
-						
-				// kb9yig sr mod starts 
-				if ( console.CurrentModel == Model.SOFTROCK40 ) 
-					console.AdjustDisplayDataForBandEdge(ref current_display_data);
-				// end kb9yig sr mods 
-
-				data_ready = false;
-			}
-
-			if(average_on)
-				console.UpdateDisplayAverage();
-			if(peak_on)
-				UpdateDisplayPeak();
-
-			start_sample_index = (BUFFER_SIZE>>1) + (int)((low * BUFFER_SIZE) / sample_rate);
-			num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
-
-			if (start_sample_index < 0) start_sample_index = 0;
-			if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
-				num_samples = BUFFER_SIZE - start_sample_index;
-
-			slope = (float)num_samples/(float)W;
-			for(int i=0; i<W; i++)
-			{
-				float max = float.MinValue;
-				float dval = i*slope + start_sample_index;
-				int lindex = (int)Math.Floor(dval);
-				int rindex;
-
-				if (slope <= 1) 
-					max =  current_display_data[lindex]*((float)lindex-dval+1) + current_display_data[lindex+1]*(dval-(float)lindex);
-				else 
-				{
-					rindex = (int)Math.Floor(dval + slope);
-					if (rindex > BUFFER_SIZE) rindex = BUFFER_SIZE;
-					for(int j=lindex; j<rindex; j++)
-						if (current_display_data[j] > max) max=current_display_data[j];
-
-				}
-
-				max = max + 
-					console.DisplayCalOffset + 
-					console.PreampOffset;
-
-				if(max > max_y)
-				{
-					max_y = max;
-					max_x = i;
-				}
-
-				data[i] = (int)(Math.Floor((spectrum_grid_max - max)*H/yRange));
-			}
-
-			UpdateDataVertexBuffer(dx_data_vb, data);
-		}
-
-		unsafe private static void ConvertDataForPhase()
-		{
-			int num_points = phase_num_pts;
-
-			if(data_ready)
-			{
-				// get new data
-				fixed(void *rptr = &new_display_data[0])
-					fixed(void *wptr = &current_display_data[0])
-						Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
-						
-				data_ready = false;
-			}
-
-			Point[] points = new Point[num_points];		// declare Point array
-			for(int i=0,j=0; i<num_points; i++,j+=8)	// fill point array
-			{
-				int x = (int)(current_display_data[i*2]*H/2);
-				int y = (int)(current_display_data[i*2+1]*H/2);
-				points[i].X = W/2+x;
-				points[i].Y = H/2+y;
-			}
-			
-			// draw each point
-			UpdateDataVertexBuffer(dx_data_vb, points);
-
-			points = null;
-		}
-
-		unsafe private static void ConvertDataForScope()
-		{
-			if(data_ready)
-			{
-				// get new data
-				fixed(void *rptr = &new_display_data[0])
-					fixed(void *wptr = &current_display_data[0])
-						Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
-						
-				data_ready = false;
-			}
-
-			double num_samples = console.ScopeTime/1000.0*console.SampleRate1;
-			double slope = num_samples/(double)W;
-
-			//float[] data = new float[W];				// create Point array
-			for(int i=0; i<W; i++)						// fill point array
-			{	
-				int pixels = (int)(H/2 * current_display_data[(int)Math.Floor(i*slope)]);
-				int y = H/2 - pixels;
-				if(y < max_y)
-				{
-					max_y = y;
-					max_x = i;
-				}
-				
-				data[i] = y;
-			}
-
-			// draw the connected points
-			UpdateDataVertexBuffer(dx_data_vb, data);
-		}
-
-		private static Background SetupScope()
-		{			
-			Background bg = new Background();
-			
-			// Add horizontal line
-			bg.lines.Add(new DXLine(new Point(0, H/2), new Point(W, H/2), 1, grid_color, dx_device));
-			
-			// Add vertical line
-			bg.lines.Add(new DXLine(new Point(W/2, 0), new Point(W/2, H), 1, grid_color, dx_device));
-
-			return bg;
-		}
-
-		private static Background SetupSpectrum()
-		{
-			Background bg = new Background();
-			Graphics g = console.CreateGraphics();
-			System.Drawing.Font font = new System.Drawing.Font("Arial", 9);
-
-			int low = 0;								// init limit variables
-			int high = 0;
-
-			if(!console.MOX)
-			{
-				low = rx_display_low;				// get RX display limits
-				high = rx_display_high;
-			}
-			else
-			{
-				low = tx_display_low;				// get TX display limits
-				high = tx_display_high;
-			}
-
-			int mid_w = W/2;
-			int[] step_list = {10, 20, 25, 50};
-			int step_power = 1;
-			int step_index = 0;
-			int freq_step_size = 50;
-
-			int y_range = spectrum_grid_max - spectrum_grid_min;
-
-			if(high == 0)
-			{
-				int f = -low;
-				// Calculate horizontal step size
-				while(f/freq_step_size > 7)
-				{
-					freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
-					step_index = (step_index+1)%4;
-					if(step_index == 0) step_power++;
-				}
-				float pixel_step_size = (float)(W*freq_step_size/f);
-
-				int num_steps = f/freq_step_size;
-
-				// Draw vertical lines
-				for(int i=1; i<=num_steps; i++)
-				{
-					int x = W-(int)Math.Floor(i*pixel_step_size);	// for negative numbers
-					
-					bg.lines.Add(new DXLine(new Point(x, 0), new Point(x, H), 1, grid_color, dx_device));
-					//g.DrawLine(grid_pen, x, 0, x, H);				// draw right line
-				
-					// Draw vertical line labels
-					int num = i*freq_step_size;
-					string label = num.ToString();
-					int offset = (int)((label.Length+1)*4.1);
-					if(x-offset >= 0)
-					{
-						//g.DrawString("-"+label, font, grid_text_brush, x-offset, (float)Math.Floor(H*.01));
-						bg.strings.Add("-"+label);
-						bg.str_loc.Add(new Point(x-offset, (int)Math.Floor(H*.01)));
-					}
-				}
-
-				// Draw horizontal lines
-				int V = (int)(spectrum_grid_max - spectrum_grid_min);
-				num_steps = V/spectrum_grid_step;
-				pixel_step_size = H/num_steps;
-
-				for(int i=1; i<num_steps; i++)
-				{
-					int xOffset = 0;
-					int num = spectrum_grid_max - i*spectrum_grid_step;
-					int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
-
-					//g.DrawLine(grid_pen, 0, y, W, y);
-					bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
-
-					// Draw horizontal line labels
-					string label = num.ToString();
-					int offset = (int)(label.Length*4.1);
-					if(label.Length == 3)
-						xOffset = (int)g.MeasureString("-", font).Width - 2;
-					SizeF size = g.MeasureString(label, font);
-
-					y -= 8;
-					int x = 0;
-					switch(display_label_align)
-					{
-						case DisplayLabelAlignment.LEFT:
-							x = xOffset + 3;
-							break;
-						case DisplayLabelAlignment.CENTER:
-							x = W/2+xOffset;
-							break;
-						case DisplayLabelAlignment.RIGHT:
-						case DisplayLabelAlignment.AUTO:
-							x = (int)(W-size.Width);
-							break;						
-						case DisplayLabelAlignment.OFF:
-							x = W;
-							break;
-					}
-
-					if(y+9 < H)
-					{
-						//g.DrawString(label, font, grid_text_brush, x, y);
-						bg.strings.Add(label);
-						bg.str_loc.Add(new Point(x, y));
-					}
-				}
-
-				// Draw middle vertical line
-				//g.DrawLine(new Pen(grid_zero_color), W-1, 0, W-1, H);
-				//g.DrawLine(new Pen(grid_zero_color), W-2, 0, W-2, H);
-				bg.lines.Add(new DXLine(new Point(W-1, 0), new Point(W-1, H), 1, grid_zero_color, dx_device));
-				bg.lines.Add(new DXLine(new Point(W-2, 0), new Point(W-2, H), 1, grid_zero_color, dx_device));
-			}
-			else if(low == 0)
-			{
-				int f = high;
-				// Calculate horizontal step size
-				while(f/freq_step_size > 7)
-				{
-					freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
-					step_index = (step_index+1)%4;
-					if(step_index == 0) step_power++;
-				}
-				float pixel_step_size = (float)(W*freq_step_size/f);
-				int num_steps = f/freq_step_size;
-
-				// Draw vertical lines
-				for(int i=1; i<=num_steps; i++)
-				{
-					int x = (int)Math.Floor(i*pixel_step_size);// for positive numbers
-					
-					//g.DrawLine(grid_pen, x, 0, x, H);			// draw right line
-					bg.lines.Add(new DXLine(new Point(x, 0), new Point(x, H), 1, grid_color, dx_device));
-				
-					// Draw vertical line labels
-					int num = i*freq_step_size;
-					string label = num.ToString();
-					int offset = (int)(label.Length*4.1);
-					if(x-offset+label.Length*7 < W)
-					{
-						//g.DrawString(label, font, grid_text_brush, x-offset, (float)Math.Floor(H*.01));
-						bg.strings.Add(label);
-						bg.str_loc.Add(new Point(x-offset, (int)Math.Floor(H*.01)));
-					}
-				}
-
-				// Draw horizontal lines
-				int V = (int)(spectrum_grid_max - spectrum_grid_min);
-				int numSteps = V/spectrum_grid_step;
-				pixel_step_size = H/numSteps;
-				for(int i=1; i<numSteps; i++)
-				{
-					int xOffset = 0;
-					int num = spectrum_grid_max - i*spectrum_grid_step;
-					int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
-
-					//g.DrawLine(grid_pen, 0, y, W, y);
-					bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
-
-					// Draw horizontal line labels
-					string label = num.ToString();
-					if(label.Length == 3)
-						xOffset = (int)g.MeasureString("-", font).Width - 2;
-					int offset = (int)(label.Length*4.1);
-					SizeF size = g.MeasureString(label, font);
-
-					int x = 0;
-					switch(display_label_align)
-					{
-						case DisplayLabelAlignment.LEFT:
-						case DisplayLabelAlignment.AUTO:
-							x = xOffset + 3;
-							break;
-						case DisplayLabelAlignment.CENTER:
-							x = W/2+xOffset;
-							break;
-						case DisplayLabelAlignment.RIGHT:
-							x = (int)(W-size.Width);
-							break;
-						case DisplayLabelAlignment.OFF:
-							x = W;
-							break;
-					}
-
-					y -= 8;
-					if(y+9 < H)
-					{
-						//g.DrawString(label, font, grid_text_brush, x, y);
-						bg.strings.Add(label);
-						bg.str_loc.Add(new Point(x, y));
-					}
-				}
-
-				// Draw middle vertical line
-				//g.DrawLine(new Pen(grid_zero_color), 0, 0, 0, H);
-				//g.DrawLine(new Pen(grid_zero_color), 1, 0, 1, H);
-				bg.lines.Add(new DXLine(new Point(0, 0), new Point(0, H), 1, grid_zero_color, dx_device));
-				bg.lines.Add(new DXLine(new Point(1, 0), new Point(1, H), 1, grid_zero_color, dx_device));
-			}
-			if(low < 0 && high > 0)
-			{
-				int f = high;
-
-				// Calculate horizontal step size
-				while(f/freq_step_size > 4)
-				{
-					freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
-					step_index = (step_index+1)%4;
-					if(step_index == 0) step_power++;
-				}
-				int pixel_step_size = W/2*freq_step_size/f;
-				int num_steps = f/freq_step_size;
-
-				// Draw vertical lines
-				for(int i=1; i<=num_steps; i++)
-				{
-					int xLeft = mid_w-(i*pixel_step_size);			// for negative numbers
-					int xRight = mid_w+(i*pixel_step_size);		// for positive numbers
-					//g.DrawLine(grid_pen, xLeft, 0, xLeft, H);		// draw left line
-					//g.DrawLine(grid_pen, xRight, 0, xRight, H);		// draw right line
-					bg.lines.Add(new DXLine(new Point(xLeft, 0), new Point(xLeft, H), 1, grid_color, dx_device));
-					bg.lines.Add(new DXLine(new Point(xRight, 0), new Point(xRight, H), 1, grid_color, dx_device));
-				
-					// Draw vertical line labels
-					int num = i*freq_step_size;
-					string label = num.ToString();
-					int offsetL = (int)((label.Length+1)*4.1);
-					int offsetR = (int)(label.Length*4.1);
-					if(xLeft-offsetL >= 0)
-					{
-						//g.DrawString("-"+label, font, grid_text_brush, xLeft-offsetL, (float)Math.Floor(H*.01));
-						bg.strings.Add("-"+label);
-						bg.str_loc.Add(new Point(xLeft-offsetL, (int)Math.Floor(H*.01)));
-						//g.DrawString(label, font, grid_text_brush, xRight-offsetR, (float)Math.Floor(H*.01));
-						bg.strings.Add(label);
-						bg.str_loc.Add(new Point(xRight-offsetR, (int)Math.Floor(H*.01)));
-					}
-				}
-
-				// Draw horizontal lines
-				int V = (int)(spectrum_grid_max - spectrum_grid_min);
-				int numSteps = V/spectrum_grid_step;
-				pixel_step_size = H/numSteps;
-				for(int i=1; i<numSteps; i++)
-				{
-					int xOffset = 0;
-					int num = spectrum_grid_max - i*spectrum_grid_step;
-					int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
-					//g.DrawLine(grid_pen, 0, y, W, y);
-					bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
-
-					// Draw horizontal line labels
-					string label = num.ToString();
-					if(label.Length == 3) xOffset = 7;
-					int offset = (int)(label.Length*4.1);
-					SizeF size = g.MeasureString(label, font);
-
-					int x = 0;
-					switch(display_label_align)
-					{
-						case DisplayLabelAlignment.LEFT:
-							x = xOffset + 3;
-							break;
-						case DisplayLabelAlignment.CENTER:
-						case DisplayLabelAlignment.AUTO:
-							x = W/2+xOffset;
-							break;
-						case DisplayLabelAlignment.RIGHT:
-							x = (int)(W-size.Width);
-							break;
-						case DisplayLabelAlignment.OFF:
-							x = W;
-							break;
-					}
-
-					y -= 8;
-					if(y+9 < H)
-					{
-						//g.DrawString(label, font, grid_text_brush, x, y);
-						bg.strings.Add(label);
-						bg.str_loc.Add(new Point(x, y));
-					}
-				}
-
-				// Draw middle vertical line
-				//g.DrawLine(new Pen(grid_zero_color), mid_w, 0, mid_w, H);
-				//g.DrawLine(new Pen(grid_zero_color), mid_w-1, 0, mid_w-1, H);
-				bg.lines.Add(new DXLine(new Point(mid_w, 0), new Point(mid_w, H), 1, grid_zero_color, dx_device));
-				bg.lines.Add(new DXLine(new Point(mid_w-1, 0), new Point(mid_w-1, H), 1, grid_zero_color, dx_device));
-			}
-
-			if(console.HighSWR)
-			{
-				//g.DrawString("High SWR", high_swr_font, red_brush, 245, 20);
-				bg.strings.Add("High SWR");
-				bg.str_loc.Add(new Point(245, 20));
-			}
-
-			g = null;
-			font = null;
-
-			return bg;
-		}
-
-		#endregion
-
-		#endregion
-
-
-		#region Background Class
-
-		public class Background
-		{
-			public ArrayList strings;		// array of strings to be drawn on the background
-			public ArrayList str_loc;		// array of top/left location of strings to be drawn
-			public ArrayList lines;			// array of DXLines to be drawn
-			public ArrayList overlay;		// array of points for overlay to be drawn
-
-			public Background()
-			{
-				strings = new ArrayList();
-				str_loc = new ArrayList();
-				lines = new ArrayList();
-				overlay = new ArrayList();
-			}
-		}
-
-		#endregion
-
-		#region DXLine Class
-
-		public class DXLine
-		{
-			// Line object 
-			private Microsoft.DirectX.Direct3D.Line mLine;
-			private Vector2[] line_vectors;
-            
-			// Starting point for the line 
-			private Point mStartPoint;
-			public Point StartPoint
-			{
-				get { return mStartPoint; }
-				set
-				{
-					mStartPoint = value;
-					UpdateLineVectors();
-				}
-			}
-            
-			// Ending point for the line 
-			private Point mEndPoint;
-			public Point EndPoint
-			{
-				get { return mEndPoint; }
-				set
-				{
-					mEndPoint = value;
-					UpdateLineVectors();
-				}
-			}
-			
-			// Width of the line 
-			private int mWidth;
-			public int Width 
-			{
-				get { return mWidth; }
-				set { mWidth = value; }
-			}
-
-			// Color for the line 
-			private Color mColor;
-			public Color Color
-			{
-				get { return mColor; }
-				set { mColor = value; }
-			}
-			
-			// Line class constructor 
-			public DXLine(Point startPoint, Point endPoint, int width, Color color, Device device)
-			{
-				// Store the data passed into the class constructor 
-				mStartPoint = startPoint;
-				mEndPoint = endPoint;
-				mWidth = width;
-				mColor = color;
-
-				// create line vectors
-				line_vectors = new Vector2[2];
-				UpdateLineVectors();
-
-				// Create the line object 
-				mLine = new Line(device);
-			}
-
-			// Draw the line using the current class values for starpoint, endpoint, width and color 
-			public void Draw()
-			{
-				// Render the line 
-				mLine.Begin();
-				mLine.Draw(line_vectors, Color);
-				mLine.End();
-			} 
-
-			// Construct the Line Vectors based on the Start and End Points 
-			private void UpdateLineVectors()
-			{
-				// Set the starting point of the line 
-				line_vectors[0].X = StartPoint.X;
-				line_vectors[0].Y = StartPoint.Y; 
-
-				// Set the end point of the line 
-				line_vectors[1].X = EndPoint.X;
-				line_vectors[1].Y = EndPoint.Y;
-			}
-		}
-*/
-		#endregion
-	}
+        private class int16
+        {
+        }
+
+        #endregion
+
+        #endregion
+
+        #region DirectX
+        /*
+                #region Variable Declaration
+
+                private static Device dx_device = null;
+                private static VertexBuffer dx_data_vb = null;
+                private static VertexBuffer dx_mouse_vb = null;
+
+                private static Background current_background;
+                private static Microsoft.DirectX.Direct3D.Font bg_string_font;
+
+                private static float[] data = null;
+                private static CustomVertex.TransformedColored[] verts = null;
+
+                #endregion
+
+                #region Properties
+
+                private static RenderType directx_render_type = RenderType.NONE;
+                public static RenderType DirectXRenderType
+                {
+                    get { return directx_render_type; }
+                    set { directx_render_type = value; }
+                }
+
+                #endregion
+
+                #region Routines
+
+                public static bool DirectXInit()
+                {
+                    // Now let's setup our D3D stuff
+                    PresentParameters presentParams = new PresentParameters();
+                    presentParams.Windowed = true;
+                    presentParams.SwapEffect = SwapEffect.Discard;
+                    try
+                    {
+                        dx_device = new Device(0,
+                            DeviceType.Hardware, 
+                            target, 
+                            CreateFlags.HardwareVertexProcessing | CreateFlags.FpuPreserve, 
+                            presentParams);
+                        directx_render_type = RenderType.HARDWARE;
+                    }
+                    catch(DirectXException)
+                    {
+                        try
+                        {
+                            dx_device = new Device(0, 
+                                DeviceType.Hardware, 
+                                target, 
+                                CreateFlags.SoftwareVertexProcessing | CreateFlags.FpuPreserve, 
+                                presentParams);
+                            directx_render_type = RenderType.SOFTWARE;
+                        }
+                        catch(DirectXException)
+                        {
+                            directx_render_type = RenderType.NONE;
+                            return false;
+                        }
+                    }
+                    OnCreateDirectXDevice(dx_device, null);
+                    dx_device.RenderState.Lighting = false;
+                    bg_string_font = new Microsoft.DirectX.Direct3D.Font(
+                        dx_device, new System.Drawing.Font("Arial", 9.0f));
+
+                    return true;
+                }
+
+                public static void DirectXRelease()
+                {
+                    dx_device = null;
+                    dx_data_vb = null;
+                    dx_mouse_vb = null;
+
+                    current_background = null;
+                    bg_string_font = null;
+
+                    data = null;
+                    verts = null;
+                }
+
+                public static void PrepareDisplayVars(DisplayMode mode)
+                {
+                    switch(console.CurrentDisplayEngine)
+                    {
+                        case DisplayEngine.DIRECT_X:
+                            int data_length = 0;
+                            int num_verts = 0;
+
+                            switch(mode)
+                            {
+                                case DisplayMode.PANADAPTER:
+                                case DisplayMode.SPECTRUM:
+                                case DisplayMode.SCOPE:
+                                    data_length = W;
+                                    num_verts = W;
+                                    break;
+                            }
+
+                            verts = new CustomVertex.TransformedColored[num_verts];
+                            data = new float[data_length];
+                            break;
+                    }
+                }
+
+                public static void OnCreateDirectXDevice(object sender, EventArgs e)
+                {
+                    Device dev = (Device)sender;
+
+                    dx_data_vb = new VertexBuffer(
+                        typeof(CustomVertex.TransformedColored),
+                        W,
+                        dev,
+                        Usage.WriteOnly,
+                        CustomVertex.TransformedColored.Format,
+                        Pool.Managed);
+
+                    dx_mouse_vb = new VertexBuffer(
+                        typeof(CustomVertex.TransformedColored),
+                        4,
+                        dev,
+                        Usage.WriteOnly,
+                        CustomVertex.TransformedColored.Format,
+                        Pool.Managed);
+                }
+
+                public static void UpdateDataVertexBuffer(object sender, float[] data)
+                {
+                    VertexBuffer vb = (VertexBuffer)sender;
+                    //CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[W];
+
+                    int color = data_line_color.ToArgb();
+                    for(int i=0; i<W; i++)
+                    {
+                        verts[i].X = i;
+                        verts[i].Y = data[i];
+                        verts[i].Z = 0.0f;
+                        verts[i].Rhw = 1; 
+                        verts[i].Color = color;
+                    }
+
+                    //GraphicsStream stm = vb.Lock(0, 0, 0);
+                    //stm.Write(verts);
+                    //vb.Unlock();
+                    vb.SetData(verts, 0, LockFlags.None);
+                }
+
+                public static void UpdateDataVertexBuffer(object sender, Point[] data)
+                {
+                    VertexBuffer vb = (VertexBuffer)sender;
+                    CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[data.Length];
+
+                    for(int i=0; i<data.Length; i++)
+                    {
+                        verts[i].X = data[i].X;
+                        verts[i].Y = data[i].Y;
+                        verts[i].Z = 0.0f;
+                        verts[i].Rhw = 1; 
+                        verts[i].Color = data_line_color.ToArgb();
+                    }
+
+                    //GraphicsStream stm = vb.Lock(0, 0, 0);
+                    //stm.Write(verts);
+                    //vb.Unlock();
+                    vb.SetData(verts, 0, LockFlags.None);
+                }
+
+                public static void UpdateMouseVertexBuffer(object sender, int x, int y)
+                {
+                    VertexBuffer vb = (VertexBuffer)sender;
+                    CustomVertex.TransformedColored[] verts = new CustomVertex.TransformedColored[4];
+
+                    verts[0].X = 0.0f;
+                    verts[0].Y = (float)y;
+                    verts[0].Z = 0.0f;
+                    verts[0].Rhw = 1;
+                    verts[0].Color = grid_text_color.ToArgb();
+
+                    verts[1].X = (float)W;
+                    verts[1].Y = (float)y;
+                    verts[1].Z = 0.0f;
+                    verts[1].Rhw = 1;
+                    verts[1].Color = grid_text_color.ToArgb();
+
+                    verts[2].X = (float)x;
+                    verts[2].Y = 0.0f;
+                    verts[2].Z = 0.0f;
+                    verts[2].Rhw = 1;
+                    verts[2].Color = grid_text_color.ToArgb();
+
+                    verts[3].X = (float)x;
+                    verts[3].Y = (float)H;
+                    verts[3].Z = 0.0f;
+                    verts[3].Rhw = 1;
+                    verts[3].Color = grid_text_color.ToArgb();
+
+                    //GraphicsStream stm = vb.Lock(0, 0, 0);
+                    //stm.Write(verts);
+                    //vb.Unlock();
+                    vb.SetData(verts, 0, LockFlags.None);
+                }
+
+                public static void RenderDXBackground()
+                {
+                    if(current_background != null)
+                    {		
+                        // draw grid lines
+                        foreach(DXLine l in current_background.lines)
+                        {
+                            l.Draw();
+                        }
+
+                        if(bg_string_font != null) // ensure the font has been instantiated
+                        {
+                            //verify background object string content
+                            Debug.Assert(current_background.str_loc.Count == current_background.strings.Count);
+
+                            // draw each string at the indicated points
+                            for(int i=0; i<current_background.strings.Count; i++)
+                            {
+                                bg_string_font.DrawText(
+                                    null, 
+                                    (string)current_background.strings[i], 
+                                    ((Point)current_background.str_loc[i]).X, 
+                                    ((Point)current_background.str_loc[i]).Y, 
+                                    grid_text_color);
+                            }
+                        }				
+                    }
+                }
+
+                public static void RenderDirectX()
+                {
+                    if(dx_device == null) return;
+
+                    // setup data
+                    switch(current_display_mode)
+                    {
+                        case DisplayMode.PANADAPTER:
+                            ConvertDataForPanadapter();
+                            break;
+                        case DisplayMode.SPECTRUM:
+                            ConvertDataForSpectrum();
+                            break;
+                        case DisplayMode.PHASE:
+                            ConvertDataForPhase();
+                            break;
+                        case DisplayMode.SCOPE:
+                            ConvertDataForScope();
+                            break;
+                    }
+                    if(console.LongCrosshair)
+                        UpdateMouseVertexBuffer(dx_mouse_vb, console.DisplayCursorX, console.DisplayCursorY);
+
+                    dx_device.Clear(ClearFlags.Target, display_background_color, 0.0f, 0);
+
+                    //Begin the scene
+                    dx_device.BeginScene();			
+
+                    //dx_device.SetTexture(0, dx_texture);
+                    //dx_device.SetStreamSource(0, dx_background_vb, 0);
+                    //dx_device.VertexFormat = CustomVertex.TransformedTextured.Format;
+                    //dx_device.DrawPrimitives(PrimitiveType.TriangleFan, 0, 2);
+                    //dx_device.SetTexture(0, null);
+
+                    RenderDXBackground();
+
+                    dx_device.SetStreamSource(0, dx_data_vb, 0);
+                    dx_device.VertexFormat = CustomVertex.TransformedColored.Format;
+
+                    switch(current_display_mode)
+                    {
+                        case DisplayMode.PANADAPTER:
+                        case DisplayMode.SPECTRUM:
+                        case DisplayMode.SCOPE:
+                            dx_device.DrawPrimitives(PrimitiveType.LineStrip, 0, W-1);
+                            break;
+                        case DisplayMode.PHASE:
+                            dx_device.DrawPrimitives(PrimitiveType.PointList, 0, phase_num_pts);
+                            break;
+                    }
+
+                    if(console.LongCrosshair)
+                    {
+                        dx_device.SetStreamSource(0, dx_mouse_vb, 0);
+                        dx_device.DrawPrimitives(PrimitiveType.LineStrip, 0, 1);
+                        dx_device.DrawPrimitives(PrimitiveType.LineStrip, 2, 1);
+                    }
+
+                    /*Microsoft.DirectX.Direct3D.Font font = new Microsoft.DirectX.Direct3D.Font(
+                        dx_device, 
+                        new System.Drawing.Font("Arial", 14.0f, FontStyle.Bold));
+                    font.DrawText(null, string.Format("Testing"), new Rectangle(256, 20, 0, 0), DrawTextFormat.NoClip, Color.Red);
+
+                    //if(console.HighSWR)
+                    //{
+                    //	if(directx_render_type == RenderType.HARDWARE)
+                    //	{
+                    //		Microsoft.DirectX.Direct3D.Font high_swr_font = new Microsoft.DirectX.Direct3D.Font(dx_device, new System.Drawing.Font("Arial", 14.0f, FontStyle.Bold));
+                    //		high_swr_font.DrawText(null, string.Format("High SWR"), new Rectangle(245, 20, 0, 0), DrawTextFormat.NoClip, Color.Red);
+                    //	}
+                    //}
+
+                    //End the scene
+                    dx_device.EndScene();
+                    dx_device.Present();
+                }
+
+                unsafe private static void ConvertDataForPanadapter()
+                {
+                    //float[] data = new float[W];			// array of points to display
+                    float slope = 0.0f;						// samples to process per pixel
+                    int num_samples = 0;					// number of samples to process
+                    int start_sample_index = 0;				// index to begin looking at samples
+                    int Low = -10000;
+                    int High = 10000;
+                    int yRange = spectrum_grid_max - spectrum_grid_min;
+
+                    if(console.CurrentDSPMode == DSPMode.DRM)
+                    {
+                        Low = 2000;
+                        High = 22000;
+                    }
+
+                    max_y = Int32.MinValue;
+
+                    if(data_ready)
+                    {
+                        // get new data
+                        fixed(void *rptr = &new_display_data[0])
+                            fixed(void *wptr = &current_display_data[0])
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
+
+                        // kb9yig sr mod starts 
+                        if ( console.CurrentModel == Model.SOFTROCK40 ) 
+                            console.AdjustDisplayDataForBandEdge(ref current_display_data);
+                        // end kb9yig sr mods 
+
+                        data_ready = false;
+                    }
+
+                    if(average_on)
+                        console.UpdateDisplayAverage();
+                    if(peak_on)
+                        UpdateDisplayPeak();
+
+                    num_samples = (High - Low);
+
+                    start_sample_index = (BUFFER_SIZE>>1) +(int)((Low * BUFFER_SIZE) / sample_rate);
+                    num_samples = (int)((High - Low) * BUFFER_SIZE / sample_rate);
+                    if (start_sample_index < 0) start_sample_index = 0;
+                    if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
+                        num_samples = BUFFER_SIZE-start_sample_index;
+
+                    slope = (float)num_samples/(float)W;
+                    for(int i=0; i<W; i++)
+                    {
+                        float max = float.MinValue;
+                        float dval = i*slope + start_sample_index;
+                        int lindex = (int)Math.Floor(dval);
+                        int rindex = (int)Math.Floor(dval + slope);
+                        if (rindex > BUFFER_SIZE) rindex = BUFFER_SIZE;
+
+                        for(int j=lindex;j<rindex;j++)
+                            if (current_display_data[j] > max) max=current_display_data[j];
+
+                        max = max +
+                            console.DisplayCalOffset + 
+                            console.PreampOffset;
+
+                        if(max > max_y)
+                        {
+                            max_y = max;
+                            max_x = i;
+                        }
+
+                        data[i] = (int)(Math.Floor((spectrum_grid_max - max)*H/yRange));
+                    } 
+
+                    UpdateDataVertexBuffer(dx_data_vb, data);
+                }
+
+                unsafe static private void ConvertDataForSpectrum()
+                {
+                    //float[] data = new float[W];			// array of points to display
+                    float slope = 0.0f;						// samples to process per pixel
+                    int num_samples = 0;					// number of samples to process
+                    int start_sample_index = 0;				// index to begin looking at samples
+                    int low = 0;
+                    int high = 0;
+
+                    max_y = Int32.MinValue;
+
+                    if(!console.MOX)
+                    {
+                        low = rx_display_low;
+                        high = rx_display_high;
+                    }
+                    else
+                    {
+                        low = tx_display_low;
+                        high = tx_display_high;
+                    }
+
+                    if(console.CurrentDSPMode == DSPMode.DRM)
+                    {
+                        low = 2000;
+                        high = 22000;
+                    }
+
+                    int yRange = spectrum_grid_max - spectrum_grid_min;
+
+                    if(data_ready)
+                    {
+                        // get new data
+                        fixed(void *rptr = &new_display_data[0])
+                            fixed(void *wptr = &current_display_data[0])
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
+
+                        // kb9yig sr mod starts 
+                        if ( console.CurrentModel == Model.SOFTROCK40 ) 
+                            console.AdjustDisplayDataForBandEdge(ref current_display_data);
+                        // end kb9yig sr mods 
+
+                        data_ready = false;
+                    }
+
+                    if(average_on)
+                        console.UpdateDisplayAverage();
+                    if(peak_on)
+                        UpdateDisplayPeak();
+
+                    start_sample_index = (BUFFER_SIZE>>1) + (int)((low * BUFFER_SIZE) / sample_rate);
+                    num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
+
+                    if (start_sample_index < 0) start_sample_index = 0;
+                    if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
+                        num_samples = BUFFER_SIZE - start_sample_index;
+
+                    slope = (float)num_samples/(float)W;
+                    for(int i=0; i<W; i++)
+                    {
+                        float max = float.MinValue;
+                        float dval = i*slope + start_sample_index;
+                        int lindex = (int)Math.Floor(dval);
+                        int rindex;
+
+                        if (slope <= 1) 
+                            max =  current_display_data[lindex]*((float)lindex-dval+1) + current_display_data[lindex+1]*(dval-(float)lindex);
+                        else 
+                        {
+                            rindex = (int)Math.Floor(dval + slope);
+                            if (rindex > BUFFER_SIZE) rindex = BUFFER_SIZE;
+                            for(int j=lindex; j<rindex; j++)
+                                if (current_display_data[j] > max) max=current_display_data[j];
+
+                        }
+
+                        max = max + 
+                            console.DisplayCalOffset + 
+                            console.PreampOffset;
+
+                        if(max > max_y)
+                        {
+                            max_y = max;
+                            max_x = i;
+                        }
+
+                        data[i] = (int)(Math.Floor((spectrum_grid_max - max)*H/yRange));
+                    }
+
+                    UpdateDataVertexBuffer(dx_data_vb, data);
+                }
+
+                unsafe private static void ConvertDataForPhase()
+                {
+                    int num_points = phase_num_pts;
+
+                    if(data_ready)
+                    {
+                        // get new data
+                        fixed(void *rptr = &new_display_data[0])
+                            fixed(void *wptr = &current_display_data[0])
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
+
+                        data_ready = false;
+                    }
+
+                    Point[] points = new Point[num_points];		// declare Point array
+                    for(int i=0,j=0; i<num_points; i++,j+=8)	// fill point array
+                    {
+                        int x = (int)(current_display_data[i*2]*H/2);
+                        int y = (int)(current_display_data[i*2+1]*H/2);
+                        points[i].X = W/2+x;
+                        points[i].Y = H/2+y;
+                    }
+
+                    // draw each point
+                    UpdateDataVertexBuffer(dx_data_vb, points);
+
+                    points = null;
+                }
+
+                unsafe private static void ConvertDataForScope()
+                {
+                    if(data_ready)
+                    {
+                        // get new data
+                        fixed(void *rptr = &new_display_data[0])
+                            fixed(void *wptr = &current_display_data[0])
+                                Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
+
+                        data_ready = false;
+                    }
+
+                    double num_samples = console.ScopeTime/1000.0*console.SampleRate1;
+                    double slope = num_samples/(double)W;
+
+                    //float[] data = new float[W];				// create Point array
+                    for(int i=0; i<W; i++)						// fill point array
+                    {	
+                        int pixels = (int)(H/2 * current_display_data[(int)Math.Floor(i*slope)]);
+                        int y = H/2 - pixels;
+                        if(y < max_y)
+                        {
+                            max_y = y;
+                            max_x = i;
+                        }
+
+                        data[i] = y;
+                    }
+
+                    // draw the connected points
+                    UpdateDataVertexBuffer(dx_data_vb, data);
+                }
+
+                private static Background SetupScope()
+                {			
+                    Background bg = new Background();
+
+                    // Add horizontal line
+                    bg.lines.Add(new DXLine(new Point(0, H/2), new Point(W, H/2), 1, grid_color, dx_device));
+
+                    // Add vertical line
+                    bg.lines.Add(new DXLine(new Point(W/2, 0), new Point(W/2, H), 1, grid_color, dx_device));
+
+                    return bg;
+                }
+
+                private static Background SetupSpectrum()
+                {
+                    Background bg = new Background();
+                    Graphics g = console.CreateGraphics();
+                    System.Drawing.Font font = new System.Drawing.Font("Arial", 9);
+
+                    int low = 0;								// init limit variables
+                    int high = 0;
+
+                    if(!console.MOX)
+                    {
+                        low = rx_display_low;				// get RX display limits
+                        high = rx_display_high;
+                    }
+                    else
+                    {
+                        low = tx_display_low;				// get TX display limits
+                        high = tx_display_high;
+                    }
+
+                    int mid_w = W/2;
+                    int[] step_list = {10, 20, 25, 50};
+                    int step_power = 1;
+                    int step_index = 0;
+                    int freq_step_size = 50;
+
+                    int y_range = spectrum_grid_max - spectrum_grid_min;
+
+                    if(high == 0)
+                    {
+                        int f = -low;
+                        // Calculate horizontal step size
+                        while(f/freq_step_size > 7)
+                        {
+                            freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
+                            step_index = (step_index+1)%4;
+                            if(step_index == 0) step_power++;
+                        }
+                        float pixel_step_size = (float)(W*freq_step_size/f);
+
+                        int num_steps = f/freq_step_size;
+
+                        // Draw vertical lines
+                        for(int i=1; i<=num_steps; i++)
+                        {
+                            int x = W-(int)Math.Floor(i*pixel_step_size);	// for negative numbers
+
+                            bg.lines.Add(new DXLine(new Point(x, 0), new Point(x, H), 1, grid_color, dx_device));
+                            //g.DrawLine(grid_pen, x, 0, x, H);				// draw right line
+
+                            // Draw vertical line labels
+                            int num = i*freq_step_size;
+                            string label = num.ToString();
+                            int offset = (int)((label.Length+1)*4.1);
+                            if(x-offset >= 0)
+                            {
+                                //g.DrawString("-"+label, font, grid_text_brush, x-offset, (float)Math.Floor(H*.01));
+                                bg.strings.Add("-"+label);
+                                bg.str_loc.Add(new Point(x-offset, (int)Math.Floor(H*.01)));
+                            }
+                        }
+
+                        // Draw horizontal lines
+                        int V = (int)(spectrum_grid_max - spectrum_grid_min);
+                        num_steps = V/spectrum_grid_step;
+                        pixel_step_size = H/num_steps;
+
+                        for(int i=1; i<num_steps; i++)
+                        {
+                            int xOffset = 0;
+                            int num = spectrum_grid_max - i*spectrum_grid_step;
+                            int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
+
+                            //g.DrawLine(grid_pen, 0, y, W, y);
+                            bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
+
+                            // Draw horizontal line labels
+                            string label = num.ToString();
+                            int offset = (int)(label.Length*4.1);
+                            if(label.Length == 3)
+                                xOffset = (int)g.MeasureString("-", font).Width - 2;
+                            SizeF size = g.MeasureString(label, font);
+
+                            y -= 8;
+                            int x = 0;
+                            switch(display_label_align)
+                            {
+                                case DisplayLabelAlignment.LEFT:
+                                    x = xOffset + 3;
+                                    break;
+                                case DisplayLabelAlignment.CENTER:
+                                    x = W/2+xOffset;
+                                    break;
+                                case DisplayLabelAlignment.RIGHT:
+                                case DisplayLabelAlignment.AUTO:
+                                    x = (int)(W-size.Width);
+                                    break;						
+                                case DisplayLabelAlignment.OFF:
+                                    x = W;
+                                    break;
+                            }
+
+                            if(y+9 < H)
+                            {
+                                //g.DrawString(label, font, grid_text_brush, x, y);
+                                bg.strings.Add(label);
+                                bg.str_loc.Add(new Point(x, y));
+                            }
+                        }
+
+                        // Draw middle vertical line
+                        //g.DrawLine(new Pen(grid_zero_color), W-1, 0, W-1, H);
+                        //g.DrawLine(new Pen(grid_zero_color), W-2, 0, W-2, H);
+                        bg.lines.Add(new DXLine(new Point(W-1, 0), new Point(W-1, H), 1, grid_zero_color, dx_device));
+                        bg.lines.Add(new DXLine(new Point(W-2, 0), new Point(W-2, H), 1, grid_zero_color, dx_device));
+                    }
+                    else if(low == 0)
+                    {
+                        int f = high;
+                        // Calculate horizontal step size
+                        while(f/freq_step_size > 7)
+                        {
+                            freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
+                            step_index = (step_index+1)%4;
+                            if(step_index == 0) step_power++;
+                        }
+                        float pixel_step_size = (float)(W*freq_step_size/f);
+                        int num_steps = f/freq_step_size;
+
+                        // Draw vertical lines
+                        for(int i=1; i<=num_steps; i++)
+                        {
+                            int x = (int)Math.Floor(i*pixel_step_size);// for positive numbers
+
+                            //g.DrawLine(grid_pen, x, 0, x, H);			// draw right line
+                            bg.lines.Add(new DXLine(new Point(x, 0), new Point(x, H), 1, grid_color, dx_device));
+
+                            // Draw vertical line labels
+                            int num = i*freq_step_size;
+                            string label = num.ToString();
+                            int offset = (int)(label.Length*4.1);
+                            if(x-offset+label.Length*7 < W)
+                            {
+                                //g.DrawString(label, font, grid_text_brush, x-offset, (float)Math.Floor(H*.01));
+                                bg.strings.Add(label);
+                                bg.str_loc.Add(new Point(x-offset, (int)Math.Floor(H*.01)));
+                            }
+                        }
+
+                        // Draw horizontal lines
+                        int V = (int)(spectrum_grid_max - spectrum_grid_min);
+                        int numSteps = V/spectrum_grid_step;
+                        pixel_step_size = H/numSteps;
+                        for(int i=1; i<numSteps; i++)
+                        {
+                            int xOffset = 0;
+                            int num = spectrum_grid_max - i*spectrum_grid_step;
+                            int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
+
+                            //g.DrawLine(grid_pen, 0, y, W, y);
+                            bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
+
+                            // Draw horizontal line labels
+                            string label = num.ToString();
+                            if(label.Length == 3)
+                                xOffset = (int)g.MeasureString("-", font).Width - 2;
+                            int offset = (int)(label.Length*4.1);
+                            SizeF size = g.MeasureString(label, font);
+
+                            int x = 0;
+                            switch(display_label_align)
+                            {
+                                case DisplayLabelAlignment.LEFT:
+                                case DisplayLabelAlignment.AUTO:
+                                    x = xOffset + 3;
+                                    break;
+                                case DisplayLabelAlignment.CENTER:
+                                    x = W/2+xOffset;
+                                    break;
+                                case DisplayLabelAlignment.RIGHT:
+                                    x = (int)(W-size.Width);
+                                    break;
+                                case DisplayLabelAlignment.OFF:
+                                    x = W;
+                                    break;
+                            }
+
+                            y -= 8;
+                            if(y+9 < H)
+                            {
+                                //g.DrawString(label, font, grid_text_brush, x, y);
+                                bg.strings.Add(label);
+                                bg.str_loc.Add(new Point(x, y));
+                            }
+                        }
+
+                        // Draw middle vertical line
+                        //g.DrawLine(new Pen(grid_zero_color), 0, 0, 0, H);
+                        //g.DrawLine(new Pen(grid_zero_color), 1, 0, 1, H);
+                        bg.lines.Add(new DXLine(new Point(0, 0), new Point(0, H), 1, grid_zero_color, dx_device));
+                        bg.lines.Add(new DXLine(new Point(1, 0), new Point(1, H), 1, grid_zero_color, dx_device));
+                    }
+                    if(low < 0 && high > 0)
+                    {
+                        int f = high;
+
+                        // Calculate horizontal step size
+                        while(f/freq_step_size > 4)
+                        {
+                            freq_step_size = step_list[step_index]*(int)Math.Pow(10.0, step_power);
+                            step_index = (step_index+1)%4;
+                            if(step_index == 0) step_power++;
+                        }
+                        int pixel_step_size = W/2*freq_step_size/f;
+                        int num_steps = f/freq_step_size;
+
+                        // Draw vertical lines
+                        for(int i=1; i<=num_steps; i++)
+                        {
+                            int xLeft = mid_w-(i*pixel_step_size);			// for negative numbers
+                            int xRight = mid_w+(i*pixel_step_size);		// for positive numbers
+                            //g.DrawLine(grid_pen, xLeft, 0, xLeft, H);		// draw left line
+                            //g.DrawLine(grid_pen, xRight, 0, xRight, H);		// draw right line
+                            bg.lines.Add(new DXLine(new Point(xLeft, 0), new Point(xLeft, H), 1, grid_color, dx_device));
+                            bg.lines.Add(new DXLine(new Point(xRight, 0), new Point(xRight, H), 1, grid_color, dx_device));
+
+                            // Draw vertical line labels
+                            int num = i*freq_step_size;
+                            string label = num.ToString();
+                            int offsetL = (int)((label.Length+1)*4.1);
+                            int offsetR = (int)(label.Length*4.1);
+                            if(xLeft-offsetL >= 0)
+                            {
+                                //g.DrawString("-"+label, font, grid_text_brush, xLeft-offsetL, (float)Math.Floor(H*.01));
+                                bg.strings.Add("-"+label);
+                                bg.str_loc.Add(new Point(xLeft-offsetL, (int)Math.Floor(H*.01)));
+                                //g.DrawString(label, font, grid_text_brush, xRight-offsetR, (float)Math.Floor(H*.01));
+                                bg.strings.Add(label);
+                                bg.str_loc.Add(new Point(xRight-offsetR, (int)Math.Floor(H*.01)));
+                            }
+                        }
+
+                        // Draw horizontal lines
+                        int V = (int)(spectrum_grid_max - spectrum_grid_min);
+                        int numSteps = V/spectrum_grid_step;
+                        pixel_step_size = H/numSteps;
+                        for(int i=1; i<numSteps; i++)
+                        {
+                            int xOffset = 0;
+                            int num = spectrum_grid_max - i*spectrum_grid_step;
+                            int y = (int)Math.Floor((double)(spectrum_grid_max - num)*H/y_range);
+                            //g.DrawLine(grid_pen, 0, y, W, y);
+                            bg.lines.Add(new DXLine(new Point(0, y), new Point(W, y), 1, grid_color, dx_device));
+
+                            // Draw horizontal line labels
+                            string label = num.ToString();
+                            if(label.Length == 3) xOffset = 7;
+                            int offset = (int)(label.Length*4.1);
+                            SizeF size = g.MeasureString(label, font);
+
+                            int x = 0;
+                            switch(display_label_align)
+                            {
+                                case DisplayLabelAlignment.LEFT:
+                                    x = xOffset + 3;
+                                    break;
+                                case DisplayLabelAlignment.CENTER:
+                                case DisplayLabelAlignment.AUTO:
+                                    x = W/2+xOffset;
+                                    break;
+                                case DisplayLabelAlignment.RIGHT:
+                                    x = (int)(W-size.Width);
+                                    break;
+                                case DisplayLabelAlignment.OFF:
+                                    x = W;
+                                    break;
+                            }
+
+                            y -= 8;
+                            if(y+9 < H)
+                            {
+                                //g.DrawString(label, font, grid_text_brush, x, y);
+                                bg.strings.Add(label);
+                                bg.str_loc.Add(new Point(x, y));
+                            }
+                        }
+
+                        // Draw middle vertical line
+                        //g.DrawLine(new Pen(grid_zero_color), mid_w, 0, mid_w, H);
+                        //g.DrawLine(new Pen(grid_zero_color), mid_w-1, 0, mid_w-1, H);
+                        bg.lines.Add(new DXLine(new Point(mid_w, 0), new Point(mid_w, H), 1, grid_zero_color, dx_device));
+                        bg.lines.Add(new DXLine(new Point(mid_w-1, 0), new Point(mid_w-1, H), 1, grid_zero_color, dx_device));
+                    }
+
+                    if(console.HighSWR)
+                    {
+                        //g.DrawString("High SWR", high_swr_font, red_brush, 245, 20);
+                        bg.strings.Add("High SWR");
+                        bg.str_loc.Add(new Point(245, 20));
+                    }
+
+                    g = null;
+                    font = null;
+
+                    return bg;
+                }
+
+                #endregion
+
+                #endregion
+
+
+                #region Background Class
+
+                public class Background
+                {
+                    public ArrayList strings;		// array of strings to be drawn on the background
+                    public ArrayList str_loc;		// array of top/left location of strings to be drawn
+                    public ArrayList lines;			// array of DXLines to be drawn
+                    public ArrayList overlay;		// array of points for overlay to be drawn
+
+                    public Background()
+                    {
+                        strings = new ArrayList();
+                        str_loc = new ArrayList();
+                        lines = new ArrayList();
+                        overlay = new ArrayList();
+                    }
+                }
+
+                #endregion
+
+                #region DXLine Class
+
+                public class DXLine
+                {
+                    // Line object 
+                    private Microsoft.DirectX.Direct3D.Line mLine;
+                    private Vector2[] line_vectors;
+
+                    // Starting point for the line 
+                    private Point mStartPoint;
+                    public Point StartPoint
+                    {
+                        get { return mStartPoint; }
+                        set
+                        {
+                            mStartPoint = value;
+                            UpdateLineVectors();
+                        }
+                    }
+
+                    // Ending point for the line 
+                    private Point mEndPoint;
+                    public Point EndPoint
+                    {
+                        get { return mEndPoint; }
+                        set
+                        {
+                            mEndPoint = value;
+                            UpdateLineVectors();
+                        }
+                    }
+
+                    // Width of the line 
+                    private int mWidth;
+                    public int Width 
+                    {
+                        get { return mWidth; }
+                        set { mWidth = value; }
+                    }
+
+                    // Color for the line 
+                    private Color mColor;
+                    public Color Color
+                    {
+                        get { return mColor; }
+                        set { mColor = value; }
+                    }
+
+                    // Line class constructor 
+                    public DXLine(Point startPoint, Point endPoint, int width, Color color, Device device)
+                    {
+                        // Store the data passed into the class constructor 
+                        mStartPoint = startPoint;
+                        mEndPoint = endPoint;
+                        mWidth = width;
+                        mColor = color;
+
+                        // create line vectors
+                        line_vectors = new Vector2[2];
+                        UpdateLineVectors();
+
+                        // Create the line object 
+                        mLine = new Line(device);
+                    }
+
+                    // Draw the line using the current class values for starpoint, endpoint, width and color 
+                    public void Draw()
+                    {
+                        // Render the line 
+                        mLine.Begin();
+                        mLine.Draw(line_vectors, Color);
+                        mLine.End();
+                    } 
+
+                    // Construct the Line Vectors based on the Start and End Points 
+                    private void UpdateLineVectors()
+                    {
+                        // Set the starting point of the line 
+                        line_vectors[0].X = StartPoint.X;
+                        line_vectors[0].Y = StartPoint.Y; 
+
+                        // Set the end point of the line 
+                        line_vectors[1].X = EndPoint.X;
+                        line_vectors[1].Y = EndPoint.Y;
+                    }
+                }
+        */
+        #endregion
+    }
 }

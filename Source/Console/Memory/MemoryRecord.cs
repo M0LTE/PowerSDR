@@ -135,6 +135,9 @@ namespace PowerSDR
             }
         }
 
+
+        //========================================================================
+        // ke9ns mod  NAME is now can be set as a hyperlink
         private string name = "";
         public string Name
         {
@@ -145,6 +148,8 @@ namespace PowerSDR
                 OnPropertyChanged(this, new PropertyChangedEventArgs("Name"));
             }
         }
+
+
 
         private DSPMode dsp_mode = DSPMode.LSB;
         public DSPMode DSPMode
@@ -343,15 +348,22 @@ namespace PowerSDR
         public int CompareTo(object obj) // to implement the IComparable interface
         {
             MemoryRecord rec = (MemoryRecord)obj;
+
             if (this.Group != rec.Group)
+            {
                 return this.Group.CompareTo(rec.Group);
+            }
 
             if (this.RXFreq != rec.RXFreq)
+            {
                 return this.RXFreq.CompareTo(rec.RXFreq);
+            }
 
             return this.Name.CompareTo(rec.Name);
-        }
+
+        } // compareto
 
         #endregion
-    }
-}
+    } // memoryrecord
+
+} // powerSDR

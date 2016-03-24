@@ -62,8 +62,7 @@ extern void destroy_workspace (unsigned int thread);
 BOOLEAN reset_em;
 char *APP_DATA_PATH;
 
-PRIVATE BOOLEAN
-gethold (unsigned int proc_thread)
+PRIVATE BOOLEAN gethold (unsigned int proc_thread)
 {
 	if (ringb_float_read_space (top[proc_thread].jack.ring.i.l) >= top[proc_thread].hold.size.frames)
 		{
@@ -372,23 +371,29 @@ Audio_Callback (float *input_l, float *input_r, float *output_l,
 	}
 }
 
-DttSP_EXP void
-Audio_Callback2 (float **input, float **output, unsigned int nframes)
+
+
+
+//=======================================================================================================
+// ke9ns  used in audio.cs routine  audio_callback2 ( DttSP.ExchangeSamples2 routine in audio.cs)
+//=======================================================================================================
+DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nframes)
 {
 	unsigned int thread;
 	BOOLEAN b = reset_em;
-	BOOLEAN return_empty=FALSE;
+	BOOLEAN return_empty = FALSE;
 	unsigned int i;
-	for(thread=0;thread<threadno;thread++)
+
+	for(thread=0;thread < threadno;thread++)
 	{
-		if (top[thread].susp) return_empty = TRUE;
+		if (top[thread].susp) return_empty = TRUE;                       // ke9ns check the 3 top[] possible threads to see if any used ?
 	}
 
 	if (return_empty)
 	{
-		for(thread=0;thread<threadno;thread++) 
+		for(thread=0;thread < threadno;thread++) 
 		{
-			memset (output[2*thread], 0, nframes * sizeof (float));
+			memset (output[2*thread], 0, nframes * sizeof (float));  // ke9ns clear out output and return
 			memset (output[2*thread+1], 0, nframes * sizeof (float));
 		}
 		return;
@@ -399,13 +404,18 @@ Audio_Callback2 (float **input, float **output, unsigned int nframes)
 		//fprintf(stderr, "reset_em!\n"); fflush(stderr);
 		//fprintf(stdout,"Audio_Callback2: reset_em = TRUE\n"), fflush(stdout);
 		reset_system_audio(nframes);
-		for(thread=0;thread<threadno;thread++) {
-			memset (output[2*thread], 0, nframes * sizeof (float));
+
+		for(thread=0;thread<threadno;thread++)
+		{
+			memset (output[2*thread], 0, nframes * sizeof (float));  // ke9ns clear out output and return
 			memset (output[2*thread+1], 0, nframes * sizeof (float));
 		}
 		return;
     }
-#if 0
+
+
+#if 0  // ke9ns dont compile this code
+
 	if (diversity.flag) {
 		// Deal with the transmitter first
 		if ((ringb_float_read_space (top[1].jack.ring.o.l) >= nframes)
@@ -561,9 +571,12 @@ Audio_Callback2 (float **input, float **output, unsigned int nframes)
 
 	} else
 #endif
-	for(thread=0; thread<threadno; thread++) 
+
+
+	for(thread=0; thread < threadno; thread++) 
 	{
 		int l=2*thread, r = 2*thread+1;
+
 		if ((ringb_float_read_space (top[thread].jack.ring.o.l) >= nframes)
 			&& (ringb_float_read_space (top[thread].jack.ring.o.r) >= nframes))
 		{
@@ -639,7 +652,7 @@ Audio_Callback2 (float **input, float **output, unsigned int nframes)
 			(ringb_float_read_space (top[thread].jack.ring.i.r) >= top[thread].hold.size.frames))
 			sem_post (&top[thread].sync.buf.sem);
 	}
-}
+} // audio_callback2 ( DttSP.ExchangeSamples2 routine in audio.cs)
 
 
 //========================================================================
@@ -708,6 +721,7 @@ PRIVATE void
 setup_local_audio (unsigned int thread)
 {
 	top[thread].hold.size.frames = uni[thread].buflen;
+
 	top[thread].hold.size.bytes = top[thread].hold.size.frames * sizeof (float);
 	top[thread].hold.buf.l =
 		(float *) safealloc (top[thread].hold.size.frames, sizeof (float),
@@ -840,16 +854,20 @@ setup (char *app_data_path)
 	}
 }
 
+
+//=======================================================================================
+// ke9ns called by setdspbuflen() in update.c
 //BOOLEAN reset_buflen = FALSE;
-int
-reset_for_buflen (unsigned int thread, int new_buflen)
+int reset_for_buflen (unsigned int thread, int new_buflen)
 {
 	// make sure new size is power of 2
-	if (popcnt (new_buflen) != 1)
-		return -1;
+	if (popcnt (new_buflen) != 1) return -1;
 //	reset_buflen = TRUE;
+
 	uni[thread].buflen = new_buflen;
+
 	top[thread].jack.reset_size = new_buflen;
+
 	safefree ((char *) top[thread].hold.buf.r);
 	safefree ((char *) top[thread].hold.buf.l);
 	safefree ((char *) top[thread].hold.aux.r);
@@ -870,7 +888,9 @@ reset_for_buflen (unsigned int thread, int new_buflen)
 	reset_counters (thread);
 
 	return 0;
-}
+} //  reset_for_buflen   called by resizesdr routine in dttsp.cs
+
+
 
 int
 reset_for_samplerate (REAL new_samplerate)

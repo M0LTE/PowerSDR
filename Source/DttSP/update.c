@@ -1424,24 +1424,26 @@ SetGrphRXEQ10(unsigned int thread, unsigned int subrx, int *rxeq)
     delvec_COMPLEX(tmpcoef);
 }
 
-DttSP_EXP void
-SetGrphRXEQcmd (unsigned int thread, unsigned int subrx,BOOLEAN state)
+DttSP_EXP void SetGrphRXEQcmd (unsigned int thread, unsigned int subrx,BOOLEAN state)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].grapheq.flag = state;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetTXAGCFF (unsigned int thread, BOOLEAN setit)
+
+DttSP_EXP void SetTXAGCFF (unsigned int thread, BOOLEAN setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].spr.flag = setit;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetTXAGCFFCompression (unsigned int thread, double txcompression)
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void SetTXAGCFFCompression (unsigned int thread, double txcompression)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].spr.gen->MaxGain = (REAL) pow (10.0, txcompression * 0.05);
@@ -1451,24 +1453,35 @@ SetTXAGCFFCompression (unsigned int thread, double txcompression)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetSquelchVal (unsigned int thread, unsigned int subrx, float setit)
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void SetSquelchVal (unsigned int thread, unsigned int subrx, float setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].squelch.thresh = setit;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP
-SetSquelchState (unsigned int thread, unsigned int subrx,BOOLEAN setit)
+
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP SetSquelchState (unsigned int thread, unsigned int subrx,BOOLEAN setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].squelch.flag = setit;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetTRX (unsigned int thread, TRXMODE setit)
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+
+DttSP_EXP void SetTRX (unsigned int thread, TRXMODE setit)
 {
 //	int i;
 	sem_wait (&top[thread].sync.upd.sem);
@@ -1485,10 +1498,14 @@ SetTRX (unsigned int thread, TRXMODE setit)
 #endif
 
 	sem_post (&top[thread].sync.upd.sem);
-}
 
-DttSP_EXP void
-FlushAllBufs (unsigned int thread, BOOLEAN trx)
+} // settrx
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+
+DttSP_EXP void FlushAllBufs (unsigned int thread, BOOLEAN trx)
 {
 	int i;
 	sem_wait (&top[thread].sync.upd.sem);
@@ -1519,22 +1536,27 @@ FlushAllBufs (unsigned int thread, BOOLEAN trx)
 	//fprintf(stdout, "DttSP: FlushAllBufs\n"), fflush(stdout);
 }
 
-DttSP_EXP void
-SetDSPBuflen (unsigned int thread, int newBuffSize)
+//=========================================================================================
+// ke9ns  console uses this to set the uni[thread] buffer length (resizesdr in dttsp.cs)
+//=========================================================================================
+DttSP_EXP void SetDSPBuflen (unsigned int thread, int newBuffSize)
 {
 	extern int reset_for_buflen (unsigned int, int);
 	extern BOOLEAN reset_em;
 	sem_wait (&top[thread].sync.upd.sem);
 	top[0].susp = TRUE;
-	reset_for_buflen (thread,     newBuffSize);
+	reset_for_buflen (thread,  newBuffSize);  // ke9ns in winmain.c
 	//fprintf(stdout,"SetDSPBuflen: reset_em = TRUE\n"), fflush(stdout);
 	reset_em = TRUE;
 	top[0].susp = FALSE;
 	sem_post (&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetAudioSize (unsigned int size)
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void SetAudioSize (unsigned int size)
 {
 	unsigned int thread;
 	for(thread = 0;thread < 3; thread++)
@@ -1565,14 +1587,21 @@ SetTXAGCLimit (unsigned int thread, double limit)
 	tx[thread].alc.gen->gain.top = (REAL)limit;
     sem_post(&top[thread].sync.upd.sem);
 }*/
-DttSP_EXP void
-SetTXAGCCompression (unsigned int thread, double txcompression)
+
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void SetTXAGCCompression (unsigned int thread, double txcompression)
 {
 
 }
 
-DttSP_EXP void
-Process_ComplexSpectrum (unsigned int thread, float *results)
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void Process_ComplexSpectrum (unsigned int thread, float *results)
 {
 	uni[thread].spec.type = SPEC_POST_FILT;
 	uni[thread].spec.scale = SPEC_PWR;
@@ -1583,44 +1612,71 @@ Process_ComplexSpectrum (unsigned int thread, float *results)
 	memcpy ((void *) results, uni[thread].spec.coutput, uni[thread].spec.size * sizeof (COMPLEX));
 }
 
-DttSP_EXP void
-Process_Spectrum (unsigned int thread, float *results)
+
+//=========================================================================================
+// ke9ns  console uses this to show Spectrum on Display (ie panadater data just in the bandpass with no filtering)
+//=========================================================================================
+DttSP_EXP void Process_Spectrum (unsigned int thread, float *results)
 {
 	uni[thread].spec.type = SPEC_POST_FILT;
+
 	uni[thread].spec.scale = SPEC_PWR;
+
 	//sem_wait (&top[thread].sync.upd.sem);
 	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);
+
 	//sem_post (&top[thread].sync.upd.sem);
 	compute_spectrum (&uni[thread].spec);
+
 	memcpy ((void *) results, uni[thread].spec.output, uni[thread].spec.size * sizeof (float));
-}
 
-DttSP_EXP void
-Process_Panadapter (unsigned int thread, float *results)
+} // process_spectrum
+
+
+//=========================================================================================
+// ke9ns  console uses this to get 4096 data points for panadapter and waterfall info
+//=========================================================================================
+DttSP_EXP void Process_Panadapter (unsigned int thread, float *results)
 {
-	extern BOOLEAN reset_em;
-	//sem_wait (&top[thread].sync.upd.sem);
-	if (uni[thread].mode.trx == TX)
-		uni[thread].spec.type = SPEC_POST_FILT;
-	else
-		uni[thread].spec.type = SPEC_PRE_FILT;
+	extern BOOLEAN reset_em; // winmain.c
 
-	uni[thread].spec.scale = SPEC_PWR;
+	//sem_wait (&top[thread].sync.upd.sem);
+	
+	if (uni[thread].mode.trx == TX)  // if in TX mode
+	{
+		uni[thread].spec.type = SPEC_POST_FILT; // ke9ns spectrum.h
+	}
+	else // else in RX mode ?
+	{
+		uni[thread].spec.type = SPEC_PRE_FILT; // ke9ns set filter type
+	}
+
+	uni[thread].spec.scale = SPEC_PWR;  // ke9ns set scale of power level
 
 	if (reset_em)
 	{
-		memset(results,0,uni[thread].spec.size * sizeof (float));
+		memset(results,0,uni[thread].spec.size * sizeof (float));               // ke9ns   reset block of memory with all 0's
+
 		//sem_post (&top[thread].sync.upd.sem);
 		return;
 	}
-	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);
+
+	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);  //ke9ns ??
+
 	//sem_post (&top[thread].sync.upd.sem);
 	compute_spectrum (&uni[thread].spec);
-	memcpy ((void *) results, uni[thread].spec.output, uni[thread].spec.size * sizeof (float));
-}
 
-DttSP_EXP void
-Process_Phase (unsigned int thread, float *results, int numpoints)
+	memcpy ((void *) results, uni[thread].spec.output, uni[thread].spec.size * sizeof (float));    // ke9ns copy uni[] into results pointer.
+
+} // Process_Panadapter =  DttSP.GetSpectrum(,)
+
+
+
+
+//=========================================================================================
+// ke9ns  console uses this to show Phase on display
+//=========================================================================================
+DttSP_EXP void Process_Phase (unsigned int thread, float *results, int numpoints)
 {
 	int i, j;
 	extern BOOLEAN reset_em;
@@ -1640,10 +1696,12 @@ Process_Phase (unsigned int thread, float *results, int numpoints)
 		results[j] = (float) CXBreal (uni[thread].spec.timebuf, i);
 		results[j + 1] = (float) CXBimag (uni[thread].spec.timebuf, i);
 	}
-}
+} // process_phase
 
-DttSP_EXP void
-Process_Scope (unsigned int thread, float *results, int numpoints)
+//=========================================================================================
+// ke9ns  console uses this to show scope on display
+//=========================================================================================
+DttSP_EXP void Process_Scope (unsigned int thread, float *results, int numpoints)
 {
 	int i;
 	extern BOOLEAN reset_em;
@@ -1663,10 +1721,13 @@ Process_Scope (unsigned int thread, float *results, int numpoints)
 	{
 		results[i] = (float) CXBreal (uni[thread].spec.timebuf, i);
 	}
-}
 
-DttSP_EXP void
-SetRingBufferOffset(unsigned int thread, int offset)
+} // process_scope
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP void  SetRingBufferOffset(unsigned int thread, int offset)
 {
 	extern BOOLEAN reset_em;
 	sem_wait(&top[thread].sync.upd.sem);
@@ -1674,10 +1735,14 @@ SetRingBufferOffset(unsigned int thread, int offset)
 	//fprintf(stdout,"SetRingBufferOffset: reset_em = TRUE\n"), fflush(stdout);
 	reset_em = TRUE;
 	sem_post(&top[thread].sync.upd.sem);
-}
 
-DttSP_EXP float
-CalculateRXMeter (unsigned int thread, unsigned int subrx, METERTYPE mt)
+}//SetRingBufferOffset 
+
+
+//=========================================================================================
+// ke9ns  console uses this to 
+//=========================================================================================
+DttSP_EXP float  CalculateRXMeter (unsigned int thread, unsigned int subrx, METERTYPE mt)
 {
 	float returnval = 0;
 	//sem_wait (&top[thread].sync.upd.sem);
@@ -1797,8 +1862,7 @@ DelPolyPhaseFIR (ResSt resst)
 	delPolyPhaseFIR (resst);
 }
 
-DttSP_EXP void *
-NewResamplerF (int samplerate_in, int samplerate_out)
+DttSP_EXP void * NewResamplerF (int samplerate_in, int samplerate_out)
 {
 	ResStF tmp;
 	int lcm = 28224000, interpFactor, deciFactor;
@@ -1808,9 +1872,7 @@ NewResamplerF (int samplerate_in, int samplerate_out)
 	return (void *) tmp;
 }
 
-DttSP_EXP void
-DoResamplerF (float *input, float *output, int numsamps, int *outsamps,
-              ResStF ptr)
+DttSP_EXP void DoResamplerF (float *input, float *output, int numsamps, int *outsamps, ResStF ptr)
 {
 	ptr->input = input;
 	ptr->output = output;

@@ -153,6 +153,9 @@ namespace PowerSDR
             return Model.ToString() + " " + serial_number + " " + nickname;
         }
 
+
+        //=======================================================================================================
+    
         public string GetDBFilename()
         {
             string s = "";
@@ -166,7 +169,28 @@ namespace PowerSDR
                 case Model.DEMO: s = "Demo"; break;
             }
 
-            return "database_" + s + "_" + serial_number + ".xml";
+          
+            return "database_" + s + "_" + serial_number + ".xml"; // ke9ns here is the database that will be used 
         }
+
+        //=======================================================================================================
+
+        // ke9ns add for my own database
+        public string GetDBFilename1()
+        {
+            string s = "";
+            switch (model)
+            {
+                case Model.SDR1000: s = "S1K"; break;
+                case Model.FLEX5000: s = "F5K"; break;
+                case Model.FLEX3000: s = "F3K"; break;
+                case Model.FLEX1500: s = "F1.5K"; break;
+                case Model.SOFTROCK40: s = "SR40"; break;
+                case Model.DEMO: s = "Demo"; break;
+            }
+
+            return "database_RevQ_" + s + "_" + serial_number + ".xml"; // ke9ns here is the database that will be used 
+        }
+
     }
 }
