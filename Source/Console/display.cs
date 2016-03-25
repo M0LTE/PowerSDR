@@ -458,11 +458,11 @@ namespace PowerSDR
         private static PixelFormat WtrColor = PixelFormat.Format24bppRgb;  //          
 
       
-        private static int H1 = 0;  //  ke9ns used to fool draw routines when displaying in 3rds 
-        private static int H2 = 0;  //  ke9ns used to fool draw routines when displaying in 4ths   
+        public static int H1 = 0;  //  ke9ns used to fool draw routines when displaying in 3rds 
+        public static int H2 = 0;  //  ke9ns used to fool draw routines when displaying in 4ths   
 
-        private static int K9 = 0;  // ke9ns rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
-        private static int K10 = 0; // ke9ns rx2 display mode selector:1=water,2=pan, 5=panfall
+        public static int K9 = 0;  // ke9ns rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
+        public static int K10 = 0; // ke9ns rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
 
         private static int K11 = 0; // ke9ns set to 5 in RX1 in panfall, otherwise 0
      
@@ -1575,7 +1575,8 @@ namespace PowerSDR
 					case DisplayMode.PANADAPTER:
                         K9 = 2;
                         K11 = 0;
-						update = DrawPanadapter(e.Graphics, W, H, 1, false);
+                     
+                        update = DrawPanadapter(e.Graphics, W, H, 1, false);
 						break;
 					case DisplayMode.SCOPE:
                         K9 = 4;
@@ -1605,8 +1606,8 @@ namespace PowerSDR
 					case DisplayMode.PANAFALL:
                         K9 = 3;
                         K11 = 0;
-                     
-                     	split_display = true; // use wide vertgrid because your saying split
+                    
+                        split_display = true; // use wide vertgrid because your saying split
 						update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //top half 
 						update = DrawWaterfall(e.Graphics, W, H/2, 1, true); // bottom half RX2 is not on
 						split_display = false;
@@ -1638,7 +1639,6 @@ namespace PowerSDR
         // this is only RX1 here, RX2 is futher down below
         //======================================================
                 
-
 				switch(current_display_mode) // ke9ns split display (RX1 top  and RX2 on bottom)
 				{
 					case DisplayMode.SPECTRUM:
@@ -1649,7 +1649,7 @@ namespace PowerSDR
 					case DisplayMode.PANADAPTER:
                         K9 = 2;
                         K11 = 0;
-						update = DrawPanadapter(e.Graphics, W, H/2, 1, false);
+						update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //ke9ns just as original
 						break;
 					case DisplayMode.SCOPE:
                           K9 = 4;
@@ -1677,13 +1677,11 @@ namespace PowerSDR
                           K11 = 0;
 						update = DrawHistogram(e.Graphics, W, H/2);
 						break;
-                 
                     
-                    
-                    case DisplayMode.PANAFALL:   // ke9ns pan (KE9NS ADDED CODE)
+                    case DisplayMode.PANAFALL:   // ke9ns pan rX1 (KE9NS ADDED CODE)
                         K9 = 5;
                         K11 = 5;
-                       
+                    
                         switch (current_display_mode_bottom)  // ke9ns check RX2 to see what to do with both RX1 and RX2
                         {
                             case DisplayMode.PANADAPTER:
@@ -1719,8 +1717,8 @@ namespace PowerSDR
                                 DrawOffBackground(e.Graphics, W, H / 2, true);
                                 K9 = 3;
                                 K11 = 0;
-                     
-                     	        split_display = true; // use wide vertgrid because your saying split
+                          
+                                split_display = true; // use wide vertgrid because your saying split
 						        update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //top half 
 						        update = DrawWaterfall(e.Graphics, W, H/2, 1, true); // bottom half RX2 is not on
 						        split_display = false;
@@ -1741,16 +1739,15 @@ namespace PowerSDR
     
 
 					default:
-                       
-
+                  
 						break;
 
-                } // ke9ns split display (RX1 top  and RX2 on bottom)
+                } // RX1 switch(current_display_mode)   ke9ns split display (RX1 top  and RX2 on bottom)
 
-    //=========================================
-    // ke9ns display RX2 on bottom of screen
-    //=========================================
-                if (K11 == 0)
+                //=========================================
+                // ke9ns display RX2 on bottom of screen
+                //=========================================
+                if (K11 == 0) //if rx1 is in panafall skip below
                 {
                     switch (current_display_mode_bottom)  // ke9ns pan
                     {
@@ -1787,7 +1784,7 @@ namespace PowerSDR
                         case DisplayMode.OFF:
                             K10 = 0;
                             DrawOffBackground(e.Graphics, W, H / 2, true);
-
+                         
                             switch (current_display_mode) // ke9ns split display (RX1 top  and RX2 on bottom)
                             {
 
@@ -1799,7 +1796,7 @@ namespace PowerSDR
                                     update = DrawPanadapter(e.Graphics, W, H / 2, 1, false); //top half 
                                     update = DrawWaterfall(e.Graphics, W, H / 2, 1, true); // bottom half RX2 is not on
                                     split_display = false;
-
+                             
                                     break;
                             }
 
@@ -1818,23 +1815,19 @@ namespace PowerSDR
                            
                     } // switch(current_display_mode_bottom)
                 } // K11 == 0
-                else
+                else // rx1 in panafall mode
                 {
                     switch (current_display_mode_bottom)  // ke9ns pan
                     {
 
                         case DisplayMode.OFF:
                             K10 = 0;
+                         
                             DrawOffBackground(e.Graphics, W, H / 2, true);
-
-                           
-
-
+  
                             break; // RX2 OFF
 
-
-
-                    }
+                    } // check rx2
 
 
                 } // K11==5
@@ -2287,9 +2280,9 @@ namespace PowerSDR
 		{
           
 
-            if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan dislay in 1/3 instead of 1/2
+            if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan display in 1/3 instead of 1/2
 
-            if ((K9 == 5) && (K10 == 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan dislay in 1/4 instead of 1/2
+            if ((K9 == 5) && (K10 == 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan display in 1/4 instead of 1/2
 
 
             // draw background
@@ -3972,14 +3965,15 @@ namespace PowerSDR
                                 if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                                 {
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
-
-                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
+                              
                                     g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                     g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
 
                                 if (Console.SXK < 99)
                                 {
+
+                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
                                     Console.SXW[Console.SXK] = (int)length.Width;
                                     Console.SXH[Console.SXK] = (int)length.Height;
                                     Console.SXX[Console.SXK] = VFO_SWLPos;
@@ -4009,9 +4003,7 @@ namespace PowerSDR
                             if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                             {
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
-
-                                SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
+                             
                                 g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                 g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
                              
@@ -4025,9 +4017,7 @@ namespace PowerSDR
 
                 } //do this above until you move freq again
 
-       
-
-
+   
             } // SP1_Active SWL CLUSTER
 
 
@@ -4037,7 +4027,6 @@ namespace PowerSDR
             // ke9ns add draw DX SPOTS on pandapter
             //=====================================================================
             //=====================================================================
-
           
             if (SpotControl.SP_Active != 0)
             {
@@ -4056,10 +4045,13 @@ namespace PowerSDR
 
                 int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
 
+
+                // ke9ns used by DX spotting routine below
+
                 int H1a = H / 2;            // length of vertical line
                 int H1b = 20;               // starting point of vertical line
 
-                // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                                              // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
                 if (bottom)                 // if your drawing to the bottom 
                 {
                   if ((K9 == 2) && (K10 == 2))  H1a = H + (H/2); // long

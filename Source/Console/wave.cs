@@ -83,6 +83,7 @@ namespace PowerSDR
         public CheckBoxTS TXIDBoxTS;
         public CheckBoxTS createBoxTS;
         public CheckBoxTS chkQuickAudioFolder;
+        private TextBox textBox1;
         private IContainer components;
 
 		#region Constructor and Destructor
@@ -158,6 +159,7 @@ namespace PowerSDR
             this.btnStop = new System.Windows.Forms.ButtonTS();
             this.checkBoxPlay = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickAudioFolder = new System.Windows.Forms.CheckBoxTS();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.grpPlaylist.SuspendLayout();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbPreamp)).BeginInit();
@@ -483,17 +485,26 @@ namespace PowerSDR
             // chkQuickAudioFolder
             // 
             this.chkQuickAudioFolder.Image = null;
-            this.chkQuickAudioFolder.Location = new System.Drawing.Point(12, 306);
+            this.chkQuickAudioFolder.Location = new System.Drawing.Point(8, 362);
             this.chkQuickAudioFolder.Name = "chkQuickAudioFolder";
             this.chkQuickAudioFolder.Size = new System.Drawing.Size(172, 26);
             this.chkQuickAudioFolder.TabIndex = 58;
             this.chkQuickAudioFolder.Text = "QuickAudio Save Folder";
             this.chkQuickAudioFolder.CheckedChanged += new System.EventHandler(this.chkQuickAudioFolder_CheckedChanged);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(8, 294);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(392, 62);
+            this.textBox1.TabIndex = 59;
+            // 
             // WaveControl
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(416, 363);
+            this.ClientSize = new System.Drawing.Size(416, 391);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkQuickAudioFolder);
             this.Controls.Add(this.createBoxTS);
             this.Controls.Add(this.TXIDBoxTS);
@@ -516,6 +527,7 @@ namespace PowerSDR
             this.grpPlayback.ResumeLayout(false);
             this.grpPlayback.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -1294,14 +1306,20 @@ namespace PowerSDR
 				string file_name = Audio.wave_file_writer.Stop();
 
 				chkQuickRec.BackColor = SystemColors.Control;
-                MessageBox.Show("The 'Over the Air' Quick audio recording has been successfully created.\n" +
-                    "Key the radio with either PTT or MOX and click on the Play button to play back the Quick audio recording over the air.");
-				// MessageBox.Show("The file has been written to the following location:\n"+file_name);
-				Audio.RecordRXPreProcessed = temp_record; //return to original state
-			}		
-		}
 
-		public bool QuickRec
+                if (console.checkBoxID.Checked == false) // ke9ns add
+                {
+                    MessageBox.Show("The 'Over the Air' Quick audio recording has been successfully created.\n" +
+                        "Key the radio with either PTT or MOX and click on the Play button to play back the Quick audio recording over the air.");
+                    // MessageBox.Show("The file has been written to the following location:\n"+file_name);
+                }
+
+                Audio.RecordRXPreProcessed = temp_record; //return to original state
+			}
+
+        } //  chkQuickRec_CheckedChanged
+
+        public bool QuickRec
 		{
 			get { return chkQuickRec.Checked; }
 			set	{ chkQuickRec.Checked = value; }

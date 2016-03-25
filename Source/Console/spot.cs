@@ -48,6 +48,7 @@ namespace PowerSDR
         private Label label1;
         private Label label2;
         private CheckBoxTS chkAlwaysOnTop;
+        public CheckBoxTS chkDXMode;
         private IContainer components;
 
 
@@ -100,6 +101,7 @@ namespace PowerSDR
             this.statusBoxSWL = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
@@ -132,7 +134,7 @@ namespace PowerSDR
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(624, 291);
+            this.textBox1.Size = new System.Drawing.Size(663, 291);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
@@ -156,7 +158,7 @@ namespace PowerSDR
             this.textBox3.Location = new System.Drawing.Point(12, 4);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(624, 81);
+            this.textBox3.Size = new System.Drawing.Size(663, 81);
             this.textBox3.TabIndex = 8;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
@@ -203,6 +205,7 @@ namespace PowerSDR
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
+            this.button1.Text = "Spot Mem";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // nameBox
@@ -268,6 +271,15 @@ namespace PowerSDR
             this.label2.TabIndex = 18;
             this.label2.Text = "Status of SWL Spotter";
             // 
+            // chkDXMode
+            // 
+            this.chkDXMode.Image = null;
+            this.chkDXMode.Location = new System.Drawing.Point(376, 405);
+            this.chkDXMode.Name = "chkDXMode";
+            this.chkDXMode.Size = new System.Drawing.Size(138, 24);
+            this.chkDXMode.TabIndex = 59;
+            this.chkDXMode.Text = "Parse \"DX Spot\" Mode";
+            // 
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Image = null;
@@ -281,7 +293,8 @@ namespace PowerSDR
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(648, 521);
+            this.ClientSize = new System.Drawing.Size(687, 521);
+            this.Controls.Add(this.chkDXMode);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -803,11 +816,11 @@ namespace PowerSDR
         public static int[] DX_Freq = new int[1000];                // in hz
         public static string[] DX_Spotter = new string[1000];       // spotter call sign
         public static string[] DX_Message = new string[1000];       // message
+        public static int[] DX_Mode = new int[1000];                // mode parse from message string 0=ssb,1=cw,2=rtty,3=psk,4=olivia,5=jt65,6=contesa,7=fsk,8=mt63,9=domi,10=packtor, 11=fm
+        public static int[] DX_Mode2 = new int[1000];                // mode2 parse from message string 0=normal , +up in hz or -dn in hz
         public static int[] DX_Time = new int[1000];                // GMT
         public static string[] DX_Grid = new string[1000];          // grid
-
-
-        public static string[] DX_Age = new string[1000];       // how old is the spot
+        public static string[] DX_Age = new string[1000];            // how old is the spot
 
         public static int DX_Index = 0;                               //  max number of spots in memory currently
         public static int DX_Index1 = 0;                             // local index that reset back to 0 after reaching max
@@ -922,6 +935,7 @@ namespace PowerSDR
 
                         try // use try since its a socket and can fail
                         {
+                           SP_reader.BaseStream.ReadTimeout = 5000; // cause character Read to break every 5 seconds to check age of DX spots
 
                             //-------------------------------------------------------------------------------------------------------------------------------------
                             // ke9ns wait for a new message
@@ -943,10 +957,10 @@ namespace PowerSDR
                                     break;
                                 }
 
+              
+                            }// for (;!(sb.ToString().Contains("\r\n"));) //  wait for end of line
 
-                            }
 
-                          
                             statusBox.ForeColor = Color.Green;
                             statusBox.Text = "Spotting";
                             SP_Active = 3;
@@ -961,40 +975,116 @@ namespace PowerSDR
 
                             if (qq == 75) // if no grid, then add spaces and CR and line feed
                             {
-                           //   sb.Append("     \r\n"); // keep all strings the same length
                                 sb.Append("     "); // keep all strings the same length
                             }
-                            else
-                            {
-                             //   sb.Append("\r\n"); // keep all strings the same length
-
-                            }
-
-
+                           
                             message1 = sb.ToString(); // post message
                             message1.TrimEnd('\0');
 
-
                             // ke9ns so at this point all messages are 82 characters long (as though they have a grid#, even if they dont)
-                         //   Trace.WriteLine("message2 length " + message1.Length);
-
+                            //   Trace.WriteLine("message2 length " + message1.Length);
 
                         }
-                        catch (FormatException e)
+                        catch // read timeout comes here
                         {
-                       
-                         //   textBox1.Text = e.ToString();
+                          
 
-                        }
-                        catch (ArgumentOutOfRangeException e)
-                        {
-                   
-                          //  textBox1.Text = e.ToString();
-                        }
+                            //=================================================================================================
+                            //=================================================================================================
+                            // ke9ns check for TIME EXPIRES  
 
+                            UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+                            FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
+                            UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
+
+                            if ((UTCLAST == 0) && (UTCNEW != 0))
+                            {
+                                UTCLAST = UTCNEW;        // for startup only
+                                DX_Time[0] = UTCNEW;
+
+                            }
+
+
+                            if ((DX_Index > 0) && (UTCNEW != UTCLAST))
+                            {
+                                int xxx = 0;
+
+                                UTCLAST = UTCNEW;
+                            
+                        
+                                Trace.WriteLine(" ");
+                                Trace.WriteLine("Start=========== " + DX_Index);
+
+
+                                for (int ii = DX_Index - 1; ii >= 0; ii--) // move from bottom of list up toward top of list
+                                {
+
+                                    int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
+                                    DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
+
+
+                                    int kk = 0; // look at very bottom of list + 1
+
+
+                                    if (UTCDIFF > 35) // if its an old SPOT then remove it from the list
+                                    {
+
+                                        kk = ii; // 
+
+                                        xxx++; //shorten dx_Index by 1
+
+                                        Trace.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
+                                        Trace.WriteLine("KK " + kk);
+                                        Trace.WriteLine("XXX " + xxx);
+
+
+                                        for (; kk < (DX_Index - xxx); kk++)
+                                        {
+
+
+                                            DX_FULLSTRING[kk] = DX_FULLSTRING[kk + xxx]; // 
+
+                                            DX_Station[kk] = DX_Station[kk + xxx];
+                                            DX_Freq[kk] = DX_Freq[kk + xxx];
+                                            DX_Spotter[kk] = DX_Spotter[kk + xxx];
+                                            DX_Message[kk] = DX_Message[kk + xxx];
+                                            DX_Grid[kk] = DX_Grid[kk + xxx];
+                                            DX_Time[kk] = DX_Time[kk + xxx];
+                                            DX_Age[kk] = DX_Age[kk + xxx];
+                                            DX_Mode[kk] = DX_Mode[kk + xxx];
+                                            DX_Mode2[kk] = DX_Mode2[kk + xxx];
+
+                                        } // for loop:  push OK Spots from bottom of list up as you delete old spots from list
+
+                                    } // TIMEOUT exceeded remove old spot
+
+
+
+                                } // for ii check for dup in list
+
+                                DX_Index = DX_Index - xxx;  // update DX_Index list (shorten if any old spots deleted)
+
+                                Trace.WriteLine("END=========== " + DX_Index);
+
+                                Trace.WriteLine(" ");
+
+                                processTCPMessage(); // update spot window (remove old spots)
+
+                                continue;
+
+                            } // UTC NEW != LAST
+                            else
+                            {
+                                continue; // skip
+                            }
+
+
+                        } // end of catch (read timeout comes here)
                       
-                   //-------------------------------------------------------------------------------------------------------------------------------------
-                   // ke9ns process received message
+
+
+                        //-------------------------------------------------------------------------------------------------------------------------------------
+                        // ke9ns process received message
                         if ((message1.StartsWith("DX de ") == true) && (message1.Length > 76)) // string can be 77 (with no grid) or 82 (with grid)
                         {
                           
@@ -1034,19 +1124,68 @@ namespace PowerSDR
                             {
                                
                                 DX_Freq[DX_Index1] = (int)((double)Convert.ToDouble(message1.Substring(13, 11)) * (double) 1000.0    ); // get dx freq 7016.0  in khz 
-                              
-                               
-                            }
+                        
+                                if ((DX_Freq[DX_Index1] >= 1800000) && (DX_Freq[DX_Index1] <= 1830000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 3500000) && (DX_Freq[DX_Index1] <= 3600000))
+                                {
+                                     DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 7000000) && (DX_Freq[DX_Index1] <= 7125000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 10000000) && (DX_Freq[DX_Index1] <= 11000000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 14000000) && (DX_Freq[DX_Index1] <= 14150000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 18000000) && (DX_Freq[DX_Index1] <= 18110000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 21000000) && (DX_Freq[DX_Index1] <= 21275000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 24800000) && (DX_Freq[DX_Index1] <= 24930000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 28000000) && (DX_Freq[DX_Index1] <= 28300000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 50000000) && (DX_Freq[DX_Index1] <= 50100000))
+                                {
+                                     DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else if ((DX_Freq[DX_Index1] >= 144000000) && (DX_Freq[DX_Index1] <= 144100000))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+                                }
+                                else
+                                {
+                                    DX_Mode[DX_Index1] = 0; // ssb mode
+                                }
+
+
+                            } // try to determine if in the cw portion or ssb portion of each band
                             catch (FormatException e)
                             {
-                                 DX_Freq[DX_Index1] = 0;
-
+                                DX_Freq[DX_Index1] = 0;
+                                DX_Mode[DX_Index1] = 0; // ssb mode
                             }
                             catch (ArgumentOutOfRangeException e)
                             {
-
                                 DX_Freq[DX_Index1] = 0;
-                             }
+                                DX_Mode[DX_Index1] = 0; // ssb mode
+                            }
                             //  Trace.WriteLine("DX_Freq " + DX_Freq[DX_Index1]);
 
 
@@ -1069,8 +1208,503 @@ namespace PowerSDR
                             //  Trace.WriteLine("DX_Spotter " + DX_Spotter[DX_Index1]);
 
                             // grab comments
-                            DX_Message[DX_Index1] = message1.Substring(39, 29); // get dx call with : at the end
-                                                                                //  Trace.WriteLine("DX_Message " + DX_Message[DX_Index1]);
+                            try
+                            {
+                                DX_Mode2[DX_Index1] = 0; // reset split hz
+
+                                DX_Message[DX_Index1] = message1.Substring(39, 29).ToLower(); // get dx call with : at the end
+                              
+
+                                if (DX_Message[DX_Index1].Contains("cw"))
+                                {
+                                    DX_Mode[DX_Index1] = 1; // cw mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("rty") || DX_Message[DX_Index1].Contains("rtty"))
+                                {
+                                    DX_Mode[DX_Index1] = 2; // RTTY mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("psk"))
+                                {
+                                    DX_Mode[DX_Index1] = 3; // psk mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("oli"))
+                                {
+                                    DX_Mode[DX_Index1] = 4; // olivia mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("jt65"))
+                                {
+                                    DX_Mode[DX_Index1] = 5; // jt65 mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("contesa"))
+                                {
+                                    DX_Mode[DX_Index1] = 6; // contesa mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("fsk"))
+                                {
+                                    DX_Mode[DX_Index1] = 7; // fsk mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("mt63"))
+                                {
+                                    DX_Mode[DX_Index1] = 8; // mt63 mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("domi"))
+                                {
+                                    DX_Mode[DX_Index1] = 9; // domino mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("pack"))
+                                {
+                                    DX_Mode[DX_Index1] = 10; // pactor mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("fm"))
+                                {
+                                    DX_Mode[DX_Index1] = 11; // fm mode
+
+                                }
+
+
+                                DX_Mode2[DX_Index1] = 0;
+                                //  resultString = Regex.Match(subjectString, @"\d+").Value;  Int32.Parse(resultString) will then give you the number.
+
+                                if (DX_Message[DX_Index1].Contains("up")) // check for split
+                                {
+                                  
+                                    int ind = DX_Message[DX_Index1].IndexOf("up") + 2;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4))* 1000);
+                                        Trace.WriteLine("Found UP split hz" +split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found UP split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found UP split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                int ind1 = DX_Message[DX_Index1].IndexOf("up") - 4; //
+
+                                                try // try 4
+                                                {
+
+                                                    int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1,4)) * 1000);
+                                                    Trace.WriteLine("Found UP split hz" + split_hz);
+                                                    DX_Mode2[DX_Index1] = split_hz;
+                                                }
+                                                catch // catch 4
+                                                {
+                                                    ind1++; //
+
+                                                    try // try 5
+                                                    {
+
+                                                        int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000);
+                                                        Trace.WriteLine("Found UP split hz" + split_hz);
+                                                        DX_Mode2[DX_Index1] = split_hz;
+                                                    }
+                                                    catch // catch 5
+                                                    {
+                                                        ind1++; //
+
+                                                        try // try 6
+                                                        {
+
+                                                            int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000);
+                                                            Trace.WriteLine("Found UP split hz" + split_hz);
+                                                            DX_Mode2[DX_Index1] = split_hz;
+                                                        }
+                                                        catch // catch 6
+                                                        {
+
+                                                            Trace.WriteLine("failed to find up value================");
+                                                            DX_Mode2[DX_Index1] = 1000; // 1khz up
+
+                                                        } // catch6   (2 digits to left side)
+                                                    
+                                                    } // catch5   (3 digits to left side)
+                                                   
+                                                } // catch4   (4 digits to left side)
+                                        
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+
+                                } // split up
+                               
+                                else if ( DX_Message[DX_Index1].Contains("dn")) // check for split down
+                                {
+                                 
+                                    int ind = DX_Message[DX_Index1].IndexOf("dn") + 2;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                int ind1 = DX_Message[DX_Index1].IndexOf("dn") - 4; //
+
+                                                try // try 4
+                                                {
+                                                    int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000);
+                                                    Trace.WriteLine("Found dn split hz" + split_hz);
+                                                    DX_Mode2[DX_Index1] = split_hz;
+                                                }
+                                                catch // catch 4
+                                                {
+                                                    ind++; //
+
+                                                    try // try 5
+                                                    {
+                                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000);
+                                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                                        DX_Mode2[DX_Index1] = split_hz;
+                                                    }
+                                                    catch // catch 5
+                                                    {
+                                                        ind1++; //
+
+                                                        try // try 6
+                                                        {
+                                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000);
+                                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                                            DX_Mode2[DX_Index1] = split_hz;
+                                                        }
+                                                        catch // catch 6
+                                                        {
+
+                                                            Trace.WriteLine("failed to find dn value================");
+                                                            DX_Mode2[DX_Index1] = -1000; // 1khz dn
+
+                                                        } // catch6   (2 digits to left side)
+
+                                                    } // catch5   (3 digits to left side)
+
+                                                } // catch4   (4 digits to left side)
+
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+
+                                } // split down
+                                else if (DX_Message[DX_Index1].Contains("dwn")) // check for split down
+                                {
+
+                                    int ind = DX_Message[DX_Index1].IndexOf("dwn") + 3;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                int ind1 = DX_Message[DX_Index1].IndexOf("dwn") - 4; //
+
+                                                try // try 4
+                                                {
+                                                    int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000);
+                                                    Trace.WriteLine("Found dn split hz" + split_hz);
+                                                    DX_Mode2[DX_Index1] = split_hz;
+                                                }
+                                                catch // catch 4
+                                                {
+                                                    ind1++; //
+
+                                                    try // try 5
+                                                    {
+                                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000);
+                                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                                        DX_Mode2[DX_Index1] = split_hz;
+                                                    }
+                                                    catch // catch 5
+                                                    {
+                                                        ind1++; //
+
+                                                        try // try 6
+                                                        {
+                                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000);
+                                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                                            DX_Mode2[DX_Index1] = split_hz;
+                                                        }
+                                                        catch // catch 6
+                                                        {
+
+                                                            Trace.WriteLine("failed to find dn value================");
+                                                            DX_Mode2[DX_Index1] = -1000; // 1khz dn
+
+                                                        } // catch6   (2 digits to left side)
+
+                                                    } // catch5   (3 digits to left side)
+
+                                                } // catch4   (4 digits to left side)
+
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+
+                                } // split down
+                                else if (DX_Message[DX_Index1].Contains("down")) // check for split down
+                                {
+
+                                    int ind = DX_Message[DX_Index1].IndexOf("down") + 4;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                int ind1 = DX_Message[DX_Index1].IndexOf("down") - 4; //
+
+                                                try // try 4
+                                                {
+                                                    int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000);
+                                                    Trace.WriteLine("Found dn split hz" + split_hz);
+                                                    DX_Mode2[DX_Index1] = split_hz;
+                                                }
+                                                catch // catch 4
+                                                {
+                                                    ind1++; //
+
+                                                    try // try 5
+                                                    {
+                                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000);
+                                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                                        DX_Mode2[DX_Index1] = split_hz;
+                                                    }
+                                                    catch // catch 5
+                                                    {
+                                                        ind1++; //
+
+                                                        try // try 6
+                                                        {
+                                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000);
+                                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                                            DX_Mode2[DX_Index1] = split_hz;
+                                                        }
+                                                        catch // catch 6
+                                                        {
+
+                                                            Trace.WriteLine("failed to find dn value================");
+                                                            DX_Mode2[DX_Index1] = -1000; // 1khz dn
+
+                                                        } // catch6   (2 digits to left side)
+
+                                                    } // catch5   (3 digits to left side)
+
+                                                } // catch4   (4 digits to left side)
+
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+                                } // split down
+                                else if (DX_Message[DX_Index1].Contains("+")) // check for split
+                                {
+
+                                    int ind = DX_Message[DX_Index1].IndexOf("+") + 1;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
+                                        Trace.WriteLine("Found UP split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found UP split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found UP split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                Trace.WriteLine("failed to find up value================");
+                                                DX_Mode2[DX_Index1] = 0; // 
+
+
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+
+                                } // split up+
+
+                                else if (DX_Message[DX_Index1].Contains("-")) // check for split
+                                {
+
+                                    int ind = DX_Message[DX_Index1].IndexOf("-") + 1;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+                                        }
+                                        catch // catch 2
+                                        {
+
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                Trace.WriteLine("failed to find up value================");
+                                                DX_Mode2[DX_Index1] = 0; // 
+
+
+                                            } // catch3   (2 digits to right side)
+
+                                        } //catch2  (3 digits to right side)
+
+                                    } // catch 1   (4 digits to right side)
+
+
+                                } // split dwn -
+
+
+
+
+
+
+                            } // try to parse dx spot message above
+                            catch (FormatException e)
+                            {
+                                Trace.WriteLine("mode issue" + e);
+
+                            }
+                            catch (ArgumentOutOfRangeException e)
+                            {
+                                Trace.WriteLine("mode1 issue" + e);
+
+                            }
+                            //  Trace.WriteLine("DX_Message " + DX_Message[DX_Index1]);
 
                             // grab time
                             try
@@ -1089,6 +1723,7 @@ namespace PowerSDR
                             //   Trace.WriteLine("DX_Time " + DX_Time[DX_Index1])
                            
                            
+                            // grab GRID #
                             DX_Grid[DX_Index1] = message1.Substring(76,4); // get grid
                            
                             sb = new StringBuilder(DX_Grid[DX_Index1]); // clear sb string over again
@@ -1096,6 +1731,11 @@ namespace PowerSDR
                             sb.Insert(0, '('); // to differentiate the spotter from the spotted
 
                             DX_Grid[DX_Index1] = sb.ToString();
+
+
+                            // set age of spot to 0;
+                            DX_Age[DX_Index1] = "00"; // reset to start
+
 
 
                             //  Trace.WriteLine("DX_Grid " + DX_Grid[DX_Index1]);
@@ -1106,11 +1746,12 @@ namespace PowerSDR
                             //=================================================================================================
                             //=================================================================================================
 
+
+
                             //=================================================================
                             //=================================================================
                             //=================================================================
                             // ke9ns DX SPOT FILTERS
-
                             if (checkBoxWorld.Checked) // filter out US calls signs
                             {
 
@@ -1197,6 +1838,8 @@ namespace PowerSDR
                             //=================================================================
                             // ke9ns check for STATION DUPLICATES , there can only be 1 possible duplicate per spot added (but IGNORE if on 2nd band)
                             PASS2: int xx = 0;
+
+                           
                             for (int ii = 0; ii <= DX_Index; ii++)
                             {
                                 if ((xx == 0) && (DX_Station[DX_Index1] == DX_Station[ii]))
@@ -1218,7 +1861,9 @@ namespace PowerSDR
                                     DX_Message[ii] = DX_Message[ii + 1];
                                     DX_Grid[ii] = DX_Grid[ii + 1];
                                     DX_Time[ii] = DX_Time[ii + 1];
-                                 //   DX_Age[ii] = DX_Age[ii + 1];
+                                    DX_Age[ii] = DX_Age[ii + 1];
+                                    DX_Mode[ii] = DX_Mode[ii + 1];
+                                    DX_Mode2[ii] = DX_Mode2[ii + 1];
                                 }
 
                             } // for ii check for dup in list
@@ -1246,110 +1891,19 @@ namespace PowerSDR
                                     DX_Message[ii] = DX_Message[ii + 1];
                                     DX_Grid[ii] = DX_Grid[ii + 1];
                                     DX_Time[ii] = DX_Time[ii + 1];
-
-                                 //   DX_Age[ii] = DX_Age[ii + 1];
-
+                                    DX_Age[ii] = DX_Age[ii + 1];
+                                    DX_Mode[ii] = DX_Mode[ii + 1];
+                                    DX_Mode2[ii] = DX_Mode2[ii + 1];
                                 }
 
                             } // for ii check for dup in list
                             DX_Index = (DX_Index - xx);  // readjust the length of the spot list after taking out the duplicates
 
 
-
-                            //=================================================================================================
-                            //=================================================================================================
-                            // ke9ns check for TIME EXPIRES  
-
-                            UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
-                            FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
-                            UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
-
-                            if ((UTCLAST == 0) && (UTCNEW != 0))
-                            {
-                                UTCLAST = UTCNEW;        // for startup only
-                                DX_Time[0] = UTCNEW;
-
-                            }
-
-                          
-                            if ((DX_Index > 0) && (UTCNEW != UTCLAST))
-                            {
-
-                                UTCLAST = UTCNEW;
-                                //   Trace.WriteLine("Time 24hr Now in UTC " + UTCNEW);
-
-                            //    int UTCDIFF1 = Math.Abs(UTCNEW - DX_Time[0]); // time difference 
-                            //    DX_Age[0] = UTCDIFF1.ToString("00"); // 2 digits
-
-
-                                xx = 0;
-                                Trace.WriteLine(" ");
-                                Trace.WriteLine("Start=========== " + DX_Index);
-
-
-                                for (int ii = DX_Index-1; ii > 0; ii--) // move from bottom of list up toward top of list
-                                {
-
-                                    int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
-                                   
-                                //    DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
-
-
-                                    int kk = 0; // look at very bottom of list + 1
-
-
-                                    if (UTCDIFF > 35) // if its an old SPOT then remove it from the list
-                                    {
-
-                                        kk = ii; // 
-
-                                        xx++; //shorten dx_Index by 1
-
-                                        Trace.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
-                                        Trace.WriteLine("KK " + kk);
-                                        Trace.WriteLine("XX " +  xx);
-
-
-
-                                        for (;kk < (DX_Index - xx);kk++)
-                                        {
-
-                                           
-                                                DX_FULLSTRING[kk] = DX_FULLSTRING[kk + xx]; // 
-
-                                                DX_Station[kk] = DX_Station[kk + xx];
-                                                DX_Freq[kk] = DX_Freq[kk + xx];
-                                                DX_Spotter[kk] = DX_Spotter[kk + xx];
-                                                DX_Message[kk] = DX_Message[kk + xx];
-                                                DX_Grid[kk] = DX_Grid[kk + xx];
-                                                DX_Time[kk] = DX_Time[kk + xx];
-
-                                          //      DX_Age[kk] = DX_Age[kk + xx];
-                                            
-                                           
-                                        } // for loop:  push OK Spots from bottom of list up as you delete old spots from list
-                                       
-                                    } // TIMEOUT exceeded remove old spot
-
-                                   
-
-                                } // for ii check for dup in list
-
-                                DX_Index = DX_Index - xx;  // update DX_Index list (shorten if any old spots deleted)
-
-                                Trace.WriteLine("END=========== " + DX_Index);
-
-                                Trace.WriteLine(" ");
-
-
-                            } // UTC NEW != LAST
-
                             //=================================================================================================
                             //=================================================================================================
                             // ke9ns  passed the spotter, dx station , freq, and time test
-
-                            //  PASS2:
-
+                           
                             DX_Index++; // jump to PASS2 if it passed the valid call spotter test
 
                             if (DX_Index > 60)
@@ -1375,25 +1929,28 @@ namespace PowerSDR
                                 DX_Message[ii] = DX_Message[ii -1];
                                 DX_Grid[ii] = DX_Grid[ii - 1];
                                 DX_Time[ii] = DX_Time[ii - 1];
-
-                              //  DX_Age[ii] = DX_Age[ii - 1];
+                                DX_Age[ii] = DX_Age[ii - 1];
+                                DX_Mode[ii] = DX_Mode[ii - 1];
+                                DX_Mode2[ii] = DX_Mode2[ii - 1];
 
                             } // for ii
 
                             DX_FULLSTRING[0] = message1; // add newest message to top
-                            processTCPMessage(); // send to spot window
 
+                          
                             DX_Station[0] = DX_Station[DX_Index1];    //insert new spot on top of list now
                             DX_Freq[0] = DX_Freq[DX_Index1];
                             DX_Spotter[0] = DX_Spotter[DX_Index1];
                             DX_Message[0] = DX_Message[DX_Index1];
                             DX_Grid[0] = DX_Grid[DX_Index1];
                             DX_Time[0] = DX_Time[DX_Index1];
-
-                         //   DX_Age[0] = DX_Age[DX_Index1];
-
+                            DX_Age[0] = DX_Age[DX_Index1];
+                            DX_Mode[0] = DX_Mode[DX_Index1];
+                            DX_Mode2[0] = DX_Mode2[DX_Index1];
 
                             Trace.WriteLine("INSTALL NEW [0]=========== " + DX_Index);
+
+                            processTCPMessage(); // send to spot window
 
 
                             SP4_Active = 0; // done processing message
@@ -1504,8 +2061,9 @@ namespace PowerSDR
             {
                 textBox1.Text += "Socket Forced closed \r\n";
 
-             //   Trace.WriteLine("cannot open socket");
-                statusBox.ForeColor = Color.Red;
+                Trace.WriteLine("socket exception issue" + e1);
+
+                 statusBox.ForeColor = Color.Red;
                 console.spotterMenu.ForeColor = Color.Red;
 
                 statusBox.Text = "Socket";
@@ -1540,11 +2098,32 @@ namespace PowerSDR
       
             for (int ii = 0; ii < DX_Index; ii++)
             {
-              
-                //  textBox1.Text += (DX_FULLSTRING[ii]+ " "+ DX_Age[ii] + "\r\n" );
-                textBox1.Text += (DX_FULLSTRING[ii] + "\r\n");
 
-            }
+                if (DX_Age[ii] == null) DX_Age[ii] = "00";
+                else if (DX_Age[ii] == "  ") DX_Age[ii] = "00";
+                if (DX_Age[ii].Length == 1) DX_Age[ii] = "0" + DX_Age[ii];
+
+                string DXmode = "    "; // 5 spaces
+
+                if (DX_Mode[ii] == 0)       DXmode = " ssb ";
+                else if (DX_Mode[ii] == 1)  DXmode = " cw  ";
+                else if (DX_Mode[ii] == 2)  DXmode = " rtty";
+                else if (DX_Mode[ii] == 3)  DXmode = " psk ";
+                else if (DX_Mode[ii] == 4)  DXmode = " oliv";
+                else if (DX_Mode[ii] == 5)  DXmode = " jt65";
+                else if (DX_Mode[ii] == 6)  DXmode = " cont";
+                else if (DX_Mode[ii] == 7)  DXmode = " fsk ";
+                else if (DX_Mode[ii] == 8)  DXmode = " mt63";
+                else if (DX_Mode[ii] == 9)  DXmode = " domi";
+                else if (DX_Mode[ii] == 10) DXmode = " pack";
+                else if (DX_Mode[ii] == 11) DXmode = " fm  ";
+                else                        DXmode = "     ";
+
+                textBox1.Text += (DX_FULLSTRING[ii]+ DXmode+ " :" + DX_Age[ii] + "\r\n" );
+             
+                //  textBox1.Text += (DX_FULLSTRING[ii] + "\r\n");
+
+            } // for loop to update dx spot window
 
 
         } //processTCPMessage
@@ -1704,7 +2283,7 @@ namespace PowerSDR
 
                 int ii = textBox1.SelectionStart;
 
-                byte iii = (byte)(ii / 82); // get line  /82
+                byte iii = (byte)(ii / 91); // get line  /82  or /85 if AGE turned on
 
                 if (DX_Index > iii)
                 {
@@ -1712,15 +2291,83 @@ namespace PowerSDR
 
                     if ((freq1 < 5000000) || ((freq1 > 6000000) && (freq1 < 8000000))) // check for bands using LSB
                     {
-                        console.RX1DSPMode = DSPMode.LSB;
-                    }
+                        if (chkDXMode.Checked == true)
+                        {
+                            if (DX_Mode[iii] == 0)       console.RX1DSPMode = DSPMode.LSB;
+                            else if (DX_Mode[iii] == 1)  console.RX1DSPMode = DSPMode.CWL;
+                            else if (DX_Mode[iii] == 2)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 3)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 4)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 5)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 6)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 7)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 8)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 9)  console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 10) console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 11) console.RX1DSPMode = DSPMode.FM;
+
+                            else console.RX1DSPMode = DSPMode.LSB;
+
+
+                        }
+                        else
+                        {
+                            console.RX1DSPMode = DSPMode.LSB;
+                        }
+                    } // LSB
                     else
                     {
-                        console.RX1DSPMode = DSPMode.USB;
+                        if (chkDXMode.Checked == true)
+                        {
+
+                            if (DX_Mode[iii] == 0)       console.RX1DSPMode = DSPMode.USB;
+                            else if (DX_Mode[iii] == 1)  console.RX1DSPMode = DSPMode.CWU;
+                            else if (DX_Mode[iii] == 2)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 3)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 4)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 5)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 6)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 7)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 8)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 9)  console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 10) console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 11) console.RX1DSPMode = DSPMode.FM;
+                            else console.RX1DSPMode = DSPMode.USB;
+
+                        }
+                        else
+                        {
+                            console.RX1DSPMode = DSPMode.USB;
+                        }
                     }
 
 
                     console.VFOAFreq = (double)freq1 / 1000000; // convert to MHZ
+
+                    if (chkDXMode.Checked == true)
+                    {
+
+                        if (DX_Mode2[iii] != 0)
+                        {
+                           
+                            console.VFOBFreq = (double)(freq1 + DX_Mode2[iii]) / 1000000; // convert to MHZ
+                            console.chkVFOSplit.Checked = true; // turn on  split
+
+                            Trace.WriteLine("split here" + (freq1 + DX_Mode2[iii]));
+
+
+
+                        }
+                        else
+                        {
+                            console.chkVFOSplit.Checked = false; // turn off split
+
+                        }
+
+
+                    }
+
+
 
                     button1.Focus();
 
@@ -1735,8 +2382,8 @@ namespace PowerSDR
                 {
                     int ii = textBox1.GetCharIndexFromPosition(e.Location);
 
-                    byte iii = (byte)(ii / 82); // get line   /82
-
+                    byte iii = (byte)(ii / 91);  // get line  /82  or /86 if AGE turned on or 91 if mode is also on
+                    
                     if (DX_Index > iii)
                     {
                         string DXName = DX_Station[iii];
