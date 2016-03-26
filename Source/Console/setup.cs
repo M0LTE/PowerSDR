@@ -21528,6 +21528,7 @@ namespace PowerSDR
 			Display.DisplayAvgBlocks = (int)Math.Max(2, buffersToAvg);
 		}
 
+
 		private void udDisplayMeterDelay_ValueChanged(object sender, System.EventArgs e)
 		{
 			console.MeterDelay = (int)udDisplayMeterDelay.Value;

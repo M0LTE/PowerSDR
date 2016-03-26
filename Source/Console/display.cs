@@ -790,6 +790,7 @@ namespace PowerSDR
 		public static float display_avg_mult_old = 1 - (float)1/5;
 		public static float display_avg_mult_new = (float)1/5;
 		private static int display_avg_num_blocks = 5;
+
 		public static int DisplayAvgBlocks
 		{
 			get { return display_avg_num_blocks; }
@@ -2273,10 +2274,15 @@ namespace PowerSDR
 #endif
 
 
- //=========================================================
- // ke9ns draw panadapter grid
- //=========================================================
-		private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
+        //=========================================================
+        // ke9ns draw panadapter grid
+        //=========================================================
+
+
+        private static int[] holder = new int[100];  // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+        private static int[] holder1 = new int[100];
+
+        private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
 		{
           
 
@@ -4035,13 +4041,11 @@ namespace PowerSDR
 
                 int iii = 0; // stairstep holder
                 byte low = 0; // 1=LSB, 0=USB
-
                 int rx2 = 0;
-
                 int kk = 0;
 
-                int[] holder = new int[100];  // used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-                int[] holder1 = new int[100];
+              //  int[] holder = new int[100];  // used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+              //  int[] holder1 = new int[100];
 
                 int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
 
@@ -4054,8 +4058,8 @@ namespace PowerSDR
                                               // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
                 if (bottom)                 // if your drawing to the bottom 
                 {
-                  if ((K9 == 2) && (K10 == 2))  H1a = H + (H/2); // long
-                  else H1a = H + (H / 4); // short
+                    if ((K9 == 2) && (K10 == 2))  H1a = H + (H/2); // long
+                    else H1a = H + (H / 4); // short
 
                     H1b = H + 20;
 
@@ -4064,7 +4068,6 @@ namespace PowerSDR
 
                 }
                 else Console.DXK = 0; // index to allow call signs to draw after all the vert lines on the screen
-
 
 
                 int VFOLow = vfo_hz + RXDisplayLow; // low freq (left side) in hz
@@ -4131,7 +4134,7 @@ namespace PowerSDR
 
                         if (!mox) // only do when not transmitting
                         {
-                            Console.DXW[ii + rx2] = (int)length.Width;
+                            Console.DXW[ii + rx2] = (int)length.Width;    // this is all for QRZ hyperlinking 
                             Console.DXH[ii + rx2] = (int)length.Height;
                             Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
                             Console.DXY[ii + rx2] = H1b + iii;
@@ -4140,7 +4143,7 @@ namespace PowerSDR
                         }
                         
 
-                    }
+                    } // LSB side
                     else   // 0=usb so draw on righ side of line (normal)
                     {
                         if (Console.DXR == 0)
@@ -4160,7 +4163,7 @@ namespace PowerSDR
 
                         if (!mox) // only do when not transmitting
                         {
-                            Console.DXW[ii + rx2] = (int)length.Width;
+                            Console.DXW[ii + rx2] = (int)length.Width;   // this is all for QRZ hyperlinking 
                             Console.DXH[ii + rx2] = (int)length.Height;
                             Console.DXX[ii + rx2] = holder1[ii];
                             Console.DXY[ii + rx2] = H1b + iii;
@@ -4175,10 +4178,9 @@ namespace PowerSDR
                         }
 
 
-                    }
+                    } // USB side
 
                     iii = iii + 11;
-
                     if (iii > 90) iii = 0;
                    
 
@@ -5496,8 +5498,8 @@ namespace PowerSDR
         // convert data ke9ns data
         //=================================================================
 
-            if (rx==1 && average_on)		console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
-			else if(rx==2 && rx2_avg_on)	console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
+            if (rx == 1 && average_on)		console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
+			else if(rx == 2 && rx2_avg_on)	console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
 
 			if(rx==1 && peak_on)	UpdateDisplayPeak(rx1_peak_buffer, current_display_data);
 			else if(rx==2 && rx2_peak_on)	UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
@@ -6242,11 +6244,10 @@ namespace PowerSDR
                 {
                     console.UpdateRX1DisplayAverage(rx1_average_buffer, current_display_data);
                 }
-                else if (rx == 2 && rx2_avg_on)
+                else if ((rx == 2) && (rx2_avg_on) )
                 {
                     console.UpdateRX2DisplayAverage(rx2_average_buffer, current_display_data_bottom);
                 }
-
                 if (rx == 1 && peak_on)
                 {
                     UpdateDisplayPeak(rx1_peak_buffer, current_display_data);

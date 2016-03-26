@@ -107,6 +107,7 @@ namespace PowerSDR
             // 
             // SWLbutton
             // 
+            this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SWLbutton.Location = new System.Drawing.Point(93, 486);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
@@ -117,6 +118,7 @@ namespace PowerSDR
             // 
             // SSBbutton
             // 
+            this.SSBbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SSBbutton.Location = new System.Drawing.Point(12, 486);
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
@@ -127,10 +129,13 @@ namespace PowerSDR
             // 
             // textBox1
             // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox1.BackColor = System.Drawing.Color.LightYellow;
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(12, 91);
+            this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -141,6 +146,7 @@ namespace PowerSDR
             // 
             // nodeBox
             // 
+            this.nodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nodeBox.Location = new System.Drawing.Point(294, 487);
             this.nodeBox.MaxLength = 50;
@@ -165,6 +171,7 @@ namespace PowerSDR
             // 
             // callBox
             // 
+            this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.callBox.Location = new System.Drawing.Point(498, 459);
             this.callBox.MaxLength = 20;
@@ -178,6 +185,7 @@ namespace PowerSDR
             // 
             // portBox
             // 
+            this.portBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.portBox.Location = new System.Drawing.Point(570, 486);
             this.portBox.MaxLength = 7;
@@ -191,6 +199,7 @@ namespace PowerSDR
             // 
             // statusBox
             // 
+            this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.statusBox.Location = new System.Drawing.Point(12, 407);
             this.statusBox.Name = "statusBox";
@@ -201,6 +210,7 @@ namespace PowerSDR
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Location = new System.Drawing.Point(174, 486);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
@@ -210,6 +220,7 @@ namespace PowerSDR
             // 
             // nameBox
             // 
+            this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nameBox.Location = new System.Drawing.Point(364, 459);
             this.nameBox.MaxLength = 25;
@@ -224,6 +235,7 @@ namespace PowerSDR
             // 
             // checkBoxUSspot
             // 
+            this.checkBoxUSspot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxUSspot.AutoSize = true;
             this.checkBoxUSspot.Location = new System.Drawing.Point(12, 435);
             this.checkBoxUSspot.Name = "checkBoxUSspot";
@@ -235,6 +247,7 @@ namespace PowerSDR
             // 
             // checkBoxWorld
             // 
+            this.checkBoxWorld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxWorld.AutoSize = true;
             this.checkBoxWorld.Location = new System.Drawing.Point(12, 458);
             this.checkBoxWorld.Name = "checkBoxWorld";
@@ -246,6 +259,7 @@ namespace PowerSDR
             // 
             // statusBoxSWL
             // 
+            this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.statusBoxSWL.Location = new System.Drawing.Point(202, 407);
             this.statusBoxSWL.Name = "statusBoxSWL";
@@ -255,6 +269,7 @@ namespace PowerSDR
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 391);
             this.label1.Name = "label1";
@@ -264,6 +279,7 @@ namespace PowerSDR
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(199, 391);
             this.label2.Name = "label2";
@@ -273,6 +289,7 @@ namespace PowerSDR
             // 
             // chkDXMode
             // 
+            this.chkDXMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDXMode.Image = null;
             this.chkDXMode.Location = new System.Drawing.Point(376, 405);
             this.chkDXMode.Name = "chkDXMode";
@@ -282,6 +299,7 @@ namespace PowerSDR
             // 
             // chkAlwaysOnTop
             // 
+            this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
             this.chkAlwaysOnTop.Location = new System.Drawing.Point(532, 405);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
@@ -312,6 +330,7 @@ namespace PowerSDR
             this.Controls.Add(this.SSBbutton);
             this.Controls.Add(this.SWLbutton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.Name = "SpotControl";
             this.Text = "DX / SWL Spotter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpotControl_FormClosing);
@@ -748,7 +767,7 @@ namespace PowerSDR
                 SP_Active = 1;
                     t.Name = "Spotter Thread";
                     t.IsBackground = true;
-                    t.Priority = ThreadPriority.Normal;
+                    t.Priority = ThreadPriority.BelowNormal;
                     t.Start();
 
                   textBox1.Text = "Clicked to Open DX Spider \r\n";
@@ -816,7 +835,7 @@ namespace PowerSDR
         public static int[] DX_Freq = new int[1000];                // in hz
         public static string[] DX_Spotter = new string[1000];       // spotter call sign
         public static string[] DX_Message = new string[1000];       // message
-        public static int[] DX_Mode = new int[1000];                // mode parse from message string 0=ssb,1=cw,2=rtty,3=psk,4=olivia,5=jt65,6=contesa,7=fsk,8=mt63,9=domi,10=packtor, 11=fm
+        public static int[] DX_Mode = new int[1000];                // mode parse from message string 0=ssb,1=cw,2=rtty,3=psk,4=olivia,5=jt65,6=contesa,7=fsk,8=mt63,9=domi,10=packtor, 11=fm, 12=drm, 13=sstv, 14=am
         public static int[] DX_Mode2 = new int[1000];                // mode2 parse from message string 0=normal , +up in hz or -dn in hz
         public static int[] DX_Time = new int[1000];                // GMT
         public static string[] DX_Grid = new string[1000];          // grid
@@ -919,7 +938,7 @@ namespace PowerSDR
                         textBox1.Text += "Waiting for DX Spots \r\n";
 
 
-                        DX_Index = 0; // start at begining
+                      //  DX_Index = 0; // start at begining
 
                     } // SP_active == 2
 
@@ -937,28 +956,29 @@ namespace PowerSDR
                         {
                            SP_reader.BaseStream.ReadTimeout = 5000; // cause character Read to break every 5 seconds to check age of DX spots
 
-                            //-------------------------------------------------------------------------------------------------------------------------------------
-                            // ke9ns wait for a new message
+                      //-------------------------------------------------------------------------------------------------------------------------------------
+                      // ke9ns wait for a new message
 
                             for (;!(sb.ToString().Contains("\r\n"));) //  wait for end of line
                             {
-                                char dd = (char)SP_reader.Read();
-                                sb.Append(dd);
+                                sb.Append((char)SP_reader.Read());  // get next char from socket and add it to build the next dx spot string to parse out 
+                             
 
                                 if (SP_Active == 0)
                                  {
-                                    Trace.WriteLine("break=====");
+                                    Trace.WriteLine("break====="); // if user wants to shut down operation 
                                     break;
                                 }
 
                                 if (sb.ToString().Length > 90)
                                 {
-                                    Trace.WriteLine("Leng break=====");
-                                    break;
+                                    Trace.WriteLine("Leng ====="); // string too long (something happened
+                                    sb = new StringBuilder(); // clear sb string over again
                                 }
 
-              
+
                             }// for (;!(sb.ToString().Contains("\r\n"));) //  wait for end of line
+                      //-------------------------------------------------------------------------------------------------------------------------------------
 
 
                             statusBox.ForeColor = Color.Green;
@@ -1149,7 +1169,7 @@ namespace PowerSDR
                                 {
                                     DX_Mode[DX_Index1] = 1; // cw mode
                                 }
-                                else if ((DX_Freq[DX_Index1] >= 21000000) && (DX_Freq[DX_Index1] <= 21275000))
+                                else if ((DX_Freq[DX_Index1] >= 21000000) && (DX_Freq[DX_Index1] <= 21200000))
                                 {
                                     DX_Mode[DX_Index1] = 1; // cw mode
                                 }
@@ -1169,6 +1189,26 @@ namespace PowerSDR
                                 {
                                     DX_Mode[DX_Index1] = 1; // cw mode
                                 }
+                                else if (
+                                    (DX_Freq[DX_Index1] == 1885000) || (DX_Freq[DX_Index1] == 1900000) || (DX_Freq[DX_Index1] == 1945000) || (DX_Freq[DX_Index1] == 1985000)
+                                    || (DX_Freq[DX_Index1] == 3825000) || (DX_Freq[DX_Index1] == 3870000) || (DX_Freq[DX_Index1] == 3880000) || (DX_Freq[DX_Index1] == 38850000)
+                                     || (DX_Freq[DX_Index1] == 7290000) || (DX_Freq[DX_Index1] == 7295000) || (DX_Freq[DX_Index1] == 14286000) || (DX_Freq[DX_Index1] == 18150000)
+                                     || (DX_Freq[DX_Index1] == 21285000) || (DX_Freq[DX_Index1] == 21425000) ||( (DX_Freq[DX_Index1] >= 29000000) && (DX_Freq[DX_Index1] < 29200000))
+                                     || (DX_Freq[DX_Index1] == 50400000) || (DX_Freq[DX_Index1] == 50250000) || (DX_Freq[DX_Index1] == 144400000) || (DX_Freq[DX_Index1] == 144425000)
+                                     || (DX_Freq[DX_Index1] == 144280000) || (DX_Freq[DX_Index1] == 144450000)
+
+                                    )
+                                {
+                                    DX_Mode[DX_Index1] = 14; // AM mode
+                                }
+                                else if (
+                                         ((DX_Freq[DX_Index1] >= 146000000) && (DX_Freq[DX_Index1] <= 148000000)) || ((DX_Freq[DX_Index1] >= 29200000) && (DX_Freq[DX_Index1] <= 29270000))
+                                       || ((DX_Freq[DX_Index1] >= 144500000) && (DX_Freq[DX_Index1] <= 144900000))|| ((DX_Freq[DX_Index1] >= 145100000) && (DX_Freq[DX_Index1] <= 145500000))
+                                       )
+                                {
+                                    DX_Mode[DX_Index1] = 114; // FM mode
+                                }
+
                                 else
                                 {
                                     DX_Mode[DX_Index1] = 0; // ssb mode
@@ -1230,7 +1270,7 @@ namespace PowerSDR
                                     DX_Mode[DX_Index1] = 3; // psk mode
 
                                 }
-                                else if (DX_Message[DX_Index1].Contains("oli"))
+                                else if (DX_Message[DX_Index1].Contains("oliv"))
                                 {
                                     DX_Mode[DX_Index1] = 4; // olivia mode
 
@@ -1260,14 +1300,34 @@ namespace PowerSDR
                                     DX_Mode[DX_Index1] = 9; // domino mode
 
                                 }
-                                else if (DX_Message[DX_Index1].Contains("pack"))
+                                else if (DX_Message[DX_Index1].Contains("packact")|| DX_Message[DX_Index1].Contains("packtor")||DX_Message[DX_Index1].Contains("amtor"))
                                 {
                                     DX_Mode[DX_Index1] = 10; // pactor mode
 
                                 }
-                                else if (DX_Message[DX_Index1].Contains("fm"))
+                                else if (DX_Message[DX_Index1].Contains("fm "))
                                 {
                                     DX_Mode[DX_Index1] = 11; // fm mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("drm"))
+                                {
+                                    DX_Mode[DX_Index1] = 12; // DRM mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("sstv"))
+                                {
+                                    DX_Mode[DX_Index1] = 13; // sstv mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains("easypal"))
+                                {
+                                    DX_Mode[DX_Index1] = 12; // drm mode
+
+                                }
+                                else if (DX_Message[DX_Index1].Contains(" am ")|| DX_Message[DX_Index1].Contains(" sam "))
+                                {
+                                    DX_Mode[DX_Index1] = 14; // AM mode
 
                                 }
 
@@ -1598,6 +1658,7 @@ namespace PowerSDR
                                     } // catch 1   (4 digits to right side)
 
                                 } // split down
+
                                 else if (DX_Message[DX_Index1].Contains("+")) // check for split
                                 {
 
@@ -1640,10 +1701,11 @@ namespace PowerSDR
 
                                     } // catch 1   (4 digits to right side)
 
+                                    if (DX_Mode2[DX_Index1] > 9000) DX_Mode2[DX_Index1] = 0;
 
                                 } // split up+
 
-                                else if (DX_Message[DX_Index1].Contains("-")) // check for split
+                                else if (DX_Message[DX_Index1].Contains(" -")) // check for split
                                 {
 
                                     int ind = DX_Message[DX_Index1].IndexOf("-") + 1;
@@ -1688,7 +1750,114 @@ namespace PowerSDR
 
                                 } // split dwn -
 
+                                else if (DX_Message[DX_Index1].Contains("qrx")) // check for split
+                                {
 
+                                    int ind = DX_Message[DX_Index1].IndexOf("qrx") + 3;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 8)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+
+                                        DX_Mode2[DX_Index1] =  DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                    }
+                                    catch // catch 1
+                                    {
+
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 7)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+
+                                            DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                        }
+                                        catch // catch 2
+                                        {
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 6)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+
+                                                DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                Trace.WriteLine("failed to find up value================");
+                                                DX_Mode2[DX_Index1] = 0; // 
+
+                                            } // catch 3   (6 digits to right side)
+                                          
+                                        } // catch 2   (7 digits to right side)
+                                       
+                                    } // catch 1   (8 digits to right side)
+
+
+                                } // split qrx
+
+                                else if (DX_Message[DX_Index1].Contains("qrz")) // check for split
+                                {
+
+                                    int ind = DX_Message[DX_Index1].IndexOf("qrz") + 3;
+
+                                    try // try 1
+                                    {
+                                        int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 8)) * 1000);
+                                        Trace.WriteLine("Found dn split hz" + split_hz);
+                                        DX_Mode2[DX_Index1] = split_hz;
+
+                                        DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                    }
+                                    catch // catch 1
+                                    {
+                                        try // try 2
+                                        {
+                                            int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 7)) * 1000);
+                                            Trace.WriteLine("Found dn split hz" + split_hz);
+                                            DX_Mode2[DX_Index1] = split_hz;
+
+                                            DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                        }
+                                        catch // catch 2
+                                        {
+                                            try // try 3
+                                            {
+                                                int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 6)) * 1000);
+                                                Trace.WriteLine("Found dn split hz" + split_hz);
+                                                DX_Mode2[DX_Index1] = split_hz;
+
+                                                DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
+
+
+                                            }
+                                            catch // catch 3
+                                            {
+
+                                                Trace.WriteLine("failed to find up value================");
+                                                DX_Mode2[DX_Index1] = 0; // 
+
+                                            } // catch 3   (6 digits to right side)
+                                          
+                                        } // catch 2   (7 digits to right side)
+                                      
+                                    } // catch 1   (8 digits to right side)
+
+
+                                } // split qrz
 
 
 
@@ -1906,10 +2075,10 @@ namespace PowerSDR
                            
                             DX_Index++; // jump to PASS2 if it passed the valid call spotter test
 
-                            if (DX_Index > 60)
+                            if (DX_Index > 80)
                             {
-                                //  Trace.WriteLine("DX SPOT REACH 60 ");
-                                DX_Index = 60; // you have reached max spots
+                                //  Trace.WriteLine("DX SPOT REACH 80 ");
+                                DX_Index = 80; // you have reached max spots
                             }
 
                             //   Trace.WriteLine("index "+ DX_Index);
@@ -2117,7 +2286,11 @@ namespace PowerSDR
                 else if (DX_Mode[ii] == 9)  DXmode = " domi";
                 else if (DX_Mode[ii] == 10) DXmode = " pack";
                 else if (DX_Mode[ii] == 11) DXmode = " fm  ";
-                else                        DXmode = "     ";
+                else if (DX_Mode[ii] == 12) DXmode = " drm ";
+                else if (DX_Mode[ii] == 13) DXmode = " sstv";
+                else if (DX_Mode[ii] == 14) DXmode = " am  ";
+
+                else DXmode = "     ";
 
                 textBox1.Text += (DX_FULLSTRING[ii]+ DXmode+ " :" + DX_Age[ii] + "\r\n" );
              
@@ -2140,7 +2313,7 @@ namespace PowerSDR
         private void callBox_MouseEnter(object sender, EventArgs e)
         {
             ToolTip tt = new ToolTip();
-            tt.Show("Your Call Sign to login to DX Spider node. Note: you must have used this call with this node prior to this first time ", callBox,10, 60, 2000);
+            tt.Show("Your Call Sign to login to DX Spider node. Note: you must have used this call with this node prior to this first time ", callBox, 10, 60, 2000);
         }
 
         private void nodeBox_MouseEnter(object sender, EventArgs e)
@@ -2159,24 +2332,30 @@ namespace PowerSDR
 
         private void callBox_TextChanged(object sender, EventArgs e)
         {
-        
+            DX_Index = 0; // start over if change node
+
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
         {
 
-          
+            DX_Index = 0; // start over if change node
+
 
         }
 
         private void portBox_TextChanged(object sender, EventArgs e)
         {
-           
+            DX_Index = 0; // start over if change node
+
         }
 
         private void nodeBox_TextChanged(object sender, EventArgs e)
         {
-      
+
+            DX_Index = 0; // start over if change node
+
+
         }
 
 
@@ -2305,7 +2484,9 @@ namespace PowerSDR
                             else if (DX_Mode[iii] == 9)  console.RX1DSPMode = DSPMode.DIGL;
                             else if (DX_Mode[iii] == 10) console.RX1DSPMode = DSPMode.DIGL;
                             else if (DX_Mode[iii] == 11) console.RX1DSPMode = DSPMode.FM;
-
+                            else if (DX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.LSB;
+                            else if (DX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
                             else console.RX1DSPMode = DSPMode.LSB;
 
 
@@ -2332,6 +2513,9 @@ namespace PowerSDR
                             else if (DX_Mode[iii] == 9)  console.RX1DSPMode = DSPMode.DIGU;
                             else if (DX_Mode[iii] == 10) console.RX1DSPMode = DSPMode.DIGU;
                             else if (DX_Mode[iii] == 11) console.RX1DSPMode = DSPMode.FM;
+                            else if (DX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.USB;
+                            else if (DX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
                             else console.RX1DSPMode = DSPMode.USB;
 
                         }
