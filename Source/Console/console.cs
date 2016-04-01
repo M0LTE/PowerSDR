@@ -623,6 +623,7 @@ namespace PowerSDR
         public static Stream meter_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met3.jpg");
         // Stream myStream = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met4.jpg");
 
+
         //==================================================================================================
 
         #region Variable Declarations
@@ -630,7 +631,7 @@ namespace PowerSDR
         // Variable Declarations 
         // ======================================================
 
-     
+
         public DSP dsp;
 		private SIOListenerII siolisten = null; 
 
@@ -1095,8 +1096,8 @@ namespace PowerSDR
 		private System.Windows.Forms.TextBoxTS txtVFOAFreq;
 		private System.Windows.Forms.TextBoxTS txtVFOABand;
 		private System.Windows.Forms.TextBoxTS txtVFOBFreq;
-		private System.Windows.Forms.PictureBox picDisplay;
-		private System.Windows.Forms.GroupBoxTS grpVFOA;
+        public PictureBox picDisplay;
+        private System.Windows.Forms.GroupBoxTS grpVFOA;
 		private System.Windows.Forms.GroupBoxTS grpVFOB;
         private System.Windows.Forms.TextBoxTS txtVFOBBand;
         public CheckBoxTS chkPower;
@@ -2954,6 +2955,7 @@ namespace PowerSDR
             this.btnTNFAdd.Name = "btnTNFAdd";
             this.toolTip1.SetToolTip(this.btnTNFAdd, resources.GetString("btnTNFAdd.ToolTip"));
             this.btnTNFAdd.Click += new System.EventHandler(this.btnTNFAdd_Click);
+            this.btnTNFAdd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnTNFAdd_MouseDown);
             // 
             // chkTNF
             // 
@@ -2965,6 +2967,7 @@ namespace PowerSDR
             this.chkTNF.Name = "chkTNF";
             this.toolTip1.SetToolTip(this.chkTNF, resources.GetString("chkTNF.ToolTip"));
             this.chkTNF.CheckedChanged += new System.EventHandler(this.chkTNF_CheckedChanged);
+            this.chkTNF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkTNF_MouseDown);
             // 
             // chkDisplayPeak
             // 
@@ -5428,6 +5431,8 @@ namespace PowerSDR
             // 
             // toolStripNotchDeep
             // 
+            this.toolStripNotchDeep.Checked = true;
+            this.toolStripNotchDeep.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripNotchDeep.Name = "toolStripNotchDeep";
             resources.ApplyResources(this.toolStripNotchDeep, "toolStripNotchDeep");
             this.toolStripNotchDeep.Click += new System.EventHandler(this.toolStripNotchDeep_Click);
@@ -46668,6 +46673,7 @@ namespace PowerSDR
             DX_X = e.X; //ke9ns add
             DX_Y = e.Y; //ke9ns add
 
+
             //---------------------------------------------------------------------------
             //---------------------------------------------------------------------------
             // ke9ns add  to allow proper click to tune operation between Rx1 and rx2
@@ -47215,9 +47221,7 @@ namespace PowerSDR
 
 
                     // ke9ns add below
-                  
-
-
+  
                     if ((!near_notch) && (current_click_tune_mode != ClickTuneMode.Off)) // ke9ns if in clicktune mode (selected by doing a right click first to lock in the mode)
 					{
                       
@@ -47238,9 +47242,7 @@ namespace PowerSDR
 								if((Display.CurrentDisplayModeBottom != DisplayMode.OFF) && (rx2_enabled) && (e.Y > H7))  // ke9ns mod (in case when rX2 display is off)
                                 {
 
-                                  //  Trace.WriteLine("here====12");
-
-
+                                 
                                     freq = double.Parse(txtVFOBFreq.Text) + (double)x*0.0000010;
 									switch(rx2_dsp_mode)
 									{
@@ -47571,6 +47573,8 @@ namespace PowerSDR
 #if (!NO_TNF)
                         List<Notch> lst = NotchList.NotchesInBW(cfreq, clow, chigh);
 
+                       
+
                         if ((lst.Count > 0) && (!mox))
                         {
                             // make sure we have a check mark on remembered in the context menu if necessary
@@ -47578,6 +47582,11 @@ namespace PowerSDR
                             // display the pop-up
                             contextMenuStripNotch.Show(Cursor.Position);
                             Context_Notch = lst[0];
+
+                            if (toolStripNotchNormal.Checked) lst[0].Depth = 1; // ke9ns add this section
+                            else if (toolStripNotchDeep.Checked) lst[0].Depth = 2;
+                            else lst[0].Depth = 3;
+
                             toolStripNotchNormal.Checked = (lst[0].Depth == 1);
                             toolStripNotchDeep.Checked = (lst[0].Depth == 2);
                             toolStripNotchVeryDeep.Checked = (lst[0].Depth == 3);
@@ -47638,7 +47647,7 @@ namespace PowerSDR
         public static int DXK = 0;               // number of spots on picdisplay
         public static int DXK2 = 0;               // number of spots on picdisplay
 
-        public static int DXR = 0;               // 1=display SPOTTER on screen instead of DX spot 0=DX SPot only
+        public static int DXR = 0;               // 1=display SPOTTER on screen instead of DX spot, 0=DX Spot only
 
         public static int DX_X = 0;               //x cursor pos inside picdisplay 
         public static int DX_Y = 0;               //y  cursor pos inside picdisplay
@@ -50631,6 +50640,8 @@ namespace PowerSDR
 			dsp.GetDSPRX(0, 0).NoiseReduction = chkNR.Checked;
 			dsp.GetDSPRX(0, 1).NoiseReduction = chkNR.Checked;
 			cat_nr_status = Convert.ToInt32(chkNR.Checked);
+
+            
 		}
 
 		private void chkANF_CheckedChanged(object sender, System.EventArgs e)
@@ -54198,6 +54209,8 @@ namespace PowerSDR
         private void toolStripNotchNormal_Click(object sender, EventArgs e)
         {
 #if (!NO_TNF)
+
+         
             Context_Notch.Depth = 1;
             toolStripNotchNormal.Checked = true;
             toolStripNotchDeep.Checked = false;
@@ -54616,13 +54629,16 @@ namespace PowerSDR
             if (NotchList.NotchesInBW(VFOAFreq, low, high).Count >= MAX_NOTCHES_INITIALLY_IN_PASSBAND)
                 return;
 
-            NotchList.List.Add(new Notch(rf_freq, default_notch_width));
+            if (setupForm.udTNFWidth.Value < 100) setupForm.udTNFWidth.Value = default_notch_width; // ke9ns add
+            else default_notch_width = (int)setupForm.udTNFWidth.Value;
+
+            NotchList.List.Add(new Notch(rf_freq, default_notch_width)); // ke9ns mod
 
             UpdateRX1Notches();
             UpdateRX1SubNotches();
             UpdateRX2Notches();
 #endif
-        }
+        } // btnTNFAdd_Click
 
         private void addNotch(int thread, int subrx, uint count, double freq, double bw)
         {
@@ -54689,7 +54705,7 @@ namespace PowerSDR
 
                 if (count >= MAX_NOTCHES_IN_PASSBAND) // don't enable more than 9 notches!
                     break;
-            }
+            } // for loop
 
             // turn off unused notches
             if (count < MAX_NOTCHES_IN_PASSBAND)
@@ -54701,7 +54717,7 @@ namespace PowerSDR
             if (!chkPower.Checked)
                 Display.DrawBackground();
 #endif
-        }
+        } // UpdateRX1Notches()
 
         private void UpdateRX1SubNotches()
         {
@@ -57522,6 +57538,46 @@ namespace PowerSDR
         private void chkRX2NB2_MouseDown(object sender, MouseEventArgs e)
         {
 
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+
+                setupForm.tcSetup.SelectedIndex = 3; // select dsp tab;
+                setupForm.tcDSP.SelectedIndex = 0; // select Options tab
+
+            } // right click
+        }
+
+        // ke9ns add
+        private void btnTNFAdd_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+
+                setupForm.tcSetup.SelectedIndex = 3; // select dsp tab;
+                setupForm.tcDSP.SelectedIndex = 0; // select Options tab
+
+            } // right click
+        }
+
+        // ke9ns add
+        private void chkTNF_MouseDown(object sender, MouseEventArgs e)
+        {
             MouseEventArgs me = (MouseEventArgs)e;
 
             if ((me.Button == System.Windows.Forms.MouseButtons.Right))

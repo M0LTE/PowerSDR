@@ -38,7 +38,8 @@ using System.Windows.Forms;
 using System.Text;  // ke9ns add for stringbuilder
 using System.Text.RegularExpressions;
 using System.Globalization;
-
+using System.IO;
+using System.IO.Ports;
 
 #if(!NO_TNF)
 using Flex.TNF;
@@ -52,9 +53,14 @@ namespace PowerSDR
 {		
 	class Display
 	{
-		#region Variable Declaration
 
-		public static Console console;
+        private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
+
+        public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");
+
+        #region Variable Declaration
+
+        public static Console console;
 
         public static SpotControl spot;                         // ke9ns add  communications with spot.cs and dx spotter
 
@@ -458,37 +464,42 @@ namespace PowerSDR
         private static PixelFormat WtrColor = PixelFormat.Format24bppRgb;  //          
 
       
-        public static int H1 = 0;  //  ke9ns used to fool draw routines when displaying in 3rds 
-        public static int H2 = 0;  //  ke9ns used to fool draw routines when displaying in 4ths   
+        public static int H1 = 0;  //  ke9ns add used to fool draw routines when displaying in 3rds 
+        public static int H2 = 0;  //  ke9ns add used to fool draw routines when displaying in 4ths   
 
-        public static int K9 = 0;  // ke9ns rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
-        public static int K10 = 0; // ke9ns rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
+        public static int K9 = 0;  // ke9ns add rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
+        public static int K10 = 0; // ke9ns add rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
 
-        private static int K11 = 0; // ke9ns set to 5 in RX1 in panfall, otherwise 0
+        private static int K11 = 0; // ke9ns add set to 5 in RX1 in panfall, otherwise 0
      
     
-        private static int K10LAST = 0; // ke9ns flag to check for only changes in display mode rx2
-        private static int K9LAST = 0;  // ke9ns flag to check for only changes in display mode rx1
+        private static int K10LAST = 0; // ke9ns add flag to check for only changes in display mode rx2
+        private static int K9LAST = 0;  // ke9ns add flag to check for only changes in display mode rx1
 
-        private static int K13 = 0; // ke9ns original H size before being reduced and past onto drawwaterfall to create bmp file size correctly
-        public static int K14 = 0; // ke9ns used to draw the bmp waterfall 1 time when you changed display modes.
-        private static int K15 = 1; // ke9ns used to pass the divider factor back to the init() routine to keep the bmp waterfall size correct
+        private static int K13 = 0; // ke9ns add original H size before being reduced and past onto drawwaterfall to create bmp file size correctly
+        public static int K14 = 0; // ke9ns add used to draw the bmp waterfall 1 time when you changed display modes.
+        private static int K15 = 1; // ke9ns add used to pass the divider factor back to the init() routine to keep the bmp waterfall size correct
 
-        private static float temp_low_threshold = 0; // ke9ns to switch between TX and RX low level waterfall levels
-        private static float temp_high_threshold = 0; // ke9ns for TX upper level
+        private static float temp_low_threshold = 0; // ke9ns add to switch between TX and RX low level waterfall levels
+        private static float temp_high_threshold = 0; // ke9ns add for TX upper level
+
+        public static int DIS_X = 0; // ke9ns add always the size of picdisplay
+        public static int DIS_Y = 0; // ke9ns add
 
         //========================================================
 
         private static Control target = null;
-		public static Control Target
+		public static Control Target                 // ke9ns come here when picdisplay is resized (ie. console is resized)
 		{
 			get { return target; }
 			set
 			{
 				target = value;
-				H = target.Height;
-				W = target.Width;
+				DIS_Y = H = target.Height; // ke9ns mod
+				DIS_X = W = target.Width; // ke9ns mod
 				Audio.ScopeDisplayWidth = W;
+
+                
 			}
 		}
 
@@ -2278,9 +2289,19 @@ namespace PowerSDR
         // ke9ns draw panadapter grid
         //=========================================================
 
+        private static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+        private static int[] holder1 = new int[100];                          // ke9ns add
+        private static Font font1 = new Font("Ariel", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
 
-        private static int[] holder = new int[100];  // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-        private static int[] holder1 = new int[100];
+        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness
+        private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
+        private static Pen p3 = new Pen(Color.FromArgb(75, Color.Black), 1.0f); // dark
+        private static Pen p4 = new Pen(Color.FromArgb(50, Color.Black), 1.0f); // dusk
+      //  private static Pen p5 = new Pen(Color.DarkGray, 2.0f); // dusk
+
+        private static SizeF length;                                          // ke9nsa add length of call sign so we can do usb/lsb and define a box to click into
+        private static bool low = false;                    // ke9ns add true=LSB, false=USB
+        private static int rx2 = 0;                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
 
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
 		{
@@ -3920,9 +3941,7 @@ namespace PowerSDR
             if ( (SpotControl.SP1_Active != 0) && (!mox) && (console.chkPower.Checked == true) && (vfoa_hz < 30000000))// do SWL spot if active and not transmitting
             {
                  
-                Font font1 = new Font("Ariel", 9, FontStyle.Regular);
-                Pen p = new Pen(Color.Purple, 2.0f); // color for vert line of SWL list
-
+               
                 int VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
                 int VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
                 int VFODiff = VFOHigh - VFOLow; // diff in hz
@@ -3972,7 +3991,7 @@ namespace PowerSDR
                                 {
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               
-                                    g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+                                    g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                     g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
 
                                 if (Console.SXK < 99)
@@ -4010,7 +4029,7 @@ namespace PowerSDR
                             {
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                              
-                                g.DrawLine(p, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+                                g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                 g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
                              
                                 iii = iii + 11; // stairstep spots
@@ -4033,60 +4052,160 @@ namespace PowerSDR
             // ke9ns add draw DX SPOTS on pandapter
             //=====================================================================
             //=====================================================================
-          
+
+
             if (SpotControl.SP_Active != 0)
             {
-                Font font1 = new Font("Ariel", 9, FontStyle.Regular);     // call sign font style
-                Pen p = new Pen(Color.YellowGreen, 2.0f);                // vert line color and thickness
 
-                int iii = 0; // stairstep holder
-                byte low = 0; // 1=LSB, 0=USB
-                int rx2 = 0;
-                int kk = 0;
+                int iii = 0;                          // ke9ns add stairstep holder
 
-              //  int[] holder = new int[100];  // used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-              //  int[] holder1 = new int[100];
+                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
 
                 int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
 
-
-                // ke9ns used by DX spotting routine below
-
-                int H1a = H / 2;            // length of vertical line
+                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
                 int H1b = 20;               // starting point of vertical line
 
-                                              // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
                 if (bottom)                 // if your drawing to the bottom 
                 {
-                    if ((K9 == 2) && (K10 == 2))  H1a = H + (H/2); // long
+                    if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
                     else H1a = H + (H / 4); // short
 
                     H1b = H + 20;
 
                     vfo_hz = (int)vfob_hz;
-                    Console.DXK2 = 0; // index to allow call signs to draw after all the vert lines on the screen
+                    Console.DXK2 = 0;        // RX2 index to allow call signs to draw after all the vert lines on the screen
 
                 }
-                else Console.DXK = 0; // index to allow call signs to draw after all the vert lines on the screen
-
-
-                int VFOLow = vfo_hz + RXDisplayLow; // low freq (left side) in hz
-                int VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
-                int VFODiff = VFOHigh - VFOLow; // diff in hz
-
-             
-                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) // check for bands using LSB
+                else
                 {
-                    low = 1; // LSB
+                    Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
                 }
-                else low = 0; // usb
 
 
-                SizeF length; // length of call sign so we can do usb/lsb and define a box to click into
+                int VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
+                int VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                int VFODiff = VFOHigh - VFOLow;       // diff in hz
 
 
-                //--------------------------------------------------------------------------------------------
-                for (int ii = 0; ii < SpotControl.DX_Index; ii++) // draw vert lines first
+                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
+                else low = false;     // usb
+
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+                // draw sun tracker and gray line
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+
+                if (SpotControl.SUN)
+                {
+
+                    Image src = new Bitmap(sun_image);
+                    g.DrawImage(src, SpotControl.Sun_X - 10, SpotControl.Sun_Y - 10);  // rectangle to show bitmap image in
+                    g.DrawString("SFI " + SpotControl.SFI.ToString("D"), font1, grid_text_brush, SpotControl.Sun_X + 15, SpotControl.Sun_Y-10);
+                    g.DrawString("A " + SpotControl.Aindex.ToString("D"), font1, grid_text_brush, SpotControl.Sun_X + 15, SpotControl.Sun_Y);
+
+                } // sun tracker enabled
+
+                if (SpotControl.GRAYLINE == true)
+                {
+
+                  //  Point[] test = new Point[100];
+
+
+                    /* 
+                                        points = new Point[W];
+
+                                        points[W].X = W; points[W].Y = H;
+                                        points[W + 1].X = 0; points[W + 1].Y = H;
+                                        if (bottom)
+                                        {
+                                            points[W].Y += H;
+                                            points[W + 1].Y += H;
+                                        }
+                                        data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
+                                        g.FillPolygon(data_line_pen.Brush, points);
+                                        points[W] = points[W - 1];
+                                        points[W + 1] = points[W - 1];
+                                        data_line_pen.Color = data_line_color;
+                                        g.DrawLines(data_line_pen, points);
+
+                                        */
+
+                   /*
+                    int H3 = SpotControl.Sun_Bot1; // full bottom, but if your in panafall mode, then reduce it.
+
+                    if (K9 > 2)
+                    {
+                        if (H < H3)
+                        {
+                            H3 = H;
+                         
+                        }
+                    }
+
+                 */
+                    for (int ee = SpotControl.Sun_Top1; ee < SpotControl.Sun_Bot1; ee++)
+                    {
+
+                       
+
+                        //-----------------------------------------------------------------
+                        // ke9ns dusk
+                        if (SpotControl.GrayLine_Pos3[ee] == 0) // not dusk on edges on screen
+                        {
+                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.GrayLine_Pos1[ee, 1], ee);
+                        }
+                        else if (SpotControl.GrayLine_Pos3[ee] == 1)
+                        {
+                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.Sun_Right1, ee);
+                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 1], ee, SpotControl.Sun_Left1, ee);
+                        }
+                        else
+                        {
+                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 1], ee, SpotControl.Sun_Right1, ee);
+                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.Sun_Left1, ee);
+                        }
+
+                    
+                    
+                        //-----------------------------------------------------------------
+                        // ke9ns dark
+                        if (SpotControl.GrayLine_Pos2[ee] == 0)  // not dark on edges on screen
+                        {
+                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.GrayLine_Pos[ee, 1], ee);
+                        }
+                        else if (SpotControl.GrayLine_Pos2[ee] == 1)
+                        {
+                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.Sun_Right1, ee);
+                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 1], ee, SpotControl.Sun_Left1, ee);
+                        }
+                        else
+                        {
+                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 1], ee, SpotControl.Sun_Right1, ee);
+                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.Sun_Left1, ee);
+                        }
+
+
+
+                       
+
+
+                        }  // for loop  
+
+
+                } // if GRAYLINE enabled
+
+
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+                // draw DX spots
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+
+
+                for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                 {
                   
                     if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
@@ -4098,7 +4217,7 @@ namespace PowerSDR
 
                         kk++; 
                       
-                        g.DrawLine(p, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
+                        g.DrawLine(p1, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
                        
                     }
 
@@ -4114,7 +4233,7 @@ namespace PowerSDR
                 {
 
                     // font
-                    if (low == 1) // 1=LSB so draw on left side of line
+                    if (low) // 1=LSB so draw on left side of line
                     {
 
                         if (Console.DXR == 0)
@@ -4129,7 +4248,7 @@ namespace PowerSDR
 
                         }
 
-                        if (bottom) rx2 = 50;
+                        if (bottom) rx2 = 50; // allow only 50 qrz spots per Receiver
                         else rx2 = 0;
 
                         if (!mox) // only do when not transmitting
@@ -4146,12 +4265,12 @@ namespace PowerSDR
                     } // LSB side
                     else   // 0=usb so draw on righ side of line (normal)
                     {
-                        if (Console.DXR == 0)
+                        if (Console.DXR == 0) // spot
                         {
                             length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
                             g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
                         }
-                        else
+                        else // spotter
                         {
                             length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
                             g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
@@ -5354,7 +5473,7 @@ namespace PowerSDR
 
             if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
-
+         
 
             if (local_mox) // ke9ns ADD reset panadapter to TX mic levels , then set it back when back to RX
             {

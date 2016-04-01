@@ -50,7 +50,9 @@ namespace PowerSDR
       
         //	private Console console;  // was this
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
-       
+
+        public static SpotControl SpotForm;                       // ke9ns add DX spotter function
+        public static ScanControl ScanForm;                       // ke9ns add freq Scanner function
 
         private Progress progress;
 		private ArrayList KeyList;
@@ -923,7 +925,7 @@ namespace PowerSDR
         private NumericUpDownTS udGenTX1Delay;
         private CheckBoxTS chkDisplayPanFill;
         private GroupBoxTS grpAppSkins;
-        private ComboBoxTS comboAppSkin;
+        public ComboBoxTS comboAppSkin;
         private ButtonTS btnSkinExport;
         private CheckBoxTS chkCWDisableUI;
         private CheckBoxTS chkAudioRX2toVAC;
@@ -1025,6 +1027,12 @@ namespace PowerSDR
         private LabelTS labelTS5;
         public CheckBoxTS checkWaterMoveSize;
         public CheckBoxTS gridBoxTS;
+        private LabelTS labelTS7;
+        public NumericUpDownTS udTNFWidth;
+        private ButtonTS btnRSTNB2;
+        private ButtonTS btnRSTNB;
+        private ButtonTS btnRSTANF;
+        private ButtonTS btnRSTNR;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1247,6 +1255,53 @@ namespace PowerSDR
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.tpGeneralOptions = new System.Windows.Forms.TabPage();
+            this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
+            this.chkCalExpert = new System.Windows.Forms.CheckBox();
+            this.tpFilters = new System.Windows.Forms.TabPage();
+            this.tpRX2 = new System.Windows.Forms.TabPage();
+            this.tpGeneralNavigation = new System.Windows.Forms.TabPage();
+            this.tpUserInterface = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnConfigure = new System.Windows.Forms.Button();
+            this.cbConsoleSelect = new System.Windows.Forms.ComboBox();
+            this.tpAudio = new System.Windows.Forms.TabPage();
+            this.tcAudio = new System.Windows.Forms.TabControl();
+            this.tpAudioCard1 = new System.Windows.Forms.TabPage();
+            this.tpVAC = new System.Windows.Forms.TabPage();
+            this.tpVAC2 = new System.Windows.Forms.TabPage();
+            this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.tpDSP = new System.Windows.Forms.TabPage();
+            this.tcDSP = new System.Windows.Forms.TabControl();
+            this.tpDSPOptions = new System.Windows.Forms.TabPage();
+            this.tpDSPImageReject = new System.Windows.Forms.TabPage();
+            this.chkDSPImageExpert = new System.Windows.Forms.CheckBox();
+            this.tpDSPKeyer = new System.Windows.Forms.TabPage();
+            this.tpDSPAGCALC = new System.Windows.Forms.TabPage();
+            this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.tpPowerAmplifier = new System.Windows.Forms.TabPage();
+            this.rtxtPACalReq = new System.Windows.Forms.RichTextBox();
+            this.tpAppearance = new System.Windows.Forms.TabPage();
+            this.tcAppearance = new System.Windows.Forms.TabControl();
+            this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
+            this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
+            this.tpKeyboard = new System.Windows.Forms.TabPage();
+            this.tpExtCtrl = new System.Windows.Forms.TabPage();
+            this.tpCAT = new System.Windows.Forms.TabPage();
+            this.tpTests = new System.Windows.Forms.TabPage();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.timer_sweep = new System.Windows.Forms.Timer(this.components);
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.btnExportDB = new System.Windows.Forms.ButtonTS();
+            this.btnImportDB = new System.Windows.Forms.ButtonTS();
+            this.btnResetDB = new System.Windows.Forms.ButtonTS();
+            this.btnApply = new System.Windows.Forms.ButtonTS();
+            this.btnCancel = new System.Windows.Forms.ButtonTS();
+            this.btnOK = new System.Windows.Forms.ButtonTS();
             this.grpHWSoftRock = new System.Windows.Forms.GroupBoxTS();
             this.lblGenSoftRockCenterFreq = new System.Windows.Forms.LabelTS();
             this.udSoftRockCenterFreq = new System.Windows.Forms.NumericUpDownTS();
@@ -1299,7 +1354,6 @@ namespace PowerSDR
             this.lbl1500PARev = new System.Windows.Forms.LabelTS();
             this.lbl1500TRXRev = new System.Windows.Forms.LabelTS();
             this.lbl1500SN = new System.Windows.Forms.LabelTS();
-            this.tpGeneralOptions = new System.Windows.Forms.TabPage();
             this.chkGenOptionsShowATUPopup = new System.Windows.Forms.CheckBoxTS();
             this.chkImportDBRestrict = new System.Windows.Forms.CheckBoxTS();
             this.grpOptUSBBuf = new System.Windows.Forms.GroupBoxTS();
@@ -1341,8 +1395,6 @@ namespace PowerSDR
             this.chkGeneralSpurRed = new System.Windows.Forms.CheckBoxTS();
             this.grpGeneralProcessPriority = new System.Windows.Forms.GroupBoxTS();
             this.comboGeneralProcessPriority = new System.Windows.Forms.ComboBoxTS();
-            this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
-            this.chkCalExpert = new System.Windows.Forms.CheckBox();
             this.grpGenCalRXImage = new System.Windows.Forms.GroupBoxTS();
             this.udGeneralCalFreq3 = new System.Windows.Forms.NumericUpDownTS();
             this.lblGenCalRXImageFreq = new System.Windows.Forms.LabelTS();
@@ -1358,7 +1410,6 @@ namespace PowerSDR
             this.btnGeneralCalFreqStart = new System.Windows.Forms.ButtonTS();
             this.udGeneralCalFreq1 = new System.Windows.Forms.NumericUpDownTS();
             this.lblGeneralCalFrequency = new System.Windows.Forms.LabelTS();
-            this.tpFilters = new System.Windows.Forms.TabPage();
             this.grpOptFilterControls = new System.Windows.Forms.GroupBoxTS();
             this.udFilterDefaultLowCut = new System.Windows.Forms.NumericUpDownTS();
             this.lblDefaultLowCut = new System.Windows.Forms.LabelTS();
@@ -1369,22 +1420,12 @@ namespace PowerSDR
             this.udOptMaxFilterWidth = new System.Windows.Forms.NumericUpDownTS();
             this.lblOptMaxFilter = new System.Windows.Forms.LabelTS();
             this.chkOptFilterSaveChanges = new System.Windows.Forms.CheckBoxTS();
-            this.tpRX2 = new System.Windows.Forms.TabPage();
             this.chkRX2DisconnectOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkRX2AutoMuteRX1OnVFOBTX = new System.Windows.Forms.CheckBoxTS();
             this.chkRX2AutoMuteRX2OnVFOATX = new System.Windows.Forms.CheckBoxTS();
-            this.tpGeneralNavigation = new System.Windows.Forms.TabPage();
             this.grpOptSpaceNav = new System.Windows.Forms.GroupBoxTS();
             this.chkSpaceNavFlyPanadapter = new System.Windows.Forms.CheckBoxTS();
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
-            this.tpUserInterface = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnConfigure = new System.Windows.Forms.Button();
-            this.cbConsoleSelect = new System.Windows.Forms.ComboBox();
-            this.tpAudio = new System.Windows.Forms.TabPage();
-            this.tcAudio = new System.Windows.Forms.TabControl();
-            this.tpAudioCard1 = new System.Windows.Forms.TabPage();
             this.chkAudioExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpAudioMicBoost = new System.Windows.Forms.GroupBoxTS();
             this.grpAudioChannels = new System.Windows.Forms.GroupBoxTS();
@@ -1418,7 +1459,6 @@ namespace PowerSDR
             this.comboAudioBuffer1 = new System.Windows.Forms.ComboBoxTS();
             this.grpAudioSampleRate1 = new System.Windows.Forms.GroupBoxTS();
             this.comboAudioSampleRate1 = new System.Windows.Forms.ComboBoxTS();
-            this.tpVAC = new System.Windows.Forms.TabPage();
             this.grpDirectIQOutput = new System.Windows.Forms.GroupBoxTS();
             this.chkAudioRX2toVAC = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioCorrectIQ = new System.Windows.Forms.CheckBoxTS();
@@ -1449,7 +1489,6 @@ namespace PowerSDR
             this.comboAudioInput2 = new System.Windows.Forms.ComboBoxTS();
             this.comboAudioDriver2 = new System.Windows.Forms.ComboBoxTS();
             this.chkAudioEnableVAC = new System.Windows.Forms.CheckBoxTS();
-            this.tpVAC2 = new System.Windows.Forms.TabPage();
             this.chkVAC2UseRX2 = new System.Windows.Forms.CheckBoxTS();
             this.grpVAC2DirectIQ = new System.Windows.Forms.GroupBoxTS();
             this.chkVAC2DirectIQCal = new System.Windows.Forms.CheckBoxTS();
@@ -1479,7 +1518,6 @@ namespace PowerSDR
             this.comboAudioInput3 = new System.Windows.Forms.ComboBoxTS();
             this.comboAudioDriver3 = new System.Windows.Forms.ComboBoxTS();
             this.chkVAC2Enable = new System.Windows.Forms.CheckBoxTS();
-            this.tpDisplay = new System.Windows.Forms.TabPage();
             this.grpDisplayMultimeter = new System.Windows.Forms.GroupBoxTS();
             this.chkDisplayMeterShowDecimal = new System.Windows.Forms.CheckBoxTS();
             this.udMeterDigitalDelay = new System.Windows.Forms.NumericUpDownTS();
@@ -1542,9 +1580,12 @@ namespace PowerSDR
             this.lblDisplayGridStep = new System.Windows.Forms.LabelTS();
             this.lblDisplayGridMin = new System.Windows.Forms.LabelTS();
             this.lblDisplayGridMax = new System.Windows.Forms.LabelTS();
-            this.tpDSP = new System.Windows.Forms.TabPage();
-            this.tcDSP = new System.Windows.Forms.TabControl();
-            this.tpDSPOptions = new System.Windows.Forms.TabPage();
+            this.btnRSTNB2 = new System.Windows.Forms.ButtonTS();
+            this.btnRSTNB = new System.Windows.Forms.ButtonTS();
+            this.btnRSTANF = new System.Windows.Forms.ButtonTS();
+            this.btnRSTNR = new System.Windows.Forms.ButtonTS();
+            this.labelTS7 = new System.Windows.Forms.LabelTS();
+            this.udTNFWidth = new System.Windows.Forms.NumericUpDownTS();
             this.chkDSPTXMeterPeak = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPBufferSize = new System.Windows.Forms.GroupBoxTS();
             this.grpDSPBufDig = new System.Windows.Forms.GroupBoxTS();
@@ -1587,8 +1628,6 @@ namespace PowerSDR
             this.grpDSPNB2 = new System.Windows.Forms.GroupBoxTS();
             this.udDSPNB2 = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPNB2Threshold = new System.Windows.Forms.LabelTS();
-            this.tpDSPImageReject = new System.Windows.Forms.TabPage();
-            this.chkDSPImageExpert = new System.Windows.Forms.CheckBox();
             this.grpDSPImageRejectTX = new System.Windows.Forms.GroupBoxTS();
             this.checkboxTXImagCal = new System.Windows.Forms.CheckBoxTS();
             this.lblDSPGainValTX = new System.Windows.Forms.LabelTS();
@@ -1599,7 +1638,6 @@ namespace PowerSDR
             this.tbDSPImagePhaseTX = new System.Windows.Forms.TrackBarTS();
             this.lblDSPImagePhaseTX = new System.Windows.Forms.LabelTS();
             this.tbDSPImageGainTX = new System.Windows.Forms.TrackBarTS();
-            this.tpDSPKeyer = new System.Windows.Forms.TabPage();
             this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.grpKeyerConnections = new System.Windows.Forms.GroupBoxTS();
             this.comboKeyerConnKeyLine = new System.Windows.Forms.ComboBoxTS();
@@ -1631,7 +1669,6 @@ namespace PowerSDR
             this.chkCWBreakInEnabled = new System.Windows.Forms.CheckBoxTS();
             this.lblCWBreakInDelay = new System.Windows.Forms.LabelTS();
             this.udCWBreakInDelay = new System.Windows.Forms.NumericUpDownTS();
-            this.tpDSPAGCALC = new System.Windows.Forms.TabPage();
             this.grpDSPLeveler = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPLevelerEnabled = new System.Windows.Forms.CheckBoxTS();
             this.lblDSPLevelerHangThreshold = new System.Windows.Forms.LabelTS();
@@ -1674,7 +1711,6 @@ namespace PowerSDR
             this.lblDSPAGCMaxGain = new System.Windows.Forms.LabelTS();
             this.udDSPAGCFixedGaindB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
-            this.tpTransmit = new System.Windows.Forms.TabPage();
             this.chkRememberTXProfileOnModeChange = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioMicBoost = new System.Windows.Forms.CheckBoxTS();
             this.chkSaveTXProfileOnExit = new System.Windows.Forms.CheckBoxTS();
@@ -1720,8 +1756,6 @@ namespace PowerSDR
             this.grpTX1500 = new System.Windows.Forms.GroupBoxTS();
             this.lblTX1500Blanking = new System.Windows.Forms.LabelTS();
             this.udTX1500PhoneBlanking = new System.Windows.Forms.NumericUpDownTS();
-            this.tpPowerAmplifier = new System.Windows.Forms.TabPage();
-            this.rtxtPACalReq = new System.Windows.Forms.RichTextBox();
             this.grpPABandOffset = new System.Windows.Forms.GroupBoxTS();
             this.lblPABandOffset10 = new System.Windows.Forms.LabelTS();
             this.lblPABandOffset12 = new System.Windows.Forms.LabelTS();
@@ -1782,9 +1816,6 @@ namespace PowerSDR
             this.lblPAGainByBand160 = new System.Windows.Forms.LabelTS();
             this.udPAGain160 = new System.Windows.Forms.NumericUpDownTS();
             this.chkPA6 = new System.Windows.Forms.CheckBoxTS();
-            this.tpAppearance = new System.Windows.Forms.TabPage();
-            this.tcAppearance = new System.Windows.Forms.TabControl();
-            this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
             this.btnSkinExport = new System.Windows.Forms.ButtonTS();
             this.grpAppSkins = new System.Windows.Forms.GroupBoxTS();
             this.comboAppSkin = new System.Windows.Forms.ComboBoxTS();
@@ -1811,7 +1842,6 @@ namespace PowerSDR
             this.lblVFOPowerOff = new System.Windows.Forms.LabelTS();
             this.clrbtnBtnSel = new PowerSDR.ColorButton();
             this.lblAppearanceGenBtnSel = new System.Windows.Forms.LabelTS();
-            this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
             this.grpMainDisplay = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnText = new PowerSDR.ColorButton();
             this.lblDisplayBackgroundColor = new System.Windows.Forms.LabelTS();
@@ -1850,7 +1880,6 @@ namespace PowerSDR
             this.lblPeakBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnPeakText = new PowerSDR.ColorButton();
             this.lblPeakText = new System.Windows.Forms.LabelTS();
-            this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterDigBackground = new PowerSDR.ColorButton();
             this.lblMeterDigitalText = new System.Windows.Forms.LabelTS();
@@ -1873,7 +1902,6 @@ namespace PowerSDR
             this.clrbtnMeterLeft = new PowerSDR.ColorButton();
             this.lblMeterType = new System.Windows.Forms.LabelTS();
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
-            this.tpKeyboard = new System.Windows.Forms.TabPage();
             this.grpKBXIT = new System.Windows.Forms.GroupBoxTS();
             this.lblKBXITUp = new System.Windows.Forms.LabelTS();
             this.lblKBXITDown = new System.Windows.Forms.LabelTS();
@@ -1929,7 +1957,6 @@ namespace PowerSDR
             this.lblKBCWDash = new System.Windows.Forms.LabelTS();
             this.comboKBCWDot = new System.Windows.Forms.ComboBoxTS();
             this.comboKBCWDash = new System.Windows.Forms.ComboBoxTS();
-            this.tpExtCtrl = new System.Windows.Forms.TabPage();
             this.chkExtEnable = new System.Windows.Forms.CheckBoxTS();
             this.grpExtTX = new System.Windows.Forms.GroupBoxTS();
             this.lblExtTXX26 = new System.Windows.Forms.LabelTS();
@@ -2117,7 +2144,6 @@ namespace PowerSDR
             this.lblExtRXX21 = new System.Windows.Forms.LabelTS();
             this.chkExtRX1605 = new System.Windows.Forms.CheckBoxTS();
             this.chkExtRX1604 = new System.Windows.Forms.CheckBoxTS();
-            this.tpCAT = new System.Windows.Forms.TabPage();
             this.chkKWAI = new System.Windows.Forms.CheckBoxTS();
             this.chkFPInstalled = new System.Windows.Forms.CheckBoxTS();
             this.chkDigUIsUSB = new System.Windows.Forms.CheckBoxTS();
@@ -2149,7 +2175,6 @@ namespace PowerSDR
             this.udRTTYL = new System.Windows.Forms.NumericUpDownTS();
             this.chkRTTYOffsetEnableB = new System.Windows.Forms.CheckBoxTS();
             this.chkRTTYOffsetEnableA = new System.Windows.Forms.CheckBoxTS();
-            this.tpTests = new System.Windows.Forms.TabPage();
             this.grpBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.udPulsePeriod = new System.Windows.Forms.NumericUpDownTS();
             this.lblPulsePeriod = new System.Windows.Forms.LabelTS();
@@ -2199,21 +2224,40 @@ namespace PowerSDR
             this.grpImpulseTest = new System.Windows.Forms.GroupBoxTS();
             this.udImpulseNum = new System.Windows.Forms.NumericUpDownTS();
             this.btnImpulse = new System.Windows.Forms.ButtonTS();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnExportDB = new System.Windows.Forms.ButtonTS();
-            this.btnImportDB = new System.Windows.Forms.ButtonTS();
-            this.btnResetDB = new System.Windows.Forms.ButtonTS();
-            this.btnApply = new System.Windows.Forms.ButtonTS();
-            this.btnCancel = new System.Windows.Forms.ButtonTS();
-            this.btnOK = new System.Windows.Forms.ButtonTS();
-            this.timer_sweep = new System.Windows.Forms.Timer(this.components);
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
             this.tpGeneralHardware.SuspendLayout();
+            this.tpGeneralOptions.SuspendLayout();
+            this.tpGeneralCalibration.SuspendLayout();
+            this.tpFilters.SuspendLayout();
+            this.tpRX2.SuspendLayout();
+            this.tpGeneralNavigation.SuspendLayout();
+            this.tpUserInterface.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.tpAudio.SuspendLayout();
+            this.tcAudio.SuspendLayout();
+            this.tpAudioCard1.SuspendLayout();
+            this.tpVAC.SuspendLayout();
+            this.tpVAC2.SuspendLayout();
+            this.tpDisplay.SuspendLayout();
+            this.tpDSP.SuspendLayout();
+            this.tcDSP.SuspendLayout();
+            this.tpDSPOptions.SuspendLayout();
+            this.tpDSPImageReject.SuspendLayout();
+            this.tpDSPKeyer.SuspendLayout();
+            this.tpDSPAGCALC.SuspendLayout();
+            this.tpTransmit.SuspendLayout();
+            this.tpPowerAmplifier.SuspendLayout();
+            this.tpAppearance.SuspendLayout();
+            this.tcAppearance.SuspendLayout();
+            this.tpAppearanceGeneral.SuspendLayout();
+            this.tpAppearanceDisplay.SuspendLayout();
+            this.tpAppearanceMeter.SuspendLayout();
+            this.tpKeyboard.SuspendLayout();
+            this.tpExtCtrl.SuspendLayout();
+            this.tpCAT.SuspendLayout();
+            this.tpTests.SuspendLayout();
             this.grpHWSoftRock.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udSoftRockCenterFreq)).BeginInit();
             this.grpGeneralDDS.SuspendLayout();
@@ -2226,7 +2270,6 @@ namespace PowerSDR
             this.grpGeneralHardwareSDR1000.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralLPTDelay)).BeginInit();
             this.grpGeneralHardwareFLEX1500.SuspendLayout();
-            this.tpGeneralOptions.SuspendLayout();
             this.grpOptUSBBuf.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbOptUSBBuf)).BeginInit();
             this.grpGenCustomTitleText.SuspendLayout();
@@ -2240,7 +2283,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udGenTX1Delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralX2Delay)).BeginInit();
             this.grpGeneralProcessPriority.SuspendLayout();
-            this.tpGeneralCalibration.SuspendLayout();
             this.grpGenCalRXImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).BeginInit();
             this.grpGenCalLevel.SuspendLayout();
@@ -2248,19 +2290,11 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq2)).BeginInit();
             this.grpGeneralCalibration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).BeginInit();
-            this.tpFilters.SuspendLayout();
             this.grpOptFilterControls.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterDefaultLowCut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterWidth)).BeginInit();
-            this.tpRX2.SuspendLayout();
-            this.tpGeneralNavigation.SuspendLayout();
             this.grpOptSpaceNav.SuspendLayout();
-            this.tpUserInterface.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.tpAudio.SuspendLayout();
-            this.tcAudio.SuspendLayout();
-            this.tpAudioCard1.SuspendLayout();
             this.grpAudioChannels.SuspendLayout();
             this.grpAudioMicInGain1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAudioMicGain1)).BeginInit();
@@ -2274,7 +2308,6 @@ namespace PowerSDR
             this.grpAudioCard.SuspendLayout();
             this.grpAudioBufferSize1.SuspendLayout();
             this.grpAudioSampleRate1.SuspendLayout();
-            this.tpVAC.SuspendLayout();
             this.grpDirectIQOutput.SuspendLayout();
             this.grpAudioVACAutoEnable.SuspendLayout();
             this.grpAudioVACGain.SuspendLayout();
@@ -2286,7 +2319,6 @@ namespace PowerSDR
             this.grpAudioSampleRate2.SuspendLayout();
             this.grpAudioBuffer2.SuspendLayout();
             this.grpAudioDetails2.SuspendLayout();
-            this.tpVAC2.SuspendLayout();
             this.grpVAC2DirectIQ.SuspendLayout();
             this.grpVAC2AutoEnable.SuspendLayout();
             this.grpVAC2Gain.SuspendLayout();
@@ -2298,7 +2330,6 @@ namespace PowerSDR
             this.grpAudioSampleRate3.SuspendLayout();
             this.grpAudioBuffer3.SuspendLayout();
             this.grpAudioDetails3.SuspendLayout();
-            this.tpDisplay.SuspendLayout();
             this.grpDisplayMultimeter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udMeterDigitalDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayMeterAvg)).BeginInit();
@@ -2328,9 +2359,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridStep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMax)).BeginInit();
-            this.tpDSP.SuspendLayout();
-            this.tcDSP.SuspendLayout();
-            this.tpDSPOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTNFWidth)).BeginInit();
             this.grpDSPBufferSize.SuspendLayout();
             this.grpDSPBufDig.SuspendLayout();
             this.grpDSPBufCW.SuspendLayout();
@@ -2350,13 +2379,11 @@ namespace PowerSDR
             this.grpDSPWindow.SuspendLayout();
             this.grpDSPNB2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNB2)).BeginInit();
-            this.tpDSPImageReject.SuspendLayout();
             this.grpDSPImageRejectTX.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPImageGainTX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPImagePhaseTX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPImagePhaseTX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPImageGainTX)).BeginInit();
-            this.tpDSPKeyer.SuspendLayout();
             this.grpKeyerConnections.SuspendLayout();
             this.grpDSPCWPitch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).BeginInit();
@@ -2366,7 +2393,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerRamp)).BeginInit();
             this.grpDSPKeyerSemiBreakIn.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
-            this.tpDSPAGCALC.SuspendLayout();
             this.grpDSPLeveler.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerHangTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerThreshold)).BeginInit();
@@ -2389,7 +2415,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCDecay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).BeginInit();
-            this.tpTransmit.SuspendLayout();
             this.grpTXProfileDef.SuspendLayout();
             this.grpTXAM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXAMCarrierLevel)).BeginInit();
@@ -2409,7 +2434,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTXVOXThreshold)).BeginInit();
             this.grpTX1500.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTX1500PhoneBlanking)).BeginInit();
-            this.tpPowerAmplifier.SuspendLayout();
             this.grpPABandOffset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPAADC17)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAADC15)).BeginInit();
@@ -2433,13 +2457,9 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain60)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain80)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain160)).BeginInit();
-            this.tpAppearance.SuspendLayout();
-            this.tcAppearance.SuspendLayout();
-            this.tpAppearanceGeneral.SuspendLayout();
             this.grpAppSkins.SuspendLayout();
             this.grpAppearanceBand.SuspendLayout();
             this.grpAppearanceVFO.SuspendLayout();
-            this.tpAppearanceDisplay.SuspendLayout();
             this.grpMainDisplay.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpAppPanadapter.SuspendLayout();
@@ -2447,10 +2467,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).BeginInit();
             this.grpDisplayPeakCursor.SuspendLayout();
-            this.tpAppearanceMeter.SuspendLayout();
             this.grpMeterEdge.SuspendLayout();
             this.grpAppearanceMeter.SuspendLayout();
-            this.tpKeyboard.SuspendLayout();
             this.grpKBXIT.SuspendLayout();
             this.grpKBRIT.SuspendLayout();
             this.grpKBMode.SuspendLayout();
@@ -2458,16 +2476,13 @@ namespace PowerSDR
             this.grpKBTune.SuspendLayout();
             this.grpKBFilter.SuspendLayout();
             this.grpKBCW.SuspendLayout();
-            this.tpExtCtrl.SuspendLayout();
             this.grpExtTX.SuspendLayout();
             this.grpExtRX.SuspendLayout();
-            this.tpCAT.SuspendLayout();
             this.grpPTTBitBang.SuspendLayout();
             this.grpCatControlBox.SuspendLayout();
             this.grpRTTYOffset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).BeginInit();
-            this.tpTests.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPulsePeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPulseDuty)).BeginInit();
@@ -2547,6 +2562,562 @@ namespace PowerSDR
             this.tpGeneralHardware.Size = new System.Drawing.Size(592, 318);
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "Hardware Config";
+            // 
+            // tpGeneralOptions
+            // 
+            this.tpGeneralOptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralOptions.Controls.Add(this.chkGenOptionsShowATUPopup);
+            this.tpGeneralOptions.Controls.Add(this.chkImportDBRestrict);
+            this.tpGeneralOptions.Controls.Add(this.grpOptUSBBuf);
+            this.tpGeneralOptions.Controls.Add(this.grpGenCustomTitleText);
+            this.tpGeneralOptions.Controls.Add(this.grpOptMisc);
+            this.tpGeneralOptions.Controls.Add(this.grpOptQuickQSY);
+            this.tpGeneralOptions.Controls.Add(this.grpGenAutoMute);
+            this.tpGeneralOptions.Controls.Add(this.grpGenTuningOptions);
+            this.tpGeneralOptions.Controls.Add(this.grpGeneralOptions);
+            this.tpGeneralOptions.Controls.Add(this.grpGeneralProcessPriority);
+            this.tpGeneralOptions.Location = new System.Drawing.Point(4, 22);
+            this.tpGeneralOptions.Name = "tpGeneralOptions";
+            this.tpGeneralOptions.Size = new System.Drawing.Size(592, 318);
+            this.tpGeneralOptions.TabIndex = 1;
+            this.tpGeneralOptions.Text = "Options";
+            // 
+            // tpGeneralCalibration
+            // 
+            this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralCalibration.Controls.Add(this.chkCalExpert);
+            this.tpGeneralCalibration.Controls.Add(this.grpGenCalRXImage);
+            this.tpGeneralCalibration.Controls.Add(this.grpGenCalLevel);
+            this.tpGeneralCalibration.Controls.Add(this.grpGeneralCalibration);
+            this.tpGeneralCalibration.Location = new System.Drawing.Point(4, 22);
+            this.tpGeneralCalibration.Name = "tpGeneralCalibration";
+            this.tpGeneralCalibration.Size = new System.Drawing.Size(592, 318);
+            this.tpGeneralCalibration.TabIndex = 2;
+            this.tpGeneralCalibration.Text = "Calibration";
+            // 
+            // chkCalExpert
+            // 
+            this.chkCalExpert.Location = new System.Drawing.Point(16, 136);
+            this.chkCalExpert.Name = "chkCalExpert";
+            this.chkCalExpert.Size = new System.Drawing.Size(56, 24);
+            this.chkCalExpert.TabIndex = 10;
+            this.chkCalExpert.Text = "Expert";
+            this.chkCalExpert.Visible = false;
+            this.chkCalExpert.CheckedChanged += new System.EventHandler(this.chkCalExpert_CheckedChanged);
+            // 
+            // tpFilters
+            // 
+            this.tpFilters.BackColor = System.Drawing.SystemColors.Control;
+            this.tpFilters.Controls.Add(this.grpOptFilterControls);
+            this.tpFilters.Location = new System.Drawing.Point(4, 22);
+            this.tpFilters.Name = "tpFilters";
+            this.tpFilters.Size = new System.Drawing.Size(592, 318);
+            this.tpFilters.TabIndex = 3;
+            this.tpFilters.Text = "Filters";
+            // 
+            // tpRX2
+            // 
+            this.tpRX2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpRX2.Controls.Add(this.chkRX2DisconnectOnTX);
+            this.tpRX2.Controls.Add(this.chkRX2AutoMuteRX1OnVFOBTX);
+            this.tpRX2.Controls.Add(this.chkRX2AutoMuteRX2OnVFOATX);
+            this.tpRX2.Location = new System.Drawing.Point(4, 22);
+            this.tpRX2.Name = "tpRX2";
+            this.tpRX2.Size = new System.Drawing.Size(592, 318);
+            this.tpRX2.TabIndex = 4;
+            this.tpRX2.Text = "RX2";
+            // 
+            // tpGeneralNavigation
+            // 
+            this.tpGeneralNavigation.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralNavigation.Controls.Add(this.grpOptSpaceNav);
+            this.tpGeneralNavigation.Location = new System.Drawing.Point(4, 22);
+            this.tpGeneralNavigation.Name = "tpGeneralNavigation";
+            this.tpGeneralNavigation.Size = new System.Drawing.Size(592, 318);
+            this.tpGeneralNavigation.TabIndex = 5;
+            this.tpGeneralNavigation.Text = "Navigation";
+            // 
+            // tpUserInterface
+            // 
+            this.tpUserInterface.Controls.Add(this.groupBox1);
+            this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
+            this.tpUserInterface.Name = "tpUserInterface";
+            this.tpUserInterface.Size = new System.Drawing.Size(592, 318);
+            this.tpUserInterface.TabIndex = 6;
+            this.tpUserInterface.Text = "User Interface";
+            this.tpUserInterface.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.btnConfigure);
+            this.groupBox1.Controls.Add(this.cbConsoleSelect);
+            this.groupBox1.Location = new System.Drawing.Point(32, 30);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(307, 135);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "User Interface Controller";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(20, 37);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Controller:";
+            // 
+            // btnConfigure
+            // 
+            this.btnConfigure.Location = new System.Drawing.Point(23, 86);
+            this.btnConfigure.Name = "btnConfigure";
+            this.btnConfigure.Size = new System.Drawing.Size(272, 30);
+            this.btnConfigure.TabIndex = 5;
+            this.btnConfigure.Text = "Configure ";
+            this.btnConfigure.UseVisualStyleBackColor = true;
+            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
+            // 
+            // cbConsoleSelect
+            // 
+            this.cbConsoleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbConsoleSelect.FormattingEnabled = true;
+            this.cbConsoleSelect.Location = new System.Drawing.Point(80, 34);
+            this.cbConsoleSelect.Name = "cbConsoleSelect";
+            this.cbConsoleSelect.Size = new System.Drawing.Size(215, 21);
+            this.cbConsoleSelect.TabIndex = 4;
+            // 
+            // tpAudio
+            // 
+            this.tpAudio.Controls.Add(this.tcAudio);
+            this.tpAudio.Location = new System.Drawing.Point(4, 22);
+            this.tpAudio.Name = "tpAudio";
+            this.tpAudio.Size = new System.Drawing.Size(584, 322);
+            this.tpAudio.TabIndex = 0;
+            this.tpAudio.Text = "Audio";
+            // 
+            // tcAudio
+            // 
+            this.tcAudio.Controls.Add(this.tpAudioCard1);
+            this.tcAudio.Controls.Add(this.tpVAC);
+            this.tcAudio.Controls.Add(this.tpVAC2);
+            this.tcAudio.Location = new System.Drawing.Point(0, 0);
+            this.tcAudio.Name = "tcAudio";
+            this.tcAudio.SelectedIndex = 0;
+            this.tcAudio.Size = new System.Drawing.Size(600, 344);
+            this.tcAudio.TabIndex = 35;
+            // 
+            // tpAudioCard1
+            // 
+            this.tpAudioCard1.Controls.Add(this.chkAudioExpert);
+            this.tpAudioCard1.Controls.Add(this.grpAudioMicBoost);
+            this.tpAudioCard1.Controls.Add(this.grpAudioChannels);
+            this.tpAudioCard1.Controls.Add(this.grpAudioMicInGain1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioLineInGain1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioVolts1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioDetails1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioLatency1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioCard);
+            this.tpAudioCard1.Controls.Add(this.grpAudioBufferSize1);
+            this.tpAudioCard1.Controls.Add(this.grpAudioSampleRate1);
+            this.tpAudioCard1.Location = new System.Drawing.Point(4, 22);
+            this.tpAudioCard1.Name = "tpAudioCard1";
+            this.tpAudioCard1.Size = new System.Drawing.Size(592, 318);
+            this.tpAudioCard1.TabIndex = 0;
+            this.tpAudioCard1.Text = "Primary";
+            // 
+            // tpVAC
+            // 
+            this.tpVAC.Controls.Add(this.grpDirectIQOutput);
+            this.tpVAC.Controls.Add(this.chkVACCombine);
+            this.tpVAC.Controls.Add(this.chkVACAllowBypass);
+            this.tpVAC.Controls.Add(this.grpAudioVACAutoEnable);
+            this.tpVAC.Controls.Add(this.grpAudioVACGain);
+            this.tpVAC.Controls.Add(this.grpAudio2Stereo);
+            this.tpVAC.Controls.Add(this.grpAudioLatency2);
+            this.tpVAC.Controls.Add(this.grpAudioSampleRate2);
+            this.tpVAC.Controls.Add(this.grpAudioBuffer2);
+            this.tpVAC.Controls.Add(this.grpAudioDetails2);
+            this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
+            this.tpVAC.Location = new System.Drawing.Point(4, 22);
+            this.tpVAC.Name = "tpVAC";
+            this.tpVAC.Size = new System.Drawing.Size(592, 318);
+            this.tpVAC.TabIndex = 1;
+            this.tpVAC.Text = "VAC 1";
+            // 
+            // tpVAC2
+            // 
+            this.tpVAC2.BackColor = System.Drawing.SystemColors.Control;
+            this.tpVAC2.Controls.Add(this.chkVAC2UseRX2);
+            this.tpVAC2.Controls.Add(this.grpVAC2DirectIQ);
+            this.tpVAC2.Controls.Add(this.chkVAC2Combine);
+            this.tpVAC2.Controls.Add(this.grpVAC2AutoEnable);
+            this.tpVAC2.Controls.Add(this.grpVAC2Gain);
+            this.tpVAC2.Controls.Add(this.grpAudioStereo3);
+            this.tpVAC2.Controls.Add(this.grpVAC2Latency);
+            this.tpVAC2.Controls.Add(this.grpAudioSampleRate3);
+            this.tpVAC2.Controls.Add(this.grpAudioBuffer3);
+            this.tpVAC2.Controls.Add(this.grpAudioDetails3);
+            this.tpVAC2.Controls.Add(this.chkVAC2Enable);
+            this.tpVAC2.Location = new System.Drawing.Point(4, 22);
+            this.tpVAC2.Name = "tpVAC2";
+            this.tpVAC2.Padding = new System.Windows.Forms.Padding(3);
+            this.tpVAC2.Size = new System.Drawing.Size(592, 318);
+            this.tpVAC2.TabIndex = 2;
+            this.tpVAC2.Text = "VAC 2";
+            // 
+            // tpDisplay
+            // 
+            this.tpDisplay.Controls.Add(this.grpDisplayMultimeter);
+            this.tpDisplay.Controls.Add(this.grpDisplayDriverEngine);
+            this.tpDisplay.Controls.Add(this.grpDisplayPolyPhase);
+            this.tpDisplay.Controls.Add(this.grpDisplayScopeMode);
+            this.tpDisplay.Controls.Add(this.grpDisplayWaterfall);
+            this.tpDisplay.Controls.Add(this.grpDisplayRefreshRates);
+            this.tpDisplay.Controls.Add(this.grpDisplayAverage);
+            this.tpDisplay.Controls.Add(this.grpDisplayPhase);
+            this.tpDisplay.Controls.Add(this.grpDisplaySpectrumGrid);
+            this.tpDisplay.Location = new System.Drawing.Point(4, 22);
+            this.tpDisplay.Name = "tpDisplay";
+            this.tpDisplay.Size = new System.Drawing.Size(584, 322);
+            this.tpDisplay.TabIndex = 2;
+            this.tpDisplay.Text = "Display";
+            // 
+            // tpDSP
+            // 
+            this.tpDSP.Controls.Add(this.tcDSP);
+            this.tpDSP.Location = new System.Drawing.Point(4, 22);
+            this.tpDSP.Name = "tpDSP";
+            this.tpDSP.Size = new System.Drawing.Size(584, 322);
+            this.tpDSP.TabIndex = 1;
+            this.tpDSP.Text = "DSP";
+            // 
+            // tcDSP
+            // 
+            this.tcDSP.Controls.Add(this.tpDSPOptions);
+            this.tcDSP.Controls.Add(this.tpDSPImageReject);
+            this.tcDSP.Controls.Add(this.tpDSPKeyer);
+            this.tcDSP.Controls.Add(this.tpDSPAGCALC);
+            this.tcDSP.Location = new System.Drawing.Point(0, 0);
+            this.tcDSP.Name = "tcDSP";
+            this.tcDSP.SelectedIndex = 0;
+            this.tcDSP.Size = new System.Drawing.Size(600, 344);
+            this.tcDSP.TabIndex = 0;
+            // 
+            // tpDSPOptions
+            // 
+            this.tpDSPOptions.Controls.Add(this.btnRSTNB2);
+            this.tpDSPOptions.Controls.Add(this.btnRSTNB);
+            this.tpDSPOptions.Controls.Add(this.btnRSTANF);
+            this.tpDSPOptions.Controls.Add(this.btnRSTNR);
+            this.tpDSPOptions.Controls.Add(this.labelTS7);
+            this.tpDSPOptions.Controls.Add(this.udTNFWidth);
+            this.tpDSPOptions.Controls.Add(this.chkDSPTXMeterPeak);
+            this.tpDSPOptions.Controls.Add(this.grpDSPBufferSize);
+            this.tpDSPOptions.Controls.Add(this.grpDSPNB);
+            this.tpDSPOptions.Controls.Add(this.grpDSPLMSNR);
+            this.tpDSPOptions.Controls.Add(this.grpDSPLMSANF);
+            this.tpDSPOptions.Controls.Add(this.grpDSPWindow);
+            this.tpDSPOptions.Controls.Add(this.grpDSPNB2);
+            this.tpDSPOptions.Location = new System.Drawing.Point(4, 22);
+            this.tpDSPOptions.Name = "tpDSPOptions";
+            this.tpDSPOptions.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPOptions.TabIndex = 2;
+            this.tpDSPOptions.Text = "Options";
+            // 
+            // tpDSPImageReject
+            // 
+            this.tpDSPImageReject.Controls.Add(this.chkDSPImageExpert);
+            this.tpDSPImageReject.Controls.Add(this.grpDSPImageRejectTX);
+            this.tpDSPImageReject.Location = new System.Drawing.Point(4, 22);
+            this.tpDSPImageReject.Name = "tpDSPImageReject";
+            this.tpDSPImageReject.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPImageReject.TabIndex = 1;
+            this.tpDSPImageReject.Text = "Image Reject";
+            // 
+            // chkDSPImageExpert
+            // 
+            this.chkDSPImageExpert.Location = new System.Drawing.Point(3, 193);
+            this.chkDSPImageExpert.Name = "chkDSPImageExpert";
+            this.chkDSPImageExpert.Size = new System.Drawing.Size(56, 24);
+            this.chkDSPImageExpert.TabIndex = 35;
+            this.chkDSPImageExpert.Text = "Expert";
+            this.chkDSPImageExpert.CheckedChanged += new System.EventHandler(this.chkDSPImageExpert_CheckedChanged);
+            // 
+            // tpDSPKeyer
+            // 
+            this.tpDSPKeyer.Controls.Add(this.chkCWDisableUI);
+            this.tpDSPKeyer.Controls.Add(this.grpKeyerConnections);
+            this.tpDSPKeyer.Controls.Add(this.grpDSPCWPitch);
+            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerOptions);
+            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerSignalShaping);
+            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerSemiBreakIn);
+            this.tpDSPKeyer.Location = new System.Drawing.Point(4, 22);
+            this.tpDSPKeyer.Name = "tpDSPKeyer";
+            this.tpDSPKeyer.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPKeyer.TabIndex = 0;
+            this.tpDSPKeyer.Text = "Keyer";
+            // 
+            // tpDSPAGCALC
+            // 
+            this.tpDSPAGCALC.Controls.Add(this.grpDSPLeveler);
+            this.tpDSPAGCALC.Controls.Add(this.grpDSPALC);
+            this.tpDSPAGCALC.Controls.Add(this.grpDSPAGC);
+            this.tpDSPAGCALC.Location = new System.Drawing.Point(4, 22);
+            this.tpDSPAGCALC.Name = "tpDSPAGCALC";
+            this.tpDSPAGCALC.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPAGCALC.TabIndex = 3;
+            this.tpDSPAGCALC.Text = "AGC/ALC";
+            // 
+            // tpTransmit
+            // 
+            this.tpTransmit.Controls.Add(this.chkRememberTXProfileOnModeChange);
+            this.tpTransmit.Controls.Add(this.chkAudioMicBoost);
+            this.tpTransmit.Controls.Add(this.chkSaveTXProfileOnExit);
+            this.tpTransmit.Controls.Add(this.chkAutoSaveTXProfile);
+            this.tpTransmit.Controls.Add(this.chkTXLimitSlew);
+            this.tpTransmit.Controls.Add(this.chkTXExpert);
+            this.tpTransmit.Controls.Add(this.grpTXProfileDef);
+            this.tpTransmit.Controls.Add(this.grpTXAM);
+            this.tpTransmit.Controls.Add(this.grpTXMonitor);
+            this.tpTransmit.Controls.Add(this.grpTXNoiseGate);
+            this.tpTransmit.Controls.Add(this.grpTXProfile);
+            this.tpTransmit.Controls.Add(this.grpPATune);
+            this.tpTransmit.Controls.Add(this.grpTXFilter);
+            this.tpTransmit.Controls.Add(this.chkDCBlock);
+            this.tpTransmit.Controls.Add(this.grpTXVOX);
+            this.tpTransmit.Controls.Add(this.grpTX1500);
+            this.tpTransmit.Location = new System.Drawing.Point(4, 22);
+            this.tpTransmit.Name = "tpTransmit";
+            this.tpTransmit.Size = new System.Drawing.Size(584, 322);
+            this.tpTransmit.TabIndex = 5;
+            this.tpTransmit.Text = "Transmit";
+            // 
+            // tpPowerAmplifier
+            // 
+            this.tpPowerAmplifier.Controls.Add(this.rtxtPACalReq);
+            this.tpPowerAmplifier.Controls.Add(this.grpPABandOffset);
+            this.tpPowerAmplifier.Controls.Add(this.chkPANewCal);
+            this.tpPowerAmplifier.Controls.Add(this.grpPAGainByBand);
+            this.tpPowerAmplifier.Location = new System.Drawing.Point(4, 22);
+            this.tpPowerAmplifier.Name = "tpPowerAmplifier";
+            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 322);
+            this.tpPowerAmplifier.TabIndex = 8;
+            this.tpPowerAmplifier.Text = "PA Settings";
+            // 
+            // rtxtPACalReq
+            // 
+            this.rtxtPACalReq.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtxtPACalReq.Location = new System.Drawing.Point(272, 16);
+            this.rtxtPACalReq.Name = "rtxtPACalReq";
+            this.rtxtPACalReq.ReadOnly = true;
+            this.rtxtPACalReq.Size = new System.Drawing.Size(224, 112);
+            this.rtxtPACalReq.TabIndex = 82;
+            this.rtxtPACalReq.Text = "";
+            // 
+            // tpAppearance
+            // 
+            this.tpAppearance.Controls.Add(this.tcAppearance);
+            this.tpAppearance.Location = new System.Drawing.Point(4, 22);
+            this.tpAppearance.Name = "tpAppearance";
+            this.tpAppearance.Size = new System.Drawing.Size(584, 322);
+            this.tpAppearance.TabIndex = 6;
+            this.tpAppearance.Text = "Appearance";
+            // 
+            // tcAppearance
+            // 
+            this.tcAppearance.Controls.Add(this.tpAppearanceGeneral);
+            this.tcAppearance.Controls.Add(this.tpAppearanceDisplay);
+            this.tcAppearance.Controls.Add(this.tpAppearanceMeter);
+            this.tcAppearance.Location = new System.Drawing.Point(0, 0);
+            this.tcAppearance.Name = "tcAppearance";
+            this.tcAppearance.SelectedIndex = 0;
+            this.tcAppearance.Size = new System.Drawing.Size(600, 344);
+            this.tcAppearance.TabIndex = 40;
+            // 
+            // tpAppearanceGeneral
+            // 
+            this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.btnSkinExport);
+            this.tpAppearanceGeneral.Controls.Add(this.grpAppSkins);
+            this.tpAppearanceGeneral.Controls.Add(this.lblGenBackground);
+            this.tpAppearanceGeneral.Controls.Add(this.clrbtnGenBackground);
+            this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceBand);
+            this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceVFO);
+            this.tpAppearanceGeneral.Controls.Add(this.clrbtnBtnSel);
+            this.tpAppearanceGeneral.Controls.Add(this.lblAppearanceGenBtnSel);
+            this.tpAppearanceGeneral.Location = new System.Drawing.Point(4, 22);
+            this.tpAppearanceGeneral.Name = "tpAppearanceGeneral";
+            this.tpAppearanceGeneral.Size = new System.Drawing.Size(592, 318);
+            this.tpAppearanceGeneral.TabIndex = 0;
+            this.tpAppearanceGeneral.Text = "General";
+            // 
+            // tpAppearanceDisplay
+            // 
+            this.tpAppearanceDisplay.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceDisplay.Controls.Add(this.grpMainDisplay);
+            this.tpAppearanceDisplay.Controls.Add(this.grpAppPanadapter);
+            this.tpAppearanceDisplay.Controls.Add(this.grpDisplayPeakCursor);
+            this.tpAppearanceDisplay.Location = new System.Drawing.Point(4, 22);
+            this.tpAppearanceDisplay.Name = "tpAppearanceDisplay";
+            this.tpAppearanceDisplay.Size = new System.Drawing.Size(592, 318);
+            this.tpAppearanceDisplay.TabIndex = 1;
+            this.tpAppearanceDisplay.Text = "Display";
+            // 
+            // tpAppearanceMeter
+            // 
+            this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceMeter.Controls.Add(this.labelTS2);
+            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
+            this.tpAppearanceMeter.Controls.Add(this.lblMeterDigitalText);
+            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigText);
+            this.tpAppearanceMeter.Controls.Add(this.grpMeterEdge);
+            this.tpAppearanceMeter.Controls.Add(this.grpAppearanceMeter);
+            this.tpAppearanceMeter.Controls.Add(this.lblMeterType);
+            this.tpAppearanceMeter.Controls.Add(this.comboMeterType);
+            this.tpAppearanceMeter.Location = new System.Drawing.Point(4, 22);
+            this.tpAppearanceMeter.Name = "tpAppearanceMeter";
+            this.tpAppearanceMeter.Size = new System.Drawing.Size(592, 318);
+            this.tpAppearanceMeter.TabIndex = 2;
+            this.tpAppearanceMeter.Text = "Meter";
+            // 
+            // tpKeyboard
+            // 
+            this.tpKeyboard.Controls.Add(this.grpKBXIT);
+            this.tpKeyboard.Controls.Add(this.grpKBRIT);
+            this.tpKeyboard.Controls.Add(this.grpKBMode);
+            this.tpKeyboard.Controls.Add(this.grpKBBand);
+            this.tpKeyboard.Controls.Add(this.grpKBTune);
+            this.tpKeyboard.Controls.Add(this.grpKBFilter);
+            this.tpKeyboard.Controls.Add(this.grpKBCW);
+            this.tpKeyboard.Location = new System.Drawing.Point(4, 22);
+            this.tpKeyboard.Name = "tpKeyboard";
+            this.tpKeyboard.Size = new System.Drawing.Size(584, 322);
+            this.tpKeyboard.TabIndex = 4;
+            this.tpKeyboard.Text = "Keyboard";
+            // 
+            // tpExtCtrl
+            // 
+            this.tpExtCtrl.Controls.Add(this.chkExtEnable);
+            this.tpExtCtrl.Controls.Add(this.grpExtTX);
+            this.tpExtCtrl.Controls.Add(this.grpExtRX);
+            this.tpExtCtrl.Location = new System.Drawing.Point(4, 22);
+            this.tpExtCtrl.Name = "tpExtCtrl";
+            this.tpExtCtrl.Size = new System.Drawing.Size(584, 322);
+            this.tpExtCtrl.TabIndex = 11;
+            this.tpExtCtrl.Text = "Ext. Ctrl";
+            // 
+            // tpCAT
+            // 
+            this.tpCAT.Controls.Add(this.chkKWAI);
+            this.tpCAT.Controls.Add(this.chkFPInstalled);
+            this.tpCAT.Controls.Add(this.chkDigUIsUSB);
+            this.tpCAT.Controls.Add(this.lblCATRigType);
+            this.tpCAT.Controls.Add(this.comboCATRigType);
+            this.tpCAT.Controls.Add(this.btnCATTest);
+            this.tpCAT.Controls.Add(this.grpPTTBitBang);
+            this.tpCAT.Controls.Add(this.grpCatControlBox);
+            this.tpCAT.Controls.Add(this.grpRTTYOffset);
+            this.tpCAT.Location = new System.Drawing.Point(4, 22);
+            this.tpCAT.Name = "tpCAT";
+            this.tpCAT.Size = new System.Drawing.Size(584, 322);
+            this.tpCAT.TabIndex = 10;
+            this.tpCAT.Text = "CAT Control";
+            // 
+            // tpTests
+            // 
+            this.tpTests.Controls.Add(this.grpBoxTS1);
+            this.tpTests.Controls.Add(this.ckEnableSigGen);
+            this.tpTests.Controls.Add(this.grpTestX2);
+            this.tpTests.Controls.Add(this.grpTestAudioBalance);
+            this.tpTests.Controls.Add(this.grpTestTXIMD);
+            this.tpTests.Controls.Add(this.grpImpulseTest);
+            this.tpTests.Location = new System.Drawing.Point(4, 22);
+            this.tpTests.Name = "tpTests";
+            this.tpTests.Size = new System.Drawing.Size(584, 322);
+            this.tpTests.TabIndex = 7;
+            this.tpTests.Text = "Tests";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
+            // 
+            // timer_sweep
+            // 
+            this.timer_sweep.Tick += new System.EventHandler(this.timer_sweep_Tick);
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.Filter = "PowerSDR Database Files (*.xml)|*.xml|All files|*.*";
+            this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            // 
+            // btnExportDB
+            // 
+            this.btnExportDB.Image = null;
+            this.btnExportDB.Location = new System.Drawing.Point(224, 366);
+            this.btnExportDB.Name = "btnExportDB";
+            this.btnExportDB.Size = new System.Drawing.Size(112, 23);
+            this.btnExportDB.TabIndex = 22;
+            this.btnExportDB.Text = "Export Database...";
+            this.toolTip1.SetToolTip(this.btnExportDB, "Copy the saved PowerSDR Database to the folder location of your choice.");
+            this.btnExportDB.Click += new System.EventHandler(this.btnExportDB_Click);
+            // 
+            // btnImportDB
+            // 
+            this.btnImportDB.Image = null;
+            this.btnImportDB.Location = new System.Drawing.Point(106, 366);
+            this.btnImportDB.Name = "btnImportDB";
+            this.btnImportDB.Size = new System.Drawing.Size(112, 23);
+            this.btnImportDB.TabIndex = 21;
+            this.btnImportDB.Text = "Import Database...";
+            this.toolTip1.SetToolTip(this.btnImportDB, "Replace the current PowerSDR database with a previously exported database.");
+            this.btnImportDB.Click += new System.EventHandler(this.btnImportDB_Click);
+            // 
+            // btnResetDB
+            // 
+            this.btnResetDB.Image = null;
+            this.btnResetDB.Location = new System.Drawing.Point(4, 366);
+            this.btnResetDB.Name = "btnResetDB";
+            this.btnResetDB.Size = new System.Drawing.Size(96, 23);
+            this.btnResetDB.TabIndex = 20;
+            this.btnResetDB.Text = "Factory Defaults";
+            this.toolTip1.SetToolTip(this.btnResetDB, "Copies the current database to the desktop and resets to the defaults (after rest" +
+        "arting)");
+            this.btnResetDB.Click += new System.EventHandler(this.btnResetDB_Click);
+            // 
+            // btnApply
+            // 
+            this.btnApply.Image = null;
+            this.btnApply.Location = new System.Drawing.Point(523, 366);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.TabIndex = 19;
+            this.btnApply.Text = "Apply";
+            this.toolTip1.SetToolTip(this.btnApply, "Save current settings to the database.");
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Image = null;
+            this.btnCancel.Location = new System.Drawing.Point(442, 366);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 18;
+            this.btnCancel.Text = "Cancel";
+            this.toolTip1.SetToolTip(this.btnCancel, "Load settings from database and close form.");
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnOK
+            // 
+            this.btnOK.Image = null;
+            this.btnOK.Location = new System.Drawing.Point(361, 366);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.TabIndex = 17;
+            this.btnOK.Text = "OK";
+            this.toolTip1.SetToolTip(this.btnOK, "Keep current settings and close form.");
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // grpHWSoftRock
             // 
@@ -3252,25 +3823,6 @@ namespace PowerSDR
             this.lbl1500SN.TabIndex = 1;
             this.lbl1500SN.Text = "S/N: 0000-0000";
             // 
-            // tpGeneralOptions
-            // 
-            this.tpGeneralOptions.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralOptions.Controls.Add(this.chkGenOptionsShowATUPopup);
-            this.tpGeneralOptions.Controls.Add(this.chkImportDBRestrict);
-            this.tpGeneralOptions.Controls.Add(this.grpOptUSBBuf);
-            this.tpGeneralOptions.Controls.Add(this.grpGenCustomTitleText);
-            this.tpGeneralOptions.Controls.Add(this.grpOptMisc);
-            this.tpGeneralOptions.Controls.Add(this.grpOptQuickQSY);
-            this.tpGeneralOptions.Controls.Add(this.grpGenAutoMute);
-            this.tpGeneralOptions.Controls.Add(this.grpGenTuningOptions);
-            this.tpGeneralOptions.Controls.Add(this.grpGeneralOptions);
-            this.tpGeneralOptions.Controls.Add(this.grpGeneralProcessPriority);
-            this.tpGeneralOptions.Location = new System.Drawing.Point(4, 22);
-            this.tpGeneralOptions.Name = "tpGeneralOptions";
-            this.tpGeneralOptions.Size = new System.Drawing.Size(592, 318);
-            this.tpGeneralOptions.TabIndex = 1;
-            this.tpGeneralOptions.Text = "Options";
-            // 
             // chkGenOptionsShowATUPopup
             // 
             this.chkGenOptionsShowATUPopup.Image = null;
@@ -3842,29 +4394,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.comboGeneralProcessPriority, "Sets the process priority of the PowerSDR software.");
             this.comboGeneralProcessPriority.SelectedIndexChanged += new System.EventHandler(this.comboGeneralProcessPriority_SelectedIndexChanged);
             // 
-            // tpGeneralCalibration
-            // 
-            this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralCalibration.Controls.Add(this.chkCalExpert);
-            this.tpGeneralCalibration.Controls.Add(this.grpGenCalRXImage);
-            this.tpGeneralCalibration.Controls.Add(this.grpGenCalLevel);
-            this.tpGeneralCalibration.Controls.Add(this.grpGeneralCalibration);
-            this.tpGeneralCalibration.Location = new System.Drawing.Point(4, 22);
-            this.tpGeneralCalibration.Name = "tpGeneralCalibration";
-            this.tpGeneralCalibration.Size = new System.Drawing.Size(592, 318);
-            this.tpGeneralCalibration.TabIndex = 2;
-            this.tpGeneralCalibration.Text = "Calibration";
-            // 
-            // chkCalExpert
-            // 
-            this.chkCalExpert.Location = new System.Drawing.Point(16, 136);
-            this.chkCalExpert.Name = "chkCalExpert";
-            this.chkCalExpert.Size = new System.Drawing.Size(56, 24);
-            this.chkCalExpert.TabIndex = 10;
-            this.chkCalExpert.Text = "Expert";
-            this.chkCalExpert.Visible = false;
-            this.chkCalExpert.CheckedChanged += new System.EventHandler(this.chkCalExpert_CheckedChanged);
-            // 
             // grpGenCalRXImage
             // 
             this.grpGenCalRXImage.Controls.Add(this.udGeneralCalFreq3);
@@ -4105,16 +4634,6 @@ namespace PowerSDR
             this.lblGeneralCalFrequency.TabIndex = 0;
             this.lblGeneralCalFrequency.Text = "Frequency:";
             // 
-            // tpFilters
-            // 
-            this.tpFilters.BackColor = System.Drawing.SystemColors.Control;
-            this.tpFilters.Controls.Add(this.grpOptFilterControls);
-            this.tpFilters.Location = new System.Drawing.Point(4, 22);
-            this.tpFilters.Name = "tpFilters";
-            this.tpFilters.Size = new System.Drawing.Size(592, 318);
-            this.tpFilters.TabIndex = 3;
-            this.tpFilters.Text = "Filters";
-            // 
             // grpOptFilterControls
             // 
             this.grpOptFilterControls.Controls.Add(this.udFilterDefaultLowCut);
@@ -4289,18 +4808,6 @@ namespace PowerSDR
         "in the Variable filter.");
             this.chkOptFilterSaveChanges.CheckedChanged += new System.EventHandler(this.chkOptFilterSaveChanges_CheckedChanged);
             // 
-            // tpRX2
-            // 
-            this.tpRX2.BackColor = System.Drawing.SystemColors.Control;
-            this.tpRX2.Controls.Add(this.chkRX2DisconnectOnTX);
-            this.tpRX2.Controls.Add(this.chkRX2AutoMuteRX1OnVFOBTX);
-            this.tpRX2.Controls.Add(this.chkRX2AutoMuteRX2OnVFOATX);
-            this.tpRX2.Location = new System.Drawing.Point(4, 22);
-            this.tpRX2.Name = "tpRX2";
-            this.tpRX2.Size = new System.Drawing.Size(592, 318);
-            this.tpRX2.TabIndex = 4;
-            this.tpRX2.Text = "RX2";
-            // 
             // chkRX2DisconnectOnTX
             // 
             this.chkRX2DisconnectOnTX.Checked = true;
@@ -4343,16 +4850,6 @@ namespace PowerSDR
         "l or other signals with RX2 while transmitting");
             this.chkRX2AutoMuteRX2OnVFOATX.CheckedChanged += new System.EventHandler(this.chkRX2AutoMuteRX2OnVFOATX_CheckedChanged);
             // 
-            // tpGeneralNavigation
-            // 
-            this.tpGeneralNavigation.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralNavigation.Controls.Add(this.grpOptSpaceNav);
-            this.tpGeneralNavigation.Location = new System.Drawing.Point(4, 22);
-            this.tpGeneralNavigation.Name = "tpGeneralNavigation";
-            this.tpGeneralNavigation.Size = new System.Drawing.Size(592, 318);
-            this.tpGeneralNavigation.TabIndex = 5;
-            this.tpGeneralNavigation.Text = "Navigation";
-            // 
             // grpOptSpaceNav
             // 
             this.grpOptSpaceNav.Controls.Add(this.chkSpaceNavFlyPanadapter);
@@ -4387,95 +4884,6 @@ namespace PowerSDR
             this.chkSpaceNavControlVFOs.TabIndex = 0;
             this.chkSpaceNavControlVFOs.Text = "VFO Control";
             this.chkSpaceNavControlVFOs.UseVisualStyleBackColor = true;
-            // 
-            // tpUserInterface
-            // 
-            this.tpUserInterface.Controls.Add(this.groupBox1);
-            this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
-            this.tpUserInterface.Name = "tpUserInterface";
-            this.tpUserInterface.Size = new System.Drawing.Size(592, 318);
-            this.tpUserInterface.TabIndex = 6;
-            this.tpUserInterface.Text = "User Interface";
-            this.tpUserInterface.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.btnConfigure);
-            this.groupBox1.Controls.Add(this.cbConsoleSelect);
-            this.groupBox1.Location = new System.Drawing.Point(32, 30);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(307, 135);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "User Interface Controller";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(20, 37);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Controller:";
-            // 
-            // btnConfigure
-            // 
-            this.btnConfigure.Location = new System.Drawing.Point(23, 86);
-            this.btnConfigure.Name = "btnConfigure";
-            this.btnConfigure.Size = new System.Drawing.Size(272, 30);
-            this.btnConfigure.TabIndex = 5;
-            this.btnConfigure.Text = "Configure ";
-            this.btnConfigure.UseVisualStyleBackColor = true;
-            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
-            // 
-            // cbConsoleSelect
-            // 
-            this.cbConsoleSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbConsoleSelect.FormattingEnabled = true;
-            this.cbConsoleSelect.Location = new System.Drawing.Point(80, 34);
-            this.cbConsoleSelect.Name = "cbConsoleSelect";
-            this.cbConsoleSelect.Size = new System.Drawing.Size(215, 21);
-            this.cbConsoleSelect.TabIndex = 4;
-            // 
-            // tpAudio
-            // 
-            this.tpAudio.Controls.Add(this.tcAudio);
-            this.tpAudio.Location = new System.Drawing.Point(4, 22);
-            this.tpAudio.Name = "tpAudio";
-            this.tpAudio.Size = new System.Drawing.Size(584, 322);
-            this.tpAudio.TabIndex = 0;
-            this.tpAudio.Text = "Audio";
-            // 
-            // tcAudio
-            // 
-            this.tcAudio.Controls.Add(this.tpAudioCard1);
-            this.tcAudio.Controls.Add(this.tpVAC);
-            this.tcAudio.Controls.Add(this.tpVAC2);
-            this.tcAudio.Location = new System.Drawing.Point(0, 0);
-            this.tcAudio.Name = "tcAudio";
-            this.tcAudio.SelectedIndex = 0;
-            this.tcAudio.Size = new System.Drawing.Size(600, 344);
-            this.tcAudio.TabIndex = 35;
-            // 
-            // tpAudioCard1
-            // 
-            this.tpAudioCard1.Controls.Add(this.chkAudioExpert);
-            this.tpAudioCard1.Controls.Add(this.grpAudioMicBoost);
-            this.tpAudioCard1.Controls.Add(this.grpAudioChannels);
-            this.tpAudioCard1.Controls.Add(this.grpAudioMicInGain1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioLineInGain1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioVolts1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioDetails1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioLatency1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioCard);
-            this.tpAudioCard1.Controls.Add(this.grpAudioBufferSize1);
-            this.tpAudioCard1.Controls.Add(this.grpAudioSampleRate1);
-            this.tpAudioCard1.Location = new System.Drawing.Point(4, 22);
-            this.tpAudioCard1.Name = "tpAudioCard1";
-            this.tpAudioCard1.Size = new System.Drawing.Size(592, 318);
-            this.tpAudioCard1.TabIndex = 0;
-            this.tpAudioCard1.Text = "Primary";
             // 
             // chkAudioExpert
             // 
@@ -4944,25 +5352,6 @@ namespace PowerSDR
         " a cost of CPU% and filter sharpness");
             this.comboAudioSampleRate1.SelectedIndexChanged += new System.EventHandler(this.comboAudioSampleRate1_SelectedIndexChanged);
             // 
-            // tpVAC
-            // 
-            this.tpVAC.Controls.Add(this.grpDirectIQOutput);
-            this.tpVAC.Controls.Add(this.chkVACCombine);
-            this.tpVAC.Controls.Add(this.chkVACAllowBypass);
-            this.tpVAC.Controls.Add(this.grpAudioVACAutoEnable);
-            this.tpVAC.Controls.Add(this.grpAudioVACGain);
-            this.tpVAC.Controls.Add(this.grpAudio2Stereo);
-            this.tpVAC.Controls.Add(this.grpAudioLatency2);
-            this.tpVAC.Controls.Add(this.grpAudioSampleRate2);
-            this.tpVAC.Controls.Add(this.grpAudioBuffer2);
-            this.tpVAC.Controls.Add(this.grpAudioDetails2);
-            this.tpVAC.Controls.Add(this.chkAudioEnableVAC);
-            this.tpVAC.Location = new System.Drawing.Point(4, 22);
-            this.tpVAC.Name = "tpVAC";
-            this.tpVAC.Size = new System.Drawing.Size(592, 318);
-            this.tpVAC.TabIndex = 1;
-            this.tpVAC.Text = "VAC 1";
-            // 
             // grpDirectIQOutput
             // 
             this.grpDirectIQOutput.Controls.Add(this.chkAudioRX2toVAC);
@@ -5373,27 +5762,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkAudioEnableVAC, "Enable Virtual Audio Cable Support for VAC 1 (RX1)");
             this.chkAudioEnableVAC.CheckedChanged += new System.EventHandler(this.chkAudioEnableVAC_CheckedChanged);
             // 
-            // tpVAC2
-            // 
-            this.tpVAC2.BackColor = System.Drawing.SystemColors.Control;
-            this.tpVAC2.Controls.Add(this.chkVAC2UseRX2);
-            this.tpVAC2.Controls.Add(this.grpVAC2DirectIQ);
-            this.tpVAC2.Controls.Add(this.chkVAC2Combine);
-            this.tpVAC2.Controls.Add(this.grpVAC2AutoEnable);
-            this.tpVAC2.Controls.Add(this.grpVAC2Gain);
-            this.tpVAC2.Controls.Add(this.grpAudioStereo3);
-            this.tpVAC2.Controls.Add(this.grpVAC2Latency);
-            this.tpVAC2.Controls.Add(this.grpAudioSampleRate3);
-            this.tpVAC2.Controls.Add(this.grpAudioBuffer3);
-            this.tpVAC2.Controls.Add(this.grpAudioDetails3);
-            this.tpVAC2.Controls.Add(this.chkVAC2Enable);
-            this.tpVAC2.Location = new System.Drawing.Point(4, 22);
-            this.tpVAC2.Name = "tpVAC2";
-            this.tpVAC2.Padding = new System.Windows.Forms.Padding(3);
-            this.tpVAC2.Size = new System.Drawing.Size(592, 318);
-            this.tpVAC2.TabIndex = 2;
-            this.tpVAC2.Text = "VAC 2";
-            // 
             // chkVAC2UseRX2
             // 
             this.chkVAC2UseRX2.Checked = true;
@@ -5790,23 +6158,6 @@ namespace PowerSDR
             this.chkVAC2Enable.Text = "Enable VAC 2";
             this.toolTip1.SetToolTip(this.chkVAC2Enable, "Enable Virtual Audio Cable for VAC 2 (RX2 only)");
             this.chkVAC2Enable.CheckedChanged += new System.EventHandler(this.chkVAC2Enable_CheckedChanged);
-            // 
-            // tpDisplay
-            // 
-            this.tpDisplay.Controls.Add(this.grpDisplayMultimeter);
-            this.tpDisplay.Controls.Add(this.grpDisplayDriverEngine);
-            this.tpDisplay.Controls.Add(this.grpDisplayPolyPhase);
-            this.tpDisplay.Controls.Add(this.grpDisplayScopeMode);
-            this.tpDisplay.Controls.Add(this.grpDisplayWaterfall);
-            this.tpDisplay.Controls.Add(this.grpDisplayRefreshRates);
-            this.tpDisplay.Controls.Add(this.grpDisplayAverage);
-            this.tpDisplay.Controls.Add(this.grpDisplayPhase);
-            this.tpDisplay.Controls.Add(this.grpDisplaySpectrumGrid);
-            this.tpDisplay.Location = new System.Drawing.Point(4, 22);
-            this.tpDisplay.Name = "tpDisplay";
-            this.tpDisplay.Size = new System.Drawing.Size(584, 322);
-            this.tpDisplay.TabIndex = 2;
-            this.tpDisplay.Text = "Display";
             // 
             // grpDisplayMultimeter
             // 
@@ -6879,48 +7230,94 @@ namespace PowerSDR
             this.lblDisplayGridMax.TabIndex = 26;
             this.lblDisplayGridMax.Text = "Max:";
             // 
-            // tpDSP
+            // btnRSTNB2
             // 
-            this.tpDSP.Controls.Add(this.tcDSP);
-            this.tpDSP.Location = new System.Drawing.Point(4, 22);
-            this.tpDSP.Name = "tpDSP";
-            this.tpDSP.Size = new System.Drawing.Size(584, 322);
-            this.tpDSP.TabIndex = 1;
-            this.tpDSP.Text = "DSP";
+            this.btnRSTNB2.Image = null;
+            this.btnRSTNB2.Location = new System.Drawing.Point(510, 89);
+            this.btnRSTNB2.Name = "btnRSTNB2";
+            this.btnRSTNB2.Size = new System.Drawing.Size(70, 23);
+            this.btnRSTNB2.TabIndex = 41;
+            this.btnRSTNB2.Text = "Reset NB2";
+            this.toolTip1.SetToolTip(this.btnRSTNB2, "Reset to Factory Setting");
+            this.btnRSTNB2.Click += new System.EventHandler(this.btnRSTNB2_Click);
             // 
-            // tcDSP
+            // btnRSTNB
             // 
-            this.tcDSP.Controls.Add(this.tpDSPOptions);
-            this.tcDSP.Controls.Add(this.tpDSPImageReject);
-            this.tcDSP.Controls.Add(this.tpDSPKeyer);
-            this.tcDSP.Controls.Add(this.tpDSPAGCALC);
-            this.tcDSP.Location = new System.Drawing.Point(0, 0);
-            this.tcDSP.Name = "tcDSP";
-            this.tcDSP.SelectedIndex = 0;
-            this.tcDSP.Size = new System.Drawing.Size(600, 344);
-            this.tcDSP.TabIndex = 0;
+            this.btnRSTNB.Image = null;
+            this.btnRSTNB.Location = new System.Drawing.Point(510, 27);
+            this.btnRSTNB.Name = "btnRSTNB";
+            this.btnRSTNB.Size = new System.Drawing.Size(70, 23);
+            this.btnRSTNB.TabIndex = 40;
+            this.btnRSTNB.Text = "Reset NB";
+            this.toolTip1.SetToolTip(this.btnRSTNB, "Reset to Factory Setting");
+            this.btnRSTNB.Click += new System.EventHandler(this.btnRSTNB_Click);
             // 
-            // tpDSPOptions
+            // btnRSTANF
             // 
-            this.tpDSPOptions.Controls.Add(this.chkDSPTXMeterPeak);
-            this.tpDSPOptions.Controls.Add(this.grpDSPBufferSize);
-            this.tpDSPOptions.Controls.Add(this.grpDSPNB);
-            this.tpDSPOptions.Controls.Add(this.grpDSPLMSNR);
-            this.tpDSPOptions.Controls.Add(this.grpDSPLMSANF);
-            this.tpDSPOptions.Controls.Add(this.grpDSPWindow);
-            this.tpDSPOptions.Controls.Add(this.grpDSPNB2);
-            this.tpDSPOptions.Location = new System.Drawing.Point(4, 22);
-            this.tpDSPOptions.Name = "tpDSPOptions";
-            this.tpDSPOptions.Size = new System.Drawing.Size(592, 318);
-            this.tpDSPOptions.TabIndex = 2;
-            this.tpDSPOptions.Text = "Options";
+            this.btnRSTANF.Image = null;
+            this.btnRSTANF.Location = new System.Drawing.Point(164, 142);
+            this.btnRSTANF.Name = "btnRSTANF";
+            this.btnRSTANF.Size = new System.Drawing.Size(68, 23);
+            this.btnRSTANF.TabIndex = 39;
+            this.btnRSTANF.Text = "Reset ANF";
+            this.toolTip1.SetToolTip(this.btnRSTANF, "Reset to Factory Setting");
+            this.btnRSTANF.Click += new System.EventHandler(this.btnRSTANF_Click);
+            // 
+            // btnRSTNR
+            // 
+            this.btnRSTNR.Image = null;
+            this.btnRSTNR.Location = new System.Drawing.Point(44, 142);
+            this.btnRSTNR.Name = "btnRSTNR";
+            this.btnRSTNR.Size = new System.Drawing.Size(68, 23);
+            this.btnRSTNR.TabIndex = 23;
+            this.btnRSTNR.Text = "Reset NR";
+            this.toolTip1.SetToolTip(this.btnRSTNR, "Reset to Factory Setting");
+            this.btnRSTNR.Click += new System.EventHandler(this.btnRSTNR_Click);
+            // 
+            // labelTS7
+            // 
+            this.labelTS7.Image = null;
+            this.labelTS7.Location = new System.Drawing.Point(13, 246);
+            this.labelTS7.Name = "labelTS7";
+            this.labelTS7.Size = new System.Drawing.Size(96, 26);
+            this.labelTS7.TabIndex = 10;
+            this.labelTS7.Text = "TNF Notch Width (Default 100):";
+            // 
+            // udTNFWidth
+            // 
+            this.udTNFWidth.Increment = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.udTNFWidth.Location = new System.Drawing.Point(115, 252);
+            this.udTNFWidth.Maximum = new decimal(new int[] {
+            600,
+            0,
+            0,
+            0});
+            this.udTNFWidth.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udTNFWidth.Name = "udTNFWidth";
+            this.udTNFWidth.Size = new System.Drawing.Size(45, 20);
+            this.udTNFWidth.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.udTNFWidth, "TNF Notch Width");
+            this.udTNFWidth.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udTNFWidth.ValueChanged += new System.EventHandler(this.udTNFWidth_ValueChanged);
             // 
             // chkDSPTXMeterPeak
             // 
             this.chkDSPTXMeterPeak.Checked = true;
             this.chkDSPTXMeterPeak.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDSPTXMeterPeak.Image = null;
-            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(16, 144);
+            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(16, 200);
             this.chkDSPTXMeterPeak.Name = "chkDSPTXMeterPeak";
             this.chkDSPTXMeterPeak.Size = new System.Drawing.Size(144, 32);
             this.chkDSPTXMeterPeak.TabIndex = 38;
@@ -7604,25 +8001,6 @@ namespace PowerSDR
             this.lblDSPNB2Threshold.TabIndex = 10;
             this.lblDSPNB2Threshold.Text = "Threshold:";
             // 
-            // tpDSPImageReject
-            // 
-            this.tpDSPImageReject.Controls.Add(this.chkDSPImageExpert);
-            this.tpDSPImageReject.Controls.Add(this.grpDSPImageRejectTX);
-            this.tpDSPImageReject.Location = new System.Drawing.Point(4, 22);
-            this.tpDSPImageReject.Name = "tpDSPImageReject";
-            this.tpDSPImageReject.Size = new System.Drawing.Size(592, 318);
-            this.tpDSPImageReject.TabIndex = 1;
-            this.tpDSPImageReject.Text = "Image Reject";
-            // 
-            // chkDSPImageExpert
-            // 
-            this.chkDSPImageExpert.Location = new System.Drawing.Point(3, 193);
-            this.chkDSPImageExpert.Name = "chkDSPImageExpert";
-            this.chkDSPImageExpert.Size = new System.Drawing.Size(56, 24);
-            this.chkDSPImageExpert.TabIndex = 35;
-            this.chkDSPImageExpert.Text = "Expert";
-            this.chkDSPImageExpert.CheckedChanged += new System.EventHandler(this.chkDSPImageExpert_CheckedChanged);
-            // 
             // grpDSPImageRejectTX
             // 
             this.grpDSPImageRejectTX.Controls.Add(this.checkboxTXImagCal);
@@ -7777,20 +8155,6 @@ namespace PowerSDR
             this.tbDSPImageGainTX.TickFrequency = 50;
             this.toolTip1.SetToolTip(this.tbDSPImageGainTX, "Sets the amplitude/gain offset between the I and Q channels.  ");
             this.tbDSPImageGainTX.Scroll += new System.EventHandler(this.tbDSPImageGainTX_Scroll);
-            // 
-            // tpDSPKeyer
-            // 
-            this.tpDSPKeyer.Controls.Add(this.chkCWDisableUI);
-            this.tpDSPKeyer.Controls.Add(this.grpKeyerConnections);
-            this.tpDSPKeyer.Controls.Add(this.grpDSPCWPitch);
-            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerOptions);
-            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerSignalShaping);
-            this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerSemiBreakIn);
-            this.tpDSPKeyer.Location = new System.Drawing.Point(4, 22);
-            this.tpDSPKeyer.Name = "tpDSPKeyer";
-            this.tpDSPKeyer.Size = new System.Drawing.Size(592, 318);
-            this.tpDSPKeyer.TabIndex = 0;
-            this.tpDSPKeyer.Text = "Keyer";
             // 
             // chkCWDisableUI
             // 
@@ -8255,17 +8619,6 @@ namespace PowerSDR
             0});
             this.udCWBreakInDelay.ValueChanged += new System.EventHandler(this.udCWKeyerSemiBreakInDelay_ValueChanged);
             this.udCWBreakInDelay.LostFocus += new System.EventHandler(this.udCWBreakInDelay_LostFocus);
-            // 
-            // tpDSPAGCALC
-            // 
-            this.tpDSPAGCALC.Controls.Add(this.grpDSPLeveler);
-            this.tpDSPAGCALC.Controls.Add(this.grpDSPALC);
-            this.tpDSPAGCALC.Controls.Add(this.grpDSPAGC);
-            this.tpDSPAGCALC.Location = new System.Drawing.Point(4, 22);
-            this.tpDSPAGCALC.Name = "tpDSPAGCALC";
-            this.tpDSPAGCALC.Size = new System.Drawing.Size(592, 318);
-            this.tpDSPAGCALC.TabIndex = 3;
-            this.tpDSPAGCALC.Text = "AGC/ALC";
             // 
             // grpDSPLeveler
             // 
@@ -9040,30 +9393,6 @@ namespace PowerSDR
             this.lblDSPAGCFixed.TabIndex = 5;
             this.lblDSPAGCFixed.Text = "Fixed Gain (dB):";
             // 
-            // tpTransmit
-            // 
-            this.tpTransmit.Controls.Add(this.chkRememberTXProfileOnModeChange);
-            this.tpTransmit.Controls.Add(this.chkAudioMicBoost);
-            this.tpTransmit.Controls.Add(this.chkSaveTXProfileOnExit);
-            this.tpTransmit.Controls.Add(this.chkAutoSaveTXProfile);
-            this.tpTransmit.Controls.Add(this.chkTXLimitSlew);
-            this.tpTransmit.Controls.Add(this.chkTXExpert);
-            this.tpTransmit.Controls.Add(this.grpTXProfileDef);
-            this.tpTransmit.Controls.Add(this.grpTXAM);
-            this.tpTransmit.Controls.Add(this.grpTXMonitor);
-            this.tpTransmit.Controls.Add(this.grpTXNoiseGate);
-            this.tpTransmit.Controls.Add(this.grpTXProfile);
-            this.tpTransmit.Controls.Add(this.grpPATune);
-            this.tpTransmit.Controls.Add(this.grpTXFilter);
-            this.tpTransmit.Controls.Add(this.chkDCBlock);
-            this.tpTransmit.Controls.Add(this.grpTXVOX);
-            this.tpTransmit.Controls.Add(this.grpTX1500);
-            this.tpTransmit.Location = new System.Drawing.Point(4, 22);
-            this.tpTransmit.Name = "tpTransmit";
-            this.tpTransmit.Size = new System.Drawing.Size(584, 322);
-            this.tpTransmit.TabIndex = 5;
-            this.tpTransmit.Text = "Transmit";
-            // 
             // chkRememberTXProfileOnModeChange
             // 
             this.chkRememberTXProfileOnModeChange.Image = null;
@@ -9747,28 +10076,6 @@ namespace PowerSDR
             0,
             0});
             this.udTX1500PhoneBlanking.ValueChanged += new System.EventHandler(this.udTX1500Blanking_ValueChanged);
-            // 
-            // tpPowerAmplifier
-            // 
-            this.tpPowerAmplifier.Controls.Add(this.rtxtPACalReq);
-            this.tpPowerAmplifier.Controls.Add(this.grpPABandOffset);
-            this.tpPowerAmplifier.Controls.Add(this.chkPANewCal);
-            this.tpPowerAmplifier.Controls.Add(this.grpPAGainByBand);
-            this.tpPowerAmplifier.Location = new System.Drawing.Point(4, 22);
-            this.tpPowerAmplifier.Name = "tpPowerAmplifier";
-            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 322);
-            this.tpPowerAmplifier.TabIndex = 8;
-            this.tpPowerAmplifier.Text = "PA Settings";
-            // 
-            // rtxtPACalReq
-            // 
-            this.rtxtPACalReq.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtxtPACalReq.Location = new System.Drawing.Point(272, 16);
-            this.rtxtPACalReq.Name = "rtxtPACalReq";
-            this.rtxtPACalReq.ReadOnly = true;
-            this.rtxtPACalReq.Size = new System.Drawing.Size(224, 112);
-            this.rtxtPACalReq.TabIndex = 82;
-            this.rtxtPACalReq.Text = "";
             // 
             // grpPABandOffset
             // 
@@ -10805,43 +11112,6 @@ namespace PowerSDR
             this.chkPA6.Text = "6";
             this.chkPA6.Visible = false;
             // 
-            // tpAppearance
-            // 
-            this.tpAppearance.Controls.Add(this.tcAppearance);
-            this.tpAppearance.Location = new System.Drawing.Point(4, 22);
-            this.tpAppearance.Name = "tpAppearance";
-            this.tpAppearance.Size = new System.Drawing.Size(584, 322);
-            this.tpAppearance.TabIndex = 6;
-            this.tpAppearance.Text = "Appearance";
-            // 
-            // tcAppearance
-            // 
-            this.tcAppearance.Controls.Add(this.tpAppearanceGeneral);
-            this.tcAppearance.Controls.Add(this.tpAppearanceDisplay);
-            this.tcAppearance.Controls.Add(this.tpAppearanceMeter);
-            this.tcAppearance.Location = new System.Drawing.Point(0, 0);
-            this.tcAppearance.Name = "tcAppearance";
-            this.tcAppearance.SelectedIndex = 0;
-            this.tcAppearance.Size = new System.Drawing.Size(600, 344);
-            this.tcAppearance.TabIndex = 40;
-            // 
-            // tpAppearanceGeneral
-            // 
-            this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceGeneral.Controls.Add(this.btnSkinExport);
-            this.tpAppearanceGeneral.Controls.Add(this.grpAppSkins);
-            this.tpAppearanceGeneral.Controls.Add(this.lblGenBackground);
-            this.tpAppearanceGeneral.Controls.Add(this.clrbtnGenBackground);
-            this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceBand);
-            this.tpAppearanceGeneral.Controls.Add(this.grpAppearanceVFO);
-            this.tpAppearanceGeneral.Controls.Add(this.clrbtnBtnSel);
-            this.tpAppearanceGeneral.Controls.Add(this.lblAppearanceGenBtnSel);
-            this.tpAppearanceGeneral.Location = new System.Drawing.Point(4, 22);
-            this.tpAppearanceGeneral.Name = "tpAppearanceGeneral";
-            this.tpAppearanceGeneral.Size = new System.Drawing.Size(592, 318);
-            this.tpAppearanceGeneral.TabIndex = 0;
-            this.tpAppearanceGeneral.Text = "General";
-            // 
             // btnSkinExport
             // 
             this.btnSkinExport.Image = null;
@@ -11134,18 +11404,6 @@ namespace PowerSDR
             this.lblAppearanceGenBtnSel.Size = new System.Drawing.Size(64, 32);
             this.lblAppearanceGenBtnSel.TabIndex = 55;
             this.lblAppearanceGenBtnSel.Text = "Button Selected:";
-            // 
-            // tpAppearanceDisplay
-            // 
-            this.tpAppearanceDisplay.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceDisplay.Controls.Add(this.grpMainDisplay);
-            this.tpAppearanceDisplay.Controls.Add(this.grpAppPanadapter);
-            this.tpAppearanceDisplay.Controls.Add(this.grpDisplayPeakCursor);
-            this.tpAppearanceDisplay.Location = new System.Drawing.Point(4, 22);
-            this.tpAppearanceDisplay.Name = "tpAppearanceDisplay";
-            this.tpAppearanceDisplay.Size = new System.Drawing.Size(592, 318);
-            this.tpAppearanceDisplay.TabIndex = 1;
-            this.tpAppearanceDisplay.Text = "Display";
             // 
             // grpMainDisplay
             // 
@@ -11618,23 +11876,6 @@ namespace PowerSDR
             this.lblPeakText.TabIndex = 65;
             this.lblPeakText.Text = "Peak Text:";
             // 
-            // tpAppearanceMeter
-            // 
-            this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
-            this.tpAppearanceMeter.Controls.Add(this.labelTS2);
-            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
-            this.tpAppearanceMeter.Controls.Add(this.lblMeterDigitalText);
-            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigText);
-            this.tpAppearanceMeter.Controls.Add(this.grpMeterEdge);
-            this.tpAppearanceMeter.Controls.Add(this.grpAppearanceMeter);
-            this.tpAppearanceMeter.Controls.Add(this.lblMeterType);
-            this.tpAppearanceMeter.Controls.Add(this.comboMeterType);
-            this.tpAppearanceMeter.Location = new System.Drawing.Point(4, 22);
-            this.tpAppearanceMeter.Name = "tpAppearanceMeter";
-            this.tpAppearanceMeter.Size = new System.Drawing.Size(592, 318);
-            this.tpAppearanceMeter.TabIndex = 2;
-            this.tpAppearanceMeter.Text = "Meter";
-            // 
             // labelTS2
             // 
             this.labelTS2.Image = null;
@@ -11881,21 +12122,6 @@ namespace PowerSDR
             this.comboMeterType.TabIndex = 78;
             this.toolTip1.SetToolTip(this.comboMeterType, "Changes the appearance of the Multimeter on the front panel.");
             this.comboMeterType.SelectedIndexChanged += new System.EventHandler(this.comboMeterType_SelectedIndexChanged);
-            // 
-            // tpKeyboard
-            // 
-            this.tpKeyboard.Controls.Add(this.grpKBXIT);
-            this.tpKeyboard.Controls.Add(this.grpKBRIT);
-            this.tpKeyboard.Controls.Add(this.grpKBMode);
-            this.tpKeyboard.Controls.Add(this.grpKBBand);
-            this.tpKeyboard.Controls.Add(this.grpKBTune);
-            this.tpKeyboard.Controls.Add(this.grpKBFilter);
-            this.tpKeyboard.Controls.Add(this.grpKBCW);
-            this.tpKeyboard.Location = new System.Drawing.Point(4, 22);
-            this.tpKeyboard.Name = "tpKeyboard";
-            this.tpKeyboard.Size = new System.Drawing.Size(584, 322);
-            this.tpKeyboard.TabIndex = 4;
-            this.tpKeyboard.Text = "Keyboard";
             // 
             // grpKBXIT
             // 
@@ -12513,17 +12739,6 @@ namespace PowerSDR
             this.comboKBCWDash.TabIndex = 5;
             this.toolTip1.SetToolTip(this.comboKBCWDash, "Note: Only works with old keyer.");
             this.comboKBCWDash.SelectedIndexChanged += new System.EventHandler(this.comboKBCWDash_SelectedIndexChanged);
-            // 
-            // tpExtCtrl
-            // 
-            this.tpExtCtrl.Controls.Add(this.chkExtEnable);
-            this.tpExtCtrl.Controls.Add(this.grpExtTX);
-            this.tpExtCtrl.Controls.Add(this.grpExtRX);
-            this.tpExtCtrl.Location = new System.Drawing.Point(4, 22);
-            this.tpExtCtrl.Name = "tpExtCtrl";
-            this.tpExtCtrl.Size = new System.Drawing.Size(584, 322);
-            this.tpExtCtrl.TabIndex = 11;
-            this.tpExtCtrl.Text = "Ext. Ctrl";
             // 
             // chkExtEnable
             // 
@@ -14410,23 +14625,6 @@ namespace PowerSDR
             this.chkExtRX1604.TabIndex = 4;
             this.chkExtRX1604.CheckedChanged += new System.EventHandler(this.chkExtRX160_CheckedChanged);
             // 
-            // tpCAT
-            // 
-            this.tpCAT.Controls.Add(this.chkKWAI);
-            this.tpCAT.Controls.Add(this.chkFPInstalled);
-            this.tpCAT.Controls.Add(this.chkDigUIsUSB);
-            this.tpCAT.Controls.Add(this.lblCATRigType);
-            this.tpCAT.Controls.Add(this.comboCATRigType);
-            this.tpCAT.Controls.Add(this.btnCATTest);
-            this.tpCAT.Controls.Add(this.grpPTTBitBang);
-            this.tpCAT.Controls.Add(this.grpCatControlBox);
-            this.tpCAT.Controls.Add(this.grpRTTYOffset);
-            this.tpCAT.Location = new System.Drawing.Point(4, 22);
-            this.tpCAT.Name = "tpCAT";
-            this.tpCAT.Size = new System.Drawing.Size(584, 322);
-            this.tpCAT.TabIndex = 10;
-            this.tpCAT.Text = "CAT Control";
-            // 
             // chkKWAI
             // 
             this.chkKWAI.Image = null;
@@ -14820,20 +15018,6 @@ namespace PowerSDR
             this.chkRTTYOffsetEnableA.TabIndex = 96;
             this.chkRTTYOffsetEnableA.Text = "Enable Offset VFO A";
             this.chkRTTYOffsetEnableA.CheckedChanged += new System.EventHandler(this.chkRTTYOffsetEnableA_CheckedChanged);
-            // 
-            // tpTests
-            // 
-            this.tpTests.Controls.Add(this.grpBoxTS1);
-            this.tpTests.Controls.Add(this.ckEnableSigGen);
-            this.tpTests.Controls.Add(this.grpTestX2);
-            this.tpTests.Controls.Add(this.grpTestAudioBalance);
-            this.tpTests.Controls.Add(this.grpTestTXIMD);
-            this.tpTests.Controls.Add(this.grpImpulseTest);
-            this.tpTests.Location = new System.Drawing.Point(4, 22);
-            this.tpTests.Name = "tpTests";
-            this.tpTests.Size = new System.Drawing.Size(584, 322);
-            this.tpTests.TabIndex = 7;
-            this.tpTests.Text = "Tests";
             // 
             // grpBoxTS1
             // 
@@ -15567,87 +15751,6 @@ namespace PowerSDR
             this.btnImpulse.Text = "Impulse";
             this.btnImpulse.Click += new System.EventHandler(this.btnImpulse_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // btnExportDB
-            // 
-            this.btnExportDB.Image = null;
-            this.btnExportDB.Location = new System.Drawing.Point(224, 366);
-            this.btnExportDB.Name = "btnExportDB";
-            this.btnExportDB.Size = new System.Drawing.Size(112, 23);
-            this.btnExportDB.TabIndex = 22;
-            this.btnExportDB.Text = "Export Database...";
-            this.toolTip1.SetToolTip(this.btnExportDB, "Copy the saved PowerSDR Database to the folder location of your choice.");
-            this.btnExportDB.Click += new System.EventHandler(this.btnExportDB_Click);
-            // 
-            // btnImportDB
-            // 
-            this.btnImportDB.Image = null;
-            this.btnImportDB.Location = new System.Drawing.Point(106, 366);
-            this.btnImportDB.Name = "btnImportDB";
-            this.btnImportDB.Size = new System.Drawing.Size(112, 23);
-            this.btnImportDB.TabIndex = 21;
-            this.btnImportDB.Text = "Import Database...";
-            this.toolTip1.SetToolTip(this.btnImportDB, "Replace the current PowerSDR database with a previously exported database.");
-            this.btnImportDB.Click += new System.EventHandler(this.btnImportDB_Click);
-            // 
-            // btnResetDB
-            // 
-            this.btnResetDB.Image = null;
-            this.btnResetDB.Location = new System.Drawing.Point(4, 366);
-            this.btnResetDB.Name = "btnResetDB";
-            this.btnResetDB.Size = new System.Drawing.Size(96, 23);
-            this.btnResetDB.TabIndex = 20;
-            this.btnResetDB.Text = "Factory Defaults";
-            this.toolTip1.SetToolTip(this.btnResetDB, "Copies the current database to the desktop and resets to the defaults (after rest" +
-        "arting)");
-            this.btnResetDB.Click += new System.EventHandler(this.btnResetDB_Click);
-            // 
-            // btnApply
-            // 
-            this.btnApply.Image = null;
-            this.btnApply.Location = new System.Drawing.Point(523, 366);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 19;
-            this.btnApply.Text = "Apply";
-            this.toolTip1.SetToolTip(this.btnApply, "Save current settings to the database.");
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(442, 366);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 18;
-            this.btnCancel.Text = "Cancel";
-            this.toolTip1.SetToolTip(this.btnCancel, "Load settings from database and close form.");
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnOK
-            // 
-            this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(361, 366);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 17;
-            this.btnOK.Text = "OK";
-            this.toolTip1.SetToolTip(this.btnOK, "Keep current settings and close form.");
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
-            // timer_sweep
-            // 
-            this.timer_sweep.Tick += new System.EventHandler(this.timer_sweep_Tick);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "PowerSDR Database Files (*.xml)|*.xml|All files|*.*";
-            this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
-            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
-            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -15670,6 +15773,37 @@ namespace PowerSDR
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
+            this.tpGeneralOptions.ResumeLayout(false);
+            this.tpGeneralCalibration.ResumeLayout(false);
+            this.tpFilters.ResumeLayout(false);
+            this.tpRX2.ResumeLayout(false);
+            this.tpGeneralNavigation.ResumeLayout(false);
+            this.tpUserInterface.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.tpAudio.ResumeLayout(false);
+            this.tcAudio.ResumeLayout(false);
+            this.tpAudioCard1.ResumeLayout(false);
+            this.tpVAC.ResumeLayout(false);
+            this.tpVAC2.ResumeLayout(false);
+            this.tpDisplay.ResumeLayout(false);
+            this.tpDSP.ResumeLayout(false);
+            this.tcDSP.ResumeLayout(false);
+            this.tpDSPOptions.ResumeLayout(false);
+            this.tpDSPImageReject.ResumeLayout(false);
+            this.tpDSPKeyer.ResumeLayout(false);
+            this.tpDSPAGCALC.ResumeLayout(false);
+            this.tpTransmit.ResumeLayout(false);
+            this.tpPowerAmplifier.ResumeLayout(false);
+            this.tpAppearance.ResumeLayout(false);
+            this.tcAppearance.ResumeLayout(false);
+            this.tpAppearanceGeneral.ResumeLayout(false);
+            this.tpAppearanceDisplay.ResumeLayout(false);
+            this.tpAppearanceMeter.ResumeLayout(false);
+            this.tpKeyboard.ResumeLayout(false);
+            this.tpExtCtrl.ResumeLayout(false);
+            this.tpCAT.ResumeLayout(false);
+            this.tpTests.ResumeLayout(false);
             this.grpHWSoftRock.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSoftRockCenterFreq)).EndInit();
             this.grpGeneralDDS.ResumeLayout(false);
@@ -15682,7 +15816,6 @@ namespace PowerSDR
             this.grpGeneralHardwareSDR1000.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralLPTDelay)).EndInit();
             this.grpGeneralHardwareFLEX1500.ResumeLayout(false);
-            this.tpGeneralOptions.ResumeLayout(false);
             this.grpOptUSBBuf.ResumeLayout(false);
             this.grpOptUSBBuf.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbOptUSBBuf)).EndInit();
@@ -15698,7 +15831,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udGenTX1Delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralX2Delay)).EndInit();
             this.grpGeneralProcessPriority.ResumeLayout(false);
-            this.tpGeneralCalibration.ResumeLayout(false);
             this.grpGenCalRXImage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).EndInit();
             this.grpGenCalLevel.ResumeLayout(false);
@@ -15706,21 +15838,12 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq2)).EndInit();
             this.grpGeneralCalibration.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).EndInit();
-            this.tpFilters.ResumeLayout(false);
             this.grpOptFilterControls.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udFilterDefaultLowCut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterShift)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterWidth)).EndInit();
-            this.tpRX2.ResumeLayout(false);
-            this.tpGeneralNavigation.ResumeLayout(false);
             this.grpOptSpaceNav.ResumeLayout(false);
             this.grpOptSpaceNav.PerformLayout();
-            this.tpUserInterface.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.tpAudio.ResumeLayout(false);
-            this.tcAudio.ResumeLayout(false);
-            this.tpAudioCard1.ResumeLayout(false);
             this.grpAudioChannels.ResumeLayout(false);
             this.grpAudioMicInGain1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udAudioMicGain1)).EndInit();
@@ -15734,7 +15857,6 @@ namespace PowerSDR
             this.grpAudioCard.ResumeLayout(false);
             this.grpAudioBufferSize1.ResumeLayout(false);
             this.grpAudioSampleRate1.ResumeLayout(false);
-            this.tpVAC.ResumeLayout(false);
             this.grpDirectIQOutput.ResumeLayout(false);
             this.grpAudioVACAutoEnable.ResumeLayout(false);
             this.grpAudioVACGain.ResumeLayout(false);
@@ -15746,7 +15868,6 @@ namespace PowerSDR
             this.grpAudioSampleRate2.ResumeLayout(false);
             this.grpAudioBuffer2.ResumeLayout(false);
             this.grpAudioDetails2.ResumeLayout(false);
-            this.tpVAC2.ResumeLayout(false);
             this.grpVAC2DirectIQ.ResumeLayout(false);
             this.grpVAC2AutoEnable.ResumeLayout(false);
             this.grpVAC2Gain.ResumeLayout(false);
@@ -15758,7 +15879,6 @@ namespace PowerSDR
             this.grpAudioSampleRate3.ResumeLayout(false);
             this.grpAudioBuffer3.ResumeLayout(false);
             this.grpAudioDetails3.ResumeLayout(false);
-            this.tpDisplay.ResumeLayout(false);
             this.grpDisplayMultimeter.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udMeterDigitalDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayMeterAvg)).EndInit();
@@ -15789,9 +15909,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridStep)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMin)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayGridMax)).EndInit();
-            this.tpDSP.ResumeLayout(false);
-            this.tcDSP.ResumeLayout(false);
-            this.tpDSPOptions.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udTNFWidth)).EndInit();
             this.grpDSPBufferSize.ResumeLayout(false);
             this.grpDSPBufDig.ResumeLayout(false);
             this.grpDSPBufCW.ResumeLayout(false);
@@ -15811,14 +15929,12 @@ namespace PowerSDR
             this.grpDSPWindow.ResumeLayout(false);
             this.grpDSPNB2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPNB2)).EndInit();
-            this.tpDSPImageReject.ResumeLayout(false);
             this.grpDSPImageRejectTX.ResumeLayout(false);
             this.grpDSPImageRejectTX.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPImageGainTX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPImagePhaseTX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPImagePhaseTX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPImageGainTX)).EndInit();
-            this.tpDSPKeyer.ResumeLayout(false);
             this.grpKeyerConnections.ResumeLayout(false);
             this.grpDSPCWPitch.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPCWPitch)).EndInit();
@@ -15828,7 +15944,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udCWKeyerRamp)).EndInit();
             this.grpDSPKeyerSemiBreakIn.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
-            this.tpDSPAGCALC.ResumeLayout(false);
             this.grpDSPLeveler.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerHangTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerThreshold)).EndInit();
@@ -15851,7 +15966,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCDecay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).EndInit();
-            this.tpTransmit.ResumeLayout(false);
             this.grpTXProfileDef.ResumeLayout(false);
             this.grpTXAM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTXAMCarrierLevel)).EndInit();
@@ -15871,7 +15985,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTXVOXThreshold)).EndInit();
             this.grpTX1500.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTX1500PhoneBlanking)).EndInit();
-            this.tpPowerAmplifier.ResumeLayout(false);
             this.grpPABandOffset.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udPAADC17)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAADC15)).EndInit();
@@ -15895,13 +16008,9 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain60)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain80)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPAGain160)).EndInit();
-            this.tpAppearance.ResumeLayout(false);
-            this.tcAppearance.ResumeLayout(false);
-            this.tpAppearanceGeneral.ResumeLayout(false);
             this.grpAppSkins.ResumeLayout(false);
             this.grpAppearanceBand.ResumeLayout(false);
             this.grpAppearanceVFO.ResumeLayout(false);
-            this.tpAppearanceDisplay.ResumeLayout(false);
             this.grpMainDisplay.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpAppPanadapter.ResumeLayout(false);
@@ -15909,10 +16018,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).EndInit();
             this.grpDisplayPeakCursor.ResumeLayout(false);
-            this.tpAppearanceMeter.ResumeLayout(false);
             this.grpMeterEdge.ResumeLayout(false);
             this.grpAppearanceMeter.ResumeLayout(false);
-            this.tpKeyboard.ResumeLayout(false);
             this.grpKBXIT.ResumeLayout(false);
             this.grpKBRIT.ResumeLayout(false);
             this.grpKBMode.ResumeLayout(false);
@@ -15920,16 +16027,13 @@ namespace PowerSDR
             this.grpKBTune.ResumeLayout(false);
             this.grpKBFilter.ResumeLayout(false);
             this.grpKBCW.ResumeLayout(false);
-            this.tpExtCtrl.ResumeLayout(false);
             this.grpExtTX.ResumeLayout(false);
             this.grpExtRX.ResumeLayout(false);
-            this.tpCAT.ResumeLayout(false);
             this.grpPTTBitBang.ResumeLayout(false);
             this.grpCatControlBox.ResumeLayout(false);
             this.grpRTTYOffset.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udRTTYU)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRTTYL)).EndInit();
-            this.tpTests.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
             this.grpBoxTS1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPulsePeriod)).EndInit();
@@ -25084,8 +25188,8 @@ namespace PowerSDR
 		private FWCAnt old_ant = FWCAnt.ANT1;
 
         private HIDAnt old_hid_ant = HIDAnt.PA;
-
-		private void ckEnableSigGen_CheckedChanged(object sender, System.EventArgs e)
+       
+        private void ckEnableSigGen_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(console.fwc_init && (console.CurrentModel == Model.FLEX5000 || console.CurrentModel == Model.FLEX3000))
 			{
@@ -25761,7 +25865,7 @@ namespace PowerSDR
             }
         }
 
-        private void comboAppSkin_SelectedIndexChanged(object sender, EventArgs e)
+        public void comboAppSkin_SelectedIndexChanged(object sender, EventArgs e)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + 
                 "\\FlexRadio Systems\\PowerSDR\\Skins\\";
@@ -25771,6 +25875,8 @@ namespace PowerSDR
                 console.CurrentSkin = comboAppSkin.Text;
                 console.RadarColorUpdate = true;
             }
+
+            SpotControl.Skin1 = comboAppSkin.Text;
 
         }
 
@@ -26303,8 +26409,40 @@ namespace PowerSDR
 
         }
 
+        // ke9ns add
+        private void btnRSTNB_Click(object sender, EventArgs e)
+        {
+            udDSPNB.Value = 20;
 
+        }
 
+        // ke9ns add
+        private void btnRSTNB2_Click(object sender, EventArgs e)
+        {
+            udDSPNB2.Value = 15;
+        }
+        // ke9ns add
+        private void btnRSTNR_Click(object sender, EventArgs e)
+        {
+            udLMSNRtaps.Value = 40;
+            udLMSNRgain.Value = 16;
+            udLMSNRdelay.Value = 30;
+            udLMSNRLeak.Value = 10;
+
+        }
+        // ke9ns add
+        private void btnRSTANF_Click(object sender, EventArgs e)
+        {
+            udLMSANFtaps.Value = 68;
+            udLMSANFgain.Value = 25;
+            udLMSANFdelay.Value = 60;
+            udLMSANFLeak.Value = 1;
+        }
+        // ke9ns add
+        private void udTNFWidth_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     } // class setup
 
     #region PADeviceInfo Helper Class

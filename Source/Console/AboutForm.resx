@@ -295,6 +295,8 @@ NO WARRANTY
   <data name="textBox2.Text" xml:space="preserve">
     <value>ke9ns Major Revision History from the base current PowerSDR 2.7.2
 
+033116S4: Add Gray Line and embedded Equirectangular Projection map
+032916S3: Add Sun Tracker, Add TNF width adjustment
 032416S1: Add Rec/Play ID feature
 032016R10: Add QRZ hyperlink of call signs click on callsign and hit CTRL button or Ctrl+Right Click on call sign in Panadapter
 031516R6: Add SWL Spotter and DX Spotter.

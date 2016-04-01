@@ -112,9 +112,9 @@ namespace PowerSDR
 
 
             f.Name = f.Name.Replace("btnBandHF1", "btnBandHF"); // ke9ns add so we can use other band png file for the SWL bands
-            f.Name = f.Name.Replace("GN", "VHF"); // ke9ns add
+            f.Name = f.Name.Replace("GN", "VHF"); // ke9ns add so we can use other band png file for the SWL band
 
-            if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
+            if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext)) // pic_file_ext = .png
             {
                 f.BackgroundImage = Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
             }
@@ -168,7 +168,9 @@ namespace PowerSDR
                 Restore(c, doc);
 
             return true;
-        }
+        } // restore(skin)
+
+
 
         private static void Save(Control c, XmlTextWriter writer)
         {
@@ -335,6 +337,9 @@ namespace PowerSDR
             temp = c as PictureBox;
             if (temp != null)
             {
+
+             //   Trace.WriteLine("pictgurebox3=====");
+
                 RestorePictureBox((PictureBox)c, doc);
                 return;
             }
@@ -410,6 +415,9 @@ namespace PowerSDR
             temp = c as PictureBox;
             if (temp != null)
             {
+
+             //   Trace.WriteLine("pictgurebox1=====");
+
                 SetBackgroundImage((PictureBox)c);
                 return;
             }
@@ -1123,8 +1131,12 @@ namespace PowerSDR
             writer.WriteEndElement();
         }
 
-        private static void RestorePictureBox(PictureBox ctrl, XmlDocument doc)
+
+        public static void RestorePictureBox(PictureBox ctrl, XmlDocument doc)
         {
+
+          //  Trace.WriteLine("pictgurebox2=====");
+
             XmlNodeList matches = doc.GetElementsByTagName(ctrl.Name);
             if (matches.Count == 0) // not found
                 return;
@@ -1592,7 +1604,7 @@ namespace PowerSDR
             return c;
         }
 
-        private static void SetBackgroundImage(Control c)
+       public static void SetBackgroundImage(Control c)
         {
 
             c.Name = c.Name.Replace("GN", "VHF"); // ke9ns add
