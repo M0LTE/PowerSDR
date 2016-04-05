@@ -293,7 +293,7 @@ namespace PowerSDR
 	{
 		FIRST = -1,
         PANADAPTER,
-        PANAFALL,
+        PANAFALL,        
         WATERFALL,
         PANASCOPE,
         SPECTRUM,
@@ -1501,6 +1501,10 @@ namespace PowerSDR
 
 		public Console(string[] args)
         {
+
+          
+          //  this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+         //   this.AutoScaleMode = AutoScaleMode.Dpi;  // ke9ns test
 
 
             //====================================================================================
@@ -3086,6 +3090,7 @@ namespace PowerSDR
             this.chkTUN.Name = "chkTUN";
             this.toolTip1.SetToolTip(this.chkTUN, resources.GetString("chkTUN.ToolTip"));
             this.chkTUN.CheckedChanged += new System.EventHandler(this.chkTUN_CheckedChanged);
+            this.chkTUN.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkTUN_MouseDown);
             // 
             // chkX2TR
             // 
@@ -4138,6 +4143,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.btnDisplayPanCenter, resources.GetString("btnDisplayPanCenter.ToolTip"));
             this.btnDisplayPanCenter.UseVisualStyleBackColor = false;
             this.btnDisplayPanCenter.Click += new System.EventHandler(this.btnDisplayPanCenter_Click);
+            this.btnDisplayPanCenter.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnDisplayPanCenter_MouseDown);
             // 
             // udFilterHigh
             // 
@@ -41687,9 +41693,10 @@ namespace PowerSDR
 					break;
 				case "Panafall":
 					Display.CurrentDisplayMode = DisplayMode.PANAFALL;
-					CalcDisplayFreq();
+                  
+                    CalcDisplayFreq();
 					break;
-				case "Panascope":
+                case "Panascope":
 					Display.CurrentDisplayMode = DisplayMode.PANASCOPE;
 					CalcDisplayFreq();
 					break;
@@ -53814,19 +53821,20 @@ namespace PowerSDR
 			if (this.WindowState == FormWindowState.Minimized)
 				return;
 
-			if(dpi == 0)
-				dpi = (int)picDisplay.CreateGraphics().DpiX;
+			if(dpi == 0) dpi = (int)picDisplay.CreateGraphics().DpiX;
+
 			if(dpi > 96 && !dpi_resize_done)
 			{
-				if(base_size.Width == 0)
-					base_size = this.AutoScaleBaseSize;
+				if(base_size.Width == 0) base_size = this.AutoScaleBaseSize;
 
-				if(this.AutoScaleBaseSize != base_size)
-					dpi_resize_done = true;
+				if(this.AutoScaleBaseSize != base_size) dpi_resize_done = true;
 				else return;
 			}
 
-			/*if(!done_console_basis)
+         //   this.AutoScaleMode = AutoScaleMode.;  // ke9ns test
+          
+
+            /*if(!done_console_basis)
 			{
 				GrabConsoleSizeBasis();
 				done_console_basis = true;
@@ -53852,7 +53860,7 @@ namespace PowerSDR
 				}
 			}*/
 
-			/*if(!set_min_size)
+            /*if(!set_min_size)
 			{
 				int W = console_basis_size.Width;
 				int H;
@@ -53865,7 +53873,7 @@ namespace PowerSDR
 				set_min_size = true;
 			}*/
 
-			if(this.Width < console_basis_size.Width)
+            if (this.Width < console_basis_size.Width)
 			{
 				this.Width = console_basis_size.Width;
 				return;
@@ -57591,6 +57599,48 @@ namespace PowerSDR
 
                 setupForm.tcSetup.SelectedIndex = 3; // select dsp tab;
                 setupForm.tcDSP.SelectedIndex = 0; // select Options tab
+
+            } // right click
+        }
+
+
+        // ke9ns add to go directly to gray line color section
+        private void btnDisplayPanCenter_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+
+                setupForm.tcSetup.SelectedIndex = 6; // select appearance tab;
+                setupForm.tcAppearance.SelectedIndex = 1; // select  tab
+
+            } // right click
+        }
+
+        private void chkTUN_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+
+                setupForm.tcSetup.SelectedIndex = 4; // select audio tab;
+
+                //   setupForm.tcAudio.SelectedIndex = 1; // select vac1 tab
+                //    setupForm.chkAudioIQtoVAC.Focus();
 
             } // right click
         }

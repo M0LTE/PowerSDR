@@ -36,16 +36,21 @@ namespace PowerSDR
     public class SpotControl : System.Windows.Forms.Form
     {
         private static System.Reflection.Assembly myAssembly2 = System.Reflection.Assembly.GetExecutingAssembly();
-      //  public static Stream Map_image = myAssembly2.GetManifestResourceStream("PowerSDR.Resources.picDisplay.png");
         public static Stream Map_image = myAssembly2.GetManifestResourceStream("PowerSDR.Resources.picD1.png");
 
+        private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
+        public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");
 
 
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
-        public static  Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+        public  Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
-      
+    //   public static Display display;
+
+     //   public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+
+
         //   private ArrayList file_list;
         private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\PowerSDR";
 
@@ -58,7 +63,6 @@ namespace PowerSDR
         public TextBox portBox;
         private TextBox statusBox;
         private Button button1;
-        public TextBox nameBox;
         private CheckBox checkBoxUSspot;
         private CheckBox checkBoxWorld;
         private TextBox statusBoxSWL;
@@ -69,6 +73,11 @@ namespace PowerSDR
         public CheckBoxTS chkSUN;
         private ToolTip toolTip1;
         public CheckBoxTS chkGrayLine;
+        private Button btnTrack;
+        public CheckBoxTS chkPanMode;
+        public TextBox nameBox;
+        public CheckBoxTS chkMapCall;
+        public CheckBoxTS chkMapCountry;
         private IContainer components;
 
 
@@ -116,23 +125,27 @@ namespace PowerSDR
             this.portBox = new System.Windows.Forms.TextBox();
             this.statusBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.nameBox = new System.Windows.Forms.TextBox();
             this.checkBoxUSspot = new System.Windows.Forms.CheckBox();
             this.checkBoxWorld = new System.Windows.Forms.CheckBox();
             this.statusBoxSWL = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chkSUN = new System.Windows.Forms.CheckBoxTS();
+            this.btnTrack = new System.Windows.Forms.Button();
+            this.nameBox = new System.Windows.Forms.TextBox();
+            this.chkMapCall = new System.Windows.Forms.CheckBoxTS();
+            this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
+            this.chkSUN = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.chkMapCountry = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
             // SWLbutton
             // 
             this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton.Location = new System.Drawing.Point(93, 486);
+            this.SWLbutton.Location = new System.Drawing.Point(193, 512);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton.TabIndex = 2;
@@ -144,7 +157,7 @@ namespace PowerSDR
             // SSBbutton
             // 
             this.SSBbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SSBbutton.Location = new System.Drawing.Point(12, 486);
+            this.SSBbutton.Location = new System.Drawing.Point(12, 513);
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
             this.SSBbutton.TabIndex = 1;
@@ -166,7 +179,7 @@ namespace PowerSDR
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(663, 287);
+            this.textBox1.Size = new System.Drawing.Size(663, 289);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
@@ -175,10 +188,10 @@ namespace PowerSDR
             // 
             this.nodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox.Location = new System.Drawing.Point(294, 487);
+            this.nodeBox.Location = new System.Drawing.Point(319, 514);
             this.nodeBox.MaxLength = 50;
             this.nodeBox.Name = "nodeBox";
-            this.nodeBox.Size = new System.Drawing.Size(270, 22);
+            this.nodeBox.Size = new System.Drawing.Size(294, 22);
             this.nodeBox.TabIndex = 6;
             this.nodeBox.Text = "spider.ham-radio-deluxe.com";
             this.toolTip1.SetToolTip(this.nodeBox, "Enter in a DX Cluster URL address here");
@@ -201,10 +214,10 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(498, 459);
+            this.callBox.Location = new System.Drawing.Point(571, 485);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
-            this.callBox.Size = new System.Drawing.Size(128, 22);
+            this.callBox.Size = new System.Drawing.Size(103, 22);
             this.callBox.TabIndex = 5;
             this.callBox.Text = "Callsign";
             this.toolTip1.SetToolTip(this.callBox, "Enter Your Call sign to login to the DX Cluster here");
@@ -216,7 +229,7 @@ namespace PowerSDR
             // 
             this.portBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox.Location = new System.Drawing.Point(570, 486);
+            this.portBox.Location = new System.Drawing.Point(619, 514);
             this.portBox.MaxLength = 7;
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(56, 22);
@@ -231,7 +244,7 @@ namespace PowerSDR
             // 
             this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBox.Location = new System.Drawing.Point(12, 407);
+            this.statusBox.Location = new System.Drawing.Point(12, 404);
             this.statusBox.Name = "statusBox";
             this.statusBox.Size = new System.Drawing.Size(156, 22);
             this.statusBox.TabIndex = 11;
@@ -243,7 +256,7 @@ namespace PowerSDR
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(174, 486);
+            this.button1.Location = new System.Drawing.Point(100, 513);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
@@ -253,26 +266,11 @@ namespace PowerSDR
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // nameBox
-            // 
-            this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(364, 459);
-            this.nameBox.MaxLength = 25;
-            this.nameBox.Name = "nameBox";
-            this.nameBox.Size = new System.Drawing.Size(128, 22);
-            this.nameBox.TabIndex = 4;
-            this.nameBox.Text = "HB9DRV-9>";
-            this.nameBox.Visible = false;
-            this.nameBox.TextChanged += new System.EventHandler(this.nameBox_TextChanged);
-            this.nameBox.Leave += new System.EventHandler(this.nameBox_Leave);
-            this.nameBox.MouseEnter += new System.EventHandler(this.nameBox_MouseEnter);
-            // 
             // checkBoxUSspot
             // 
             this.checkBoxUSspot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxUSspot.AutoSize = true;
-            this.checkBoxUSspot.Location = new System.Drawing.Point(12, 435);
+            this.checkBoxUSspot.Location = new System.Drawing.Point(12, 462);
             this.checkBoxUSspot.Name = "checkBoxUSspot";
             this.checkBoxUSspot.Size = new System.Drawing.Size(163, 17);
             this.checkBoxUSspot.TabIndex = 14;
@@ -284,7 +282,7 @@ namespace PowerSDR
             // 
             this.checkBoxWorld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxWorld.AutoSize = true;
-            this.checkBoxWorld.Location = new System.Drawing.Point(12, 458);
+            this.checkBoxWorld.Location = new System.Drawing.Point(12, 485);
             this.checkBoxWorld.Name = "checkBoxWorld";
             this.checkBoxWorld.Size = new System.Drawing.Size(182, 17);
             this.checkBoxWorld.TabIndex = 15;
@@ -296,7 +294,7 @@ namespace PowerSDR
             // 
             this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBoxSWL.Location = new System.Drawing.Point(202, 407);
+            this.statusBoxSWL.Location = new System.Drawing.Point(184, 404);
             this.statusBoxSWL.Name = "statusBoxSWL";
             this.statusBoxSWL.Size = new System.Drawing.Size(156, 22);
             this.statusBoxSWL.TabIndex = 16;
@@ -307,7 +305,7 @@ namespace PowerSDR
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 391);
+            this.label1.Location = new System.Drawing.Point(12, 387);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 17;
@@ -317,63 +315,131 @@ namespace PowerSDR
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(199, 391);
+            this.label2.Location = new System.Drawing.Point(181, 387);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 18;
             this.label2.Text = "Status of SWL Spotter";
             // 
-            // chkSUN
+            // btnTrack
             // 
-            this.chkSUN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkSUN.Image = null;
-            this.chkSUN.Location = new System.Drawing.Point(376, 421);
-            this.chkSUN.Name = "chkSUN";
-            this.chkSUN.Size = new System.Drawing.Size(116, 24);
-            this.chkSUN.TabIndex = 60;
-            this.chkSUN.Text = "SunTracking\r\n";
-            this.toolTip1.SetToolTip(this.chkSUN, "Sun will show on Panadapter screen \r\nBut only when using KE9SN6_World 3 only\r\nAnd" +
-        " only when RX1 is in Panadapter Mode with RX2 Display OFF");
-            this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
+            this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnTrack.Location = new System.Drawing.Point(364, 479);
+            this.btnTrack.Name = "btnTrack";
+            this.btnTrack.Size = new System.Drawing.Size(75, 23);
+            this.btnTrack.TabIndex = 62;
+            this.btnTrack.Text = "Track";
+            this.toolTip1.SetToolTip(this.btnTrack, "Click to Turn on/off GrayLine and/or Sun Tracking");
+            this.btnTrack.UseVisualStyleBackColor = true;
+            this.btnTrack.Click += new System.EventHandler(this.btnTrack_Click);
+            // 
+            // nameBox
+            // 
+            this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nameBox.Location = new System.Drawing.Point(571, 457);
+            this.nameBox.MaxLength = 20;
+            this.nameBox.Name = "nameBox";
+            this.nameBox.Size = new System.Drawing.Size(103, 22);
+            this.nameBox.TabIndex = 64;
+            this.nameBox.Text = "name";
+            this.toolTip1.SetToolTip(this.nameBox, "Enter Your Call sign to login to the DX Cluster here");
+            this.nameBox.Visible = false;
+            // 
+            // chkMapCall
+            // 
+            this.chkMapCall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkMapCall.Image = null;
+            this.chkMapCall.Location = new System.Drawing.Point(475, 427);
+            this.chkMapCall.Name = "chkMapCall";
+            this.chkMapCall.Size = new System.Drawing.Size(88, 24);
+            this.chkMapCall.TabIndex = 65;
+            this.chkMapCall.Text = "Map Calls";
+            this.toolTip1.SetToolTip(this.chkMapCall, "Show DX Spot Call signs on Map");
+            this.chkMapCall.CheckedChanged += new System.EventHandler(this.chkMapCall_CheckedChanged);
+            // 
+            // chkPanMode
+            // 
+            this.chkPanMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkPanMode.Image = null;
+            this.chkPanMode.Location = new System.Drawing.Point(364, 449);
+            this.chkPanMode.Name = "chkPanMode";
+            this.chkPanMode.Size = new System.Drawing.Size(153, 24);
+            this.chkPanMode.TabIndex = 63;
+            this.chkPanMode.Text = "Special PanaFall Mode\r\n";
+            this.toolTip1.SetToolTip(this.chkPanMode, "When Checked, will Display RX1 in Panafall mode, with a small waterfall for bette" +
+        "r viewing of the map");
+            this.chkPanMode.CheckedChanged += new System.EventHandler(this.chkPanMode_CheckedChanged);
             // 
             // chkGrayLine
             // 
             this.chkGrayLine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkGrayLine.Image = null;
-            this.chkGrayLine.Location = new System.Drawing.Point(483, 421);
+            this.chkGrayLine.Location = new System.Drawing.Point(364, 427);
             this.chkGrayLine.Name = "chkGrayLine";
-            this.chkGrayLine.Size = new System.Drawing.Size(116, 24);
+            this.chkGrayLine.Size = new System.Drawing.Size(105, 24);
             this.chkGrayLine.TabIndex = 61;
             this.chkGrayLine.Text = "GrayLine Track";
             this.toolTip1.SetToolTip(this.chkGrayLine, "GrayLine will show on Panadapter Display\r\nBut only when using KE9SN6_World skin o" +
         "nly\r\nAnd only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkGrayLine.CheckedChanged += new System.EventHandler(this.chkGrayLine_CheckedChanged);
             // 
+            // chkSUN
+            // 
+            this.chkSUN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkSUN.Image = null;
+            this.chkSUN.Location = new System.Drawing.Point(364, 404);
+            this.chkSUN.Name = "chkSUN";
+            this.chkSUN.Size = new System.Drawing.Size(92, 24);
+            this.chkSUN.TabIndex = 60;
+            this.chkSUN.Text = "SunTracking\r\n";
+            this.toolTip1.SetToolTip(this.chkSUN, "Sun will show on Panadapter screen \r\nBut only when using KE9SN6_World 3 only\r\nAnd" +
+        " only when RX1 is in Panadapter Mode with RX2 Display OFF");
+            this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
+            // 
             // chkDXMode
             // 
             this.chkDXMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(376, 391);
+            this.chkDXMode.Location = new System.Drawing.Point(12, 432);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(138, 24);
             this.chkDXMode.TabIndex = 59;
             this.chkDXMode.Text = "Parse \"DX Spot\" Mode";
+            this.chkDXMode.UseVisualStyleBackColor = true;
             // 
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(570, 391);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(571, 402);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
             this.chkAlwaysOnTop.Text = "Always On Top";
             this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
+            // chkMapCountry
+            // 
+            this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkMapCountry.Image = null;
+            this.chkMapCountry.Location = new System.Drawing.Point(475, 402);
+            this.chkMapCountry.Name = "chkMapCountry";
+            this.chkMapCountry.Size = new System.Drawing.Size(88, 24);
+            this.chkMapCountry.TabIndex = 66;
+            this.chkMapCountry.Text = "Map Country";
+            this.toolTip1.SetToolTip(this.chkMapCountry, "Show Dx spot Countries on Map\r\n");
+            this.chkMapCountry.CheckedChanged += new System.EventHandler(this.chkMapCountry_CheckedChanged);
+            // 
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(687, 521);
+            this.ClientSize = new System.Drawing.Size(687, 548);
+            this.Controls.Add(this.chkMapCountry);
+            this.Controls.Add(this.chkMapCall);
+            this.Controls.Add(this.nameBox);
+            this.Controls.Add(this.chkPanMode);
+            this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.chkGrayLine);
             this.Controls.Add(this.chkSUN);
             this.Controls.Add(this.chkDXMode);
@@ -383,7 +449,6 @@ namespace PowerSDR
             this.Controls.Add(this.statusBoxSWL);
             this.Controls.Add(this.checkBoxWorld);
             this.Controls.Add(this.checkBoxUSspot);
-            this.Controls.Add(this.nameBox);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusBox);
             this.Controls.Add(this.portBox);
@@ -505,13 +570,14 @@ namespace PowerSDR
 
         }
 
-        public static byte SP_Active = 0;  // 1= DX Spot feature ON
+        public static byte SP_Active = 0;  // 1= DX Spot feature ON 2=waiting for spots
         public static byte SP2_Active = 0; // DX Spot: 0=closed so ok to open again if you want, 1=in process of shutting down
         public static byte SP4_Active = 0; // 1=processing valid DX spot. 0=not processing new DX spot
 
         public static byte SP1_Active = 0; // SWL active
         public static byte SP3_Active = 0; // 1=SWL database loaded up, so no need to reload if you turn if OFF
-       
+
+        public static byte SP5_Active = 0; // 1= Sun and/or grayline tracking on
 
         //=======================================================================================
         //=======================================================================================
@@ -547,8 +613,9 @@ namespace PowerSDR
 
 
                 t.Name = "SWL Spotter Thread";
+              
                 t.IsBackground = true;
-                t.Priority = ThreadPriority.Lowest;
+                t.Priority = ThreadPriority.Normal;
                 t.Start();
 
               
@@ -598,19 +665,16 @@ namespace PowerSDR
         public static int Lindex; // low index spot
         public static int Hindex; // high index spot
 
-   
         public static FileStream stream2;          // for reading SWL.csv file
         public static BinaryReader reader2;
 
         public static byte Flag1 = 0; // flag to skip header line in SWL.csv file
 
-
         public static DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
         public static string FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
 
         public static int UTCNEW1 = Convert.ToInt16(FD);                                       // convert 24hr UTC to int
-        public static int UTCLAST1 = 0;
-       
+        
         //=======================================================================================
         //=======================================================================================
         //ke9ns start SWL spotting
@@ -623,7 +687,7 @@ namespace PowerSDR
             {
 
 
-                stream2 = new FileStream(file_name, FileMode.Open); // open BMP  file
+                stream2 = new FileStream(file_name, FileMode.Open); // open file
                 reader2 = new BinaryReader(stream2, Encoding.ASCII);
 
 
@@ -811,7 +875,9 @@ namespace PowerSDR
 
 
 
-       public static string Skin1  = null;
+
+
+
 
         //=======================================================================================
         //=======================================================================================
@@ -822,38 +888,24 @@ namespace PowerSDR
 
             if ( (SP2_Active == 0) && (SP_Active == 0) && (callBox.Text != "callsign") && (callBox.Text != null) )
             {
-
-
-                if  ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
-                {
-                  
-                   console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    console.picDisplay.Image = Image.FromStream(Map_image);
-                   
-                }
-               
-
+              
                 Thread t = new Thread(new ThreadStart(SPOTTER));
 
-                   t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-                    t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-               
-
+                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+         
 
                 SP_Active = 1;
-                    t.Name = "Spotter Thread";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.Lowest;
-                    t.Start();
+                t.Name = "Spotter Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
 
-                  textBox1.Text = "Clicked to Open DX Spider \r\n";
+                textBox1.Text = "Clicked to Open DX Spider \r\n";
 
             }
             else
             {
-
-            
-
 
                 SP_Active = 0; // turn off DX Spotter
 
@@ -873,55 +925,23 @@ namespace PowerSDR
                     SP_reader.Close();
                     networkStream.Close();
                     client.Close();
-
            
                 }
 
                 SP2_Active = 1; // in process of shutting down.
 
-               console.picDisplay.Image = null; // put back original image
-              console.picDisplay.Invalidate();
-
-         
-
+               
             } // turn DX spotting off
-
 
 
         } //  spotSSB_Click
 
 
-        //====================================================================================================
-        //====================================================================================================
-        // ke9ns add compute angle to sun (for dusk grayline) // equations in this section below provided by Roland Leigh
-        private int SUNANGLE(int lat, int lon)  // ke9ns Thread opeation (runs in en-us culture) opens internet connection to genearte list of dx spots
-        {
-          
-               double N = 0.017214206321 * DateTime.UtcNow.DayOfYear; // 2 * PI / 365 * Day
-
-               double latitude = lat; 
-               double longitude = lon;
-               latitude = latitude / 57.296;                         // lat * Math.PI / 180;  convert angle to rads
-
-               double EQT = 0.000075 + (0.001868 * Math.Cos(N)) - (0.032077 * Math.Sin(N)) - (0.014615 * Math.Cos(2 * N)) - (0.040849 * Math.Sin(2 * N));
-
-               double th = Math.PI * ((UTC100A / 12.0) - 1.0 + (longitude / 180.0)) + EQT;
-
-               double delta = 0.006918 - (0.399912 * Math.Cos(N)) + (0.070257 * Math.Sin(N)) - (0.006758 * Math.Cos(2 * N)) + (0.000907 * Math.Sin(2 * N)) - (0.002697 * Math.Cos(3 * N)) + (0.00148 * Math.Sin(3 * N));
-
-               double cossza = (Math.Sin(delta) * Math.Sin(latitude)) + (Math.Cos(delta) * Math.Cos(latitude) * Math.Cos(th));
-
-               double SZA = (Math.Atan(-cossza / Math.Sqrt(-cossza * cossza + 1.0)) + 2.0 * Math.Atan(1)) * 57.296;  // ' the 57.296 converts this SZA to degrees
-
-               return (int)Math.Abs(SZA); // 90=horizon, 108=total darkness, 100=dusk
-              
-            
-        } // sunangle
+      
 
         //====================================================================================================
         //====================================================================================================
         // ke9ns add Thread routine
-
 
         public static string[] SP_Time;
         public static string[] SP_Freq;
@@ -944,13 +964,22 @@ namespace PowerSDR
         public static string[] DX_Spotter = new string[1000];       // spotter call sign
         public static string[] DX_Message = new string[1000];       // message
         public static int[] DX_Mode = new int[1000];                // mode parse from message string 0=ssb,1=cw,2=rtty,3=psk,4=olivia,5=jt65,6=contesa,7=fsk,8=mt63,9=domi,10=packtor, 11=fm, 12=drm, 13=sstv, 14=am
-        public static int[] DX_Mode2 = new int[1000];                // mode2 parse from message string 0=normal , +up in hz or -dn in hz
+        public static int[] DX_Mode2 = new int[1000];               // mode2 parse from message string 0=normal , +up in hz or -dn in hz
         public static int[] DX_Time = new int[1000];                // GMT
         public static string[] DX_Grid = new string[1000];          // grid
-        public static string[] DX_Age = new string[1000];            // how old is the spot
+        public static string[] DX_Age = new string[1000];           // how old is the spot
+
+     //   public static int[] DX_Lat = new int[1000];                 // Latitude location on map 
+     //   public static int[] DX_Lon = new int[1000];                 // Longitude location on map (before any scaling) 
+
+        public static int[] DX_X = new int[1000];                   // x pixel location on map (before any scaling) Longitude
+        public static int[] DX_Y = new int[1000];                   // y pixel location on map (before any scaling) Latitude
+        public static string[] DX_country = new string[1000];       // country
 
         public static int DX_Index = 0;                               //  max number of spots in memory currently
         public static int DX_Index1 = 0;                             // local index that reset back to 0 after reaching max
+        public static int DX_Last = 0;                               //  last # in DX_Index (used for DXLOC_Mapper)
+        public static int Map_Last = 0;                               //  last map checkbox change (used for DXLOC_Mapper)
 
         public static string[] DX_FULLSTRING = new string[1000];       // full undecoded message
 
@@ -959,132 +988,24 @@ namespace PowerSDR
 
         public static int UTCNEW = Convert.ToInt16(FD);                        // convert 24hr UTC to int
         public static int UTCLAST = 0;                                        // last utc time for determining when to check again
-        public static int UTCLAST2 = 0;                                        // for check every 10 min
 
-        public static double UTC100A = 0;                                       // UTC time in hours.100th of min for grayline
-
-        public static double UTC100 = 0;                                       // UTC time as a factor of 1 (1=2400 UTC, 0= 0000UTC) 
-        public static double UTCDAY = 0;                                       // UTC day as a factor of 1 (0=1day, 1=365)
-        public static int[] Gray_X = new int[400];                             // for mapping the gray line x and y 
-        public static int[] Gray_Y = new int[400];
-
-        public static int Sun_Right1 = 0;
-        public static int Sun_Left1 = 0;
-
-        public static int[,] GrayLine_Pos = new int[1000, 3];                      // [0,]=is lat 180 to 0 to -180 (top to bottom)
-        public static int[,] GrayLine_Pos1 = new int[1000, 3];                      // [0,]=is lat 180 to 0 to -180 (top to bottom)
-        public static int[] GrayLine_Pos2 = new int[1000];
-        public static int[] GrayLine_Pos3 = new int[1000];
-
-        public static int zz = 0; // determine the y pixel for this latitude grayline
         private bool detectEncodingFromByteOrderMarks = true;
 
         private bool pause = false; // true = pause dx spot window update.
 
-        public static int Sun_X = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin)
-        public static int Sun_Y = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin) 
-        public static int Sun_Top1 = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin)
-        public static int Sun_Bot1 = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin) 
+        private static byte Flag8 = 0; // 1= DX_Index value changed due to spot age cut, 
 
-        public static bool SUN = false; // true = on
-        public static bool GRAYLINE = false; // true = on
-
-        private static int test = 0;
-
-        public static int SFI = 0;
-        public static int SN = 0;
-        public static int Aindex = 0;
-        public static int Kindex = 0;
-
-        private string serverPath;
+        //====================================================================================================
+        //====================================================================================================
+        // ke9ns add Thread routine (get DX spots)
 
         private void SPOTTER()  // ke9ns Thread opeation (runs in en-us culture) opens internet connection to genearte list of dx spots
         {
 
-           
-            textBox1.Text += "Attempt login to:  NOAA Space Weather Prediction Center \r\n";  
+           DXLOC_FILE(); // open DXLOC.txt file and put into array of lat/lon values vs prefix
 
-            serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
-
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
-
-            textBox1.Text += "Attempt to download Space Weather \r\n";
-
-            request.KeepAlive = true;
-            request.UsePassive = true;
-            request.UseBinary = true;
-
-            request.Method = WebRequestMethods.Ftp.DownloadFile;
-            string username = "anonymous";
-            string password = "guest";
-            request.Credentials = new NetworkCredential(username, password);
-
-            string noaa = null;
-                   
-            try
-            {
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-             
-                Stream responseStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(responseStream);
-                noaa = reader.ReadToEnd();
-
-                reader.Close();
-                response.Close();
-                Trace.WriteLine("noaa=== " + noaa);
-
-                textBox1.Text += "NOAA Download complete \r\n";
-
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine("noaa fault=== " + ex);
-                textBox1.Text += "Failed to download Space Weather \r\n";
-
-            }
-
-            //--------------------------------------------------------------------
-            if (noaa.Contains("Solar flux ")) // 
-            {
-
-                int ind = noaa.IndexOf("Solar flux ") + 11;
-
-                try 
-                {
-                    SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
-                    Trace.WriteLine("SFI " + SFI);
-                }
-                catch(Exception)
-                {
-
-                }
-
-
-             } // SFI
-
-            if (noaa.Contains("A-index ")) // 
-            {
-
-                int ind = noaa.IndexOf("A-index ") + 8;
-
+         
                 try
-                {
-                    Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
-                    Trace.WriteLine("Aindex " + Aindex);
-                }
-                catch (Exception)
-                {
-
-                }
-
-
-            } // Aindex
-
-           
-
-            //========================================================
-
-            try
                 {
                 textBox1.Text += "Attempt Opening socket \r\n";
 
@@ -1096,8 +1017,7 @@ namespace PowerSDR
 
                 SP_reader = new StreamReader(networkStream,Encoding.ASCII,detectEncodingFromByteOrderMarks); //Encoding.UTF8  or detectEncodingFromByteOrderMarks
                 SP_writer = new BinaryWriter(networkStream,Encoding.UTF7);
-
-              
+   
                
                 var sb = new StringBuilder(message2);
                 statusBox.ForeColor = Color.Red;
@@ -1111,6 +1031,8 @@ namespace PowerSDR
 
                 for (; SP_Active > 0;) // shut down socket and thread if SP_Active = 1
                 {
+
+                  
 
                     if (SP_Active == 1) // if you shut down dont attempt to read next spot
                     {
@@ -1180,13 +1102,17 @@ namespace PowerSDR
 
                         try // use try since its a socket and can fail
                         {
-                           SP_reader.BaseStream.ReadTimeout = 5000; // 5000 cause character Read to break every 5 seconds to check age of DX spots
+                           SP_reader.BaseStream.ReadTimeout = 3000; // 5000 cause character Read to break every 5 seconds to check age of DX spots
 
                       //-------------------------------------------------------------------------------------------------------------------------------------
                       // ke9ns wait for a new message
 
                             for (;!(sb.ToString().Contains("\r\n"));) //  wait for end of line
                             {
+                                processDXAGE();
+
+                                Thread.Sleep(200); // slow down the thread here
+
                                 sb.Append((char)SP_reader.Read());  // get next char from socket and add it to build the next dx spot string to parse out 
                              
 
@@ -1233,603 +1159,9 @@ namespace PowerSDR
                         }
                         catch // read timeout comes here
                         {
-
-                            if (
-                               ((chkSUN.Checked == true) || (chkGrayLine.Checked == true)) && 
-                               ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                                )
-
-                            {
-                              
-                                if (chkSUN.Checked == true) SUN = true; // activate display
-                                else SUN = false;
-                                if (chkGrayLine.Checked == true) GRAYLINE = true; // activate display
-                                else GRAYLINE = false;
-
-                              
-
-                                if ((UTCNEW != UTCLAST2)) // do only 1 time per minute
-                                {
-                                    UTCLAST2 = UTCNEW;
-
-                                    //=================================================================================================
-                                    //=================================================================================================
-                                    // ke9ns Position of SUN (viewed from SUN) using the ke9ns world skin 
-                                    // X  left edge starts 5.6% in, right edge ends 94.7%  (with Display.DIS_X at 100%)
-                                    // y  top edge starts 7.8% in, bottom edge ends 90.1%  (with Display.DIS_Y at 100%)
-                                    // robinson project map has longitude lines every 15deg (1 per hour) 300deg mark at 0330UTC and sun moves to the left
-                                    // left edge is 2359 UTC (right edge is 0 UTC)
-
-                                    //  Trace.WriteLine("Mouse x " + Console.DX_X); // mouse on picDisplay coordinates
-                                    //  Trace.WriteLine("mouse y " + Console.DX_Y);
-
-                                    //   Trace.WriteLine("x pos " + Display.DIS_X); // 
-                                    //  Trace.WriteLine("y pos " + Display.DIS_Y);
-
-                                    double g = (double)(360 / 365.25 * (DateTime.UtcNow.DayOfYear + (DateTime.UtcNow.Hour / 24))); // convert days to angle
-                                  
-                                    g = g * Math.PI / 180; // convert angle to rads
-                                    
-                                    double D = (double)(0.396372 - (22.91327 * Math.Cos(g)) + (4.02543 * Math.Sin(g)) - (0.387205 * Math.Cos(2 * g))
-                                        + (0.051967 * Math.Sin(2 * g)) - (0.154527 * Math.Cos(3 * g)) + (0.084798 * Math.Sin(3 * g)));
-
-                                    D = D / 24; // convert to percent of 100
-
-                                    Sun_Top1 = (int)((double)(Display.DIS_Y * 0.078)); // Y pixel location of top of map
-                                    Sun_Bot1 = (int)((double)(Display.DIS_Y * 0.901)); // Y pixel locaiton of bottom of map 
-                                    int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
-
-                                    int Sun_Top = (int)((double)(Display.DIS_Y * 0.365)); // y pixel location North Hem summer solstice
-                                    int Sun_Bot = (int)((double)(Display.DIS_Y * 0.606));  // Y pixel location of North Hem winter solstice
-
-                                    int Sun_WidthY = Sun_Bot - Sun_Top; // # of Y pixes width between solstices
-                                    int Sun_WidthHalf = ((Sun_Bot - Sun_Top) / 2) + Sun_Top; // 223
-
-                                    int Sun_Diff = Sun_WidthHalf - Sun_Top; // 54
-
-                                    Sun_Y = (int)(Sun_WidthHalf - (double)(Sun_Diff * D)); // position of SUN on longitude of map (based of time of year)
-
-
-                                    UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
-
-                                  //  if (pause == false) test++;
-                                  //  if (test > 23) test = 0;
-                                   
-                                    FD = UTCD.ToString("HH");
-                                    UTC100 = Convert.ToInt16(FD);
-                                    FD = UTCD.ToString("mm");
-
-                                   
-                                   UTC100A = (UTC100 + (Convert.ToInt16(FD) / 60F)); // used by SUNANGLE routine
-
-                                 //   UTC100A = (test + (Convert.ToInt16(FD) / 60F));
-
-                                   UTC100 = (UTC100 + (Convert.ToInt16(FD) / 60F)) / 24F; // used by SUN track routine convert to 100% 2400 = 100%
-
-
-                                    int Sun_Left = (int)((double)(Display.DIS_X * 0.056)); // .056 ratio of left side of map at equator
-                                    int Sun_Right = (int)((double)(Display.DIS_X * 0.940));// .947 ratio of right side of map at equator
-
-                                    Sun_Left1 = Sun_Left; // used by Grayline routine
-                                    Sun_Right1 = Sun_Right;
-
-
-                                    int Sun_Width = Sun_Right - Sun_Left; //used by sun track routine
-
-
-                                    Sun_X = (int)(Sun_Left + (float)(Sun_Width * (1.0 - UTC100))); // position of SUN on equator based on time of day
-
-                                    if ((GRAYLINE == true)  )
-                                    {
-
-                                        //-------------------------------------------------------------------
-                                        // ke9ns grayline check 
-                                        // horizontal lines top to bottom (North)90 to 0 to (-SOUTH)90
-                                        // vertical lines left to right  -West(180) to 0 to +East(180)
-                                        //
-                                        // Sunset:                SUNANGLE = 90    (horizon = 90deg)
-                                        // Civil Twilight:        SUNANGLE = 91 to 95 
-                                        // Civil Dusk:            SUNANGLE = 96 
-                                        // Nautical Twilight:     SUNANGLE = 97 to 101
-                                        // Nautical Dusk:         SUNANGLE = 102
-                                        // Astronomical Twilight: SUNANGLE = 103 to 107
-                                        // Astronomical Dusk:     SUNANGLE = 108
-                                        // Night:                 SUNANGLE > 108
-
-
-                                        // ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt
-                                   
-                                        /*
-                                        :Product: Geophysical Alert Message wwv.txt
-                                        : Issued: 2016 Mar 31 2110 UTC
-                                        # Prepared by the US Dept. of Commerce, NOAA, Space Weather Prediction Center
-                                        #
-                                        #          Geophysical Alert Message
-                                        #
-                                        Solar - terrestrial indices for 31 March follow.
-                                          Solar flux 82 and estimated planetary A - index 7.
-                                          The estimated planetary K - index at 2100 UTC on 31 March was 0.
-
-                                          No space weather storms were observed for the past 24 hours.
-
-                                          No space weather storms are predicted for the next 24 hours
-
-                                     */
-
-                                        int qq = 0;       // index for accumulating lat edges
-                                        int ww = 0;       // 0=no edges found, 1=1 edge found, 2=2 edges found
-
-                                        int tt = 0;
-                                        bool check_for_light = true; // true = in the dark, so looking for light, false = in the light, so looking for the dark
-                                        int tempsun_ang = 0; // temp holder for sun angle
-
-
-                                        //----------------------------------------------------------------------------------
-                                        //----------------------------------------------------------------------------------
-                                        // check for Dark (Right side of map)
-                                        //----------------------------------------------------------------------------------
-                                        //----------------------------------------------------------------------------------
-
-                                        for (int lat = 90; lat >= -90; lat--)  // horizontal lines top to bottom (North)90 to 0 to -90 (South)
-                                        {
-
-                                           
-                                            if ((SUNANGLE(lat, -180) >= 96) && (SUNANGLE(lat, 180) >= 96)) tt = 1; // dark on edges of screen 
-                                            else    tt = 0; // light on at least 1 side
-
-                                            zz = (int)((qq / 180.0 * Sun_WidthY1) + Sun_Top1); // determine the y pixel for this latitude grayline
-
-                                            GrayLine_Pos[zz, 0] = GrayLine_Pos[zz, 1] = 0;
-
-
-                                            if (SUNANGLE(lat, 0) < 96) check_for_light = false; // your in light so check for dark
-                                            else check_for_light = true; // >= 96 your in dark so check for light
-
-
-
-                                            for (int lon = 0; lon <= 180; lon++)  
-                                            {
-                                                tempsun_ang = SUNANGLE(lat, lon); // pos angle from 0 to 120
-
-                                              
-                                                if (check_for_light == true) // in dark, looking for light
-                                                {
-
-                                                    if (tempsun_ang < 96) // found light
-                                                    {
-    
-                                                        GrayLine_Pos[zz, ww] = (int)(( (lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                        GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww]; // make sure to cover unused pixels
-
-                                                        ww++;
-                                                        if (ww == 2) break;   // both edges found so done
-
-                                                        lon = lon + 30; // jump a little to save time
-                                                        check_for_light = false; // now in light so check for dark
-
-                                                    } // found light
-
-                                                } // your in dark so check for light
-                                                else // in light so check for dark
-                                                {
-
-                                                    if (tempsun_ang >= 96) // in Dark (found it)
-                                                    {
-
-                                                        GrayLine_Pos[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                        GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww]; // make sure to cover unused pixels
-
-                                                        ww++;
-                                                        if (ww == 2) break;   // both edges found so done
-
-                                                        lon = lon + 30;         // jump a little to save time
-                                                        check_for_light = true; // in dark so now check for light
-
-                                                    } // found dark
-
-
-                                                }// in light so check for dark
-
-
-                                            } // for lon (right side of map)
-
-                                            //----------------------------------------------------------------------------------
-                                            //----------------------------------------------------------------------------------
-                                            // check for Dark (left side of map
-                                            //----------------------------------------------------------------------------------
-                                            //----------------------------------------------------------------------------------
-
-                                            if (ww < 2) // still need at least 1 edge (maybe 2)
-                                            {
-
-                                                if (SUNANGLE(lat, 0) < 96) check_for_light = false; // your in light so check for dark
-                                                else check_for_light = true; // >= 90 your in dark so check for light
-
-                                                for (int lon = 0; lon >= -180; lon--)  // vertical lines left to right 0 to -180 (west) (check left side of map)
-                                                {
-                                                    tempsun_ang = SUNANGLE(lat, lon);
-                                                  
-                                                    if (check_for_light == true)
-                                                    {
-
-                                                        if (tempsun_ang < 96) // found light
-                                                        {
-
-                                                            GrayLine_Pos[zz, ww] = (int)(( (180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-                                                            GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww];
-
-                                                            ww++;
-                                                            if (ww == 2) break;      // if we have 2 edge then done
-
-                                                            lon = lon - 30;           // jump a little to save time
-                                                            check_for_light = false; // now in light so check for dark
-
-                                                        } // found light
-
-                                                    } // your in dark so check for light
-                                                    else // in light so check for dark
-                                                    {
-
-                                                        if (tempsun_ang >= 96) // in Dark (found it)
-                                                        {
-                                                            GrayLine_Pos[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                            GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww];
-
-                                                            ww++;
-                                                            if (ww == 2) break;    // if we have 2 edge then done
-
-                                                            lon = lon - 30;         // jump a little to save time
-                                                            check_for_light = true; // in dark so now check for light
-
-                                                        } // found dark
-
-
-                                                    }// in light so check for dark
-
-
-                                                } // for lon  (left side of map)
-
-
-                                            } // ww as < 2 on the right side attempt
-
-
-                                            if (ww == 0) // if still less than 2 edges then just zero out
-                                            {
-
-                                                GrayLine_Pos[zz + 2, 0] = GrayLine_Pos[zz + 1, 0] = GrayLine_Pos[zz, 0] = 0;
-                                                GrayLine_Pos[zz + 2, 1] = GrayLine_Pos[zz + 1, 1] = GrayLine_Pos[zz, 1] = 0;
-
-                                            }
-                                            else if (ww == 1)
-                                            {
-
-                                                GrayLine_Pos[zz + 2, 0] = GrayLine_Pos[zz + 1, 0] = GrayLine_Pos[zz, 0] = GrayLine_Pos[zz, 0] + GrayLine_Pos[zz, 1];
-                                                GrayLine_Pos[zz + 2, 1] = GrayLine_Pos[zz + 1, 1] = GrayLine_Pos[zz, 1]= GrayLine_Pos[zz, 0];
-
-                                            }
-
-                                            ww = 0; // start over for next lat
-
-                                            if (tt == 1) // if dark on both edges then figure out which is which and signal display
-                                            {
-
-                                                if ((GrayLine_Pos[zz, 0] - GrayLine_Pos[zz, 1]) > 0)
-                                                {
-                                               
-                                                    GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 1; // ,0 is on right side, ,1 is on left side
-                                                }
-                                                else if ((GrayLine_Pos[zz, 1] - GrayLine_Pos[zz, 0]) > 0)
-                                                {
-                                                
-                                                    GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 2; // ,0 is on left side, ,1 is on right side
-                                                }
-                                                else
-                                                {
-                                                   GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 0;             // dark in center of map, (standard)
-
-                                                }
-
-                                            }
-                                            else
-                                            {
-                                            
-                                                GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 0;             // dark in center of map, (standard)
-                                            }
-
-                                            qq++; // get next lat
-
-                                        } //  for (int lat = 90;lat >= -90;lat--)   horizontal lines top to bottom (North)90 to 0 to -90 (South)
-
-
-
-                                        //-------------------------------------------------------------------
-                                        //-------------------------------------------------------------------
-                                        // check for dusk (right side first)
-                                        //-------------------------------------------------------------------
-                                        //-------------------------------------------------------------------
-                                        qq = 0;
-                                        ww = 0;
-
-                                        for (int lat = 90; lat >= -90; lat--)  // horizontal lines top to bottom (North)90 to 0 to -90 (South)
-                                        {
-
-
-                                            if ((SUNANGLE(lat, -180) >= 90) && (SUNANGLE(lat, 180) >= 90)) tt = 1; // dark on edges of screen 
-                                            else tt = 0; // light on at least 1 side
-
-                                            zz = (int)((qq / 180.0 * Sun_WidthY1) + Sun_Top1); // determine the y pixel for this latitude grayline
-
-                                            GrayLine_Pos1[zz, 0] = GrayLine_Pos1[zz, 1] = 0;
-
-                                            if (SUNANGLE(lat, 0) < 90) check_for_light = false; // your in light so check for dark
-                                            else check_for_light = true; // >= 96 your in dark so check for light
-
-
-                                            for (int lon = 0; lon <= 180; lon++)
-                                            {
-                                                tempsun_ang = SUNANGLE(lat, lon); // pos angle from 0 to 120
-
-
-                                                if (check_for_light == true) // in dark, looking for light
-                                                {
-
-                                                    if (tempsun_ang < 90) // found light
-                                                    {
-
-                                                        GrayLine_Pos1[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                        GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww]; // make sure to cover unused pixels
-
-                                                        ww++;
-                                                        if (ww == 2) break;   // both edges found so done
-
-                                                         lon = lon + 30; // jump a little to save time
-                                                        check_for_light = false; // now in light so check for dark
-
-                                                    } // found light
-
-                                                } // your in dark so check for light
-                                                else // in light so check for dark
-                                                {
-
-                                                    if (tempsun_ang >= 90) // in Dark (found it)
-                                                    {
-
-                                                        GrayLine_Pos1[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                        GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww]; // make sure to cover unused pixels
-
-                                                        ww++;
-                                                        if (ww == 2) break;   // both edges found so done
-
-                                                          lon = lon + 30;         // jump a little to save time
-                                                        check_for_light = true; // in dark so now check for light
-
-                                                    } // found dark
-
-
-                                                }// in light so check for dark
-
-
-                                            } // for lon (right side of map)
-
-                                            //----------------------------------------------------------------------------------
-                                            //----------------------------------------------------------------------------------
-                                            // check for Dark (left side of map
-                                            //----------------------------------------------------------------------------------
-                                            //----------------------------------------------------------------------------------
-
-                                            if (ww < 2) // still need at least 1 edge (maybe 2)
-                                            {
-
-                                                if (SUNANGLE(lat, 0) < 90) check_for_light = false; // your in light so check for dark
-                                                else check_for_light = true; // >= 90 your in dark so check for light
-
-                                                for (int lon = 0; lon >= -180; lon--)  // vertical lines left to right 0 to -180 (west) (check left side of map)
-                                                {
-                                                    tempsun_ang = SUNANGLE(lat, lon);
-
-                                                    if (check_for_light == true)
-                                                    {
-
-                                                        if (tempsun_ang < 90) // found light
-                                                        {
-
-                                                            GrayLine_Pos1[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-                                                            GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww];
-
-                                                            ww++;
-                                                            if (ww == 2) break;      // if we have 2 edge then done
-
-                                                            //  lon = lon - 60;           // jump a little to save time
-                                                            check_for_light = false; // now in light so check for dark
-
-                                                        } // found light
-
-                                                    } // your in dark so check for light
-                                                    else // in light so check for dark
-                                                    {
-
-                                                        if (tempsun_ang >= 90) // in Dark (found it)
-                                                        {
-                                                            GrayLine_Pos1[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
-
-                                                            GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww];
-
-                                                            ww++;
-                                                            if (ww == 2) break;    // if we have 2 edge then done
-
-                                                              lon = lon - 30;         // jump a little to save time
-                                                            check_for_light = true; // in dark so now check for light
-
-                                                        } // found dark
-
-
-                                                    }// in light so check for dark
-
-
-                                                } // for lon  (left side of map)
-
-
-                                            } // ww as < 2 on the right side attempt
-
-
-                                            if (ww == 0) // if still less than 2 edges then just zero out
-                                            {
-
-                                                GrayLine_Pos1[zz + 2, 0] = GrayLine_Pos1[zz + 1, 0] = GrayLine_Pos1[zz, 0] = 0;
-                                                GrayLine_Pos1[zz + 2, 1] = GrayLine_Pos1[zz + 1, 1] = GrayLine_Pos1[zz, 1] = 0;
-
-                                            }
-                                            else if (ww == 1)
-                                            {
-
-                                               
-                                                GrayLine_Pos1[zz + 2, 0] = GrayLine_Pos1[zz + 1, 0] = GrayLine_Pos1[zz, 0] = GrayLine_Pos1[zz, 0] + GrayLine_Pos1[zz, 1];
-                                                GrayLine_Pos1[zz + 2, 1] = GrayLine_Pos1[zz + 1, 1] = GrayLine_Pos1[zz, 1] = GrayLine_Pos1[zz, 0];
-
-                                            }
-
-                                            ww = 0; // start over for next lat
-
-                                            if (tt == 1) // if dark on both edges then figure out which is which and signal display
-                                            {
-
-                                                if ((GrayLine_Pos1[zz, 0] - GrayLine_Pos1[zz, 1]) > 0)
-                                                {
-                                                   
-                                                    GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 1; // ,0 is on right side, ,1 is on left side
-                                                }
-                                                else if ((GrayLine_Pos1[zz, 1] - GrayLine_Pos1[zz, 0]) > 0)
-                                                {
-                                                  
-                                                    GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 2; // ,0 is on left side, ,1 is on right side
-                                                }
-                                                else
-                                                {
-                                                     GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 0;             // dark in center of map, (standard)
-
-                                                }
-
-                                            }
-                                            else
-                                            {
-                                               
-                                                GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 0;             // dark in center of map, (standard)
-                                            }
-
-                                            qq++; // get next lat
-
-                                        } //  for (int lat = 90;lat >= -90;lat--)   horizontal lines top to bottom (North)90 to 0 to -90 (South)
-
-
-
-
-
-
-
-
-                                    } // GRAYLINE = true
-
-
-                                } // check every 1 minutes
-
-                            } // only check in in panadapter mode since you cant see it in any other mode
-                            else
-                            {
-                                SUN = false;
-                                GRAYLINE = false;
-                            }
-
-
-
-                            //=================================================================================================
-                            //=================================================================================================
-                            // ke9ns check for TIME EXPIRES  
-
-                            UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
-                            FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
-                            UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
-
-                            if ((UTCLAST == 0) && (UTCNEW != 0))
-                            {
-                                UTCLAST = UTCNEW;        // for startup only
-                                DX_Time[0] = UTCNEW;
-
-                            }
-
-                            if ((DX_Index > 0) && (UTCNEW != UTCLAST))
-                            {
-                                int xxx = 0;
-
-                                UTCLAST = UTCNEW;
-                          
-                                Trace.WriteLine("Start=========== " + DX_Index);
-
-                                for (int ii = DX_Index - 1; ii >= 0; ii--) // move from bottom of list up toward top of list
-                                {
-
-                                    int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
-                                    DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
-
-
-                                    int kk = 0; // look at very bottom of list + 1
-
-
-                                    if (UTCDIFF > 35) // if its an old SPOT then remove it from the list
-                                    {
-
-                                        kk = ii; // 
-
-                                        xxx++; //shorten dx_Index by 1
-
-                                        Trace.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
-                                        Trace.WriteLine("KK " + kk);
-                                        Trace.WriteLine("XXX " + xxx);
-
-
-                                        for (; kk < (DX_Index - xxx); kk++)
-                                        {
-
-                                            DX_FULLSTRING[kk] = DX_FULLSTRING[kk + xxx]; // 
-
-                                            DX_Station[kk] = DX_Station[kk + xxx];
-                                            DX_Freq[kk] = DX_Freq[kk + xxx];
-                                            DX_Spotter[kk] = DX_Spotter[kk + xxx];
-                                            DX_Message[kk] = DX_Message[kk + xxx];
-                                            DX_Grid[kk] = DX_Grid[kk + xxx];
-                                            DX_Time[kk] = DX_Time[kk + xxx];
-                                            DX_Age[kk] = DX_Age[kk + xxx];
-                                            DX_Mode[kk] = DX_Mode[kk + xxx];
-                                            DX_Mode2[kk] = DX_Mode2[kk + xxx];
-
-                                        } // for loop:  push OK Spots from bottom of list up as you delete old spots from list
-
-                                    } // TIMEOUT exceeded remove old spot
-
-
-
-                                } // for ii check for dup in list
-
-                                DX_Index = DX_Index - xxx;  // update DX_Index list (shorten if any old spots deleted)
-
-                                Trace.WriteLine("END=========== " + DX_Index);
-
-                                Trace.WriteLine(" ");
-
-                                processTCPMessage(); // update spot window (remove old spots)
-
-                                continue;
-
-                            } // UTC NEW != LAST
-                            else
-                            {
-                                continue; // skip
-                            }
-
+                            processDXAGE();
+                            if (Flag8 == 0) continue; // if DX_Index value changed due to age, then proceess otherwise continue around
+                            Flag8 = 0;
 
                         } // end of catch (read timeout comes here)
                       
@@ -1875,7 +1207,7 @@ namespace PowerSDR
                             try
                             {
                                
-                                DX_Freq[DX_Index1] = (int)((double)Convert.ToDouble(message1.Substring(13, 11)) * (double) 1000.0    ); // get dx freq 7016.0  in khz 
+                                DX_Freq[DX_Index1] = (int)((double)Convert.ToDouble(message1.Substring(15, 9)) * (double) 1000.0    ); //  get dx freq 7016.0  in khz 
                         
                                 if ((DX_Freq[DX_Index1] >= 1800000) && (DX_Freq[DX_Index1] <= 1830000))
                                 {
@@ -1992,7 +1324,7 @@ namespace PowerSDR
                                     DX_Mode[DX_Index1] = 1; // cw mode
 
                                 }
-                                else if (DX_Message[DX_Index1].Contains("rty") || DX_Message[DX_Index1].Contains("rtty"))
+                                else if (DX_Message[DX_Index1].Contains(" rty ") || DX_Message[DX_Index1].Contains("rtty"))
                                 {
                                     DX_Mode[DX_Index1] = 2; // RTTY mode
 
@@ -2390,7 +1722,7 @@ namespace PowerSDR
                                     } // catch 1   (4 digits to right side)
 
                                 } // split down
-                                else if ((DX_Message[DX_Index1].Contains("s9+")) || (DX_Message[DX_Index1].Contains("59+") )) // check for split
+                                else if ((DX_Message[DX_Index1].Contains("9+")) || (DX_Message[DX_Index1].Contains("59+") )) // check for split
                                 {
                                     // ignore + if its part of s9+
                                 }
@@ -2788,6 +2120,11 @@ namespace PowerSDR
                                     DX_Age[ii] = DX_Age[ii + 1];
                                     DX_Mode[ii] = DX_Mode[ii + 1];
                                     DX_Mode2[ii] = DX_Mode2[ii + 1];
+
+                                    DX_country[ii] = DX_country[ii + 1];
+                                    DX_X[ii] = DX_X[ii + 1];
+                                    DX_Y[ii] = DX_Y[ii + 1];
+
                                 }
 
                             } // for ii check for dup in list
@@ -2818,6 +2155,10 @@ namespace PowerSDR
                                     DX_Age[ii] = DX_Age[ii + 1];
                                     DX_Mode[ii] = DX_Mode[ii + 1];
                                     DX_Mode2[ii] = DX_Mode2[ii + 1];
+
+                                    DX_country[ii] = DX_country[ii + 1];
+                                    DX_X[ii] = DX_X[ii + 1];
+                                    DX_Y[ii] = DX_Y[ii + 1];
                                 }
 
                             } // for ii check for dup in list
@@ -2857,6 +2198,10 @@ namespace PowerSDR
                                 DX_Mode[ii] = DX_Mode[ii - 1];
                                 DX_Mode2[ii] = DX_Mode2[ii - 1];
 
+                                DX_country[ii] = DX_country[ii - 1];
+                                DX_X[ii] = DX_X[ii - 1];
+                                DX_Y[ii] = DX_Y[ii - 1];
+
                             } // for ii
 
                             DX_FULLSTRING[0] = message1; // add newest message to top
@@ -2872,8 +2217,12 @@ namespace PowerSDR
                             DX_Mode[0] = DX_Mode[DX_Index1];
                             DX_Mode2[0] = DX_Mode2[DX_Index1];
 
+                            DXLOC_MAPPER(); // update map with new index
+
+
                             Trace.WriteLine("INSTALL NEW [0]=========== " + DX_Index);
 
+                           
                             processTCPMessage(); // send to spot window
 
 
@@ -3056,7 +2405,97 @@ namespace PowerSDR
 
         } //processTCPMessage
 
-      
+
+        //===================================================================================
+        // ke9ns add process message for spot.cs window by right clicking
+        private void processDXAGE()
+        {
+
+            UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
+            UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
+
+            if ((UTCLAST == 0) && (UTCNEW != 0))
+            {
+                UTCLAST = UTCNEW;        // for startup only
+                DX_Time[0] = UTCNEW;
+
+            }
+
+            if ((DX_Index > 0) && (UTCNEW != UTCLAST))
+            {
+                int xxx = 0;
+
+                UTCLAST = UTCNEW;
+                          
+                Trace.WriteLine("Time to Check DX Spot Age =========== " + DX_Index);
+
+                for (int ii = DX_Index - 1; ii >= 0; ii--) // move from bottom of list up toward top of list
+                {
+
+                    int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
+                    DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
+
+                  //  Trace.WriteLine("TIME== " + DX_Time[ii] + " age "+DX_Age[ii]);
+
+                    int kk = 0; // look at very bottom of list + 1
+
+
+                    if (UTCDIFF > 35) // if its an old SPOT then remove it from the list
+                    {
+
+                        Flag8 = 1; // signal that the DX_Index will change due to an old spot being removed
+
+                        kk = ii; // 
+
+                        xxx++; //shorten dx_Index by 1
+
+                        Trace.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
+                        Trace.WriteLine("KK " + kk);
+                        Trace.WriteLine("XXX " + xxx);
+
+
+                        for (; kk< (DX_Index - xxx); kk++)
+                        {
+
+                            DX_FULLSTRING[kk] = DX_FULLSTRING[kk + xxx]; // 
+
+                            DX_Station[kk] = DX_Station[kk + xxx];
+                            DX_Freq[kk] = DX_Freq[kk + xxx];
+                            DX_Spotter[kk] = DX_Spotter[kk + xxx];
+                            DX_Message[kk] = DX_Message[kk + xxx];
+                            DX_Grid[kk] = DX_Grid[kk + xxx];
+                            DX_Time[kk] = DX_Time[kk + xxx];
+                            DX_Age[kk] = DX_Age[kk + xxx];
+                            DX_Mode[kk] = DX_Mode[kk + xxx];
+                            DX_Mode2[kk] = DX_Mode2[kk + xxx];
+
+                        } // for loop:  push OK Spots from bottom of list up as you delete old spots from list
+
+                    } // TIMEOUT exceeded remove old spot
+
+
+
+                } // for ii check for dup in list
+
+                DX_Index = DX_Index - xxx;  // update DX_Index list (shorten if any old spots deleted)
+
+                Trace.WriteLine("END=========== " + DX_Index);
+
+                Trace.WriteLine(" ");
+
+                processTCPMessage(); // update spot window (remove old spots)
+
+                return;
+
+            } // UTC NEW != LAST
+            else
+            {
+                return; // skip
+            }
+
+} // processDXAGE
+
 
         private void nameBox_MouseEnter(object sender, EventArgs e)
         {
@@ -3294,8 +2733,6 @@ namespace PowerSDR
 
                             Trace.WriteLine("split here" + (freq1 + DX_Mode2[iii]));
 
-
-
                         }
                         else
                         {
@@ -3304,8 +2741,7 @@ namespace PowerSDR
                         }
 
 
-                    }
-
+                    } // dxmode checked
 
 
                     button1.Focus();
@@ -3348,12 +2784,15 @@ namespace PowerSDR
 
 
 
+        //=========================================================================================
         private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
         {
 
             this.TopMost = chkAlwaysOnTop.Checked;
         }
 
+
+        //=========================================================================================
         private void button1_Click(object sender, EventArgs e)
         {
             if (pause == true)
@@ -3369,53 +2808,1330 @@ namespace PowerSDR
 
         }
 
+
+
+
+        public static Image Skin1 = null; // temp holder for orignal skin image in picdisplay
+
+        //=========================================================================================
         private void chkSUN_CheckedChanged(object sender, EventArgs e)
         {
 
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                console.picDisplay.Image = null; // put back original image
-                console.picDisplay.Invalidate();
+                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
             }
-            if ((SP_Active !=0) )
+            if (SP_Active != 0 ) 
             {
-
              
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-             
+
+                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    console.picDisplay.Image = Image.FromStream(Map_image);
 
-                }
-            }
+                    if (MAP == null) console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    else console.picDisplay.BackgroundImage = MAP;
+ 
+                } // SUN or GRAY LINE checked
 
-        }
+            } // dx spot on
 
+            Map_Last = 1;
+
+        } // chkSUN_CheckedChanged
+
+
+
+        //=========================================================================================
         private void chkGrayLine_CheckedChanged(object sender, EventArgs e)
         {
             if ((chkSUN.Checked == false) && (chkGrayLine.Checked == false))
             {
-                console.picDisplay.Image = null; // put back original image
-                console.picDisplay.Invalidate();
+                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
             }
-          
-            if ( (SP_Active != 0) )
+
+            if ( SP_Active != 0) 
             {
               
+                if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
+                {
+                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
+                    console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    if (MAP == null)   console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    else console.picDisplay.BackgroundImage = MAP;
+      
+                } // only do if SUN or GRAY LINE checked
+
+            } // dx spot active
+
+            Map_Last = 1;
+
+        } // chkGrayLine_CheckedChanged
+
+
+
+      
+        private static bool GridLines = false;
+
+        private static DisplayMode LastDisplayMode = 0;
+
+
+
+        //===============================================================================================================================
+        //===============================================================================================================================
+        //===============================================================================================================================
+        //===============================================================================================================================
+        // turn on/off tracking (sun and/or grayline)
+        private void btnTrack_Click(object sender, EventArgs e)
+        {
+
+            if (SP5_Active == 0)  // if OFF then turn ON
+            {
+
+                if (chkPanMode.Checked == true) Display.map = 1;
+                else Display.map = 0;
+
+                btnTrack.Text = "Track ON";
+
+                LastDisplayMode = Display.CurrentDisplayMode;
+
+                if (chkPanMode.Checked == true)  Display.CurrentDisplayMode = DisplayMode.PANAFALL;
+
+                GridLines = console.setupForm.GRIDLINES;    // save gridboxTS value for when you turn off tracking
+       
+                console.setupForm.GRIDLINES = true;         // turn off Grid lines
 
                 if ((chkSUN.Checked == true) || (chkGrayLine.Checked == true))
                 {
-                 
+
+                    if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
-                    console.picDisplay.Image = Image.FromStream(Map_image);
+
+                    if (MAP == null) console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    else console.picDisplay.BackgroundImage = MAP;
 
                 }
+
+
+                Thread t = new Thread(new ThreadStart(TrackSun));
+
+                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
+
+                SP5_Active = 1;
+                t.Name = "Track Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.BelowNormal;
+                t.Start();
+
+                textBox1.Text = "Clicked to Turn on GrayLine Sun Tracker\r\n";
+
             }
-       }
+            else
+            {
+
+                Display.map = 0;
+
+                if (chkPanMode.Checked == true) Display.CurrentDisplayMode = LastDisplayMode;
+
+                console.setupForm.GRIDLINES = GridLines;// turn Grid lines back on if they were on before
+
+                btnTrack.Text = "Track";
+
+                SP5_Active = 0;                     // turn off tracking
+                  
+                textBox1.Text += "Click to turn off GrayLine Sun Tracking\r\n";
+             
+                if (Skin1 != null) console.picDisplay.BackgroundImage = Skin1; // put back original image
+
+            } // turn Tracking  off
+
+
+        } //  btnTrack_Click
 
 
 
+
+
+        public static int UTCLAST2 = 0;                                        // for Sun Tracker
+
+        public static double UTC100A = 0;                                       // UTC time in hours.100th of min for grayline
+
+        public static double UTC100 = 0;                                       // UTC time as a factor of 1 (1=2400 UTC, 0= 0000UTC) 
+        public static double UTCDAY = 0;                                       // UTC day as a factor of 1 (0=1day, 1=365)
+        public static int[] Gray_X = new int[400];                             // for mapping the gray line x and y 
+        public static int[] Gray_Y = new int[400];
+
+        public static int Sun_Right = 0;
+        public static int Sun_Left = 0;
+
+        public static int[,] GrayLine_Pos = new int[1000, 3];                      // [0,]=is lat 180 to 0 to -180 (top to bottom)
+        public static int[,] GrayLine_Pos1 = new int[1000, 3];                      // [0,]=is lat 180 to 0 to -180 (top to bottom)
+        public static int[] GrayLine_Pos2 = new int[1000];
+        public static int[] GrayLine_Pos3 = new int[1000];
+
+        public static int zz = 0; // determine the y pixel for this latitude grayline
+
+
+        public static int Sun_X = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin)
+        public static int Sun_Y = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin) 
+        public static int Sun_Top1 = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin)
+        public static int Sun_Bot1 = 0;  // position of SUN in picDisplay window (based on ke9ns world map skin) 
+
+        public static bool SUN = false; // true = on
+        public static bool GRAYLINE = false; // true = on
+
+
+        public static int SFI = 0;       // for Space weather
+        public static int SN = 0;        // for Space weather
+        public static int Aindex = 0;    // for Space weather
+        public static int Kindex = 0;    // for Space weather
+
+        private string serverPath;       // for Space weather
+
+
+
+        //====================================================================================================
+        //====================================================================================================
+        // ke9ns add compute angle to sun (for dusk grayline) // equations in this section below provided by Roland Leigh
+        private int SUNANGLE(double lat, double lon)  // ke9ns Thread opeation (runs in en-us culture) opens internet connection to genearte list of dx spots
+        {
+
+            double N = 0.017214206321 * DateTime.UtcNow.DayOfYear; // 2 * PI / 365 * Day
+
+            double latitude = lat;
+            double longitude = lon;
+            latitude = latitude / 57.296;                         // lat * Math.PI / 180;  convert angle to rads
+
+            double EQT = 0.000075 + (0.001868 * Math.Cos(N)) - (0.032077 * Math.Sin(N)) - (0.014615 * Math.Cos(2 * N)) - (0.040849 * Math.Sin(2 * N));
+
+            double th = Math.PI * ((UTC100A / 12.0) - 1.0 + (longitude / 180.0)) + EQT;
+
+            double delta = 0.006918 - (0.399912 * Math.Cos(N)) + (0.070257 * Math.Sin(N)) - (0.006758 * Math.Cos(2 * N)) + (0.000907 * Math.Sin(2 * N)) - (0.002697 * Math.Cos(3 * N)) + (0.00148 * Math.Sin(3 * N));
+
+            double cossza = (Math.Sin(delta) * Math.Sin(latitude)) + (Math.Cos(delta) * Math.Cos(latitude) * Math.Cos(th));
+
+            double SZA = (Math.Atan(-cossza / Math.Sqrt(-cossza * cossza + 1.0)) + 2.0 * Math.Atan(1)) * 57.296;  // ' the 57.296 converts this SZA to degrees
+
+            return (int)Math.Abs(SZA); // 90=horizon, 108=total darkness, 100=dusk
+
+
+        } // sunangle
+
+
+        //===============================================================================================================================
+        //===============================================================================================================================
+        //===============================================================================================================================
+        //===============================================================================================================================
+        private void TrackSun()  // ke9ns Thread opeation (runs in en-us culture) To create and draw Sun and/or Grayline Track
+        {
+           
+
+            //-------------------------------------------------------------------
+            // ke9ns grayline check 
+            // horizontal lines top to bottom (North)90 to 0 to (-SOUTH)90
+            // vertical lines left to right  -West(180) to 0 to +East(180)
+            // Solstice June and Dec  (reach northern or southern extreme (about +/-24deg)
+            // Equinox: March and Sept  (pass the equator)
+            //
+            // Sunset:                SUNANGLE = 90    (horizon = 90deg)
+            // Civil Twilight:        SUNANGLE = 91 to 95 
+            // Civil Dusk:            SUNANGLE = 96 
+            // Nautical Twilight:     SUNANGLE = 97 to 101
+            // Nautical Dusk:         SUNANGLE = 102
+            // Astronomical Twilight: SUNANGLE = 103 to 107
+            // Astronomical Dusk:     SUNANGLE = 108
+            // Night:                 SUNANGLE > 108
+
+            // ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt
+
+            /*
+            :Product: Geophysical Alert Message wwv.txt
+            : Issued: 2016 Mar 31 2110 UTC
+            # Prepared by the US Dept. of Commerce, NOAA, Space Weather Prediction Center
+            #
+            #          Geophysical Alert Message
+            #
+            Solar - terrestrial indices for 31 March follow.
+              Solar flux 82 and estimated planetary A - index 7.
+              The estimated planetary K - index at 2100 UTC on 31 March was 0.
+
+              No space weather storms were observed for the past 24 hours.
+
+              No space weather storms are predicted for the next 24 hours
+
+         */
+
+            console.setupForm.clrbtnGrayLine_Changed(this, EventArgs.Empty); // get color from setup at startup
+
+            textBox1.Text += "Attempt login to:  NOAA Space Weather Prediction Center \r\n";
+
+            serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
+
+            textBox1.Text += "Attempt to download Space Weather \r\n";
+
+            request.KeepAlive = true;
+            request.UsePassive = true;
+            request.UseBinary = true;
+
+            request.Method = WebRequestMethods.Ftp.DownloadFile;
+            string username = "anonymous";
+            string password = "guest";
+            request.Credentials = new NetworkCredential(username, password);
+
+            string noaa = null;
+
+            try
+            {
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream);
+                noaa = reader.ReadToEnd();
+
+                reader.Close();
+                response.Close();
+                Trace.WriteLine("noaa=== " + noaa);
+
+                textBox1.Text += "NOAA Download complete \r\n";
+
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("noaa fault=== " + ex);
+                textBox1.Text += "Failed to download Space Weather \r\n";
+
+            }
+
+            //--------------------------------------------------------------------
+            if (noaa.Contains("Solar flux ")) // 
+            {
+
+                int ind = noaa.IndexOf("Solar flux ") + 11;
+
+                try
+                {
+                    SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
+                    Trace.WriteLine("SFI " + SFI);
+                }
+                catch (Exception)
+                {
+                    SFI = 0;
+                }
+
+
+            } // SFI
+
+            if (noaa.Contains("A-index ")) // 
+            {
+
+                int ind = noaa.IndexOf("A-index ") + 8;
+
+                try
+                {
+                    Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
+                    Trace.WriteLine("Aindex " + Aindex);
+                }
+                catch (Exception)
+                {
+                    Aindex = 0;
+                }
+
+
+            } // Aindex
+
+
+
+            //--------------------------------------------------------------------------------------------
+            // stay in this thread loop until you turn off tracking
+            for (; SP5_Active == 1;)
+            {
+
+                Thread.Sleep(700);
+
+                
+                if (((chkSUN.Checked == true) || (chkGrayLine.Checked == true)) &&
+                                ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL)))
+                {
+
+                    UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+                    FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
+                    UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
+
+
+                    if (chkSUN.Checked == true) SUN = true; // activate display
+                    else SUN = false;
+
+                    if (chkGrayLine.Checked == true) GRAYLINE = true; // activate display
+                    else GRAYLINE = false;
+
+
+                    if (((UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) || (DX_Index != DX_Last) || ( Map_Last == 1 )) && (!console.MOX)) // do only 1 time per minute
+                    {
+
+                      
+                     //   Trace.WriteLine("Update Track=================");
+
+                        UTCLAST2 = UTCNEW; // store time for compare next time
+                        GrayLine_Last = Setup.DisplayGrayLineColor; // store last color for compare next time
+
+                     //   DXLOC_MAPPER();
+                        DX_Last = DX_Index;
+                        Map_Last = 0;
+
+
+
+                        //=================================================================================================
+                        //=================================================================================================
+                        // ke9ns Position of SUN (viewed from SUN) using the ke9ns world skin 
+                        // X  left edge starts 5.6% in, right edge ends 94.7%  (with Display.DIS_X at 100%)
+                        // y  top edge starts 7.8% in, bottom edge ends 90.1%  (with Display.DIS_Y at 100%)
+                        // equirectangle project map has longitude lines every 15deg (1 per hour) center is 0 UTC and sun moves to the left
+                        // left edge is 2359 UTC (right edge is 0 UTC)
+
+                        //  Trace.WriteLine("Mouse x " + Console.DX_X); // mouse on picDisplay coordinates
+                        //  Trace.WriteLine("mouse y " + Console.DX_Y);
+
+                        //   Trace.WriteLine("x pos " + Display.DIS_X); // 
+                        //  Trace.WriteLine("y pos " + Display.DIS_Y);
+
+                        double g = (double)(360 / 365.25 * (DateTime.UtcNow.DayOfYear + (DateTime.UtcNow.Hour / 24))); // convert days to angle
+
+                        g = g * Math.PI / 180;                             // convert angle to rads
+
+                        double D = (double)(0.396372 - (22.91327 * Math.Cos(g)) + (4.02543 * Math.Sin(g)) - (0.387205 * Math.Cos(2 * g))
+                            + (0.051967 * Math.Sin(2 * g)) - (0.154527 * Math.Cos(3 * g)) + (0.084798 * Math.Sin(3 * g)));
+
+                        D = D / 24;                                        // convert to percent of 100
+
+                        Sun_Top1 = 26;                                     // 45 Y pixel location of top of map
+                        Sun_Bot1 = 465;                                    // 485 Y pixel locaiton of bottom of map 
+
+                        int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
+
+
+                        int Sun_Top = 187;                                 // 207 y pixel location North Hem summer solstice
+                        int Sun_Bot = 303;                                 // 324 Y pixel location of North Hem winter solstice
+
+                        int Sun_WidthY = Sun_Bot - Sun_Top;                // # of Y pixes width between solstices
+                        int Sun_WidthHalf = (Sun_WidthY / 2) + Sun_Top;    // y= 265 put you at equator
+
+                        int Sun_Diff = Sun_WidthHalf - Sun_Top;            // 
+
+                        Sun_Y = (int)(Sun_WidthHalf - (double)(Sun_Diff * D)); // position of SUN on longitude of map (based of time of year)
+
+                        UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+                        FD = UTCD.ToString("HH");
+                        UTC100 = Convert.ToInt16(FD);
+                        FD = UTCD.ToString("mm");
+
+                        UTC100A = (UTC100 + (Convert.ToInt16(FD) / 60F));  // used by SUNANGLE routine
+
+                        UTC100 = (UTC100 + (Convert.ToInt16(FD) / 60F)) / 24F; // used by SUN track routine convert to 100% 2400 = 100%
+
+                        Sun_Left = 57;                                       // Left side at equator used by Grayline routine
+                        Sun_Right = 939;
+
+                        int Sun_Width = Sun_Right - Sun_Left; //used by sun track routine
+
+                        Sun_X = (int)(Sun_Left + (float)(Sun_Width * (1.0 - UTC100))); // position of SUN on equator based on time of day
+
+                        if ((GRAYLINE == true))
+                        {
+
+                            int qq = 0;       // index for accumulating lat edges
+                            int ww = 0;       // 0=no edges found, 1=1 edge found, 2=2 edges found
+
+                            int tt = 0;
+                            bool check_for_light = true; // true = in the dark, so looking for light, false = in the light, so looking for the dark
+                            int tempsun_ang = 0; // temp holder for sun angle
+
+
+                            //----------------------------------------------------------------------------------
+                            //----------------------------------------------------------------------------------
+                            // check for Dark (Right side of map)
+                            //----------------------------------------------------------------------------------
+                            //----------------------------------------------------------------------------------
+
+                            for (double lat = 90.0; lat >= -90.0; lat = lat - 0.5)  // horizontal lines top to bottom (North)90 to 0 to -90 (South)
+                            {
+
+
+                                if ((SUNANGLE(lat, -180.0) >= 96) && (SUNANGLE(lat, 180.0) >= 96)) tt = 1; // dark on edges of screen 
+                                else tt = 0; // light on at least 1 side
+
+                                zz = (int)((qq / 360.0 * Sun_WidthY1) + Sun_Top1); // 360 = number of latitude points, determine the y pixel for this latitude grayline
+
+                                GrayLine_Pos[zz, 0] = GrayLine_Pos[zz, 1] = 0;
+
+                                if (SUNANGLE(lat, 0.0) < 96) check_for_light = false; // your in light so check for dark
+                                else check_for_light = true; // >= 96 your in dark so check for light
+
+
+                                for (double lon = 0.0; lon <= 180.0; lon = lon + 0.5)
+                                {
+                                    tempsun_ang = SUNANGLE(lat, lon); // pos angle from 0 to 120
+
+
+                                    if (check_for_light == true) // in dark, looking for light
+                                    {
+
+                                        if (tempsun_ang < 96) // found light
+                                        {
+
+                                            GrayLine_Pos[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                            GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww]; // make sure to cover unused pixels
+
+                                            ww++;
+                                            if (ww == 2) break;   // both edges found so done
+
+                                            lon = lon + 30.0; // jump a little to save time
+                                            check_for_light = false; // now in light so check for dark
+
+                                        } // found light
+
+                                    } // your in dark so check for light
+                                    else // in light so check for dark
+                                    {
+
+                                        if (tempsun_ang >= 96) // in Dark (found it)
+                                        {
+
+                                            GrayLine_Pos[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                            GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww]; // make sure to cover unused pixels
+
+                                            ww++;
+                                            if (ww == 2) break;   // both edges found so done
+
+                                            lon = lon + 30.0;         // jump a little to save time
+                                            check_for_light = true; // in dark so now check for light
+
+                                        } // found dark
+
+
+                                    }// in light so check for dark
+
+
+                                } // for lon (right side of map)
+
+                                //----------------------------------------------------------------------------------
+                                //----------------------------------------------------------------------------------
+                                // check for Dark (left side of map
+                                //----------------------------------------------------------------------------------
+                                //----------------------------------------------------------------------------------
+
+                                if (ww < 2) // still need at least 1 edge (maybe 2)
+                                {
+
+                                    if (SUNANGLE(lat, 0.0) < 96) check_for_light = false; // your in light so check for dark
+                                    else check_for_light = true; // >= 90 your in dark so check for light
+
+                                    for (double lon = 0.0; lon >= -180.0; lon = lon - 0.5)  // vertical lines left to right 0 to -180 (west) (check left side of map)
+                                    {
+                                        tempsun_ang = SUNANGLE(lat, lon);
+
+                                        if (check_for_light == true)
+                                        {
+
+                                            if (tempsun_ang < 96) // found light
+                                            {
+
+                                                GrayLine_Pos[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                                GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww];
+
+                                                ww++;
+                                                if (ww == 2) break;      // if we have 2 edge then done
+
+                                                lon = lon - 30.0;           // jump a little to save time
+                                                check_for_light = false; // now in light so check for dark
+
+                                            } // found light
+
+                                        } // your in dark so check for light
+                                        else // in light so check for dark
+                                        {
+
+                                            if (tempsun_ang >= 96) // in Dark (found it)
+                                            {
+                                                GrayLine_Pos[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                                GrayLine_Pos[zz + 2, ww] = GrayLine_Pos[zz + 1, ww] = GrayLine_Pos[zz, ww];
+
+                                                ww++;
+                                                if (ww == 2) break;    // if we have 2 edge then done
+
+                                                lon = lon - 30;         // jump a little to save time
+                                                check_for_light = true; // in dark so now check for light
+
+                                            } // found dark
+
+
+                                        }// in light so check for dark
+
+
+                                    } // for lon  (left side of map)
+
+
+                                } // ww as < 2 on the right side attempt
+
+
+                                if (ww == 0) // if still less than 2 edges then just zero out
+                                {
+                                    GrayLine_Pos[zz + 2, 0] = GrayLine_Pos[zz + 1, 0] = GrayLine_Pos[zz, 0] = 0;
+                                    GrayLine_Pos[zz + 2, 1] = GrayLine_Pos[zz + 1, 1] = GrayLine_Pos[zz, 1] = 0;
+                                }
+                                else if (ww == 1)
+                                {
+                                    GrayLine_Pos[zz + 2, 0] = GrayLine_Pos[zz + 1, 0] = GrayLine_Pos[zz, 0] = GrayLine_Pos[zz, 0] + GrayLine_Pos[zz, 1];
+                                    GrayLine_Pos[zz + 2, 1] = GrayLine_Pos[zz + 1, 1] = GrayLine_Pos[zz, 1] = GrayLine_Pos[zz, 0];
+                                }
+
+                                ww = 0; // start over for next lat
+
+                                if (tt == 1) // if dark on both edges then figure out which is which and signal display
+                                {
+
+                                    if ((GrayLine_Pos[zz, 0] - GrayLine_Pos[zz, 1]) > 0)
+                                    {
+                                        GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 1; // ,0 is on right side, ,1 is on left side
+                                    }
+                                    else if ((GrayLine_Pos[zz, 1] - GrayLine_Pos[zz, 0]) > 0)
+                                    {
+                                        GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 2; // ,0 is on left side, ,1 is on right side
+                                    }
+                                    else
+                                    {
+                                        GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 0;             // dark in center of map, (standard)
+                                    }
+
+                                }
+                                else
+                                {
+                                    GrayLine_Pos2[zz + 2] = GrayLine_Pos2[zz + 1] = GrayLine_Pos2[zz] = 0;             // dark in center of map, (standard)
+                                }
+
+                                qq++; // get next lat
+
+                            } //  for (int lat = 90;lat >= -90;lat--)   horizontal lines top to bottom (North)90 to 0 to -90 (South)
+
+
+
+                            //-------------------------------------------------------------------
+                            //-------------------------------------------------------------------
+                            // check for dusk (right side first)
+                            //-------------------------------------------------------------------
+                            //-------------------------------------------------------------------
+                            qq = 0;
+                            ww = 0;
+
+                            for (double lat = 90.0; lat >= -90.0; lat = lat - 0.5)  // horizontal lines top to bottom (North)90 to 0 to -90 (South)
+                            {
+
+
+                                if ((SUNANGLE(lat, -180.0) >= 90) && (SUNANGLE(lat, 180.0) >= 90)) tt = 1; // dark on edges of screen 
+                                else tt = 0; // light on at least 1 side
+
+                                zz = (int)((qq / 360.0 * Sun_WidthY1) + Sun_Top1); // 360 = number of latitude points, determine the y pixel for this latitude grayline
+
+                                GrayLine_Pos1[zz, 0] = GrayLine_Pos1[zz, 1] = 0;
+
+                                if (SUNANGLE(lat, 0.0) < 90) check_for_light = false; // your in light so check for dark
+                                else check_for_light = true; // >= 96 your in dark so check for light
+
+
+                                for (double lon = 0.0; lon <= 180.0; lon = lon + 0.5)
+                                {
+                                    tempsun_ang = SUNANGLE(lat, lon); // pos angle from 0 to 120
+
+
+                                    if (check_for_light == true) // in dark, looking for light
+                                    {
+
+                                        if (tempsun_ang < 90) // found light
+                                        {
+
+                                            GrayLine_Pos1[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                            GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww]; // make sure to cover unused pixels
+
+                                            ww++;
+                                            if (ww == 2) break;   // both edges found so done
+
+                                            lon = lon + 30.0; // jump a little to save time
+                                            check_for_light = false; // now in light so check for dark
+
+                                        } // found light
+
+                                    } // your in dark so check for light
+                                    else // in light so check for dark
+                                    {
+
+                                        if (tempsun_ang >= 90) // in Dark (found it)
+                                        {
+
+                                            GrayLine_Pos1[zz, ww] = (int)(((lon + 180.0) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                            GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww]; // make sure to cover unused pixels
+
+                                            ww++;
+                                            if (ww == 2) break;   // both edges found so done
+
+                                            lon = lon + 30.0;         // jump a little to save time
+                                            check_for_light = true; // in dark so now check for light
+
+                                        } // found dark
+
+
+                                    }// in light so check for dark
+
+
+                                } // for lon (right side of map)
+
+                                //----------------------------------------------------------------------------------
+                                //----------------------------------------------------------------------------------
+                                // check for Dark (left side of map
+                                //----------------------------------------------------------------------------------
+                                //----------------------------------------------------------------------------------
+
+                                if (ww < 2) // still need at least 1 edge (maybe 2)
+                                {
+
+                                    if (SUNANGLE(lat, 0.0) < 90) check_for_light = false; // your in light so check for dark
+                                    else check_for_light = true; // >= 90 your in dark so check for light
+
+                                    for (double lon = 0.0; lon >= -180.0; lon = lon - 0.5)  // vertical lines left to right 0 to -180 (west) (check left side of map)
+                                    {
+                                        tempsun_ang = SUNANGLE(lat, lon);
+
+                                        if (check_for_light == true)
+                                        {
+
+                                            if (tempsun_ang < 90) // found light
+                                            {
+
+                                                GrayLine_Pos1[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+                                                GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww];
+
+                                                ww++;
+                                                if (ww == 2) break;      // if we have 2 edge then done
+
+                                                lon = lon - 30.0;           // jump a little to save time
+                                                check_for_light = false; // now in light so check for dark
+
+                                            } // found light
+
+                                        } // your in dark so check for light
+                                        else // in light so check for dark
+                                        {
+
+                                            if (tempsun_ang >= 90) // in Dark (found it)
+                                            {
+                                                GrayLine_Pos1[zz, ww] = (int)(((180.0 + lon) / 360.0 * Sun_Width) + Sun_Left); // determine x pixel for this longitude grayline
+
+                                                GrayLine_Pos1[zz + 2, ww] = GrayLine_Pos1[zz + 1, ww] = GrayLine_Pos1[zz, ww];
+
+                                                ww++;
+                                                if (ww == 2) break;    // if we have 2 edge then done
+
+                                                lon = lon - 30.0;         // jump a little to save time
+                                                check_for_light = true; // in dark so now check for light
+
+                                            } // found dark
+
+
+                                        }// in light so check for dark
+
+
+                                    } // for lon  (left side of map)
+
+
+                                } // ww as < 2 on the right side attempt
+
+
+                                if (ww == 0) // if still less than 2 edges then just zero out
+                                {
+                                    GrayLine_Pos1[zz + 2, 0] = GrayLine_Pos1[zz + 1, 0] = GrayLine_Pos1[zz, 0] = 0;
+                                    GrayLine_Pos1[zz + 2, 1] = GrayLine_Pos1[zz + 1, 1] = GrayLine_Pos1[zz, 1] = 0;
+                                }
+                                else if (ww == 1)
+                                {
+                                    GrayLine_Pos1[zz + 2, 0] = GrayLine_Pos1[zz + 1, 0] = GrayLine_Pos1[zz, 0] = GrayLine_Pos1[zz, 0] + GrayLine_Pos1[zz, 1];
+                                    GrayLine_Pos1[zz + 2, 1] = GrayLine_Pos1[zz + 1, 1] = GrayLine_Pos1[zz, 1] = GrayLine_Pos1[zz, 0];
+                                }
+
+                                ww = 0; // start over for next lat
+
+                                if (tt == 1) // if dark on both edges then figure out which is which and signal display
+                                {
+
+                                    if ((GrayLine_Pos1[zz, 0] - GrayLine_Pos1[zz, 1]) > 0)
+                                    {
+                                        GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 1; // ,0 is on right side, ,1 is on left side
+                                    }
+                                    else if ((GrayLine_Pos1[zz, 1] - GrayLine_Pos1[zz, 0]) > 0)
+                                    {
+                                        GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 2; // ,0 is on left side, ,1 is on right side
+                                    }
+                                    else
+                                    {
+                                        GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 0;             // dark in center of map, (standard)
+                                    }
+
+                                }
+                                else
+                                {
+                                    GrayLine_Pos3[zz + 2] = GrayLine_Pos3[zz + 1] = GrayLine_Pos3[zz] = 0;             // dark in center of map, (standard)
+                                }
+
+                                qq++; // get next lat
+
+                            } //  for (int lat = 90;lat >= -90;lat--)   horizontal lines top to bottom (North)90 to 0 to -90 (South)
+
+
+                        } // GRAYLINE = true
+
+                        DrawSun(); // go and draw SUN and GRAYLINE onto Map_Image and update picDisplay window
+
+
+                    } // check every 1 minutes
+
+                } // only check in in panadapter mode since you cant see it in any other mode
+                else
+                {
+                    SUN = false;
+                    GRAYLINE = false;
+                }
+
+            } // for loop (SP5_Active == 1)
+
+        } // TrackSun
+
+
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns parse dx spot data against the DXLOC prefix data and lat/lon data
+        public void DXLOC_MAPPER()
+        {
+
+            int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
+
+            int Sun_Width = Sun_Right - Sun_Left;              //used by sun track routine
+
+            Trace.WriteLine("MAPPING======");
+
+            
+                DX_Y[0] = 0;
+                DX_X[0] = 0;
+                DX_country[0] = null;
+
+
+                for (int kk=0;kk < DXLOC_Index1;kk++)  // list of call sign prefixes and there corresponding LAT/LON
+                {
+                    if ( DX_Station[0].StartsWith(DXLOC_prefix[kk]) == true)
+                    {
+                        if (DXLOC_prefix1[kk] != null)
+                        {
+
+                            if (DX_Station[0].Contains(DXLOC_prefix1[kk]) == false) continue; // dont choose if not a match
+
+                        }
+
+                        DX_Y[0] = (int)( ( (180-(DXLOC_LAT[kk] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
+
+                        DX_X[0] =  (int)(((DXLOC_LON[kk] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+
+                        DX_country[0] = DXLOC_country[kk];
+
+                        Trace.WriteLine("MAPPER " + DX_Station[0] + " "+ DX_X[0] + " " + DX_Y[0] + " cntry " + DX_country[0] +  " prefix "+ DXLOC_prefix[kk] +" lat "+ DXLOC_LAT[kk] + " lon "+ DXLOC_LON[kk]);
+               
+                        break;
+
+                    }
+
+                } // for kk loop for DXLOC in memory
+
+          
+        } // DXMAPPER
+
+
+ 
+        public static Color GrayLine_Last = Color.FromArgb(70, Color.Black);                       // used to check if setup.cs changed the color
+
+        private static Font font1 = new Font("Ariel", 10.5f, FontStyle.Regular,GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
+        private static Font font2 = new Font("Ariel", 9.2f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns add dx spot call sign font style
+
+        private static Color grid_text_color = Color.Yellow;
+        SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
+        SolidBrush redbrush = new SolidBrush(Color.Red);
+
+        public static Image MAP = null; // holds bitmap image for SUN and GRAY LINE
+
+
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        public void DrawSun()
+        {
+
+            //-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
+            // draw sun tracker and gray line
+            //-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
+
+             MAP = new Bitmap(Map_image); // load up Map image
+
+            Graphics g = Graphics.FromImage(MAP);
+
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+          
+                if (SUN == true)
+                {
+                
+                    Image src = new Bitmap(sun_image); // load up SUN image ( use PNG to allow transparent background)
+       
+                    g.DrawImage(src, Sun_X - 10, Sun_Y - 10, 23, 27); // draw SUN 20 x 20 pixel
+
+                    g.DrawString("SFI " + SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y-10);
+                    g.DrawString("A " + Aindex.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y);
+             
+                } // sun tracker enabled
+
+
+                //---------------------------------------------------------------------------
+                if (GRAYLINE == true)
+                {
+
+                    Pen p3 = new Pen(GrayLine_Last, 1.0f); // dark
+                    Pen p4 = new Pen(GrayLine_Last, 1.0f); // dusk
+                                                            
+
+                   for (int ee = Sun_Top1; ee< Sun_Bot1; ee++)
+                   {
+                  
+                        //-----------------------------------------------------------------
+                        // ke9ns dusk
+                        if (GrayLine_Pos3[ee] == 0) // not dusk on edges on screen
+                        {
+                            g.DrawLine(p4, GrayLine_Pos1[ee, 0], ee, GrayLine_Pos1[ee, 1], ee);
+                        }
+                        else if (GrayLine_Pos3[ee] == 1)
+                        {
+                            g.DrawLine(p4, GrayLine_Pos1[ee, 0], ee, Sun_Right, ee);
+                            g.DrawLine(p4, GrayLine_Pos1[ee, 1], ee, Sun_Left, ee);
+                        }
+                        else
+                        {
+                            g.DrawLine(p4, GrayLine_Pos1[ee, 1], ee, Sun_Right, ee);
+                            g.DrawLine(p4, GrayLine_Pos1[ee, 0], ee, Sun_Left, ee);
+                        }
+
+                    
+                        //-----------------------------------------------------------------
+                        // ke9ns dark
+                        if (GrayLine_Pos2[ee] == 0)  // not dark on edges on screen
+                        {
+                            g.DrawLine(p3, GrayLine_Pos[ee, 0], ee, GrayLine_Pos[ee, 1], ee);
+                        }
+                        else if (GrayLine_Pos2[ee] == 1)
+                        {
+                            g.DrawLine(p3, GrayLine_Pos[ee, 0], ee, Sun_Right, ee);
+                            g.DrawLine(p3, GrayLine_Pos[ee, 1], ee, Sun_Left, ee);
+                        }
+                        else
+                        {
+                            g.DrawLine(p3, GrayLine_Pos[ee, 1], ee, Sun_Right, ee);
+                            g.DrawLine(p3, GrayLine_Pos[ee, 0], ee, Sun_Left, ee);
+                        }
+ 
+
+                 }  // for loop  
+
+            } // if GRAYLINE enabled
+
+
+            //-------------------------------------------------------------------------------------
+
+            string[] country = new string[200];
+            string[] call = new string[200];
+
+            int[] yy = new int[200];
+            int Flag11 = 0;
+
+            int kk = 0;
+
+            int rr = 0;
+
+            for (int ii = 0; ii < DX_Index; ii++)
+            {
+                //   Trace.WriteLine("XY " + DXLOC_X[ii] + " "+ DXLOC_Y[ii]);
+
+                if ((DX_X[ii] != 0) && (DX_Y[ii] != 0))
+                {
+
+                    g.FillRectangle(redbrush, DX_X[ii], DX_Y[ii], 3, 3);  // place red dot on map
+
+
+                    if (chkMapCountry.Checked == true) // spot country on map
+                    {
+                        g.DrawString(DX_country[ii], font2, grid_text_brush, DX_X[ii], DX_Y[ii]); // country name
+
+                    } // chkMapCountry
+
+                    else if (chkMapCall.Checked == true)
+                    {
+                        
+
+                        for (rr = 0; rr < kk; rr++)  // check all accumulated countrys from the current DX_index list
+                        {
+                            if (country[rr] == DX_country[ii])
+                            {
+                                yy[rr] = yy[rr] + 10; // multiple calls for same country stack downward
+                                Flag11 = 1;
+                                break;
+                            }
+                               
+
+                        } // for rr loop
+
+
+                        if (Flag11 == 0)
+                        {
+                            country[kk] = DX_country[ii]; // add to list
+                            yy[kk] = 0;
+                        }
+
+                        kk++; // increment for next country
+
+                        Flag11 = 0; // reset flag
+
+
+
+                        g.DrawString(DX_Station[ii], font2, grid_text_brush, DX_X[ii], DX_Y[ii] + yy[rr]); // Station  name
+
+
+
+                    } // chkMapCall
+
+
+
+                } //  if ((DX_X[ii] != 0) && (DX_Y[ii] != 0))
+
+            } // for ii index loop
+
+
+            //----------------------------------------------------------------------------------------------------
+
+            console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;      // put image back onto picDisplay background image
+            console.picDisplay.BackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
+
+        } // Drawsun()
+
+
+
+        public void chkPanMode_CheckedChanged(object sender, EventArgs e)
+        {
+
+          
+
+
+        } // chkPanMode_CheckedChanged
+
+
+
+        //=========================================================================================
+
+
+        private static int DXLOC_Index1 = 0;
+        private static int SP8_Active = 0;    // 1=DX LOC scanned into memory
+
+        // data obtained from DXLOC.txt file
+        public static string[] DXLOC_prefix = new string[1000];       // prefix (must start with)
+        public static string[] DXLOC_prefix1 = new string[1000];      // prefix (must also contain) /
+        public static string[] DXLOC_prefix2 = new string[1000];      // prefix (must exclude) \
+
+        public static string[] DXLOC_lat = new string[1000];          // text of lat
+        public static string[] DXLOC_lon = new string[1000];          // text of  lon
+        public static double[] DXLOC_LAT = new double[1000];          // latitude  
+        public static double[] DXLOC_LON = new double[1000];          //  longitude
+        public static string[] DXLOC_country = new string[1000];      // country
+        public static string[] DXLOC_continent = new string[1000];    // continent
+
+     
+        //=======================================================================================
+        //=======================================================================================
+        //ke9ns Open and read DXLOC.txt file here (put into array of prefix vs lat/lon value)
+        //   Fields:
+        //
+        //0	    DXCC number
+        //1*	ARRL DXCC prefix,
+        //2*    DXCC Entity name,
+        //3*	Continent,
+        //4*	Latitude,
+        //5*	Longitude,
+        //6	    CQ Zone,
+        //7	    ITU Zone,
+        //8	Active (A) or Deleted (D),
+        //9	Date from becoming a valid Entity,
+        //10	Possible prefixes from ITU Assigned Blocks to Sovereign UN Territory(s)
+        public void DXLOC_FILE()
+        {
+
+            string file_name = console.AppDataPath + "\\DXLOC.txt"; // //  sked - b15.csv
+
+            textBox1.Text += "Attempting to open DX Location list\r\n";
+
+            if (File.Exists(file_name))
+            {
+
+                textBox1.Text += "Reading DX Location list\r\n";
+
+                stream2 = new FileStream(file_name, FileMode.Open); // open  file
+                reader2 = new BinaryReader(stream2, Encoding.ASCII);
+
+
+                var result = new StringBuilder();
+
+                if (SP8_Active == 0) // dont reset if already scanned in  database
+                {
+                    DXLOC_Index1 = 0; // how big is the DXLOC data file in lines
+              
+                }
+
+                for (;;)
+                {
+
+                    if (SP8_Active == 1) // aleady scanned database
+                    {
+                        break; // dont rescan database over 
+                    }
+
+                    if (SP_Active == 0)
+                    {
+                        reader2.Close();    // close  file
+                        stream2.Close();   // close stream
+
+                        return;
+                    }
+
+
+
+                    try
+                    {
+                        var newChar = (char)reader2.ReadChar();
+
+                        if ((newChar == '\r'))
+                        {
+                            newChar = (char)reader2.ReadChar(); // read \n char to finishline
+
+                            string[] values = result.ToString().Split(','); // split line up into segments divided by ,
+
+
+                         //   Trace.Write(DXLOC_Index1.ToString());
+
+                            DXLOC_prefix[DXLOC_Index1] = values[1].Substring(1, values[1].Length - 2);                       // call sign prefix
+                        //    Trace.Write(" prefix>" + DXLOC_prefix[DXLOC_Index1]);
+
+
+                            if (DXLOC_prefix[DXLOC_Index1].Contains("/")) // indicating an extra character the call sign must contain
+                            {
+                                DXLOC_prefix1[DXLOC_Index1] = DXLOC_prefix[DXLOC_Index1].Substring(DXLOC_prefix[DXLOC_Index1].Length-1,1);
+                                DXLOC_prefix[DXLOC_Index1] = DXLOC_prefix[DXLOC_Index1].Substring(0, DXLOC_prefix[DXLOC_Index1].Length - 2);
+
+                            }
+                            else DXLOC_prefix1[DXLOC_Index1] = null;
+
+                            if (DXLOC_prefix[DXLOC_Index1].Contains("\\")) // indicating an extra character the call sign must not contain
+                            {
+                                DXLOC_prefix2[DXLOC_Index1] = DXLOC_prefix[DXLOC_Index1].Substring(DXLOC_prefix[DXLOC_Index1].Length - 1, 1);
+                                DXLOC_prefix[DXLOC_Index1] = DXLOC_prefix[DXLOC_Index1].Substring(0, DXLOC_prefix[DXLOC_Index1].Length - 2);
+
+
+                            }
+                            else DXLOC_prefix2[DXLOC_Index1] = null;
+
+                        //    Trace.Write(" prefix>" + DXLOC_prefix[DXLOC_Index1]);
+
+                        //    Trace.Write(" pre/ " + DXLOC_prefix1[DXLOC_Index1]);
+                         //   Trace.Write(" pre\\ " + DXLOC_prefix2[DXLOC_Index1]);
+
+
+
+                            DXLOC_country[DXLOC_Index1] = values[2].Substring(1, values[2].Length - 2);                       // call sign country
+                                                                                                                              // Trace.Write(" country>" + DXLOC_country[DXLOC_Index1]);
+
+
+                            DXLOC_continent[DXLOC_Index1] = values[3].Substring(1, values[3].Length - 2);                     // call sign continent
+                                                                                                                              //  Trace.Write(" continent>" + DXLOC_continent[DXLOC_Index1]);
+
+                            DXLOC_lat[DXLOC_Index1] = values[4];                          // call sign lat
+                                                                                          //  Trace.Write(" lat>" + DXLOC_lat[DXLOC_Index1]);
+
+                            DXLOC_lon[DXLOC_Index1] = values[5];                          // call sign lon
+                                                                                          //  Trace.Write(" lon>" + DXLOC_lon[DXLOC_Index1]);
+
+                            // horizontal lines top to bottom (North)90 to 0 to (-SOUTH)90
+                            // vertical lines left to right  -West(180) to 0 to +East(180)
+
+
+                            if (DXLOC_lat[DXLOC_Index1].Contains("N")) // pos 90 North
+                            {
+                                int ff = DXLOC_lat[DXLOC_Index1].IndexOf('N') - 1;
+
+                                try
+                                {
+                                    DXLOC_LAT[DXLOC_Index1] = Convert.ToDouble(DXLOC_lat[DXLOC_Index1].Substring(1, ff));
+                               //     Trace.Write(" LAT>" + DXLOC_LAT[DXLOC_Index1]);
+
+                                }
+                                catch (Exception)
+                                {
+
+                                    Trace.WriteLine(" NORTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                    DXLOC_LAT[DXLOC_Index1] = 0;
+
+
+                                }
+
+                            }  // pos 90 North
+                            else if (DXLOC_lat[DXLOC_Index1].Contains("S")) // neg 90 North
+                            {
+
+                                int ff = DXLOC_lat[DXLOC_Index1].IndexOf('S') - 1;
+
+                                try
+                                {
+                                    DXLOC_LAT[DXLOC_Index1] = -Convert.ToDouble(DXLOC_lat[DXLOC_Index1].Substring(1, ff));
+                                //    Trace.Write(" LAT>" + DXLOC_LAT[DXLOC_Index1]);
+
+                                }
+                                catch (Exception)
+                                {
+                                    DXLOC_LAT[DXLOC_Index1] = 0;
+                                    Trace.WriteLine(" SOUTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+
+
+                                }
+
+                            }  // neg 90 North
+
+
+                            if (DXLOC_lon[DXLOC_Index1].Contains("W")) // neg 180 west
+                            {
+                                int ff = DXLOC_lon[DXLOC_Index1].IndexOf('W') - 1;
+
+                                try
+                                {
+
+                                    DXLOC_LON[DXLOC_Index1] = -Convert.ToDouble(DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                  //  Trace.WriteLine(" LON>" + DXLOC_LON[DXLOC_Index1]);
+
+                                }
+                                catch (Exception)
+                                {
+                                    Trace.WriteLine(" WEST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                    DXLOC_LON[DXLOC_Index1] = 0;
+                                }
+
+                            }  // neg 180 West
+                            else if (DXLOC_lon[DXLOC_Index1].Contains("E")) // pos 180 East
+                            {
+                                int ff = DXLOC_lon[DXLOC_Index1].IndexOf('E') - 1;
+
+                                try
+                                {
+
+                                    DXLOC_LON[DXLOC_Index1] = Convert.ToDouble(DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                 //   Trace.WriteLine(" LON>" + DXLOC_LON[DXLOC_Index1]);
+
+                                }
+                                catch (Exception)
+                                {
+                                    Trace.WriteLine(" EAST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                    DXLOC_LON[DXLOC_Index1] = 0;
+                                }
+
+                            }  // pos 180 East
+
+
+
+                            DXLOC_Index1++;
+
+                            if (DXLOC_Index1 > 999) break;
+
+                            result = new StringBuilder(); // clean up for next line
+
+                        } // \r
+                        else
+                        {
+                            result.Append(newChar);  // save char
+                        }
+
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        DXLOC_Index1--;
+                        textBox1.Text += "End of DX LOC FILE at " + DXLOC_Index1.ToString() + "\r\n";
+
+                        break; // done with file
+                    }
+                    catch (Exception)
+                    {
+                        //  Trace.WriteLine("excpt======== " + e);
+                        //     textBox1.Text = e.ToString();
+
+                        break; // done with file
+                    }
+
+
+                } // for loop until end of file is reached
+
+
+                Trace.WriteLine("reached DXLOC end of file" + DXLOC_Index1.ToString());
+                textBox1.Text += "Reached End of DXLOC.txt FILE with # " + DXLOC_Index1.ToString() + "\r\n";
+
+
+                reader2.Close();    // close  file
+                stream2.Close();   // close stream
+
+
+                SP8_Active = 1; // done loading DXLOC database (Good)
+
+
+
+            } // if file exists
+            else Trace.WriteLine("NO DX LOC FILE");
+
+
+
+        } // DXMAP()
+
+        private void chkMapCountry_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkMapCountry.Checked == true) chkMapCall.Checked = false;
+            Map_Last = 1;
+
+        }
+
+        private void chkMapCall_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkMapCall.Checked == true) chkMapCountry.Checked = false;
+            Map_Last = 1;
+
+        }
     } // Spotcontrol
 
 

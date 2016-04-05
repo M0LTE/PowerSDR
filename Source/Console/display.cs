@@ -54,21 +54,24 @@ namespace PowerSDR
 	class Display
 	{
 
-        private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
+     //   private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
 
-        public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");
+     //   public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");
 
         #region Variable Declaration
 
         public static Console console;
 
-        public static SpotControl spot;                         // ke9ns add  communications with spot.cs and dx spotter
+      //  public static SpotControl spot;                         // ke9ns add  communications with spot.cs and dx spotter
 
-		//private static Mutex background_image_mutex;			// used to lock the base display image
-		//private static Bitmap background_bmp;					// saved background picture for display
-		//private static Bitmap display_bmp;					// Bitmap for use when drawing
-		//private static int waterfall_counter;
-		private static Bitmap waterfall_bmp;					// RX1 saved waterfall picture for display
+      //  public SpotControl SpotForm;                       // ke9ns add DX spotter function
+      //  public ScanControl ScanForm;                       // ke9ns add freq Scanner function
+
+        //private static Mutex background_image_mutex;			// used to lock the base display image
+        //private static Bitmap background_bmp;					// saved background picture for display
+        //private static Bitmap display_bmp;					// Bitmap for use when drawing
+        //private static int waterfall_counter;
+        private static Bitmap waterfall_bmp;					// RX1 saved waterfall picture for display
 		private static Bitmap waterfall_bmp2;                   // RX2
 		private static int[] histogram_data;					// histogram display buffer
 		private static int[] histogram_history;					// histogram counter
@@ -463,11 +466,13 @@ namespace PowerSDR
 
         private static PixelFormat WtrColor = PixelFormat.Format24bppRgb;  //          
 
-      
+
+        public static int map = 0; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
+
         public static int H1 = 0;  //  ke9ns add used to fool draw routines when displaying in 3rds 
         public static int H2 = 0;  //  ke9ns add used to fool draw routines when displaying in 4ths   
 
-        public static int K9 = 0;  // ke9ns add rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode
+        public static int K9 = 0;  // ke9ns add rx1 display mode selector:  1=water,2=pan,3=panfall, 5=panfall with RX2 on any mode, 7=special map viewing panafall
         public static int K10 = 0; // ke9ns add rx2 display mode selector: 0=off 1=water,2=pan, 5=panfall
 
         private static int K11 = 0; // ke9ns add set to 5 in RX1 in panfall, otherwise 0
@@ -642,7 +647,7 @@ namespace PowerSDR
         public static byte autoBright4 = 0; // ke9ns add
         public static byte autoBright5 = 0; // ke9ns add
 
-        private static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
+        public static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
 		public static DisplayMode CurrentDisplayMode
 		{
 			get { return current_display_mode; }
@@ -1616,13 +1621,27 @@ namespace PowerSDR
 						update = DrawHistogram(e.Graphics, W, H);
 						break;
 					case DisplayMode.PANAFALL:
-                        K9 = 3;
-                        K11 = 0;
-                    
-                        split_display = true; // use wide vertgrid because your saying split
-						update = DrawPanadapter(e.Graphics, W, H/2, 1, false); //top half 
-						update = DrawWaterfall(e.Graphics, W, H/2, 1, true); // bottom half RX2 is not on
-						split_display = false;
+            
+                        if (map == 1) // ke9ns add  if in special map viewing panafall mode
+                        {
+                           
+                            K9 = 7;             //special panafall mode for sun/grayline tracking mode
+                            K11 = 0;
+
+                            update = DrawPanadapter(e.Graphics, W, 4 * H / 5, 1, false);    //     in pure panadapter mode: update = DrawPanadapter(e.Graphics, W, H, 1, false);
+                            update = DrawWaterfall(e.Graphics, W, 4 * H / 5, 1, true);        // bottom half RX2 is not on
+                            split_display = false;
+                        }
+                        else
+                       {
+                            K9 = 3;
+                            K11 = 0;
+
+                            split_display = true; // use wide vertgrid because your saying split
+                            update = DrawPanadapter(e.Graphics, W, H / 2, 1, false); //top half 
+                            update = DrawWaterfall(e.Graphics, W, H / 2, 1, true); // bottom half RX2 is not on
+                            split_display = false;
+                       }
 
 						break;
 
@@ -2295,10 +2314,9 @@ namespace PowerSDR
 
         private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness
         private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
-        private static Pen p3 = new Pen(Color.FromArgb(75, Color.Black), 1.0f); // dark
-        private static Pen p4 = new Pen(Color.FromArgb(50, Color.Black), 1.0f); // dusk
-      //  private static Pen p5 = new Pen(Color.DarkGray, 2.0f); // dusk
-
+      //  private static Pen p3 = new Pen(Color.FromArgb(75, Color.Black), 1.0f); // dark
+      //  private static Pen p4 = new Pen(Color.FromArgb(50, Color.Black), 1.0f); // dusk
+     
         private static SizeF length;                                          // ke9nsa add length of call sign so we can do usb/lsb and define a box to click into
         private static bool low = false;                    // ke9ns add true=LSB, false=USB
         private static int rx2 = 0;                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
@@ -3963,7 +3981,7 @@ namespace PowerSDR
 
                 DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
-                int UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
+                SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
                 if ((!bottom) && (VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
                 {
@@ -4092,111 +4110,7 @@ namespace PowerSDR
                 if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
                 else low = false;     // usb
 
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-                // draw sun tracker and gray line
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-
-                if (SpotControl.SUN)
-                {
-
-                    Image src = new Bitmap(sun_image);
-                    g.DrawImage(src, SpotControl.Sun_X - 10, SpotControl.Sun_Y - 10);  // rectangle to show bitmap image in
-                    g.DrawString("SFI " + SpotControl.SFI.ToString("D"), font1, grid_text_brush, SpotControl.Sun_X + 15, SpotControl.Sun_Y-10);
-                    g.DrawString("A " + SpotControl.Aindex.ToString("D"), font1, grid_text_brush, SpotControl.Sun_X + 15, SpotControl.Sun_Y);
-
-                } // sun tracker enabled
-
-                if (SpotControl.GRAYLINE == true)
-                {
-
-                  //  Point[] test = new Point[100];
-
-
-                    /* 
-                                        points = new Point[W];
-
-                                        points[W].X = W; points[W].Y = H;
-                                        points[W + 1].X = 0; points[W + 1].Y = H;
-                                        if (bottom)
-                                        {
-                                            points[W].Y += H;
-                                            points[W + 1].Y += H;
-                                        }
-                                        data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
-                                        g.FillPolygon(data_line_pen.Brush, points);
-                                        points[W] = points[W - 1];
-                                        points[W + 1] = points[W - 1];
-                                        data_line_pen.Color = data_line_color;
-                                        g.DrawLines(data_line_pen, points);
-
-                                        */
-
-                   /*
-                    int H3 = SpotControl.Sun_Bot1; // full bottom, but if your in panafall mode, then reduce it.
-
-                    if (K9 > 2)
-                    {
-                        if (H < H3)
-                        {
-                            H3 = H;
-                         
-                        }
-                    }
-
-                 */
-                    for (int ee = SpotControl.Sun_Top1; ee < SpotControl.Sun_Bot1; ee++)
-                    {
-
-                       
-
-                        //-----------------------------------------------------------------
-                        // ke9ns dusk
-                        if (SpotControl.GrayLine_Pos3[ee] == 0) // not dusk on edges on screen
-                        {
-                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.GrayLine_Pos1[ee, 1], ee);
-                        }
-                        else if (SpotControl.GrayLine_Pos3[ee] == 1)
-                        {
-                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.Sun_Right1, ee);
-                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 1], ee, SpotControl.Sun_Left1, ee);
-                        }
-                        else
-                        {
-                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 1], ee, SpotControl.Sun_Right1, ee);
-                            g.DrawLine(p4, SpotControl.GrayLine_Pos1[ee, 0], ee, SpotControl.Sun_Left1, ee);
-                        }
-
-                    
-                    
-                        //-----------------------------------------------------------------
-                        // ke9ns dark
-                        if (SpotControl.GrayLine_Pos2[ee] == 0)  // not dark on edges on screen
-                        {
-                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.GrayLine_Pos[ee, 1], ee);
-                        }
-                        else if (SpotControl.GrayLine_Pos2[ee] == 1)
-                        {
-                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.Sun_Right1, ee);
-                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 1], ee, SpotControl.Sun_Left1, ee);
-                        }
-                        else
-                        {
-                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 1], ee, SpotControl.Sun_Right1, ee);
-                            g.DrawLine(p3, SpotControl.GrayLine_Pos[ee, 0], ee, SpotControl.Sun_Left1, ee);
-                        }
-
-
-
-                       
-
-
-                        }  // for loop  
-
-
-                } // if GRAYLINE enabled
-
+   
 
                 //-------------------------------------------------------------------------------------------------
                 //-------------------------------------------------------------------------------------------------
@@ -4330,7 +4244,7 @@ namespace PowerSDR
          //  Trace.WriteLine("KE9NS DRAWWATERFALLGRID....H................. "+ H);
          //   Trace.WriteLine("KE9NS DRAWWATERFALLGRID....W................. " + W);
 
-           
+         
         // ke9ns this assures a black line for the waterfall frequencies to go into
             if (bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);  // fill black on bottom half of display
             else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);  // fill black into entire display
@@ -4485,6 +4399,7 @@ namespace PowerSDR
                         g.DrawLine(tx_filter_pen, filter_left_x + 1, H, filter_left_x + 1, H + top);    // draw tx filter overlay
                         g.DrawLine(tx_filter_pen, filter_right_x, H, filter_right_x, H + top);      // draw tx filter overlay
                         g.DrawLine(tx_filter_pen, filter_right_x + 1, H, filter_right_x + 1, H + top);  // draw tx filter overlay
+
                     } // 
 
                     if (!mox && draw_tx_cw_freq && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
@@ -5508,6 +5423,7 @@ namespace PowerSDR
 
             if ((K9 == 5) && (K10 == 5) && (bottom)) H2 = H - (H / 2); // for display in 1/4 area instead of 1/2
 
+           
             if (pan_fill)
             {
                 if (points == null || points.Length < W + 2)
@@ -6034,21 +5950,20 @@ namespace PowerSDR
         // RX1
         private static long AB = 0; // ke9ns for autobright
         private static long[] AB1 = new long[10];// ke9ns
-      //  private static byte ab2 = 0; // ke9ns
         private static float AB3 = 0; // ke9ns
 
         // RX2
         private static long A2B = 0; // ke9ns for autobright
         private static long[] A2B1 = new long[10];// ke9ns
-      //  private static byte a2b2 = 0; // ke9ns
         private static float A2B3 = 0; // ke9ns
 
         // TX
         private static long A3B = 0; // ke9ns for autobright
         private static long[] A3B1 = new long[10];// ke9ns
-      //  private static byte a3b2 = 0;        // ke9ns
         private static float A3B3 = 0;       // ke9ns
         private static int A4B = 0;          // ke9ns for autobright
+
+
 
         private static int itemp = 0; // ke9ns add continuum mode
         private static int itemp_last = 0; // ke9ns add continuum mode
@@ -6063,15 +5978,10 @@ namespace PowerSDR
           //  Stopwatch stopWatch = new Stopwatch();
           //  stopWatch.Start();
 
-
-            if (WaterMove == 0)
-            {
-                WM = W;  // standard old way 
-            }
-            else
-            {
-                WM = WaterMove * W;  // ke9ns ADD  bitmap width (usually 3 times the W)  WM = 5 * 1123 = over 6000 pixels        
-            }
+            
+            if (WaterMove == 0)   WM = W;  // standard old way 
+            else   WM = WaterMove * W;  // ke9ns ADD  bitmap width (usually 3 times the W)  WM = 5 * 1123 = over 6000 pixels        
+           
                     
             DrawWaterfallGrid(ref g, W, H, rx, bottom);  // ke9ns draw frequency text on line above waterfall
 
@@ -6107,7 +6017,7 @@ namespace PowerSDR
 
         // ke9ns add check for window resizing messing up bitmap size.
 
-            if (DP==1) // power on
+            if (DP == 1) // power on
             {
                 F5A = 0; // power on, so reset counter to allow time
                 DP = 0;
@@ -6157,7 +6067,7 @@ namespace PowerSDR
                 K14 = 1;
               //  Trace.Write("2   ");
             }
-            else if ((K9 == 5)&&(K10 == 1)&&(K14 == 0))  // RX1: 1/3 pan + 1/3 water, RX2: water 1/3
+            else if ((K9 == 5) && (K10 == 1)&&(K14 == 0))  // RX1: 1/3 pan + 1/3 water, RX2: water 1/3
             {
                 waterfall_bmp = new Bitmap(WM, K13/3 - 16, WtrColor);	// initialize waterfall display
                 waterfall_bmp2 = new Bitmap(WM, K13/3 - 16, WtrColor);  // ke9ns BMP
@@ -6207,7 +6117,7 @@ namespace PowerSDR
                 K15 =  2;
                 K14 = 1;
             }
-            else if ((K9==1)&& (K14 == 0))// waterfall on rx1 only
+            else if ((K9 == 1) && (K14 == 0))// waterfall on rx1 only
             {
                 waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
                 waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
@@ -6221,12 +6131,23 @@ namespace PowerSDR
                
                 waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
                 waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
-               // waterfall_bmp.MakeTransparent(Color.FromArgb(0,0,0,0)); // ke9ns test
-
+            
                 K15 = 1;
                 K14 = 1;
                  
             }
+            else if ((K9 == 7) && (K14 == 0))// waterfall on rx1 only
+            {
+
+                waterfall_bmp = new Bitmap(WM, K13/4 - 16, WtrColor);	// initialize waterfall display
+              //  waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+                                                                      // waterfall_bmp.MakeTransparent(Color.FromArgb(0,0,0,0)); // ke9ns test
+
+                K15 = 1;
+                K14 = 1;
+
+            }
+
             else if ((K14 == 0))// all else
             {
                 waterfall_bmp = new Bitmap(WM, K13 - 16, WtrColor);	// initialize waterfall display
@@ -7260,7 +7181,7 @@ namespace PowerSDR
 
                     if (continuum == 0)
                     {
-                        g.DrawImageUnscaled(waterfall_bmp, (-(W * WaterMove1)) - WM1F, 16);  // draw the image on the background	
+                         g.DrawImageUnscaled(waterfall_bmp, (-(W * WaterMove1)) - WM1F, 16);  // draw the image on the background	
                     }
                     else
                     {
