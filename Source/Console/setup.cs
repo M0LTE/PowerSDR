@@ -16403,7 +16403,7 @@ namespace PowerSDR
                         comboAudioDriver2.Items.Add(devinfo); // vac1 populate lists
                         comboAudioDriver3.Items.Add(devinfo); // vac2
 
-                        //Trace.WriteLine("vac1 " + host_index + " devinfo "+ devinfo ); // SOUND DRIVERS: (0=MME, 1=Windows Direct Sound, 4=Windows WDM-KS
+                        //Debug.WriteLine("vac1 " + host_index + " devinfo "+ devinfo ); // SOUND DRIVERS: (0=MME, 1=Windows Direct Sound, 4=Windows WDM-KS
 
                         dax_audio_setup_enum = true;
                     }
@@ -16437,7 +16437,7 @@ namespace PowerSDR
             foreach (PADeviceInfo p in a)               // try each device and create list of inputs and outputs
             {
                 comboAudioInput1.Items.Add(p);
-              //  Trace.WriteLine("pri " + p + " in "); // SOUND input: ASIO FlexRadio 
+              //  Debug.WriteLine("pri " + p + " in "); // SOUND input: ASIO FlexRadio 
             }
             a = Audio.GetPAOutputDevices(host);
 
@@ -16445,7 +16445,7 @@ namespace PowerSDR
             {
                 comboAudioOutput1.Items.Add(p);
 
-              //  Trace.WriteLine("pri " + p + " out "); // SOUND out: ASIO FlexRadio 
+              //  Debug.WriteLine("pri " + p + " out "); // SOUND out: ASIO FlexRadio 
             }
 
         } // getdevices 1
@@ -16459,7 +16459,7 @@ namespace PowerSDR
             foreach (PADeviceInfo p in a)
             {
                 comboAudioInput2.Items.Add(p);
-              //   Trace.WriteLine("vac1 " + p + " in "); // SOUND input: (Microsoft Sound Mapper - Input,CABLE Output (VB-Audio Virtual, Mic in at front panel (Pink) (R
+              //   Debug.WriteLine("vac1 " + p + " in "); // SOUND input: (Microsoft Sound Mapper - Input,CABLE Output (VB-Audio Virtual, Mic in at front panel (Pink) (R
 
             }
 
@@ -16467,7 +16467,7 @@ namespace PowerSDR
             foreach (PADeviceInfo p in a)
             {
                 comboAudioOutput2.Items.Add(p);
-              //   Trace.WriteLine("vac1 " + p + " out "); // SOUND output: (Microsoft Sound Mapper - Output,Speakers (Realtek High Definiti,CABLE Input (VB-Audio Virtual C )
+              //   Debug.WriteLine("vac1 " + p + " out "); // SOUND output: (Microsoft Sound Mapper - Output,Speakers (Realtek High Definiti,CABLE Input (VB-Audio Virtual C )
 
             }
         }
@@ -17119,7 +17119,7 @@ namespace PowerSDR
                 if (comboMeterType != null)
                 {
                     comboMeterType.Text = value;
-                 //   Trace.WriteLine("meter change via click " + value);
+                 //   Debug.WriteLine("meter change via click " + value);
                 }
 
             }
@@ -25602,11 +25602,11 @@ namespace PowerSDR
 
 
         // ke9ns add
-        public bool GRIDLINES
-        {
-            get { return gridBoxTS.Checked; }
-            set { gridBoxTS.Checked = value; }
-        }
+    //    public bool GRIDLINES
+     //   {
+     //       get { return gridBoxTS.Checked; }
+     //       set { gridBoxTS.Checked = value; }
+     //   }
 
 
         private void chkEnableRFEPATR_CheckedChanged(object sender, System.EventArgs e)
@@ -26431,13 +26431,15 @@ namespace PowerSDR
           
         }
 
+
+        // ke9ns add
         private void comboAppSkin_MouseDown(object sender, MouseEventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
 
             if (me.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                Trace.WriteLine("right click ");
+                Debug.WriteLine("right click ");
 
                 //  string filePath = "%COMMONAPPDATAROOT%\\FlexRadio Systems\\PowerSDR\\Skins\\Default 2012";
 
@@ -26445,7 +26447,7 @@ namespace PowerSDR
 
                 if (!Directory.Exists(filePath))
                 {
-                    Trace.WriteLine("problem1 ");
+                    Debug.WriteLine("problem1 ");
                     return;
                 }
 
@@ -26469,8 +26471,8 @@ namespace PowerSDR
         public void gridBoxTS_CheckedChanged(object sender, EventArgs e)
         {
 
-            if (gridBoxTS.Checked == true)  Display.GridOff = 1;
-            else Display.GridOff = 0;
+            if (gridBoxTS.Checked == true)  Display.GridOff = 1; // gridlines OFF
+            else Display.GridOff = 0; // gridlines ON
 
         }
 

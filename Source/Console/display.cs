@@ -222,7 +222,7 @@ namespace PowerSDR
                                 if (autoBright4 == 0)
                                 {
                                     console.autoBrightBox.Text = "";
-                                    //   Trace.WriteLine("off======");
+                                    //   Debug.WriteLine("off======");
                                 }
                             }
                             autoBright5 = 0;
@@ -230,7 +230,7 @@ namespace PowerSDR
 
                     }
 
-                   //   Trace.WriteLine("ab4 " + autoBright4 + " ab5 " + autoBright5);
+                   //   Debug.WriteLine("ab4 " + autoBright4 + " ab5 " + autoBright5);
 
                 }
                 else autoBright5 = 0;
@@ -676,7 +676,7 @@ namespace PowerSDR
                             if (autoBright5 == 0)
                             {
                                 console.autoBrightBox.Text = "";
-                                //  Trace.WriteLine("1off======");
+                                //  Debug.WriteLine("1off======");
                             }
                         }
                         autoBright4 = 0;
@@ -698,7 +698,7 @@ namespace PowerSDR
 
 
 
-              //  Trace.WriteLine("1ab4 " + autoBright4 + " 1ab5 " + autoBright5);
+              //  Debug.WriteLine("1ab4 " + autoBright4 + " 1ab5 " + autoBright5);
 
                 /*switch(current_display_mode)
 				{
@@ -1078,7 +1078,7 @@ namespace PowerSDR
                     
                 }
 
-             //   Trace.WriteLine("hereasdfadsf===========");
+             //   Debug.WriteLine("hereasdfadsf===========");
 
             } // set
 
@@ -1628,8 +1628,8 @@ namespace PowerSDR
                             K9 = 7;             //special panafall mode for sun/grayline tracking mode
                             K11 = 0;
 
-                            update = DrawPanadapter(e.Graphics, W, 4 * H / 5, 1, false);    //     in pure panadapter mode: update = DrawPanadapter(e.Graphics, W, H, 1, false);
-                            update = DrawWaterfall(e.Graphics, W, 4 * H / 5, 1, true);        // bottom half RX2 is not on
+                            update = DrawPanadapter(e.Graphics, W, 5 * H / 6, 1, false);    //     in pure panadapter mode: update = DrawPanadapter(e.Graphics, W, H, 1, false);
+                            update = DrawWaterfall(e.Graphics, W, 5 * H / 6, 1, true);        // bottom half RX2 is not on
                             split_display = false;
                         }
                         else
@@ -2308,18 +2308,20 @@ namespace PowerSDR
         // ke9ns draw panadapter grid
         //=========================================================
 
-        private static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-        private static int[] holder1 = new int[100];                          // ke9ns add
+        public static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+        public static int[] holder1 = new int[100];                          // ke9ns add
         private static Font font1 = new Font("Ariel", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
 
         private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness
         private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
-      //  private static Pen p3 = new Pen(Color.FromArgb(75, Color.Black), 1.0f); // dark
-      //  private static Pen p4 = new Pen(Color.FromArgb(50, Color.Black), 1.0f); // dusk
-     
+       
         private static SizeF length;                                          // ke9nsa add length of call sign so we can do usb/lsb and define a box to click into
-        private static bool low = false;                    // ke9ns add true=LSB, false=USB
-        private static int rx2 = 0;                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
+        private static bool low = false;                                     // ke9ns add true=LSB, false=USB
+        private static int rx2 = 0;                                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
+
+        public static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
+        public static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
+        public static int VFODiff = 0;                                      // ke9ns diff high-low
 
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
 		{
@@ -2357,8 +2359,8 @@ namespace PowerSDR
             if ((K9 == 5) && (K10 == 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
             
 
-          //  if (bottom) Trace.WriteLine("bottom...top " + top + " H " + H);
-          //  else Trace.WriteLine("top...top " + top + " H " + H);
+          //  if (bottom) Debug.WriteLine("bottom...top " + top + " H " + H);
+          //  else Debug.WriteLine("top...top " + top + " H " + H);
 
             bool is_first = true;
             int _x = 0;
@@ -2437,8 +2439,8 @@ namespace PowerSDR
 			int top = (int)((double)grid_step * H / y_range); // find top of each window for the panadapter
 
 
-            //  if (bottom) Trace.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top);
-            //   else Trace.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top);
+            //  if (bottom) Debug.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top);
+            //   else Debug.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top);
 
 
 
@@ -3855,8 +3857,8 @@ namespace PowerSDR
                     else g.DrawLine(grid_pen, 0, y, W, y);
                 }
                 
-               //   if (bottom) Trace.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top + " num "+num + " gstep "+ grid_step + " Y "+ y + " yrange " + y_range);
-               //   else Trace.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top + " num " + num + " gstep " + grid_step + " Y " + y + " yrange " + y_range);
+               //   if (bottom) Debug.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top + " num "+num + " gstep "+ grid_step + " Y "+ y + " yrange " + y_range);
+               //   else Debug.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top + " num " + num + " gstep " + grid_step + " Y " + y + " yrange " + y_range);
 
 
             //===============================================================
@@ -3960,9 +3962,9 @@ namespace PowerSDR
             {
                  
                
-                int VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
-                int VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
-                int VFODiff = VFOHigh - VFOLow; // diff in hz
+                VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
+                VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
+                VFODiff = VFOHigh - VFOLow; // diff in hz
             
                 byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
                 byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
@@ -3983,6 +3985,8 @@ namespace PowerSDR
 
                 SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
+
+              
                 if ((!bottom) && (VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
                 {
                   
@@ -3995,10 +3999,12 @@ namespace PowerSDR
 
                     for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
                     {
+                        SpotControl.Hindex = ii; // get top index spot
+
                         if ((SpotControl.SWL_Freq[ii] > VFOHigh))
                         {
-                            SpotControl.Hindex = ii--; // get top index spot
-                            break; // once a SWL spot if found off the right side of screen then DONE
+                            SpotControl.Hindex--; // get top index spot
+                             break; // once a SWL spot if found off the right side of screen then DONE
                         }
                        
                             if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
@@ -4025,6 +4031,8 @@ namespace PowerSDR
 
                                     Console.SXK++;
                                 }
+                                else Debug.Write(" SXK OVERLIMIT ");
+
 
                                     iii = iii + 11; // stairstep spots
                                     if (iii > 90) iii = 0;
@@ -4033,13 +4041,16 @@ namespace PowerSDR
                         } // make sure spot is > then left side of screen
    
                     } // for loop through SWL_Index
+
+                  
+
                 }
                 else // if you dont change freq, then do below
                 {
 
                     if (!bottom)
                     {
-                       
+                      
                         for (int ii = SpotControl.Lindex; ii < SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
                         {
 
@@ -4102,9 +4113,9 @@ namespace PowerSDR
                 }
 
 
-                int VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
-                int VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
-                int VFODiff = VFOHigh - VFOLow;       // diff in hz
+                VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
+                VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                VFODiff = VFOHigh - VFOLow;       // diff in hz
 
 
                 if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
@@ -4124,7 +4135,7 @@ namespace PowerSDR
                   
                     if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
                     {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] - VFOLow)));
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] - VFOLow))); // determine DX spot line pos on current panadapter screen
                       
                         holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
                         holder1[kk] = VFO_DXPos;
@@ -4139,7 +4150,7 @@ namespace PowerSDR
 
 
                 if (bottom) Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
-                else Console.DXK= kk;
+                else Console.DXK= kk; // count of spots in current panadapter
 
               
                 //--------------------------------------------------------------------------------------------
@@ -4241,8 +4252,8 @@ namespace PowerSDR
 			// draw background
             // full screen W = 1607, H = 541  (shurnk W=1168, H=303)
 
-         //  Trace.WriteLine("KE9NS DRAWWATERFALLGRID....H................. "+ H);
-         //   Trace.WriteLine("KE9NS DRAWWATERFALLGRID....W................. " + W);
+         //  Debug.WriteLine("KE9NS DRAWWATERFALLGRID....H................. "+ H);
+         //   Debug.WriteLine("KE9NS DRAWWATERFALLGRID....W................. " + W);
 
          
         // ke9ns this assures a black line for the waterfall frequencies to go into
@@ -4279,9 +4290,9 @@ namespace PowerSDR
 
 			int center_line_x = (int)(-(double)low/(high-low)*W); // ke9ns 885 full screen (shrunk 643) =(97370/(176741))*1607
 
-          //  Trace.WriteLine("KE9NS Y-Range................. " + y_range);
+          //  Debug.WriteLine("KE9NS Y-Range................. " + y_range);
 
-          //  Trace.WriteLine("KE9NS Centerlinex................. " + center_line_x);
+          //  Debug.WriteLine("KE9NS Centerlinex................. " + center_line_x);
             
 			if(mox) // get filter limits
 			{
@@ -4337,7 +4348,7 @@ namespace PowerSDR
 	
             if(bottom) top = top * 2;
 
-            //   Trace.WriteLine("KE9NS top................. " + top);
+            //   Debug.WriteLine("KE9NS top................. " + top);
 
             if ((continuum == 0) || (rx==2))
             {
@@ -4456,9 +4467,9 @@ namespace PowerSDR
 			long vfo_round = ((long)(vfo/freq_step_size))*freq_step_size;  // round freq you are currently on
 			long vfo_delta = (long)(vfo - vfo_round); // difference between real and rounded
 
-            //   Trace.WriteLine("round " + vfo_round);
-            //   Trace.WriteLine("delta " + vfo_delta);
-            //  Trace.WriteLine("vfo " + vfo);
+            //   Debug.WriteLine("round " + vfo_round);
+            //   Debug.WriteLine("delta " + vfo_delta);
+            //  Debug.WriteLine("vfo " + vfo);
 
 
 
@@ -4482,7 +4493,7 @@ namespace PowerSDR
                     g.DrawString(label1, font, grid_text_brush, temp1, (float)Math.Floor(H * .01)); // ke9ns shift labels over 100 to allow room for time stamp on left side
 
               
-                    //  Trace.WriteLine("W " + W + " temp " + temp + " temp1 " + temp1 + " temp2 " + temp2 + " temp3 " + temp3);
+                    //  Debug.WriteLine("W " + W + " temp " + temp + " temp1 " + temp1 + " temp2 " + temp2 + " temp3 " + temp3);
                 } // horz steps
 
             } // continuum mode
@@ -4494,7 +4505,7 @@ namespace PowerSDR
                 switch (console.CurrentRegion)
                 {
                     case FRSRegion.US:
-                        //  Trace.Write("low " + waterfall_low_threshold + " high " + waterfall_high_threshold);
+                        //  Debug.Write("low " + waterfall_low_threshold + " high " + waterfall_high_threshold);
 
                         for (int i = 0; i <= h_steps + 1; i++)  // ke9ns draw freq numbers in line just above waterfall
                         {
@@ -4506,9 +4517,9 @@ namespace PowerSDR
                             double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;  // freq to print out
                             int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
 
-                            //   Trace.WriteLine("fgrid " + fgrid);
-                            //   Trace.WriteLine("Afgrid " + actual_fgrid);
-                            //   Trace.WriteLine("vgrid " + vgrid);
+                            //   Debug.WriteLine("fgrid " + fgrid);
+                            //   Debug.WriteLine("Afgrid " + actual_fgrid);
+                            //   Debug.WriteLine("vgrid " + vgrid);
 
 
                             if (!show_freq_offset)
@@ -4670,7 +4681,7 @@ namespace PowerSDR
                                         g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
                                     }
 
-                                    // Trace.WriteLine("KE9NS H................. " + H);
+                                    // Debug.WriteLine("KE9NS H................. " + H);
 
                                 } // no actual fgrid (these are the remaining frequences to show in the strip above the waterfall)
 
@@ -5407,7 +5418,7 @@ namespace PowerSDR
                 }
                 else
                 {
-                   //  Trace.WriteLine("never ");
+                   //  Debug.WriteLine("never ");
                 }
             }
             else
@@ -6024,13 +6035,13 @@ namespace PowerSDR
             }
             else // power off
             {
-              // Trace.WriteLine("OFF   ");
+              // Debug.WriteLine("OFF   ");
              
             }
           
             if (F5A == 2)// if power turned ON, then wait 1 or 2 cycles before waterfall starts to allow vfo to update
             {
-             //  Trace.WriteLine("RESET waterfall  ");
+             //  Debug.WriteLine("RESET waterfall  ");
                 F5A = 3;
 
                 F2A = 1;
@@ -6056,7 +6067,7 @@ namespace PowerSDR
                 waterfall_bmp2 = new Bitmap(WM, K13 / 2 - 16, WtrColor);  // ke9ns BMP
                 K15 = 2;
                 K14 = 1;
-              //  Trace.Write("1   ");
+              //  Debug.Write("1   ");
 
             }
             else if ((continuum == 1) && (K14 == 0))
@@ -6065,7 +6076,7 @@ namespace PowerSDR
                 waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
                 K15 = 1;
                 K14 = 1;
-              //  Trace.Write("2   ");
+              //  Debug.Write("2   ");
             }
             else if ((K9 == 5) && (K10 == 1)&&(K14 == 0))  // RX1: 1/3 pan + 1/3 water, RX2: water 1/3
             {
@@ -6374,15 +6385,15 @@ namespace PowerSDR
 
                                 WM1 = (int)((float)WM2A_DIFF / WM4 / slope); // how many pixels to move the bmp frame -=going down in freq +=going up in freq
 
-                             //    Trace.WriteLine("wm1 " + WM1);// pixels at this point not row[bytes] 
-                             //     Trace.WriteLine("watermove2 " + WaterMove2);
-                              //     Trace.WriteLine("W " + W);
+                             //    Debug.WriteLine("wm1 " + WM1);// pixels at this point not row[bytes] 
+                             //     Debug.WriteLine("watermove2 " + WaterMove2);
+                              //     Debug.WriteLine("W " + W);
 
                                 if ((WM1 >= ((W*(WaterMove1))-2 )) || (WM1 <= (-(W*WaterMove1)+2 ))) // either you move W beyond or -W below
                                 {
                                     K9LAST = 0; // redraw bitmap
                                     WM1 = 0;
-                                  //  Trace.WriteLine("===================OVER EDGE=========================");
+                                  //  Debug.WriteLine("===================OVER EDGE=========================");
 
                                 } // reset the bitmap
 
@@ -6431,9 +6442,9 @@ namespace PowerSDR
 
                                 WM2 = (int)((float)WM2B_DIFF / WM5 / slope); // how many pixels to move the bmp frame -=going down in freq +=going up in freq
 
-                                //  Trace.WriteLine("wm2 " + WM2);
-                                //    Trace.WriteLine("wm5 " + WM5);
-                                //    Trace.WriteLine("WM2B " + WM2B);
+                                //  Debug.WriteLine("wm2 " + WM2);
+                                //    Debug.WriteLine("wm5 " + WM5);
+                                //    Debug.WriteLine("WM2B " + WM2B);
 
                                 if ((WM2 >= ((W * WaterMove1)-2)) || (WM2 <= (-(W * WaterMove1)+2)))  // either you move W beyond or -W below
                                 {
@@ -6469,7 +6480,7 @@ namespace PowerSDR
                 } // rx2
 
 
-             //   Trace.WriteLine("pw2 " + pw_avg2 + " pw1 "+pw_avg);  // water avg on)
+             //   Debug.WriteLine("pw2 " + pw_avg2 + " pw1 "+pw_avg);  // water avg on)
 
 
             //================================================
@@ -6511,8 +6522,8 @@ namespace PowerSDR
                     }
 
                  
-                 //   Trace.Write("diff "+ DT1.Subtract(DT).TotalSeconds);
-                  // Trace.Write("ts " + ts);
+                 //   Debug.Write("diff "+ DT1.Subtract(DT).TotalSeconds);
+                  // Debug.Write("ts " + ts);
 
                     if ((DT1.Subtract(DT).TotalSeconds) >= 5)
                     {
@@ -6626,7 +6637,7 @@ namespace PowerSDR
                         if (rx == 1)
                         {
 
-                            //   Trace.Write("last " + itemp_last + " itemp " + itemp);
+                            //   Debug.Write("last " + itemp_last + " itemp " + itemp);
 
 
                             waterfall_data[i] = waterfall_low_threshold; // ke9ns add no line shown
@@ -6679,7 +6690,7 @@ namespace PowerSDR
                         if (mox)
                         {
 
-                          //  Trace.WriteLine("VALS ==  " + max);
+                          //  Debug.WriteLine("VALS ==  " + max);
 
                             if (max > -100)  // use only mic data
                             {
@@ -6719,7 +6730,7 @@ namespace PowerSDR
                             WaterfallLowMicThreshold = A3B3 - abright; //  console.setupForm.WaterfallLowMicThreshold
                             console.setupForm.udDisplayWaterfallMicLevel.Value = (decimal)WaterfallLowMicThreshold;
                         }
-                        //  Trace.WriteLine("TX value " + A3B3);
+                        //  Debug.WriteLine("TX value " + A3B3);
                         //   console.setupForm.udDisplayWaterfallRX2Level.Invalidate();
 
                     } // autobright3 = 1
@@ -6742,7 +6753,7 @@ namespace PowerSDR
 
                             //  console.setupForm.udDisplayWaterfallLowLevel.Invalidate();
                         }
-                        //  Trace.WriteLine("rx1 value " + AB3);
+                        //  Debug.WriteLine("rx1 value " + AB3);
 
                     } // autobright = 1
 
@@ -6764,7 +6775,7 @@ namespace PowerSDR
                             console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright;
                             console.setupForm.udDisplayWaterfallRX2Level.Value = (decimal)WaterfallLowRX2Threshold;
                         }
-                         //  Trace.WriteLine("rx2 value " + A2B3 );
+                         //  Debug.WriteLine("rx2 value " + A2B3 );
                         //   console.setupForm.udDisplayWaterfallRX2Level.Invalidate();
 
                     } // autobright2 = 1
@@ -6820,7 +6831,7 @@ namespace PowerSDR
                    row = (byte*)bitmapData.Scan0 ;    // ke9ns  first row but W over to the right since the Width of the bmp is 3times the real viewing area
                    row1 = (int*)bitmapData.Scan0;     // ke9ns used for faster clearing out of bad data
 
-              //  Trace.WriteLine("scan0 " + bitmapData.Scan0 + " total size " + total_size + " W " + W +" bitmapData.Stride  "+bitmapData.Stride);
+              //  Debug.WriteLine("scan0 " + bitmapData.Scan0 + " total size " + total_size + " W " + W +" bitmapData.Stride  "+bitmapData.Stride);
               
                 
                 //=================================================================
@@ -6884,7 +6895,7 @@ namespace PowerSDR
                     else
                     {
                         waterfall_low_threshold = -200; // if you dont have a low level use -200
-                     //   Trace.WriteLine("never ");
+                     //   Debug.WriteLine("never ");
                     }
 
                 }
@@ -7065,7 +7076,7 @@ namespace PowerSDR
                             
                         }  // value is between low and high
 
-                        //   Trace.WriteLine("water "+ waterfall_data[i] + " offset " + offset + " range " + range + " Gray " + Gray+" Gray1 " + Gray1 + " Gray2 "+ Gray2);
+                        //   Debug.WriteLine("water "+ waterfall_data[i] + " offset " + offset + " range " + range + " Gray " + Gray+" Gray1 " + Gray1 + " Gray2 "+ Gray2);
 
 
 
@@ -7212,8 +7223,8 @@ namespace PowerSDR
           //  stopWatch.Stop();
           //  TimeSpan ts = stopWatch.Elapsed;
 
-         //   if (rx==1)  Trace.WriteLine("RunTime1 " + ts);
-         //   else Trace.WriteLine("RunTime2 " + ts);
+         //   if (rx==1)  Debug.WriteLine("RunTime1 " + ts);
+         //   else Debug.WriteLine("RunTime2 " + ts);
 
 
             //=======================================

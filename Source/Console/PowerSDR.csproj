@@ -51,7 +51,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;NO_NEW_ATU; NO_MCL_PM</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NO_MCL_PM;NO_KE9NS</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -154,6 +154,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -547,6 +548,7 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="Resources\picD1.png" />
     <EmbeddedResource Include="Resources\sun.png" />
     <EmbeddedResource Include="Resources\met3.jpg" />
     <EmbeddedResource Include="MET3.jpg" />
@@ -788,7 +790,6 @@
     </EmbeddedResource>
     <Content Include="CAT\CATStructs.xml" />
     <EmbeddedResource Include="images\flex-3000.jpg" />
-    <EmbeddedResource Include="Resources\picD1.png" />
     <Content Include="images\PowerSDR.ico" />
   </ItemGroup>
   <ItemGroup>

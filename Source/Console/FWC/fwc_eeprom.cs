@@ -125,6 +125,8 @@ namespace PowerSDR
                 region = FRSRegion.US;
 		}
 
+
+        //====================================================================================
 		public static bool NeedDump()
 		{
             if (File.Exists(Environment.SpecialFolder.ApplicationData + "\\FlexRadio Systems\\nobackup")) 
@@ -132,8 +134,10 @@ namespace PowerSDR
 			uint data;
 			if(model == 99) // keep from reading the model more than once
 				FWC.GetModel(out model);
-			StringBuilder s = new StringBuilder("");
-			switch(model)
+
+            StringBuilder s = new StringBuilder("");
+
+            switch (model)
 			{
 				case 0: // 5000A
 				case 1: // 5000C
@@ -143,33 +147,45 @@ namespace PowerSDR
 					s.Append("F3K_");
 					break;
 			}
-			FWC.ReadTRXEEPROMUint(0x18, out data);
+
+			FWC.ReadTRXEEPROMUint(0x18, out data); // get serial# from radio
+
 			s.Append(((byte)(data)).ToString("00"));
 			s.Append(((byte)(data>>8)).ToString("00"));
 			s.Append("-"+((ushort)(data>>16)).ToString("0000"));
-			if(File.Exists(app_data_path+"Backup\\"+s+" backup.csv"))
-				return false;
-			return true;
-		}
 
-		private static Progress progress;
+			if(File.Exists(app_data_path+"Backup\\"+s+" backup.csv"))	return false;
+
+            return true;
+		} // needdump()
+
+
+        //=================================================================================
+		private static Progress progress; // progress bard
 		public static void StartDump()
 		{
 			progress = new Progress("Backing Up EEPROM");
             progress.PercentDigits = 0;
+
 			Thread t = new Thread(new ThreadStart(Dump));
 			t.Name = "EEPROM Dump Thread";
 			t.IsBackground = true;
 			t.Priority = ThreadPriority.Normal;
 			t.Start();
-			progress.Show();
+
+			progress.Show(); // progress bar
+
 			while(t.IsAlive)
 			{
 				Thread.Sleep(50);
 				Application.DoEvents();
 			}
-		}
 
+		} // startdump()
+
+
+        //========================================================================================
+        // ke9ns EEPROM dump thread
 		private static void Dump()
 		{
             if (File.Exists(Environment.SpecialFolder.ApplicationData + "\\FlexRadio Systems\\nobackup"))
@@ -177,6 +193,8 @@ namespace PowerSDR
                 return;  // for production
             }
 			uint data, count=0;
+            byte data1; // ke9ns add
+
 			if(model == 99) // keep from reading the model more than once
 				FWC.GetModel(out model);
 			StringBuilder s = new StringBuilder("");
@@ -196,36 +214,68 @@ namespace PowerSDR
 			s.Append("-"+((ushort)(data>>16)).ToString("0000"));
             if(!Directory.Exists(app_data_path+"\\Backup\\"))
                 Directory.CreateDirectory(app_data_path + "\\Backup\\");
+
             if (File.Exists(app_data_path + "\\Backup\\" + s + " backup.csv"))
 			{
 				progress.Hide();
 				return;
 			}
 			StreamWriter writer = new StreamWriter(app_data_path+"\\Backup\\"+s+" backup.csv");
+        //    StreamWriter writer1 = new StreamWriter(app_data_path + "\\Backup\\" + s + " backup.dat"); // ke9ns add
+             
+            s = new StringBuilder(",");
 
-			s = new StringBuilder(",");
-			for(int i=0; i<16; i++)
-				s.Append(i.ToString("X")+",");
-			writer.WriteLine(s);
-			for(int i=0; i<0xC1; i++)
+            for (int i = 0; i < 16; i++)
+            {
+                s.Append(i.ToString("X") + ",");  // used to help show position 0 to 15 in a spread sheet
+            }
+            writer.WriteLine(s);
+
+/*
+            // ke9ns add
+            for(int ii=0;ii< 3088;ii++)
+            {
+
+                FWC.ReadTRXEEPROMByte((uint)(ii ), out data1);
+
+                writer1.Write(data1); // creae binary file
+            }
+
+            writer1.Close(); // ke9ns add
+*/
+
+            for (int i=0; i < 0xC1; i++) //193 sets of 16 bytes to read = 3088 bytes
 			{
 				s = new StringBuilder(i.ToString("X")+",");
-				for(int j=0; j<4; j++)
+
+				for(int j = 0; j < 4; j++) // read 4 sets of INT data so 16 byte
 				{
 					FWC.ReadTRXEEPROMUint((uint)(i*16+j*4), out data);
-					//Thread.Sleep(40);
-					for(int k=0; k<4; k++)
-						s.Append(((byte)(data>>(k*8))).ToString("X")+",");
-					progress.SetPercent(count++/772.0f);
+                  
+                    //Thread.Sleep(40);
+                    for (int k = 0; k < 4; k++)
+                    {
+                        s.Append(((byte)(data >> (k * 8))).ToString("X") + ",");
+
+                    
+                    }
+
+
+					progress.SetPercent(count++/772.0f); // progress bar update
 				}
 				writer.WriteLine(s);
 			}
 
 			writer.Close();
-			progress.Close();
-		}
+           
+            progress.Close();
 
-		public static string SerialToString(uint serial)
+        } // Dump() thread
+
+
+
+
+        public static string SerialToString(uint serial)
 		{
 			string s = "";
 			s += ((byte)(serial)).ToString("00");

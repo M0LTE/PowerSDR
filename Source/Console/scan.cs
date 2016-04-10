@@ -27,6 +27,7 @@ namespace PowerSDR
 
 
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
+        public Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
         //   private ArrayList file_list;
         private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\PowerSDR";
@@ -539,9 +540,13 @@ namespace PowerSDR
 
 
             //   Trace.WriteLine("good1   ");
+
             double ii = freq_Low;
 
-            if (ScanRST == 1) ii = freq_Last;
+            if (ScanRST == 1)
+            {
+                ii = freq_Last;
+            }
              
 
             for (; ii < freq_High; ii = ii + step)
@@ -585,7 +590,15 @@ namespace PowerSDR
                 if (SP5_Active == 0) break;
             }
 
-            if (ii >= freq_High) ScanRST = 0; // reset back to start
+            if (ii >= freq_High)
+            {
+                ScanRST = 0; // reset back to start
+                ii = freq_Low;
+
+                Trace.WriteLine("finished ");
+
+
+            }
             else
             {
                 ScanRST = 1; // leave off where you left off
@@ -699,6 +712,9 @@ namespace PowerSDR
         {
             this.TopMost = chkAlwaysOnTop.Checked;
         }
+
+
+
     } // scancontrol
 
 

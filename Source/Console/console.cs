@@ -1749,8 +1749,8 @@ namespace PowerSDR
                         DBFileName1 = app_data_path + r.GetDBFilename(); // ke9ns add  this is the old original name database_F5K_1610-2780.xml file that we copy use to copy over to the RevQ when needed
                                                                          //            we do this just in case you need your original database for running an older copy of PowerSDR
 
-                     //   Trace.WriteLine("found radio "+ DBFileName);
-                     //   Trace.WriteLine("found radio1 " + DBFileName1);
+                     //   Debug.WriteLine("found radio "+ DBFileName);
+                     //   Debug.WriteLine("found radio1 " + DBFileName1);
 
 
 
@@ -1974,7 +1974,9 @@ namespace PowerSDR
                 if (FWCEEPROM.NeedDump())
                 {
                     Splash.HideForm();
-                    FWCEEPROM.StartDump();
+
+                    FWCEEPROM.StartDump(); // fwc_eeprom.cs
+
                     Splash.UnHideForm();
                 }
 
@@ -2106,10 +2108,12 @@ namespace PowerSDR
                 psdr2_mutex = new Mutex(true, psdr2_mutex_name, out psdr2_mutex_exists);
             }
 
-            if (fwc_init && (current_model == Model.FLEX3000 || current_model == Model.FLEX5000))
-                extended = FWC.GetStatus();
-            else if (hid_init && current_model == Model.FLEX1500)
-                extended = USBHID.GetStatus();
+
+
+            // ke9ns Extended capabilities Flex radio check
+
+            if (fwc_init && (current_model == Model.FLEX3000 || current_model == Model.FLEX5000))  extended = FWC.GetStatus();
+            else if (hid_init && current_model == Model.FLEX1500)  extended = USBHID.GetStatus();
             else if (File.Exists("extended.edf"))						// Check for extended capabilities file
             {
                 ArrayList a = DB.GetVars("State");
@@ -2143,8 +2147,7 @@ namespace PowerSDR
                     string data = sr.ReadLine();
                     sr.Close();
 
-                    if (text == data)
-                        extended = true;
+                    if (text == data)   extended = true;
                     else	// Logon information found, but doesn't match
                     {
                         MessageBox.Show("Error reading logon information.", "Logon Error",
@@ -2153,7 +2156,14 @@ namespace PowerSDR
                         LogOnForm.ShowDialog();
                     }
                 }
+            } // check for extended file
+            else
+            {
+             //   extended = true; // but will not key radio transmitter without proper eeprom data
+
             }
+
+
 
             // update titlebar
             this.Text = TitleBar.GetString();
@@ -6662,7 +6672,6 @@ namespace PowerSDR
             resources.ApplyResources(this.txtVFOAMSD, "txtVFOAMSD");
             this.txtVFOAMSD.ForeColor = System.Drawing.Color.Olive;
             this.txtVFOAMSD.Name = "txtVFOAMSD";
-            this.txtVFOAMSD.TextChanged += new System.EventHandler(this.txtVFOAMSD_TextChanged);
             this.txtVFOAMSD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtVFOAMSD_MouseDown);
             this.txtVFOAMSD.MouseLeave += new System.EventHandler(this.txtVFOAMSD_MouseLeave);
             this.txtVFOAMSD.MouseMove += new System.Windows.Forms.MouseEventHandler(this.txtVFOAMSD_MouseMove);
@@ -7439,7 +7448,6 @@ namespace PowerSDR
             Setup.console = this;                  // ke9ns add   setup.cs to this console so setup can talk to console
 
             SpotControl.console = this;            // ke9ns add   Spot.cs to this console so setup can talk to console
-
             ScanControl.console = this;           // ke9ns add Spot.cs to this console so setup can talk to console
 
             if (hid_init) Flex1500.Console = this;
@@ -8222,8 +8230,8 @@ namespace PowerSDR
             FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
             BinaryWriter writer2 = new BinaryWriter(stream2);
 
-        //    if (Audio.MON_PRE == 1) Trace.WriteLine("Saving PRE = 1");
-        //    else Trace.WriteLine("Saving PRE = 0");
+        //    if (Audio.MON_PRE == 1) Debug.WriteLine("Saving PRE = 1");
+        //    else Debug.WriteLine("Saving PRE = 0");
 
             writer2.Write((double)WaterfallLowThresholdMic);      // TX low level waterfall threshold
             writer2.Write(setupForm.checkWaterMoveSize.Checked);  // large waterfall move
@@ -8232,6 +8240,10 @@ namespace PowerSDR
             writer2.Write(Display.PW_AVG);                       // save avgP or avgB  RX1
             writer2.Write(Display.PW_AVG2);                      // save avgp or avgB RX2
             writer2.Write(Audio.MON_PRE);                        // save MONitor pre or post audio
+
+            if (setupForm.gridBoxTS.Checked == true) Display.GridOff = 1; // gridlines OFF
+            else Display.GridOff = 0; // gridlines ON
+
             writer2.Write(Display.GridOff);                      // save panadapter grid on/off
             writer2.Write(WaveControl.QAC);                      // QUickaudio file #
 
@@ -8251,24 +8263,24 @@ namespace PowerSDR
 
             writer2.Close();    // close  file
             stream2.Close();   // close stream
-                               //   Trace.WriteLine("save database file on exit");
+                               //   Debug.WriteLine("save database file on exit");
 
             //--------------------------------------------------------------------
 
-         //   Trace.WriteLine("-nameB " + SpotControl.nameB);
-         //   Trace.WriteLine("-portB " + SpotControl.portB);
-          //  Trace.WriteLine("-callB " + SpotControl.callB);
-          //  Trace.WriteLine("-nodeB " + SpotControl.nodeB);
+         //   Debug.WriteLine("-nameB " + SpotControl.nameB);
+         //   Debug.WriteLine("-portB " + SpotControl.portB);
+          //  Debug.WriteLine("-callB " + SpotControl.callB);
+          //  Debug.WriteLine("-nodeB " + SpotControl.nodeB);
 
 
 
 
 
 
-            //   Trace.WriteLine("mic " + WaterfallLowThresholdMic);
-            //   Trace.WriteLine("large " + setupForm.checkWaterMoveSize.Checked);
-            //   Trace.WriteLine("call " + callsign);
-            //   Trace.WriteLine("callL " + LastCall);
+            //   Debug.WriteLine("mic " + WaterfallLowThresholdMic);
+            //   Debug.WriteLine("large " + setupForm.checkWaterMoveSize.Checked);
+            //   Debug.WriteLine("call " + callsign);
+            //   Debug.WriteLine("callL " + LastCall);
 
             ArrayList a = new ArrayList();     // storage for saving everything
 
@@ -8860,7 +8872,7 @@ namespace PowerSDR
             if (!File.Exists(file_name2))
             {
 
-                Trace.WriteLine("Create new database file");
+                Debug.WriteLine("Create new database file");
 
                 FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
                 BinaryWriter writer2 = new BinaryWriter(stream2);
@@ -8889,7 +8901,7 @@ namespace PowerSDR
 
                 writer2.Close();    // close  file
                 stream2.Close();   // close stream
-                Trace.WriteLine("Create new database file");
+                Debug.WriteLine("Create new database file");
 
             }
             else // yes ke9ns.dat file does exist
@@ -8919,14 +8931,14 @@ namespace PowerSDR
 
                 reader2.Close();    // close  file
                 stream2.Close();   // close stream
-                                   //   Trace.WriteLine("Read database file");
+                                   //   Debug.WriteLine("Read database file");
             } // yes ke9ns.dat file does exist
 
 
-         //   Trace.WriteLine("1nameB " + SpotControl.nameB);
-         //   Trace.WriteLine("1portB " + SpotControl.portB);
-         //   Trace.WriteLine("1callB " + SpotControl.callB);
-        //    Trace.WriteLine("1nodeB " + SpotControl.nodeB);
+         //   Debug.WriteLine("1nameB " + SpotControl.nameB);
+         //   Debug.WriteLine("1portB " + SpotControl.portB);
+         //   Debug.WriteLine("1callB " + SpotControl.callB);
+        //    Debug.WriteLine("1nodeB " + SpotControl.nodeB);
 
             if (Display.GridOff == 1)
             {
@@ -8952,7 +8964,7 @@ namespace PowerSDR
             //  }
             //  else
             //  {
-            //   Trace.WriteLine("recall PRE = 0");
+            //   Debug.WriteLine("recall PRE = 0");
             //  Audio.MON_PRE = 1;
 
             //  chkMON.CheckedChanged -= chkMON_CheckedChanged;
@@ -8969,7 +8981,7 @@ namespace PowerSDR
 
             if (Display.PW_AVG == 1)
             {
-              //  Trace.WriteLine("avgP ");
+              //  Debug.WriteLine("avgP ");
              
                 chkDisplayAVG.CheckedChanged -= chkDisplayAVG_CheckedChanged; // turn eventoff
               //  chkDisplayAVG.Checked = true;
@@ -8991,7 +9003,7 @@ namespace PowerSDR
             }
             if (Display.PW_AVG2 == 1)
             {
-                // Trace.WriteLine("avgP ");
+                // Debug.WriteLine("avgP ");
 
                 chkRX2DisplayAVG.CheckedChanged -= chkRX2DisplayAVG_CheckedChanged; // turn eventoff
               //  chkRX2DisplayAVG.Checked = true;
@@ -9033,11 +9045,11 @@ namespace PowerSDR
 
 
 
-            //  Trace.WriteLine("mic " + WaterfallLowThresholdMic);
-            //  Trace.WriteLine("large " + setupForm.checkWaterMoveSize.Checked);
-            //  Trace.WriteLine("large " + Display.WMS);
-            //  Trace.WriteLine("call " + callsign);
-            //  Trace.WriteLine("callL " + LastCall);
+            //  Debug.WriteLine("mic " + WaterfallLowThresholdMic);
+            //  Debug.WriteLine("large " + setupForm.checkWaterMoveSize.Checked);
+            //  Debug.WriteLine("large " + Display.WMS);
+            //  Debug.WriteLine("call " + callsign);
+            //  Debug.WriteLine("callL " + LastCall);
 
 
             ArrayList a1 = DB.GetVars("WaveOptions");                          // Get the saved list of controls
@@ -9057,7 +9069,7 @@ namespace PowerSDR
 
                 if (name.StartsWith("chkQuickAudioFolder"))
                 {
-                    // Trace.WriteLine("val======= " + val);
+                    // Debug.WriteLine("val======= " + val);
 
                     if (val.Contains("True"))  WaveForm.chkQuickAudioFolder.Checked = true;
               
@@ -9365,7 +9377,7 @@ namespace PowerSDR
                             {
                                 rx1_ant_by_band[i] = (FWCAnt)int.Parse(list[i]);
                             }
-                            else Trace.WriteLine("index short");
+                            else Debug.WriteLine("index short");
                         }
                 }
                 else if (name.StartsWith("rx2_ant_by_band"))
@@ -9378,7 +9390,7 @@ namespace PowerSDR
                         {
                             rx2_ant_by_band[i] = (FWCAnt)int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("tx_ant_by_band"))
@@ -9390,7 +9402,7 @@ namespace PowerSDR
                         {
                             tx_ant_by_band[i] = (FWCAnt)int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("rx_ant_1500_by_band"))
@@ -9402,7 +9414,7 @@ namespace PowerSDR
                         {
                             rx_ant_1500_by_band[i] = (HIDAnt)int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("tx_ant_1500_by_band"))
@@ -9414,7 +9426,7 @@ namespace PowerSDR
                         {
                             tx_ant_1500_by_band[i] = (HIDAnt)int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("rx1_loop_by_band"))
@@ -9426,7 +9438,7 @@ namespace PowerSDR
                         {
                             rx1_loop_by_band[i] = Convert.ToBoolean(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("rx1_preamp_by_band"))
@@ -9438,7 +9450,7 @@ namespace PowerSDR
                         {
                             rx1_preamp_by_band[i] = (PreampMode)(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
 
                         if (rx1_preamp_by_band[i] == PreampMode.FIRST)  rx1_preamp_by_band[i] = PreampMode.OFF;
                     }
@@ -9452,7 +9464,7 @@ namespace PowerSDR
                         {
                             rx2_preamp_by_band[i] = (PreampMode)(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("power_by_band"))
@@ -9464,7 +9476,7 @@ namespace PowerSDR
                         {
                             power_by_band[i] = int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("fm_tx_offset_by_band_mhz"))
@@ -9476,7 +9488,7 @@ namespace PowerSDR
                         {
                             fm_tx_offset_by_band_mhz[i] = double.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("rx1_agct_by_band"))
@@ -9488,7 +9500,7 @@ namespace PowerSDR
                         {
                             rx1_agct_by_band[i] = int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("rx2_agct_by_band"))
@@ -9500,7 +9512,7 @@ namespace PowerSDR
                         {
                             rx2_agct_by_band[i] = int.Parse(list[i]);
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("tx1_by_band"))
@@ -9512,7 +9524,7 @@ namespace PowerSDR
                         {
                             tx1_by_band[i] = Convert.ToBoolean(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("tx2_by_band"))
@@ -9524,7 +9536,7 @@ namespace PowerSDR
                         {
                             tx2_by_band[i] = Convert.ToBoolean(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
                 else if (name.StartsWith("tx3_by_band"))
@@ -9536,7 +9548,7 @@ namespace PowerSDR
                         {
                             tx3_by_band[i] = Convert.ToBoolean(int.Parse(list[i]));
                         }
-                        else Trace.WriteLine("index short");
+                        else Debug.WriteLine("index short");
                     }
                 }
 
@@ -12382,6 +12394,7 @@ namespace PowerSDR
             foreach (Control c in panelBandGN.Controls) // ke9ns add
             {
                 RadioButtonTS b = c as RadioButtonTS;
+                Debug.WriteLine("enableallbnads");
 
                 if (b != null)
                 {
@@ -12849,16 +12862,25 @@ namespace PowerSDR
 
         private void SetRX1BandButton(Band b)
         {
+
+            SpotControl.VFOLOW = 0;   // ke9ns add default values (used in spot.cs for mapping dx spots)
+            SpotControl.VFOHIGH = 1;  // ke9ns add default values
+
             switch (b)
             {
                 case Band.B160M:
+                    SpotControl.VFOLOW = 1800000; // ke9ns add
+                    SpotControl.VFOHIGH = 2000000;// ke9ns add
+
                     radBand160.Checked = true;
-                    regBox.Text = band_160m_register.ToString();
-                    regBox1.Text = (band_160m_index + 1).ToString();
+                    regBox.Text = band_160m_register.ToString();     // ke9ns add box to show the total # of bankstacks in memory
+                    regBox1.Text = (band_160m_index + 1).ToString();  // ke9ns add box to show which bandstack your on
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B80M:
+                    SpotControl.VFOLOW = 3500000;
+                    SpotControl.VFOHIGH = 4000000;
                     radBand80.Checked = true;
                     regBox.Text = band_80m_register.ToString();
                     regBox1.Text = (band_80m_index+1).ToString();
@@ -12866,6 +12888,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B60M:
+                    SpotControl.VFOLOW = 5000000;
+                    SpotControl.VFOHIGH = 6000000;
                     radBand60.Checked = true;
                     regBox.Text = band_60m_register.ToString();
                     regBox1.Text = (band_60m_index+1).ToString();
@@ -12873,6 +12897,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B40M:
+                    SpotControl.VFOLOW = 7000000;
+                    SpotControl.VFOHIGH = 7300000;
                     radBand40.Checked = true;
                     regBox.Text = band_40m_register.ToString();
                     regBox1.Text = (band_40m_index + 1).ToString();
@@ -12880,6 +12906,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B30M:
+                    SpotControl.VFOLOW = 10100000;
+                    SpotControl.VFOHIGH = 10150000;
                     radBand30.Checked = true;
                     regBox.Text = band_30m_register.ToString();
                     regBox1.Text =(band_30m_index + 1).ToString();
@@ -12887,6 +12915,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B20M:
+                    SpotControl.VFOLOW = 14000000;
+                    SpotControl.VFOHIGH = 14350000;
                     radBand20.Checked = true;
                     regBox.Text = band_20m_register.ToString();
                     regBox1.Text = (band_20m_index + 1).ToString();
@@ -12894,6 +12924,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B17M:
+                    SpotControl.VFOLOW = 18000000; // 18.068
+                    SpotControl.VFOHIGH = 18200000; // 18.168
                     radBand17.Checked = true;
                     regBox.Text = band_17m_register.ToString();
                     regBox1.Text = (band_17m_index + 1).ToString();
@@ -12901,6 +12933,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B15M:
+                    SpotControl.VFOLOW = 21000000; // 
+                    SpotControl.VFOHIGH = 21450000; // 
                     radBand15.Checked = true;
                     regBox.Text = band_15m_register.ToString();
                     regBox1.Text = (band_15m_index + 1).ToString();
@@ -12908,6 +12942,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B12M:
+                    SpotControl.VFOLOW = 24800000; // 24.89
+                    SpotControl.VFOHIGH = 21450000; // 24.99
                     radBand12.Checked = true;
                     regBox.Text = band_12m_register.ToString();
                     regBox1.Text = (band_12m_index + 1).ToString();
@@ -12915,6 +12951,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B10M:
+                    SpotControl.VFOLOW = 28000000; // 
+                    SpotControl.VFOHIGH = 30000000; // 
                     radBand10.Checked = true;
                     regBox.Text = band_10m_register.ToString();
                     regBox1.Text = band_10m_index.ToString();
@@ -12922,6 +12960,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B6M:
+                    SpotControl.VFOLOW = 50000000; // 
+                    SpotControl.VFOHIGH = 54000000; //
                     radBand6.Checked = true;
                     regBox.Text = band_6m_register.ToString();
                     regBox1.Text = (band_6m_index + 1).ToString();
@@ -12929,6 +12969,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B2M:
+                    SpotControl.VFOLOW = 144000000; // 
+                    SpotControl.VFOHIGH = 146000000; // 
                     radBand2.Checked = true;
                     regBox.Text = band_2m_register.ToString();
                     regBox1.Text = (band_2m_index + 1).ToString();
@@ -12943,7 +12985,7 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.GEN:
-                 //   Trace.WriteLine("gen pushed");
+                 //   Debug.WriteLine("gen pushed");
                     radBandGEN.Checked = true;
                     DeselectVHF();
                     DeselectHF(); // ke9ns add
@@ -12951,6 +12993,8 @@ namespace PowerSDR
 
 
                 case Band.VHF0:
+                    SpotControl.VFOLOW = 144000000; // 
+                    SpotControl.VFOHIGH = 146000000; // 
                     radBandVHF0.Checked = true;
                     regBox.Text = band_vhf0_register.ToString();
                     regBox1.Text = (band_vhf0_index + 1).ToString();
@@ -12958,6 +13002,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF1:
+                    SpotControl.VFOLOW = 430000000; // 
+                    SpotControl.VFOHIGH = 445000000; // 
                     radBandVHF1.Checked = true;
                     regBox.Text = band_vhf1_register.ToString();
                     regBox1.Text = (band_vhf1_index + 1).ToString();
@@ -12965,6 +13011,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF2:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF2.Checked = true;
                     regBox.Text = band_vhf2_register.ToString();
                     regBox1.Text = (band_vhf2_index + 1).ToString();
@@ -12972,6 +13020,9 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF3:
+
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF3.Checked = true;
                     regBox.Text = band_vhf3_register.ToString();
                     regBox1.Text = (band_vhf3_index + 1).ToString();
@@ -12979,6 +13030,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF4:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF4.Checked = true;
                     regBox.Text = band_vhf4_register.ToString();
                     regBox1.Text = (band_vhf4_index + 1).ToString();
@@ -12986,6 +13039,9 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF5:
+
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF5.Checked = true;
                     regBox.Text = band_vhf5_register.ToString();
                     regBox1.Text = (band_vhf5_index + 1).ToString();
@@ -12993,6 +13049,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF6:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF6.Checked = true;
                     regBox.Text = band_vhf6_register.ToString();
                     regBox1.Text =( band_vhf6_index + 1).ToString();
@@ -13000,6 +13058,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF7:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF7.Checked = true;
                     regBox.Text = band_vhf7_register.ToString();
                     regBox1.Text = (band_vhf7_index + 1).ToString();
@@ -13007,6 +13067,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF8:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF8.Checked = true;
                     regBox.Text = band_vhf8_register.ToString();
                     regBox1.Text = (band_vhf8_index + 1).ToString();
@@ -13014,6 +13076,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF9:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF9.Checked = true;
                     regBox.Text = band_vhf9_register.ToString();
                     regBox1.Text = (band_vhf9_index + 1).ToString();
@@ -13021,6 +13085,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF10:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF10.Checked = true;
                     regBox.Text = band_vhf10_register.ToString();
                     regBox1.Text =( band_vhf10_index + 1).ToString();
@@ -13028,6 +13094,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF11:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF11.Checked = true;
                     regBox.Text = band_vhf11_register.ToString();
                     regBox1.Text = (band_vhf11_index + 1).ToString();
@@ -13035,6 +13103,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF12:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF12.Checked = true;
                     regBox.Text = band_vhf12_register.ToString();
                     regBox1.Text = (band_vhf12_index + 1).ToString();
@@ -13042,6 +13112,8 @@ namespace PowerSDR
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.VHF13:
+                    SpotControl.VFOLOW = 445000000; // 
+                    SpotControl.VFOHIGH = 990000000; //
                     radBandVHF13.Checked = true;
                     regBox.Text = band_vhf13_register.ToString();
                     regBox1.Text = (band_vhf13_index + 1).ToString();
@@ -13050,9 +13122,7 @@ namespace PowerSDR
                     break;
 
 
-
                 case Band.BLMF:
-                    //   Trace.WriteLine("LMF pushed");
                     radBandGN0.Checked = true;
                     regBox.Text = band_LMF_register.ToString();
                     regBox1.Text = (band_LMF_index + 1).ToString();
@@ -13081,6 +13151,8 @@ namespace PowerSDR
                     DeselectVHF(); // ke9ns add
                     break;
                 case Band.B49M:
+                 //   Debug.WriteLine("================49==============");
+
                     radBandGN4.Checked = true;
                     regBox.Text = band_49m_register.ToString();
                     regBox1.Text = (band_49m_index + 1).ToString();
@@ -13088,6 +13160,9 @@ namespace PowerSDR
                     DeselectVHF(); // ke9ns add
                     break;
                 case Band.B41M:
+
+                  //  Debug.WriteLine("================41==============");
+
                     radBandGN5.Checked = true;
                     regBox.Text = band_41m_register.ToString();
                     regBox1.Text =( band_41m_index + 1).ToString();
@@ -13632,71 +13707,19 @@ namespace PowerSDR
                 panelBandGN.Visible = false;
                 panelBandHF.Visible = false;
                 panelBandVHF.Visible = true; // ke9ns add keep VHF panel open when VHF button selected
-             //   Trace.WriteLine("VHF HERE======" + xvtr_index);
+                Debug.WriteLine("VHF HERE======" + xvtr_index);
 
                 return (Band)(Band.VHF0 + xvtr_index);
             }
 
-         //   Trace.WriteLine("REGION " + region);
+           Debug.WriteLine("REGION=========================== " + region+ " freq "+freq);
 
-            if(extended && tx)
+            if(extended && tx) // ke9ns this is for Flex radios with extended MARS capability
             {
-                if (freq >= 0.0 && freq <= 2.75)
-                { panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M; }
-                else if (freq > 2.75 && freq < 5.3305)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
-                }
-                else if (freq >= 5.3305 && freq < 7.0)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
-                }
-                else if (freq >= 7.0 && freq <= 8.7)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
-                }
-                else if (freq >= 8.7 && freq <= 12.075)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
-                }
-                else if (freq >= 12.075 && freq <= 16.209)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
-                }
-                else if (freq >= 16.209 && freq <= 19.584)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
-                }
-                else if (freq >= 19.584 && freq <= 23.17)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
-                }
-                else if (freq >= 23.17 && freq <= 26.495)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
-                }
-                else if (freq >= 26.495 && freq <= 29.7)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
-                }
-                else if (freq >= 50.0 && freq <= 54.0)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
-                }
-                else if (freq >= 144.0 && freq <= 148.0) // ke9ns test was 144.0 and 148.0
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
-                }
-                else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
-                        freq == 20.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
-                {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
-                }
-
-
+                Debug.WriteLine("EXTENDED========================");
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                if (freq >= 0.20 && freq < 1.80)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -13794,6 +13817,65 @@ namespace PowerSDR
                     return Band.B11M;
                 }
 
+                // original code below 
+                else if (freq >= 0.0 && freq <= 2.75)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                }
+                else if (freq > 2.75 && freq < 5.3305)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                }
+                else if (freq >= 5.3305 && freq < 7.0)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                }
+                else if (freq >= 7.0 && freq <= 8.7)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                }
+                else if (freq >= 8.7 && freq <= 12.075)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                }
+                else if (freq >= 12.075 && freq <= 16.209)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                }
+                else if (freq >= 16.209 && freq <= 19.584)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                }
+                else if (freq >= 19.584 && freq <= 23.17)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                }
+                else if (freq >= 23.17 && freq <= 26.495)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                }
+                else if (freq >= 26.495 && freq <= 29.7)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                }
+                else if (freq >= 50.0 && freq <= 54.0)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                }
+                else if (freq >= 144.0 && freq <= 148.0) // ke9ns test was 144.0 and 148.0
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                }
+                else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
+                        freq == 20.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                }
+
+
+
+            
+
 
                 else
                     return Band.GEN;
@@ -13801,6 +13883,8 @@ namespace PowerSDR
 
                if (region == FRSRegion.US)
                {
+                Debug.WriteLine("US BAND========================");
+
                 if (freq >= 1.8 && freq <= 2.0)
                 {
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
@@ -13886,6 +13970,7 @@ namespace PowerSDR
 
                 else if (freq >= 5.06 && freq < 7.20)
                 {
+                    Debug.WriteLine("bandbyfreq 49");
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B49M;
@@ -13893,6 +13978,7 @@ namespace PowerSDR
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
+                    Debug.WriteLine("bandbyfreq 41");
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B41M;
@@ -16831,7 +16917,7 @@ namespace PowerSDR
             else
             {
                 panelBandGN.Visible = true; //ke9ns add
-             //   Trace.WriteLine("bandchange");
+             //   Debug.WriteLine("bandchange");
               //  panelBandHF.Visible = true;
                
                 panelBandVHF.Visible = false;
@@ -17677,7 +17763,7 @@ namespace PowerSDR
 				Hdw.RFE_LPF = RFELPFBand.B1210;
 				Hdw.XVTR_RF = true;
 			}
-		//	if(xvtr_present && freq < 144) Hdw.XVTR_RF = false; // ke9ns test this was not commented out
+			if(xvtr_present && freq < 144) Hdw.XVTR_RF = false; // ke9ns test this was not commented out
 
 			if(rx1_xvtr_index >= 0)
 			{
@@ -18775,8 +18861,8 @@ namespace PowerSDR
                         break;
                 } // RX2Band
 
-            //    Trace.WriteLine("rX2 low upateband " + RX2Band);
-            //    Trace.WriteLine("rX2 low upatevalue " + Display.WaterfallLowRX2Threshold);
+            //    Debug.WriteLine("rX2 low upateband " + RX2Band);
+            //    Debug.WriteLine("rX2 low upatevalue " + Display.WaterfallLowRX2Threshold);
   
                 setupForm.UpdateWaterfallBandInfo();
             } // !initializing
@@ -32129,8 +32215,8 @@ namespace PowerSDR
 
 				Display.RX2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
 
-              //  Trace.WriteLine("preamp rx2 " + rx2_preamp_mode);  // ke9ns rx2 preamp issue  pos 14 when it should be -14
-               // Trace.WriteLine("offset " + Display.RX2PreampOffset);
+              //  Debug.WriteLine("preamp rx2 " + rx2_preamp_mode);  // ke9ns rx2 preamp issue  pos 14 when it should be -14
+               // Debug.WriteLine("offset " + Display.RX2PreampOffset);
 
                 if (chkRX2Squelch.Checked)
 					ptbRX2Squelch_Scroll(this, EventArgs.Empty);
@@ -33675,8 +33761,8 @@ namespace PowerSDR
             int pixel_x1 = 0; // ke9ns ADD for peak routine
 			string output = "";
 
-            FREQA = double.Parse(txtVFOAFreq.Text); // ke9ns ADD grab current A freq
-            FREQB = double.Parse(txtVFOBFreq.Text); // ke9ns ADD grab current B freq
+          //  Debug.WriteLine("freqA " + FREQA);
+          //  Debug.WriteLine("freqB " + FREQB);
 
             switch (current_meter_display_mode)
 			{
@@ -33755,6 +33841,7 @@ namespace PowerSDR
                                 // Image src = new Bitmap("Met3.jpg"); // local image only, but now embeded resource
                                 g.DrawImage(src, new Rectangle(0, 5,W,H));  // rectangle to show bitmap image in
 
+                                
                                 if (FREQA < 30) // ke9ns add  (too much gain over S9) too little gain under S9
                                 {
                                     if (num > -73) // at or over S9
@@ -36511,7 +36598,7 @@ namespace PowerSDR
                          g.InterpolationMode = InterpolationMode.Default;
                          g.SmoothingMode = SmoothingMode.Default;
 
-                         //  Trace.WriteLine("Signal " + signal);
+                         //  Debug.WriteLine("Signal " + signal);
 
  
                     } // TX curved needle
@@ -38681,12 +38768,12 @@ namespace PowerSDR
                             {
                                 if (peak5 == 20)
                                 {
-                                  //  Trace.WriteLine("peak5 " + rx2_meter_peak);
+                                  //  Debug.WriteLine("peak5 " + rx2_meter_peak);
                                     if (rx2_meter_peak > num) rx2_meter_peak = rx2_meter_peak - 1;
                                     else peak5 = 0;
                                 }
                                 else peak5++;
-                             //   Trace.WriteLine("peak5 " +peak5);
+                             //   Debug.WriteLine("peak5 " +peak5);
 
 
                             }
@@ -39387,7 +39474,7 @@ namespace PowerSDR
 
         //    stopWatch.Stop();        
          //   TimeSpan ts = stopWatch.Elapsed;
-        //    Trace.WriteLine("RunTime1 " + ts);
+        //    Debug.WriteLine("RunTime1 " + ts);
 
 
 
@@ -39847,29 +39934,37 @@ namespace PowerSDR
 
 		private void Console_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
-            if (callsignfocus == 1) return;
+
+         //   Debug.WriteLine("console_keypress");
+
+
+            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
                  
             if (e.KeyChar == (char)Keys.Enter)
 				btnHidden.Focus();
 		}
 
-		private void Console_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+
+        //===============================================================================================================
+        //===============================================================================================================
+        private void Console_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 
             regBand = 0;  // ke9ns add
-          //  DXR = 0; // ke9ns add
+        
+            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
 
-            if (callsignfocus == 1) return;
             if (e.Shift == false && shift_down)
 				shift_down = false;
-
-         
-
+   
         }
 
-        private static byte regBand = 0;
+        private static byte regBand = 0; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking)
 
-		private void Console_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e )
+        //===============================================================================================================
+        //===============================================================================================================
+        //===============================================================================================================
+        private void Console_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e )
 		{
 
 
@@ -39883,20 +39978,23 @@ namespace PowerSDR
            //    DXR = 0; // show DX on panadapter
             }
 
+            Debug.WriteLine("keypressedCODE " + e.KeyCode);
 
-            if (e.Control == true) // ke9ns add (check for CTRL key 
+           
+           
+            if (e.Control == true) // ke9ns add (check for CTRL key press to do a QRZ lookup) 
             {
 
                    regBand = 1; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking)
 
                                   
-                    if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2))
+                    if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2))  // Do below if not in the middle of processing a DX spot, but DX spotting is Active
                     {
                 
-                    int x = DX_X;
-                    int y = DX_Y;
+                        int x = DX_X;
+                        int y = DX_Y;
                                   
-                        for (byte ii = 0; ii < DXK; ii++)
+                        for (byte ii = 0; ii < DXK; ii++) // check all spot on Panadapter
                         {
                      
                             if ((x >= DXX[ii]) && (x <= (DXX[ii] + DXW[ii])) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii])))
@@ -39911,7 +40009,7 @@ namespace PowerSDR
                                 }
                                 catch
                                 {
-                                    Trace.WriteLine("bad station");
+                                    Debug.WriteLine("bad station");
                                 }
 
                                 return;
@@ -39936,7 +40034,7 @@ namespace PowerSDR
                                     }
                                     catch
                                     {
-                                        Trace.WriteLine("bad station");
+                                        Debug.WriteLine("bad station");
                                     }
 
                                     break;
@@ -39956,7 +40054,7 @@ namespace PowerSDR
                 if ((SpotControl.SP1_Active == 1))
                 {
 
-                   // Trace.WriteLine("test====");
+                   // Debug.WriteLine("test====");
 
                     int x = DX_X;
                     int y = DX_Y;
@@ -39976,7 +40074,7 @@ namespace PowerSDR
                             }
                             catch
                             {
-                                Trace.WriteLine("bad station");
+                                Debug.WriteLine("bad station");
                             }
 
                             return;
@@ -39989,18 +40087,22 @@ namespace PowerSDR
 
 
 
-            }
+            } // e.control key
             else
             {
 
                regBand = 0;
             }
 
-            if (callsignfocus == 1) return;
-            if (e.Shift == true && !shift_down)
-				shift_down = true;
 
-			if(e.Control == true && e.Shift == true)
+         
+            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
+
+            if (e.Shift == true && !shift_down)	shift_down = true;
+
+         
+            //==================================================================
+            if (e.Control == true && e.Shift == true)  // CTRL and SHIFT together
 			{
 				switch(e.KeyCode)
 				{
@@ -40125,8 +40227,10 @@ namespace PowerSDR
                         break;
 				}
 				shift_down = false;
-			}
-			else if(e.Control == true && e.Alt == true)     // ALT + CTRL keys are pressed
+
+			} // if (e.Control == true && e.Shift == true)  // CTRL and SHIFT together
+
+            else if(e.Control == true && e.Alt == true)     // ALT + CTRL keys are pressed
 			{
 				switch(e.KeyCode)
 				{
@@ -40173,15 +40277,14 @@ namespace PowerSDR
                         aboutForm.Focus();
                         break;
 				}
-			}
-			else if(!enable_kb_shortcuts)
-			{
-				return;
-			}
-			else if(e.Control && !e.Alt)		// control key is pressed
-			{
+            } //if(e.Control == true && e.Alt == true)     // ALT + CTRL keys are pressed
 
-
+            else if(!enable_kb_shortcuts)
+			{
+				return; // dont go any further if shortcuts are not enabled in setup general
+			}
+			else if(e.Control && !e.Alt)		// CTRL key is pressed ALONE
+			{
 
                 switch (e.KeyCode)
 				{
@@ -40309,8 +40412,9 @@ namespace PowerSDR
                         }
 						break;
 				}
-			}
-			else if(e.Alt && !e.Control)    // Alt key is pressed
+            } // if(e.Control && !e.Alt)		// CTRL key is pressed
+
+            else if(e.Alt && !e.Control)    // Alt key is pressed
 			{
 				switch(e.KeyCode)
 				{
@@ -40421,13 +40525,17 @@ namespace PowerSDR
 							btnZeroBeat_Click(this, EventArgs.Empty);
 						break;
 				}
-			}
-			else if(!e.Alt && !e.Control)
+            } // if(!e.Control && e.Alt)		//  ALT key is pressed
+            else if(!e.Alt && !e.Control)
 			{
-				if(this.ActiveControl is TextBoxTS) return;
+               
+             
+                if (this.ActiveControl is TextBoxTS) return;
 				if(this.ActiveControl is NumericUpDownTS) return;
 
-				switch(e.KeyCode)
+                Debug.WriteLine("1keypressedCODE " + e.KeyCode);
+
+                switch (e.KeyCode)
 				{
 					case Keys.Multiply:
 						chkMUT.Checked = !chkMUT.Checked;
@@ -40450,18 +40558,19 @@ namespace PowerSDR
 						int low = (int)udFilterLow.Value;
 						int high = (int)udFilterHigh.Value;
 						int increment = 0;
-					switch(rx1_dsp_mode)
-					{
-						case DSPMode.CWL:
-						case DSPMode.CWU:
-						case DSPMode.DIGL:
-						case DSPMode.DIGU:
-							increment = 10;
-							break;
-						default:
-							increment = 50;
-							break;
-					}
+
+					        switch(rx1_dsp_mode)
+					        {
+						        case DSPMode.CWL:
+						        case DSPMode.CWU:
+						        case DSPMode.DIGL:
+						        case DSPMode.DIGU:
+							        increment = 10;
+							        break;
+						        default:
+							        increment = 50;
+							        break;
+					        }
 						UpdateRX1Filters(low-increment, high-increment);
 						/*if(tbFilterShift.Value != tbFilterShift.Minimum)
 								tbFilterShift.Value--;
@@ -40471,18 +40580,18 @@ namespace PowerSDR
 						low = (int)udFilterLow.Value;
 						high = (int)udFilterHigh.Value;
 						increment = 0;
-					switch(rx1_dsp_mode)
-					{
-						case DSPMode.CWL:
-						case DSPMode.CWU:
-						case DSPMode.DIGL:
-						case DSPMode.DIGU:
-							increment = 10;
-							break;
-						default:
-							increment = 50;
-							break;
-					}
+					        switch(rx1_dsp_mode)
+					        {
+						        case DSPMode.CWL:
+						        case DSPMode.CWU:
+						        case DSPMode.DIGL:
+						        case DSPMode.DIGU:
+							        increment = 10;
+							        break;
+						        default:
+							        increment = 50;
+							        break;
+					        }
 						UpdateRX1Filters(low+increment, high+increment);
 						/*if(tbFilterShift.Value != tbFilterShift.Maximum)
 								tbFilterShift.Value++;
@@ -40649,7 +40758,8 @@ namespace PowerSDR
 							RX1DSPMode = DSPMode.LSB;
 							break;
 					}
-				}
+				} // if (e.keycode == keymode up
+
 				else if(e.KeyCode == key_mode_down)
 				{
 					switch(rx1_dsp_mode)
@@ -40691,8 +40801,9 @@ namespace PowerSDR
 							RX1DSPMode = DSPMode.SPEC;
 							break;
 					}
-				}
-				else if(e.KeyCode == key_band_up && !vfo_lock)
+                } //  if(e.KeyCode == keymode down
+
+                else if(e.KeyCode == key_band_up && !vfo_lock)
 				{
 					switch(rx1_band)
 					{
@@ -40900,8 +41011,9 @@ namespace PowerSDR
 							}
 							break;
 					}
-				}
-				else if(e.KeyCode == key_band_down && !vfo_lock)
+                } //  if(e.KeyCode == key_band_up && !vfo_lock)
+
+                else if(e.KeyCode == key_band_down && !vfo_lock)
 				{
 					switch(rx1_band)
 					{
@@ -41097,11 +41209,13 @@ namespace PowerSDR
                             break;
 
                             // ke9ns could add GEN SWL Bands here later
+                           
+                         
+                    } // switch rx1 band
 
-					} // switch rx1 band
+                } // if(e.KeyCode == key_band_down && !vfo_lock)
 
-				}
-				else if(e.KeyCode == key_cw_dot)
+                else if(e.KeyCode == key_cw_dot)
 				{
 					
 				}
@@ -41113,7 +41227,7 @@ namespace PowerSDR
 				{
 					return;
 				}
-				else if((int)e.KeyCode >= 48 && (int)e.KeyCode <= 57)
+				else if((int)e.KeyCode >= 48 && (int)e.KeyCode <= 57) // check for numbers 0 to 9
 				{
 					if(small_lsd)
 					{
@@ -41124,7 +41238,7 @@ namespace PowerSDR
 					txtVFOAFreq.Text = ((int)(e.KeyCode - 48)).ToString();
 					txtVFOAFreq.Select(1,0);
 				}
-				else if((int)e.KeyCode >= 96 && (int)e.KeyCode <= 105)
+				else if((int)e.KeyCode >= 96 && (int)e.KeyCode <= 105) // codes ' thru i 
 				{
 					if(small_lsd)
 					{
@@ -41148,8 +41262,16 @@ namespace PowerSDR
 					txtVFOAFreq.Text = separator;
 					txtVFOAFreq.Select(1,0);
 				}
-			}
-		}
+
+
+                Debug.WriteLine("5KEYPRESS================= " + e.KeyCode);
+                    
+
+			} // NO ALT and NO CTRL key pressed
+
+		} // CONSOLE_KEYDOWN()
+
+
 
 		// chkPower
         private bool one_time = true;
@@ -42753,14 +42875,14 @@ namespace PowerSDR
                     Audio.MON_PRE = 1;           // turn on MON_PRE
                     chkMON.Text = "MONpr";
                     chkMON.Checked = true;
-                  //  Trace.WriteLine("pre=1 and checked = true  PR");
+                  //  Debug.WriteLine("pre=1 and checked = true  PR");
                 }
                 else
                 {
                     Audio.MON_PRE = 0;            // turn off MON_PRE
                     chkMON.Text = "MONps";
                     chkMON.Checked = true;
-                  //  Trace.WriteLine("pre=0 and checked = true  PS");
+                  //  Debug.WriteLine("pre=0 and checked = true  PS");
                 }
 
             }
@@ -42771,7 +42893,7 @@ namespace PowerSDR
                     Audio.MON_PRE = 0;
                     chkMON.Text = "MON";
                     chkMON.Checked = false;
-                  //  Trace.WriteLine("pre=0 and checked = false OFF");
+                  //  Debug.WriteLine("pre=0 and checked = false OFF");
 
                 }
                 else
@@ -42779,7 +42901,7 @@ namespace PowerSDR
                     Audio.MON_PRE = 0;
                     chkMON.Text = "MON";
                     chkMON.Checked = true;
-                   // Trace.WriteLine("pre=0 and checked = true BAD");
+                   // Debug.WriteLine("pre=0 and checked = true BAD");
                 }
 
 
@@ -43815,7 +43937,7 @@ namespace PowerSDR
                     else // true
                     {
                         // AVG ON FULL PANAFALL
-                      //  Trace.WriteLine("dhdkd===");
+                      //  Debug.WriteLine("dhdkd===");
                         Display.PW_AVG = 0;             // waterfall avg ON    
                         chkDisplayAVG.Checked = true;   // Panadapter avg ON  (simply flipping the button ON)
                         chkDisplayAVG.Text = "AvgB"; // ke9ns 
@@ -44043,7 +44165,7 @@ namespace PowerSDR
 
                 
                     Audio.MonitorVolume = (ptbAF.Value / 100.0) / 8;  // ke9ns add cut volume during a tune
-                 //   Trace.WriteLine("tune===");
+                 //   Debug.WriteLine("tune===");
                
                 
                
@@ -44876,15 +44998,18 @@ namespace PowerSDR
         //================================================================================   
         private void txtVFOAFreq_LostFocus(object sender, System.EventArgs e)
 		{
-			if(txtVFOAFreq.Text == "." || txtVFOAFreq.Text == "") 
+
+         
+            if (txtVFOAFreq.Text == "." || txtVFOAFreq.Text == "") 
 			{
 				VFOAFreq = saved_vfoa_freq;
 				return;
 			}
-			
-			double freq = double.Parse(txtVFOAFreq.Text);
 
-          
+         
+            double freq = double.Parse(txtVFOAFreq.Text);
+
+         
 
             // ke9ns MOD khz freq entry here
             if ((freq > 65.0) && ((panelBandHF.Visible == true || panelBandGN.Visible == true)) && txtVFOAFreq.Text.Contains(".")==false) // check for khz entry instead of mhz
@@ -44917,7 +45042,9 @@ namespace PowerSDR
                     freq = freq / 1000000; // 14123456 = 14.123456
                 }
 
+              
                 txtVFOAFreq.Text = freq.ToString("0.######");
+                
 
             } // assume anything over 65 is actually khz not mhz
 
@@ -44928,7 +45055,9 @@ namespace PowerSDR
 
 			UpdateVFOAFreq(freq.ToString("f6"));
 
-			Display.VFOA = (long)(freq * 1e6);
+            FREQA = freq; // ke9ns used in S9 determining routine (in meters)
+
+            Display.VFOA = (long)(freq * 1e6);
 
             if (chkTUN.Checked && chkVFOATX.Checked && !chkVFOSplit.Checked)
             {
@@ -45159,7 +45288,8 @@ namespace PowerSDR
             double db_freq = freq;
             if (RX1IsOn60mChannel()) db_freq -= ModeFreqOffset(rx1_dsp_mode);
 			bool transmit_allowed = DB.BandText(db_freq, out bandInfo);
-			if(!transmit_allowed)
+
+            if (!transmit_allowed)
 			{
 				txtVFOABand.BackColor = out_of_band_color;
 				//if(!chkVFOSplit.Checked && mox && !extended)
@@ -45974,6 +46104,8 @@ namespace PowerSDR
 
 
             } // ke9ns
+
+
             //===============================
 
             if (chkEnableMultiRX.Checked && !rx2_enabled)  // check if multiRX1 or RX2 turned on here
@@ -46004,6 +46136,9 @@ namespace PowerSDR
             //=================================================================
             //txtVFOBFreq.Text = freq.ToString("f6"); 
             UpdateVFOBFreq(freq.ToString("f6"));
+
+            FREQB = freq; // ke9ns used in S9 determining routine (in meters)
+
             if (rx2_enabled)
             {
                 Display.VFOB = (long)(freq * 1e6);
@@ -46054,7 +46189,8 @@ namespace PowerSDR
             } //rx2_enabled NOT
 
             int xvtr_index = xvtrForm.XVTRFreq(freq);
-			if(xvtr_index < 0)
+
+			if(xvtr_index < 0) // ke9ns if no freq was found
 			{
 				int old_xvtr_index = xvtrForm.XVTRFreq(saved_vfob_freq);
 				if(old_xvtr_index >= 0 && freq >= max_freq)
@@ -46585,18 +46721,23 @@ namespace PowerSDR
 
 		private void txtVFOAMSD_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			txtVFOAFreq_MouseMove(txtVFOAMSD,	new MouseEventArgs(e.Button, e.Clicks, e.X, e.Y, e.Delta));
+          //  Debug.WriteLine("VFOAmousemove");
+            txtVFOAFreq_MouseMove(txtVFOAMSD,	new MouseEventArgs(e.Button, e.Clicks, e.X, e.Y, e.Delta));
 		}
 
 
 		private void txtVFOAMSD_MouseLeave(object sender, System.EventArgs e)
 		{
-			txtVFOAFreq_MouseLeave(txtVFOAMSD, e);
+           // Debug.WriteLine("VFOAmouseleave");
+
+            txtVFOAFreq_MouseLeave(txtVFOAMSD, e);
 		}
 
 		private void txtVFOBMSD_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			txtVFOBMSD.Visible = false;
+        {
+          //  Debug.WriteLine("VFOAmousedown");
+
+            txtVFOBMSD.Visible = false;
 			txtVFOBLSD.Visible = false;
 			txtVFOBFreq.Focus();
 			txtVFOBFreq.SelectAll();
@@ -47634,11 +47775,11 @@ namespace PowerSDR
         // ke9ns mod 
 
 
-        public static int[] SXX = new int[100]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
-        public static int[] SXY = new int[100]; // 
-        public static int[] SXW = new int[100]; //
-        public static int[] SXH = new int[100]; //  
-        public static string[] SXS = new string[100]; // ties it back to the real DX_Index
+        public static int[] SXX = new int[200]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
+        public static int[] SXY = new int[200]; // 
+        public static int[] SXW = new int[200]; //
+        public static int[] SXH = new int[200]; //  
+        public static string[] SXS = new string[200]; // ties it back to the real DX_Index
         public static int SXK = 0;               // number of spots on picdisplay
      
         public static int SXR = 0;               // 1=doing an QRZ hyperlink
@@ -47646,11 +47787,11 @@ namespace PowerSDR
         public static int SX_Y = 0;               //y  cursor pos inside picdisplay
 
 
-        public static int[] DXX = new int[100]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
-        public static int[] DXY = new int[100]; // 
-        public static int[] DXW = new int[100]; //
-        public static int[] DXH = new int[100]; //  
-        public static string[] DXS = new string[100]; // ties it back to the real DX_Index
+        public static int[] DXX = new int[200]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
+        public static int[] DXY = new int[200]; // 
+        public static int[] DXW = new int[200]; //
+        public static int[] DXH = new int[200]; //  
+        public static string[] DXS = new string[200]; // ties it back to the real DX_Index
         public static int DXK = 0;               // number of spots on picdisplay
         public static int DXK2 = 0;               // number of spots on picdisplay
 
@@ -47756,7 +47897,7 @@ namespace PowerSDR
                                 }
                                 catch
                                 {
-                                    Trace.WriteLine("bad station");
+                                    Debug.WriteLine("bad station");
                                     // if not a URL then ignore
                                 }
 
@@ -47789,7 +47930,7 @@ namespace PowerSDR
                                     }
                                     catch
                                     {
-                                        Trace.WriteLine("bad station");
+                                        Debug.WriteLine("bad station");
                                         // if not a URL then ignore
                                     }
 
@@ -48379,6 +48520,7 @@ namespace PowerSDR
             }
 
             int xvtr_index = Int32.Parse(new_band.Substring(3));
+
             double start_freq = xvtrForm.GetBegin(xvtr_index);
             double end_freq = xvtrForm.GetEnd(xvtr_index);
 
@@ -51505,7 +51647,7 @@ namespace PowerSDR
                 {
                     // create PowerSDR audio folder if it does not exist
                     //  Directory.CreateDirectory(wave_folder);
-                    Trace.WriteLine("problem no ke9ns dat file found");
+                    Debug.WriteLine("problem no ke9ns dat file found");
                     return;
 
                 }
@@ -53896,7 +54038,7 @@ namespace PowerSDR
 			ResizeConsole(h_delta, v_delta);
 
             Display.Power = 1;
-           // Trace.WriteLine("RESIZE1");
+           // Debug.WriteLine("RESIZE1");
 
         } // control resize
 
@@ -55761,7 +55903,7 @@ namespace PowerSDR
 
                 if (!File.Exists(filePath))
                 {
-                    Trace.WriteLine("problem no ke9ns dat file found ");
+                    Debug.WriteLine("problem no ke9ns dat file found ");
                     return;
                 }
 
@@ -55785,7 +55927,7 @@ namespace PowerSDR
         //============================================================================ 
         private void callsignTextBox_TextChanged_1(object sender, EventArgs e) // ke9ns add
         {
-            // Trace.WriteLine("change   ");
+            // Debug.WriteLine("change   ");
             // Process.Start(@"c:\test")
 
             callsignTextBox.BackColor = Color.LemonChiffon; //to show your editing this callsign field
@@ -55794,12 +55936,14 @@ namespace PowerSDR
             menuStrip1.Update();
 
         }
-        private static byte callsignfocus = 0;
+
+
+        private static byte callsignfocus = 0; // ke9ns used to keep focus on text entry and not flex keyboard shortcuts
 
         private void callsignTextBox_MouseEnter(object sender, EventArgs e)// ke9ns add
         {
 
-          //  Trace.WriteLine("Enter  ");
+          //  Debug.WriteLine("Enter  ");
 
             callsign = callsignTextBox.Text;
             callsignTextBox.BackColor = Color.LemonChiffon;  // to show your editing this callsign field
@@ -55812,10 +55956,11 @@ namespace PowerSDR
 
         private void callsignTextBox_MouseLeave(object sender, EventArgs e)// ke9ns add
         {
-           // Trace.WriteLine("leaveM   ");
+           // Debug.WriteLine("leaveM   ");
               WaveForm.CreatePlay = true;   // create wave file
               btnHidden.Focus();
 
+              callsignfocus = 0; // ke9ns 
         }
 
         //============================================================================ 
@@ -55825,7 +55970,7 @@ namespace PowerSDR
         //============================================================================ 
         private void callsignTextBox_Leave(object sender, EventArgs e)// ke9ns add
         {
-         //   Trace.WriteLine("leave   ");
+         //   Debug.WriteLine("leave   ");
             WaveForm.CreatePlay = true;   // create wave file
    
         } // callsignTextBox_Leave
@@ -55871,7 +56016,7 @@ namespace PowerSDR
                    
                   //  await Task.Delay(3000);
                 }
-              //  Trace.WriteLine("wating...........");
+              //  Debug.WriteLine("wating...........");
 
               //  Thread.Sleep(300);
               //  Task.Delay(200);
@@ -55949,7 +56094,7 @@ namespace PowerSDR
 
         private void grpVFOB_Paint(object sender, PaintEventArgs e)
         {
-            //   Trace.WriteLine("paint  ");
+            //   Debug.WriteLine("paint  ");
 /*
 
             Graphics g = e.Graphics;
@@ -56031,12 +56176,12 @@ namespace PowerSDR
                                 {
                                     if (!File.Exists(filePath))
                                     {
-                                        Trace.WriteLine("problem no ke9ns dat file found");
+                                        Debug.WriteLine("problem no ke9ns dat file found");
                                         return;
                                     }
 
                                     string argument = @"/select, " + filePath;
-                                 //   Trace.WriteLine("filepath " + argument);
+                                 //   Debug.WriteLine("filepath " + argument);
 
                                     System.Diagnostics.Process.Start("explorer.exe", argument);
                                 }
@@ -56048,13 +56193,13 @@ namespace PowerSDR
                                     {
                                         // create PowerSDR audio folder if it does not exist
                                         //  Directory.CreateDirectory(wave_folder);
-                                        Trace.WriteLine("problem no ke9ns dat file found");
+                                        Debug.WriteLine("problem no ke9ns dat file found");
                                         return;
 
                                     }
                                     string argument = @"/select, " + filePath1;
 
-                                 //   Trace.WriteLine("filepath1 " + argument);
+                                 //   Debug.WriteLine("filepath1 " + argument);
 
                                     System.Diagnostics.Process.Start("explorer.exe", argument);
 
@@ -57007,7 +57152,7 @@ namespace PowerSDR
             SpotForm.Focus();
 
 
-            //   Trace.WriteLine("SPOTTER CLICK");
+            //   Debug.WriteLine("SPOTTER CLICK");
 /*
             if (spotterMenu.Checked == false)  //
             {
@@ -57031,7 +57176,7 @@ namespace PowerSDR
         private void spotterMenu_CheckedChanged(object sender, EventArgs e)
         {
 
-         //   Trace.WriteLine("SPOTTER change");
+         //   Debug.WriteLine("SPOTTER change");
 
           /*  
             if (spotterMenu.Checked == true)  // if checked open up dx cluster
@@ -57046,14 +57191,14 @@ namespace PowerSDR
                     t.Start();
                 }
 
-             //   Trace.WriteLine("start DX SPOT thread");
+             //   Debug.WriteLine("start DX SPOT thread");
 
 
             } // dx spotter using spider.ham-radio-deluxe.com port 8000
             else
             {
 
-             //   Trace.WriteLine("END DX SPOT thread");
+             //   Debug.WriteLine("END DX SPOT thread");
 
                 SP_Active = 0;
 
@@ -57666,7 +57811,7 @@ namespace PowerSDR
                     {
                         // create PowerSDR audio folder if it does not exist
                         //  Directory.CreateDirectory(wave_folder);
-                        Trace.WriteLine("problem no ke9ns dat file found");
+                        Debug.WriteLine("problem no ke9ns dat file found");
                         return;
 
                     }
@@ -57675,15 +57820,15 @@ namespace PowerSDR
                     
                     openFileDialog1.InitialDirectory = filePath; // ke9ns  file to quickplay subfolder but could also be wave_folder;
 
-                    //   Trace.WriteLine("right  click ");
+                    //   Debug.WriteLine("right  click ");
 
 
                     DialogResult result = openFileDialog1.ShowDialog();
 
                     if (result == DialogResult.OK) // Test result.
                     {
-                        //      Trace.WriteLine("file selected1 " + result);
-                        //     Trace.WriteLine("file selected2 " + openFileDialog1.FileName);
+                        //      Debug.WriteLine("file selected1 " + result);
+                        //     Debug.WriteLine("file selected2 " + openFileDialog1.FileName);
 
                         WaveControl.QPFILE = openFileDialog1.FileName; // pass file name to wave file
                     }
@@ -57692,14 +57837,14 @@ namespace PowerSDR
                         WaveControl.QPFILE = null;
                     }
 
-                    //    Trace.WriteLine("file selected " + result);
+                    //    Debug.WriteLine("file selected " + result);
 
                 } // sequential quickaudio
 
             } // right mouse button click
             else if (me.Button == System.Windows.Forms.MouseButtons.Left)
             {
-             //   Trace.WriteLine("left click ");
+             //   Debug.WriteLine("left click ");
 
             }
 
@@ -57744,7 +57889,7 @@ namespace PowerSDR
             }
             else
             {
-                //  Trace.WriteLine("WATERFALL OFF======================");
+                //  Debug.WriteLine("WATERFALL OFF======================");
                 WaveForm.TXIDPlay = false; // tell wave.cs not to create or send waterfall id
                 this.TXIDMenuItem.Text = "TX WaterID";
                

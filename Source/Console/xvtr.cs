@@ -372,7 +372,7 @@ namespace PowerSDR
                 udUCBAddr0.Value = 0;
                 txtButtonText0.Text = "2m";
                 udLOOffset0.Value = 125;              // ke9ns was 125
-                udLOError0.Value = 0;
+             //   udLOError0.Value = 0;  // ke9ns was not commented out
                 udFreqBegin0.Value = 144;            // ke9ns was 144
                 udFreqEnd0.Value = 148;              // ke9ns was 148
                 //udRXGain0.Value = 32;
@@ -383,7 +383,7 @@ namespace PowerSDR
                 udUCBAddr1.Value = 1;
                 txtButtonText1.Text = "70cm";
                 udLOOffset1.Value = 400;
-                udLOError1.Value = 0;
+                // udLOError1.Value = 0;    // ke9ns was not commented out
                 udFreqBegin1.Value = 430;
                 udFreqEnd1.Value = 450;
                 //udRXGain1.Value = 28;
@@ -403,8 +403,11 @@ namespace PowerSDR
             }
             else
             {
-                chkEnable0.Checked = false;
-                chkEnable1.Checked = false;
+
+
+                  chkEnable0.Checked = false;
+                   chkEnable1.Checked = false;
+              
                 chkVHFIFGain.Enabled = false;
                 chkUHFIFGain.Enabled = false;
                 chkVHFPAEnable.Enabled = false;
@@ -793,8 +796,6 @@ namespace PowerSDR
             this.groupBox1.Controls.Add(this.chkXVTRRF0);
             this.groupBox1.Controls.Add(this.udPower1);
             this.groupBox1.Controls.Add(this.udPower0);
-            this.groupBox1.Controls.Add(this.udLOError1);
-            this.groupBox1.Controls.Add(this.udLOError0);
             this.groupBox1.Controls.Add(this.chkRXOnly1);
             this.groupBox1.Controls.Add(this.chkRXOnly0);
             this.groupBox1.Controls.Add(this.udFreqEnd1);
@@ -811,6 +812,8 @@ namespace PowerSDR
             this.groupBox1.Controls.Add(this.chkEnable0);
             this.groupBox1.Controls.Add(this.udUCBAddr1);
             this.groupBox1.Controls.Add(this.udUCBAddr0);
+            this.groupBox1.Controls.Add(this.udLOError0);
+            this.groupBox1.Controls.Add(this.udLOError1);
             this.groupBox1.Location = new System.Drawing.Point(26, 47);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(974, 71);
@@ -1027,7 +1030,6 @@ namespace PowerSDR
             // udLOError1
             // 
             this.udLOError1.DecimalPlaces = 3;
-            this.udLOError1.Enabled = false;
             this.udLOError1.Increment = new decimal(new int[] {
             1,
             0,
@@ -1048,7 +1050,7 @@ namespace PowerSDR
             this.udLOError1.Size = new System.Drawing.Size(56, 20);
             this.udLOError1.TabIndex = 17;
             this.udLOError1.Value = new decimal(new int[] {
-            7,
+            0, //ke9ns was 7
             0,
             0,
             0});
@@ -1056,7 +1058,6 @@ namespace PowerSDR
             // udLOError0
             // 
             this.udLOError0.DecimalPlaces = 3;
-            this.udLOError0.Enabled = false;
             this.udLOError0.Increment = new decimal(new int[] {
             1,
             0,
@@ -1077,7 +1078,7 @@ namespace PowerSDR
             this.udLOError0.Size = new System.Drawing.Size(56, 20);
             this.udLOError0.TabIndex = 5;
             this.udLOError0.Value = new decimal(new int[] {
-            2,
+            0,   // ke9ns was 2
             0,
             0,
             0});
@@ -5422,7 +5423,7 @@ namespace PowerSDR
 		/// the frequency is not found.</returns>
 		public int XVTRFreq(double freq)
 		{
-			for(int i=0; i<16; i++)
+			for(int i=0; i < 16; i++)
 			{
 				if(enabled[i].Checked)
 				{
@@ -5731,6 +5732,8 @@ namespace PowerSDR
 		private void chkEnable0_CheckedChanged(object sender, System.EventArgs e)
 		{
 			bool b = chkEnable0.Checked;
+            udLOError0.Enabled = b;
+
             /*
 			udUCBAddr0.Enabled = b;
 			txtButtonText0.Enabled = b;
@@ -5750,19 +5753,21 @@ namespace PowerSDR
 		private void chkEnable1_CheckedChanged(object sender, System.EventArgs e)
 		{
 			bool b = chkEnable1.Checked;
+
+            udLOError1.Enabled = b;
             /*
-			udUCBAddr1.Enabled = b;
-			txtButtonText1.Enabled = b;
-			udLOOffset1.Enabled = b;
-			udLOError1.Enabled = b;
-			udFreqBegin1.Enabled = b;
-			udFreqEnd1.Enabled = b;
-			udRXGain1.Enabled = b;
-			chkRXOnly1.Enabled = b;
-			udPower1.Enabled = b;
-			chkXVTRRF1.Enabled = b;
-            */
-			console.SetVHFEnabled(1, b);
+           udUCBAddr1.Enabled = b;
+           txtButtonText1.Enabled = b;
+           udLOOffset1.Enabled = b;
+
+           udFreqBegin1.Enabled = b;
+           udFreqEnd1.Enabled = b;
+           udRXGain1.Enabled = b;
+           chkRXOnly1.Enabled = b;
+           udPower1.Enabled = b;
+           chkXVTRRF1.Enabled = b;
+           */
+            console.SetVHFEnabled(1, b);
 		}
 
 		private void chkEnable2_CheckedChanged(object sender, System.EventArgs e)

@@ -185,8 +185,12 @@ namespace PowerSDR
 				}
 				statusBar1.Text = "Invalid User/Pass.  "+count.ToString()+" tries left.";
 			}
-		}
-	}
+
+        } //  btnSubmit_Click
+
+
+
+    } // logon
 
 	public class Encryption
 	{
@@ -232,5 +236,5 @@ namespace PowerSDR
 
 			return Encoding.Default.GetString(stream.ToArray());
 		}
-	}
+	} // encryption
 }

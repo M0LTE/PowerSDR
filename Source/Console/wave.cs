@@ -1177,7 +1177,7 @@ namespace PowerSDR
                     Audio.MON_PRE = 0;
                     console.MONINIT = 1;
                     console.MON = true; // turn post MON on
-                 //   Trace.WriteLine("1mon == false");
+                 //   Debug.WriteLine("1mon == false");
                 }
                 else
                 {
@@ -1231,7 +1231,7 @@ namespace PowerSDR
                     Audio.MON_PRE = 0;
                     console.MONINIT = 1;
                     console.MON = false;// turn off MON
-                  //  Trace.WriteLine("mon == false");
+                  //  Debug.WriteLine("mon == false");
 
                 }
                 else
@@ -1275,7 +1275,7 @@ namespace PowerSDR
                     System.IO.Directory.CreateDirectory(console.AppDataPath + "\\QuickAudio"); // ke9ns create sub directory
                     file_name = console.AppDataPath + "\\QuickAudio"+ "\\SDRQuickAudio"+QAC.ToString() +".wav";
 
-                 //   Trace.WriteLine("qac" + QAC);
+                 //   Debug.WriteLine("qac" + QAC);
 
                 }
                 else
@@ -1406,7 +1406,7 @@ namespace PowerSDR
 
                 //  console.MON = false;
 
-             //   Trace.WriteLine("playing ");
+             //   Debug.WriteLine("playing ");
 
                 if (!OpenWaveFile(file_name, false))
                 {
@@ -1431,7 +1431,7 @@ namespace PowerSDR
              
                 TXIDBoxTS.BackColor = SystemColors.Control;
                
-               //  Trace.WriteLine("DONE playing ");
+               //  Debug.WriteLine("DONE playing ");
 
                 console.MON = temp_mon;
                 Audio.RecordTXPreProcessed = temp_play; //return to original state
@@ -1477,7 +1477,7 @@ namespace PowerSDR
         {
             if (createBoxTS.Checked)
             {
-              //  Trace.WriteLine("check create");
+              //  Debug.WriteLine("check create");
                
                 if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))  // check if we need to create a new wave file or use the old one.
                 {
