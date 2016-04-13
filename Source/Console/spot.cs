@@ -26,13 +26,19 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Net;
+using System.Runtime.Serialization.Json;
+
+
 
 using System.Net.Sockets;                // ke9ns add for tcpip internet connections
 using System.Threading.Tasks;
-using System.Net;
 
 namespace PowerSDR
 {
+
+  
+
     public class SpotControl : System.Windows.Forms.Form
     {
         private static System.Reflection.Assembly myAssembly2 = System.Reflection.Assembly.GetExecutingAssembly();
@@ -46,9 +52,11 @@ namespace PowerSDR
 
         public  Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
-    //   public static Display display;
+        //   public static Display display;
 
-     //   public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+        //   public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+
+       
 
 
         //   private ArrayList file_list;
@@ -82,6 +90,7 @@ namespace PowerSDR
         public CheckBoxTS chkBoxCW;
         public CheckBoxTS chkBoxSSB;
         public CheckBoxTS chkBoxDIG;
+        public CheckBoxTS chkBoxPan;
         private IContainer components;
 
 
@@ -137,6 +146,7 @@ namespace PowerSDR
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnTrack = new System.Windows.Forms.Button();
             this.nameBox = new System.Windows.Forms.TextBox();
+            this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxCW = new System.Windows.Forms.CheckBoxTS();
@@ -222,7 +232,7 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(434, 488);
+            this.callBox.Location = new System.Drawing.Point(543, 514);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
             this.callBox.Size = new System.Drawing.Size(103, 22);
@@ -345,7 +355,7 @@ namespace PowerSDR
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(552, 513);
+            this.nameBox.Location = new System.Drawing.Point(695, 446);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -353,6 +363,18 @@ namespace PowerSDR
             this.nameBox.Text = "name";
             this.toolTip1.SetToolTip(this.nameBox, "Enter Your Call sign to login to the DX Cluster here");
             this.nameBox.Visible = false;
+            // 
+            // chkBoxPan
+            // 
+            this.chkBoxPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxPan.Image = null;
+            this.chkBoxPan.Location = new System.Drawing.Point(416, 474);
+            this.chkBoxPan.Name = "chkBoxPan";
+            this.chkBoxPan.Size = new System.Drawing.Size(113, 24);
+            this.chkBoxPan.TabIndex = 71;
+            this.chkBoxPan.Text = "Map just Pan";
+            this.toolTip1.SetToolTip(this.chkBoxPan, "Show Country or Calls on Map for just the Panadapter freq you are viewing.\r\n");
+            this.chkBoxPan.CheckedChanged += new System.EventHandler(this.chkBoxPan_CheckedChanged);
             // 
             // chkBoxDIG
             // 
@@ -399,20 +421,21 @@ namespace PowerSDR
             this.chkMapBand.Checked = true;
             this.chkMapBand.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapBand.Image = null;
-            this.chkMapBand.Location = new System.Drawing.Point(416, 455);
+            this.chkMapBand.Location = new System.Drawing.Point(416, 446);
             this.chkMapBand.Name = "chkMapBand";
             this.chkMapBand.Size = new System.Drawing.Size(113, 24);
             this.chkMapBand.TabIndex = 67;
             this.chkMapBand.Text = "Map just Band";
-            this.toolTip1.SetToolTip(this.chkMapBand, "Show Country or Calls on Map for just the Band you see.\r\n");
+            this.toolTip1.SetToolTip(this.chkMapBand, "Show Country or Calls on Map for the Band you are on.\r\n");
+            this.chkMapBand.CheckedChanged += new System.EventHandler(this.chkMapBand_CheckedChanged);
             // 
             // chkMapCountry
             // 
             this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapCountry.Image = null;
-            this.chkMapCountry.Location = new System.Drawing.Point(416, 400);
+            this.chkMapCountry.Location = new System.Drawing.Point(416, 393);
             this.chkMapCountry.Name = "chkMapCountry";
-            this.chkMapCountry.Size = new System.Drawing.Size(88, 24);
+            this.chkMapCountry.Size = new System.Drawing.Size(88, 22);
             this.chkMapCountry.TabIndex = 66;
             this.chkMapCountry.Text = "Map Country";
             this.toolTip1.SetToolTip(this.chkMapCountry, "Show Dx spot Countries on Map\r\n");
@@ -424,7 +447,7 @@ namespace PowerSDR
             this.chkMapCall.Checked = true;
             this.chkMapCall.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapCall.Image = null;
-            this.chkMapCall.Location = new System.Drawing.Point(416, 428);
+            this.chkMapCall.Location = new System.Drawing.Point(416, 421);
             this.chkMapCall.Name = "chkMapCall";
             this.chkMapCall.Size = new System.Drawing.Size(88, 24);
             this.chkMapCall.TabIndex = 65;
@@ -440,7 +463,7 @@ namespace PowerSDR
             this.chkPanMode.Image = null;
             this.chkPanMode.Location = new System.Drawing.Point(272, 451);
             this.chkPanMode.Name = "chkPanMode";
-            this.chkPanMode.Size = new System.Drawing.Size(147, 23);
+            this.chkPanMode.Size = new System.Drawing.Size(148, 23);
             this.chkPanMode.TabIndex = 63;
             this.chkPanMode.Text = "Special PanaFall Mode\r\n";
             this.toolTip1.SetToolTip(this.chkPanMode, "When Checked, will Display RX1 in Panafall mode, with a small waterfall for bette" +
@@ -483,9 +506,9 @@ namespace PowerSDR
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(604, 488);
+            this.chkDXMode.Location = new System.Drawing.Point(652, 515);
             this.chkDXMode.Name = "chkDXMode";
-            this.chkDXMode.Size = new System.Drawing.Size(138, 24);
+            this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
             this.chkDXMode.Text = "Parse \"DX Spot\" Mode";
             this.chkDXMode.UseVisualStyleBackColor = true;
@@ -495,9 +518,9 @@ namespace PowerSDR
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(638, 514);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(638, 485);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
-            this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(103, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
             this.chkAlwaysOnTop.Text = "Always On Top";
             this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
@@ -506,6 +529,7 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(753, 548);
+            this.Controls.Add(this.chkBoxPan);
             this.Controls.Add(this.chkBoxDIG);
             this.Controls.Add(this.chkBoxSSB);
             this.Controls.Add(this.chkBoxCW);
@@ -654,7 +678,7 @@ namespace PowerSDR
         public static byte SP1_Active = 0; // SWL active
         public static byte SP3_Active = 0; // 1=SWL database loaded up, so no need to reload if you turn if OFF
 
-        public static byte SP5_Active = 0; // 1= Sun and/or grayline tracking on
+        public static byte SP5_Active = 0; // 1= turn on tracking mode, but you might not have sun or grayline on
 
         //=======================================================================================
         //=======================================================================================
@@ -667,7 +691,7 @@ namespace PowerSDR
 
             if (!File.Exists(file_name))
             {
-              //  Debug.WriteLine("problem no SWL.CSV file found ");
+                Debug.WriteLine("problem no SWL.CSV file found ");
                 statusBoxSWL.ForeColor = Color.Red;
                
                 statusBoxSWL.Text = "No SWL.csv file found";
@@ -755,6 +779,10 @@ namespace PowerSDR
 
         public static int UTCNEW1 = Convert.ToInt16(FD);                                       // convert 24hr UTC to int
         
+
+     
+
+
         //=======================================================================================
         //=======================================================================================
         //ke9ns start SWL spotting
@@ -951,6 +979,64 @@ namespace PowerSDR
             } // if file exists
 
 
+            //-----------------------------------------
+            // ke9ns track ISS
+
+
+            
+            /*
+            try
+            {
+
+                // http://api.open-notify.org/iss-now.json
+
+                textBox1.Text += "Attempt to connect to ISS Now http \r\n";
+
+                serverPath = "http://api.open-notify.org/iss-now.json";
+
+            
+                HttpWebRequest request = WebRequest.Create(serverPath) as HttpWebRequest;
+
+                textBox1.Text += "Attempt to download ISS position \r\n";
+
+                using(HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception(String.Format("Server error (HTTP {0}: {1}).", response.StatusCode, response.StatusDescription));
+                    }
+
+                    DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Response));
+                    object objResponse = jsonSerializer.ReadObject(response.GetResponseStream());
+
+
+                   Response jsonResponse = objResponse as Response;
+
+                }
+
+
+
+
+                //  Stream responseStream = response.GetResponseStream();
+                //   StreamReader reader = new StreamReader(responseStream);
+                //    noaa = reader.ReadToEnd();
+
+                //  reader.Close();
+                //   response.Close();
+                //   Debug.WriteLine("noaa=== " + noaa);
+
+                textBox1.Text += "ISS  Download complete \r\n";
+
+            }
+            catch (Exception ex)
+            {
+                //   Debug.WriteLine("ISS fault=== " + ex);
+                textBox1.Text += "Failed to get ISS data \r\n";
+
+            }
+*/
+
         } // SWLSPOTTER
 
 
@@ -1061,7 +1147,7 @@ namespace PowerSDR
         public static int DX_Index = 0;                               //  max number of spots in memory currently
         public static int DX_Index1 = 0;                             // local index that reset back to 0 after reaching max
         public static int DX_Last = 0;                               //  last # in DX_Index (used for DXLOC_Mapper)spotter(
-        public static int Map_Last = 0;                               //  last map checkbox change (used for DXLOC_Mapper)
+        public static int Map_Last = 0;                               //  last map checkbox change (used for DXLOC_Mapper) 1=update grayline 2=update spots on map only
         public static int DXK_Last = 0;                               //  last # in console.DXK (used for DXLOC_Mapper)
 
         public static string[] DX_FULLSTRING = new string[1000];       // full undecoded message
@@ -1201,13 +1287,13 @@ namespace PowerSDR
 
                                 if (SP_Active == 0)
                                  {
-                               //     Debug.WriteLine("break====="); // if user wants to shut down operation 
+                                    Debug.WriteLine("break====="); // if user wants to shut down operation 
                                     break;
                                 }
 
                                 if (sb.ToString().Length > 90)
                                 {
-                                //    Debug.WriteLine("Leng ====="); // string too long (something happened
+                                    Debug.WriteLine("Leng ====="); // string too long (something happened
                                     sb = new StringBuilder(); // clear sb string over again
                                 }
 
@@ -1266,7 +1352,7 @@ namespace PowerSDR
                             try
                             {
                                 DX_Spotter[DX_Index1] = message1.Substring(6, 10); // get dx call with : at the end
-                                                                                   //  Debug.WriteLine("DX_Call " + DX_Station[DX_Index1]);
+                                 Debug.WriteLine("DX_Call " + DX_Station[DX_Index1]);
                                 int pos = DX_Spotter[DX_Index1].IndexOf(':'); // find the :
                                 DX_Spotter[DX_Index1] = DX_Spotter[DX_Index1].Substring(0, pos); // reduce the call without the :
 
@@ -1377,7 +1463,7 @@ namespace PowerSDR
                                 DX_Freq[DX_Index1] = 0;
                                 DX_Mode[DX_Index1] = 0; // ssb mode
                             }
-                            //  Debug.WriteLine("DX_Freq " + DX_Freq[DX_Index1]);
+                            Debug.WriteLine("DX_Freq " + DX_Freq[DX_Index1]);
 
 
                             // grad DX_Station=========================================================================================
@@ -1396,7 +1482,7 @@ namespace PowerSDR
                             {
                                 DX_Spotter[DX_Index1] = "NA";
                             }
-                            //  Debug.WriteLine("DX_Spotter " + DX_Spotter[DX_Index1]);
+                              Debug.WriteLine("DX_Spotter " + DX_Spotter[DX_Index1]);
 
                             // grab comments
                             try
@@ -1504,7 +1590,7 @@ namespace PowerSDR
 
                                     if (chkBoxSSB.Checked != true)
                                     {
-                                  //      Debug.WriteLine("bypass ssb because not looking for ssb");
+                                       Debug.WriteLine("bypass ssb because not looking for ssb");
                                         continue; // check for a SSB mode spot
                                     }
 
@@ -1515,7 +1601,7 @@ namespace PowerSDR
 
                                     if (chkBoxCW.Checked != true)
                                     {
-                                     //   Debug.WriteLine("bypass CW because not looking for CW");
+                                       Debug.WriteLine("bypass CW because not looking for CW");
                                         continue; // check for a CW mode spot
                                     }
 
@@ -1543,7 +1629,7 @@ namespace PowerSDR
                                     try // 
                                     {
                                         DX_Grid[DX_Index1] = DX_Message[DX_Index1].Substring(ind, 6);
-                                    //    Debug.WriteLine("FOUND COMMENT GRID " + DX_Grid[DX_Index1]);
+                                        Debug.WriteLine("FOUND COMMENT GRID " + DX_Grid[DX_Index1]);
                                        
                                     }
                                     catch // 
@@ -1567,7 +1653,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4))* 1000));
-                                     //   Debug.WriteLine("Found UP split hz" +split_hz);
+                                       Debug.WriteLine("Found UP split hz" +split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1576,7 +1662,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000));
-                                      //      Debug.WriteLine("Found UP split hz" + split_hz);
+                                          Debug.WriteLine("Found UP split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1585,7 +1671,7 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000));
-                                             //   Debug.WriteLine("Found UP split hz" + split_hz);
+                                              Debug.WriteLine("Found UP split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
@@ -1597,7 +1683,7 @@ namespace PowerSDR
                                                 {
 
                                                     int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1,4)) * 1000));
-                                                //    Debug.WriteLine("Found UP split hz" + split_hz);
+                                                   Debug.WriteLine("Found UP split hz" + split_hz);
                                                     DX_Mode2[DX_Index1] = split_hz;
                                                 }
                                                 catch // catch 4
@@ -1608,7 +1694,7 @@ namespace PowerSDR
                                                     {
 
                                                         int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000));
-                                                  //      Debug.WriteLine("Found UP split hz" + split_hz);
+                                                       Debug.WriteLine("Found UP split hz" + split_hz);
                                                         DX_Mode2[DX_Index1] = split_hz;
                                                     }
                                                     catch // catch 5
@@ -1619,13 +1705,13 @@ namespace PowerSDR
                                                         {
 
                                                             int split_hz = (int)(Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000));
-                                                       //     Debug.WriteLine("Found UP split hz" + split_hz);
+                                                           Debug.WriteLine("Found UP split hz" + split_hz);
                                                             DX_Mode2[DX_Index1] = split_hz;
                                                         }
                                                         catch // catch 6
                                                         {
 
-                                                        //    Debug.WriteLine("failed to find up value================");
+                                                          Debug.WriteLine("failed to find up value================");
                                                             DX_Mode2[DX_Index1] = 1000; // 1khz up
 
                                                         } // catch6   (2 digits to left side)
@@ -1651,7 +1737,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000));
-                                     //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                        Debug.WriteLine("Found dn split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1660,7 +1746,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000));
-                                          //  Debug.WriteLine("Found dn split hz" + split_hz);
+                                          Debug.WriteLine("Found dn split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1669,7 +1755,7 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000));
-                                            //    Debug.WriteLine("Found dn split hz" + split_hz);
+                                               Debug.WriteLine("Found dn split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
@@ -1680,7 +1766,7 @@ namespace PowerSDR
                                                 try // try 4
                                                 {
                                                     int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000));
-                                                //    Debug.WriteLine("Found dn split hz" + split_hz);
+                                                    Debug.WriteLine("Found dn split hz" + split_hz);
                                                     DX_Mode2[DX_Index1] = split_hz;
                                                 }
                                                 catch // catch 4
@@ -1690,7 +1776,7 @@ namespace PowerSDR
                                                     try // try 5
                                                     {
                                                         int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000));
-                                                   //     Debug.WriteLine("Found dn split hz" + split_hz);
+                                                        Debug.WriteLine("Found dn split hz" + split_hz);
                                                         DX_Mode2[DX_Index1] = split_hz;
                                                     }
                                                     catch // catch 5
@@ -1700,13 +1786,13 @@ namespace PowerSDR
                                                         try // try 6
                                                         {
                                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000));
-                                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                            Debug.WriteLine("Found dn split hz" + split_hz);
                                                             DX_Mode2[DX_Index1] = split_hz;
                                                         }
                                                         catch // catch 6
                                                         {
 
-                                                          //  Debug.WriteLine("failed to find dn value================");
+                                                          Debug.WriteLine("failed to find dn value================");
                                                             DX_Mode2[DX_Index1] = -1000; // 1khz dn
 
                                                         } // catch6   (2 digits to left side)
@@ -1731,7 +1817,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000));
-                                     //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                       Debug.WriteLine("Found dn split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1740,7 +1826,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000));
-                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                            Debug.WriteLine("Found dn split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1749,7 +1835,7 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000));
-                                             //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                Debug.WriteLine("Found dn split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
@@ -1760,7 +1846,7 @@ namespace PowerSDR
                                                 try // try 4
                                                 {
                                                     int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000));
-                                                 //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                  Debug.WriteLine("Found dn split hz" + split_hz);
                                                     DX_Mode2[DX_Index1] = split_hz;
                                                 }
                                                 catch // catch 4
@@ -1770,7 +1856,7 @@ namespace PowerSDR
                                                     try // try 5
                                                     {
                                                         int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000);
-                                                    //    Debug.WriteLine("Found dn split hz" + split_hz);
+                                                      Debug.WriteLine("Found dn split hz" + split_hz);
                                                         DX_Mode2[DX_Index1] = split_hz;
                                                     }
                                                     catch // catch 5
@@ -1780,13 +1866,13 @@ namespace PowerSDR
                                                         try // try 6
                                                         {
                                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000));
-                                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                           Debug.WriteLine("Found dn split hz" + split_hz);
                                                             DX_Mode2[DX_Index1] = split_hz;
                                                         }
                                                         catch // catch 6
                                                         {
 
-                                                        //    Debug.WriteLine("failed to find dn value================");
+                                                           Debug.WriteLine("failed to find dn value================");
                                                             DX_Mode2[DX_Index1] = -1000; // 1khz dn
 
                                                         } // catch6   (2 digits to left side)
@@ -1811,7 +1897,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000));
-                                      //  Debug.WriteLine("Found dn split hz" + split_hz);
+                                        Debug.WriteLine("Found dn split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1820,7 +1906,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000));
-                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                           Debug.WriteLine("Found dn split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1829,7 +1915,7 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000));
-                                            //    Debug.WriteLine("Found dn split hz" + split_hz);
+                                               Debug.WriteLine("Found dn split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
@@ -1840,7 +1926,7 @@ namespace PowerSDR
                                                 try // try 4
                                                 {
                                                     int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 4)) * 1000));
-                                                 //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                    Debug.WriteLine("Found dn split hz" + split_hz);
                                                     DX_Mode2[DX_Index1] = split_hz;
                                                 }
                                                 catch // catch 4
@@ -1850,7 +1936,7 @@ namespace PowerSDR
                                                     try // try 5
                                                     {
                                                         int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 3)) * 1000));
-                                                     //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                       Debug.WriteLine("Found dn split hz" + split_hz);
                                                         DX_Mode2[DX_Index1] = split_hz;
                                                     }
                                                     catch // catch 5
@@ -1860,13 +1946,13 @@ namespace PowerSDR
                                                         try // try 6
                                                         {
                                                             int split_hz = (int)(-Math.Abs(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind1, 2)) * 1000));
-                                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                                           Debug.WriteLine("Found dn split hz" + split_hz);
                                                             DX_Mode2[DX_Index1] = split_hz;
                                                         }
                                                         catch // catch 6
                                                         {
 
-                                                         //   Debug.WriteLine("failed to find dn value================");
+                                                           Debug.WriteLine("failed to find dn value================");
                                                             DX_Mode2[DX_Index1] = -1000; // 1khz dn
 
                                                         } // catch6   (2 digits to left side)
@@ -1895,7 +1981,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
-                                    //    Debug.WriteLine("Found UP split hz" + split_hz);
+                                       Debug.WriteLine("Found UP split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1904,7 +1990,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
-                                         //   Debug.WriteLine("Found UP split hz" + split_hz);
+                                            Debug.WriteLine("Found UP split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1913,13 +1999,13 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
-                                            //    Debug.WriteLine("Found UP split hz" + split_hz);
+                                              Debug.WriteLine("Found UP split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
                                             {
 
-                                            //    Debug.WriteLine("failed to find up value================");
+                                                Debug.WriteLine("failed to find up value================");
                                                 DX_Mode2[DX_Index1] = 0; // 
 
 
@@ -1941,7 +2027,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 4)) * 1000);
-                                     //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                        Debug.WriteLine("Found dn split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
                                     }
                                     catch // catch 1
@@ -1950,7 +2036,7 @@ namespace PowerSDR
                                         try // try 2
                                         {
                                             int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 3)) * 1000);
-                                         //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                           Debug.WriteLine("Found dn split hz" + split_hz);
                                             DX_Mode2[DX_Index1] = split_hz;
                                         }
                                         catch // catch 2
@@ -1959,13 +2045,13 @@ namespace PowerSDR
                                             try // try 3
                                             {
                                                 int split_hz = (int)(-Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 2)) * 1000);
-                                           //     Debug.WriteLine("Found dn split hz" + split_hz);
+                                               Debug.WriteLine("Found dn split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
                                             }
                                             catch // catch 3
                                             {
 
-                                            //    Debug.WriteLine("failed to find up value================");
+                                                Debug.WriteLine("failed to find up value================");
                                                 DX_Mode2[DX_Index1] = 0; // 
 
 
@@ -1986,7 +2072,7 @@ namespace PowerSDR
                                     try // try 1
                                     {
                                         int split_hz = (int)(Convert.ToDouble(DX_Message[DX_Index1].Substring(ind, 8)) * 1000);
-                                      //  Debug.WriteLine("Found dn split hz" + split_hz);
+                                       Debug.WriteLine("Found dn split hz" + split_hz);
                                         DX_Mode2[DX_Index1] = split_hz;
 
                                         DX_Mode2[DX_Index1] =  DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2003,7 +2089,7 @@ namespace PowerSDR
                                             if (split_hz < 10000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX .412  then treat it with the same mhz as DX_Freq
                                             else if (split_hz < 100000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX 18.412  then it must be in mhz
 
-                                         //   Debug.WriteLine("Found qrx split hz" + split_hz);
+                                          Debug.WriteLine("Found qrx split hz" + split_hz);
 
                                             DX_Mode2[DX_Index1] = split_hz;
                                             DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2019,7 +2105,7 @@ namespace PowerSDR
                                                 if (split_hz < 10000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX .412  then treat it with the same mhz as DX_Freq
                                                 else if (split_hz < 100000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX 18.412  then it must be in mhz
 
-                                             //   Debug.WriteLine("Found dn split hz" + split_hz);
+                                               Debug.WriteLine("Found dn split hz" + split_hz);
 
                                                 DX_Mode2[DX_Index1] = split_hz;
                                                 DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2029,7 +2115,7 @@ namespace PowerSDR
                                             catch // catch 3
                                             {
 
-                                             //   Debug.WriteLine("failed to find up value================");
+                                               Debug.WriteLine("failed to find up value================");
                                                 DX_Mode2[DX_Index1] = 0; // 
 
                                             } // catch 3   (6 digits to right side)
@@ -2053,7 +2139,7 @@ namespace PowerSDR
                                         if (split_hz < 10000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX .412  then treat it with the same mhz as DX_Freq
                                         else if (split_hz < 100000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX 18.412  then it must be in mhz
 
-                                   //     Debug.WriteLine("Found qrz split hz" + split_hz);
+                                        Debug.WriteLine("Found qrz split hz" + split_hz);
 
                                         DX_Mode2[DX_Index1] = split_hz;
                                         DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2069,7 +2155,7 @@ namespace PowerSDR
                                             if (split_hz < 10000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX .412  then treat it with the same mhz as DX_Freq
                                             else if (split_hz < 100000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX 18.412  then it must be in mhz
 
-                                         //   Debug.WriteLine("Found qrz split hz" + split_hz);
+                                          Debug.WriteLine("Found qrz split hz" + split_hz);
 
                                             DX_Mode2[DX_Index1] = split_hz;
                                             DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2084,7 +2170,7 @@ namespace PowerSDR
                                                 if (split_hz < 10000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX .412  then treat it with the same mhz as DX_Freq
                                                 else if (split_hz < 100000) split_hz = (DX_Freq[DX_Index1] / 1000000) + split_hz; // if its QRX 18.412  then it must be in mhz
 
-                                           //     Debug.WriteLine("Found dn split hz" + split_hz);
+                                               Debug.WriteLine("Found dn split hz" + split_hz);
                                                 DX_Mode2[DX_Index1] = split_hz;
 
                                                 DX_Mode2[DX_Index1] = DX_Mode2[DX_Index1] - DX_Freq[DX_Index1];
@@ -2094,7 +2180,7 @@ namespace PowerSDR
                                             catch // catch 3
                                             {
 
-                                            //    Debug.WriteLine("failed to find up value================");
+                                                Debug.WriteLine("failed to find up value================");
                                                 DX_Mode2[DX_Index1] = 0; // 
 
                                             } // catch 3   (6 digits to right side)
@@ -2112,15 +2198,15 @@ namespace PowerSDR
                             } // try to parse dx spot message above
                             catch (FormatException e)
                             {
-                             //   Debug.WriteLine("mode issue" + e);
+                               Debug.WriteLine("mode issue" + e);
 
                             }
                             catch (ArgumentOutOfRangeException e)
                             {
-                              //  Debug.WriteLine("mode1 issue" + e);
+                                Debug.WriteLine("mode1 issue" + e);
 
                             }
-                            //  Debug.WriteLine("DX_Message " + DX_Message[DX_Index1]);
+                          //  Debug.WriteLine("DX_Message " + DX_Message[DX_Index1]);
 
                             // grab time
                             try
@@ -2131,37 +2217,21 @@ namespace PowerSDR
 
 
                             }
-                            catch (FormatException e)
+                            catch (Exception)
                             {
                                 DX_Time[DX_Index1] = UTCNEW;
                           
                             }
-                            catch (ArgumentOutOfRangeException e)
-                            {
-                                DX_Time[DX_Index1] = 0;
-                            }
+                           
                             //   Debug.WriteLine("DX_Time " + DX_Time[DX_Index1])
                            
                            
-                       /*     // grab GRID #
-                            DX_Grid[DX_Index1] = message1.Substring(76,4); // get grid
-                           
-                            sb = new StringBuilder(DX_Grid[DX_Index1]); // clear sb string over again
-                            sb.Append(')');
-                            sb.Insert(0, '('); // to differentiate the spotter from the spotted
-
-                            DX_Grid[DX_Index1] = sb.ToString();
-                         */
-
+                      
                             // set age of spot to 0;
                             DX_Age[DX_Index1] = "00"; // reset to start
 
-
-
-                            //  Debug.WriteLine("DX_Grid " + DX_Grid[DX_Index1]);
-
-                            //  Debug.WriteLine("============================================");
-
+  
+                          
 
                             //=================================================================================================
                             //=================================================================================================
@@ -2188,7 +2258,7 @@ namespace PowerSDR
                                 {
                                     if ((r2.IsMatch(us2)))
                                     {
-                                   //     Debug.WriteLine("bypass4a " + DX_Spotter[DX_Index1]);
+                                       Debug.WriteLine("bypass4a " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
                                     }
                                     goto PASS2; // if the 1st letter is not a US letter then GOOD use SPOT
@@ -2198,7 +2268,7 @@ namespace PowerSDR
                                 {
                                     if ((r.IsMatch(us1)))
                                     {
-                                     //   Debug.WriteLine("bypass3 " + DX_Spotter[DX_Index1]);
+                                        Debug.WriteLine("bypass3 " + DX_Spotter[DX_Index1]);
                                         continue;// dont show spot if not on the r list
                                     }
                                     goto PASS2; // if the 1st letter is not a US letter then GOOD use SPOT
@@ -2207,7 +2277,7 @@ namespace PowerSDR
 
                                 if ((r1.IsMatch(us2)))
                                 {
-                                  //   Debug.WriteLine("bypass4 " + DX_Spotter[DX_Index1]);
+                                     Debug.WriteLine("bypass4 " + DX_Spotter[DX_Index1]);
                                     continue; // dont show spot if not on the r1 list
                                 }
 
@@ -2227,7 +2297,7 @@ namespace PowerSDR
 
                                 if (!(r.IsMatch(us1)))
                                 {
-                                  //   Debug.WriteLine("bypass1 " + DX_Spotter[DX_Index1]);
+                                     Debug.WriteLine("bypass1 " + DX_Spotter[DX_Index1]);
                                     continue;// dont show spot if not on the r list
                                 }
 
@@ -2235,7 +2305,7 @@ namespace PowerSDR
                                 {
                                     if (!(r2.IsMatch(us2)))
                                     {
-                                      //    Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
+                                         Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
                                     }
                                 }
@@ -2243,7 +2313,7 @@ namespace PowerSDR
                                 {
                                     if (!(r1.IsMatch(us2)))
                                     {
-                                     //   Debug.WriteLine("bypass2 " + DX_Spotter[DX_Index1]);
+                                        Debug.WriteLine("bypass2 " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
                                     }
                                 }
@@ -2268,7 +2338,7 @@ namespace PowerSDR
                                     {
                                   
                                         xx = 1;
-                                    //   Debug.WriteLine("station dup============" + DX_Freq[ii] + " dup "+ DX_Freq[DX_Index1] + " dup " + DX_Station[DX_Index1] + " dup " + DX_Station[ii]);
+                                    Debug.WriteLine("station dup============" + DX_Freq[ii] + " dup "+ DX_Freq[DX_Index1] + " dup " + DX_Station[DX_Index1] + " dup " + DX_Station[ii]);
                                     } // freq too close so its a dup
                                 }
 
@@ -2304,7 +2374,7 @@ namespace PowerSDR
                                 if ((xx == 0) && (DX_Freq[DX_Index1] == DX_Freq[ii])) // if you already have this station in the spot list on the screen remove the old spot
                                 {
                                     xx = 1;
-                                  //   Debug.WriteLine("freq dup============");
+                                    Debug.WriteLine("freq dup============");
                                 }
 
                                 if (xx == 1)
@@ -2338,7 +2408,7 @@ namespace PowerSDR
 
                             if (DX_Index > 80)
                             {
-                                //  Debug.WriteLine("DX SPOT REACH 80 ");
+                                 Debug.WriteLine("DX SPOT REACH 80 ");
                                 DX_Index = 80; // you have reached max spots
                             }
 
@@ -2382,76 +2452,25 @@ namespace PowerSDR
                             DX_Mode[0] = DX_Mode[DX_Index1];
                             DX_Mode2[0] = DX_Mode2[DX_Index1];
 
-
-
-
-                            //------------------------------------------------------------------------------------
                             //------------------------------------------------------------------------------------
                             //------------------------------------------------------------------------------------
                             //------------------------------------------------------------------------------------
                             // Crosscheck Station Call sign Prefix with data from DXLOC.txt (lat and lon) 
                             // and create a list of Country, Callsign, X, Y on unscaled map
 
-                            if (SP8_Active == 1) // do if dxloc.txt file loaded in
-                            {
 
-                                int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
+                            updatemapspots();
 
-                                int Sun_Width = Sun_Right - Sun_Left;              //used by sun track routine
-
-                                Debug.WriteLine("MAPPING======");
-
-
-                                DX_Y[0] = 0;
-                                DX_X[0] = 0;
-                                DX_country[0] = null;
-
-                                int kk = 0;
-
-                                for (; kk < DXLOC_Index1; kk++)  // list of call sign prefixes and there corresponding LAT/LON
-                                {
-                                    if (DX_Station[0].StartsWith(DXLOC_prefix[kk]) == true) // look for a dx spot callsign prefix to make a match with the dxloc.txt list
-                                    {
-                                        if (DXLOC_prefix1[kk] != null)
-                                        {
-
-                                            if (DX_Station[0].Contains(DXLOC_prefix1[kk]) == false) continue; // dont choose if not a match
-
-                                        }
-
-                                        DX_Y[0] = (int)(((180 - (DXLOC_LAT[kk] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
-
-                                        DX_X[0] = (int)(((DXLOC_LON[kk] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
-
-                                        DX_country[0] = DXLOC_country[kk]; // save country into dx spotter list (pulled from dxloc list)
-
-                                        Debug.WriteLine("MAPPER " + DX_Station[0] + " "+ DX_X[0] + " " + DX_Y[0] + " cntry " + DX_country[0] +  " prefix "+ DXLOC_prefix[kk] +" lat "+ DXLOC_LAT[kk] + " lon "+ DXLOC_LON[kk]);
-
-                                        break; // got a match so break
-
-                                    }
-
-                                } // for kk loop for DXLOC in memory
-
-                                if (kk == DXLOC_Index1) // no match found
-                                {
-                                    DX_country[0] =" -- "; // dont have a match so need to add to list
-
-                                    Debug.WriteLine("MAPPER NO MACH FOR Station" + DX_Station[0]);
-
-                                }
-
-                            } // sp8_active = 1
 
                             //------------------------------------------------------------------------------------
                             //------------------------------------------------------------------------------------
                             //------------------------------------------------------------------------------------
 
-                              Debug.WriteLine("INSTALL NEW [0]=========== " + DX_Index);
+                            Debug.WriteLine("INSTALL NEW [0]=========== " + DX_Index);
 
 
                             processTCPMessage(); // send to spot window
-                            Debug.WriteLine("INSTALL NEW [0]=========== " + DX_Index);
+                            Debug.WriteLine("INSTALL NEW [1]=========== " + DX_Index);
 
 
                             SP4_Active = 0; // done processing message
@@ -2544,9 +2563,26 @@ namespace PowerSDR
                 statusBox.Text = "Socket";
                 console.spotterMenu.Text = "Socket";
 
-                SP_writer.Close();
-                SP_reader.Close();
-                networkStream.Close();
+                try
+                {
+                    SP_writer.Close();
+                    SP_reader.Close();
+                }
+                catch(Exception)
+                {
+
+
+                }
+
+                try
+                {
+                    networkStream.Close();
+                }
+                catch(Exception)
+                {
+
+                }
+
                 client.Close();
                 SP_Active = 0;
                 SP2_Active = 0;
@@ -2592,6 +2628,88 @@ namespace PowerSDR
         } // SPOTTER Thread
 
 
+
+        //===================================================================================
+        // ke9ns add update dx call and country on map
+        private void updatemapspots()
+        {
+
+
+            //------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------------
+            // Crosscheck Station Call sign Prefix with data from DXLOC.txt (lat and lon) 
+            // and create a list of Country, Callsign, X, Y on unscaled map
+
+            if (SP8_Active == 1) // do if dxloc.txt file loaded in
+            {
+
+                int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
+
+                int Sun_Width = Sun_Right - Sun_Left;              //used by sun track routine
+
+                Debug.WriteLine("MAPPING======");
+
+
+                DX_Y[0] = 0;
+                DX_X[0] = 0;
+                DX_country[0] = null;
+
+                int kk = 0;
+
+                for (; kk < DXLOC_Index1; kk++)  // list of call sign prefixes and there corresponding LAT/LON  DXLOC_Index1 is from when file was read into memory
+                {
+                    if (DX_Station[0].StartsWith(DXLOC_prefix[kk]) == true) // look for a dx spot callsign prefix to make a match with the dxloc.txt list
+                    {
+                        if (DXLOC_prefix1[kk] != null)
+                        {
+
+                            if (DX_Station[0].Contains(DXLOC_prefix1[kk]) == false) continue; // dont choose if not a match
+
+                        }
+
+                        DX_Y[0] = (int)(((180 - (DXLOC_LAT[kk] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
+
+                        DX_X[0] = (int)(((DXLOC_LON[kk] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+
+                        DX_country[0] = DXLOC_country[kk]; // save country into dx spotter list (pulled from dxloc list)
+
+                        Debug.WriteLine("MAPPER " + DX_Station[0] + " " + DX_X[0] + " " + DX_Y[0] + " cntry " + DX_country[0] + " prefix " + DXLOC_prefix[kk] + " lat " + DXLOC_LAT[kk] + " lon " + DXLOC_LON[kk]);
+
+                        break; // got a match so break
+
+                    }
+
+                } // for kk loop for DXLOC in memory
+
+                if (kk == DXLOC_Index1) // no match found
+                {
+                    DX_country[0] = " -- "; // dont have a match so need to add to list
+
+                    Debug.WriteLine("MAPPER NO MACH FOR Station" + DX_Station[0]);
+
+                }
+
+            } // sp8_active = 1
+            else
+            {
+                DX_country[0] = " -- "; // dont have a match so need to add to list
+
+                //  Debug.WriteLine("mapper OFF");
+
+            }
+
+
+        } //  updatemapspots()
+
+
+
+
+
+
+
+
         //===================================================================================
         // ke9ns add process message for spot.cs window by right clicking
         private void processTCPMessage()
@@ -2604,6 +2722,7 @@ namespace PowerSDR
 
                 if (DX_Age[ii] == null) DX_Age[ii] = "00";
                 else if (DX_Age[ii] == "  ") DX_Age[ii] = "00";
+
                 if (DX_Age[ii].Length == 1) DX_Age[ii] = "0" + DX_Age[ii];
 
                 string DXmode = "    "; // 5 spaces
@@ -2658,7 +2777,7 @@ namespace PowerSDR
 
                 UTCLAST = UTCNEW;
                           
-             //   Debug.WriteLine("Time to Check DX Spot Age =========== " + DX_Index);
+             //  Debug.WriteLine("Time to Check DX Spot Age =========== " + DX_Index);
 
                 for (int ii = DX_Index - 1; ii >= 0; ii--) // move from bottom of list up toward top of list
                 {
@@ -2680,12 +2799,12 @@ namespace PowerSDR
 
                         xxx++; //shorten dx_Index by 1
 
-                     //   Debug.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
+                        Debug.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
                      //   Debug.WriteLine("KK " + kk);
                      //   Debug.WriteLine("XXX " + xxx);
 
 
-                        for (; kk< (DX_Index - xxx); kk++)
+                        for (; kk < (DX_Index - xxx); kk++)
                         {
 
                             DX_FULLSTRING[kk] = DX_FULLSTRING[kk + xxx]; // 
@@ -2724,7 +2843,7 @@ namespace PowerSDR
                 return; // skip
             }
 
-} // processDXAGE
+        } // processDXAGE
 
 
         private void nameBox_MouseEnter(object sender, EventArgs e)
@@ -2978,7 +3097,7 @@ namespace PowerSDR
 
                     button1.Focus();
 
-                    Map_Last = 1; // redraw map spots
+                    Map_Last = 2; // redraw map spots
 
                 } // make sure index you clicked on is within range
 
@@ -3105,8 +3224,8 @@ namespace PowerSDR
 
 
 
-      
-    
+
+
         private static DisplayMode LastDisplayMode = 0;
 
         //===============================================================================================================================
@@ -3315,7 +3434,7 @@ namespace PowerSDR
 
          */
 
-            console.setupForm.clrbtnGrayLine_Changed(this, EventArgs.Empty); // get color from setup at startup
+            console.setupForm.clrbtnGrayLine_Changed(this, EventArgs.Empty);               // get color from setup at startup
 
             textBox1.Text += "Attempt login to:  NOAA Space Weather Prediction Center \r\n";
 
@@ -3431,19 +3550,19 @@ namespace PowerSDR
                     // Check if the number of spots on map changed (DXK is the # of spots on the current panadapter)
                     // Check for Transmitting (dont update if transmitting)
 
-                    if ( (!console.MOX) && ((UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) || (Map_Last == 1) ||
+                    if ( (!console.MOX) && ((UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) || (Map_Last > 0) ||
                         (((DX_Index != DX_Last) ||(Console.DXK != DXK_Last) || (console.RX1Band != RX1Band_Last)) && (SP8_Active == 1)) ) ) 
                     {
 
                       
-                        Debug.WriteLine("Update Track=================");
+                        Debug.WriteLine("Update DX Spots on Screen=================");
 
                         GrayLine_Last = Setup.DisplayGrayLineColor; // store last color for compare next time
 
                         DXK_Last = Console.DXK;
 
                         DX_Last = DX_Index;                    // if the DX spot list changed
-                        Map_Last = 0;
+                      
                         RX1Band_Last = console.RX1Band;
 
                         if ( (UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) || (Map_Last == 1))
@@ -3556,7 +3675,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0; // jump a little to save time
+                                                lon = lon + 30.0; // 30 jump a little to save time
                                                 check_for_light = false; // now in light so check for dark
 
                                             } // found light
@@ -3575,7 +3694,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0;         // jump a little to save time
+                                                lon = lon + 30.0;         // 30jump a little to save time
                                                 check_for_light = true; // in dark so now check for light
 
                                             } // found dark
@@ -3863,9 +3982,13 @@ namespace PowerSDR
 
                             } // GRAYLINE = true
 
-                        } // time changeed or color change
+                        } //  if ( (UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) )  time changeed or color change
 
-                      
+
+                        if (Map_Last == 2) updatemapspots();
+
+                        Map_Last = 0;
+
                         if (SP5_Active == 0) continue;
 
 
@@ -4002,24 +4125,70 @@ namespace PowerSDR
                             } // for ii DX_Index  (full dx spot list)
 
 
-                            if (chkMapBand.Checked == true) // just your band
+                            if (chkBoxPan.Checked == true) // show spots on map for just your panadapter
                             {
 
-                                //  for (int ii = 0; ii < Console.DXK; ii++) // dx call sign or country name on map is just for the band your on
-                                for (int ii = 0; ii < zz; ii++) // dx call sign or country name on map is just for the band your on
-                                {
+                                 for (int ii = 0; ii < Console.DXK; ii++) // dx call sign or country name on map is just for the band your on
+                                 {
 
-                                    //  if ((DX_X[Display.holder[ii]] != 0) && (DX_Y[Display.holder[ii]] != 0))  // dont even bother with the spot if X and Y = 0 since that means no data to plot
-                                    if ((DX_X[spots[ii]] != 0) && (DX_Y[spots[ii]] != 0))  // dont even bother with the spot if X and Y = 0 since that means no data to plot
-
+                                    if ((DX_X[Display.holder[ii]] != 0) && (DX_Y[Display.holder[ii]] != 0))  // dont even bother with the spot if X and Y = 0 since that means no data to plot
                                     {
 
                                         if (chkMapCountry.Checked == true) // spot country on map
                                         {
+                                             g.DrawString(DX_country[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]]); // use Pandapdater holder[] data
+                                     
+                                        } // chkMapCountry true = draw country name on map
 
-                                            //  g.DrawString(DX_country[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]]); // use Pandapdater holder[] data
+                                        else if (chkMapCall.Checked == true)  // else show call signs on map
+                                        {
+
+                                            for (rr = 0; rr < kk; rr++)  // check all accumulated countrys from the current DX_index list
+                                            {
+                                                if (country[rr] == DX_country[Display.holder[ii]])  // use Pandapdater holder[] data
+                                                {
+                                                    yy[rr] = yy[rr] + 10; // multiple calls for same country stack downward
+                                                    Flag11 = 1;
+                                                    break;
+                                                }
+
+
+                                            } // for rr loop
+
+
+                                            if (Flag11 == 0)
+                                            {
+                                                country[kk] = DX_country[Display.holder[ii]]; // add to list
+                                                yy[kk] = 0;
+                                            }
+
+                                            kk++; // increment for next country
+
+                                            Flag11 = 0; // reset flag
+                                            g.DrawString(DX_Station[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]] + yy[rr]); // Station  name
+                                 
+                                        } // chkMapCall true = draw all sign on map
+
+
+                                    } //  if ((DX_X[ii] != 0) && (DX_Y[ii] != 0))
+
+
+                                } // for ii index loop
+
+                            } // chkboxpan
+
+                            else if (chkMapBand.Checked == true) //  show spots on map for your entire band
+                            {
+
+                                for (int ii = 0; ii < zz; ii++) // dx call sign or country name on map is just for the band your on
+                                {
+
+                                    if ((DX_X[spots[ii]] != 0) && (DX_Y[spots[ii]] != 0))  // dont even bother with the spot if X and Y = 0 since that means no data to plot
+                                    {
+
+                                        if (chkMapCountry.Checked == true) // spot country on map
+                                        {
                                             g.DrawString(DX_country[spots[ii]], font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]]); // use Pandapdater holder[] data
-
 
                                         } // chkMapCountry true = draw country name on map
 
@@ -4028,7 +4197,6 @@ namespace PowerSDR
 
                                             for (rr = 0; rr < kk; rr++)  // check all accumulated countrys from the current DX_index list
                                             {
-                                                //  if (country[rr] == DX_country[Display.holder[ii]])  // use Pandapdater holder[] data
                                                 if (country[rr] == DX_country[spots[ii]])  // use Pandapdater holder[] data
                                                 {
                                                     yy[rr] = yy[rr] + 10; // multiple calls for same country stack downward
@@ -4042,8 +4210,6 @@ namespace PowerSDR
 
                                             if (Flag11 == 0)
                                             {
-                                               // country[kk] = DX_country[Display.holder[ii]]; // add to list
-
                                                 country[kk] = DX_country[spots[ii]]; // add to list
                                                 yy[kk] = 0;
                                             }
@@ -4051,8 +4217,7 @@ namespace PowerSDR
                                             kk++; // increment for next country
 
                                             Flag11 = 0; // reset flag
-                                          //  g.DrawString(DX_Station[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]] + yy[rr]); // Station  name
-
+                                          
                                             g.DrawString(DX_Station[spots[ii]], font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]] + yy[rr]); // Station  name
 
 
@@ -4156,9 +4321,22 @@ namespace PowerSDR
         public void chkPanMode_CheckedChanged(object sender, EventArgs e)
         {
 
-          
+            if (SP5_Active == 1) // only check if tracking is already on
+            {
+                if (chkPanMode.Checked == true)
+                {
+
+                    Display.map = 1;
+                    Display.CurrentDisplayMode = DisplayMode.PANAFALL;
 
 
+                }
+                else if (chkPanMode.Checked == false) // turn off special pan and put back original display mode
+                {
+                    Display.map = 0;
+                    Display.CurrentDisplayMode = LastDisplayMode;
+                }
+            }
         } // chkPanMode_CheckedChanged
 
 
@@ -4427,7 +4605,7 @@ namespace PowerSDR
             else
             {
                 SP8_Active = 0;
-              //  Debug.WriteLine("NO DX LOC FILE");
+                Debug.WriteLine("NO DX LOC FILE============================");
             }
 
 
@@ -4447,6 +4625,20 @@ namespace PowerSDR
             if (chkMapCall.Checked == true) chkMapCountry.Checked = false;
             Map_Last = 1;
 
+        }
+
+        private void chkMapBand_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkMapBand.Checked == true) chkBoxPan.Checked = false;
+            Map_Last = 1;
+
+        }
+
+        private void chkBoxPan_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkBoxPan.Checked == true) chkMapBand.Checked = false;
+            Map_Last = 1;
         }
     } // Spotcontrol
 

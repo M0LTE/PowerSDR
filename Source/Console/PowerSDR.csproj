@@ -51,7 +51,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE;NO_MCL_PM;NO_KE9NS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NO_MCL_PM;NO_KE9NS</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -126,9 +126,14 @@
       <HintPath>..\..\bin\Release\Interop.TDxInput.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.JScript" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualBasic.Compatibility" />
     <Reference Include="Microsoft.VisualC" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Sanford.Collections">
       <HintPath>..\..\bin\Release\DJ\Sanford.Collections.dll</HintPath>
@@ -157,6 +162,10 @@
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Json.4.0.20126.16343\lib\net40\System.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms">
@@ -548,6 +557,8 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Content Include="Scripts\json-serialize.js" />
+    <Content Include="Scripts\json-serialize.min.js" />
     <EmbeddedResource Include="Resources\picD1.png" />
     <EmbeddedResource Include="Resources\sun.png" />
     <EmbeddedResource Include="Resources\met3.jpg" />
@@ -891,6 +902,7 @@
     <EmbeddedResource Include="Resources\swissli.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\DataSources\Setup.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

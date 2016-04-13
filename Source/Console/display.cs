@@ -4241,7 +4241,7 @@ namespace PowerSDR
 
 
 
-      //==========================================================================================================================================
+        //==========================================================================================================================================
         //================================================================
         // ke9ns drawwaterfall text
         //       continuum mode draws db numbers instead of freq
@@ -6746,7 +6746,7 @@ namespace PowerSDR
 
                         autobright3 = autobright = 0; // turn off feature
 
-                        if ((AB3 > -140) && (AB3 < -50))
+                        if ((AB3 > -170) && (AB3 < -50))
                         {
                             console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright;
                             console.setupForm.udDisplayWaterfallLowLevel.Value = (decimal)WaterfallLowThreshold;
