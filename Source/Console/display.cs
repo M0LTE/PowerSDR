@@ -82,7 +82,8 @@ namespace PowerSDR
 
         public const int DATA_BUFFER_SIZE = 4096;               // ke9ns add  every place in this file with 4096 was substitued with this const
 
-        public const int abright = 5;                           // ke9ns add  used by auto water level, how much db to subtract from the actual avg determined by a scan of the panadapter
+        public const int abright = 5;                           // ke9ns add  used by auto water level, how much db to subtract from the actual avg determined by a scan of the waterfall
+        public const int abrightpan = 15;                       // ke9ns add  used by auto water level, how much db to subtract from the actual avg determined by a scan of the panadapter
 
 
         public static float[] new_display_data;					// Buffer used to store the new data from the DSP for the display
@@ -209,10 +210,10 @@ namespace PowerSDR
                 {
                     switch (current_display_mode_bottom)  //ke9ns add  (change visability of autobrightbox on console
                     {
-
+                        case DisplayMode.PANADAPTER:
                         case DisplayMode.PANAFALL:
                         case DisplayMode.WATERFALL:
-                            console.autoBrightBox.Text = "Auto Wtr Level";
+                            console.autoBrightBox.Text = "Auto Wtr/Pan Lvl";
                             autoBright5 = 1;
 
                             break;
@@ -644,8 +645,8 @@ namespace PowerSDR
 
         public static byte continuum = 0; // ke9ns add
 
-        public static byte autoBright4 = 0; // ke9ns add
-        public static byte autoBright5 = 0; // ke9ns add
+        public static byte autoBright4 = 0; // ke9ns add 1=rx1 in panafall or waterfall mode when RX2 ON
+        public static byte autoBright5 = 0; // ke9ns add 1=rx2 in panafall or waterfall mode when RX1 ON
 
         public static DisplayMode current_display_mode = DisplayMode.PANADAPTER;
 		public static DisplayMode CurrentDisplayMode
@@ -660,11 +661,11 @@ namespace PowerSDR
               
                 switch (current_display_mode)  //ke9ns add  (change visability of autobrightbox on console
                 {
-                   
 
+                    case DisplayMode.PANADAPTER:
                     case DisplayMode.PANAFALL:
                     case DisplayMode.WATERFALL:
-                         console.autoBrightBox.Text = "Auto Wtr Level";
+                         console.autoBrightBox.Text = "Auto Wtr/Pan Lvl";
                          autoBright4 = 1;
                         
 
@@ -834,7 +835,7 @@ namespace PowerSDR
 
 
 
-        private static int spectrum_grid_max1 = 0; // ke9ns add
+        private static int spectrum_grid_max1 = 0; // ke9ns add to adjust grid during transmit
         private static int spectrum_grid_max = 0;
 		public static int SpectrumGridMax
 		{
@@ -1054,6 +1055,7 @@ namespace PowerSDR
         private static byte autobright = 0; //  ke9ns ADD from console rx1 waterfall bright adjust
         private static byte autobright2 = 0; //  ke9ns ADD from console rx2 waterfall bright adjust
         private static byte autobright3 = 0; //  ke9ns ADD from console TX waterfall bright adjust
+        private static byte autobright6 = 0; //  ke9ns ADD from console rx1 panadapter bright adjust
 
         public static byte AutoBright       // this is called or set in console
         {
@@ -1068,6 +1070,18 @@ namespace PowerSDR
                 else
                 {
                     autobright3 = 0;
+
+                    if ((console.chkPower.Checked) && (value == 2) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)))
+                    {
+                        autobright6 = value; // RX1 adjust
+                        return;
+                    }
+                    else
+                    {
+                        autobright6 = 0;
+                       
+                    }
+
 
                     if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.WATERFALL) || (current_display_mode == DisplayMode.PANAFALL))) autobright = value; // RX1 adjust
                     else autobright = 0;
@@ -5463,6 +5477,7 @@ namespace PowerSDR
 				High = High + 12000;
 			}
 
+           
       //=================================================================
       //get line of spectrum data (if new data available)
       //=================================================================
@@ -5634,12 +5649,47 @@ namespace PowerSDR
 
                 else if ((bottom)) points[i].Y = points[i].Y + H; // this is the origina only line
 
-			}  // for loop from 0 to W wide
 
-//================================================================
+            //=========================================================================
+            // ke9ns auto
+                if (autobright6 == 2) // RX1
+                {
+                    if ((!mox) && (rx == 1)) AB = AB + (long)max; // ke9ns add autobright feature 
+
+                }
 
 
-			if(!bottom) max_y = local_max_y;                // used in TNF function
+            }  // for loop from 0 to W wide
+
+
+            //=========================================================================
+            //=========================================================================
+            // ke9ns auto
+            if (autobright6 == 2) // rx1 adjust
+            {
+                AB1[0] = AB / W; // get avg of the entire read
+
+                AB3 = (float)(AB1[0]);
+
+                autobright6 = autobright3 = autobright = 0; // turn off feature
+
+                if ((AB3 > -170) && (AB3 < -50))
+                {
+                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan);
+                    SpectrumGridMin = (int)(AB3 - abrightpan);
+
+               
+
+                }
+                //  Debug.WriteLine("rx1 value " + AB3);
+
+            } // autobright = 1
+
+
+            //================================================================
+
+
+            if (!bottom) max_y = local_max_y;                // used in TNF function
 
             if (pan_fill)                               // trace spectrum line and fill under it
             {
@@ -5959,7 +6009,7 @@ namespace PowerSDR
         private static float WM5 = 0;// ke9ns rx2 number of hz on screen
 
         // RX1
-        private static long AB = 0; // ke9ns for autobright
+        private static long AB = 0; // ke9ns for autobright accumulator across a single W length line of data
         private static long[] AB1 = new long[10];// ke9ns
         private static float AB3 = 0; // ke9ns
 
@@ -6716,7 +6766,7 @@ namespace PowerSDR
 
                 if (mox)
                 {
-                    if (autobright3 == 1)
+                    if (autobright3 == 1) // tx adjust
                     {
                         A3B1[0] = A3B / A4B; // get avg of the entire read
 
@@ -6738,7 +6788,7 @@ namespace PowerSDR
                 }
                 else if (rx == 1)
                 {
-                    if (autobright == 1)
+                    if (autobright == 1) // rx1 adjust
                     {
                         AB1[0] = AB / W; // get avg of the entire read
 
@@ -6761,7 +6811,7 @@ namespace PowerSDR
                 else if (rx == 2)
                 {
 
-                    if (autobright2 == 1)
+                    if (autobright2 == 1)  // rx2 adjust
                     {
                         A2B1[0] = A2B / W; // get avg of the entire read
 

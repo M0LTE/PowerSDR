@@ -508,13 +508,13 @@ namespace PowerSDR
 		private void load_alpha()
 		{
 
-			if (!File.Exists(console.AppDataPath+"\\"+sfile))	// create default morsedef.txt
-			{
+			if (!File.Exists(console.AppDataPath + sfile))    // create default morsedef.txt   "\\ " +
+            {
 #if(CWX_DEBUG)
 				MessageBox.Show(sfile+" not found, creating ...");
 #endif
-                using (StreamWriter sw = new StreamWriter(console.AppDataPath + "\\" + sfile)) 
-				{
+                using (StreamWriter sw = new StreamWriter(console.AppDataPath + sfile))  // "\\" +
+                {
 					sw.WriteLine("32| |*        | space     ");
 					sw.WriteLine("33|!|...-.    | [SN]      ");
 					sw.WriteLine("34|\"|*        | loop      ");
@@ -582,8 +582,8 @@ namespace PowerSDR
 				}
 			}
 			//MessageBox.Show("reading ",sfile);
-            using (StreamReader sr = new StreamReader(console.AppDataPath + "\\" + sfile)) 
-			{
+            using (StreamReader sr = new StreamReader(console.AppDataPath + sfile))  // "\\" +
+            {
 				String line;
 				String t;
 				int nl = 0;
@@ -1919,10 +1919,10 @@ namespace PowerSDR
 		}
 		private void write_a2m2()
 		{
-            if (File.Exists(console.AppDataPath + "\\" + sfile))
-                File.Delete(console.AppDataPath + "\\" + sfile);			// out withe the old
-            using (StreamWriter sw = new StreamWriter(console.AppDataPath + "\\" + sfile))	// and in with the new
-			{
+            if (File.Exists(console.AppDataPath + sfile)) File.Delete(console.AppDataPath +  sfile);            // out withe the old   // "\\" + for both
+             
+            using (StreamWriter sw = new StreamWriter(console.AppDataPath +  sfile))  // and in with the new // "\\" +
+            {
 				for (int i = 0; i < 64; i++)
 				{
 					sw.WriteLine(a2m2[i]);

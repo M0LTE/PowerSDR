@@ -62,8 +62,8 @@ namespace PowerSDR
         public TabPage tpDSP;
         private System.Windows.Forms.TabPage tpDisplay;
 		private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
-		private System.Windows.Forms.NumericUpDownTS udDisplayGridMin;
-		private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
+        public NumericUpDownTS udDisplayGridMin;
+        private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
 		private System.Windows.Forms.LabelTS lblDisplayGridStep;
 		private System.Windows.Forms.LabelTS lblDisplayGridMin;
 		private System.Windows.Forms.LabelTS lblDisplayGridMax;
@@ -24272,8 +24272,10 @@ namespace PowerSDR
 		{
             openFileDialog1.InitialDirectory = String.Empty;
             string path = console.AppDataPath;
-			path = path.Substring(0, path.LastIndexOf("\\"));
-			openFileDialog1.InitialDirectory = path;
+
+            path = path.Substring(0, path.LastIndexOf("\\"));
+
+            openFileDialog1.InitialDirectory = path;
 			// openFileDialog1.ShowDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 db_import_success = false;

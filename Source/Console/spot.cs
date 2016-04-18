@@ -200,6 +200,7 @@ namespace PowerSDR
             this.textBox1.Size = new System.Drawing.Size(729, 270);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
+            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
             // 
             // nodeBox
@@ -671,7 +672,7 @@ namespace PowerSDR
 
         }
 
-        public static byte SP_Active = 0;  // 1= DX Spot feature ON 2=waiting for spots
+        public static byte SP_Active = 0;  // 1= DX Spot feature ON, 2=logging in 3=waiting for spots
         public static byte SP2_Active = 0; // DX Spot: 0=closed so ok to open again if you want, 1=in process of shutting down
         public static byte SP4_Active = 0; // 1=processing valid DX spot. 0=not processing new DX spot
 
@@ -687,7 +688,7 @@ namespace PowerSDR
         {
 
       
-            string file_name = console.AppDataPath + "\\SWL.csv"; // //  sked - b15.csv
+            string file_name = console.AppDataPath + "SWL.csv"; // //  sked - b15.csv
 
             if (!File.Exists(file_name))
             {
@@ -789,15 +790,31 @@ namespace PowerSDR
         private void SWLSPOTTER()
         {
   
-            string file_name = console.AppDataPath + "\\SWL.csv"; // //  sked - b15.csv
+            string file_name = console.AppDataPath + "SWL.csv"; //  sked - b15.csv  
 
             if (File.Exists(file_name))
             {
 
+                try
+                {
+                    stream2 = new FileStream(file_name, FileMode.Open); // open file
+                    reader2 = new BinaryReader(stream2, Encoding.ASCII);
+                }
+                catch(Exception)
+                {
+                    SP1_Active = 0; // turn off SWL spotter
 
-                stream2 = new FileStream(file_name, FileMode.Open); // open file
-                reader2 = new BinaryReader(stream2, Encoding.ASCII);
+                    statusBoxSWL.ForeColor = Color.Red;
+                    statusBoxSWL.Text = "Off";
 
+
+                    if (SP_Active == 0)
+                    {
+                        console.spotterMenu.ForeColor = Color.Red;
+                        console.spotterMenu.Text = "Spotter";
+                    }
+                    return;
+                }
 
                 var result = new StringBuilder();
 
@@ -1088,10 +1105,26 @@ namespace PowerSDR
                 {
                     textBox1.Text += "Force closed \r\n";
 
-                    SP_writer.Close();
-                    SP_reader.Close();
-                    networkStream.Close();
-                    client.Close();
+                    try
+                    {
+                        SP_writer.Close();
+                        SP_reader.Close();
+                    }
+                    catch(Exception)
+                    {
+                        Debug.Write("writer/reader was not open to close");
+                    }
+
+                    try
+                    {
+
+                        networkStream.Close();
+                        client.Close();
+                    }
+                    catch(Exception)
+                    {
+                        Debug.Write("networkstream was never open to close");
+                    }
 
                     SP_Active = 0; // turn off DX Spotter
                     SP2_Active = 0; // turn off DX Spotter
@@ -1174,8 +1207,8 @@ namespace PowerSDR
            DXLOC_FILE(); // open DXLOC.txt file and put into array of lat/lon values vs prefix
 
          
-                try
-                {
+            try // opening socket
+            {
                 textBox1.Text += "Attempt Opening socket \r\n";
 
                 client = new TcpClient();                  
@@ -2556,7 +2589,7 @@ namespace PowerSDR
             {
                 textBox1.Text += "Socket Forced closed \r\n";
 
-              //  Debug.WriteLine("cannot open socket" + SE);
+                Debug.WriteLine("cannot open socket or socket closed on me" + SE);
                 statusBox.ForeColor = Color.Red;
                 console.spotterMenu.ForeColor = Color.Red;
 
@@ -2570,20 +2603,21 @@ namespace PowerSDR
                 }
                 catch(Exception)
                 {
-
+                  
 
                 }
 
                 try
                 {
                     networkStream.Close();
+                    client.Close();
                 }
                 catch(Exception)
                 {
 
                 }
 
-                client.Close();
+               
                 SP_Active = 0;
                 SP2_Active = 0;
 
@@ -2600,7 +2634,7 @@ namespace PowerSDR
             {
                 textBox1.Text += "Socket Forced closed \r\n";
 
-              //  Debug.WriteLine("socket exception issue" + e1);
+                Debug.WriteLine("socket exception issue" + e1);
 
                  statusBox.ForeColor = Color.Red;
                 console.spotterMenu.ForeColor = Color.Red;
@@ -2608,19 +2642,33 @@ namespace PowerSDR
                 statusBox.Text = "Socket";
                 console.spotterMenu.Text = "Socket";
 
-                SP_writer.Close();
-                SP_reader.Close();
-                networkStream.Close();
-                client.Close();
+                try
+                {
+                    SP_writer.Close();
+                    SP_reader.Close();
+                }
+                catch (Exception)
+                {
+
+
+                }
+
+                try
+                {
+                    networkStream.Close();
+                    client.Close();
+                }
+                catch (Exception)
+                {
+
+                }
 
                 SP2_Active = 0;
 
                 statusBox.Text = "Closed";
                 console.spotterMenu.Text = "Spotter";
 
-                //   textBox1.Text += "Socket crash Done \r\n";
-            //    textBox1.Text = e1.ToString();
-
+           
                 return;
             }
 
@@ -2642,7 +2690,7 @@ namespace PowerSDR
             // Crosscheck Station Call sign Prefix with data from DXLOC.txt (lat and lon) 
             // and create a list of Country, Callsign, X, Y on unscaled map
 
-            if (SP8_Active == 1) // do if dxloc.txt file loaded in
+            if ((SP8_Active == 1) && (SP_Active > 2)  && (SP5_Active == 1 ) && (DX_Index > 0 )) // do if dxloc.txt file loaded in
             {
 
                 int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
@@ -2650,7 +2698,6 @@ namespace PowerSDR
                 int Sun_Width = Sun_Right - Sun_Left;              //used by sun track routine
 
                 Debug.WriteLine("MAPPING======");
-
 
                 DX_Y[0] = 0;
                 DX_X[0] = 0;
@@ -3000,6 +3047,7 @@ namespace PowerSDR
         {
             textBox1.ShortcutsEnabled = false;
 
+          
             chkDXMode.Checked = true;
 
             if (e.Button == MouseButtons.Left)
@@ -3675,7 +3723,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0; // 30 jump a little to save time
+                                                lon = lon + 40.0; // 30 jump a little to save time
                                                 check_for_light = false; // now in light so check for dark
 
                                             } // found light
@@ -3694,7 +3742,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0;         // 30jump a little to save time
+                                                lon = lon + 40.0;         // 30jump a little to save time
                                                 check_for_light = true; // in dark so now check for light
 
                                             } // found dark
@@ -3734,7 +3782,7 @@ namespace PowerSDR
                                                     ww++;
                                                     if (ww == 2) break;      // if we have 2 edge then done
 
-                                                    lon = lon - 30.0;           // jump a little to save time
+                                                    lon = lon - 40.0;           // jump a little to save time
                                                     check_for_light = false; // now in light so check for dark
 
                                                 } // found light
@@ -3752,7 +3800,7 @@ namespace PowerSDR
                                                     ww++;
                                                     if (ww == 2) break;    // if we have 2 edge then done
 
-                                                    lon = lon - 30;         // jump a little to save time
+                                                    lon = lon - 40;         // jump a little to save time
                                                     check_for_light = true; // in dark so now check for light
 
                                                 } // found dark
@@ -3849,7 +3897,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0; // jump a little to save time
+                                                lon = lon + 40.0; // jump a little to save time
                                                 check_for_light = false; // now in light so check for dark
 
                                             } // found light
@@ -3868,7 +3916,7 @@ namespace PowerSDR
                                                 ww++;
                                                 if (ww == 2) break;   // both edges found so done
 
-                                                lon = lon + 30.0;         // jump a little to save time
+                                                lon = lon + 40.0;         // jump a little to save time
                                                 check_for_light = true; // in dark so now check for light
 
                                             } // found dark
@@ -3907,7 +3955,7 @@ namespace PowerSDR
                                                     ww++;
                                                     if (ww == 2) break;      // if we have 2 edge then done
 
-                                                    lon = lon - 30.0;           // jump a little to save time
+                                                    lon = lon - 40.0;           // jump a little to save time
                                                     check_for_light = false; // now in light so check for dark
 
                                                 } // found light
@@ -3925,7 +3973,7 @@ namespace PowerSDR
                                                     ww++;
                                                     if (ww == 2) break;    // if we have 2 edge then done
 
-                                                    lon = lon - 30.0;         // jump a little to save time
+                                                    lon = lon - 40.0;         // jump a little to save time
                                                     check_for_light = true; // in dark so now check for light
 
                                                 } // found dark
@@ -4348,16 +4396,16 @@ namespace PowerSDR
         private static int SP8_Active = 0;    // 1=DX LOC scanned into memory
 
         // data obtained from DXLOC.txt file
-        public static string[] DXLOC_prefix = new string[1000];       // prefix (must start with)
-        public static string[] DXLOC_prefix1 = new string[1000];      // prefix (must also contain) /
-        public static string[] DXLOC_prefix2 = new string[1000];      // prefix (must exclude) \
+        public static string[] DXLOC_prefix = new string[2000];       // prefix (must start with)
+        public static string[] DXLOC_prefix1 = new string[2000];      // prefix (must also contain) /
+        public static string[] DXLOC_prefix2 = new string[2000];      // prefix (must exclude) \
 
-        public static string[] DXLOC_lat = new string[1000];          // text of lat
-        public static string[] DXLOC_lon = new string[1000];          // text of  lon
-        public static double[] DXLOC_LAT = new double[1000];          // latitude  
-        public static double[] DXLOC_LON = new double[1000];          //  longitude
-        public static string[] DXLOC_country = new string[1000];      // country
-        public static string[] DXLOC_continent = new string[1000];    // continent
+        public static string[] DXLOC_lat = new string[2000];          // text of lat
+        public static string[] DXLOC_lon = new string[2000];          // text of  lon
+        public static double[] DXLOC_LAT = new double[2000];          // latitude  
+        public static double[] DXLOC_LON = new double[2000];          //  longitude
+        public static string[] DXLOC_country = new string[2000];      // country
+        public static string[] DXLOC_continent = new string[2000];    // continent
 
      
         //=======================================================================================
@@ -4379,7 +4427,7 @@ namespace PowerSDR
         public void DXLOC_FILE()
         {
 
-            string file_name = console.AppDataPath + "\\DXLOC.txt"; // //  sked - b15.csv
+            string file_name = console.AppDataPath + "DXLOC.txt"; // //  sked - b15.csv
 
             textBox1.Text += "Attempting to open DX Location list\r\n";
 
@@ -4388,10 +4436,20 @@ namespace PowerSDR
 
                 textBox1.Text += "Reading DX Location list\r\n";
 
-                stream2 = new FileStream(file_name, FileMode.Open); // open  file
-                reader2 = new BinaryReader(stream2, Encoding.ASCII);
+                try
+                {
+                    stream2 = new FileStream(file_name, FileMode.Open); // open  file
+                    reader2 = new BinaryReader(stream2, Encoding.ASCII);
+
+                }
+                catch(Exception)
+                {
+                    SP8_Active = 0;
+                    Debug.WriteLine("NO DX LOC FILE============================");
+                    return;
 
 
+                }
                 var result = new StringBuilder();
 
                 if (SP8_Active == 0) // dont reset if already scanned in  database
@@ -4489,7 +4547,7 @@ namespace PowerSDR
                                 catch (Exception)
                                 {
 
-                                    //     Debug.WriteLine(" NORTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                       Debug.WriteLine(" NORTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
                                     DXLOC_LAT[DXLOC_Index1] = 0;
 
 
@@ -4510,8 +4568,8 @@ namespace PowerSDR
                                 catch (Exception)
                                 {
                                     DXLOC_LAT[DXLOC_Index1] = 0;
-                                    //    Debug.WriteLine(" SOUTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
-                                    //    Debug.Write(" prefix>" + DXLOC_prefix[DXLOC_Index1]);
+                                       Debug.WriteLine(" SOUTH " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                        Debug.Write(" prefix>" + DXLOC_prefix[DXLOC_Index1]);
 
                                 }
 
@@ -4531,7 +4589,7 @@ namespace PowerSDR
                                 }
                                 catch (Exception)
                                 {
-                                    //    Debug.WriteLine(" WEST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                        Debug.WriteLine(" WEST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
                                     DXLOC_LON[DXLOC_Index1] = 0;
                                 }
 
@@ -4544,12 +4602,12 @@ namespace PowerSDR
                                 {
 
                                     DXLOC_LON[DXLOC_Index1] = Convert.ToDouble(DXLOC_lon[DXLOC_Index1].Substring(1, ff));
-                                    //   Debug.WriteLine(" LON>" + DXLOC_LON[DXLOC_Index1]);
+                                    //  Debug.WriteLine(" LON>" + DXLOC_LON[DXLOC_Index1]);
 
                                 }
                                 catch (Exception)
                                 {
-                                    //    Debug.WriteLine(" EAST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
+                                       Debug.WriteLine(" EAST " + DXLOC_lon[DXLOC_Index1].Substring(1, ff));
                                     DXLOC_LON[DXLOC_Index1] = 0;
                                 }
 
@@ -4559,7 +4617,7 @@ namespace PowerSDR
 
                             DXLOC_Index1++;
 
-                            if (DXLOC_Index1 > 999) break;
+                            if (DXLOC_Index1 > 2000) break;
 
                             result = new StringBuilder(); // clean up for next line
 
@@ -4581,6 +4639,8 @@ namespace PowerSDR
                     {
                         //  Debug.WriteLine("excpt======== " + e);
                         //     textBox1.Text = e.ToString();
+
+                        textBox1.Text += "No DXLOC.txt list file found in database folder\r\n";
 
                         break; // done with file
                     }
@@ -4639,6 +4699,13 @@ namespace PowerSDR
 
             if (chkBoxPan.Checked == true) chkMapBand.Checked = false;
             Map_Last = 1;
+        }
+
+        private void textBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up
+
         }
     } // Spotcontrol
 

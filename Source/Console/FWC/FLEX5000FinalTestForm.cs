@@ -1049,7 +1049,7 @@ namespace PowerSDR
 			}
 			toolTip1.SetToolTip(btnPABias, test_pa_bias);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			path += "\\pa_bias.csv";
 			bool file_exists = File.Exists(path);
@@ -1475,7 +1475,7 @@ namespace PowerSDR
 			if(b) btnPAPower.BackColor = Color.Green;
 			else btnPAPower.BackColor = Color.Red;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\pa_power.csv");
 			StreamWriter writer = new StreamWriter(path+"\\pa_power.csv", true);
@@ -1523,11 +1523,11 @@ namespace PowerSDR
 			console.SyncCalDateTime();
 			lstDebug.Items[0] = "Saving Power data to EEPROM...done";
 
-            if (File.Exists(console.AppDataPath + "\\Compression.xls"))
+            if (File.Exists(console.AppDataPath + "Compression.xls"))
 			{
-                Process.Start(console.AppDataPath + "\\power.csv");
+                Process.Start(console.AppDataPath + "power.csv");
 				Thread.Sleep(100);
-                Process.Start(console.AppDataPath + "\\Compression.xls");
+                Process.Start(console.AppDataPath + "Compression.xls");
 			}
 
 			if(console.CurrentModel == Model.FLEX3000)
@@ -1765,7 +1765,7 @@ namespace PowerSDR
 
 			if(!fail) btnPASWR.BackColor = Color.Green;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\pa_swr.csv");
 			StreamWriter writer = new StreamWriter(path+"\\pa_swr.csv", true);
@@ -2103,7 +2103,7 @@ namespace PowerSDR
 				test_pa_verify = test_pa_verify.Substring(0, test_pa_verify.Length-2)+")";
 			toolTip1.SetToolTip(btnPAVerify, test_pa_verify);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\pa_verify.csv");
 			StreamWriter writer = new StreamWriter(path+"\\pa_verify.csv", true);
@@ -2749,7 +2749,7 @@ namespace PowerSDR
 				test_pa_bridge = test_pa_bridge.Substring(0, test_pa_bridge.Length-2)+")";
 			//toolTip1.SetToolTip(btnRunPACal, test_pa_bridge);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\pa_bridge.csv");
 			StreamWriter writer = new StreamWriter(path+"\\pa_bridge.csv", true);
@@ -2822,7 +2822,7 @@ namespace PowerSDR
 			/*if(pass && pwr_pass) btnRunPACal.BackColor = Color.Green;
 			else btnRunPACal.BackColor = Color.Red;*/
 
-            path = console.AppDataPath + "\\Tests";
+            path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			file_exists = File.Exists(path+"\\pa_power.csv");
 			writer = new StreamWriter(path+"\\pa_power.csv", true);
@@ -2875,7 +2875,7 @@ namespace PowerSDR
 
 			try
 			{
-                writer = new StreamWriter(console.AppDataPath + "\\power.csv");
+                writer = new StreamWriter(console.AppDataPath + "power.csv");
 				writer.WriteLine("Band, 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100");
 				for(int i=1; i<=(int)Band.B6M; i++)
 				{
@@ -2894,14 +2894,14 @@ namespace PowerSDR
 					MessageBoxIcon.Error);
 			}
 
-            if (File.Exists(console.AppDataPath + "\\Compression.xls"))
+            if (File.Exists(console.AppDataPath + "Compression.xls"))
 			{
-                Process.Start(console.AppDataPath + "\\power.csv");
+                Process.Start(console.AppDataPath + "power.csv");
 				Thread.Sleep(100);
-                Process.Start(console.AppDataPath + "\\Compression.xls");
+                Process.Start(console.AppDataPath + "Compression.xls");
 			}
 
-            path = console.AppDataPath + "\\Tests";
+            path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			file_exists = File.Exists(path+"\\pa_swr.csv");
 			writer = new StreamWriter(path+"\\pa_swr.csv", true);
@@ -3098,7 +3098,7 @@ namespace PowerSDR
 			grpIO.Enabled = true;
 			grpATU.Enabled = true;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 
 			bool file_exists = File.Exists(path+"\\io_xvrx.csv");
@@ -3263,7 +3263,7 @@ namespace PowerSDR
 			grpIO.Enabled = true;
 			grpATU.Enabled = true;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 
 			bool file_exists = File.Exists(path+"\\io_rx1inout.csv");
@@ -3431,7 +3431,7 @@ namespace PowerSDR
 			grpPA.Enabled = true;
 			grpATU.Enabled = true;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 
 			bool file_exists = File.Exists(path+"\\io_txmon.csv");
@@ -3704,7 +3704,7 @@ namespace PowerSDR
 
 			if(!fail) btnATUSWR.BackColor = Color.Green;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\atu_swr.csv");
 			StreamWriter writer = new StreamWriter(path+"\\atu_swr.csv", true);
@@ -3753,7 +3753,7 @@ namespace PowerSDR
                 btnCheckEEPROM.BackColor = Color.Red;
             else btnCheckEEPROM.BackColor = Color.Green;
             
-            string path = console.AppDataPath + "..\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\sanity.csv");
             StreamWriter writer = new StreamWriter(path + "\\sanity.csv", true);

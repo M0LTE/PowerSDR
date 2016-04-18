@@ -898,10 +898,11 @@ namespace PowerSDR
                 temp = temp.Replace("/", "-");
                 temp = temp.Replace(":", " ");
                 // temp = console.AppDataPath + temp;
+
                 temp = wave_folder + "\\" + temp;
                 
-                string file_name = temp+".wav";
-                string file_name2 = file_name+"-rx2";
+                string file_name = temp + ".wav";
+                string file_name2 = file_name + "-rx2";
 				
 				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, long_sample_rate, file_name);
 
@@ -1129,17 +1130,17 @@ namespace PowerSDR
           
             if (chkQuickAudioFolder.Checked == true) // ke9ns add to allow subfolder with different names to play
             {
-                System.IO.Directory.CreateDirectory(console.AppDataPath + "\\QuickAudio"); // ke9ns create sub directory
+                System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
 
         
                   if (QPFile != null)  file_name = QPFile; // ke9ns check file name passed from console play button
-                  else file_name = console.AppDataPath + "\\QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                  else file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
       
 
             }
             else
             {
-                file_name = console.AppDataPath + "\\SDRQuickAudio.wav";
+                file_name = console.AppDataPath + "SDRQuickAudio.wav";
             }
         
            
@@ -1272,8 +1273,8 @@ namespace PowerSDR
                 if (chkQuickAudioFolder.Checked == true)
                 {
                     QAC++;
-                    System.IO.Directory.CreateDirectory(console.AppDataPath + "\\QuickAudio"); // ke9ns create sub directory
-                    file_name = console.AppDataPath + "\\QuickAudio"+ "\\SDRQuickAudio"+QAC.ToString() +".wav";
+                    System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
+                    file_name = console.AppDataPath + "QuickAudio"+ "\\SDRQuickAudio"+QAC.ToString() +".wav";
 
                  //   Debug.WriteLine("qac" + QAC);
 
@@ -1281,7 +1282,7 @@ namespace PowerSDR
                 else
                 {
 
-                    file_name = console.AppDataPath + "\\SDRQuickAudio.wav";
+                    file_name = console.AppDataPath + "SDRQuickAudio.wav";
 
                 }
 
@@ -1362,7 +1363,7 @@ namespace PowerSDR
         {
 
 
-            string file_name = console.AppDataPath + "\\ke9ns.wav"; // TEXT to waterfall image only
+            string file_name = console.AppDataPath + "ke9ns.wav"; // TEXT to waterfall image only
 
 
             //=========================================================================================
@@ -1510,9 +1511,10 @@ namespace PowerSDR
         //============================================================================================
         private void CreateWaterfallID()
         {
-
-                    string file_name = console.AppDataPath + "\\ke9ns.wav"; // TEXT to waterfall image only
-                    string file_name1 = console.AppDataPath + "\\ke9ns.bmp"; // image file to waterfall
+           
+          
+                    string file_name = console.AppDataPath + "ke9ns.wav"; // TEXT to waterfall image only
+                    string file_name1 = console.AppDataPath + "ke9ns.bmp"; // image file to waterfall
 
                 
                     console.callsignTextBox.BackColor = Color.PaleVioletRed; // let user know your creating a new wave file
@@ -1526,10 +1528,15 @@ namespace PowerSDR
 
                     int IMAGE = 0;                      // 0=text, 1=image
 
+          //  t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+          //  t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
                     if (console.Callsign.EndsWith(".") == true)
                     {
                         IMAGE = 1; // get real image file
-                        file_name1 = console.AppDataPath + "\\" + console.Callsign + "bmp"; // image file to waterfall
+
+                        file_name1 = console.AppDataPath + console.Callsign + "bmp";    //    image file to waterfall
+               
                     }
 
                     double bright = 300;      // amplitude factor
@@ -1985,7 +1992,7 @@ namespace PowerSDR
 
             if (chkQuickAudioFolder.Checked)
             {
-                System.IO.Directory.CreateDirectory(console.AppDataPath + "\\QuickAudio"); // ke9ns create sub directory
+                System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
      
             }
             else

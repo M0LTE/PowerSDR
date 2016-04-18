@@ -1514,7 +1514,7 @@ namespace PowerSDR
             toolTip1.SetToolTip(btnPLL, test_pll);
             lstDebug.Items.Insert(0, test_pll);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             /*path += "\\PLL";
             if(!Directory.Exists(path))	Directory.CreateDirectory(path);*/
@@ -1775,7 +1775,7 @@ namespace PowerSDR
                 console.RX1FilterHigh = var_high;
             }
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             /*path += "\\DDS";
             if(!Directory.Exists(path))	Directory.CreateDirectory(path);*/
@@ -1915,7 +1915,7 @@ namespace PowerSDR
                 console.RX1FilterHigh = var_high;
             }
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             /*path += "\\Noise";
             if(!Directory.Exists(path))	Directory.CreateDirectory(path);*/
@@ -2073,7 +2073,7 @@ namespace PowerSDR
             console.NB = nb;
             console.NB2 = nb2;
             console.setupForm.Polyphase = polyphase;
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             /*path += "\\Impulse";
             if(!Directory.Exists(path))	Directory.CreateDirectory(path);*/
@@ -2260,7 +2260,7 @@ namespace PowerSDR
                 console.RX1FilterHigh = var_high;
             }
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             string serial = "";
@@ -2517,7 +2517,7 @@ namespace PowerSDR
                 console.RX1FilterHigh = var_high;
             }
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\attn.csv");
@@ -2812,7 +2812,7 @@ namespace PowerSDR
                 test_rx_filter = test_rx_filter.Substring(0, test_rx_filter.Length - 1) + ")";
             toolTip1.SetToolTip(btnRXFilter, test_rx_filter);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\rx_filter.csv");
             StreamWriter writer = new StreamWriter(path + "\\rx_filter.csv", true);
@@ -3178,7 +3178,7 @@ namespace PowerSDR
                 test_1500_filter = test_1500_filter.Substring(0, test_1500_filter.Length - 2) + ")";
             toolTip1.SetToolTip(btnRXFilter, test_1500_filter);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\rx_filter.csv");
             StreamWriter writer = new StreamWriter(path + "\\rx_filter.csv", true);
@@ -3392,7 +3392,7 @@ namespace PowerSDR
             t1.Stop();
             Debug.WriteLine("RX Level Timer: " + t1.Duration);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\rx_level.csv");
             StreamWriter writer = new StreamWriter(path + "\\rx_level.csv", true);
@@ -3630,7 +3630,7 @@ namespace PowerSDR
             t1.Stop();
             Debug.WriteLine("RX Image Timer: " + t1.Duration);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\rx_image.csv");
             StreamWriter writer = new StreamWriter(path + "\\rx_image.csv", true);
@@ -3826,7 +3826,7 @@ namespace PowerSDR
 			t1.Stop();
 			Debug.WriteLine("RX Image Timer: "+t1.Duration);
 
-			string path = app_data_path+"\\Tests";
+			string path = app_data_path+"Tests";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
 			bool file_exists = File.Exists(path+"\\rx_mds.csv");
 			StreamWriter writer = new StreamWriter(path+"\\rx_mds.csv", true);
@@ -4174,7 +4174,7 @@ namespace PowerSDR
                 test_tx_filter = test_tx_filter.Substring(0, test_tx_filter.Length - 1) + ")";
             toolTip1.SetToolTip(btnTXFilter, test_tx_filter);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\tx_filter.csv");
             StreamWriter writer = new StreamWriter(path + "\\tx_filter.csv", true);
@@ -4361,7 +4361,7 @@ namespace PowerSDR
                 test_tx_image = test_tx_image.Substring(0, test_tx_image.Length - 1) + ")";
             toolTip1.SetToolTip(btnTXImage, test_tx_image);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\tx_image.csv");
             StreamWriter writer = new StreamWriter(path + "\\tx_image.csv", true);
@@ -4568,7 +4568,7 @@ namespace PowerSDR
             t1.Stop();
             Debug.WriteLine("TX Carrier Timer: " + t1.Duration);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\tx_carrier.csv");
             StreamWriter writer = new StreamWriter(path + "\\tx_carrier.csv", true);
@@ -4856,7 +4856,7 @@ namespace PowerSDR
                 test_tx_gain = test_tx_gain.Substring(0, test_tx_gain.Length - 1) + ")";
             toolTip1.SetToolTip(btnTXGain, test_tx_gain);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\tx_gain.csv");
             StreamWriter writer = new StreamWriter(path + "\\tx_gain.csv", true);
@@ -5306,7 +5306,7 @@ namespace PowerSDR
                 test_pa_power = test_pa_power.Substring(0, test_pa_power.Length - 2) + ")";
             toolTip1.SetToolTip(btnTX1500PA, test_pa_power);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             bool file_exists = File.Exists(path + "\\pa_power.csv");
             StreamWriter writer = new StreamWriter(path + "\\pa_power.csv", true);
@@ -5947,7 +5947,7 @@ namespace PowerSDR
             console.RX1DSPMode = dsp_mode;
             Audio.MonitorVolume = monitor;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_pwrspkr.csv");
@@ -6143,7 +6143,7 @@ namespace PowerSDR
             console.RX1DSPMode = dsp_mode;
             Audio.MonitorVolume = monitor;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_rcainout.csv");
@@ -6349,7 +6349,7 @@ namespace PowerSDR
             console.RX1DSPMode = dsp_mode;
             Audio.MonitorVolume = monitor;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_fwinout.csv");
@@ -6510,7 +6510,7 @@ namespace PowerSDR
 
             DttSP.SetCorrectIQEnable(1); // turn on I/Q correction
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_fwinout.csv");
@@ -6741,7 +6741,7 @@ namespace PowerSDR
             console.RX1DSPMode = dsp_mode;
             Audio.MonitorVolume = monitor;
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_headphone.csv");
@@ -6889,7 +6889,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIODot, test_io_dot);            
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_dot.csv");
@@ -7057,7 +7057,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIODash, test_io_dash);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_dash.csv");
@@ -7183,7 +7183,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIORCAPTT, test_io_rcaptt);           
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_rcaptt.csv");
@@ -7276,7 +7276,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOFWPTT, test_io_fwptt);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_fwptt.csv");
@@ -7433,7 +7433,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOMicPTT, test_io_micptt);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_micptt.csv");
@@ -7531,7 +7531,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOExtRef, test_io_extref);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_extref.csv");
@@ -7626,7 +7626,7 @@ namespace PowerSDR
 
             Flex1500.ProdTestWriteOp(USBHID.Opcode.USB_OP_SET_RX1_FREQ_TW, 0, 0);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_extref.csv");
@@ -7716,7 +7716,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOMicUp, test_io_micup);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_micup.csv");
@@ -7806,7 +7806,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOMicDown, test_io_micdown);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_micdown.csv");
@@ -7896,7 +7896,7 @@ namespace PowerSDR
             }
             toolTip1.SetToolTip(btnIOMicFast, test_io_micfast);
 
-            string path = console.AppDataPath + "\\Tests";
+            string path = console.AppDataPath + "Tests";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             bool file_exists = File.Exists(path + "\\io_micfast.csv");
