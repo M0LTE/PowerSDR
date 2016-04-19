@@ -26750,15 +26750,53 @@ namespace PowerSDR
 				edge_meter_background_color = value;
 				if(current_meter_display_mode == MultiMeterDisplayMode.Edge)
 				{
-					picMultiMeterDigital.BackColor = value;
+                   
+                    picMultiMeterDigital.BackColor = value; // background is black
+                 
 					picMultiMeterDigital.Invalidate();
+
+
                     picRX2Meter.BackColor = value;
-                    if (chkRX2.Checked)
-                        picRX2Meter.Invalidate();
+                    if (chkRX2.Checked)    picRX2Meter.Invalidate();
 				}
 
+                if (current_meter_display_mode == MultiMeterDisplayMode.Analog) // ke9ns add
+                {
+                    if (analog_rev == 1)
+                    {
+                        picMultiMeterDigital.BackColor = edge_low_color; // background is white
+                    }
+                    else
+                    {
+                        picMultiMeterDigital.BackColor = value; // background is black
+                    }
 
-			}
+                    picMultiMeterDigital.Invalidate();
+
+                    if (analog_rev == 1)
+                    {
+                        picRX2Meter.BackColor = edge_low_color; // background is white
+                    }
+                    else
+                    {
+                        picRX2Meter.BackColor = value;
+                    }
+                    if (chkRX2.Checked) picRX2Meter.Invalidate();
+
+
+                }
+                if (current_meter_display_mode == MultiMeterDisplayMode.Original)  // ke9ns add
+                {
+
+                    picMultiMeterDigital.BackColor = Color.Black; // background is black
+               
+                    picMultiMeterDigital.Invalidate();
+
+                    picRX2Meter.BackColor = value;
+                    if (chkRX2.Checked) picRX2Meter.Invalidate();
+                }
+
+            }
 		}
 
 		private Color edge_low_color = Color.White;
@@ -26800,9 +26838,9 @@ namespace PowerSDR
 			set
 			{
 				edge_avg_color = value;
-				if(current_meter_display_mode == MultiMeterDisplayMode.Edge)
-					picMultiMeterDigital.Invalidate();
-			}
+				if(current_meter_display_mode == MultiMeterDisplayMode.Edge) picMultiMeterDigital.Invalidate();
+                if (current_meter_display_mode == MultiMeterDisplayMode.Analog) picMultiMeterDigital.Invalidate(); //ke9ns add
+            }
 		}
 
 		private Color meter_background_color = Color.Black;
@@ -35523,9 +35561,20 @@ namespace PowerSDR
                             num = avg_num = current_meter_data * 0.2 + avg_num * 0.8; // slow decay
                     }
 
-                    g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
+                    if (analog_rev == 1)
+                    {
+                        g.DrawRectangle(new Pen(edge_low_color), 0, 0, W, H); // white background
+                        low_brush = new SolidBrush(edge_meter_background_color); //black text
 
-                    low_brush = new SolidBrush(edge_low_color); // white
+                    }
+                    else
+                    {
+                        g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H); // black background
+                        low_brush = new SolidBrush(edge_low_color); // white text
+
+                    }
+
+
                     high_brush = new SolidBrush(edge_high_color); // red
 
 //=============================================
@@ -35554,7 +35603,20 @@ namespace PowerSDR
                                 int Origin_x = W / 2;
                                 int Origin_y = (int)( (double)(H * 1.5)) ; // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                                Pen low_brush1 = new Pen(edge_low_color);  // white
+
+                                Pen low_brush1;
+
+                                if (analog_rev == 1)
+                                {
+                                   
+                                    low_brush1 = new Pen(edge_meter_background_color);  // black text and lines
+                                }
+                                else
+                                {
+                                    low_brush1 = new Pen(edge_low_color);  // white
+                                }
+
+
                                 Pen high_brush2 = new Pen(Brushes.Blue); // blue
                                 Pen high_brush1 = new Pen(Brushes.Red); // red
                                 Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
@@ -36388,7 +36450,9 @@ namespace PowerSDR
                                  Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
                                  low_brush1 = new Pen(edge_low_color);  // white
-                                 high_brush2 = new Pen(Brushes.Blue); // blue
+
+
+                                high_brush2 = new Pen(Brushes.Blue); // blue
                                  high_brush1 = new Pen(Brushes.Red); // red
                                  high_brush3 = new Pen(Brushes.Yellow); // yellow
                                 // high_brush4 = new Pen(Brushes.BurlyWood); //  
@@ -36573,8 +36637,18 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);
 
-                        Pen line_pen = new Pen(edge_avg_color);
-                        Pen line_dark_pen = new Pen(
+                        Pen line_pen;
+
+                        if (analog_rev == 1)
+                        {
+                            line_pen = new Pen(edge_meter_background_color);//background
+                        }
+                        else
+                        {
+                            line_pen = new Pen(edge_avg_color); // yellow
+                        }
+
+                       Pen line_dark_pen = new Pen(
                             Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
                             (edge_avg_color.G + edge_meter_background_color.G) / 2,
                             (edge_avg_color.B + edge_meter_background_color.B) / 2));
@@ -37397,10 +37471,22 @@ namespace PowerSDR
 							num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
 					}
 
-					g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
+					
+                    if (analog_rev == 1)
+                    {
+                        g.DrawRectangle(new Pen(edge_low_color), 0, 0, W, H); // white background
+                        low_brush = new SolidBrush(edge_meter_background_color); //black text
 
-					low_brush = new SolidBrush(edge_low_color);
-					high_brush = new SolidBrush(edge_high_color);
+                    }
+                    else
+                    {
+                        g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H); // black background
+                        low_brush = new SolidBrush(edge_low_color); // white text
+
+                    }
+
+
+                    high_brush = new SolidBrush(edge_high_color);
 
 					switch(rx2_meter_mode)
 					{								
@@ -37422,11 +37508,22 @@ namespace PowerSDR
                             int Origin_x = W / 2;
                             int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                            Pen low_brush1 = new Pen(edge_low_color);  // white
+                            Pen low_brush1;
+
+                            if (analog_rev == 1)
+                            {
+
+                                low_brush1 = new Pen(edge_meter_background_color);  // black text and lines
+                            }
+                            else
+                            {
+                                low_brush1 = new Pen(edge_low_color);  // white
+                            }
+
                             Pen high_brush2 = new Pen(Brushes.Blue); // blue
                             Pen high_brush1 = new Pen(Brushes.Red); // red
                             Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                           // Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
+                            // Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
                            Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
 
@@ -37513,7 +37610,7 @@ namespace PowerSDR
                                 POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
 
                                 g.DrawString((-1 + i * 2).ToString(), f1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
+                              
 
                             } // white ticks and test
 
@@ -37654,7 +37751,17 @@ namespace PowerSDR
 						pixel_x = Math.Max(0, pixel_x);
 						pixel_x = Math.Min(W-3, pixel_x);
 
-						Pen line_pen = new Pen(edge_avg_color);
+                        Pen line_pen;
+
+                        if (analog_rev == 1)
+                        {
+                            line_pen = new Pen(edge_meter_background_color);//background
+                        }
+                        else
+                        {
+                            line_pen = new Pen(edge_avg_color); // yellow
+                        }
+
 						Pen line_dark_pen = new Pen(
 							Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
 							(edge_avg_color.G+edge_meter_background_color.G)/2,
@@ -56008,26 +56115,53 @@ namespace PowerSDR
         // update setup form
         //============================================================================ 
         //============================================================================ 
+        private static int analog_rev = 0; // ke9ns add 1=reverse the analog meter color from back background, white text/lines to whitebackground, black text/lines
+        private static int analog_flag = 0;
         private void picMultiMeterDigital_Click(object sender, EventArgs e) // ke9ns ADD change meter types as you click
         {
-          
+            analog_flag++;
+
             switch (current_meter_display_mode)
             {
-
+ 
                 case MultiMeterDisplayMode.Edge:
                     current_meter_display_mode = MultiMeterDisplayMode.Analog;
+                    analog_rev = 0;
+                    analog_flag = 0;
                     CurrentMeterDisplayMode = current_meter_display_mode;
                     setupForm.MTRSet = "Analog";  // comboMeterType update
+                    EdgeMeterBackgroundColor = edge_meter_background_color;
+
                     break;
+
                 case MultiMeterDisplayMode.Analog:
-                     current_meter_display_mode = MultiMeterDisplayMode.Original;
-                     CurrentMeterDisplayMode = current_meter_display_mode;
-                    setupForm.MTRSet = "AnalogTR7";
+
+                    if (analog_flag == 1)
+                    {
+                        analog_rev = 1;
+                        current_meter_display_mode = MultiMeterDisplayMode.Analog;
+                        CurrentMeterDisplayMode = current_meter_display_mode;
+                        setupForm.MTRSet = "Analog";
+                    }
+                    else
+                    {
+                        analog_rev = 0;
+                        analog_flag = 0;
+                        CurrentMeterDisplayMode = current_meter_display_mode;
+                        setupForm.MTRSet = "AnalogTR7";
+                    }
+
+                    EdgeMeterBackgroundColor = edge_meter_background_color;
+
                     break;
                 case MultiMeterDisplayMode.Original:
+                    analog_rev = 0;
+                    analog_flag = 0;
                    current_meter_display_mode = MultiMeterDisplayMode.Edge;
                     CurrentMeterDisplayMode = current_meter_display_mode;
                     setupForm.MTRSet = "Edge";
+                    EdgeMeterBackgroundColor = edge_meter_background_color;
+
                     break;
 
             } // check which meter you current display and change to the next one

@@ -1,5 +1,22 @@
 //=================================================================
 // Spot.cs
+// created by Darrin Kohn ke9ns
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//
+//
 //=================================================================
 // Fractional year:
 //g = (360/365.25)*(N + hour/24)    //  N=day number 1-365
@@ -3386,7 +3403,7 @@ namespace PowerSDR
         public static int SN = 0;        // for Space weather
         public static int Aindex = 0;    // for Space weather
         public static int Kindex = 0;    // for Space weather
-
+        public static string RadioBlackout = " ";
         private string serverPath;       // for Space weather
 
 
@@ -3534,7 +3551,7 @@ namespace PowerSDR
                 try
                 {
                     SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
-                 //   Debug.WriteLine("SFI " + SFI);
+                    Debug.WriteLine("SFI " + SFI);
                 }
                 catch (Exception)
                 {
@@ -3552,7 +3569,7 @@ namespace PowerSDR
                 try
                 {
                     Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
-                 //   Debug.WriteLine("Aindex " + Aindex);
+                  Debug.WriteLine("Aindex " + Aindex);
                 }
                 catch (Exception)
                 {
@@ -3562,7 +3579,23 @@ namespace PowerSDR
 
             } // Aindex
 
+            if (noaa.Contains("Radio blackouts reaching the ")) // 
+            {
 
+                int ind = noaa.IndexOf("Radio blackouts reaching the ") + 29;
+
+                try
+                {
+                    RadioBlackout = noaa.Substring(ind, 2);
+                      Debug.WriteLine("Radio Blackout " + RadioBlackout);
+                }
+                catch (Exception)
+                {
+                    RadioBlackout = " ";
+                }
+
+
+            } // radio blackouts
 
             //--------------------------------------------------------------------------------------------
             // stay in this thread loop until you turn off tracking
@@ -4063,7 +4096,8 @@ namespace PowerSDR
                             g.DrawImage(src, Sun_X - 10, Sun_Y - 10, 23, 27); // draw SUN 20 x 20 pixel
 
                             g.DrawString("SFI " + SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
-                            g.DrawString("A " + Aindex.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y);
+                            g.DrawString("A " + Aindex.ToString("D") + ", " + RadioBlackout, font1, grid_text_brush, Sun_X + 15, Sun_Y);
+                         
 
                         } // sun tracker enabled
 
