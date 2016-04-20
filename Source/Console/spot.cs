@@ -69,6 +69,8 @@ namespace PowerSDR
 
         public  Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
+        public DXMemList dxmemlist;
+
         //   public static Display display;
 
         //   public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
@@ -82,10 +84,10 @@ namespace PowerSDR
         private Button SWLbutton;
         private Button SSBbutton;
         public TextBox textBox1;
-        public TextBox nodeBox;
+        public TextBox nodeBox1;
         private TextBox textBox3;
         public TextBox callBox;
-        public TextBox portBox;
+        public TextBox portBox2;
         private TextBox statusBox;
         private Button button1;
         private CheckBox checkBoxUSspot;
@@ -108,6 +110,7 @@ namespace PowerSDR
         public CheckBoxTS chkBoxSSB;
         public CheckBoxTS chkBoxDIG;
         public CheckBoxTS chkBoxPan;
+        private DataGridView dataGridView1;
         private IContainer components;
 
 
@@ -120,8 +123,49 @@ namespace PowerSDR
 
             Common.RestoreForm(this, "SpotForm", true);
 
-        
-        }
+
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\";
+            string file_name = path + "DXMemory.xml";
+
+           // dataGridView1.Dock = DockStyle.Fill;
+
+            dataGridView1.RowHeadersVisible = true;
+            dataGridView1.ColumnHeadersVisible = false;
+            dataGridView1.DataSource = console.DXMemList.List; // ke9ns get list of memories from memorylist.cs is where the file is opened and saved
+
+            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+          
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dataGridView1.AllowUserToAddRows = true;
+            dataGridView1.AllowUserToDeleteRows = true;
+            dataGridView1.AutoGenerateColumns = false;
+
+            
+            if (!File.Exists(file_name))
+            {
+                console.DXMemList.List.Add(new DXMemRecord("k1rfi.com:7300"));
+                console.DXMemList.List.Add(new DXMemRecord("ve7cc.net:23"));
+                console.DXMemList.List.Add(new DXMemRecord("telnet.reversebeacon.net:7000"));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord(""));
+
+
+                console.DXMemList.Save1();
+
+                Debug.WriteLine("create DXURL File");
+
+            }
+
+
+        } // spotcontrol
 
         protected override void Dispose(bool disposing)
         {
@@ -146,13 +190,14 @@ namespace PowerSDR
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.nodeBox = new System.Windows.Forms.TextBox();
+            this.nodeBox1 = new System.Windows.Forms.TextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.callBox = new System.Windows.Forms.TextBox();
-            this.portBox = new System.Windows.Forms.TextBox();
+            this.portBox2 = new System.Windows.Forms.TextBox();
             this.statusBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.checkBoxUSspot = new System.Windows.Forms.CheckBox();
@@ -163,6 +208,7 @@ namespace PowerSDR
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnTrack = new System.Windows.Forms.Button();
             this.nameBox = new System.Windows.Forms.TextBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
@@ -173,8 +219,9 @@ namespace PowerSDR
             this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
-            this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // SWLbutton
@@ -209,39 +256,40 @@ namespace PowerSDR
             this.textBox1.BackColor = System.Drawing.Color.LightYellow;
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(12, 117);
+            this.textBox1.Location = new System.Drawing.Point(12, 107);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(729, 270);
+            this.textBox1.Size = new System.Drawing.Size(729, 280);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
             // 
-            // nodeBox
+            // nodeBox1
             // 
-            this.nodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.nodeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox.Location = new System.Drawing.Point(181, 514);
-            this.nodeBox.MaxLength = 50;
-            this.nodeBox.Name = "nodeBox";
-            this.nodeBox.Size = new System.Drawing.Size(294, 22);
-            this.nodeBox.TabIndex = 6;
-            this.nodeBox.Text = "spider.ham-radio-deluxe.com";
-            this.toolTip1.SetToolTip(this.nodeBox, "Enter in a DX Cluster URL address here");
-            this.nodeBox.TextChanged += new System.EventHandler(this.nodeBox_TextChanged);
-            this.nodeBox.Leave += new System.EventHandler(this.nodeBox_Leave);
-            this.nodeBox.MouseEnter += new System.EventHandler(this.nodeBox_MouseEnter);
+            this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nodeBox1.Location = new System.Drawing.Point(666, 464);
+            this.nodeBox1.MaxLength = 50;
+            this.nodeBox1.Name = "nodeBox1";
+            this.nodeBox1.Size = new System.Drawing.Size(84, 22);
+            this.nodeBox1.TabIndex = 6;
+            this.nodeBox1.Text = "spider.ham-radio-deluxe.com";
+            this.toolTip1.SetToolTip(this.nodeBox1, "Enter in a DX Cluster URL address here");
+            this.nodeBox1.Visible = false;
+            this.nodeBox1.TextChanged += new System.EventHandler(this.nodeBox_TextChanged);
+            this.nodeBox1.Leave += new System.EventHandler(this.nodeBox_Leave);
+            this.nodeBox1.MouseEnter += new System.EventHandler(this.nodeBox_MouseEnter);
             // 
             // textBox3
             // 
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(12, 4);
+            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox3.Location = new System.Drawing.Point(272, 7);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(729, 104);
+            this.textBox3.Size = new System.Drawing.Size(469, 94);
             this.textBox3.TabIndex = 8;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
@@ -250,10 +298,10 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(543, 514);
+            this.callBox.Location = new System.Drawing.Point(648, 517);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
-            this.callBox.Size = new System.Drawing.Size(103, 22);
+            this.callBox.Size = new System.Drawing.Size(93, 22);
             this.callBox.TabIndex = 5;
             this.callBox.Text = "Callsign";
             this.toolTip1.SetToolTip(this.callBox, "Enter Your Call sign to login to the DX Cluster here");
@@ -261,20 +309,21 @@ namespace PowerSDR
             this.callBox.Leave += new System.EventHandler(this.callBox_Leave);
             this.callBox.MouseEnter += new System.EventHandler(this.callBox_MouseEnter);
             // 
-            // portBox
+            // portBox2
             // 
-            this.portBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.portBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox.Location = new System.Drawing.Point(481, 514);
-            this.portBox.MaxLength = 7;
-            this.portBox.Name = "portBox";
-            this.portBox.Size = new System.Drawing.Size(56, 22);
-            this.portBox.TabIndex = 7;
-            this.portBox.Text = "8000";
-            this.toolTip1.SetToolTip(this.portBox, "Enter in Dx Cluster URL Port# here");
-            this.portBox.TextChanged += new System.EventHandler(this.portBox_TextChanged);
-            this.portBox.Leave += new System.EventHandler(this.portBox_Leave);
-            this.portBox.MouseEnter += new System.EventHandler(this.portBox_MouseEnter);
+            this.portBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.portBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.portBox2.Location = new System.Drawing.Point(695, 447);
+            this.portBox2.MaxLength = 7;
+            this.portBox2.Name = "portBox2";
+            this.portBox2.Size = new System.Drawing.Size(56, 22);
+            this.portBox2.TabIndex = 7;
+            this.portBox2.Text = "0";
+            this.toolTip1.SetToolTip(this.portBox2, "Enter in Dx Cluster URL Port# here");
+            this.portBox2.Visible = false;
+            this.portBox2.TextChanged += new System.EventHandler(this.portBox_TextChanged);
+            this.portBox2.Leave += new System.EventHandler(this.portBox_Leave);
+            this.portBox2.MouseEnter += new System.EventHandler(this.portBox_MouseEnter);
             // 
             // statusBox
             // 
@@ -294,7 +343,7 @@ namespace PowerSDR
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.Location = new System.Drawing.Point(100, 513);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(68, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "Pause";
             this.toolTip1.SetToolTip(this.button1, "Click to Pause the DX Text window (if spots are coming through too fast)\r\nUpdates" +
@@ -360,7 +409,7 @@ namespace PowerSDR
             // btnTrack
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTrack.Location = new System.Drawing.Point(272, 475);
+            this.btnTrack.Location = new System.Drawing.Point(272, 513);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
@@ -373,7 +422,7 @@ namespace PowerSDR
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(695, 446);
+            this.nameBox.Location = new System.Drawing.Point(678, 434);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -381,6 +430,32 @@ namespace PowerSDR
             this.nameBox.Text = "name";
             this.toolTip1.SetToolTip(this.nameBox, "Enter Your Call sign to login to the DX Cluster here");
             this.nameBox.Visible = false;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowDrop = true;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridView1.Location = new System.Drawing.Point(12, 7);
+            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(254, 94);
+            this.dataGridView1.TabIndex = 72;
+            this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
+            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
             // 
             // chkBoxPan
             // 
@@ -518,20 +593,6 @@ namespace PowerSDR
         " only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
             // 
-            // chkDXMode
-            // 
-            this.chkDXMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkDXMode.Checked = true;
-            this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(652, 515);
-            this.chkDXMode.Name = "chkDXMode";
-            this.chkDXMode.Size = new System.Drawing.Size(91, 24);
-            this.chkDXMode.TabIndex = 59;
-            this.chkDXMode.Text = "Parse \"DX Spot\" Mode";
-            this.chkDXMode.UseVisualStyleBackColor = true;
-            this.chkDXMode.Visible = false;
-            // 
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -543,10 +604,25 @@ namespace PowerSDR
             this.chkAlwaysOnTop.Text = "Always On Top";
             this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
+            // chkDXMode
+            // 
+            this.chkDXMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkDXMode.Checked = true;
+            this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDXMode.Image = null;
+            this.chkDXMode.Location = new System.Drawing.Point(650, 517);
+            this.chkDXMode.Name = "chkDXMode";
+            this.chkDXMode.Size = new System.Drawing.Size(91, 24);
+            this.chkDXMode.TabIndex = 59;
+            this.chkDXMode.Text = "Parse \"DX Spot\" Mode";
+            this.chkDXMode.UseVisualStyleBackColor = true;
+            this.chkDXMode.Visible = false;
+            // 
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(753, 548);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chkBoxPan);
             this.Controls.Add(this.chkBoxDIG);
             this.Controls.Add(this.chkBoxSSB);
@@ -559,7 +635,6 @@ namespace PowerSDR
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.chkGrayLine);
             this.Controls.Add(this.chkSUN);
-            this.Controls.Add(this.chkDXMode);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -568,13 +643,14 @@ namespace PowerSDR
             this.Controls.Add(this.checkBoxUSspot);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusBox);
-            this.Controls.Add(this.portBox);
+            this.Controls.Add(this.portBox2);
             this.Controls.Add(this.callBox);
             this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.nodeBox);
+            this.Controls.Add(this.nodeBox1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.SSBbutton);
             this.Controls.Add(this.SWLbutton);
+            this.Controls.Add(this.chkDXMode);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.Name = "SpotControl";
@@ -582,6 +658,7 @@ namespace PowerSDR
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpotControl_FormClosing);
             this.Load += new System.EventHandler(this.SpotControl_Load);
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -662,11 +739,23 @@ namespace PowerSDR
    
             nameBox.Text = nameB;
             callBox.Text = callB;
-            nodeBox.Text = nodeB;
-            portBox.Text = portB;
+            nodeBox1.Text = nodeB;
+            portBox2.Text = portB;
 
-          
+            try
+            {
+                if (Convert.ToInt16(portBox2.Text) < 20)
+                {
+                    dataGridView1.CurrentCell = dataGridView1[0, Convert.ToInt16(portBox2.Text)];
+                    Debug.WriteLine("retrieved the index from storage");
 
+                }    
+            }
+            catch(Exception)
+            {
+                dataGridView1.CurrentCell = dataGridView1[0, 0];
+
+            }
         }
 
         //=======================================================================================================================
@@ -674,18 +763,18 @@ namespace PowerSDR
         {
 
             callB = callBox.Text;  // values to save in ke9ns.dat file
-            nodeB = nodeBox.Text;
-            portB = portBox.Text;
+            nodeB = nodeBox1.Text;
+            portB = portBox2.Text;
             nameB = nameBox.Text;
  
      
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "SpotForm");
-           
-            
-            //  console.MemoryList.Save();
-          
+
+            console.DXMemList.Save1(); // save dx spotter list
+    
+
 
         }
 
@@ -1085,11 +1174,22 @@ namespace PowerSDR
         //ke9ns start DX spotting
         private void spotSSB_Click(object sender, EventArgs e)
         {
-         
+            Debug.WriteLine("TESt");
+
+             Debug.WriteLine("========row " + dataGridView1.CurrentCell.RowIndex);
+
+            Debug.WriteLine("========URL " + (string)dataGridView1["dxurl", dataGridView1.CurrentCell.RowIndex].Value);
+       
+
 
             if ( (SP2_Active == 0) && (SP_Active == 0) && (callBox.Text != "callsign") && (callBox.Text != null) )
             {
+
               
+              //  console.DXMemList.List.Add(new DXMemRecord(console.DXMemList.List[dataGridView1.CurrentCell.RowIndex]));
+
+              //  Common.SaveForm(this, "MemoryForm");    
+               
                 Thread t = new Thread(new ThreadStart(SPOTTER));
 
                 t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
@@ -1187,9 +1287,7 @@ namespace PowerSDR
         public static string[] DX_Grid = new string[1000];          // grid
         public static string[] DX_Age = new string[1000];           // how old is the spot
 
-     //   public static int[] DX_Lat = new int[1000];                 // Latitude location on map 
-     //   public static int[] DX_Lon = new int[1000];                 // Longitude location on map (before any scaling) 
-
+  
         public static int[] DX_X = new int[1000];                   // x pixel location on map (before any scaling) Longitude
         public static int[] DX_Y = new int[1000];                   // y pixel location on map (before any scaling) Latitude
         public static string[] DX_country = new string[1000];       // country
@@ -1212,7 +1310,7 @@ namespace PowerSDR
 
         private bool pause = false; // true = pause dx spot window update.
 
-        private static byte Flag8 = 0; // 1= DX_Index value changed due to spot age cut, 
+       private static byte Flag8 = 0; // 1= DX_Index value changed due to spot age cut, 
 
         //====================================================================================================
         //====================================================================================================
@@ -1228,10 +1326,41 @@ namespace PowerSDR
             {
                 textBox1.Text += "Attempt Opening socket \r\n";
 
-                client = new TcpClient();                  
+                client = new TcpClient(); // for new socket
 
-                client.Connect(nodeBox.Text, Convert.ToInt16(portBox.Text));      // 'EXAMPLE  client.Connect("192.168.0.149", 230) 
+            
+                DXMemRecord nodeBox5 = new DXMemRecord(console.DXMemList.List[dataGridView1.CurrentCell.RowIndex]); // ke9ns 
 
+                nodeBox1.Text = nodeBox5.DXURL; // get string from DXMemory file based on current pointed to index
+
+                Debug.WriteLine("node " + nodeBox1.Text);
+              
+             
+                if (nodeBox1.Text.Contains(":") == true)
+                {
+                    int ind = nodeBox1.Text.IndexOf(":") + 1;
+                    int ind1 = nodeBox1.Text.Length;
+
+                    portBox2.Text = dataGridView1.CurrentCell.RowIndex.ToString(); // to store
+
+                    string PORT1 = nodeBox1.Text.Substring(ind, ind1 - ind);
+                    string URL1 = nodeBox1.Text.Substring(0, ind - 1);
+
+                    Debug.WriteLine("url " + URL1);
+                    Debug.WriteLine("port " + PORT1);
+                    Debug.WriteLine("index " + portBox2.Text);
+
+
+                    client.Connect(URL1, Convert.ToInt16(PORT1));      // 'EXAMPLE  client.Connect("192.168.0.149", 230) 
+                }
+                else
+                {
+                    Debug.WriteLine("NO PORT# detected us 7000 " );
+
+                    client.Connect(nodeBox1.Text, 7000);      // 'EXAMPLE  client.Connect("192.168.0.149", 230) 
+                }
+
+               
                 networkStream = client.GetStream();
 
                 SP_reader = new StreamReader(networkStream,Encoding.ASCII,detectEncodingFromByteOrderMarks); //Encoding.UTF8  or detectEncodingFromByteOrderMarks
@@ -2977,8 +3106,8 @@ namespace PowerSDR
         private void nameBox_Leave(object sender, EventArgs e)
         {
              callB = callBox.Text;
-             nodeB = nodeBox.Text;
-             portB = portBox.Text;
+             nodeB = nodeBox1.Text;
+             portB = portBox2.Text;
              nameB = nameBox.Text;
         }
 
@@ -2986,8 +3115,8 @@ namespace PowerSDR
         {
 
             callB = callBox.Text;
-            nodeB = nodeBox.Text;
-            portB = portBox.Text;
+            nodeB = nodeBox1.Text;
+            portB = portBox2.Text;
             nameB = nameBox.Text;
         }
 
@@ -2995,8 +3124,8 @@ namespace PowerSDR
         {
 
             callB = callBox.Text;
-            nodeB = nodeBox.Text;
-            portB = portBox.Text;
+            nodeB = nodeBox1.Text;
+            portB = portBox2.Text;
             nameB = nameBox.Text;
         }
 
@@ -3004,8 +3133,8 @@ namespace PowerSDR
         {
 
             callB = callBox.Text;
-            nodeB = nodeBox.Text;
-            portB = portBox.Text;
+            nodeB = nodeBox1.Text;
+            portB = portBox2.Text;
             nameB = nameBox.Text;
         }
 
@@ -4739,6 +4868,33 @@ namespace PowerSDR
         {
 
             textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up
+
+        }
+
+      
+
+       
+
+        private void dataGridView1_DoubleClick(object sender, EventArgs e)
+        {
+            if (console.DXMemList.List.Count == 0) return; // nothing in the list, exit
+
+            int index = dataGridView1.CurrentCell.RowIndex;
+
+
+            if ((index < 0) || (index > (console.DXMemList.List.Count - 1))) return;// index out of range
+
+            //   DXMemRecord recordToRestore = new DXMemRecord((DXMemRecord)DXURL.SelectedItem);
+
+            Debug.WriteLine("Double CLick=" + index);
+        }
+
+
+        public static int RIndex1 = 0;
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            RIndex1 = e.RowIndex; // last row you clicked on 
 
         }
     } // Spotcontrol

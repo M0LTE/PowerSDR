@@ -295,6 +295,7 @@ NO WARRANTY
   <data name="textBox2.Text" xml:space="preserve">
     <value>ke9ns Major Revision History from the base current PowerSDR 2.7.2
 
+042016T1: Add store multiple cluster addresses:ports for dx spotting
 041316S11: Add Right Click on "Auto Wtr/Pan Lvl" to adust Panadapter min grid level
 040416S7: Add Left Click + CTRL key on Red Dot goes directly to DX freq, mode and split
 033116S4: Add Gray Line and embedded Equirectangular Projection map

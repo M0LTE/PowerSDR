@@ -57,8 +57,6 @@ namespace PowerSDR
             console = c;
             Common.RestoreForm(this, "MemoryForm", true); // ke9ns bring up memory window in place you left it last time
 
-
-
             dataGridView1.RowHeadersVisible = true;
 
             dataGridView1.DataSource = console.MemoryList.List; // ke9ns get list of memories from memorylist.cs is where the file is opened and saved
@@ -217,13 +215,14 @@ namespace PowerSDR
 
 
 
-        public static string URLTEXT;
-        public string droppedUrl;
-
-        public static string[] filename;
 
         //==============================================================================================
         //ke9ns add AS YOU DRAG YOUR URL ALONG WITH YOUR MOUSE INTO THE MEMORY FORM WINDOW
+        public static string URLTEXT; // ke9ns add
+        public string droppedUrl;   // ke9ns add
+        public static string[] filename; // ke9ns add
+
+
         private void dataGridView1_DragEnter(object sender, DragEventArgs e)
         {
 
@@ -330,8 +329,7 @@ namespace PowerSDR
                 dataGridView1.Columns[e.ColumnIndex].Name == "RPTROffset")
             {
                 double temp; 
-                if(!double.TryParse((string)e.FormattedValue, out temp))
-                    dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0.0;
+                if(!double.TryParse((string)e.FormattedValue, out temp))  dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0.0;
                 return;
             }
 
@@ -342,8 +340,7 @@ namespace PowerSDR
                 dataGridView1.Columns[e.ColumnIndex].Name == "AGCT")
             {
                 int temp;
-                if (!int.TryParse((string)e.FormattedValue, out temp))
-                    dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0;
+                if (!int.TryParse((string)e.FormattedValue, out temp))   dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0;
                 return;
             }
 
@@ -489,7 +486,7 @@ namespace PowerSDR
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
            
-        }
+        } // delete memory
 
 
         //===========================================================================================================================
@@ -514,11 +511,9 @@ namespace PowerSDR
 
             console.changeComboFMMemory(index); // ke9ns this will call recallmemory in console 
 
-            Trace.WriteLine("INDEX clicked "+index);
+            Debug.WriteLine("INDEX clicked "+index);
            
-          //  Trace.WriteLine("INDEX clicked " + dataGridView1.);
-
-
+          //  Debug.WriteLine("INDEX clicked " + dataGridView1.);
 
             if (chkMemoryFormClose.Checked) // ke9ns this saves position of memory form window on your screen when you closed it.
             {

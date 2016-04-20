@@ -121,16 +121,12 @@
     <value>17, 17</value>
   </metadata>
   <data name="textBox3.Text" xml:space="preserve">
-    <value>Enter DX Cluster or reverse Beacon telnet address and port# and your call sign. 
-Like: ve7cc.net Port 23 or k1rfi.com Port 7300 or telnet.reversebeacon.net Port 7000
-Some sites require you to fill in information to setup your account first. Do that using a telnet program.
-Right Click on the Waterfall ID CALLSIGN box and place SWL.csv  and DXLOC.txt files in that folder.
-Visit http://www.eibispace.de/ to download the latest CSV file and rename to SWL.csv
-The DXLOC.txt file will be updated in the download ZIP file as needed.
+    <value>Enter DX Cluster or reverse Beacon telnet address and port# and your call sign.  Like: ve7cc.net:23 or k1rfi.com:7300 or telnet.reversebeacon.net:7000
+Some sites require you to fill in information to setup your account first. Do that using a telnet program. Right Click on the Waterfall ID CALLSIGN box and place SWL.csv  and DXLOC.txt files in that folder. Visit http://www.eibispace.de/ to download the latest CSV file and rename to SWL.csv The DXLOC.txt file will be updated in the download ZIP file as needed.
 </value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>31</value>
+    <value>25</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
