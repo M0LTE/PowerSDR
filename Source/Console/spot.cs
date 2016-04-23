@@ -1205,6 +1205,15 @@ namespace PowerSDR
                 textBox1.Text = "Clicked to Open DX Spider \r\n";
 
             }
+            else if ((callBox.Text != "callsign") || (callBox.Text != null))
+            {
+
+                textBox1.Text += "Must put your CALL Sign in the CALLSIGN box (lower Right of this window)\r\n";
+                callBox.ForeColor = Color.Red;
+                callBox.BackColor = Color.Yellow;
+
+
+            }
             else
             {
 
@@ -1305,6 +1314,7 @@ namespace PowerSDR
 
         public static int UTCNEW = Convert.ToInt16(FD);                        // convert 24hr UTC to int
         public static int UTCLAST = 0;                                        // last utc time for determining when to check again
+        public static int UTCLASTMIN = 0;                                        // last utc time for determining when to check again
 
         private bool detectEncodingFromByteOrderMarks = true;
 
@@ -2918,6 +2928,7 @@ namespace PowerSDR
 
                 if (DX_Age[ii].Length == 1) DX_Age[ii] = "0" + DX_Age[ii];
 
+                //----------------------------------------------------------
                 string DXmode = "    "; // 5 spaces
 
                 if (DX_Mode[ii] == 0)       DXmode = " ssb ";
@@ -2953,14 +2964,28 @@ namespace PowerSDR
         private void processDXAGE()
         {
 
+            
             UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+          
             FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
             UTCNEW = Convert.ToInt16(FD);                                    // convert 24hr UTC to int
 
-            if ((UTCLAST == 0) && (UTCNEW != 0))
+
+
+            int hh = Convert.ToInt16(UTCD.ToString("HH"));
+            int mm = Convert.ToInt16(UTCD.ToString("mm"));
+
+            int UTCNEWMIN = mm + (60 * hh);
+         //   Debug.WriteLine("time in minutes only " + UTCNEWMIN);
+
+
+
+            if ((UTCLAST == 0) && (UTCNEW != 0))  // for startup only (ie. run 1 time)
             {
-                UTCLAST = UTCNEW;        // for startup only
+                UTCLAST = UTCNEW;        
                 DX_Time[0] = UTCNEW;
+                UTCLASTMIN = UTCNEWMIN; 
 
             }
 
@@ -2969,21 +2994,34 @@ namespace PowerSDR
                 int xxx = 0;
 
                 UTCLAST = UTCNEW;
-                          
-             //  Debug.WriteLine("Time to Check DX Spot Age =========== " + DX_Index);
+
+                int UTCDIFFMIN = UTCNEWMIN - UTCLASTMIN;  // difference in minutes from last time we checked the dx spots for age
+
+                Debug.WriteLine("Time to Check DX Spot Age =========== " + DX_Index + " UTCNEWMIN " + UTCNEWMIN + " UTCLASTMIN " + UTCLASTMIN + " UTCDIFFMIN " + UTCDIFFMIN);
+
+                UTCLASTMIN = UTCNEWMIN; // save for next go around
+
+                if (UTCDIFFMIN < 0) // this indicates you crossed the timeline to the next day
+                {
+                    UTCDIFFMIN = 1440 - UTCDIFFMIN; // make positive again
+                }
 
                 for (int ii = DX_Index - 1; ii >= 0; ii--) // move from bottom of list up toward top of list
                 {
 
-                    int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
-                    DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
+                    //  int UTCDIFF = Math.Abs(UTCNEW - DX_Time[ii]); // time difference 
+                    //DX_Age[ii] = UTCDIFF.ToString("00"); // 2 digits
+                   
 
-                  //  Debug.WriteLine("TIME== " + DX_Time[ii] + " age "+DX_Age[ii]);
+                   int  UTCAGE = Convert.ToInt32(DX_Age[ii]) + UTCDIFFMIN; // current age difference for DX spots
 
+                    DX_Age[ii] = UTCAGE.ToString(); // age your DX spot
+
+                                       
                     int kk = 0; // look at very bottom of list + 1
 
-
-                    if (UTCDIFF > 35) // if its an old SPOT then remove it from the list
+                    
+                    if (UTCAGE > 35) // if its an old SPOT then remove it from the list
                     {
 
                         Flag8 = 1; // signal that the DX_Index will change due to an old spot being removed
@@ -2992,7 +3030,7 @@ namespace PowerSDR
 
                         xxx++; //shorten dx_Index by 1
 
-                        Debug.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFF " + UTCDIFF + " ii " + ii + " station " + DX_Station[ii]);
+                        Debug.WriteLine("time expire, remove=========spot " + DX_Time[ii] + " current time " + UTCLAST + " UTCDIFFMIN " + UTCDIFFMIN + " ii " + ii + " station " + DX_Station[ii]);
                      //   Debug.WriteLine("KK " + kk);
                      //   Debug.WriteLine("XXX " + xxx);
 

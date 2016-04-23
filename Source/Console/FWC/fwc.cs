@@ -682,6 +682,7 @@ namespace PowerSDR
 			return rtn;
 		}
 
+
 		public static int SetRX1Freq(float freq)
 		{
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_RX1_FREQ, freq, 0);
@@ -702,12 +703,12 @@ namespace PowerSDR
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_RX2_FREQ_TW, tw, freq);
 		}
 
-		public static int SetTXFreq(float freq)
+		public static int SetTXFreq(float freq)                                        // ke9ns set transmit freq
 		{
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_FREQ, freq, 0);
 		}
 
-		public static int SetTXFreqTW(uint tw, float freq)
+		public static int SetTXFreqTW(uint tw, float freq)                            // ke9ns set TX DDS freq ???
 		{
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_FREQ_TW, tw, freq);
 		}
@@ -1075,12 +1076,12 @@ namespace PowerSDR
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_FULL_DUPLEX, Convert.ToUInt32(b), 0);
 		}
 
-		public static int SetTXDAC(bool b)
+		public static int SetTXDAC(bool b)                                                // ke9ns not used
 		{
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_DAC, Convert.ToUInt32(b), 0);
 		}
 
-		public static int SetAmpTX1(bool b)
+		public static int SetAmpTX1(bool b)                                              // ke9ns determine which RCA plug will be keyed up 
 		{
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_AMP_TX1, Convert.ToUInt32(b), 0);
 		}
@@ -1100,7 +1101,7 @@ namespace PowerSDR
         //    return Pal.WriteOp(Opcode.RDAL_OP_SET_XVTR_ACTIVE, Convert.ToUInt32(b), 0);
         //}
 
-        public static int SetXVTRRXOn(bool b)
+        public static int SetXVTRRXOn(bool b)                                                // ke9ns transverter ON/OFF
         {
             return Pal.WriteOp(Opcode.FWC_OP_SET_XVTR_RX_ON, Convert.ToUInt32(b), 0);
         }
@@ -1255,7 +1256,7 @@ namespace PowerSDR
 			return Pal.WriteOp(Opcode.RDAL_OP_SET_FAN_SPEED, val, 0);
 		}
 
-		public static int GetRegion(out FRSRegion region)
+		public static int GetRegion(out FRSRegion region)                            // ke9ns find region programmed into your flex radio itself
 		{
 			uint data;
 			int rtn = Pal.ReadOp(Opcode.RDAL_OP_GET_REGION, 0, 0, out data);
@@ -1263,17 +1264,17 @@ namespace PowerSDR
 			return rtn;
 		}
 
-        public static int SetTXDSPFilter(int low, int high)
+        public static int SetTXDSPFilter(int low, int high)                           // ke9ns to set the upper and lower bounds to the Transmit passband (up to 90khz in either direction)
         {
             return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_DSP_FILTER, low, high);
         }
 
-        public static int SetTXOffset(int offset)
+        public static int SetTXOffset(int offset)                                    // ke9ns offset = (int)dsp.GetDSPTX(0).TXOsc;
         {
             return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_OFFSET, offset, 0);
         }
 
-        public static int SetTXDSPMode(DSPMode mode)
+        public static int SetTXDSPMode(DSPMode mode)                                  // ke9ns select your mode (USB,CW,FM, etc)
         {
             return Pal.WriteOp(Opcode.RDAL_OP_SET_TX_DSP_MODE, (uint)mode, 0);
         }
@@ -1294,6 +1295,15 @@ namespace PowerSDR
             int rtn = Pal.ReadOp(Opcode.RDAL_OP_GET_STATUS, 0, 0, out status);
             return (status != 0);
         }
+
+
+
+
+        //=================================================================================
+        //=================================================================================
+        //=================================================================================
+        //=================================================================================
+        // ke9ns VHF/UHF module
 
         public static int SetVU_FanHigh(bool b)
         {
@@ -1529,6 +1539,13 @@ namespace PowerSDR
             return Pal.WriteOp(Opcode.FWC_OP_SET_VU_TXBAND, b, 0);
         }
 
+        // ke9ns VHF/UHF module above
+        //=================================================================================
+        //=================================================================================
+        //=================================================================================
+        //=================================================================================
+
+
         public static int DDSIOUpdate()
         {
             return Pal.WriteOp(Opcode.RDAL_OP_UPDATE_DDS, 0, 0);
@@ -1558,6 +1575,7 @@ namespace PowerSDR
         public static bool ignore_dash = false;        
 		public static Console console;
         public static uint last_bmp = 0;
+
 		public static void Notify(uint bmp)
 		{
 #if(TIMING)

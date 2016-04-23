@@ -45,35 +45,30 @@ unsigned int thread_com;
 #define asinh(value) (REAL)log(value + sqrt(value * value + 1))
 ////////////////////////////////////////////////////////////////////////////
 
-PRIVATE REAL INLINE
-dB2lin (REAL dB)
+PRIVATE REAL INLINE dB2lin (REAL dB)
 {
 	return (REAL) pow (10.0, (REAL) dB / 20.0);
 }
 
-PRIVATE REAL INLINE
-gmean (REAL x, REAL y)
+PRIVATE REAL INLINE gmean (REAL x, REAL y)
 {
 	return (REAL)sqrt(x*y);
 }
 
-DttSP_EXP void
-Setup_SDR (char *app_data_path)
+DttSP_EXP void Setup_SDR (char *app_data_path)
 {
 	extern void setup (app_data_path);
 	setup ();
 }
 
-DttSP_EXP void
-Destroy_SDR ()
+DttSP_EXP void Destroy_SDR ()
 {
 	extern void closeup ();
 	closeup ();
 }
 
 
-DttSP_EXP void
-SetThreadNo(unsigned int setit)
+DttSP_EXP void SetThreadNo(unsigned int setit)
 {
 	sem_wait(&top[0].sync.upd.sem);
 	sem_wait(&top[1].sync.upd.sem);
@@ -84,8 +79,7 @@ SetThreadNo(unsigned int setit)
 	sem_post(&top[0].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetThreadCom(unsigned int thread)
+DttSP_EXP void SetThreadCom(unsigned int thread)
 {
 	if (thread < 3)
 	{
@@ -99,8 +93,7 @@ SetThreadCom(unsigned int thread)
 	}
 }
 
-DttSP_EXP void 
-SetSwchFlag(unsigned int thread, unsigned int val)
+DttSP_EXP void SetSwchFlag(unsigned int thread, unsigned int val)
 {
 	//fprintf(stderr, "DttSP: SetSwchFlag(%u, %u)\n", thread, val), fflush(stderr);
 
@@ -109,8 +102,7 @@ SetSwchFlag(unsigned int thread, unsigned int val)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetSwchRiseThresh(unsigned int thread, REAL val)
+DttSP_EXP void SetSwchRiseThresh(unsigned int thread, REAL val)
 {
 	//fprintf(stderr, "DttSP: SetSwchRiseThresh(%u, %f)\n", thread, val), fflush(stderr);
 
@@ -119,8 +111,7 @@ SetSwchRiseThresh(unsigned int thread, REAL val)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetThreadProcessingMode(unsigned int thread, RUNMODE runmode)
+DttSP_EXP void SetThreadProcessingMode(unsigned int thread, RUNMODE runmode)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 
@@ -155,25 +146,29 @@ SetThreadProcessingMode(unsigned int thread, RUNMODE runmode)
 
 	sem_post(&top[thread].sync.upd.sem);
 	//fprintf(stderr,"thread: %0u setting mode to %0d\n", thread, (int)runmode),fflush(stderr);
-}
 
-DttSP_EXP int
-SetMode (unsigned int thread, unsigned int subrx, SDRMODE m)
+} // SetThreadProcessingMode
+
+DttSP_EXP int SetMode (unsigned int thread, unsigned int subrx, SDRMODE m)
 {
 	int rtn=0;
 	sem_wait(&top[thread].sync.upd.sem);
+
 	tx[thread].mode = m;
 	if (tx[thread].mode == LSB) tx[thread].hlb.gen->invert = TRUE;
 	else tx[thread].hlb.gen->invert = FALSE;
+
 	rx[thread][subrx].mode = m;
 	if (m == SAM) rx[thread][subrx].am.gen->mode = 1;
-	if (m == AM) rx[thread][subrx].am.gen->mode = 0;
-	sem_post(&top[thread].sync.upd.sem);
-	return rtn;
-}
 
-DttSP_EXP void
-AudioReset (void)
+	if (m == AM) rx[thread][subrx].am.gen->mode = 0;
+
+	sem_post(&top[thread].sync.upd.sem);
+
+	return rtn;
+} // SetMode
+
+DttSP_EXP void AudioReset (void)
 {
 	extern BOOLEAN reset_em;
 	//fprintf(stdout,"AudioReset: reset_em = TRUE\n"), fflush(stdout);
@@ -322,56 +317,59 @@ SetFMSquelchThreshold(unsigned int thread, unsigned int k, REAL threshold)
 }
 
 
-DttSP_EXP int
-SetTXFilter (unsigned int thread, double low_frequency, double high_frequency)
+//======================================================================================================
+DttSP_EXP int SetTXFilter (unsigned int thread, double low_frequency, double high_frequency)
 {
 	int ncoef = uni[thread].buflen + 1;
 	int i, fftlen = 2 * uni[thread].buflen, rtn=0;
 	fftwf_plan ptmp;
 	COMPLEX *zcvec;
 
-	if (fabs (low_frequency) >= 0.5 * uni[thread].samplerate)
-		rtn = -1;
-	if (fabs (high_frequency) >= 0.5 * uni[thread].samplerate)
-		rtn = -2;
-	if ((low_frequency + 10) >= high_frequency)
-		rtn = -3;
+	if (fabs (low_frequency) >= 0.5 * uni[thread].samplerate) rtn = -1;  // ke9ns testdsp freq setpoints cant be more than half the samplerate.
+	if (fabs (high_frequency) >= 0.5 * uni[thread].samplerate) rtn = -2;
+	if ((low_frequency + 10) >= high_frequency)	rtn = -3;
+
+	//fprintf(stdout, "SETTXFILTER\n"), fflush(stdout); // ke9ns add
+
+	//high_frequency = 0;
+//	low_frequency = -150000;
 
 	if (rtn == 0)
 	{
 		sem_wait(&top[thread].sync.upd.sem);
-		delFIR_COMPLEX (tx[thread].filt.coef);
+		delFIR_COMPLEX(tx[thread].filt.coef);
 
-		tx[thread].filt.coef = newFIR_Bandpass_COMPLEX ((REAL)low_frequency,
-			(REAL)high_frequency,
-			uni[thread].samplerate, ncoef);
+		tx[thread].filt.coef = newFIR_Bandpass_COMPLEX((REAL)low_frequency,	(REAL)high_frequency, uni[thread].samplerate, ncoef);
 
-		zcvec = newvec_COMPLEX (fftlen, "filter z vec in setFilter");
-		ptmp = fftwf_plan_dft_1d (fftlen,
-			(fftwf_complex *) zcvec,
-			(fftwf_complex *) tx[thread].filt.ovsv->zfvec,
-			FFTW_FORWARD, uni[thread].wisdom.bits);
+		zcvec = newvec_COMPLEX(fftlen, "filter z vec in setFilter");
+
+		ptmp = fftwf_plan_dft_1d(fftlen, (fftwf_complex *)zcvec,	(fftwf_complex *)tx[thread].filt.ovsv->zfvec, FFTW_FORWARD, uni[thread].wisdom.bits);
+
 #ifdef LHS
 		for (i = 0; i < ncoef; i++)
 			zcvec[i] = tx[thread].filt.coef->coef[i];
 #else
 		for (i = 0; i < ncoef; i++)
-			zcvec[fftlen - ncoef + i] = tx[thread].filt.coef->coef[i];
+		{
+    		zcvec[fftlen - ncoef + i] = tx[thread].filt.coef->coef[i];
+	    }
 #endif
 		fftwf_execute (ptmp);
 		fftwf_destroy_plan (ptmp);
 		delvec_COMPLEX (zcvec);
+
 		normalize_vec_COMPLEX (tx[thread].filt.ovsv->zfvec, tx[thread].filt.ovsv->fftlen,tx[thread].filt.ovsv->scale);
-		memcpy ((char *) tx[thread].filt.save, (char *) tx[thread].filt.ovsv->zfvec,
-			tx[thread].filt.ovsv->fftlen * sizeof (COMPLEX));
+		
+		memcpy ((char *) tx[thread].filt.save, (char *) tx[thread].filt.ovsv->zfvec, tx[thread].filt.ovsv->fftlen * sizeof (COMPLEX));
 
 		sem_post(&top[thread].sync.upd.sem);
-	}
-	return rtn;
-}
+	} // rtn = 0
 
-DttSP_EXP int
-SetRXFilter (unsigned int thread, unsigned int subrx, double low_frequency, double high_frequency)
+	return rtn;
+
+} // SetTXFilter
+
+DttSP_EXP int SetRXFilter (unsigned int thread, unsigned int subrx, double low_frequency, double high_frequency)
 {
 	int ncoef = uni[thread].buflen + 1;
 	int i, fftlen = 2 * uni[thread].buflen,rtn=0;

@@ -80,6 +80,7 @@ namespace PowerSDR
 		unsafe private static PA19.PaStreamCallback callbackVAC = new PA19.PaStreamCallback(CallbackVAC);
         unsafe private static PA19.PaStreamCallback callbackVAC2 = new PA19.PaStreamCallback(CallbackVAC2);
 		unsafe private static PA19.PaStreamCallback callback4port = new PA19.PaStreamCallback(Callback4Port);
+
 		unsafe private static PA19.PaStreamCallback callback8 = new PA19.PaStreamCallback(Callback2);
 #endif
 
@@ -922,14 +923,14 @@ namespace PowerSDR
 
 
         //==============================================================================================================         
-        // ke9ns   not used for Flex radios (use callback2 or callback1500)
+        // ke9ns   not used for Flex radios ? (use callback2 or callback1500)
         //==============================================================================================================         
         unsafe public static int Callback1(void* input, void* output, int frameCount,	PA19.PaStreamCallbackTimeInfo* timeInfo, int statusFlags, void *userData)
 		{
 #if(TIMER)
 			t1.Start();
 #endif
-         //   Trace.WriteLine("Callback1=================================");
+         //  Debug.WriteLine("Callback1=================================");
 
 			int* array_ptr = (int *)input;
 			float* in_l_ptr1 = (float *)array_ptr[0];
@@ -2462,7 +2463,7 @@ namespace PowerSDR
 			float* out_r_ptr2 = (float *)array_ptr_output[3];
 
 			// arrange input buffers in the following order:
-			// RX1 Left, RX1 Right, TX Left, TX Right, RX2 Left, RX2 Right
+			// RX1 Left, RX1 Right,   TX Left, TX Right,   RX2 Left, RX2 Right
 			int* array_ptr = (int *)input;
 			switch(in_rx1_l)
 			{
@@ -2522,8 +2523,14 @@ namespace PowerSDR
 				in_r = (float *)array_ptr_input[3];
 			}
 
-			if(wave_playback)	wave_file_reader.GetPlayBuffer(in_l, in_r);
-			if(wave_record)
+            if (wave_playback)
+            {
+                wave_file_reader.GetPlayBuffer(in_l, in_r);
+            //    Debug.WriteLine("===========testing"); // ke9ns testdsp
+
+            }
+
+            if (wave_record)
 			{
 				if(!localmox)
 				{
@@ -3299,37 +3306,55 @@ namespace PowerSDR
 
             localmox = mox;
 
-            void* ex_input = (int*)input;
+     
+            //=====================================================================================
+            // OUTPUT pointer streams
+
             void* ex_output = (int*)output;
-
-            int* array_ptr_input = (int*)input;
-
-            float* in_l_ptr1 = (float*)array_ptr_input[0];
-            float* in_r_ptr1 = (float*)array_ptr_input[1];
-            float* in_l_ptr2 = (float*)array_ptr_input[2];
-            float* in_r_ptr2 = (float*)array_ptr_input[3];
-            float* in_l_ptr3 = (float*)array_ptr_input[4];
-            float* in_r_ptr3 = (float*)array_ptr_input[5];
-            float* in_l_ptr4 = (float*)array_ptr_input[6];
-            float* in_r_ptr4 = (float*)array_ptr_input[7];
 
             int* array_ptr_output = (int*)output;
 
             float* out_l_ptr1 = (float*)array_ptr_output[0];
             float* out_r_ptr1 = (float*)array_ptr_output[1];
+
             float* out_l_ptr2 = (float*)array_ptr_output[2];
             float* out_r_ptr2 = (float*)array_ptr_output[3];
+
             float* out_l_ptr3 = (float*)array_ptr_output[4];
             float* out_r_ptr3 = (float*)array_ptr_output[5];
+
             float* out_l_ptr4 = (float*)array_ptr_output[6];
             float* out_r_ptr4 = (float*)array_ptr_output[7];
 
+
+            //=====================================================================================
+            // INPUT pointer streams
+
+            void* ex_input = (int*)input;
+
+            int* array_ptr_input = (int*)input; // create array of pointers for inputs
+
+            float* in_l_ptr1 = (float*)array_ptr_input[0];// rx1
+            float* in_r_ptr1 = (float*)array_ptr_input[1];
+
+            float* in_l_ptr2 = (float*)array_ptr_input[2]; // rx2
+            float* in_r_ptr2 = (float*)array_ptr_input[3];
+
+            float* in_l_ptr3 = (float*)array_ptr_input[4]; // spare ??
+            float* in_r_ptr3 = (float*)array_ptr_input[5];
+
+            float* in_l_ptr4 = (float*)array_ptr_input[6]; // tx
+            float* in_r_ptr4 = (float*)array_ptr_input[7];
+
+          
             // arrange input buffers in the following order:
             // RX1 Left, RX1 Right, TX Left, TX Right, RX2 Left, RX2 Right
             //int* array_ptr = (int *)input;
+        
+
             switch (in_rx1_l)
             {
-                case 0: array_ptr_input[0] = (int)in_l_ptr1; break;
+                case 0: array_ptr_input[0] = (int)in_l_ptr1; break; // ke9ns default
                 case 1: array_ptr_input[0] = (int)in_r_ptr1; break;
                 case 2: array_ptr_input[0] = (int)in_l_ptr2; break;
                 case 3: array_ptr_input[0] = (int)in_r_ptr2; break;
@@ -3342,7 +3367,7 @@ namespace PowerSDR
             switch (in_rx1_r)
             {
                 case 0: array_ptr_input[1] = (int)in_l_ptr1; break;
-                case 1: array_ptr_input[1] = (int)in_r_ptr1; break;
+                case 1: array_ptr_input[1] = (int)in_r_ptr1; break; // ke9ns default
                 case 2: array_ptr_input[1] = (int)in_l_ptr2; break;
                 case 3: array_ptr_input[1] = (int)in_r_ptr2; break;
                 case 4: array_ptr_input[1] = (int)in_l_ptr3; break;
@@ -3359,7 +3384,7 @@ namespace PowerSDR
                 case 3: array_ptr_input[2] = (int)in_r_ptr2; break;
                 case 4: array_ptr_input[2] = (int)in_l_ptr3; break;
                 case 5: array_ptr_input[2] = (int)in_r_ptr3; break;
-                case 6: array_ptr_input[2] = (int)in_l_ptr4; break;
+                case 6: array_ptr_input[2] = (int)in_l_ptr4; break; // ke9ns default
                 case 7: array_ptr_input[2] = (int)in_r_ptr4; break;
             }
 
@@ -3372,14 +3397,14 @@ namespace PowerSDR
                 case 4: array_ptr_input[3] = (int)in_l_ptr3; break;
                 case 5: array_ptr_input[3] = (int)in_r_ptr3; break;
                 case 6: array_ptr_input[3] = (int)in_l_ptr4; break;
-                case 7: array_ptr_input[3] = (int)in_r_ptr4; break;
+                case 7: array_ptr_input[3] = (int)in_r_ptr4; break; // ke9ns default
             }
 
             switch (in_rx2_l)
             {
                 case 0: array_ptr_input[4] = (int)in_l_ptr1; break;
                 case 1: array_ptr_input[4] = (int)in_r_ptr1; break;
-                case 2: array_ptr_input[4] = (int)in_l_ptr2; break;
+                case 2: array_ptr_input[4] = (int)in_l_ptr2; break; // ke9ns default
                 case 3: array_ptr_input[4] = (int)in_r_ptr2; break;
                 case 4: array_ptr_input[4] = (int)in_l_ptr3; break;
                 case 5: array_ptr_input[4] = (int)in_r_ptr3; break;
@@ -3391,32 +3416,93 @@ namespace PowerSDR
                 case 0: array_ptr_input[5] = (int)in_l_ptr1; break;
                 case 1: array_ptr_input[5] = (int)in_r_ptr1; break;
                 case 2: array_ptr_input[5] = (int)in_l_ptr2; break;
-                case 3: array_ptr_input[5] = (int)in_r_ptr2; break;
+                case 3: array_ptr_input[5] = (int)in_r_ptr2; break; // ke9ns default
                 case 4: array_ptr_input[5] = (int)in_l_ptr3; break;
                 case 5: array_ptr_input[5] = (int)in_r_ptr3; break;
                 case 6: array_ptr_input[5] = (int)in_l_ptr4; break;
                 case 7: array_ptr_input[5] = (int)in_r_ptr4; break;
             }
 
-            rx1_in_l = (float*)array_ptr_input[0];
-            rx1_in_r = (float*)array_ptr_input[1];
-            tx_in_l = (float*)array_ptr_input[2];
-            tx_in_r = (float*)array_ptr_input[3];
-            rx2_in_l = (float*)array_ptr_input[4];
-            rx2_in_r = (float*)array_ptr_input[5];
 
-            rx1_out_l = (float*)array_ptr_output[0];
-            rx1_out_r = (float*)array_ptr_output[1];
-            tx_out_l = (float*)array_ptr_output[2];
-            tx_out_r = (float*)array_ptr_output[3];
-            rx2_out_l = (float*)array_ptr_output[4];
-            rx2_out_r = (float*)array_ptr_output[5];
+            //  Debug.Write(" in_rx1_l " + in_rx1_l);
+            //  Debug.Write(" in_rx1_r " + in_rx1_r);
+            //  Debug.Write(" in_tx_l " + in_tx_l);
+            //  Debug.Write(" in_tx_r " + in_tx_r);
+            //  Debug.Write(" in_rx2_l " + in_rx2_l);
+            //   Debug.Write(" in_rx2_r " + in_rx2_r);
+
+            // output from DSP is organized as follows
+            //=========================================================
+            //Channel |   0      1    |    2      3   |   4      5    |
+            //Signal  | RX1 L  RX1 R  |  TX L   TX R  | RX2 L  RX2 R  |
+            //Pointer | out_l1 out_r1 | out_l2 out_r2 | out_l3 out_r3 |
+            //=========================================================
+
+            // output DAC lineup for FLEX-5000
+            //===================================================================================================================
+            //Channel |   0       1    |      2           3       |     4           5      |            6            |    7     |
+            //Signal  | QSE I   QSE Q  | Headphone R  Headphone L | Ext Spkr R  Ext Spkr L | RCA Line Out + FlexWire | Int Spkr |
+            //Pointer | out_l1  out_r1 |    out_l2      out_r2    |   out_l3      out_r3   |          out_l4         |  out_r4  |
+            //===================================================================================================================
+
+            //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
+            // PRE PROCESSED STREAMS (original input streams)
+
+            // RECEIVER1 INPUT Stream (I believe this would be as wide as your sample rate)
+            // if receiving on RX1 (this is raw audio stream from the RX1 signal)
+            rx1_in_l = (float*)array_ptr_input[0]; // = in_l_ptr1;  points to -> in_l
+            rx1_in_r = (float*)array_ptr_input[1]; // = in_r_ptr1;  points to -> in_r
+
+            //------------------------------------------------------------------------------
+            // Transmint INPUT Stream (as wide as your source stream)
+            // if transmitting (this is the raw audio stream to transmit (from say your MIC) but its whatever input you direct to this stream)
+            tx_in_l = (float*)array_ptr_input[2]; // = in_l_ptr4;  points to = in_l
+            tx_in_r = (float*)array_ptr_input[3]; // = in_r_ptr4;  points to = in_r
+
+            //------------------------------------------------------------------------------
+            // RECEIVER2 INPUT Stream (wide as your sample rate)
+            // if receiving on RX2 (this is the raw audio stream from the RX2 signal)
+            rx2_in_l = (float*)array_ptr_input[4]; // = in_l_ptr2;  
+            rx2_in_r = (float*)array_ptr_input[5]; // = in_r_ptr2; 
+
+            //------------------------------------------------------------------------------
+            // SPARE INPUT Stream ?
+            //   rx_in_l = (float*)array_ptr_input[6]; // = in_l_ptr3;  
+           //  rx_in_r = (float*)array_ptr_input[7]; // = in_r_ptr3; 
+
+            //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
+            // POST PROCESSED STREAMS (streams after they get a pass thru DttSP routines->winmain, update, etc)
+
+            // Now Filtered From RX1 audio stream reduced down to the passband high/low rx filters and eq'ed 
+            rx1_out_l = (float*)array_ptr_output[0]; // out_l_ptr1;  out_l1 = QSE I
+            rx1_out_r = (float*)array_ptr_output[1]; // out_r_ptr1;  out_r1 = QSE Q
+
+            //------------------------------------------------------------------------------
+            // SEND TO TRANSMITTER and HEADPHONE JACK (this is the audio stream sent to your headphone and transmitter)  (ramp up function on this stream only)
+            // Now Filtered TX audio stream reduced down to the TX passband high/low TX fitlers and eq'ed 
+            tx_out_l = (float*)array_ptr_output[2]; //out_l_ptr2;   out_l2 =  L (sent to transmitter ) (sent to headphones in MONps mode)
+            tx_out_r = (float*)array_ptr_output[3]; //out_r_ptr2;   out_r2 =  R (sent to transmitter ) (sent to headphones in MONps mode)
+
+            //------------------------------------------------------------------------------
+            //   Now Filtered From RX2 audio stream reduced down to the passband high/low rx filters and eq'ed 
+            // SEND TO EXTERAL SPEAKER JACK
+            rx2_out_l = (float*)array_ptr_output[4]; //out_l_ptr3;  out_l3 = ext spkr L
+            rx2_out_r = (float*)array_ptr_output[5]; //out_r_ptr3;  out_r3 = ext spkr R
+
+            //------------------------------------------------------------------------------
+            // SEND TO RCA and FLEXWIRE JACK
+            //   float* out_l_ptr4 = (float*)array_ptr_output[6];  // out_l4 = RCA out and FLexwire (mono)
+            //   float* out_r_ptr4 = (float*)array_ptr_output[7];  // out_r4  = int spker (which is not used) (mono)
 
 
 
             //=============================================================================================
             //=============================================================================================
-            // ke9ns below is wher the INPUT audio is played
+            // ke9ns below is where the INPUT audio is played
             //=============================================================================================
             //=============================================================================================
 
@@ -3450,10 +3536,15 @@ namespace PowerSDR
             }
 #endif
 
-            if (wave_playback)                  // ke9ns  audio playback
-            {
-                wave_file_reader.GetPlayBuffer(in_l, in_r);
 
+            //---------------------------------------------------------------------------------------------------------
+            // ke9ns  audio playback ov wav file (both RX and TX)
+#if NO_WIDETX
+            if (wave_playback)                 
+            {
+           
+               wave_file_reader.GetPlayBuffer(in_l, in_r); // WAV file audio streamed into in_l and in_r 
+             
                 if (rx2_enabled)
                 {
                     if (wave_file_reader2 != null)
@@ -3462,37 +3553,40 @@ namespace PowerSDR
                     }
                     else if (!localmox)
                     {
-                        CopyBuffer(in_l, rx2_in_l, frameCount);
+                        CopyBuffer(in_l, rx2_in_l, frameCount);  // in, out
                         CopyBuffer(in_r, rx2_in_r, frameCount);
                     }
                 }
-            } // audio file playback
 
-            if (wave_record)                           // ke9ns  audio playback
+            } // audio file playback
+#endif
+            //-------------------------------------------------------------------------------------
+            // ke9ns PRE AUDIO PROCESSING WAVE RECORDING
+            if (wave_record)                          
             {
-                if (!localmox)
+                if (!localmox)   // ke9ns record receiving audio 
                 {
                     if (record_rx_preprocessed)
                     {
                         wave_file_writer.AddWriteBuffer(rx1_in_l, rx1_in_r);
 
-                        if (wave_file_writer2 != null)
-                            wave_file_writer2.AddWriteBuffer(rx2_in_l, rx2_in_r);
+                        if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_in_l, rx2_in_r);
                     }
                 }
-                else
+                else // ke9ns record transmitting audio (mic)
                 {
-                    if (record_tx_preprocessed)
+                    if (record_tx_preprocessed) // ke9ns capture preprocessed transmitting audio
                     {
-                        wave_file_writer.AddWriteBuffer(tx_in_l, tx_in_r); // this audio is still real audio , where the section further down is post processed and AM mode is in AM mode
+                        wave_file_writer.AddWriteBuffer(tx_in_l, tx_in_r); // ke9ns this audio is still real pre processed audio , where the section further down is post processed and AM mode is in AM mode
                          //   Trace.Write("pretest====");
-
                     }
                 }
             } // audio file record
 
             if (phase)
             {
+                Debug.WriteLine("phase ===================="); // ke9ns testdsp
+
                 //phase_mutex.WaitOne();
                 Marshal.Copy(new IntPtr(in_l), phase_buf_l, 0, frameCount);
                 Marshal.Copy(new IntPtr(in_r), phase_buf_r, 0, frameCount);
@@ -3501,7 +3595,10 @@ namespace PowerSDR
 
 
             //---------------------------------------------------------------------------------
-            // handle VAC1 Input
+            // handle VAC1 Input (receving send to > out_l_ptr2) (transmitting send pc mic to > tx_in_l) and _r side as well
+            
+#region vac1
+
             if (vac_enabled && rb_vacOUT_l != null && rb_vacOUT_r != null)
             {
                 if (vac_bypass || !localmox) // drain VAC Input ring buffer
@@ -3538,12 +3635,13 @@ namespace PowerSDR
 
             } // vac1 on 
 
-
+#endregion
 
             //---------------------------------------------------------------------------------
-            // handle VAC2 Input
-            if (vac2_enabled &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+            // handle VAC2 Input (receving send to > out_l_ptr2) (transmitting send pc mic to > tx_in_l) and _r side as well
+#region vac2
+
+            if (vac2_enabled && rb_vac2OUT_l != null && rb_vac2OUT_r != null)
             {
                 if (vac_bypass || !localmox || !vfob_tx) // drain VAC2 Input ring buffer
                 {
@@ -3577,9 +3675,11 @@ namespace PowerSDR
                     }
                 }
             } // vac2 on 
+#endregion
 
-
-            #region VOX
+            //---------------------------------------------------------------------------------
+            // VOX enabled (check threshold against tx_in_l and _r)
+#region VOX
             if (vox_enabled)
             {
                 if (tx_dsp_mode == DSPMode.LSB ||
@@ -3600,20 +3700,22 @@ namespace PowerSDR
                         vox_active = false;
                 }
             }
-            #endregion
+#endregion
 
+
+            //-----------------------------------------------------------------------------------
             // scale input with mic preamp
-            if ((!vac_enabled &&
-                (tx_dsp_mode == DSPMode.LSB ||
+            if ((!vac_enabled &&  (tx_dsp_mode == DSPMode.LSB ||
                 tx_dsp_mode == DSPMode.USB ||
                 tx_dsp_mode == DSPMode.DSB ||
                 tx_dsp_mode == DSPMode.AM ||
                 tx_dsp_mode == DSPMode.SAM ||
                 tx_dsp_mode == DSPMode.FM ||
                 tx_dsp_mode == DSPMode.DIGL ||
-                tx_dsp_mode == DSPMode.DIGU)) ||
-                (vac_enabled && vac_bypass &&
-                (tx_dsp_mode == DSPMode.DIGL ||
+                tx_dsp_mode == DSPMode.DIGU))
+                
+                ||
+                (vac_enabled && vac_bypass &&  (tx_dsp_mode == DSPMode.DIGL ||
                 tx_dsp_mode == DSPMode.DIGU ||
                 tx_dsp_mode == DSPMode.LSB ||
                 tx_dsp_mode == DSPMode.USB ||
@@ -3622,10 +3724,15 @@ namespace PowerSDR
                 tx_dsp_mode == DSPMode.SAM ||
                 tx_dsp_mode == DSPMode.FM)))
             {
-                if (wave_playback)
+
+
+                if (wave_playback) // playing back a wav file as though it was coming from the MIC
                 {
-                    ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
-                    ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
+#if NO_WIDETX
+                      ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
+                      ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
+#endif
+                    
                 }
                 else
                 {
@@ -3640,9 +3747,13 @@ namespace PowerSDR
                         ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)mic_preamp);
                     }
                 }
-            }
+            } // scale inputs
 
-            #region Input Signal Source
+
+            //---------------------------------------------------------------------------------
+            // input signal source (inject sine,noise,etc into rx1_in_l & _r)
+
+#region Input Signal Source
 
             switch (rx1_input_signal)
             {
@@ -3809,7 +3920,7 @@ namespace PowerSDR
                     break;
             }
 
-            #endregion
+#endregion
 
 #if (MINMAX)
 			/*float local_max = MaxSample(in_l, in_r, frameCount);
@@ -3825,9 +3936,9 @@ namespace PowerSDR
 
             //---------------------------------------------------------------------------------
             // handle Direct IQ for VAC1
-            if (vac_enabled && vac_output_iq &&
-                rb_vacOUT_l != null && rb_vacOUT_r != null &&
-                rx1_in_l != null && rx1_in_r != null)
+#region vac1IQ
+
+            if (vac_enabled && vac_output_iq && rb_vacOUT_l != null && rb_vacOUT_r != null && rx1_in_l != null && rx1_in_r != null)
             {
                 if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
                 {
@@ -3841,8 +3952,10 @@ namespace PowerSDR
                                 CorrectIQBuffer(rx1_in_l, rx1_in_r, res_outl_ptr, res_outr_ptr, frameCount);
 
                             Win32.EnterCriticalSection(cs_vac);
+
                             rb_vacOUT_l.WritePtr(res_outr_ptr, frameCount); // why are these reversed??
                             rb_vacOUT_r.WritePtr(res_outl_ptr, frameCount);
+
                             Win32.LeaveCriticalSection(cs_vac);
 
                         }
@@ -3869,12 +3982,13 @@ namespace PowerSDR
                 }
             } // vac1 with IQ ON
 
-
+#endregion // vac1IQ
 
             //---------------------------------------------------------------------------------
             // handle Direct IQ for VAC2
-            if (vac2_enabled && vac2_output_iq &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+#region VAC2IQ
+
+            if (vac2_enabled && vac2_output_iq && rb_vac2OUT_l != null && rb_vac2OUT_r != null)
             {
                 if ((rb_vac2OUT_l.WriteSpace() >= frameCount) && (rb_vac2OUT_r.WriteSpace() >= frameCount))
                 {
@@ -3916,8 +4030,15 @@ namespace PowerSDR
                 }
             } // Vac2 with IQ on
 
+#endregion // VAC2 IQ
 
 
+
+            double tx_vol = FWCTXScale;
+
+            //---------------------------------------------------------------------------------
+            //---------------------------------------------------------------------------------
+            // ke9ns DttSP 
 
             if (localmox && (tx_dsp_mode == DSPMode.CWL || tx_dsp_mode == DSPMode.CWU))
             {
@@ -3931,13 +4052,19 @@ namespace PowerSDR
                 double time = CWSensorItem.GetCurrentTime();
                 CWSynth.Advance(tx_out_l, tx_out_r, frameCount, time);
 
-                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);
+                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);  
             }
             else
             {
-                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);            // ke9ns for standard audio do this routine found in  winmain.c as Audio_Callback2
-            }
+              
+                //====================================================================================
+                // ke9ns this is where pre audio is converted to post audio (i.e. filtered, eq'ed, modulated, etc, etc,)
+                // ke9ns ex_input is a pointer to an array of input pointers array_ptr_input[0-7];
+                // ke9ns ex_output is a pointer to an array of output pointers array_ptr_output[0-7];
 
+                DttSP.ExchangeSamples2(ex_input, ex_output, frameCount);            // ke9ns for standard audio do this routine found in  winmain.c as Audio_Callback2
+                
+            }
 
 
 #if (MINMAX)
@@ -3947,12 +4074,13 @@ namespace PowerSDR
 
             //=============================================================================================
             //=============================================================================================
-            // ke9ns below is wher the OUTPUT audio is played
+            // ke9ns below is where the OUTPUT audio is played (after the DSP just above)
             //=============================================================================================
             //=============================================================================================
 
-
-            #region Output Signal Source
+            //-------------------------------------------------------------------------------------
+            // ke9ns output signal source (sine, noise, triangle, etc to rx1_out_l & _r)
+#region Output Signal Source
 
             switch (rx1_output_signal)
             {
@@ -4106,7 +4234,9 @@ namespace PowerSDR
                     break;
             }
 
-            #endregion
+#endregion
+          
+            //-------------------------------------------------------------------------------------
 
             if (localmox && ramp)  // ke9ns ramp up function to give amps time to come on line
             {
@@ -4132,14 +4262,16 @@ namespace PowerSDR
                         break;
                     }
                 }
-            }
+            } // if (localmox && ramp)
+
+            //-------------------------------------------------------------------------------------
 
             if (Display.CurrentDisplayMode == DisplayMode.SCOPE || Display.CurrentDisplayMode == DisplayMode.PANASCOPE)  // ke9ns add  no need to do scope if your not using it.
             { 
                 if (!localmox)
                 {
 
-                    // ke9ns this produces scope screan data in Receive out_l_ptr1 = rx1_out_l  = OUT_L1
+                    // ke9ns this produces scope screen data in Receive out_l_ptr1 = rx1_out_l  = OUT_L1
 
                     DoScope(out_l_ptr1, frameCount); // why on separate channels for RX/TX?
 
@@ -4153,36 +4285,44 @@ namespace PowerSDR
 
            } // do only if needing scope
 
-			if(wave_record)
+
+            //-------------------------------------------------------------------------------------
+            // ke9ns POST AUDIO PROCESSING WAVE RECORDING
+
+            if (wave_record)
 			{
-				if(!localmox)
+				if(!localmox) // receiving while recording, so record the samplerate (entire panadapter)
 				{
 					if(!record_rx_preprocessed)
 					{
-						wave_file_writer.AddWriteBuffer(out_l_ptr1, out_r_ptr1);
-                        if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);
+						wave_file_writer.AddWriteBuffer(out_l_ptr1, out_r_ptr1);    // record RX1:  rx1_out_l & rx1_out_r,   out_l1 & out_r1
+
+                        if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);  // record RX2
 					}
 				}
-				else
+				else // transmitting while recording (so record my MIC or whatever is going to the transmitter)
 				{
 					if(!record_tx_preprocessed)               // ke9ns either do here or up above
 					{
 						wave_file_writer.AddWriteBuffer(out_l_ptr2, out_r_ptr2); // ke9ns post process audio and so AM mode is modulated here (above wave_record section is pre process so its not modulated)
                     
-                    //    Trace.Write("test====");
+                      //  Trace.Write("test9===============");
 
                     }
 				}
 
 			} // wave_record
 
+         
 
+            //-------------------------------------------------------------------------------------
+            // output from DSP unit (post processed steam)
 
-			out_l1 = rx1_out_l;   // ke9ns RX1 receive signal (from radio unless setup->test->receiver is changed) out_l_ptr1
-			out_r1 = rx1_out_r;  // out_r_ptr1
+            out_l1 = rx1_out_l;   // ke9ns RX1 receive signal (from radio unless setup->test->receiver is changed) out_l_ptr1
+			out_r1 = rx1_out_r;   // out_r_ptr1
 
 			out_l2 = out_l_ptr2;  // ke9ns transmit signal (from mic) tx_out_l (also sent out to headphones in MON mode)
-			out_r2 = out_r_ptr2;  // tx_out_R (also sent out to headphones in MON mode)
+            out_r2 = out_r_ptr2;  // tx_out_R (also sent out to headphones in MON mode)
 
             out_l3 = out_l_ptr3;  // ke9ns RX2 receive signal (also sent out to ext speaker in MON mode)as in out_l2 copied to out_l3
             out_r3 = out_r_ptr3;  // ke9ns (also sent out to ext speaker in MON mode)
@@ -4190,14 +4330,31 @@ namespace PowerSDR
             out_l4 = out_l_ptr4;  // ke9ns extra unused buffer  (used for LINE OUT channel as in out_l2 copied to out_l4 in MON mode)
 			out_r4 = out_r_ptr4;  // ke9ns internal speaker (which was never used) out_r2 copied to out_r4
 
-         
-         
 
+            //---------------------------------------------------------------------------------------------------------
+            // ke9ns testdsp audio playback ov wav file (both RX and TX)
+
+#if !NO_WIDETX
+            if (wave_playback)
+            {
+                //  Debug.WriteLine("wave playback ===================="); // ke9ns testdsp
+
+                    wave_file_reader.GetPlayBuffer(out_l2, out_r2); // WAV file audio streamed into in_l and in_r 
+
+                   ScaleBuffer(out_l2, out_l2, frameCount, (float)wave_preamp);
+                   ScaleBuffer(out_r2, out_r2, frameCount, (float)wave_preamp);
+            
+
+
+            } // audio file playback
+
+#endif        
             //---------------------------------------------------------------------------------
             // scale output for VAC1 -- use chan 4 as spare buffer
-            if (vac_enabled && !vac_output_iq && 
-				rb_vacIN_l != null && rb_vacIN_r != null && 
-				rb_vacOUT_l != null && rb_vacOUT_r != null)
+
+            #region vac1scale
+
+            if ( (vac_enabled) && (!vac_output_iq) && (rb_vacIN_l != null) && (rb_vacIN_r != null) && (rb_vacOUT_l != null) && (rb_vacOUT_r != null) )
 			{
 				if(!localmox)
 				{
@@ -4299,14 +4456,14 @@ namespace PowerSDR
 
 			} // vac1 ON output
 
-
-
+#endregion
 
             //---------------------------------------------------------------------------------
             // scale output for VAC2 -- use chan 4 as spare buffer
-            if (vac2_enabled && !vac2_output_iq &&
-                rb_vac2IN_l != null && rb_vac2IN_r != null &&
-                rb_vac2OUT_l != null && rb_vac2OUT_r != null)
+
+#region vac2scale
+
+            if (vac2_enabled && !vac2_output_iq && rb_vac2IN_l != null && rb_vac2IN_r != null && rb_vac2OUT_l != null && rb_vac2OUT_r != null)
             {
                 if (!localmox || (localmox && !vfob_tx))
                 {
@@ -4403,9 +4560,10 @@ namespace PowerSDR
                     }
                 }
             } // vac2 ON and output
+#endregion
 
 
-			double tx_vol = FWCTXScale;
+        //    double tx_vol = FWCTXScale;
 
             if (tx_output_signal != SignalSource.RADIO)	tx_vol = 1.0;
 
@@ -4435,7 +4593,7 @@ namespace PowerSDR
             CopyBuffer(out_l1, out_l4, frameCount);
             CopyBuffer(out_r1, out_r4, frameCount);
 
-            // Handle output to QSE
+            // Handle output to QSE (Quadrature Sampling Exciter I and Q ) or Transmit mixer
 
             // if not in some kind of TX mode, clear the QSE output
             if (!localmox && !full_duplex)
@@ -4445,7 +4603,11 @@ namespace PowerSDR
             }
             else // otherwise, scale using power/swr factors
             {
-                ScaleBuffer(out_l2, out_l1, frameCount, (float)tx_vol);
+
+             //   Debug.Write("testing------------");
+
+                ScaleBuffer(out_l2, out_l1, frameCount, (float)tx_vol);       // ke9ns transmit  (in, out)
+
                 ScaleBuffer(out_r2, out_r1, frameCount, (float)tx_vol);
             }
 
@@ -4454,6 +4616,7 @@ namespace PowerSDR
             // handle simple cases first -- non- full-duplex
             if (!full_duplex)
             {
+              
                 if (!localmox) // RX Mode
                 {
                     // if RX2 is present, combine the outputs ---- A (GRE)
@@ -4484,7 +4647,7 @@ namespace PowerSDR
 
                     if (tx_dsp_mode == DSPMode.AM || tx_dsp_mode == DSPMode.SAM)  // ke9ns add  use pre-processed audio for MON function in these modes only
                     {
-                        ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add   preprocess
+                        ScaleBuffer(tx_in_l, out_l2, frameCount, 1.0f); // ke9ns add   preprocess  scaleBuffer(in, out, , )
                         ScaleBuffer(tx_in_l, out_r2, frameCount, 1.0f);
 
                     }
@@ -4522,6 +4685,8 @@ namespace PowerSDR
                 }
                 else // TX (w/o Monitor) --- C (ORA)
                 {
+                 //   Debug.Write("transmit===============");
+
                     // if RX2 is present, use that output
                     if (rx2_enabled && !rx2_auto_mute_tx)
                     {
@@ -4539,13 +4704,14 @@ namespace PowerSDR
                         // Copy the output for the Int Spkr
                         CopyBuffer(out_r2, out_r4, frameCount);
                     }
-                    else // no RX2, so silence all outputs  ---  D (BLU)
+                    else // no RX2, so silence all outputs  ---  D (BLU)                  // ke9ns transmit on VFOA
                     {
                         // output silence to Line Out
                         ClearBuffer(out_l4, frameCount);
 
                         // output silence to Headphones
                         ClearBuffer(out_l2, frameCount);
+
                         ClearBuffer(out_r2, frameCount);
 
                         // output silence to Ext Spkr
@@ -4656,7 +4822,9 @@ namespace PowerSDR
                         }
 
                         // combine the RX1 and TX audio
-                        AddBuffer(out_l4, out_l2, frameCount);
+
+                        AddBuffer(out_l4, out_l2, frameCount); // ke9ns TX audio 
+
                         AddBuffer(out_r4, out_r2, frameCount);
 
                         // Scale the output for the headphones
@@ -4685,8 +4853,9 @@ namespace PowerSDR
                         // Copy the output for the Int Spkr
                         CopyBuffer(out_r2, out_r4, frameCount);
                     }
-                }
-            }
+                } // rx2
+
+            } // full duplex
 
 			// Scale output to FLEX-5000
 			/*if(full_duplex)
@@ -4806,7 +4975,7 @@ namespace PowerSDR
 				}
 			}*/
 
-#if(MINMAX)
+#if (MINMAX)
 			/*Debug.Write(MaxSample(out_l2, out_r2, frameCount).ToString("f6")+",");
 
 			float current_max = MaxSample(out_l2, out_r2, frameCount);
@@ -4817,7 +4986,7 @@ namespace PowerSDR
 			//Debug.WriteLine(MaxSample(out_l2, out_r2, frameCount).ToString("f6"));
             //if(period > 8) Debug.
             //    WriteLine("period: " + period.ToString("f2"));
-#if(TIMER)
+#if (TIMER)
 			t1.Stop();
 			Debug.WriteLine(t1.Duration);
 #endif
@@ -5160,9 +5329,9 @@ namespace PowerSDR
 			return 0;
 		}
 
-		#endregion
+#endregion
 
-		#region Buffer Operations
+#region Buffer Operations
 
         unsafe private static float SumBuffer(float* buf, int samples)
         {
@@ -5533,9 +5702,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region Misc Routines
+#region Misc Routines
         // ======================================================
         // Misc Routines
         // ======================================================
@@ -5555,13 +5724,13 @@ namespace PowerSDR
 
 		private static void VACDebug(string s)
 		{
-#if(VAC_DEBUG)
+#if (VAC_DEBUG)
 			Debug.WriteLine(s);
 #endif
 		}
 
 #if (NewVAC)
-		#region NewInitVac
+#region NewInitVac
 		unsafe private static void InitVAC()
 		{
 			
@@ -5600,7 +5769,7 @@ namespace PowerSDR
 				Debug.WriteLine("CriticalSection Failed");
 			}
 		}
-		#endregion
+#endregion
 #else
 		unsafe private static void InitVAC()
 		{
@@ -6043,7 +6212,7 @@ namespace PowerSDR
 				
 			inparam.device = in_dev;
 			inparam.channelCount = num_channels;
-#if(INTERLEAVED)
+#if (INTERLEAVED)
 			inparam.sampleFormat = PA19.paFloat32;
 #else
 			inparam.sampleFormat = PA19.paFloat32 | PA19.paNonInterleaved;
@@ -6052,7 +6221,7 @@ namespace PowerSDR
 
 			outparam.device = out_dev;
 			outparam.channelCount = num_channels;
-#if(INTERLEAVED)
+#if (INTERLEAVED)
 			outparam.sampleFormat = PA19.paFloat32;
 #else
 			outparam.sampleFormat = PA19.paFloat32 | PA19.paNonInterleaved;
@@ -6073,7 +6242,7 @@ namespace PowerSDR
             for (i = 0; i < RETRY_AUDIO_START_TIMES; i++)
             {
              
-                switch (callback_num)
+                switch (callback_num) // ke9ns = 0
                 {
                     case 1: // VAC1
                         error = PA19.PA_OpenStream(out stream2, &inparam, &outparam, sample_rate, block_size, 0, callback, 1);
@@ -6082,8 +6251,8 @@ namespace PowerSDR
                         error = PA19.PA_OpenStream(out stream3, &inparam, &outparam, sample_rate, block_size, 0, callback, 2);
                         break;
                     default:
-                        error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0);
-                      //  Trace.WriteLine("start=====");
+                        error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0); // ke9ns this is the default stream  callback = callback8 (which is callback2)
+                    //  Debug.WriteLine("startcallback0=====");
                         break;
                 }
 /*
@@ -6179,9 +6348,9 @@ namespace PowerSDR
             if (error != 0) PortAudioErrorMessageBox(error);
         }
 
-		#endregion		
+#endregion
 
-		#region Scope Stuff
+#region Scope Stuff
 
 		private static int scope_samples_per_pixel = 512;
 		public static int ScopeSamplesPerPixel
@@ -6271,7 +6440,7 @@ namespace PowerSDR
 
 		} // doscope
 
-		#endregion
+#endregion
 
 	} // audio class
 

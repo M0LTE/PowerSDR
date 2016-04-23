@@ -403,9 +403,10 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 	{
 		//fprintf(stderr, "reset_em!\n"); fflush(stderr);
 		//fprintf(stdout,"Audio_Callback2: reset_em = TRUE\n"), fflush(stdout);
+		
 		reset_system_audio(nframes);
 
-		for(thread=0;thread<threadno;thread++)
+		for(thread=0;thread < threadno;thread++)
 		{
 			memset (output[2*thread], 0, nframes * sizeof (float));  // ke9ns clear out output and return
 			memset (output[2*thread+1], 0, nframes * sizeof (float));
@@ -575,13 +576,13 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 
 	for(thread=0; thread < threadno; thread++) 
 	{
-		int l=2*thread, r = 2*thread+1;
+		int l = 2*thread, r = 2*thread+1;
 
-		if ((ringb_float_read_space (top[thread].jack.ring.o.l) >= nframes)
-			&& (ringb_float_read_space (top[thread].jack.ring.o.r) >= nframes))
+		if ((ringb_float_read_space (top[thread].jack.ring.o.l) >= nframes)	&& (ringb_float_read_space (top[thread].jack.ring.o.r) >= nframes))
 		{
 			/*ringb_float_read (top[thread].jack.auxr.o.l, output[l], nframes);
 			ringb_float_read (top[thread].jack.auxr.o.r, output[r], nframes);*/
+		
 			ringb_float_read (top[thread].jack.ring.o.l, output[l], nframes);
 			ringb_float_read (top[thread].jack.ring.o.r, output[r], nframes);
 		}
@@ -589,7 +590,7 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 		{	
 			// rb pathology
 			//reset_system_audio(nframes);
-			for(thread=0;thread<threadno;thread++) 
+			for(thread=0;thread < threadno;thread++) 
 			{
 				memset (output[2*thread  ], 0, nframes * sizeof (float));
 				memset (output[2*thread+1], 0, nframes * sizeof (float));
@@ -598,39 +599,48 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 		}
 
 		// input: copy from port to ring
-		if ((ringb_float_write_space (top[thread].jack.ring.i.l) >= nframes)
-			&& (ringb_float_write_space (top[thread].jack.ring.i.r) >= nframes))
+		if ((ringb_float_write_space (top[thread].jack.ring.i.l) >= nframes) && (ringb_float_write_space (top[thread].jack.ring.i.r) >= nframes))
 		{
-			if (diversity.flag && (thread == 0)) {
-				if ((ringb_float_write_space (top[2].jack.ring.i.l) >= nframes)
-					&& (ringb_float_write_space (top[2].jack.ring.i.r) >= nframes))
+			if (diversity.flag && (thread == 0))
+			{
+				if ((ringb_float_write_space (top[2].jack.ring.i.l) >= nframes)	&& (ringb_float_write_space (top[2].jack.ring.i.r) >= nframes))
 				{
 					REAL *l0 = input[0];
 					REAL *r0 = input[1];
 					REAL *l2 = input[4];
 					REAL *r2 = input[5];
-					for (i=0;i<nframes;i++) {
+
+					for (i=0;i < nframes;i++) 
+					{
 						COMPLEX A = Cmplx(l0[i],r0[i]);
 						COMPLEX B = Cmplx(l2[i],r2[i]);
+
 						A = Cscl(Cadd(A,Cmul(B,diversity.scalar)),diversity.gain);
+
 						ringb_float_write (top[0].jack.ring.i.l, &A.re, 1);
 						ringb_float_write (top[0].jack.ring.i.r, &A.im, 1);
 					}
+
 					/*ringb_float_write (top[thread].jack.auxr.i.l, input[l], nframes);
 					ringb_float_write (top[thread].jack.auxr.i.r, input[r], nframes);*/
-				} else {
+				} 
+				else
+				{
 					// rb pathology
 					//reset_system_audio(nframes);
-					for(thread=0;thread<threadno;thread++) 
+					for(thread=0;thread < threadno;thread++) 
 					{
 						memset (output[2*thread  ], 0, nframes * sizeof (float));
 						memset (output[2*thread+1], 0, nframes * sizeof (float));
 					}
 					return;
 				}
-			} else {
+			} 
+			else
+			{
 				ringb_float_write (top[thread].jack.ring.i.l, input[l], nframes);
 				ringb_float_write (top[thread].jack.ring.i.r, input[r], nframes);
+				
 				/*ringb_float_write (top[thread].jack.auxr.i.l, input[l], nframes);
 				ringb_float_write (top[thread].jack.auxr.i.r, input[r], nframes);*/
 			}
@@ -639,7 +649,8 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 		{	
 			// rb pathology
 			//reset_system_audio(nframes);
-			for(thread=0;thread<threadno;thread++) 
+
+			for(thread=0;thread < threadno;thread++) 
 			{
 				memset (output[2*thread  ], 0, nframes * sizeof (float));
 				memset (output[2*thread+1], 0, nframes * sizeof (float));
@@ -648,10 +659,16 @@ DttSP_EXP void Audio_Callback2 (float **input, float **output, unsigned int nfra
 		}
 		
 		// if enough accumulated in ring, fire dsp
-		if ((ringb_float_read_space (top[thread].jack.ring.i.l) >= top[thread].hold.size.frames) &&
-			(ringb_float_read_space (top[thread].jack.ring.i.r) >= top[thread].hold.size.frames))
-			sem_post (&top[thread].sync.buf.sem);
-	}
+		if ((ringb_float_read_space(top[thread].jack.ring.i.l) >= top[thread].hold.size.frames) && (ringb_float_read_space(top[thread].jack.ring.i.r) >= top[thread].hold.size.frames))
+		{
+			sem_post(&top[thread].sync.buf.sem);
+		}
+
+
+	} // for thread loop
+
+
+
 } // audio_callback2 ( DttSP.ExchangeSamples2 routine in audio.cs)
 
 

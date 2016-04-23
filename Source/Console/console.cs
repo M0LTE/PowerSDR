@@ -4218,6 +4218,7 @@ namespace PowerSDR
             this.chkEnableMultiRX.Name = "chkEnableMultiRX";
             this.toolTip1.SetToolTip(this.chkEnableMultiRX, resources.GetString("chkEnableMultiRX.ToolTip"));
             this.chkEnableMultiRX.CheckedChanged += new System.EventHandler(this.chEnableMultiRX_CheckedChanged);
+            this.chkEnableMultiRX.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkEnableMultiRX_MouseDown);
             // 
             // chkSR
             // 
@@ -13739,7 +13740,7 @@ namespace PowerSDR
 
             if(extended && tx) // ke9ns this is for Flex radios with extended MARS capability
             {
-                Debug.WriteLine("EXTENDED========================");
+             //   Debug.WriteLine("EXTENDED========================");
 /*
                 if (Band.BLMF) tx_band = Band.B160M;
                 else if (Band.B120M) tx_band = Band.B160M;
@@ -13940,7 +13941,7 @@ namespace PowerSDR
 
                if (region == FRSRegion.US)
                {
-                Debug.WriteLine("US BAND========================");
+             //   Debug.WriteLine("US BAND========================");
 
                 if (freq >= 1.8 && freq <= 2.0)
                 {
@@ -18649,17 +18650,17 @@ namespace PowerSDR
 				case DSPMode.DIGL:
 					l = -high;
 					h = -low;
-					break;
+                    break;
 				case DSPMode.USB:
 				case DSPMode.CWU:
 				case DSPMode.DIGU:
-					l = low;
-					h = high;
-					break;
+                    	l = low;
+                        h = high;
+                    break;
 				case DSPMode.DSB:
-					l = -high;
-					h = high;
-					break;
+                    l = -high;
+                    h = high;
+                    break;
 				case DSPMode.AM:
 				case DSPMode.SAM:
 					l = -high;
@@ -18696,12 +18697,19 @@ namespace PowerSDR
 			}
 
 			dsp.GetDSPTX(0).SetTXFilter(l, h);
+
+          //  dsp.GetDSPTX(0).SetTXFilter(-90000, 0); // ke9ns testdsp limited to about 90khz
+
+
             if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
-                FWC.SetTXDSPFilter(l, h);
+            {
+                  FWC.SetTXDSPFilter(l, h);
+             }
 
 			Display.TXFilterLow = l;
 			Display.TXFilterHigh = h;
-		}
+		} // set txfilters
+
 
 		public void UpdateTXProfile(string name)
 		{
@@ -28783,9 +28791,13 @@ namespace PowerSDR
 				wave_playback = value;
 				if(wave_playback)
 				{
-					wave_freq = (VFOAFreq*1e6)%sample_rate1;
-				}
-				else
+					wave_freq = (VFOAFreq * 1e6) % sample_rate1; // 25000 hz = (3.865 * 1mhz) % 192000hz  (modulus is remainder only)
+                    Debug.WriteLine("wave_freq " + wave_freq);  // ke9ns test
+                    Debug.WriteLine("VFO_freq " + VFOAFreq);  // ke9ns test
+                    Debug.WriteLine("SR " + sample_rate1);  // ke9ns test
+
+                }
+                else
 				{
 					txtVFOAFreq_LostFocus(this, EventArgs.Empty);
 				}
@@ -32598,8 +32610,10 @@ namespace PowerSDR
 			set
 			{
 				tx_filter_high = value;
+
 				SetTXFilters(rx1_dsp_mode, tx_filter_low, tx_filter_high);
-				if(Display.DrawTXFilter && !chkPower.Checked)
+
+                if (Display.DrawTXFilter && !chkPower.Checked)
 				{
 					switch(Display.CurrentDisplayMode)
 					{
@@ -38851,7 +38865,7 @@ namespace PowerSDR
 										power = FWCPAPower(pa_fwd_power);
                                         //power = (double)pm.Watts;
                                         //output = power.ToString("f0")+" W";
-                                        Debug.WriteLine("power " + power); // ke9ns test
+                                      //  Debug.WriteLine("power " + power); // ke9ns test
 
 										new_meter_data = (float)power;
 										break;
@@ -45973,7 +45987,9 @@ namespace PowerSDR
                     //----------------------------------------------------------------------------------
                     if (Audio.wave_playback) // this is true if playing back audio file
 					{
-						double f = (wave_freq-(VFOAFreq*1e6)%sample_rate1);
+						double f = (wave_freq - (VFOAFreq*1e6) % sample_rate1);
+ 
+                        Debug.WriteLine("f "+f);  // ke9ns test
 
                         if (f > sample_rate1/2) f -= sample_rate1;
 
@@ -46463,17 +46479,19 @@ namespace PowerSDR
 
 
 
-
+//=======================================================================================================
 		private void txtVFOABand_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
 			if(!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked)) 
 			{
 				e.Handled = true;
-				return;
+				return;              // return if you dont need the subVFOa 
 			}
 
 			string separator = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-			int KeyCode = (int)e.KeyChar;  
+
+            int KeyCode = (int)e.KeyChar; 
+             
 			if((KeyCode < 48 || KeyCode > 57) &&			// numeric keys
 				KeyCode != 8 &&								// backspace
 				!e.KeyChar.ToString().Equals(separator) &&	// decimal
@@ -46487,18 +46505,22 @@ namespace PowerSDR
 				{
 					e.Handled = (((TextBoxTS)sender).Text.IndexOf(separator) >= 0);
 				}
-				else if(KeyCode == 27)
+				else if(KeyCode == 27) // esc key
 				{
-					VFOASubFreq = saved_vfoa_sub_freq;
+					VFOASubFreq = saved_vfoa_sub_freq; // used previously saved value
 					btnHidden.Focus();
 				}
 			}
-			if(e.KeyChar == (char)Keys.Enter)
+
+
+			if(e.KeyChar == (char)Keys.Enter) // check for enter key
 			{
 				txtVFOABand_LostFocus(txtVFOABand, new System.EventArgs());
 				btnHidden.Focus();
 			}
-		}
+
+
+        } // txtVFOABand_KeyPress
 
         //================================================================================ 
         //================================================================================ 
@@ -49645,6 +49667,7 @@ namespace PowerSDR
             }
 
             int new_txosc = (int)dsp.GetDSPTX(0).TXOsc;
+
             if (new_txosc != old_txosc)
             {
                 if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
@@ -51617,11 +51640,15 @@ namespace PowerSDR
 				btnHidden.Focus();
 		}
 
+
+        //==================================================================================
 		private void chEnableMultiRX_CheckedChanged(object sender, System.EventArgs e)
 		{
 			dsp.GetDSPRX(0, 1).Active = chkEnableMultiRX.Checked;
-			if(chkEnableMultiRX.Checked)
+
+            if (chkEnableMultiRX.Checked)
 			{
+                  
 				//tbPanMainRX_Scroll(this, EventArgs.Empty);
 				//tbRX0Gain_Scroll(this, EventArgs.Empty);
 				
@@ -51630,10 +51657,14 @@ namespace PowerSDR
 				{
 					if(rx2_enabled)
 					{
-						UpdateVFOASub();
+                        VFOASubFreq = VFOAFreq; // ke9ns add start with sub on top of vfoA
+                        UpdateVFOASub();
+
 					}
 					else
 					{
+                        VFOBFreq = VFOAFreq; // ke9ns add  start with B synced to A
+
 						txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 						if(chkVFOSplit.Checked) chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
                         else
@@ -52673,7 +52704,9 @@ namespace PowerSDR
 		private void txtVFOABand_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			if(!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked) || !chkPower.Checked) return;
+
 			panelVFOASubHover.Visible = true;
+
 			if(this.ContainsFocus)
 			{
 				int old_digit = vfoa_sub_hover_digit;
@@ -52682,6 +52715,7 @@ namespace PowerSDR
 					GetVFOSubCharWidth();
 
 				int x = txtVFOABand.Width - (vfo_sub_pixel_offset - 5);
+
 				while(x < e.X)
 				{
 					digit_index++;
@@ -52709,15 +52743,18 @@ namespace PowerSDR
 				}
 
 				if(digit_index < 3) digit_index = -1;
+
 				if(digit_index > 9) digit_index = 9;
+
 				vfoa_sub_hover_digit = digit_index;
-				if(vfoa_sub_hover_digit != old_digit)
-					panelVFOASubHover.Invalidate();
+
+				if(vfoa_sub_hover_digit != old_digit)	panelVFOASubHover.Invalidate();
 				//Debug.WriteLine("vfoa_sub_hover_digit:"+vfoa_sub_hover_digit);
 			}
-		}
 
-		private void txtVFOABand_MouseLeave(object sender, System.EventArgs e)
+        } // txtVFOABand_MouseMove(
+
+        private void txtVFOABand_MouseLeave(object sender, System.EventArgs e)
 		{
 			vfoa_sub_hover_digit = -1;
 			panelVFOASubHover.Invalidate();
@@ -58314,6 +58351,29 @@ namespace PowerSDR
 
 
         } // autobrightbox_mousedown
+
+        private void chkEnableMultiRX_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (rx2_enabled)
+                {
+                    VFOASubFreq = VFOAFreq; // ke9ns add start with sub on top of vfoA
+                    UpdateVFOASub();
+
+                }
+                else
+                {
+                    VFOBFreq = VFOAFreq; // ke9ns add  start with B synced to A
+                }
+
+
+            } // right click
+
+        } // chkEnableMultiRX_MouseDown
 
 
         //===================================================================================

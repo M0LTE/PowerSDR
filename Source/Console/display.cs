@@ -90,7 +90,7 @@ namespace PowerSDR
 		public static float[] current_display_data;             // Buffer used to store the current data for the display
         public static float[] current_display_data1;            // ke9ns add this is data that is never avg
 
-        public static float[] new_display_data_bottom;          //  RX2
+        public static float[] new_display_data_bottom;          // RX2
 		public static float[] current_display_data_bottom;      // RX2 
         public static float[] current_display_data_bottom1;     // ke9ns add this is data that is never avg
 
@@ -4504,7 +4504,7 @@ namespace PowerSDR
 
                     string label1 = temp3.ToString("d3");
 
-                    g.DrawString(label1, font, grid_text_brush, temp1, (float)Math.Floor(H * .01)); // ke9ns shift labels over 100 to allow room for time stamp on left side
+                    g.DrawString(label1, font, grid_text_brush, temp1, (float)Math.Floor(H * .005)); // ke9ns shift labels over 100 to allow room for time stamp on left side
 
               
                     //  Debug.WriteLine("W " + W + " temp " + temp + " temp1 " + temp1 + " temp2 " + temp2 + " temp3 " + temp3);
@@ -4567,8 +4567,8 @@ namespace PowerSDR
                                     else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
                                     else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
 
-                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01)); // ke9ns draw frequency at band edges in RED
-                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .005)); // was .01 ke9ns draw frequency at band edges in RED
+                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .005)); // .01
 
                                 } // actual_fgrid
                                 else
@@ -4688,11 +4688,11 @@ namespace PowerSDR
 
                                     if (bottom)
                                     {
-                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005)); // .01
                                     }
                                     else
                                     {
-                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                        g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
                                     }
 
                                     // Debug.WriteLine("KE9NS H................. " + H);
@@ -4713,8 +4713,8 @@ namespace PowerSDR
                                 offsetR = (int)(label.Length * 4.1);
                                 if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
                                 {
-                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
                                 }
                             } // show freq offset
 
@@ -4800,8 +4800,8 @@ namespace PowerSDR
                                     else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
                                     else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
 
-                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .005));
                                 }
                                 else
                                 {
@@ -4884,8 +4884,8 @@ namespace PowerSDR
                                     else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
                                     else offsetL = (int)((label.Length) * 4.1) - 8;
 
-                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
                                 }
                             }
                             else
@@ -4901,8 +4901,8 @@ namespace PowerSDR
                                 offsetR = (int)(label.Length * 4.1);
                                 if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
                                 {
-                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
-                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
                                 }
                             }
                         }
@@ -5012,8 +5012,8 @@ namespace PowerSDR
 
                 if (show_freq_offset)
                 {
-                    if (bottom) g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, H + (float)Math.Floor(H * .01));
-                    else g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, (float)Math.Floor(H * .01));
+                    if (bottom) g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, H + (float)Math.Floor(H * .005));
+                    else g.DrawString("0", font, new SolidBrush(grid_zero_color), center_line_x - 5, (float)Math.Floor(H * .005));
                 }
 
             } // no continuum mode
@@ -6201,7 +6201,8 @@ namespace PowerSDR
             {
 
                 waterfall_bmp = new Bitmap(WM, K13/4 - 16, WtrColor);	// initialize waterfall display
-              //  waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
+            
+                //  waterfall_bmp2 = new Bitmap(WM, K13 - 16, WtrColor);  // ke9ns BMP
                                                                       // waterfall_bmp.MakeTransparent(Color.FromArgb(0,0,0,0)); // ke9ns test
 
                 K15 = 1;

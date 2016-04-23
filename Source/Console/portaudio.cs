@@ -263,7 +263,7 @@ namespace PowerSDR
 			uint framesPerBuffer,
 			PaStreamFlags streamFlags,
 			PaStreamCallback streamCallback,
-			int callback_id);		// 0 for callback1, else callback2
+			int callback_id);		// 0 for callback1, else callback2     // ke9ns 0=callback8 (which is really callback2)
 
 		[DllImport("PA19.dll")]
 		unsafe public static extern PaError PA_OpenDefaultStream(

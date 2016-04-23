@@ -80,9 +80,9 @@ namespace PowerSDR
         private System.Windows.Forms.TrackBar tbPreamp;
 
         #endregion
-        public CheckBoxTS TXIDBoxTS;
-        public CheckBoxTS createBoxTS;
-        public CheckBoxTS chkQuickAudioFolder;
+        public CheckBoxTS TXIDBoxTS; // ke9ns add
+        public CheckBoxTS createBoxTS; // ke9ns add
+        public CheckBoxTS chkQuickAudioFolder; // ke9ns add
         private TextBox textBox1;
         private IContainer components;
 
@@ -648,7 +648,7 @@ namespace PowerSDR
 				return false;
 			}
 
-            if (!TXIDBoxTS.Checked)
+            if (!TXIDBoxTS.Checked) // ke9ns add
             {                                                                  // format =1 means PCM
                 if (!CheckSampleRate(fmt.sample_rate) || (fmt.format == 1 && fmt.sample_rate != Audio.SampleRate1))  // ke9ns needs to be on the list of sample rates BUT needs to match the current SR otherwise it fails
                 {
@@ -671,6 +671,9 @@ namespace PowerSDR
                     file_list.RemoveAt(currently_playing);
                     return false;
                 }
+
+             //  Debug.WriteLine("audio go here"); // here at start of playback
+
             } // do above if not a WatefallID TX
 
 
@@ -826,6 +829,7 @@ namespace PowerSDR
 			if(checkBoxPlay.Checked)
 			{
 				string filename = (string)file_list[currently_playing];
+
 				if(!OpenWaveFile(filename, false))
 				{
 					checkBoxPlay.Checked = false;
@@ -837,21 +841,18 @@ namespace PowerSDR
                 if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
                 {
                     string filename2 = filename+"-rx2";
-                    if(File.Exists(filename2))
-                        OpenWaveFile(filename2, true);
+                    if(File.Exists(filename2))  OpenWaveFile(filename2, true);
                 }
 
 				txtCurrentFile.Text = (string)lstPlaylist.Items[currently_playing];
 				checkBoxPlay.BackColor = console.ButtonSelectedColor;
 				checkBoxPause.Enabled = true;
 			}
-			else
+			else // if not playing audio
 			{
-				if(Audio.wave_file_reader != null)
-					Audio.wave_file_reader.Stop();
+				if(Audio.wave_file_reader != null)	Audio.wave_file_reader.Stop();
 
-                if (Audio.wave_file_reader2 != null)
-                    Audio.wave_file_reader2.Stop();
+                if (Audio.wave_file_reader2 != null)   Audio.wave_file_reader2.Stop();
 
                 Thread.Sleep(50); // wait for files to close
 
@@ -861,8 +862,12 @@ namespace PowerSDR
 				checkBoxPlay.BackColor = SystemColors.Control;
 
 			}
+
 			Audio.wave_playback = checkBoxPlay.Checked;
-			console.WavePlayback = checkBoxPlay.Checked; 
+			console.WavePlayback = checkBoxPlay.Checked;
+         
+            //  Debug.WriteLine("audio done here");
+
         } //checkBoxPlay_CheckedChanged
 
 
@@ -2565,8 +2570,9 @@ namespace PowerSDR
         private void ReadBuffer(ref BinaryReader reader)
 		{
 
-          	//Debug.WriteLine("ReadBuffer ("+rb_l.ReadSpace()+")");
-			int i=0, num_reads = IN_BLOCK;
+            //	Debug.WriteLine("ReadBuffer ("+rb_l.ReadSpace()+")");
+
+            int i=0, num_reads = IN_BLOCK;
 			int val = reader.Read(io_buf, 0, io_buf_size);             // reader.  this is the open wave file binearystream
 
 			if(val < io_buf_size)
@@ -2640,9 +2646,11 @@ namespace PowerSDR
 			else
 			{
 				buf_l_in.CopyTo(buf_l_out, 0); // copy to buffer
+
                 if (channels > 1)
                 {
                     buf_r_in.CopyTo(buf_r_out, 0); // ke9ns mod (no if channels)
+                   // Debug.WriteLine("channels2==================");
                 }
             }
 
@@ -2659,8 +2667,10 @@ namespace PowerSDR
                 rb_r.Write(buf_l_out, out_cnt); // if only left channel, simply repeat right
             }
 
+          //  Debug.WriteLine("readbuffer==================");
 
-		}  // readbuffer
+
+        }  // readbuffer
 
 
 
@@ -2669,7 +2679,7 @@ namespace PowerSDR
 		unsafe public void GetPlayBuffer(float *left, float *right)
 		{
 
-             //Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
+           //  Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
             int count = rb_l.ReadSpace();
 
 			if(count == 0) return;
