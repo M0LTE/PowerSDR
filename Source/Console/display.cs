@@ -4017,20 +4017,25 @@ namespace PowerSDR
 
                         if ((SpotControl.SWL_Freq[ii] > VFOHigh))
                         {
-                            SpotControl.Hindex--; // get top index spot
-                             break; // once a SWL spot if found off the right side of screen then DONE
+                           SpotControl.Hindex--; // get top index spot
+                         
+                            break; // once a SWL spot if found off the right side of screen then DONE
                         }
                        
                             if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
                             {
                                 if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
 
-                                if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                         //   Debug.Write(" FREQ-SWL " + ii);
+
+                            if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                                 {
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               
                                     g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                     g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+
+                             //   Debug.WriteLine(" FINDSWL "+ ii );
 
                                 if (Console.SXK < 99)
                                 {
@@ -4055,18 +4060,23 @@ namespace PowerSDR
                         } // make sure spot is > then left side of screen
    
                     } // for loop through SWL_Index
+                 //   Debug.WriteLine(" L_index " + SpotControl.Lindex);
+                 //   Debug.WriteLine(" H_index " + SpotControl.Hindex);
 
-                  
+                 //   Debug.WriteLine(" VFOLow " + VFOLow);
+                 //   Debug.WriteLine(" VFOHigh " + VFOHigh);
 
-                }
+
+                } // if you change vfo freq do above
                 else // if you dont change freq, then do below
                 {
 
                     if (!bottom)
                     {
                       
-                        for (int ii = SpotControl.Lindex; ii < SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
                         {
+                          //  Debug.Write(" drawSWL " + ii);
 
                             if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                             {
@@ -5694,20 +5704,27 @@ namespace PowerSDR
             if (pan_fill)                               // trace spectrum line and fill under it
             {
                 points[W].X = W; points[W].Y = H;
-                points[W+1].X = 0; points[W+1].Y = H;
+                points[W + 1].X = 0; points[W + 1].Y = H;
                 if (bottom)
                 {
                     points[W].Y += H;
-                    points[W+1].Y += H;
+                    points[W + 1].Y += H;
                 }
-                data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
+
+                data_line_pen.Color = Setup.DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+
                 g.FillPolygon(data_line_pen.Brush, points);
-                points[W] = points[W-1];
-                points[W+1] = points[W-1];
+                points[W] = points[W - 1];
+
+                points[W + 1] = points[W - 1];
                 data_line_pen.Color = data_line_color;
-                g.DrawLines(data_line_pen, points);                
+             
+                g.DrawLines(data_line_pen, points);
             }
-            else g.DrawLines(data_line_pen, points);                                 // trace spectrum line to screen
+            else
+            {
+                  g.DrawLines(data_line_pen, points);                                 // trace spectrum line to screen
+            }
 
             
             // draw notch zoom if enabled
@@ -5891,14 +5908,21 @@ namespace PowerSDR
                             points[W].Y += H;
                             points[W + 1].Y += H;
                         }
-                        data_line_pen.Color = Color.FromArgb(100, 255, 255, 255);
+
+                        data_line_pen.Color = Setup.DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+
                         g.FillPolygon(data_line_pen.Brush, points);
                         points[W] = points[W - 1];
                         points[W + 1] = points[W - 1];
+
                         data_line_pen.Color = data_line_color;
                         g.DrawLines(data_line_pen, points);
                     }
-                    else g.DrawLines(data_line_pen, points);
+                    else
+                    {
+                      
+                        g.DrawLines(data_line_pen, points);  // g.DrawLines(data_line_pen, points);
+                    }
                 }
             }  // TNF ZOOM
 #endif //TNF option

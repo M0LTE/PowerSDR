@@ -1037,6 +1037,14 @@ namespace PowerSDR
         private LabelTS labelTS9;
         public ColorButton clrbtnGrayLine;
         private LabelTS labelTS8;
+        private LabelTS labelTS11;
+        private LabelTS labelTS10;
+        public TrackBarTS tbPanAlpha;
+        public ColorButton clrbtnPan;
+        private ColorButton clrbtnMeterIndicator;
+        private LabelTS labelTS12;
+        private ColorButton clrbtnMeterHigh;
+        private ColorButton clrbtnMeterLow;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1844,6 +1852,10 @@ namespace PowerSDR
             this.lblDisplayGridColor = new System.Windows.Forms.LabelTS();
             this.clrbtnDataLine = new PowerSDR.ColorButton();
             this.grpAppPanadapter = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS11 = new System.Windows.Forms.LabelTS();
+            this.labelTS10 = new System.Windows.Forms.LabelTS();
+            this.tbPanAlpha = new System.Windows.Forms.TrackBarTS();
+            this.clrbtnPan = new PowerSDR.ColorButton();
             this.tbGrayLineAlpha = new System.Windows.Forms.TrackBarTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.clrbtnGrayLine = new PowerSDR.ColorButton();
@@ -1875,6 +1887,7 @@ namespace PowerSDR
             this.tpAppearanceMeter = new System.Windows.Forms.TabPage();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterDigBackground = new PowerSDR.ColorButton();
+            this.clrbtnMeterRight = new PowerSDR.ColorButton();
             this.lblMeterDigitalText = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterDigText = new PowerSDR.ColorButton();
             this.grpMeterEdge = new System.Windows.Forms.GroupBoxTS();
@@ -1886,13 +1899,16 @@ namespace PowerSDR
             this.lblMeterEdgeHigh = new System.Windows.Forms.LabelTS();
             this.lblMeterEdgeLow = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterEdgeLow = new PowerSDR.ColorButton();
+            this.clrbtnMeterLeft = new PowerSDR.ColorButton();
             this.grpAppearanceMeter = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnMeterHigh = new PowerSDR.ColorButton();
+            this.clrbtnMeterIndicator = new PowerSDR.ColorButton();
+            this.clrbtnMeterLow = new PowerSDR.ColorButton();
+            this.labelTS12 = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterBackground = new PowerSDR.ColorButton();
             this.lblMeterBackground = new System.Windows.Forms.LabelTS();
-            this.clrbtnMeterRight = new PowerSDR.ColorButton();
             this.lblAppearanceMeterRight = new System.Windows.Forms.LabelTS();
             this.lblAppearanceMeterLeft = new System.Windows.Forms.LabelTS();
-            this.clrbtnMeterLeft = new PowerSDR.ColorButton();
             this.lblMeterType = new System.Windows.Forms.LabelTS();
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpKeyboard = new System.Windows.Forms.TabPage();
@@ -2466,6 +2482,7 @@ namespace PowerSDR
             this.grpMainDisplay.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpAppPanadapter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udBandSegmentBoxLineWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).BeginInit();
@@ -11336,9 +11353,9 @@ namespace PowerSDR
             this.lblDisplayDataLineColor.Image = null;
             this.lblDisplayDataLineColor.Location = new System.Drawing.Point(132, 61);
             this.lblDisplayDataLineColor.Name = "lblDisplayDataLineColor";
-            this.lblDisplayDataLineColor.Size = new System.Drawing.Size(56, 24);
+            this.lblDisplayDataLineColor.Size = new System.Drawing.Size(62, 36);
             this.lblDisplayDataLineColor.TabIndex = 41;
-            this.lblDisplayDataLineColor.Text = "Data Line:";
+            this.lblDisplayDataLineColor.Text = "Pan Data Line:";
             // 
             // lblDisplayTextColor
             // 
@@ -11422,10 +11439,15 @@ namespace PowerSDR
             this.clrbtnDataLine.Name = "clrbtnDataLine";
             this.clrbtnDataLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnDataLine.TabIndex = 73;
+            this.toolTip1.SetToolTip(this.clrbtnDataLine, "Pan Data line Color for RX1 and RX2");
             this.clrbtnDataLine.Changed += new System.EventHandler(this.clrbtnDataLine_Changed);
             // 
             // grpAppPanadapter
             // 
+            this.grpAppPanadapter.Controls.Add(this.labelTS11);
+            this.grpAppPanadapter.Controls.Add(this.labelTS10);
+            this.grpAppPanadapter.Controls.Add(this.tbPanAlpha);
+            this.grpAppPanadapter.Controls.Add(this.clrbtnPan);
             this.grpAppPanadapter.Controls.Add(this.tbGrayLineAlpha);
             this.grpAppPanadapter.Controls.Add(this.labelTS9);
             this.grpAppPanadapter.Controls.Add(this.clrbtnGrayLine);
@@ -11457,6 +11479,50 @@ namespace PowerSDR
             this.grpAppPanadapter.Text = "Panadapter";
             this.grpAppPanadapter.Enter += new System.EventHandler(this.grpAppPanadapter_Enter);
             // 
+            // labelTS11
+            // 
+            this.labelTS11.Image = null;
+            this.labelTS11.Location = new System.Drawing.Point(376, 78);
+            this.labelTS11.Name = "labelTS11";
+            this.labelTS11.Size = new System.Drawing.Size(64, 28);
+            this.labelTS11.TabIndex = 95;
+            this.labelTS11.Text = "Pan Fill Color:\r\n";
+            // 
+            // labelTS10
+            // 
+            this.labelTS10.Image = null;
+            this.labelTS10.Location = new System.Drawing.Point(376, 110);
+            this.labelTS10.Name = "labelTS10";
+            this.labelTS10.Size = new System.Drawing.Size(50, 31);
+            this.labelTS10.TabIndex = 94;
+            this.labelTS10.Text = "Fill Alpha:";
+            // 
+            // tbPanAlpha
+            // 
+            this.tbPanAlpha.AutoSize = false;
+            this.tbPanAlpha.Location = new System.Drawing.Point(432, 112);
+            this.tbPanAlpha.Maximum = 200;
+            this.tbPanAlpha.Name = "tbPanAlpha";
+            this.tbPanAlpha.Size = new System.Drawing.Size(66, 18);
+            this.tbPanAlpha.TabIndex = 93;
+            this.tbPanAlpha.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbPanAlpha, "Transparency of Panadapter Fill (if turned on)");
+            this.tbPanAlpha.Value = 70;
+            this.tbPanAlpha.Scroll += new System.EventHandler(this.tbPanAlpha_Scroll);
+            // 
+            // clrbtnPan
+            // 
+            this.clrbtnPan.Automatic = "Automatic";
+            this.clrbtnPan.Color = System.Drawing.Color.White;
+            this.clrbtnPan.Image = null;
+            this.clrbtnPan.Location = new System.Drawing.Point(453, 83);
+            this.clrbtnPan.MoreColors = "More Colors...";
+            this.clrbtnPan.Name = "clrbtnPan";
+            this.clrbtnPan.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnPan.TabIndex = 92;
+            this.toolTip1.SetToolTip(this.clrbtnPan, "Panadapter line fill color for RX1 and RX2");
+            this.clrbtnPan.Changed += new System.EventHandler(this.clrbtnPan_Changed);
+            // 
             // tbGrayLineAlpha
             // 
             this.tbGrayLineAlpha.AutoSize = false;
@@ -11466,6 +11532,7 @@ namespace PowerSDR
             this.tbGrayLineAlpha.Size = new System.Drawing.Size(66, 18);
             this.tbGrayLineAlpha.TabIndex = 91;
             this.tbGrayLineAlpha.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbGrayLineAlpha, "Transparency of Grayline dark area over the map");
             this.tbGrayLineAlpha.Value = 70;
             this.tbGrayLineAlpha.Scroll += new System.EventHandler(this.tbGrayLineAlpha_Scroll);
             // 
@@ -11488,6 +11555,7 @@ namespace PowerSDR
             this.clrbtnGrayLine.Name = "clrbtnGrayLine";
             this.clrbtnGrayLine.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGrayLine.TabIndex = 89;
+            this.toolTip1.SetToolTip(this.clrbtnGrayLine, "Color of Grayline dark area over the map");
             this.clrbtnGrayLine.Changed += new System.EventHandler(this.clrbtnGrayLine_Changed);
             // 
             // labelTS8
@@ -11645,6 +11713,7 @@ namespace PowerSDR
             this.tbRX1FilterAlpha.Size = new System.Drawing.Size(66, 18);
             this.tbRX1FilterAlpha.TabIndex = 78;
             this.tbRX1FilterAlpha.TickFrequency = 64;
+            this.toolTip1.SetToolTip(this.tbRX1FilterAlpha, "Transparency of RX1 and RX2 Bandpass window");
             this.tbRX1FilterAlpha.Value = 97;
             this.tbRX1FilterAlpha.Scroll += new System.EventHandler(this.tbRX1FilterAlpha_Scroll);
             // 
@@ -11719,6 +11788,7 @@ namespace PowerSDR
             this.clrbtnFilter.Name = "clrbtnFilter";
             this.clrbtnFilter.Size = new System.Drawing.Size(40, 23);
             this.clrbtnFilter.TabIndex = 71;
+            this.toolTip1.SetToolTip(this.clrbtnFilter, "Color of RX1 and RX2 Bandpass window");
             this.clrbtnFilter.Changed += new System.EventHandler(this.clrbtnFilter_Changed);
             // 
             // grpDisplayPeakCursor
@@ -11781,9 +11851,11 @@ namespace PowerSDR
             this.tpAppearanceMeter.BackColor = System.Drawing.SystemColors.Control;
             this.tpAppearanceMeter.Controls.Add(this.labelTS2);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigBackground);
+            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterRight);
             this.tpAppearanceMeter.Controls.Add(this.lblMeterDigitalText);
             this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterDigText);
             this.tpAppearanceMeter.Controls.Add(this.grpMeterEdge);
+            this.tpAppearanceMeter.Controls.Add(this.clrbtnMeterLeft);
             this.tpAppearanceMeter.Controls.Add(this.grpAppearanceMeter);
             this.tpAppearanceMeter.Controls.Add(this.lblMeterType);
             this.tpAppearanceMeter.Controls.Add(this.comboMeterType);
@@ -11813,6 +11885,19 @@ namespace PowerSDR
             this.clrbtnMeterDigBackground.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterDigBackground.TabIndex = 84;
             this.clrbtnMeterDigBackground.Changed += new System.EventHandler(this.clrbtnMeterDigBackground_Changed);
+            // 
+            // clrbtnMeterRight
+            // 
+            this.clrbtnMeterRight.Automatic = "Automatic";
+            this.clrbtnMeterRight.Color = System.Drawing.Color.Red;
+            this.clrbtnMeterRight.Image = null;
+            this.clrbtnMeterRight.Location = new System.Drawing.Point(461, 209);
+            this.clrbtnMeterRight.MoreColors = "More Colors...";
+            this.clrbtnMeterRight.Name = "clrbtnMeterRight";
+            this.clrbtnMeterRight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterRight.TabIndex = 75;
+            this.clrbtnMeterRight.Visible = false;
+            this.clrbtnMeterRight.Changed += new System.EventHandler(this.clrbtnMeterRight_Changed);
             // 
             // lblMeterDigitalText
             // 
@@ -11906,6 +11991,7 @@ namespace PowerSDR
             this.clrbtnMeterEdgeHigh.Name = "clrbtnMeterEdgeHigh";
             this.clrbtnMeterEdgeHigh.Size = new System.Drawing.Size(40, 23);
             this.clrbtnMeterEdgeHigh.TabIndex = 75;
+            this.clrbtnMeterEdgeHigh.Changed += new System.EventHandler(this.clrbtnMeterEdgeHigh_Changed);
             // 
             // lblMeterEdgeHigh
             // 
@@ -11937,20 +12023,81 @@ namespace PowerSDR
             this.clrbtnMeterEdgeLow.TabIndex = 74;
             this.clrbtnMeterEdgeLow.Changed += new System.EventHandler(this.clrbtnMeterEdgeLow_Changed);
             // 
+            // clrbtnMeterLeft
+            // 
+            this.clrbtnMeterLeft.Automatic = "Automatic";
+            this.clrbtnMeterLeft.Color = System.Drawing.Color.White;
+            this.clrbtnMeterLeft.Image = null;
+            this.clrbtnMeterLeft.Location = new System.Drawing.Point(507, 209);
+            this.clrbtnMeterLeft.MoreColors = "More Colors...";
+            this.clrbtnMeterLeft.Name = "clrbtnMeterLeft";
+            this.clrbtnMeterLeft.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterLeft.TabIndex = 74;
+            this.clrbtnMeterLeft.Visible = false;
+            this.clrbtnMeterLeft.Changed += new System.EventHandler(this.clrbtnMeterLeft_Changed);
+            // 
             // grpAppearanceMeter
             // 
+            this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterHigh);
+            this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterIndicator);
+            this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterLow);
+            this.grpAppearanceMeter.Controls.Add(this.labelTS12);
             this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterBackground);
             this.grpAppearanceMeter.Controls.Add(this.lblMeterBackground);
-            this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterRight);
             this.grpAppearanceMeter.Controls.Add(this.lblAppearanceMeterRight);
             this.grpAppearanceMeter.Controls.Add(this.lblAppearanceMeterLeft);
-            this.grpAppearanceMeter.Controls.Add(this.clrbtnMeterLeft);
             this.grpAppearanceMeter.Location = new System.Drawing.Point(168, 8);
             this.grpAppearanceMeter.Name = "grpAppearanceMeter";
-            this.grpAppearanceMeter.Size = new System.Drawing.Size(136, 120);
+            this.grpAppearanceMeter.Size = new System.Drawing.Size(136, 160);
             this.grpAppearanceMeter.TabIndex = 38;
             this.grpAppearanceMeter.TabStop = false;
-            this.grpAppearanceMeter.Text = "Original Style";
+            this.grpAppearanceMeter.Text = "Analog";
+            // 
+            // clrbtnMeterHigh
+            // 
+            this.clrbtnMeterHigh.Automatic = "Automatic";
+            this.clrbtnMeterHigh.Color = System.Drawing.Color.Red;
+            this.clrbtnMeterHigh.Image = null;
+            this.clrbtnMeterHigh.Location = new System.Drawing.Point(80, 56);
+            this.clrbtnMeterHigh.MoreColors = "More Colors...";
+            this.clrbtnMeterHigh.Name = "clrbtnMeterHigh";
+            this.clrbtnMeterHigh.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterHigh.TabIndex = 85;
+            this.clrbtnMeterHigh.Changed += new System.EventHandler(this.clrbtnMeterHigh_Changed);
+            // 
+            // clrbtnMeterIndicator
+            // 
+            this.clrbtnMeterIndicator.Automatic = "Automatic";
+            this.clrbtnMeterIndicator.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMeterIndicator.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMeterIndicator.Image = null;
+            this.clrbtnMeterIndicator.Location = new System.Drawing.Point(80, 117);
+            this.clrbtnMeterIndicator.MoreColors = "More Colors...";
+            this.clrbtnMeterIndicator.Name = "clrbtnMeterIndicator";
+            this.clrbtnMeterIndicator.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterIndicator.TabIndex = 80;
+            this.clrbtnMeterIndicator.Changed += new System.EventHandler(this.clrbtnMeterIndicator_Changed);
+            // 
+            // clrbtnMeterLow
+            // 
+            this.clrbtnMeterLow.Automatic = "Automatic";
+            this.clrbtnMeterLow.Color = System.Drawing.Color.White;
+            this.clrbtnMeterLow.Image = null;
+            this.clrbtnMeterLow.Location = new System.Drawing.Point(80, 24);
+            this.clrbtnMeterLow.MoreColors = "More Colors...";
+            this.clrbtnMeterLow.Name = "clrbtnMeterLow";
+            this.clrbtnMeterLow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMeterLow.TabIndex = 81;
+            this.clrbtnMeterLow.Changed += new System.EventHandler(this.clrbtnMeterLow_Changed);
+            // 
+            // labelTS12
+            // 
+            this.labelTS12.Image = null;
+            this.labelTS12.Location = new System.Drawing.Point(8, 119);
+            this.labelTS12.Name = "labelTS12";
+            this.labelTS12.Size = new System.Drawing.Size(56, 24);
+            this.labelTS12.TabIndex = 80;
+            this.labelTS12.Text = "Indicator:";
             // 
             // clrbtnMeterBackground
             // 
@@ -11973,18 +12120,6 @@ namespace PowerSDR
             this.lblMeterBackground.TabIndex = 76;
             this.lblMeterBackground.Text = "Background:";
             // 
-            // clrbtnMeterRight
-            // 
-            this.clrbtnMeterRight.Automatic = "Automatic";
-            this.clrbtnMeterRight.Color = System.Drawing.Color.Lime;
-            this.clrbtnMeterRight.Image = null;
-            this.clrbtnMeterRight.Location = new System.Drawing.Point(80, 56);
-            this.clrbtnMeterRight.MoreColors = "More Colors...";
-            this.clrbtnMeterRight.Name = "clrbtnMeterRight";
-            this.clrbtnMeterRight.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMeterRight.TabIndex = 75;
-            this.clrbtnMeterRight.Changed += new System.EventHandler(this.clrbtnMeterRight_Changed);
-            // 
             // lblAppearanceMeterRight
             // 
             this.lblAppearanceMeterRight.Image = null;
@@ -11992,7 +12127,7 @@ namespace PowerSDR
             this.lblAppearanceMeterRight.Name = "lblAppearanceMeterRight";
             this.lblAppearanceMeterRight.Size = new System.Drawing.Size(72, 24);
             this.lblAppearanceMeterRight.TabIndex = 53;
-            this.lblAppearanceMeterRight.Text = "Right Color:";
+            this.lblAppearanceMeterRight.Text = "High Color:";
             // 
             // lblAppearanceMeterLeft
             // 
@@ -12001,19 +12136,7 @@ namespace PowerSDR
             this.lblAppearanceMeterLeft.Name = "lblAppearanceMeterLeft";
             this.lblAppearanceMeterLeft.Size = new System.Drawing.Size(72, 24);
             this.lblAppearanceMeterLeft.TabIndex = 51;
-            this.lblAppearanceMeterLeft.Text = "Left Color:";
-            // 
-            // clrbtnMeterLeft
-            // 
-            this.clrbtnMeterLeft.Automatic = "Automatic";
-            this.clrbtnMeterLeft.Color = System.Drawing.Color.Green;
-            this.clrbtnMeterLeft.Image = null;
-            this.clrbtnMeterLeft.Location = new System.Drawing.Point(80, 24);
-            this.clrbtnMeterLeft.MoreColors = "More Colors...";
-            this.clrbtnMeterLeft.Name = "clrbtnMeterLeft";
-            this.clrbtnMeterLeft.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnMeterLeft.TabIndex = 74;
-            this.clrbtnMeterLeft.Changed += new System.EventHandler(this.clrbtnMeterLeft_Changed);
+            this.lblAppearanceMeterLeft.Text = "Low Color:";
             // 
             // lblMeterType
             // 
@@ -16064,6 +16187,7 @@ namespace PowerSDR
             this.grpMainDisplay.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpAppPanadapter.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udBandSegmentBoxLineWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).EndInit();
@@ -18919,6 +19043,7 @@ namespace PowerSDR
                         Audio.RX2Enabled = true;
                     }
                     else*/
+
                     DSP.SetThreadNumber(2);
 
                     string key = comboKeyerConnPrimary.Text;
@@ -22984,7 +23109,11 @@ namespace PowerSDR
             Display.BandBoxWidth = (float)udBandSegmentBoxLineWidth.Value;
         }
 
-		private void clrbtnMeterLeft_Changed(object sender, System.EventArgs e)
+
+        //================================================================================
+        // ke9ns delete ORIGINAL meter colors (not used with the TR7 meter at the moment)
+
+        private void clrbtnMeterLeft_Changed(object sender, System.EventArgs e)
 		{
 			console.MeterLeftColor = clrbtnMeterLeft.Color;
 		}
@@ -22994,7 +23123,31 @@ namespace PowerSDR
 			console.MeterRightColor = clrbtnMeterRight.Color;
 		}
 
-		private void clrbtnBtnSel_Changed(object sender, System.EventArgs e)
+        //==========================================================================================
+        // ke9ns add ANALOG METER COLORS
+        private void clrbtnMeterLow_Changed(object sender, EventArgs e)
+        {
+            console.AnalogLowColor = clrbtnMeterLow.Color;
+        }
+
+        private void clrbtnMeterIndicator_Changed(object sender, EventArgs e)
+        {
+            console.AnalogAVGColor = clrbtnMeterIndicator.Color;
+        }
+
+        private void clrbtnMeterHigh_Changed(object sender, EventArgs e)
+        {
+            console.AnalogHighColor = clrbtnMeterHigh.Color;
+        }
+
+        private void clrbtnMeterBackground_Changed(object sender, System.EventArgs e)
+        {
+            console.AnalogMeterBackgroundColor = clrbtnMeterBackground.Color;
+        }
+
+        //==========================================================================================
+
+        private void clrbtnBtnSel_Changed(object sender, System.EventArgs e)
 		{
 			console.ButtonSelectedColor = clrbtnBtnSel.Color;
 		}
@@ -23044,10 +23197,7 @@ namespace PowerSDR
 			console.PeakBackgroundColor = clrbtnPeakBackground.Color;
 		}
 
-		private void clrbtnMeterBackground_Changed(object sender, System.EventArgs e)
-		{
-			console.MeterBackgroundColor = clrbtnMeterBackground.Color;
-		}
+		
 
 		private void clrbtnBandBackground_Changed(object sender, System.EventArgs e)
 		{
@@ -25109,14 +25259,14 @@ namespace PowerSDR
 
    
         //================================================================================
-
+        // ke9ns EDGE meter colors
 
         private void clrbtnMeterEdgeLow_Changed(object sender, System.EventArgs e)
 		{
 			console.EdgeLowColor = clrbtnMeterEdgeLow.Color;
 		}
 
-		private void clrbtnMeterEdgeHighChanged(object sender, System.EventArgs e)
+		private void clrbtnMeterEdgeHigh_Changed(object sender, System.EventArgs e)
 		{
 			console.EdgeHighColor = clrbtnMeterEdgeHigh.Color;
 		}
@@ -25131,7 +25281,9 @@ namespace PowerSDR
 			console.EdgeAVGColor = clrbtnEdgeIndicator.Color;
 		}
 
-		private void clrbtnMeterDigText_Changed(object sender, System.EventArgs e)
+        //================================================================================
+
+        private void clrbtnMeterDigText_Changed(object sender, System.EventArgs e)
 		{
 			console.MeterDigitalTextColor = clrbtnMeterDigText.Color;
 		}
@@ -26525,6 +26677,21 @@ namespace PowerSDR
         {
             clrbtnGrayLine_Changed(this, EventArgs.Empty);
            
+        }
+
+        public static Color DisplayPanFillColor = Color.FromArgb(70, Color.White); // ke9ns add default value
+        public static Color DisplayPanColor = Color.White;
+
+        private void clrbtnPan_Changed(object sender, EventArgs e)
+        {
+            DisplayPanColor = clrbtnPan.Color;
+            DisplayPanFillColor = Color.FromArgb(tbPanAlpha.Value, clrbtnPan.Color);
+
+        }
+
+        private void tbPanAlpha_Scroll(object sender, EventArgs e)
+        {
+            clrbtnPan_Changed(this, EventArgs.Empty);
         }
     } // class setup
 

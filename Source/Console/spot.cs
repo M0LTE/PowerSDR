@@ -129,7 +129,7 @@ namespace PowerSDR
 
            // dataGridView1.Dock = DockStyle.Fill;
 
-            dataGridView1.RowHeadersVisible = true;
+            dataGridView1.RowHeadersVisible = false;
             dataGridView1.ColumnHeadersVisible = false;
             dataGridView1.DataSource = console.DXMemList.List; // ke9ns get list of memories from memorylist.cs is where the file is opened and saved
 
@@ -442,7 +442,7 @@ namespace PowerSDR
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.OliveDrab;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -1205,8 +1205,10 @@ namespace PowerSDR
                 textBox1.Text = "Clicked to Open DX Spider \r\n";
 
             }
-            else if ((callBox.Text != "callsign") || (callBox.Text != null))
+            else if ((callBox.Text == "callsign") || (callBox.Text == null))
             {
+
+                Debug.WriteLine("callbox " + callBox.Text);
 
                 textBox1.Text += "Must put your CALL Sign in the CALLSIGN box (lower Right of this window)\r\n";
                 callBox.ForeColor = Color.Red;
@@ -3211,15 +3213,23 @@ namespace PowerSDR
         private void statusBox_Click(object sender, EventArgs e)
         {
 
-            if (SP_Active == 3 ) // if DX cluster active then test it by sending a CR
+            if ((SP_Active == 3 )) // if DX cluster active then test it by sending a CR
             {
 
-                statusBox.ForeColor = Color.Red;
-              
-                statusBox.Text = "Test Sent <CR>";
+                try
+                {
+                    statusBox.ForeColor = Color.Red;
 
-                SP_writer.Write((char)13);
-                SP_writer.Write((char)10);
+                    statusBox.Text = "Test Sent <CR>";
+
+                    SP_writer.Write((char)13);
+                    SP_writer.Write((char)10);
+                }
+                catch(Exception)
+                {
+                    statusBox.Text = "Failed Test";
+
+                }
      
             } // if connection was supposed to be active
 
@@ -3701,13 +3711,7 @@ namespace PowerSDR
 
                 textBox1.Text += "NOAA Download complete \r\n";
 
-            }
-            catch (Exception ex)
-            {
-             //   Debug.WriteLine("noaa fault=== " + ex);
-                textBox1.Text += "Failed to download Space Weather \r\n";
-
-            }
+           
 
             //--------------------------------------------------------------------
             if (noaa.Contains("Solar flux ")) // 
@@ -3763,6 +3767,14 @@ namespace PowerSDR
 
 
             } // radio blackouts
+
+            }
+            catch (Exception ex)
+            {
+                //   Debug.WriteLine("noaa fault=== " + ex);
+                textBox1.Text += "Failed to download Space Weather \r\n";
+
+            }
 
             //--------------------------------------------------------------------------------------------
             // stay in this thread loop until you turn off tracking
@@ -4233,7 +4245,7 @@ namespace PowerSDR
                         } //  if ( (UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) )  time changeed or color change
 
 
-                        if (Map_Last == 2) updatemapspots();
+                        if ((Map_Last == 2) && (SP4_Active == 0)) updatemapspots(); // if you need a map update make sure your not in the middle of updating your dx spot list
 
                         Map_Last = 0;
 
@@ -4832,7 +4844,9 @@ namespace PowerSDR
                     catch (EndOfStreamException)
                     {
                         DXLOC_Index1--;
-                        textBox1.Text += "End of DX LOC FILE at " + DXLOC_Index1.ToString() + "\r\n";
+
+                        if (DXLOC_Index1 < 10) textBox1.Text += "No DXLOC.txt list file found in database folder\r\n";
+                        else   textBox1.Text += "End of DX LOC FILE at " + DXLOC_Index1.ToString() + "\r\n";
 
                         break; // done with file
                     }
@@ -4841,7 +4855,7 @@ namespace PowerSDR
                         //  Debug.WriteLine("excpt======== " + e);
                         //     textBox1.Text = e.ToString();
 
-                        textBox1.Text += "No DXLOC.txt list file found in database folder\r\n";
+                        if (DXLOC_Index1 < 10) textBox1.Text += "No DXLOC.txt list file found in database folder\r\n";
 
                         break; // done with file
                     }

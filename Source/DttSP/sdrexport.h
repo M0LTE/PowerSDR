@@ -446,16 +446,18 @@ extern struct _top
 
 	} jack;
 
+	// ke9ns THREADS
 	// update io
 	// multiprocessing & synchronization
 	struct
 	{
 		struct
 		{
-			pthread_t id;
+			pthread_t id;                
 		} trx, upd, updrx, mon, pws, mtr, scope;
 	} thrd;
 
+	// ke9ns SEMAPHORE to help sync the thread 
 	struct
 	{
 		struct
@@ -463,29 +465,6 @@ extern struct _top
 			sem_t sem;
 		} buf, upd, mon, pws, mtr, scope;
 	} sync;
-
-
-
-	// TRX switching
-#if 0
-	struct
-	{
-		struct
-		{
-			int want, have;
-		} bfct;
-		struct
-		{
-			TRXMODE next;
-		} trx;
-		struct
-		{
-			RUNMODE last;
-		} run;
-		int fade, tail;
-	} swch;
-#endif
-
 
 
 	// TRX switching

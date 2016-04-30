@@ -128,6 +128,8 @@ namespace PowerSDR
         public static void SetThreadNumber(uint num)
         {
             DttSP.SetThreadNo(num);
+          //  Debug.WriteLine("THREAD NUMBER ======================" + num);
+
         }
 
         public static void SetThreadCom(uint num)

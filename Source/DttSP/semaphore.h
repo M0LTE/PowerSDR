@@ -124,11 +124,9 @@ typedef unsigned int mode_t;
 #endif
 
 
-typedef struct sem_t_ * sem_t;
+typedef struct sem_t_ * sem_t;                // ke9ns synchronization primitive 
 
-PTW32_DLLPORT int __cdecl sem_init (sem_t * sem,
-			    int pshared,
-			    unsigned int value);
+PTW32_DLLPORT int __cdecl sem_init (sem_t * sem, int pshared,  unsigned int value);
 
 PTW32_DLLPORT int __cdecl sem_destroy (sem_t * sem);
 
@@ -136,13 +134,11 @@ PTW32_DLLPORT int __cdecl sem_trywait (sem_t * sem);
 
 PTW32_DLLPORT int __cdecl sem_wait (sem_t * sem);
 
-PTW32_DLLPORT int __cdecl sem_timedwait (sem_t * sem,
-				 const struct timespec * abstime);
+PTW32_DLLPORT int __cdecl sem_timedwait (sem_t * sem, const struct timespec * abstime);
 
 PTW32_DLLPORT int __cdecl sem_post (sem_t * sem);
 
-PTW32_DLLPORT int __cdecl sem_post_multiple (sem_t * sem,
-				     int count);
+PTW32_DLLPORT int __cdecl sem_post_multiple (sem_t * sem,  int count);
 
 PTW32_DLLPORT int __cdecl sem_open (const char * name,
 			    int oflag,

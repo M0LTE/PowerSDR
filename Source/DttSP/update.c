@@ -68,14 +68,20 @@ DttSP_EXP void Destroy_SDR ()
 }
 
 
-DttSP_EXP void SetThreadNo(unsigned int setit)
+DttSP_EXP void SetThreadNo(unsigned int setit)  // ke9ns 1=demo/1500, 2=RX1 3000/5000,  3=RX2 5000 enabled
 {
 	sem_wait(&top[0].sync.upd.sem);
+
 	sem_wait(&top[1].sync.upd.sem);
+
 	sem_wait(&top[2].sync.upd.sem);
-	if ((setit > 0) && (setit<4)) threadno = setit;
+
+	if ((setit > 0) && (setit < 4)) threadno = setit;
+
 	sem_post(&top[2].sync.upd.sem);
+
 	sem_post(&top[1].sync.upd.sem);
+
 	sem_post(&top[0].sync.upd.sem);
 }
 
@@ -332,7 +338,7 @@ DttSP_EXP int SetTXFilter (unsigned int thread, double low_frequency, double hig
 	//fprintf(stdout, "SETTXFILTER\n"), fflush(stdout); // ke9ns add
 
 	//high_frequency = 0;
-//	low_frequency = -150000;
+    //	low_frequency = -150000;
 
 	if (rtn == 0)
 	{
