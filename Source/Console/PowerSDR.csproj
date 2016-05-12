@@ -51,7 +51,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;NO_MCL_PM;NO_KE9NS;NO_WIDETX</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NO_WIDETX;NO_MCL_PM;NO_KE9NS</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>

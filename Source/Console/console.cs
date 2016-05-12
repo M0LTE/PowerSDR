@@ -1462,7 +1462,7 @@ namespace PowerSDR
         private CheckBoxTS chkFMTXRev;
         private LabelTS lblFMOffset;
         private NumericUpDownTS udFMOffset;
-        private ComboBoxTS comboFMMemory;
+        public ComboBoxTS comboFMMemory;
         private ButtonTS btnFMMemoryUp;
         private ButtonTS btnFMMemoryDown;
         private LabelTS lblFMMemory;
@@ -2731,12 +2731,12 @@ namespace PowerSDR
             this.aTUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flexControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TXIDMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -4180,12 +4180,12 @@ namespace PowerSDR
             0,
             0});
             this.udFilterHigh.Maximum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             0});
             this.udFilterHigh.Minimum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             -2147483648});
@@ -4211,12 +4211,12 @@ namespace PowerSDR
             0,
             0});
             this.udFilterLow.Maximum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             0});
             this.udFilterLow.Minimum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             -2147483648});
@@ -5319,6 +5319,8 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
             this.ptbDisplayPan.Value = 500;
             this.ptbDisplayPan.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
+            this.ptbDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseDown);
+            this.ptbDisplayPan.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseUp);
             // 
             // ptbFilterShift
             // 
@@ -5340,7 +5342,7 @@ namespace PowerSDR
             resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
             this.ptbFilterWidth.HeadImage = null;
             this.ptbFilterWidth.LargeChange = 1;
-            this.ptbFilterWidth.Maximum = 10000;
+            this.ptbFilterWidth.Maximum = 15000;
             this.ptbFilterWidth.Minimum = 0;
             this.ptbFilterWidth.Name = "ptbFilterWidth";
             this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -5497,12 +5499,12 @@ namespace PowerSDR
             this.aTUToolStripMenuItem,
             this.flexControlToolStripMenuItem,
             this.eSCToolStripMenuItem,
-            this.herosToolStripMenuItem,
             this.GrayMenuItem,
             this.TXIDMenuItem,
             this.callsignTextBox,
             this.ScanMenuItem,
             this.spotterMenu,
+            this.herosToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.remoteProfilesToolStripMenuItem,
             this.reportBugToolStripMenuItem});
@@ -5600,13 +5602,6 @@ namespace PowerSDR
             this.eSCToolStripMenuItem.Name = "eSCToolStripMenuItem";
             this.eSCToolStripMenuItem.Click += new System.EventHandler(this.eSCToolStripMenuItem_Click);
             // 
-            // herosToolStripMenuItem
-            // 
-            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
-            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
-            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
-            // 
             // GrayMenuItem
             // 
             this.GrayMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
@@ -5650,6 +5645,13 @@ namespace PowerSDR
             this.spotterMenu.CheckedChanged += new System.EventHandler(this.spotterMenu_CheckedChanged);
             this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
             this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
+            // 
+            // herosToolStripMenuItem
+            // 
+            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
+            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
+            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -6445,6 +6447,7 @@ namespace PowerSDR
             this.lblDisplayZoom.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblDisplayZoom, "lblDisplayZoom");
             this.lblDisplayZoom.Name = "lblDisplayZoom";
+            this.lblDisplayZoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayZoom_MouseDown);
             // 
             // lblDisplayPan
             // 
@@ -18234,11 +18237,12 @@ namespace PowerSDR
                     break;
 			}
 
+            if (low < -14999) low = -14999;
+            if (high > 14999) high = 14999;
 
-			if(low < -9999)
-				low = -9999;
-			if(high > 9999) 
-				high = 9999;
+		//	if(low < -9999)	low = -9999;
+		//	if(high > 9999)	high = 9999; // ke9ns test. this was original
+
 
 			// send the settings to the DSP
 			dsp.GetDSPRX(0, 0).SetRXFilter(low, high);
@@ -18248,12 +18252,12 @@ namespace PowerSDR
 			Display.RX1FilterLow = low;
 			Display.RX1FilterHigh = high;
 
-			// update var filter controls
+         	// update var filter controls
 			udFilterLow.Value = low;
 			udFilterHigh.Value = high;
-
-			// update Filter Shift
-			ptbFilterShift_Update(low, high);
+         
+            // update Filter Shift
+            ptbFilterShift_Update(low, high);
 
 			// update Filter Width
 			ptbFilterWidth_Update(low, high);
@@ -18366,7 +18370,7 @@ namespace PowerSDR
 				if(filterRX2Form.DSPMode == rx2_dsp_mode)
 					filterRX2Form.CurrentFilter = rx2_filter;
 			}
-		}
+		} //update RX2 Filters
 
 		public void UpdateRX1FilterNames(Filter f)
 		{
@@ -27226,7 +27230,8 @@ namespace PowerSDR
 			set { save_filter_changes = value; }
 		}
 
-		private int max_filter_shift = 9999;
+        //=====================================================================================
+        private int max_filter_shift = 9999;
 		public int MaxFilterShift
 		{
 			get { return max_filter_shift; }
@@ -27237,7 +27242,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int max_filter_width = 9999;
+        //=====================================================================================
+        private int max_filter_width = 9999;
 		public int MaxFilterWidth
 		{
 			get { return max_filter_width; }
@@ -27248,7 +27254,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool mic_boost = false;
+        //=====================================================================================
+        private bool mic_boost = false;
 		public bool MicBoost
 		{
 			get { return mic_boost; }
@@ -28848,9 +28855,9 @@ namespace PowerSDR
 				if(wave_playback)
 				{
 					wave_freq = (VFOAFreq * 1e6) % sample_rate1; // 25000 hz = (3.865 * 1mhz) % 192000hz  (modulus is remainder only)
-                    Debug.WriteLine("wave_freq " + wave_freq);  // ke9ns test
-                    Debug.WriteLine("VFO_freq " + VFOAFreq);  // ke9ns test
-                    Debug.WriteLine("SR " + sample_rate1);  // ke9ns test
+                  //  Debug.WriteLine("wave_freq " + wave_freq);  // ke9ns test
+                  //  Debug.WriteLine("VFO_freq " + VFOAFreq);  // ke9ns test
+                  //  Debug.WriteLine("SR " + sample_rate1);  // ke9ns test
 
                 }
                 else
@@ -40112,15 +40119,16 @@ namespace PowerSDR
                 if (Audio.EmptyBuffers > limit) // 1 second dropout
                 {
                     count++;
+
                     Audio.StopAudio();
-                    if (vac_enabled) 
-                        Audio.StopAudioVAC();
+                    if (vac_enabled) Audio.StopAudioVAC();
+
                     Thread.Sleep(500);
                     this.Invoke(new MethodInvoker(AudioStart));
                 }
                 Thread.Sleep(3000);
             }
-        }
+        } // audiowatchdog
 
         private void AudioStart()
         {
@@ -40174,7 +40182,7 @@ namespace PowerSDR
         }
 
         private static byte regBand = 0; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking)
-
+        public static bool ALTM = false; // ke9ns add
         //===============================================================================================================
         //===============================================================================================================
         //===============================================================================================================
@@ -40194,24 +40202,42 @@ namespace PowerSDR
 
             Debug.WriteLine("keypressedCODE " + e.KeyCode);
 
-           
-           
+            if (e.Alt == true) // ke9ns add
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.M: // add to memory list
+
+                        // Debug.WriteLine("ALT + M key ");
+
+                        ALTM = true;
+                        if (memoryForm == null || memoryForm.IsDisposed) memoryForm = new MemoryForm(this);
+                      //  memoryForm.Show();
+                      //  memoryForm.Focus();
+
+                        memoryForm.MemoryRecordAdd_Click(memoryForm.MemoryRecordAdd, EventArgs.Empty); // 
+
+                        break;
+
+                }
+            } // alt key + M
+
+            ALTM = false;
+
             if (e.Control == true) // ke9ns add (check for CTRL key press to do a QRZ lookup) 
             {
 
                    regBand = 1; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking)
 
                                   
-                    if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2) && (SpotControl.DX_Index > 0))  // Do below if not in the middle of processing a DX spot, but DX spotting is Active
-                    {
+                if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2) && (SpotControl.DX_Index > 0))  // Do below if not in the middle of processing a DX spot, but DX spotting is Active
+                {
 
                    
                         int x = DX_X;
                         int y = DX_Y;
                     //======================================================================================================    
-
-
-                  
+     
                     int xx = picDisplay.Width;  // size of picdisplay as user scales it to their screen
                     int yy = picDisplay.Height;
 
@@ -40221,8 +40247,6 @@ namespace PowerSDR
                     Debug.WriteLine(" width " + xx);
                     Debug.WriteLine(" Height " + yy);
 
-                                 
-
                     Point p = picDisplay.PointToClient(Cursor.Position); // mouse cursor when you hit the ctrl key
 
                     int XX = 0;
@@ -40231,23 +40255,18 @@ namespace PowerSDR
                     float scalex = ((float)xxx/(float)xx);
                     XX = (int)((float)p.X * scalex);
 
-
                     float scaley = ((float)yyy / (float)yy);
                     YY = (int)((float)p.Y * scaley);
 
-
-                    Debug.WriteLine(" unscalledX " +XX);
+                    Debug.WriteLine(" unscalledX " + XX);
                     Debug.WriteLine(" unscalledY " + YY);
 
                     Debug.WriteLine(" cursor " + p);
 
-               
-
                     int iii = 500;
 
-                        for (int ii = 0; ii < SpotControl.DX_Index; ii++) // check all spot on Panadapter
+                        for (int ii = 0; ii < SpotControl.DX_Index; ii++) // check all dots on Panadapter
                         {
-
 
                             if ((SpotControl.DX_X[ii] > 5) && (SpotControl.DX_Y[ii] > 5) &&  (XX <= (SpotControl.DX_X[ii] +5)) && (XX >= (SpotControl.DX_X[ii] -5))
                                 && (YY <= (SpotControl.DX_Y[ii] + 5)) && (YY >= (SpotControl.DX_Y[ii] - 5)) )
@@ -40291,7 +40310,6 @@ namespace PowerSDR
                                         else if (SpotControl.DX_Mode[iii] == 13) RX1DSPMode = DSPMode.DIGL;
                                         else if (SpotControl.DX_Mode[iii] == 14) RX1DSPMode = DSPMode.SAM;
                                         else RX1DSPMode = DSPMode.LSB;
-
 
                                     }
                                     else
@@ -40355,7 +40373,7 @@ namespace PowerSDR
                                 } // chkdxmode checked
 
 
-                        SpotControl.Map_Last = 2;
+                        SpotControl.Map_Last = 2; // UPDATE SPOTS ON MAP
 
 
                         return;
@@ -40421,6 +40439,88 @@ namespace PowerSDR
 
                 } //   if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2))
 
+
+
+                //---------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------
+                //ke9ns memory in Pan
+
+                if ((SpotControl.SP6_Active == 1))
+                {
+                    int x = DX_X;
+                    int y = DX_Y;
+
+
+                    for (int ii = 0; ii < MMK3; ii++) // check all spot on Panadapter
+                    {
+
+                        if ((x >= MMX[ii]) && (x <= (MMX[ii] + MMW[ii])) && (y >= MMY[ii]) && (y <= (MMY[ii] + MMH[ii])))
+                        {
+
+                            //   var DXtemp = new StringBuilder("https://www.qrz.com/db/");
+                            //   DXtemp.Append(DXS1[ii]);
+
+
+                            Debug.WriteLine("NAME === " + MMS[ii] + " index "+MMM[ii]);
+
+                            try
+                            {
+                                //  System.Diagnostics.Process.Start(DXtemp.ToString());
+
+                                changeComboFMMemory(MMM[ii]);
+                            }
+                            catch
+                            {
+                                Debug.WriteLine("bad station");
+                            }
+
+                            return;
+
+                        } // index
+
+                    } // for loop
+
+                    //-------------------------------------------------------
+
+
+                    if (chkRX2.Checked == true)  // check RX2 click
+                    {
+                        for (int ii = 0; ii < MMK4; ii++)
+                        {
+
+                            if ((x >= MMX[ii + 50]) && (x <= (MMX[ii + 50] + DXW[ii + 50])) && (y >= MMY[ii + 50]) && (y <= (MMY[ii + 50] + MMH[ii + 50])))
+                            {
+                                //  var DXtemp = new StringBuilder("https://www.qrz.com/db/");
+                                //  DXtemp.Append(DXS1[ii + 50]);
+
+                               
+                                try
+                                {
+                                    //  System.Diagnostics.Process.Start(DXtemp.ToString());
+                                    changeComboFMMemory(MMM[ii]);
+                                }
+                                catch
+                                {
+                                    Debug.WriteLine("bad station");
+                                }
+
+                                break;
+
+                            } // index
+
+
+                        } // for loop
+
+                    } // rx2 checked on 
+
+
+                } // memory ON pAN ACTIVE
+
+                //---------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------
+                //---------------------------------------------------------------------------------
                 //---------------------------------------------------------------------------------
                 //ke9ns SWL lookup on google
                 if ((SpotControl.SP1_Active == 1))
@@ -42674,7 +42774,9 @@ namespace PowerSDR
             if (exit) return;
 
             RX1PreampMode = mode;
-        }
+
+
+        } // comboPreamp_SelectedIndexChanged
 
 
         //=========================================================================================
@@ -45946,7 +46048,7 @@ namespace PowerSDR
 					{
 						double f = (wave_freq - (VFOAFreq*1e6) % sample_rate1);
  
-                        Debug.WriteLine("f "+f);  // ke9ns test
+                      //  Debug.WriteLine("f "+f);  // ke9ns test
 
                         if (f > sample_rate1/2) f -= sample_rate1;
 
@@ -48398,6 +48500,18 @@ namespace PowerSDR
         public static int DXK = 0;               // number of spots on picdisplay
         public static int DXK2 = 0;               // number of spots on picdisplay
 
+
+
+        public static int[] MMX = new int[200]; // ke9ns add X used for MEMORY hyperlinking(these are the callsign locations on the screen)
+        public static int[] MMY = new int[200]; //           Y
+        public static int[] MMW = new int[200]; //           W
+        public static int[] MMH = new int[200]; //           H
+        public static int[] MMM = new int[200]; //           Index postion in Memory.xml file
+        public static string[] MMS = new string[200]; // ties it back to the real MEMORY NAME
+
+        public static int MMK3 = 0;               // number of MEMORY spots on picdisplay
+        public static int MMK4 = 0;               // number of spots on picdisplay
+
         public static int DXR = 0;               // 1=display SPOTTER on screen instead of DX spot, 0=DX Spot only
 
         public static int DX_X = 0;               //x cursor pos inside picdisplay 
@@ -50165,17 +50279,23 @@ namespace PowerSDR
 				btnHidden.Focus();*/
 		}
 		
+
+        //=========================================================================================
 		private void udFilterHigh_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udFilterHigh.Focused)
+           
+
+            if (udFilterHigh.Focused)
 			{
-				if(udFilterHigh.Value <= udFilterLow.Value+10)
+				if(udFilterHigh.Value <= udFilterLow.Value + 10)
 				{
-					udFilterHigh.Value = udFilterLow.Value+10;
+					udFilterHigh.Value = udFilterLow.Value + 10;
 					return;
 				}
 
+              
 				UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
+
 
                 if (!save_filter_changes)
 					rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
@@ -50184,11 +50304,16 @@ namespace PowerSDR
             if (save_filter_changes && rx1_filter >= Filter.F1 && rx1_filter <= Filter.VAR2)
 				rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
 
-			/*if(udFilterHigh.Focused)
+            /*if(udFilterHigh.Focused)
 				btnHidden.Focus();*/
-		}
-		
-		private void DoFilterShift(int shift, bool redraw)
+
+          
+        } // udFilterHigh_ValueChanged
+
+
+
+        //==========================================================================================================
+        private void DoFilterShift(int shift, bool redraw)
 		{
 			// VK6APH: Does the Filter Shift function, alters the filter low and high frequency values 
 			// as the Filter Shift slider is moved. We need to keep the last Filter Shift values
@@ -50200,7 +50325,7 @@ namespace PowerSDR
 			int low;
 			int high;
 			int bandwidth;
-			int max_shift = 9999;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
+            int max_shift = 9999;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
 
 			if(rx1_dsp_mode == DSPMode.SPEC ||
 				rx1_dsp_mode == DSPMode.DRM)
@@ -50246,7 +50371,10 @@ namespace PowerSDR
 			// show the IF Shift is active by setting the zero button colour
 			if (shift != 0)
 				btnFilterShiftReset.BackColor = button_selected_color;
-		}
+		} //
+
+
+
 
 		private void ptbFilterShift_Scroll(object sender, System.EventArgs e)
 		{
@@ -50513,9 +50641,11 @@ namespace PowerSDR
 			if(new_val > ptbFilterWidth.Maximum) new_val = ptbFilterWidth.Maximum;
 			if(new_val < ptbFilterWidth.Minimum) new_val = ptbFilterWidth.Minimum;
 			ptbFilterWidth.Value = new_val;
-		}
 
-		private void ptbFilterWidth_Scroll(object sender, System.EventArgs e)
+        } // ptbFilterWidth_Update
+
+        //==========================================================================================================
+        private void ptbFilterWidth_Scroll(object sender, System.EventArgs e)
 		{
 			if ( rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC ) 
 			{
@@ -50547,7 +50677,9 @@ namespace PowerSDR
 			}
 			
 			new_bw = Math.Max(new_bw, 10);
-			int current_center = ((int)udFilterLow.Value + (int)udFilterHigh.Value)/2;
+
+			int current_center = ((int)udFilterLow.Value + (int)udFilterHigh.Value) / 2;
+
 			int low = 0, high = 0;
 			switch(rx1_dsp_mode)
 			{
@@ -50557,15 +50689,16 @@ namespace PowerSDR
 				case DSPMode.DSB:
 					low = current_center - new_bw;
 					high = current_center + new_bw;
+
 					if(low < -max_filter_width) 
 					{
-						low += (-max_filter_width-low);
-						high += (-max_filter_width-low);
+						low += (-max_filter_width - low);
+						high += (-max_filter_width - low);
 					}
 					else if(high > max_filter_width)
 					{
-						high -= (high-max_filter_width);
-						low -= (high-max_filter_width);
+						high -= (high - max_filter_width);
+						low -= (high - max_filter_width);
 					}
 					break;
 				case DSPMode.LSB:
@@ -50611,9 +50744,11 @@ namespace PowerSDR
 
 			if(ptbFilterWidth.Focused)
 				btnHidden.Focus();
-		}
-		
-		private void tbFilterWidthScroll_newMode() 
+        } // ptbFilterWidth_Scroll
+
+
+
+        private void tbFilterWidthScroll_newMode() 
 		{
 			//centerSave = 0;  // dump any save center with scroller is keeping 
 			switch ( rx1_dsp_mode ) 
@@ -55996,8 +56131,7 @@ namespace PowerSDR
 
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (memoryForm == null || memoryForm.IsDisposed)
-                memoryForm = new MemoryForm(this);
+            if (memoryForm == null || memoryForm.IsDisposed) memoryForm = new MemoryForm(this);
             memoryForm.Show();
             memoryForm.Focus();
         }
@@ -58396,7 +58530,7 @@ namespace PowerSDR
             } // right click
         }
 
-
+         
         // ke9ns add for auto adjusting panadapter min level (keep the base line signal on the screen)
         private void autoBrightBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -58447,6 +58581,34 @@ namespace PowerSDR
 
         } // chkEnableMultiRX_MouseDown
 
+        private void ptbDisplayPan_MouseDown(object sender, MouseEventArgs e)
+        {
+          
+        }
+
+        private void ptbDisplayPan_MouseUp(object sender, MouseEventArgs e)
+        {
+          
+        }
+
+        // ke9ns add right click over ZOOM label goes directly to setup->display
+        private void lblDisplayZoom_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+            
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+
+                setupForm.tcSetup.SelectedIndex = 2; // select Display tab;
+
+            
+            } // right click
+        }
 
         //===================================================================================
         // ke9ns add allow you to play sequential quickaudio by right clicking

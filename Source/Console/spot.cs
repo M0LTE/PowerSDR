@@ -111,6 +111,9 @@ namespace PowerSDR
         public CheckBoxTS chkBoxDIG;
         public CheckBoxTS chkBoxPan;
         private DataGridView dataGridView1;
+        public CheckBoxTS chkBoxSWL2;
+        public CheckBoxTS chkBoxMem;
+        public DataGridView dataGridView2;
         private IContainer components;
 
 
@@ -120,6 +123,7 @@ namespace PowerSDR
         {
             InitializeComponent();
             console = c;
+            Display.SpotForm = this;  // allows Display to see public data (not public static data)
 
             Common.RestoreForm(this, "SpotForm", true);
 
@@ -191,6 +195,7 @@ namespace PowerSDR
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -209,6 +214,9 @@ namespace PowerSDR
             this.btnTrack = new System.Windows.Forms.Button();
             this.nameBox = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxSWL2 = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
@@ -222,6 +230,7 @@ namespace PowerSDR
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // SWLbutton
@@ -271,7 +280,7 @@ namespace PowerSDR
             // 
             this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox1.Location = new System.Drawing.Point(666, 464);
+            this.nodeBox1.Location = new System.Drawing.Point(667, 450);
             this.nodeBox1.MaxLength = 50;
             this.nodeBox1.Name = "nodeBox1";
             this.nodeBox1.Size = new System.Drawing.Size(84, 22);
@@ -298,10 +307,10 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(648, 517);
+            this.callBox.Location = new System.Drawing.Point(654, 513);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
-            this.callBox.Size = new System.Drawing.Size(93, 22);
+            this.callBox.Size = new System.Drawing.Size(87, 22);
             this.callBox.TabIndex = 5;
             this.callBox.Text = "Callsign";
             this.toolTip1.SetToolTip(this.callBox, "Enter Your Call sign to login to the DX Cluster here");
@@ -422,7 +431,7 @@ namespace PowerSDR
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(678, 434);
+            this.nameBox.Location = new System.Drawing.Point(683, 450);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -456,6 +465,57 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowDrop = true;
+            this.dataGridView2.AllowUserToAddRows = false;
+            this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.AllowUserToResizeColumns = false;
+            this.dataGridView2.AllowUserToResizeRows = false;
+            this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridView2.Location = new System.Drawing.Point(463, 281);
+            this.dataGridView2.MultiSelect = false;
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.Size = new System.Drawing.Size(254, 94);
+            this.dataGridView2.TabIndex = 75;
+            this.toolTip1.SetToolTip(this.dataGridView2, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
+            this.dataGridView2.Visible = false;
+            // 
+            // chkBoxMem
+            // 
+            this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxMem.Image = null;
+            this.chkBoxMem.Location = new System.Drawing.Point(474, 511);
+            this.chkBoxMem.Name = "chkBoxMem";
+            this.chkBoxMem.Size = new System.Drawing.Size(128, 24);
+            this.chkBoxMem.TabIndex = 74;
+            this.chkBoxMem.Text = "MEMORIES to Pan";
+            this.toolTip1.SetToolTip(this.chkBoxMem, "Show Memories directly on Panadapter.\r\n\r\nLEFT CLICK on visible Memory + CTRL to s" +
+        "et Mode\r\n\r\nLEFT CLICK on PAN + ALT + M keys to save New Memory\r\n");
+            this.chkBoxMem.CheckedChanged += new System.EventHandler(this.chkBoxMem_CheckedChanged);
+            // 
+            // chkBoxSWL2
+            // 
+            this.chkBoxSWL2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxSWL2.Image = null;
+            this.chkBoxSWL2.Location = new System.Drawing.Point(676, 450);
+            this.chkBoxSWL2.Name = "chkBoxSWL2";
+            this.chkBoxSWL2.Size = new System.Drawing.Size(65, 24);
+            this.chkBoxSWL2.TabIndex = 73;
+            this.chkBoxSWL2.Text = "Alternate SWL2.txt";
+            this.toolTip1.SetToolTip(this.chkBoxSWL2, "Show Country or Calls on Map for just the Panadapter freq you are viewing.\r\n");
+            this.chkBoxSWL2.Visible = false;
+            this.chkBoxSWL2.CheckedChanged += new System.EventHandler(this.chkBoxSWL2_CheckedChanged);
             // 
             // chkBoxPan
             // 
@@ -610,7 +670,7 @@ namespace PowerSDR
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(650, 517);
+            this.chkDXMode.Location = new System.Drawing.Point(654, 515);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
@@ -622,6 +682,9 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(753, 548);
+            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.chkBoxMem);
+            this.Controls.Add(this.chkBoxSWL2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chkBoxPan);
             this.Controls.Add(this.chkBoxDIG);
@@ -647,10 +710,10 @@ namespace PowerSDR
             this.Controls.Add(this.callBox);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.nodeBox1);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.SSBbutton);
             this.Controls.Add(this.SWLbutton);
             this.Controls.Add(this.chkDXMode);
+            this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.Name = "SpotControl";
@@ -659,10 +722,11 @@ namespace PowerSDR
             this.Load += new System.EventHandler(this.SpotControl_Load);
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
+        } //initializecomponents
 
 
 
@@ -792,9 +856,16 @@ namespace PowerSDR
         // ke9ns SWL spotter // www.eibispace.de to get sked.csv file to read
         private void SWLbutton_Click(object sender, EventArgs e)
         {
+            string file_name =" ";
 
-      
-            string file_name = console.AppDataPath + "SWL.csv"; // //  sked - b15.csv
+            if (chkBoxSWL2.Checked == true)
+            {
+                 file_name = console.AppDataPath + "SWL2.txt"; // Sigmera
+            }
+            else
+            {
+                 file_name = console.AppDataPath + "SWL.csv"; //   eibispace.de  sked - b15.csv
+            }
 
             if (!File.Exists(file_name))
             {
@@ -862,6 +933,7 @@ namespace PowerSDR
         public static string[] SWL_Lang = new string[20000];          // language of transmitter
         public static int[] SWL_TimeN = new int[20000];                // UTC time of operation ON air
         public static int[] SWL_TimeF = new int[20000];                // UTC time of operation OFF air
+        public static string[] SWL_Mode = new string[20000];          // operating mode
         public static string[] SWL_Day = new string[20000];          // days of operation
         public static string[] SWL_Loc = new string[20000];          // location of transmitter
         public static string[] SWL_Target = new string[20000];          // target area of station
@@ -895,8 +967,17 @@ namespace PowerSDR
         //ke9ns start SWL spotting
         private void SWLSPOTTER()
         {
-  
-            string file_name = console.AppDataPath + "SWL.csv"; //  sked - b15.csv  
+
+            string file_name = " ";
+
+            if (chkBoxSWL2.Checked == true)
+            {
+                file_name = console.AppDataPath + "SWL2.txt"; // sigmera
+            }
+            else
+            {
+              file_name  = console.AppDataPath + "SWL.csv"; //  sked - b15.csv  
+            }
 
             if (File.Exists(file_name))
             {
@@ -973,59 +1054,155 @@ namespace PowerSDR
                     {
                         var newChar = (char)reader2.ReadChar();
 
-                        if ((newChar == '\r'))
+                        if (((chkBoxSWL2.Checked == false) && (newChar == '\r')) || ((chkBoxSWL2.Checked == true) && (newChar == '\n'))  )
                         {
-                            newChar = (char)reader2.ReadChar(); // read \n char to finishline
+                            if (chkBoxSWL2.Checked == false)  newChar = (char)reader2.ReadChar(); // read \n char to finishline
 
                             if (Flag1 == 1)
                             {
 
-                                string[] values = result.ToString().Split(';'); // split line up into segments divided by ;
+                                string[] values;
 
-                                SWL_Freq[SWL_Index1] = (int)(Convert.ToDouble(values[0]) * 1000); // get freq and convert to hz
-
-                                SWL_Band[SWL_Index1] = (byte)(SWL_Freq[SWL_Index1] / 1000000); // get freq and convert to mhz
-
-
-                                if (SWL_Band[SWL_Index1] > SWL_Index)
+                                //--------------------------------------------------------------------------------------------
+                                if (chkBoxSWL2.Checked == true) // SWL2.TXT file only
                                 {
-                                    //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
-                                    SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
-                                    VFOHLast = 0; // refresh pan screen while loading
-                                    SWL_Index++;
-                                }
+                                    values = result.ToString().Split('|'); // split line up into segments divided by | char
+
+                                    SWL_Freq[SWL_Index1] = (int)(Convert.ToDouble(values[0]) * 1000000); // get freq and convert to hz
 
 
-                                SWL_TimeN[SWL_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
-                                SWL_TimeF[SWL_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
-
-                                SWL_Day[SWL_Index1] = values[2]; // get days ON
-
-                                SWL_Loc[SWL_Index1] = values[3]; // get location of station
-
-                                SWL_Station[SWL_Index1] = values[4]; // get station name
-
-                                SWL_Lang[SWL_Index1] = values[5]; // get language
-
-                                SWL_Target[SWL_Index1] = values[6]; // get station target area
+                                    SWL_Band[SWL_Index1] = (byte)(SWL_Freq[SWL_Index1] / 1000000); // get freq and convert to mhz
 
 
-                                if (SWL_Index > 0)
-                                {
-                                    if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1])&& (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]))// if same name and freq then check times
+                                    if (SWL_Band[SWL_Index1] > SWL_Index)
                                     {
-                                        if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1])) goto BYPASS; // duplicate
+                                        //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
+                                        SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
+                                        VFOHLast = 0; // refresh pan screen while loading
+                                        SWL_Index++;
+                                    }
+
+
+                                    SWL_TimeN[SWL_Index1] = 0;
+                                    SWL_TimeF[SWL_Index1] = 2400;
+
+                                    SWL_Mode[SWL_Index1] = values[1]; // get opeating mode
+
+                                    SWL_Day[SWL_Index1] = "na"; // get days ON
+
+                                    SWL_Loc[SWL_Index1] = "na"; // get location of station
+
+                                  //  Debug.WriteLine("namebefore " + values[2]);
+
+                                    if (values[2].Contains("_")) // get rid of date time stamp
+                                    {
+                                        int ind = values[2].IndexOf("_");
+
+                                        var temp = new StringBuilder();
+                                      if((ind-7) > 0)  temp.Append( values[2].Substring(0, ind - 7));
+                                       
+                                        if (values[2].Length > (ind + 5))
+                                        {
+                                          //  Debug.WriteLine("len " + values[2].Length);
+
+                                          //  Debug.WriteLine("ind " + ind);
+                                            temp.Append(values[2].Substring(ind + 5, values[2].Length-ind-5));
+                                           
+                                        }
+                                       
+                                        values[2] = temp.ToString();
+                                       
+                                     //   Debug.WriteLine("nameafter " + values[2]);
+
+                                    } // contains _
+
+                                    if (values[2].Contains("_")) // 2nd look: get rid of date time stamp
+                                    {
+                                        int ind = values[2].IndexOf("_");
+
+                                        var temp = new StringBuilder();
+                                        if ((ind - 7) > 0) temp.Append(values[2].Substring(0, ind - 7));
+
+                                        if (values[2].Length > (ind + 5))
+                                        {
+                                          //  Debug.WriteLine("len " + values[2].Length);
+
+                                         //   Debug.WriteLine("ind " + ind);
+                                            temp.Append(values[2].Substring(ind + 5, values[2].Length - ind - 5));
+
+                                        }
+
+                                        values[2] = temp.ToString();
+
+                                        //   Debug.WriteLine("nameafter " + values[2]);
+
+                                    } // 2nd check contains _
+
+
+                                    SWL_Station[SWL_Index1] = values[2]; // get station name
+
+
+                                    SWL_Lang[SWL_Index1] = "na"; // get language
+
+                                    SWL_Target[SWL_Index1] = "na"; // get station target area
+
+
+                                    SWL_Index1++;
+
+                                
+
+                                }
+                                //--------------------------------------------------------------------------------------------
+                                else // SWL.CSV file only
+                                {
+                                  values = result.ToString().Split(';'); // split line up into segments divided by ;
+
+                                    SWL_Freq[SWL_Index1] = (int)(Convert.ToDouble(values[0]) * 1000); // get freq and convert to hz
+
+                                    SWL_Band[SWL_Index1] = (byte)(SWL_Freq[SWL_Index1] / 1000000); // get freq and convert to mhz
+
+
+                                    if (SWL_Band[SWL_Index1] > SWL_Index)
+                                    {
+                                        //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
+                                        SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
+                                        VFOHLast = 0; // refresh pan screen while loading
+                                        SWL_Index++;
+                                    }
+
+
+                                    SWL_TimeN[SWL_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
+                                    SWL_TimeF[SWL_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
+
+                                    SWL_Day[SWL_Index1] = values[2]; // get days ON
+
+                                    SWL_Loc[SWL_Index1] = values[3]; // get location of station
+
+                                    SWL_Mode[SWL_Index1] = "AM"; // get opeating mode
+
+                                    SWL_Station[SWL_Index1] = values[4]; // get station name
+
+                                    SWL_Lang[SWL_Index1] = values[5]; // get language
+
+                                    SWL_Target[SWL_Index1] = values[6]; // get station target area
+
+
+                                    if (SWL_Index > 0)
+                                    {
+                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]))// if same name and freq then check times
+                                        {
+                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1])) goto BYPASS; // duplicate
+
+                                        }
 
                                     }
 
-                                }
-
-                                SWL_Index1++;
+                                    SWL_Index1++;
 
 
-                                BYPASS:;  
-                                
-                                     //   Debug.Write(" freq " + SWL_Freq[SWL_Index1]);
+                                    BYPASS:;
+
+                                    //   Debug.Write(" freq " + SWL_Freq[SWL_Index1]);
                                     //   Debug.Write(" Band " + SWL_Band[SWL_Index1]);
                                     //   Debug.Write(" ON time " + SWL_TimeN[SWL_Index1]);
                                     //    Debug.Write(" OFF time " + SWL_TimeF[SWL_Index1]);
@@ -1041,9 +1218,9 @@ namespace PowerSDR
                                     // ? Stop 
 
 
-                                   
+                                } // SWL.CSV file only
 
-                                //  if (SWL_Index1 > 500) goto PASS3; // done with file temporary
+                               
 
                             } // SWL Spots
                             else Flag1 = 1;
@@ -1199,7 +1376,7 @@ namespace PowerSDR
                 SP_Active = 1;
                 t.Name = "Spotter Thread";
                 t.IsBackground = true;
-                t.Priority = ThreadPriority.Normal;
+                t.Priority = ThreadPriority.Normal; // normal
                 t.Start();
 
                 textBox1.Text = "Clicked to Open DX Spider \r\n";
@@ -1391,9 +1568,7 @@ namespace PowerSDR
 
                 for (; SP_Active > 0;) // shut down socket and thread if SP_Active = 1
                 {
-
-                  
-
+   
                     if (SP_Active == 1) // if you shut down dont attempt to read next spot
                     {
                         sb.Append((char)SP_reader.Read(), 1);
@@ -1544,7 +1719,18 @@ namespace PowerSDR
                             {
                                 DX_Spotter[DX_Index1] = message1.Substring(6, 10); // get dx call with : at the end
                                  Debug.WriteLine("DX_Call " + DX_Station[DX_Index1]);
-                                int pos = DX_Spotter[DX_Index1].IndexOf(':'); // find the :
+
+                                int pos = 10;
+                                if (DX_Spotter[DX_Index1].Contains(":"))
+                                {
+                                     pos = DX_Spotter[DX_Index1].IndexOf(':'); // find the :
+                                }
+                                else
+                                {
+                                     pos = DX_Spotter[DX_Index1].IndexOf(' '); // find the first space instead of the :
+                                }
+                               
+
                                 DX_Spotter[DX_Index1] = DX_Spotter[DX_Index1].Substring(0, pos); // reduce the call without the :
 
                                 sb = new StringBuilder(DX_Spotter[DX_Index1]); // clear sb string over again
@@ -2421,35 +2607,37 @@ namespace PowerSDR
                             // set age of spot to 0;
                             DX_Age[DX_Index1] = "00"; // reset to start
 
-  
-                          
+
+
 
                             //=================================================================================================
                             //=================================================================================================
 
+                            // CHECK HERE FOR (NA) NORTH AMERICAN,  OR EXCLUDE NORTH AMERICAN SPOTS
 
-
                             //=================================================================
                             //=================================================================
                             //=================================================================
-                            // ke9ns DX SPOT FILTERS
+                            // ke9ns DX SPOT FILTERS (EXCLUDE NA HERE)
                             if (checkBoxWorld.Checked) // filter out US calls signs
                             {
 
-                                string us1 = DX_Spotter[DX_Index1].Substring(0, 1);
-                                string us2 = DX_Spotter[DX_Index1].Substring(1, 1);
+                                string us1 = DX_Spotter[DX_Index1].Substring(1, 1); // grab first char of Spotter callsign becuase I added a < > around the spotter callsign
+                                string us2 = DX_Spotter[DX_Index1].Substring(2, 1); // grab second char of Spotter callsign
+
+                             //   Debug.WriteLine("us1 " + us1 + " us2 " + us2);
+
+                                Regex r = new Regex("[KNWAX]"); // first char (include X for Mexico in the NA spots)
+                                Regex r1 = new Regex("[A-Z0-9]"); // 2nd char to select as a NA spot
+                                Regex r2 = new Regex("[ABCDEFGYO]"); // 2nd char // for V as the first char for Canada
+                                Regex r3 = new Regex("[YGFIJK]"); // 2nd char // for C as the first char
 
 
-                                Regex r = new Regex("[KNWAX]"); // first char
-                                Regex r1 = new Regex("[A-Z0-9]"); // 2nd char
-                                Regex r2 = new Regex("[EYO]"); // 2nd char // for V as the first char
-
-
-                                if (us1 == "V")
+                                if ((us1 == "V") || (us1 == "C")) // check for Canada (NA)
                                 {
-                                    if ((r2.IsMatch(us2)))
+                                    if ( ((us1 == "V") && (r2.IsMatch(us2)) ) || ((us1 == "C") && (r3.IsMatch(us2))))
                                     {
-                                       Debug.WriteLine("bypass4a " + DX_Spotter[DX_Index1]);
+                                        Debug.WriteLine("bypass4a " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
                                     }
                                     goto PASS2; // if the 1st letter is not a US letter then GOOD use SPOT
@@ -2462,6 +2650,8 @@ namespace PowerSDR
                                         Debug.WriteLine("bypass3 " + DX_Spotter[DX_Index1]);
                                         continue;// dont show spot if not on the r list
                                     }
+                                 
+                                   // Debug.WriteLine("============CHECK3, fist us1 letter good for not being NA " + DX_Spotter[DX_Index1]);
                                     goto PASS2; // if the 1st letter is not a US letter then GOOD use SPOT
 
                                 }
@@ -2474,17 +2664,19 @@ namespace PowerSDR
 
 
                             }
-                            else if (checkBoxUSspot.Checked) // filer out call signs outside of US
+                            else if (checkBoxUSspot.Checked) // filter out call signs outside of NA
                             {
-
 
                                 string us1 = DX_Spotter[DX_Index1].Substring(1, 1);// was 0,1 now 1,1 because I added <>
                                 string us2 = DX_Spotter[DX_Index1].Substring(2, 1);// was 1,1
 
+                                Debug.WriteLine("us1 " + us1 + " us2 " + us2);
+
 
                                 Regex r = new Regex("[KNWAVX]"); // first char
                                 Regex r1 = new Regex("[A-Z0-9]"); // 2nd char
-                                Regex r2 = new Regex("[EYO]"); // 2nd char // for V as the first char
+                                Regex r2 = new Regex("[ABCDEFGYO]"); // 2nd char // for V as the first char
+                                Regex r3 = new Regex("[YGFIJK]"); // 2nd char // for C as the first char
 
                                 if (!(r.IsMatch(us1)))
                                 {
@@ -2492,11 +2684,11 @@ namespace PowerSDR
                                     continue;// dont show spot if not on the r list
                                 }
 
-                                if (us1 == "V")
+                                if ((us1 == "V") || (us1 == "C"))
                                 {
-                                    if (!(r2.IsMatch(us2)))
+                                    if ( ((us1 == "V") && !(r2.IsMatch(us2)) ) || ((us1 == "C") && !(r3.IsMatch(us2))))
                                     {
-                                         Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
+                                        Debug.WriteLine("bypass2a " + DX_Spotter[DX_Index1]);
                                         continue; // dont show spot if not on the r1 list
                                     }
                                 }
@@ -4949,6 +5141,57 @@ namespace PowerSDR
             RIndex1 = e.RowIndex; // last row you clicked on 
 
         }
+
+        public static bool SWL2 = false;
+
+        private void chkBoxSWL2_CheckedChanged(object sender, EventArgs e)
+        {
+            SP3_Active = 0;
+            SP1_Active = 0;
+
+            if (chkBoxSWL2.Checked == true) SWL2 = true;
+            else SWL2 = false;
+        }
+
+
+        public static byte SP6_Active = 0; // 1= turn on MEMORY in panadapter
+
+        private void chkBoxMem_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkBoxMem.Checked == true)
+            {
+              
+                  dataGridView2.DataSource = console.MemoryList.List;   // ke9ns get list of memories from memorylist.cs is where the file is opened and saved
+
+                SP6_Active = 1;
+
+                //  comboFMMemory.DataSource = MemoryList.List;
+                //  comboFMMemory.DisplayMember = "Name";
+                //  comboFMMemory.ValueMember = "Name";
+
+
+                //  Debug.WriteLine("comboFM " + (string)dataGridView1["Name", dataGridView1.CurrentCell.RowIndex].Value);
+
+                //  Debug.WriteLine("comboFM " + (string)dataGridView2[2, 0].Value);
+                //  Debug.WriteLine("comboFM1 " + dataGridView2[1, 3].ToString());
+                  Debug.WriteLine("Rows Count " + dataGridView2.Rows.Count);
+
+            }
+            else
+            {
+                SP6_Active = 0;
+            }
+
+        //  MemoryList X = console.MemoryList.List;
+         //   MemoryRecord recordToRestore = new MemoryRecord((MemoryRecord)comboFMMemory.SelectedItem);
+           
+              //  console.RecallMemory(recordToRestore);
+
+        }
+
+
+
     } // Spotcontrol
 
 

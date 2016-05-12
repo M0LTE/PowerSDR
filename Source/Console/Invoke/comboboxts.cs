@@ -626,11 +626,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		#endregion
+        public object Rows { get; internal set; }
 
-		#region Functions
+        #endregion
 
-		public new void BeginUpdate()
+        #region Functions
+
+        public new void BeginUpdate()
 		{
 			if(base.InvokeRequired)
 				this.Invoke(new MethodInvoker(base.BeginUpdate));

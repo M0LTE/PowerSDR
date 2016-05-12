@@ -419,18 +419,32 @@ namespace PowerSDR
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MemoryRecordAdd_Click(object sender, EventArgs e)
+        public void MemoryRecordAdd_Click(object sender, EventArgs e)
         {
             string mem_name = Convert.ToString(console.VFOAFreq);   //W4TME
 
-            console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
-                console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
-                (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow, 
-                console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+            if (Console.ALTM == true) // ke9ns add  add memory from ALT + M keys 
+            {
+                console.MemoryList.List.Add(new MemoryRecord("New Spot", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
+                   console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
+                   (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
+                   console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+
+            }
+            else
+            {
+                console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
+                    console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
+                    (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
+                    console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+            }
+
+            Console.ALTM = false;
 
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
-        }
+
+        } // MemoryRecordAdd_Click
 
 
         //=========================================================================================================================================

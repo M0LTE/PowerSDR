@@ -54,18 +54,12 @@ namespace PowerSDR
 	class Display
 	{
 
-     //   private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
-
-     //   public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");
-
         #region Variable Declaration
 
         public static Console console;
 
-      //  public static SpotControl spot;                         // ke9ns add  communications with spot.cs and dx spotter
-
-      //  public SpotControl SpotForm;                       // ke9ns add DX spotter function
-      //  public ScanControl ScanForm;                       // ke9ns add freq Scanner function
+        public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
+        public ScanControl ScanForm;                            // ke9ns add freq Scanner function
 
         //private static Mutex background_image_mutex;			// used to lock the base display image
         //private static Bitmap background_bmp;					// saved background picture for display
@@ -928,7 +922,45 @@ namespace PowerSDR
 			}
 		}
 
-		private static Color display_filter_tx_color = Color.Yellow;
+        // ke9ns add for panadapter fill color and alpha
+        private static Color display_pan_color = Color.FromArgb(70, Color.White);
+        public static Color DisplayPanFillColor
+        {
+            get { return display_pan_color; }
+            set
+            {
+                display_pan_color = value;
+                DrawBackground();
+            }
+        }
+
+        // ke9ns add  autobright                        helper to keep thread safe
+        private static int wateroffset = 20;
+        public static int WATEROFFSET
+        {
+            get { return wateroffset; }
+            set
+            {
+                wateroffset = value;
+                
+            }
+        }
+
+        // ke9ns add autobright  
+        private static int gridoffset = 20;
+        public static int GRIDOFFSET
+        {
+            get { return gridoffset; }
+            set
+            {
+                gridoffset = value;
+
+            }
+        }
+
+
+
+        private static Color display_filter_tx_color = Color.Yellow;
 		public static Color DisplayFilterTXColor
 		{
 			get { return display_filter_tx_color; }
@@ -2322,16 +2354,23 @@ namespace PowerSDR
         // ke9ns draw panadapter grid
         //=========================================================
 
+        public static int[] holder2 = new int[100];                           // ke9ns add MEMORY Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
+        public static int[] holder3 = new int[100];                          // ke9ns add
+
         public static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
         public static int[] holder1 = new int[100];                          // ke9ns add
         private static Font font1 = new Font("Ariel", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
 
-        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness
+        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness  DXSPOTTER
+        private static Pen p3 = new Pen(Color.Blue, 2.0f);                   // ke9ns add vert line color and thickness    MEMORY
         private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
        
-        private static SizeF length;                                          // ke9nsa add length of call sign so we can do usb/lsb and define a box to click into
+        private static SizeF length;                                          // ke9ns add length of call sign so we can do usb/lsb and define a box to click into
+        private static SizeF length1;                                          // ke9ns add length of call sign so we can do usb/lsb and define a box to click into
+
         private static bool low = false;                                     // ke9ns add true=LSB, false=USB
         private static int rx2 = 0;                                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
+        private static int rx3 = 0;                                          // ke9ns add 0-49 spots for rx1 panadapter window for qrz callup  (50-100 for rx2)
 
         public static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
         public static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
@@ -3964,17 +4003,184 @@ namespace PowerSDR
 
 
 
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //=====================================================================
+            //=====================================================================
+            // ke9ns add DRAW MEMORY SPOTS ON PANADAPTER
+            //=====================================================================
+            //=====================================================================
 
+            if ((SpotControl.SP6_Active != 0) && (!mox) && (console.chkPower.Checked == true))// do memory spot if active and not transmitting
+            {
+
+                int iii = 0;                          // ke9ns add stairstep holder
+
+                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
+
+                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
+
+                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
+                int H1b = 20;               // starting point of vertical line
+
+                // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                if (bottom)                 // if your drawing to the bottom 
+                {
+                    if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
+                    else H1a = H + (H / 4); // short
+
+                    H1b = H + 20;
+
+                    vfo_hz = (int)vfob_hz;
+                    Console.MMK4 = 0;        // RX4 index to allow call signs to draw after all the vert lines on the screen
+
+                }
+                else
+                {
+                    Console.MMK3 = 0;        // RX3 index to allow call signs to draw after all the vert lines on the screen
+                }
+
+
+                VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
+                VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                VFODiff = VFOHigh - VFOLow;       // diff in hz
+
+
+             //   if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
+              //  else low = false;     // usb
+
+             //   Debug.WriteLine("=============");
+
+                int gg = SpotForm.dataGridView2.Rows.Count;  // get current # of memories we have available
+
+              //  int gg = console.comboFMMemory.Items.Count;
+
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+                // draw MEMORY SPOTS
+                //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
+
+
+                for (int ii = 0; ii < gg ; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
+                {
+                    
+                     int hh = (int)(Convert.ToDouble(SpotForm.dataGridView2[1, ii].Value) * 1000000);  // MEMORY "RXFREQ"  convert to hz
+
+
+                    if ( ( hh >= VFOLow) && (hh <= VFOHigh)) // find MEMORIES that appear on PAN
+                    {
+ 
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(hh - VFOLow))); // determine DX spot line pos on current panadapter screen
+
+                        holder2[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
+                        holder3[kk] = VFO_DXPos;
+
+                        kk++;
+
+                        g.DrawLine(p3, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
+
+                    }
+
+                } // for loop through MEMORIES
+
+
+                if (bottom) Console.MMK4 = kk; // keep a count for the bottom MEMORY 
+                else Console.MMK3 = kk; // count of spots in current panadapter
+
+
+                //--------------------------------------------------------------------------------------------
+                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
+                {
+
+                    string ll = (string)SpotForm.dataGridView2[2, holder2[ii]].Value;  // Name of MEMORY
+                    string mm = (string)SpotForm.dataGridView2[0, holder2[ii]].Value;  // GROUP of MEMORY
+
+                    DSPMode nn = (DSPMode)SpotForm.dataGridView2[3, holder2[ii]].Value;  // DSPMODE of MEMORY
+
+                    if ((nn == DSPMode.LSB) || (nn == DSPMode.DIGL) || (nn == DSPMode.CWL)) low = true;
+                    else low = false;
+
+                    // font
+                    if (low) // 1=LSB so draw on left side of line
+                    {
+      
+                        length = g.MeasureString(ll, font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
+                        g.DrawString(ll, font1, grid_text_brush, holder3[ii] - length.Width, H1b + iii);
+                        length1 = g.MeasureString(mm, font1); //  not needed here but used for MEMORY GROUP
+                        g.DrawString(mm, font1, grid_text_brush, holder3[ii] - length1.Width, H1b + iii+11);
+
+                        if (bottom) rx3 = 50; // allow only 50 spots per Receiver
+                        else rx3 = 0;
+
+                        if (!mox) // only do when not transmitting
+                        {
+
+                            if (length1.Width > length.Width) length.Width = length1.Width;
+
+                            Console.MMW[ii + rx3] = (int)length.Width;    // this is all for QRZ hyperlinking 
+                            Console.MMH[ii + rx3] = (int)length.Height * 2;   // * 2 because of 2 lines of text
+                            Console.MMX[ii + rx3] = holder3[ii] - (int)length.Width;
+                            Console.MMY[ii + rx3] = H1b + iii;
+                            Console.MMS[ii + rx3] = ll;
+                            Console.MMM[ii + rx3] = holder2[ii];
+
+                        }
+
+
+                    } // LSB side
+                    else   // 0=usb so draw on righ side of line (normal)
+                    {
+                       
+                        length = g.MeasureString(ll, font1); //  not needed here but used for MEMORY NAME
+                        g.DrawString(ll, font1, grid_text_brush, holder3[ii], H1b + iii); // DX station name
+                        length1 = g.MeasureString(mm, font1); //  not needed here but used for MEMORY GROUP
+                        g.DrawString(mm, font1, grid_text_brush, holder3[ii], H1b + iii + 11);
+
+                   
+                        if (bottom) rx3 = 50;
+                        else rx3 = 0;
+
+                        if (!mox) // only do when not transmitting
+                        {
+                            if (length1.Width > length.Width) length.Width = length1.Width;
+
+                            Console.MMW[ii + rx3] = (int)length.Width;   // W this is all for MEMORY clicking 
+                            Console.MMH[ii + rx3] = (int)length.Height * 2;  // H
+                            Console.MMX[ii + rx3] = holder3[ii];         // X
+                            Console.MMY[ii + rx3] = H1b + iii;           // Y
+                            Console.MMS[ii + rx3] = ll;                  // Name of Memory showing up in Pan
+                            Console.MMM[ii + rx3] = holder2[ii];         // index in memory.xml file
+                        }
+
+                    } // USB side
+
+                    iii = iii + 22; // 11
+                    if (iii > 90) iii = 0;
+
+
+                }// for loop through MEMORIES
+
+
+            } // MEMORY SPOTTING
+
+
+
+
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
             //=====================================================================
             //=====================================================================
             // ke9ns add DRAW SWL SPOTS ON PANADAPTER
             //=====================================================================
             //=====================================================================
 
-         
             if ( (SpotControl.SP1_Active != 0) && (!mox) && (console.chkPower.Checked == true) && (vfoa_hz < 30000000))// do SWL spot if active and not transmitting
             {
-                 
                
                 VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
                 VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
@@ -3982,7 +4188,6 @@ namespace PowerSDR
             
                 byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
                 byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
-
 
                 int iii = 0; // stairstep the swl stations on the screen
    
@@ -3994,13 +4199,10 @@ namespace PowerSDR
                 
                 int H1a = H*2 / 3; // vert line length from top down
 
-
                 DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
                 SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
-
-
-              
+   
                 if ((!bottom) && (VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
                 {
                   
@@ -4033,7 +4235,8 @@ namespace PowerSDR
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               
                                     g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
-                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+
+                                     g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
 
                              //   Debug.WriteLine(" FINDSWL "+ ii );
 
@@ -4083,8 +4286,26 @@ namespace PowerSDR
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                              
                                 g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+                              //  g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+                                
+                                iii = iii + 11; // stairstep spots
+                                if (iii > 90) iii = 0;
+
+                            } // check time
+
+                        } // for loop to display all current swl spots
+                        iii = 0;
+                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                        {
+                            //  Debug.Write(" drawSWL " + ii);
+
+                            if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                            {
+                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+
+                               // g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
                                 g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
-                             
+
                                 iii = iii + 11; // stairstep spots
                                 if (iii > 90) iii = 0;
 
@@ -4100,6 +4321,10 @@ namespace PowerSDR
 
 
 
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
             //=====================================================================
             //=====================================================================
             // ke9ns add draw DX SPOTS on pandapter
@@ -4136,23 +4361,18 @@ namespace PowerSDR
                     Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
                 }
 
-
                 VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
                 VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
                 VFODiff = VFOHigh - VFOLow;       // diff in hz
 
-
                 if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
                 else low = false;     // usb
-
-   
 
                 //-------------------------------------------------------------------------------------------------
                 //-------------------------------------------------------------------------------------------------
                 // draw DX spots
                 //-------------------------------------------------------------------------------------------------
                 //-------------------------------------------------------------------------------------------------
-
 
                 for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                 {
@@ -4238,13 +4458,11 @@ namespace PowerSDR
                             Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
                         }
 
-
                         if (vfo_hz >= 50000000) // 50000000 or 50mhz
                         {
                             iii = iii + 11;
                             g.DrawString(SpotControl.DX_Grid[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX grid name
                         }
-
 
                     } // USB side
 
@@ -4253,12 +4471,13 @@ namespace PowerSDR
                    
 
                 }// for loop through DX_Index
-
-             
+         
 
             } // SP_Active DX SSB CLUSTER
 
-
+            //===============================================================================================================================================================
+            //===============================================================================================================================================================
+   
 
         } // draw panadapter grid
 
@@ -5685,8 +5904,8 @@ namespace PowerSDR
 
                 if ((AB3 > -170) && (AB3 < -50))
                 {
-                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan);
-                    SpectrumGridMin = (int)(AB3 - abrightpan);
+                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
+                    SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
 
                
 
@@ -5711,7 +5930,7 @@ namespace PowerSDR
                     points[W + 1].Y += H;
                 }
 
-                data_line_pen.Color = Setup.DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+                data_line_pen.Color = DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
 
                 g.FillPolygon(data_line_pen.Brush, points);
                 points[W] = points[W - 1];
@@ -5909,7 +6128,7 @@ namespace PowerSDR
                             points[W + 1].Y += H;
                         }
 
-                        data_line_pen.Color = Setup.DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+                        data_line_pen.Color = DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
 
                         g.FillPolygon(data_line_pen.Brush, points);
                         points[W] = points[W - 1];
@@ -6280,7 +6499,7 @@ namespace PowerSDR
             //         copy it into current_display_data so it does not get clobbered
             //==================================================
 
-            if (rx==1 && data_ready)
+            if (rx==1 && data_ready ) // ke9ns mod
 			{
 				if(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
 				{
@@ -6317,7 +6536,7 @@ namespace PowerSDR
 				}
 				data_ready = false;
 			} // RX1
-			else if(rx==2 && data_ready_bottom)
+			else if(rx==2 && data_ready_bottom )
 			{
 
                
@@ -6383,7 +6602,7 @@ namespace PowerSDR
                     UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
                 }
 
-            } // check if just waterfall only rx1
+            } // RX1 in WATERFALL MODE
             else if (current_display_mode_bottom == DisplayMode.WATERFALL) // ke9ns add  this assume you came here because RX1 is in PANAFALL mode
             {
                  if (rx == 2 && rx2_avg_on)
@@ -6394,7 +6613,7 @@ namespace PowerSDR
                 {
                     UpdateDisplayPeak(rx2_peak_buffer, current_display_data_bottom);
                 }
-            } // rx2
+            } // RX2 in WATERFALL MODE
 
 			int duration = 0;
 
@@ -6415,7 +6634,7 @@ namespace PowerSDR
             //==================================================
 
 
-            if (duration > waterfall_update_period)
+            if ((duration > waterfall_update_period) &&  console.chkPower.Checked)
 			{
 				if(rx == 1) timer_waterfall.Start();
 				else if(rx == 2) timer_waterfall2.Start();
@@ -6802,7 +7021,7 @@ namespace PowerSDR
 
                         if ((A3B3 > -100) || (A3B3 < -10))
                         {
-                            WaterfallLowMicThreshold = A3B3 - abright; //  console.setupForm.WaterfallLowMicThreshold
+                            WaterfallLowMicThreshold = A3B3 - abright - (wateroffset-20); //  console.setupForm.WaterfallLowMicThreshold
                             console.setupForm.udDisplayWaterfallMicLevel.Value = (decimal)WaterfallLowMicThreshold;
                         }
                         //  Debug.WriteLine("TX value " + A3B3);
@@ -6823,7 +7042,7 @@ namespace PowerSDR
 
                         if ((AB3 > -170) && (AB3 < -50))
                         {
-                            console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright;
+                            console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright - (wateroffset - 20);
                             console.setupForm.udDisplayWaterfallLowLevel.Value = (decimal)WaterfallLowThreshold;
 
                             //  console.setupForm.udDisplayWaterfallLowLevel.Invalidate();
@@ -6847,7 +7066,7 @@ namespace PowerSDR
 
                         if ((A2B3 > -140) && (A2B3 < -50))
                         {
-                            console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright;
+                            console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright - (wateroffset - 20);
                             console.setupForm.udDisplayWaterfallRX2Level.Value = (decimal)WaterfallLowRX2Threshold;
                         }
                          //  Debug.WriteLine("rx2 value " + A2B3 );

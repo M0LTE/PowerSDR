@@ -170,6 +170,7 @@ namespace PowerSDR
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MemoryForm";
             this.Text = "Memory Interface";
+            this.toolTip1.SetToolTip(this, resources.GetString("$this.ToolTip"));
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MemoryForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
@@ -179,12 +180,12 @@ namespace PowerSDR
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ButtonTS MemoryRecordAdd;
         private System.Windows.Forms.ButtonTS btnMemoryRecordCopy;
         private System.Windows.Forms.ButtonTS btnMemoryRecordDelete;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ButtonTS btnSelect;
         private System.Windows.Forms.CheckBoxTS chkMemoryFormClose;
+        public System.Windows.Forms.ButtonTS MemoryRecordAdd;
     } //memoryform
 
 } //PowerSDR

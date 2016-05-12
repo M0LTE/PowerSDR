@@ -149,13 +149,15 @@ namespace PowerSDR
 		private uint thread;
 		private uint subrx;
 
-		public DSPRX(uint t, uint rx)
+        //=====================================================================================
+        public DSPRX(uint t, uint rx)
 		{
 			thread = t;
 			subrx = rx;
 			DttSP.SetTRX(t, false);
 		}
 
+        //=====================================================================================
         public void Copy(DSPRX rx)
         {
             this.AudioSize = rx.audio_size;
@@ -205,7 +207,8 @@ namespace PowerSDR
             this.RXFMDeviation = rx.rx_fm_deviation;
         }
 
-		private void SyncAll()
+        //=====================================================================================
+        private void SyncAll()
 		{
 			//BufferSize = buffer_size;
 			SetRXCorrectIQW(rx_correct_iq_w_real, rx_correct_iq_w_imag);
@@ -260,6 +263,7 @@ namespace PowerSDR
 
         #region Non-Static Properties & Routines
 
+        //=====================================================================================
         /// <summary>
         /// Controls whether updates to following properties call the DSP.  
         /// Each property uses this value and a copy of the last thing sent to
@@ -276,12 +280,13 @@ namespace PowerSDR
 			}
 		}
 
-		/// <summary>
-		/// Used to force properties to update even if the DSP copy matches the
-		/// new setting.  Mainly used to resync the DSP after having to rebuild
-		/// when resetting DSP Block Size or Sample Rate.
-		/// </summary>
-		private bool force = false;
+        //=====================================================================================
+        /// <summary>
+        /// Used to force properties to update even if the DSP copy matches the
+        /// new setting.  Mainly used to resync the DSP after having to rebuild
+        /// when resetting DSP Block Size or Sample Rate.
+        /// </summary>
+        private bool force = false;
 		public bool Force
 		{
 			get { return force; }
@@ -312,7 +317,8 @@ namespace PowerSDR
 		} // buffersize
 
 
-		private int audio_size_dsp = 2048;
+        //=====================================================================================
+        private int audio_size_dsp = 2048;
 		private int audio_size = 2048;
 		public int AudioSize
 		{
@@ -331,7 +337,8 @@ namespace PowerSDR
 			}
 		}
 
-		private DSPMode dsp_mode_dsp = DSPMode.USB;
+        //=====================================================================================
+        private DSPMode dsp_mode_dsp = DSPMode.USB;
 		private DSPMode dsp_mode = DSPMode.USB;
 		public DSPMode DSPMode
 		{
@@ -350,7 +357,8 @@ namespace PowerSDR
 			}
 		}
 
-		public void SetRXFilter(int low, int high)
+        //=====================================================================================
+        public void SetRXFilter(int low, int high)
 		{
             //Debug.WriteLine("SetRXFilter[" + thread + "][" + subrx + " ](" + low + ", " + high + ") ");
 			rx_filter_low = low;
@@ -366,7 +374,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_filter_low_dsp;
+        //=====================================================================================
+        private int rx_filter_low_dsp;
 		private int rx_filter_low;
 		public int RXFilterLow
 		{
@@ -385,7 +394,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_filter_high_dsp;
+        //=====================================================================================
+        private int rx_filter_high_dsp;
 		private int rx_filter_high;
 		public int RXFilterHigh
 		{
@@ -404,7 +414,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool noise_reduction_dsp = false;
+        //=====================================================================================
+        private bool noise_reduction_dsp = false;
 		private bool noise_reduction = false;
 		public bool NoiseReduction
 		{
@@ -423,7 +434,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int nr_taps_dsp = 64;
+        //=====================================================================================
+        private int nr_taps_dsp = 64;
 		private int nr_taps = 64;
 		private int nr_delay_dsp = 64;
 		private int nr_delay = 64;
@@ -470,7 +482,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int anf_taps_dsp = 64;
+        //=====================================================================================
+        private int anf_taps_dsp = 64;
 		private int anf_taps = 64;
 		private int anf_delay_dsp = 64;
 		private int anf_delay = 64;
@@ -498,7 +511,8 @@ namespace PowerSDR
 			}
 		}
 
-		private AGCMode rx_agc_mode_dsp = AGCMode.MED;
+        //=====================================================================================
+        private AGCMode rx_agc_mode_dsp = AGCMode.MED;
 		private AGCMode rx_agc_mode = AGCMode.MED;
 		public AGCMode RXAGCMode
 		{
@@ -541,14 +555,16 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_eq_num_bands = 3;
+        //=====================================================================================
+        private int rx_eq_num_bands = 3;
 		public int RXEQNumBands
 		{
 			get { return rx_eq_num_bands; }
 			set { rx_eq_num_bands = value; }
 		}
 
-		private int[] rx_eq3_dsp = new int[4];
+        //=====================================================================================
+        private int[] rx_eq3_dsp = new int[4];
 		private int[] rx_eq3 = new int[4];
 		public int[] RXEQ3
 		{
@@ -579,7 +595,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int[] rx_eq10_dsp = new int[11];
+        //=====================================================================================
+        private int[] rx_eq10_dsp = new int[11];
 		private int[] rx_eq10 = new int[11];
 		public int[] RXEQ10
 		{
@@ -610,7 +627,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool rx_eq_on_dsp = false;
+        //=====================================================================================
+        private bool rx_eq_on_dsp = false;
 		private bool rx_eq_on = false;
 		public bool RXEQOn
 		{
@@ -629,7 +647,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool nb_on_dsp = false;
+        //=====================================================================================
+        private bool nb_on_dsp = false;
 		private bool nb_on = false;
 		public bool NBOn
 		{
@@ -648,7 +667,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double nb_threshold_dsp = 3.3;
+        //=====================================================================================
+        private double nb_threshold_dsp = 3.3;
 		private double nb_threshold = 3.3;
 		public double NBThreshold
 		{
@@ -667,21 +687,24 @@ namespace PowerSDR
 			}
 		}
 
-		private float rx_correct_iq_w_real_dsp = 0.0f;
+        //=====================================================================================
+        private float rx_correct_iq_w_real_dsp = 0.0f;
 		private float rx_correct_iq_w_real = 0.0f;
 		public float RXCorrectIQWReal
 		{
 			get { return rx_correct_iq_w_real; }
 		}
 
-		private float rx_correct_iq_w_imag_dsp = 0.0f;
+        //=====================================================================================
+        private float rx_correct_iq_w_imag_dsp = 0.0f;
 		private float rx_correct_iq_w_imag = 0.0f;
 		public float RXCorrectIQWImag
 		{
 			get { return rx_correct_iq_w_imag; }
 		}
 
-		public void SetRXCorrectIQW(float real, float imag) 
+        //=====================================================================================
+        public void SetRXCorrectIQW(float real, float imag) 
 		{
 			//Debug.WriteLine("RX IQ Gain "+thread+" "+subrx+": "+value.ToString("f4"));
 			rx_correct_iq_w_real = real;
@@ -699,7 +722,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double rx_correct_iq_mu_dsp = 0.005;
+        //=====================================================================================
+        private double rx_correct_iq_mu_dsp = 0.005;
 		private double rx_correct_iq_mu = 0.005;
 		public double RXCorrectIQMu
 		{
@@ -719,7 +743,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool sdrom_dsp = false;
+        //=====================================================================================
+        private bool sdrom_dsp = false;
 		private bool sdrom = false;
 		public bool SDROM
 		{
@@ -738,7 +763,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double sdrom_threshold_dsp = 2.475;
+        //=====================================================================================
+        private double sdrom_threshold_dsp = 2.475;
 		private double sdrom_threshold = 2.475;
 		public double SDROMThreshold
 		{
@@ -757,7 +783,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double rx_fixed_agc_dsp = 20.0;
+        //=====================================================================================
+        private double rx_fixed_agc_dsp = 20.0;
 		private double rx_fixed_agc = 20.0;
 		public double RXFixedAGC
 		{
@@ -776,7 +803,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double rx_agc_max_gain_dsp = 90.0;
+        //=====================================================================================
+        private double rx_agc_max_gain_dsp = 90.0;
 		private double rx_agc_max_gain = 90.0;
 		public double RXAGCMaxGain
 		{
@@ -795,7 +823,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_agc_attack_dsp = 2;
+        //=====================================================================================
+        private int rx_agc_attack_dsp = 2;
 		private int rx_agc_attack = 2;
 		public int RXAGCAttack
 		{
@@ -814,7 +843,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_agc_decay_dsp = 250;
+        //=====================================================================================
+        private int rx_agc_decay_dsp = 250;
 		private int rx_agc_decay = 250;
 		public int RXAGCDecay
 		{
@@ -833,7 +863,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_agc_hang_dsp = 250;
+        //=====================================================================================
+        private int rx_agc_hang_dsp = 250;
 		private int rx_agc_hang = 250;
 		public int RXAGCHang
 		{
@@ -852,7 +883,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double rx_output_gain_dsp = 0.5;
+        //=====================================================================================
+        private double rx_output_gain_dsp = 0.5;
 		private double rx_output_gain = 0.5;
 		public double RXOutputGain
 		{
@@ -871,7 +903,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_agc_slope_dsp = 0;
+        //=====================================================================================
+        private int rx_agc_slope_dsp = 0;
 		private int rx_agc_slope = 0;
 		public int RXAGCSlope
 		{
@@ -890,7 +923,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int rx_agc_hang_threshold_dsp = 0;
+        //=====================================================================================
+        private int rx_agc_hang_threshold_dsp = 0;
 		private int rx_agc_hang_threshold = 0;
 		public int RXAGCHangThreshold
 		{
@@ -909,7 +943,8 @@ namespace PowerSDR
 			}
 		}
 
-		private Window current_window_dsp = Window.BLKHARRIS;
+        //=====================================================================================
+        private Window current_window_dsp = Window.BLKHARRIS;
 		private Window current_window = Window.BLKHARRIS;
 		public Window CurrentWindow
 		{
@@ -928,7 +963,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool spectrum_polyphase_dsp = false;
+        //=====================================================================================
+        private bool spectrum_polyphase_dsp = false;
 		private bool spectrum_polyphase = false;
 		public bool SpectrumPolyphase
 		{
@@ -947,7 +983,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool bin_on_dsp = false;
+        //=====================================================================================
+        private bool bin_on_dsp = false;
 		private bool bin_on = false;
 		public bool BinOn
 		{
@@ -966,6 +1003,7 @@ namespace PowerSDR
 			}
 		}
 
+        //=====================================================================================
         private float rx_squelch_threshold_dsp = -150.0f;
         private float rx_squelch_threshold = -150.0f;
         public float RXSquelchThreshold
@@ -986,6 +1024,7 @@ namespace PowerSDR
             }
         }
 
+        //=====================================================================================
         private float fm_squelch_threshold = 1.0f;
         private float fm_squelch_threshold_dsp = 1.0f;
         public float FMSquelchThreshold
@@ -1005,9 +1044,10 @@ namespace PowerSDR
             }
         }
 
-        
 
-		private bool rx_squelch_on_dsp = false;
+
+        //=====================================================================================
+        private bool rx_squelch_on_dsp = false;
 		private bool rx_squelch_on = false;
 		public bool RXSquelchOn
 		{
@@ -1026,7 +1066,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool spectrum_pre_filter_dsp = true;
+        //=====================================================================================
+        private bool spectrum_pre_filter_dsp = true;
 		private bool spectrum_pre_filter = true;
 		public bool SpectrumPreFilter
 		{
@@ -1046,7 +1087,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool active_dsp = false;
+        //=====================================================================================
+        private bool active_dsp = false;
 		private bool active = false;
 		public bool Active
 		{
@@ -1063,8 +1105,11 @@ namespace PowerSDR
 					}
 				}
 			}
-		}        
-		private float pan_dsp = 0.5f;
+		}
+      
+        
+        //=====================================================================================
+        private float pan_dsp = 0.5f;
 		private float pan = 0.5f;
         /// <summary>
         /// Determines the left (0.0) to right (1.0) audio field for this RX.
@@ -1086,7 +1131,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double rx_osc_dsp = 0.011025;
+        //=====================================================================================
+        private double rx_osc_dsp = 0.011025;
 		private double rx_osc = 0.011025;
 		public double RXOsc
 		{
@@ -1105,7 +1151,8 @@ namespace PowerSDR
 			}
 		}
 
-		private double osc_phase_dsp = 0.0;
+        //=====================================================================================
+        private double osc_phase_dsp = 0.0;
 		public double OSC_PHASE_DSP
 		{
 			get { return osc_phase_dsp; }
@@ -1122,6 +1169,7 @@ namespace PowerSDR
 			}
 		}
 
+        //=====================================================================================
         private bool dc_block_dsp = false;
         private bool dc_block = false;
         public bool DCBlock
@@ -1142,6 +1190,7 @@ namespace PowerSDR
             }
         }
 
+        //=====================================================================================
         private double rx_fm_deviation = 5000.0;
         private double rx_fm_deviation_dsp = 5000.0;
         public double RXFMDeviation
@@ -1161,6 +1210,7 @@ namespace PowerSDR
             }
         }
 
+        //=====================================================================================
         private const int MAX_NOTCHES_IN_PASSBAND = 18;
         private bool[] notch_on = new bool[MAX_NOTCHES_IN_PASSBAND];
         private bool[] notch_on_dsp = new bool[MAX_NOTCHES_IN_PASSBAND];
@@ -1169,6 +1219,7 @@ namespace PowerSDR
             return notch_on[index];
         }
 
+        //=====================================================================================
         public void SetNotchOn(uint index, bool b)
         {
             notch_on[index] = b;
@@ -1182,6 +1233,7 @@ namespace PowerSDR
             }
         }
 
+        //=====================================================================================
         private double[] notch_freq = new double[MAX_NOTCHES_IN_PASSBAND];
         private double[] notch_freq_dsp = new double[MAX_NOTCHES_IN_PASSBAND];
         public double GetNotchFreq(uint index)
@@ -1189,6 +1241,7 @@ namespace PowerSDR
             return notch_freq[index];
         }
 
+        //=====================================================================================
         public void SetNotchFreq(uint index, double freq)
         {
             notch_freq[index] = freq;
@@ -1202,6 +1255,7 @@ namespace PowerSDR
             }
         }
 
+        //=====================================================================================
         private double[] notch_bw = new double[MAX_NOTCHES_IN_PASSBAND];
         private double[] notch_bw_dsp = new double[MAX_NOTCHES_IN_PASSBAND];
         public double GetNotchBW(uint index)
@@ -1209,6 +1263,7 @@ namespace PowerSDR
             return notch_bw[index];
         }
 
+        //=====================================================================================
         /// <summary>
         /// Sets the notch bandwidth
         /// </summary>
@@ -1228,7 +1283,7 @@ namespace PowerSDR
         }
 
 		#endregion
-	}
+	} //DSPRX
 
 	#endregion
 
@@ -1290,14 +1345,15 @@ namespace PowerSDR
             CTCSSFlag = ctcss_flag;
 		}
 
-		#region Non-Static Properties & Routines
+        #region Non-Static Properties & Routines
 
-		/// <summary>
-		/// Controls whether updates to following properties call the DSP.  
-		/// Each property uses this value and a copy of the last thing sent to
-		/// the DSP to update in a minimal fashion.
-		/// </summary>
-		private bool update = false;
+        //=====================================================================================
+        /// <summary>
+        /// Controls whether updates to following properties call the DSP.  
+        /// Each property uses this value and a copy of the last thing sent to
+        /// the DSP to update in a minimal fashion.
+        /// </summary>
+        private bool update = false;
 		public bool Update
 		{
 			get { return update; }
@@ -1307,20 +1363,22 @@ namespace PowerSDR
 				if(value) SyncAll();
 			}
 		}
-
-		/// <summary>
-		/// Used to force properties to update even if the DSP copy matches the
-		/// new setting.  Mainly used to resync the DSP after having to rebuild
-		/// when resetting DSP Block Size or Sample Rate.
-		/// </summary>
-		private bool force = false;
+   
+        //=====================================================================================
+        /// <summary>
+        /// Used to force properties to update even if the DSP copy matches the
+        /// new setting.  Mainly used to resync the DSP after having to rebuild
+        /// when resetting DSP Block Size or Sample Rate.
+        /// </summary>
+        private bool force = false;
 		public bool Force
 		{
 			get { return force; }
 			set { force = value; }
 		}
 
-		private int buffer_size_dsp = 2048;
+        //=====================================================================================
+        private int buffer_size_dsp = 2048;
 		private int buffer_size = 2048;
 		public int BufferSize
 		{
@@ -1341,7 +1399,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int audio_size_dsp = 2048;
+        //=====================================================================================
+        private int audio_size_dsp = 2048;
 		private int audio_size = 2048;
 		public int AudioSize
 		{
@@ -1360,7 +1419,8 @@ namespace PowerSDR
 			}
 		}
 
-		private DSPMode current_dsp_mode_dsp = DSPMode.USB;
+        //=====================================================================================
+        private DSPMode current_dsp_mode_dsp = DSPMode.USB;
 		private DSPMode current_dsp_mode = DSPMode.USB;
 		public DSPMode CurrentDSPMode
 		{
@@ -1379,7 +1439,8 @@ namespace PowerSDR
 			}
 		}
 
-		public void SetTXFilter(int low, int high)
+        //=====================================================================================
+        public void SetTXFilter(int low, int high)
 		{
 			tx_filter_low = low;
 			tx_filter_high = high;
@@ -1394,7 +1455,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int tx_filter_low_dsp;
+        //=====================================================================================
+        private int tx_filter_low_dsp;
 		private int tx_filter_low;
 		public int TXFilterLow
 		{
@@ -1413,7 +1475,8 @@ namespace PowerSDR
 			}
 		}
 
-		private int tx_filter_high_dsp;
+        //=====================================================================================
+        private int tx_filter_high_dsp;
 		private int tx_filter_high;
 		public int TXFilterHigh
 		{
@@ -1431,8 +1494,10 @@ namespace PowerSDR
 				}
 			}
 		}
-
-		private double tx_osc_dsp = 0.0f;
+   
+        
+        //=====================================================================================
+        private double tx_osc_dsp = 0.0f;
 		private double tx_osc = 0.0;
 		public double TXOsc
 		{
@@ -1451,7 +1516,8 @@ namespace PowerSDR
 			}
 		}
 
-		private bool dc_block_dsp;
+        //=====================================================================================
+        private bool dc_block_dsp;
 		private bool dc_block;
 		public bool DCBlock
 		{
@@ -1470,13 +1536,16 @@ namespace PowerSDR
 			}
 		}
 
-		private int tx_eq_num_bands = 3;
+        //=====================================================================================
+        private int tx_eq_num_bands = 3;
 		public int TXEQNumBands
 		{
 			get { return tx_eq_num_bands; }
 			set { tx_eq_num_bands = value; }
 		}
 
+
+        //=====================================================================================
 		private int[] tx_eq3_dsp = new int[4];
 		private int[] tx_eq3 = new int[4];
 		public int[] TXEQ3
@@ -1484,8 +1553,10 @@ namespace PowerSDR
 			get { return tx_eq3; }
 			set
 			{
-				for(int i=0; i<tx_eq3.Length && i<value.Length; i++)
-					tx_eq3[i] = value[i];
+                for (int i = 0; i < tx_eq3.Length && i < value.Length; i++)
+                {
+                    tx_eq3[i] = value[i];
+                }
 				if(update)
 				{
 					/*bool need_update = false;
@@ -1501,8 +1572,10 @@ namespace PowerSDR
 					if(need_update)
 					{*/
 						DttSP.SetGrphTXEQ(thread, tx_eq3);
-						for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
-							tx_eq3_dsp[i] = value[i];
+                    for (int i = 0; i < tx_eq3_dsp.Length && i < value.Length; i++)
+                    {
+                        tx_eq3_dsp[i] = value[i];
+                    }
 					//}
 				}
 			}

@@ -127,17 +127,18 @@ Drag &amp; Drop a File, or URL onto the Selected Row
 or Drag &amp; Drop directly to the Add button to create new Memory
 
 TO USE THE HYPERLINK:
-Right Clink on the Memory (Row)
+RIGHT CLICK mouse on the Memory (Row)
 </value>
   </data>
   <data name="MemoryRecordAdd.ToolTip" xml:space="preserve">
-    <value>Add a new Memory entry based on the current console settings
-
-TO ADD A URL OR FILE HYPERLINK TO A MEMORY:
-Drag &amp; Drop directly to the Add button to create new Memory
+    <value>TO ADD A URL OR FILE HYPERLINK TO A MEMORY:
+Select a Memory (Row) with your mouse
+Drag &amp; Drop a File, or URL onto the Selected Row
+or Drag &amp; Drop directly to the Add button to create new Memory
 
 TO USE THE HYPERLINK:
-Right Clink on the Memory (Row)
+RIGHT CLICK mouse on the Memory (Row)
+
 </value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -395,6 +396,16 @@ Right Clink on the Memory (Row)
         //8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAD//wAA
         AAAAAP//AAAAAAAA//8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8AAAAAAAD//wAAAAAAAP//AAAAAAAA
         //8AAAAAAAD//wAAAAAAAP//AAAAAAAA//8=
+</value>
+  </data>
+  <data name="$this.ToolTip" xml:space="preserve">
+    <value>TO ADD A URL OR FILE HYPERLINK TO A MEMORY:
+Select a Memory (Row) with your mouse
+Drag &amp; Drop a File, or URL onto the Selected Row
+or Drag &amp; Drop directly to the Add button to create new Memory
+
+TO USE THE HYPERLINK:
+RIGHT CLICK mouse on the Memory (Row)
 </value>
   </data>
 </root>
