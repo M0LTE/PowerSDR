@@ -116,6 +116,7 @@ using System.Text;
 using System.Windows.Forms;
 //using System.Threading.Tasks; // ke9ns add net 4.5
 
+
 using PortTalk;
 //using System.Object;
 //using System.Windows.Threading.DispatcherObject;
@@ -478,7 +479,6 @@ namespace PowerSDR
 		B2M,
 		WWV,
 
-
         VHF0,
 		VHF1,
 		VHF2,
@@ -493,7 +493,6 @@ namespace PowerSDR
 		VHF11,
 		VHF12,
 		VHF13,
-
 
         BLMF, // ke9ns move down below vhf
         B120M,
@@ -1391,7 +1390,7 @@ namespace PowerSDR
         private PanelTS panelRX2Filter;
         private PrettyTrackBar ptbDisplayPan;
         private PrettyTrackBar ptbDisplayZoom;
-        private PrettyTrackBar ptbAF;
+        public PrettyTrackBar ptbAF;
         private PrettyTrackBar ptbRF;
         private PrettyTrackBar ptbPWR;
         private PrettyTrackBar ptbSquelch;
@@ -2259,7 +2258,12 @@ namespace PowerSDR
                     switch (current_model)
                     {
                         case Model.FLEX5000:
+
+                            Debug.WriteLine("rx1_band " + rx1_band);
+
                             fwcAntForm.SetBand(rx1_band);
+
+
                             fwcAntForm.CurrentAntMode = current_ant_mode;
                             fwcAntForm.RX1Ant = rx1_ant;
                             fwcAntForm.RX1Loop = rx1_loop;
@@ -8003,7 +8007,9 @@ namespace PowerSDR
 				VerifyTRXChecksums();
 				if(fwcAntForm != null && !fwcAntForm.IsDisposed)
 				{
-					fwcAntForm.SetBand(rx1_band);
+                    Debug.WriteLine("1rx1_band " + rx1_band);
+
+                    fwcAntForm.SetBand(rx1_band);
 					fwcAntForm.CurrentAntMode = current_ant_mode;
 					fwcAntForm.RX1Ant = rx1_ant;
 					fwcAntForm.RX1Loop = rx1_loop;
@@ -11757,7 +11763,7 @@ namespace PowerSDR
             RX1Band = rx1_band;
             TXBand = tx_band;
             initializing = save_init;
-		}
+		} // RestoreCalData
 
 		public void RX2RestoreCalData()
 		{
@@ -17000,8 +17006,7 @@ namespace PowerSDR
 			{
 				if(TXBand != b && !tuning)
 				{
-					if(chkVFOSplit.Checked)
-						chkVFOSplit.Checked = false;
+					if(chkVFOSplit.Checked)	chkVFOSplit.Checked = false;
 				}
 			}
 
@@ -17015,8 +17020,7 @@ namespace PowerSDR
 			{
 				if(atu_present && xvtr_present)
 				{
-					if(b == Band.B2M)
-						comboTuneMode.Enabled = false;
+					if(b == Band.B2M) comboTuneMode.Enabled = false;
 					else
 						comboTuneMode.Enabled = true;
 				}
@@ -17918,6 +17922,7 @@ namespace PowerSDR
 		private void UpdateExtCtrl()
 		{
 			if(current_model != Model.SDR1000) return;
+
 			switch(TXBand)
 			{
 				case Band.B160M:
@@ -17993,10 +17998,11 @@ namespace PowerSDR
 						Hdw.X2 = (byte)((Hdw.X2 & 0xC0) | x2_2_tx);
 					break;
 			}
-		}
 
-		// Added 06/24/05 BT for CAT commands
-		public void CATMemoryQS()
+        } // UpdateExtCtrl()
+
+        // Added 06/24/05 BT for CAT commands
+        public void CATMemoryQS()
 		{
 			btnMemoryQuickSave_Click(this.btnMemoryQuickSave, EventArgs.Empty);
 		}
@@ -25758,12 +25764,11 @@ namespace PowerSDR
 				case AntMode.Expert:
 					tx1_by_band[(int)b] = on;
 					Band band = tx_band;
-					if(tx_xvtr_index >= 0)
-						band = (Band)((int)Band.VHF0 + tx_xvtr_index);
+					if(tx_xvtr_index >= 0)	band = (Band)((int)Band.VHF0 + tx_xvtr_index);
 					if(band == b) FWCAmpTX1 = on;
 					break;
 			}
-		}
+		} // SetTX1
 
         public void Set1500TX1(Band b, bool on)
         {
@@ -30460,6 +30465,8 @@ namespace PowerSDR
 
 #region CAT Properties
 
+
+        //==================================================================
 		private Band rx1_band;
         public Band RX1Band
         {
@@ -30470,6 +30477,7 @@ namespace PowerSDR
                 rx1_band = value;
 
                 Band lo_band = Band.FIRST;
+
                 if (rx1_xvtr_index >= 0)
                 {
                     lo_band = BandByFreq(xvtrForm.TranslateFreq(VFOAFreq), -1, false, current_region);
@@ -30515,8 +30523,7 @@ namespace PowerSDR
                     }
                 }
 
-                if(rx1_preamp_mode > PreampMode.FIRST)
-                    rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
+                if(rx1_preamp_mode > PreampMode.FIRST)    rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
 
                 /*                  moved logic to txtVFOAFreq_LostFocus
                 if (fwc_init)
@@ -30796,8 +30803,7 @@ namespace PowerSDR
                             {
                                 // set saved values for new band
                                 int band = (int)value;
-                                if (rx1_xvtr_index >= 0)
-                                    band = (int)Band.VHF0 + rx1_xvtr_index;
+                                if (rx1_xvtr_index >= 0)   band = (int)Band.VHF0 + rx1_xvtr_index;
 
                                 if (rx1_ant != FWCAnt.SIG_GEN)
                                 {
@@ -30808,8 +30814,7 @@ namespace PowerSDR
                                     RX1Ant = rx1_ant_by_band[band];
                                     if (vu_ant) vu_ant = false;
                                 }
-                                if (rx1_ant != FWCAnt.RX1IN)
-                                    RX1Loop = rx1_loop_by_band[band];
+                                if (rx1_ant != FWCAnt.RX1IN) RX1Loop = rx1_loop_by_band[band];
                             }
                             else // Simple antenna mode
                             {
@@ -30854,8 +30859,10 @@ namespace PowerSDR
                             Audio.IQGain = 1.0f + 0.001f * rx1_image_gain_table[(int)b];
                             Audio.IQPhase = 0.001f * rx1_image_phase_table[(int)b];
 
-                            if (fwcAntForm != null && !fwcAntForm.IsDisposed)
-                                fwcAntForm.SetBand(value);
+                            Debug.WriteLine("band value " + value);
+
+                            if (fwcAntForm != null && !fwcAntForm.IsDisposed)   fwcAntForm.SetBand(value);
+
                             break;
                         case Model.FLEX3000:
                             if (!fwc_init) break;
@@ -31124,12 +31131,12 @@ namespace PowerSDR
                         dsp.GetDSPRX(1, 1).SetRXCorrectIQW(rx2_image_gain_table[(int)b], rx2_image_phase_table[(int)b]);
                     }		
 
-					if(fwcAntForm != null && !fwcAntForm.IsDisposed) 
-						fwcAntForm.SetBand(value);
+					if(fwcAntForm != null && !fwcAntForm.IsDisposed) fwcAntForm.SetBand(value);
 				}
 			}
 		}
 
+        //===================================================
 		private Band tx_band;
 		public Band TXBand
 		{
@@ -31140,6 +31147,7 @@ namespace PowerSDR
 				tx_band = value;
 
 				Band lo_band = Band.FIRST;
+
                 if (tx_xvtr_index >= 0)
                 {
                     lo_band = BandByFreq(xvtrForm.TranslateFreq(VFOAFreq), -1, true, current_region);
@@ -31183,6 +31191,7 @@ namespace PowerSDR
                     {
                         case Model.FLEX5000:
                             if(!fwc_init) break;
+
                             if (FWCEEPROM.VUOK && tx_xvtr_index != last_tx_xvtr_index)
                             {
                                 if (tx_xvtr_index == 0)
@@ -31212,20 +31221,18 @@ namespace PowerSDR
                             if (current_ant_mode == AntMode.Expert)
                             {
                                 int band = (int)value;
-                                if (tx_xvtr_index >= 0)
-                                    band = (int)Band.VHF0 + tx_xvtr_index;
+                                if (tx_xvtr_index >= 0)  band = (int)Band.VHF0 + tx_xvtr_index;
 
                                 TXAnt = tx_ant_by_band[band];
                                 FWCAmpTX1 = tx1_by_band[band];
                                 FWCAmpTX2 = tx2_by_band[band];
                                 FWCAmpTX3 = tx3_by_band[band];
                             }
-                            else if (value != Band.B6M)
-                                TXAnt = tx_ant;
+                            else if (value != Band.B6M)  TXAnt = tx_ant;
 
                             Band b = tx_band;
-                            if (tx_xvtr_index >= 0)
-                                b = lo_band;
+
+                            if (tx_xvtr_index >= 0)  b = lo_band;
 
                             if (fwc_init && current_model == Model.FLEX5000 && FWCEEPROM.VUOK)
                             {
@@ -31264,12 +31271,16 @@ namespace PowerSDR
                                 temp += (uint)((byte)tx_carrier_table[(int)b][i] << (8 * (3 - i)));
                             FWC.SetTRXPot(temp);*/
 
-                            if (fwcAntForm != null && !fwcAntForm.IsDisposed)
-                            fwcAntForm.SetBand(value);
+
+                            Debug.WriteLine("TXband value " + value);
+
+                            if (!extended) // ke9ns add this if statement. extended uses ham bands to transmit on but antenna switch gets confused when RXBand and TXBand dont match when in SWL bands
+                            {
+                                if (fwcAntForm != null && !fwcAntForm.IsDisposed) fwcAntForm.SetBand(value); // ke9ns test commented this out
+                            }
 
                             bool tx1, tx2, tx3;
-                            if (flex5000RelayForm != null)
-                                flex5000RelayForm.UpdateRelayState(out tx1, out tx2, out tx3);
+                            if (flex5000RelayForm != null) flex5000RelayForm.UpdateRelayState(out tx1, out tx2, out tx3);
                             break;
 
                         case Model.FLEX3000:
@@ -31364,7 +31375,7 @@ namespace PowerSDR
                     }
 				}
 			}
-		}
+		} // TXBand
 
         private int tx_filter_low_save = 200;
         private int tx_filter_high_save = 3100;
@@ -32098,6 +32109,8 @@ namespace PowerSDR
 				ptbAF_Scroll(this, EventArgs.Empty);
 			}
 		}
+
+
 
 		private int rxaf = 50;
 		public int RXAF
@@ -40121,7 +40134,14 @@ namespace PowerSDR
                     count++;
 
                     Audio.StopAudio();
-                    if (vac_enabled) Audio.StopAudioVAC();
+                    Debug.WriteLine("NOT GOOD2============");
+
+                    if (vac_enabled)
+                    {
+                        Debug.WriteLine("NOT GOOD============");
+
+                        Audio.StopAudioVAC();
+                    }
 
                     Thread.Sleep(500);
                     this.Invoke(new MethodInvoker(AudioStart));
@@ -42196,6 +42216,8 @@ namespace PowerSDR
 
                 if (vac_enabled)
                 {
+                    Debug.WriteLine("test8===============");
+
                     Audio.StopAudioVAC();
                 }
 
@@ -51884,13 +51906,14 @@ namespace PowerSDR
 				{
 					if(rx2_enabled)
 					{
-                        VFOASubFreq = VFOAFreq; // ke9ns add start with sub on top of vfoA
+                      if (setupForm.chkBoxMRX.Checked == true)  VFOASubFreq = VFOAFreq; // ke9ns add start with sub on top of vfoA
+
                         UpdateVFOASub();
 
 					}
 					else
 					{
-                        VFOBFreq = VFOAFreq; // ke9ns add  start with B synced to A
+                        if (setupForm.chkBoxMRX.Checked == true) VFOBFreq = VFOAFreq; // ke9ns add  start with B synced to A
 
 						txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 						if(chkVFOSplit.Checked) chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
@@ -58608,6 +58631,13 @@ namespace PowerSDR
 
             
             } // right click
+        }
+
+        //===================================================================
+        // ke9ns add  VAC system PC volume control
+        private void ptbVAC_Scroll(object sender, EventArgs e)
+        {
+
         }
 
         //===================================================================================

@@ -849,9 +849,10 @@ namespace PowerSDR
 
             }
 			return ret_val;
-		}
 
-		private Band StringToBand(string s)
+        } // BandToString
+
+        private Band StringToBand(string s)
 		{
 			Band b = Band.GEN;
 			switch(s)
@@ -902,9 +903,9 @@ namespace PowerSDR
 
             }
 			return b;
-		}
+        } //StringToBand
 
-		private string AntToString(FWCAnt ant)
+        private string AntToString(FWCAnt ant)
 		{
 			string ret_val = "";
 			switch(ant)
@@ -918,9 +919,9 @@ namespace PowerSDR
 				case FWCAnt.RX1TAP: ret_val = "RX1 Tap"; break;
 			}
 			return ret_val;
-		}
+        }//AntToString
 
-		private FWCAnt StringToAnt(string s)
+        private FWCAnt StringToAnt(string s)
 		{
 			FWCAnt ant = FWCAnt.ANT1;
 			switch(s)
@@ -1011,23 +1012,20 @@ namespace PowerSDR
 		private void comboBand_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			Band band = StringToBand(comboBand.Text);
-			if(!radModeSimple.Checked)
+
+            if (!radModeSimple.Checked)
 			{				
 				if((byte)(FWCEEPROM.RFIORev) < 34)
 				{
 					switch(band)
 					{
 						case Band.B6M:
-							if(comboTXAnt.Items.Contains("ANT 1"))
-								comboTXAnt.Items.Remove("ANT 1");
-							if(comboTXAnt.Items.Contains("ANT 2"))
-								comboTXAnt.Items.Remove("ANT 2");
+							if(comboTXAnt.Items.Contains("ANT 1"))	comboTXAnt.Items.Remove("ANT 1");
+							if(comboTXAnt.Items.Contains("ANT 2"))	comboTXAnt.Items.Remove("ANT 2");
 							break;
 						default:
-							if(!comboTXAnt.Items.Contains("ANT 2"))
-								comboTXAnt.Items.Insert(0, "ANT 2");
-							if(!comboTXAnt.Items.Contains("ANT 1"))
-								comboTXAnt.Items.Insert(0, "ANT 1");
+							if(!comboTXAnt.Items.Contains("ANT 2"))	comboTXAnt.Items.Insert(0, "ANT 2");
+							if(!comboTXAnt.Items.Contains("ANT 1"))	comboTXAnt.Items.Insert(0, "ANT 1");
 							break;
 					}
 				}
@@ -1077,11 +1075,12 @@ namespace PowerSDR
 					comboTXAnt.Text = AntToString(console.TXAnt);
 				}
 			}
-		}
+
+        } //comboBand_SelectedIndexChanged
 
 
 
-		private void comboRX1Ant_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void comboRX1Ant_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if((comboRX1Ant.Focused || comboTXAnt.Focused) && rx2_ok && comboRX1Ant.Text == "ANT 1" && comboRX2Ant.Text == "ANT 1")
 			{

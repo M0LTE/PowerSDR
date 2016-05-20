@@ -148,3 +148,4 @@ C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\R
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\Resources\swissli.ttf
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\PowerSDR.exe
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\PowerSDR.pdb
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.csprojResolveAssemblyReference.cache

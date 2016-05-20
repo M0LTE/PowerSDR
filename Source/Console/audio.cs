@@ -5033,7 +5033,9 @@ namespace PowerSDR
 		{
             if (!vac_enabled) return 0;
 
-			int* array_ptr = (int *)input;
+          //  Debug.WriteLine("NOT GOOD1============");
+
+            int* array_ptr = (int *)input;
 
             float* in_l_ptr1 = (float *)array_ptr[0];  // ke9ns this is the inpu from VAC1	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
 
@@ -6129,7 +6131,8 @@ namespace PowerSDR
 
 			if(vac_enabled) // ke9ns  VAC1 that is
 			{
-				int num_chan = 1;
+              
+                int num_chan = 1;
 				// ehr add for multirate iq to vac
 				int sample_rate = sample_rate2;
 				int block_size = block_size_vac;
@@ -6147,7 +6150,12 @@ namespace PowerSDR
 
                 try   // ke9ns 	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
                 {
+                    Debug.WriteLine("NOT GOOD111============ in " + input_dev2 +" output "+output_dev2);
+                    // host2 = type of audio driver
+
                     retval = StartAudio(ref callbackVAC, (uint)block_size, sample_rate, host2, input_dev2, output_dev2, num_chan, 1, latency);  // ke9ns use VAC1 input_dev2 device
+                    Debug.WriteLine("NOT GOOD222============");
+
                 }
                 catch (Exception)
                 {
@@ -6158,7 +6166,8 @@ namespace PowerSDR
                         MessageBoxIcon.Error);
                     return false;
                 }
-			} // ke9ns VAC1 on
+              
+            } // ke9ns VAC1 on
 
             if (vac2_enabled)
             {
@@ -6204,10 +6213,14 @@ namespace PowerSDR
 		{
             empty_buffers = 0;
 
+           // input_dev_index = 2; // ke9ns test
+
 			int in_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, input_dev_index);
+
 			int out_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, output_dev_index);
 
-			PA19.PaStreamParameters inparam = new PA19.PaStreamParameters();
+           
+            PA19.PaStreamParameters inparam = new PA19.PaStreamParameters();
 			PA19.PaStreamParameters outparam = new PA19.PaStreamParameters();
 				
 			inparam.device = in_dev;
@@ -6237,6 +6250,10 @@ namespace PowerSDR
 
             int RETRY_AUDIO_START_TIMES = (console.CurrentModel == Model.FLEX1500 ? 25 : 1);
 
+         //   Debug.WriteLine("host " + host_api_index);
+         //   Debug.WriteLine("in_dev " + in_dev);
+         //   Debug.WriteLine("out_dev " + out_dev);
+
             int i;
             // in case we fail, try multiple times (FLEX1500)
             for (i = 0; i < RETRY_AUDIO_START_TIMES; i++)
@@ -6255,21 +6272,31 @@ namespace PowerSDR
                     //  Debug.WriteLine("startcallback0=====");
                         break;
                 }
-/*
-                if (callback_num == 0)
-                    error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0);
-                else
-                    error = PA19.PA_OpenStream(out stream2, &inparam, &outparam, sample_rate, block_size, 0, callback, 1);
-*/
-                if (error == 0) break; // stop if no error
-            }
+                /*
+                                if (callback_num == 0)
+                                    error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0);
+                                else
+                                    error = PA19.PA_OpenStream(out stream2, &inparam, &outparam, sample_rate, block_size, 0, callback, 1);
+                */
+             
+                if (error == 0) // ke9ns 0=good
+                {
+                   break; // stop if no error
+                }
+      
 
-         
+            } // for loop
+
+         //   Debug.WriteLine("host1 " + host_api_index);
+         //   Debug.WriteLine("in_dev1 " + in_dev);
+         //   Debug.WriteLine("out_dev1 " + out_dev);
 
             if (console.CurrentModel == Model.FLEX1500) Debug.WriteLine("audio start retry = "+i+" times");
 
             //if (console.CurrentModel == Model.FLEX1500)
-                //Flex1500.StartListener(); // restart listening to commands to start audio
+            //Flex1500.StartListener(); // restart listening to commands to start audio
+
+           
             if (error != 0)
 			{
                 PortAudioErrorMessageBox(error);
@@ -6289,13 +6316,14 @@ namespace PowerSDR
                     error = PA19.PA_StartStream(stream1);
                     break;
             }
-/*
-			if(callback_num == 0)
-				error = PA19.PA_StartStream(stream1);
-			else
-				error = PA19.PA_StartStream(stream2);
-*/
-			if(error != 0)
+            /*
+                        if(callback_num == 0)
+                            error = PA19.PA_StartStream(stream1);
+                        else
+                            error = PA19.PA_StartStream(stream2);
+            */
+
+            if (error != 0)
 			{
                 PortAudioErrorMessageBox(error);
 				return false;
@@ -6305,7 +6333,7 @@ namespace PowerSDR
 
 
 
-
+       //=================================================================================
         private static void PortAudioErrorMessageBox(int error)
         {
             switch (error)
@@ -6317,14 +6345,16 @@ namespace PowerSDR
                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
+
                 default:
-                    MessageBox.Show(PA19.PA_GetErrorText(error), "PortAudio Error: "+error,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(PA19.PA_GetErrorText(error), "PortAudio Error: "+error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
             }
-        }
+        } //  PortAudioErrorMessageBox
 
-		public unsafe static void StopAudio()
+
+
+        public unsafe static void StopAudio()
 		{
             int error = 0;
             PA19.PA_AbortStream(stream1);
@@ -6337,6 +6367,7 @@ namespace PowerSDR
             int error = 0;
             PA19.PA_AbortStream(stream2);
             error = PA19.PA_CloseStream(stream2);
+          
             if (error != 0) PortAudioErrorMessageBox(error);
 		}
 

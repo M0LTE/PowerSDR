@@ -4042,19 +4042,11 @@ namespace PowerSDR
                     Console.MMK3 = 0;        // RX3 index to allow call signs to draw after all the vert lines on the screen
                 }
 
-
                 VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
                 VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
                 VFODiff = VFOHigh - VFOLow;       // diff in hz
 
-
-             //   if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
-              //  else low = false;     // usb
-
-             //   Debug.WriteLine("=============");
-
                 int gg = SpotForm.dataGridView2.Rows.Count;  // get current # of memories we have available
-
               //  int gg = console.comboFMMemory.Items.Count;
 
                 //-------------------------------------------------------------------------------------------------
@@ -4067,15 +4059,14 @@ namespace PowerSDR
                 for (int ii = 0; ii < gg ; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                 {
                     
-                     int hh = (int)(Convert.ToDouble(SpotForm.dataGridView2[1, ii].Value) * 1000000);  // MEMORY "RXFREQ"  convert to hz
-
+                    int hh = (int)(Convert.ToDouble(SpotForm.dataGridView2[1, ii].Value) * 1000000);  // MEMORY "RXFREQ"  convert to hz
 
                     if ( ( hh >= VFOLow) && (hh <= VFOHigh)) // find MEMORIES that appear on PAN
                     {
  
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(hh - VFOLow))); // determine DX spot line pos on current panadapter screen
+                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(hh - VFOLow))); // determine MEMORY spot line pos on current panadapter screen
 
-                        holder2[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
+                        holder2[kk] = ii;                    // ii is the actual MEMORY INDEX pos the the KK holds
                         holder3[kk] = VFO_DXPos;
 
                         kk++;
@@ -4107,10 +4098,12 @@ namespace PowerSDR
                     if (low) // 1=LSB so draw on left side of line
                     {
       
-                        length = g.MeasureString(ll, font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-                        g.DrawString(ll, font1, grid_text_brush, holder3[ii] - length.Width, H1b + iii);
-                        length1 = g.MeasureString(mm, font1); //  not needed here but used for MEMORY GROUP
-                        g.DrawString(mm, font1, grid_text_brush, holder3[ii] - length1.Width, H1b + iii+11);
+                        length = g.MeasureString(ll, font1);             //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
+                        length1 = g.MeasureString(mm, font1);             //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
+
+
+                        g.DrawString(ll, font1, grid_text_brush, holder3[ii] - length.Width, H1b + iii);    // Memory Name
+                        g.DrawString(mm, font1, grid_text_brush, holder3[ii] - length1.Width, H1b + iii+11); // Memory Group
 
                         if (bottom) rx3 = 50; // allow only 50 spots per Receiver
                         else rx3 = 0;
@@ -4118,10 +4111,10 @@ namespace PowerSDR
                         if (!mox) // only do when not transmitting
                         {
 
-                            if (length1.Width > length.Width) length.Width = length1.Width;
+                            if (length1.Width > length.Width) length.Width = length1.Width; // make virtual box as wide as the widest text
 
-                            Console.MMW[ii + rx3] = (int)length.Width;    // this is all for QRZ hyperlinking 
-                            Console.MMH[ii + rx3] = (int)length.Height * 2;   // * 2 because of 2 lines of text
+                            Console.MMW[ii + rx3] = (int)length.Width;           // Width,Height,X,Y of upper left corner to locate where text actually is 
+                            Console.MMH[ii + rx3] = (int)length.Height * 2;       // * 2 because of 2 lines of text
                             Console.MMX[ii + rx3] = holder3[ii] - (int)length.Width;
                             Console.MMY[ii + rx3] = H1b + iii;
                             Console.MMS[ii + rx3] = ll;
@@ -4135,11 +4128,12 @@ namespace PowerSDR
                     {
                        
                         length = g.MeasureString(ll, font1); //  not needed here but used for MEMORY NAME
-                        g.DrawString(ll, font1, grid_text_brush, holder3[ii], H1b + iii); // DX station name
-                        length1 = g.MeasureString(mm, font1); //  not needed here but used for MEMORY GROUP
-                        g.DrawString(mm, font1, grid_text_brush, holder3[ii], H1b + iii + 11);
+                        length1 = g.MeasureString(mm, font1); //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
 
-                   
+
+                        g.DrawString(ll, font1, grid_text_brush, holder3[ii], H1b + iii); // Memory Name
+                        g.DrawString(mm, font1, grid_text_brush, holder3[ii], H1b + iii + 11); // Memory Group
+      
                         if (bottom) rx3 = 50;
                         else rx3 = 0;
 
@@ -4147,7 +4141,7 @@ namespace PowerSDR
                         {
                             if (length1.Width > length.Width) length.Width = length1.Width;
 
-                            Console.MMW[ii + rx3] = (int)length.Width;   // W this is all for MEMORY clicking 
+                            Console.MMW[ii + rx3] = (int)length.Width;    // Width,Height,X,Y of upper left corner to locate where text actually is 
                             Console.MMH[ii + rx3] = (int)length.Height * 2;  // H
                             Console.MMX[ii + rx3] = holder3[ii];         // X
                             Console.MMY[ii + rx3] = H1b + iii;           // Y
@@ -4230,13 +4224,35 @@ namespace PowerSDR
 
                          //   Debug.Write(" FREQ-SWL " + ii);
 
-                            if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                                if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                                 {
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               
                                     g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
 
-                                     g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+                                if ((Console.MMK3 > 0) && (SpotControl.SP6_Active != 0))
+                                {
+                                    int x2 = VFO_SWLPos;
+                                    int y2 = 20 + iii;
+
+                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                    for (int jj = 0; jj < Console.MMK3; jj++)
+                                    {
+
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                        {
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                            {
+                                                iii = iii + 33;
+                                                break;
+                                            }
+                                        }
+
+                                    } // for loop to check if DX text will draw over top of Memory text
+                                }
+
+                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
 
                              //   Debug.WriteLine(" FINDSWL "+ ii );
 
@@ -4286,7 +4302,6 @@ namespace PowerSDR
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                              
                                 g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
-                              //  g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
                                 
                                 iii = iii + 11; // stairstep spots
                                 if (iii > 90) iii = 0;
@@ -4303,8 +4318,29 @@ namespace PowerSDR
                             {
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
-                               // g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
-                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+                                if ((Console.MMK3 > 0) && (SpotControl.SP6_Active != 0))
+                                {
+                                    int x2 = VFO_SWLPos;
+                                    int y2 = 20 + iii;
+
+                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                    for (int jj = 0; jj < Console.MMK3; jj++)
+                                    {
+
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                        {
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                            {
+                                                iii = iii + 33;
+                                                break;
+                                            }
+                                        }
+
+                                    } // for loop to check if DX text will draw over top of Memory text
+                                }
+
+                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii); // draw station Name
 
                                 iii = iii + 11; // stairstep spots
                                 if (iii > 90) iii = 0;
@@ -4393,8 +4429,17 @@ namespace PowerSDR
                 } // for loop through DX_Index
 
 
-                if (bottom) Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
-                else Console.DXK= kk; // count of spots in current panadapter
+                int bb = 0;
+                if (bottom)
+                {
+                    Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
+                    bb = Console.MMK4;
+                }
+                else
+                {
+                    Console.DXK = kk; // count of spots in current panadapter
+                    bb = Console.MMK3; 
+                }
 
               
                 //--------------------------------------------------------------------------------------------
@@ -4405,15 +4450,57 @@ namespace PowerSDR
                     if (low) // 1=LSB so draw on left side of line
                     {
 
-                        if (Console.DXR == 0)
+                        if (Console.DXR == 0) // display Spotted on Pan
                         {
                             length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - length.Width, H1b + iii);
+
+                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            {
+                                int x2 = holder1[ii] - (int)length.Width;
+                                int y2 = H1b + iii;
+
+                                for (int jj = 0; jj < bb; jj++)
+                                {
+
+                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    {
+                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                        {
+                                            iii = iii + 33;
+                                            break;
+                                        }
+                                    }
+
+                                } // for loop to check if DX text will draw over top of Memory text
+                            }
+
+                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii);
                         }
-                        else
+                        else // display SPOTTER on Pan (not the Spotted)
                         {
                             length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii] - length.Width, H1b + iii);
+
+                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            {
+                                int x2 = holder1[ii] - (int)length.Width;
+                                int y2 = H1b + iii;
+
+                                for (int jj = 0; jj < bb; jj++)
+                                {
+
+                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    {
+                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                        {
+                                            iii = iii + 33;
+                                            break;
+                                        }
+                                    }
+
+                                } // for loop to check if DX text will draw over top of Memory text
+                            }
+
+                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii);
 
                         }
 
@@ -4432,16 +4519,60 @@ namespace PowerSDR
                         
 
                     } // LSB side
+
+
                     else   // 0=usb so draw on righ side of line (normal)
                     {
                         if (Console.DXR == 0) // spot
                         {
                             length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+
+                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            {
+                                int x2 = holder1[ii];
+                                int y2 = H1b + iii;
+
+                                for (int jj = 0; jj < bb; jj++)
+                                {
+
+                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    {
+                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                        {
+                                            iii = iii + 33;
+                                            break;
+                                        }
+                                    }
+
+                                } // for loop to check if DX text will draw over top of Memory text
+                            }
+
                             g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
                         }
                         else // spotter
                         {
                             length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+
+                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            {
+                                int x2 = holder1[ii];
+                                int y2 = H1b + iii;
+
+                                for (int jj = 0; jj < bb; jj++)
+                                {
+
+                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    {
+                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                        {
+                                            iii = iii + 33;
+                                            break;
+                                        }
+                                    }
+
+                                } // for loop to check if DX text will draw over top of Memory text
+                            }
+
                             g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
 
                         }
