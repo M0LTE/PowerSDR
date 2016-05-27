@@ -2362,7 +2362,7 @@ namespace PowerSDR
         private static Font font1 = new Font("Ariel", 9, FontStyle.Regular);  // ke9ns add dx spot call sign font style
 
         private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness  DXSPOTTER
-        private static Pen p3 = new Pen(Color.Blue, 2.0f);                   // ke9ns add vert line color and thickness    MEMORY
+        private static Pen p3 = new Pen(Color.Blue, 2.5f);                   // ke9ns add vert line color and thickness    MEMORY
         private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
        
         private static SizeF length;                                          // ke9ns add length of call sign so we can do usb/lsb and define a box to click into
