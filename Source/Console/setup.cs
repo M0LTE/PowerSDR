@@ -914,8 +914,8 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS labelTS3;
 		private System.Windows.Forms.LabelTS labelTS4;
 		private System.Windows.Forms.TabPage tpRX2;
-		private System.Windows.Forms.CheckBoxTS chkRX2AutoMuteRX2OnVFOATX;
-		private System.Windows.Forms.GroupBoxTS grpDirectIQOutput;
+        public CheckBoxTS chkRX2AutoMuteRX2OnVFOATX;
+        private System.Windows.Forms.GroupBoxTS grpDirectIQOutput;
 		private System.Windows.Forms.CheckBoxTS chkAudioCorrectIQ;
         public CheckBoxTS chkAudioIQtoVAC;
         private System.Windows.Forms.CheckBoxTS chkRX2AutoMuteRX1OnVFOBTX;
@@ -1054,6 +1054,7 @@ namespace PowerSDR
         private LabelTS labelTS13;
         private TrackBarTS tbGridOffset;
         public CheckBoxTS chkBoxMRX;
+        public CheckBoxTS chkTXMeter2;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1716,6 +1717,7 @@ namespace PowerSDR
             this.udDSPAGCFixedGaindB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkTXMeter2 = new System.Windows.Forms.CheckBoxTS();
             this.chkRememberTXProfileOnModeChange = new System.Windows.Forms.CheckBoxTS();
             this.chkAudioMicBoost = new System.Windows.Forms.CheckBoxTS();
             this.chkSaveTXProfileOnExit = new System.Windows.Forms.CheckBoxTS();
@@ -9247,6 +9249,7 @@ namespace PowerSDR
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkTXMeter2);
             this.tpTransmit.Controls.Add(this.chkRememberTXProfileOnModeChange);
             this.tpTransmit.Controls.Add(this.chkAudioMicBoost);
             this.tpTransmit.Controls.Add(this.chkSaveTXProfileOnExit);
@@ -9268,6 +9271,17 @@ namespace PowerSDR
             this.tpTransmit.Size = new System.Drawing.Size(584, 322);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
+            // 
+            // chkTXMeter2
+            // 
+            this.chkTXMeter2.Image = null;
+            this.chkTXMeter2.Location = new System.Drawing.Point(306, 282);
+            this.chkTXMeter2.Name = "chkTXMeter2";
+            this.chkTXMeter2.Size = new System.Drawing.Size(133, 26);
+            this.chkTXMeter2.TabIndex = 62;
+            this.chkTXMeter2.Text = "TX 2nd Meter Active";
+            this.toolTip1.SetToolTip(this.chkTXMeter2, "Automatically saves the current TX Profile when PowerSDR is closed");
+            this.chkTXMeter2.CheckedChanged += new System.EventHandler(this.chkTXMeter2_CheckedChanged);
             // 
             // chkRememberTXProfileOnModeChange
             // 
@@ -9293,8 +9307,6 @@ namespace PowerSDR
             // 
             // chkSaveTXProfileOnExit
             // 
-            this.chkSaveTXProfileOnExit.Checked = true;
-            this.chkSaveTXProfileOnExit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSaveTXProfileOnExit.Image = null;
             this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(306, 250);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
@@ -25874,7 +25886,8 @@ namespace PowerSDR
 		private void chkDSPTXMeterPeak_CheckedChanged(object sender, System.EventArgs e)
 		{
 			console.PeakTXMeter = chkDSPTXMeterPeak.Checked;
-		}
+            console.PeakTX1Meter = chkDSPTXMeterPeak.Checked;
+        }
 
 		private void chkVACCombine_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -26821,6 +26834,13 @@ namespace PowerSDR
         }
 
 
+        // ke9ns add
+        private void chkTXMeter2_CheckedChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine("HELP");
+            console.TXMeter2 = chkTXMeter2.Checked;
+            
+        }
     } // class setup
 
     #region PADeviceInfo Helper Class

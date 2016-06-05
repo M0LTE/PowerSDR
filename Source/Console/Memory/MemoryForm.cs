@@ -282,11 +282,12 @@ namespace PowerSDR
   
                 try
                 {
+                  
                     System.Diagnostics.Process.Start((string)dataGridView1["comments", RIndex].Value);   // System.Diagnostics.Process.Start("http://www.microsoft.com");
                 }
                 catch
                 {
-                    // if not a URL then ignore
+                    
                 }
 
 

@@ -29,9 +29,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace PowerSDR
@@ -152,6 +155,39 @@ namespace PowerSDR
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            // System.Diagnostics.Process.Start("IExplore.exe", e.LinkText);
+
+
+           
+            var result = new StringBuilder(Environment.ExpandEnvironmentVariables("%userprofile%"));
+
+            try
+            {
+          
+                System.Diagnostics.Process.Start(e.LinkText);    // HTTP
+            }
+            catch
+            {
+                try
+                {
+                    var link = e.LinkText.Replace("file://%userprofile%", ""); //file
+                    link = link.Replace("%20", " ");
+
+                    result.Append(link);
+                   
+                    Debug.WriteLine("link2 " + result.ToString());
+
+                    Process.Start(result.ToString());
+                }
+                catch
+                {
+
+                }
+            }
         }
     }
 }

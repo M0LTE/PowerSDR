@@ -292,45 +292,25 @@ NO WARRANTY
 
 12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</value>
   </data>
-  <data name="textBox2.Text" xml:space="preserve">
-    <value>ke9ns Major Revision History from the base current PowerSDR 2.7.2
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>PowerSDR 2.7.2 ke9ns Rev T7: 
 
-042016T1: Add store multiple cluster addresses:ports for dx spotting
-041316S11: Add Right Click on "Auto Wtr/Pan Lvl" to adust Panadapter min grid level
-040416S7: Add Left Click + CTRL key on Red Dot goes directly to DX freq, mode and split
-033116S4: Add Gray Line and embedded Equirectangular Projection map
-032916S3: Add Sun Tracker, Add TNF width adjustment
-032416S1: Add Rec/Play ID feature
-032016R10: Add QRZ hyperlink of call signs click on callsign and hit CTRL button or Ctrl+Right Click on call sign in Panadapter
-031516R6: Add SWL Spotter and DX Spotter.
-031216R1: Add DX spider Cluster on Panadpater "Spotter" button
-030716Q6: Add band stacking for all bands with a &lt;ctrl&gt; &amp; Right Click on band button. Add Index &amp; Total stack numbers.
-030516Q5: Add drag/drop URL or File links into Memory form (right click on memory to open web browser to that URL)
-030216Q3: Add multiple QuickAudio files in subfolder (Select feature in Wave)(right click on PLAY button to access)
-030116Q1: Add GEN SWL Bands (and bandstacks). copy over original database into new RevQ database to preserve original
-022916P10: Add Continuum Mode for RX1
-022316 P5: Add MON to AM/FM and toggle between pre and post MON (with some limitations)
-021816 P1: Add Auto Watefall Level Adjustment to RX and TX
-021116 O2: Add Database to save ke9ns mod settings.
-021116 O1: Compliled under NET 4.5 and SDK 8.1
-020716 N4: Add Transmit any 256color 8bpp bitmap image via waterfall
-020716 N1: ADD: Transmit Callsign ID as Visual Waterfall image for other SDR's to view
-020316 M9: Add optional widerwaterfall (setting in setup-&gt;Display)
-020216 M8: ADD Resize panadapter Grid on TX to fit better with Line level audio
-020216 M7: ADD Now you can toggle "Avg Both", or "Avg Pan" for Panafall.
-Normally  "Avg" button in Panafall always affects Pan &amp; Water together. 
-012916 M: Add DJ Console into code
-012816 L: Add KHZ or MHZ frequency manual entry into VFOA or VFOB
-012716 K: Embed Swis721 Font into PowerSDR
-012516 K: Add ATU back to Flex3000
-012416 K: Entire Waterfall moves with frequency changes
-012416 J: Add PA Temp &amp; Volt to display
-012316 I: Add Signal Peak/Hold to Meters. Correct S9 reading above 30mhz to -93dBm
-012116 G: Add Grayscale Waterfall Menu Item (Toggle). Can toggle on/off "Peak" digital display
-011616 F: Fix CW TX Indicator
-011516 E: RX2 Waterfall Low level &amp; TX Waterfall Low Level added to Setup-&gt;Display
-011516 D: Enable PanaFall on RX2
-011216 C: Enable PanaFall on RX1 with RX2 Enabled
-010716 Initial Release: Add new and Larger Meters (with Emded image) to Setup-&gt;Appearance-&gt;Meters</value>
+For Revision history visit: http://ke9ns.com/flexpage.html/#GPLREV
+
+Features add DOC file:
+"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PoweRSDR_ke9ns_Feature_Add_List.docx"
+
+
+TX Waterfall ID DOC file:
+"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PowerSDR%20TX%20Waterfall%20ID.docx"
+
+Each Video covers additional features not covered in earlier videos:
+
+YouTube Video Describing RevT6 to RevS11: https://www.youtube.com/embed/uPTpZCXCFw0
+YouTube Video Describing RevS10 to RevS2: https://www.youtube.com/embed/zninPwfSgJY
+YouTube Video Describing RevS1 to RevR4 : https://www.youtube.com/embed/fr523IwrApU
+YouTube Video Describing RevR3 to RevP2 : https://www.youtube.com/embed/mOwYpAMm8S0
+YouTube Video Describing RevP1 to Rev A : https://www.youtube.com/embed/aQN9KStSuPI
+</value>
   </data>
 </root>

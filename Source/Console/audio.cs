@@ -3539,7 +3539,7 @@ namespace PowerSDR
 
             //---------------------------------------------------------------------------------------------------------
             // ke9ns  audio playback ov wav file (both RX and TX)
-#if NO_WIDETX
+//#if NO_WIDETX
             if (wave_playback)                 
             {
            
@@ -3559,7 +3559,7 @@ namespace PowerSDR
                 }
 
             } // audio file playback
-#endif
+//#endif
             //-------------------------------------------------------------------------------------
             // ke9ns PRE AUDIO PROCESSING WAVE RECORDING
             if (wave_record)                          
@@ -3728,10 +3728,10 @@ namespace PowerSDR
 
                 if (wave_playback) // playing back a wav file as though it was coming from the MIC
                 {
-#if NO_WIDETX
+//#if NO_WIDETX
                       ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
                       ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
-#endif
+//#endif
                     
                 }
                 else
@@ -4333,7 +4333,7 @@ namespace PowerSDR
 
             //---------------------------------------------------------------------------------------------------------
             // ke9ns testdsp audio playback ov wav file (both RX and TX)
-
+/*
 #if !NO_WIDETX
             if (wave_playback)
             {
@@ -4348,7 +4348,8 @@ namespace PowerSDR
 
             } // audio file playback
 
-#endif        
+#endif 
+ */       
             //---------------------------------------------------------------------------------
             // scale output for VAC1 -- use chan 4 as spare buffer
 
