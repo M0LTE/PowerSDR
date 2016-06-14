@@ -149,3 +149,7 @@ C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\R
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\PowerSDR.exe
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\PowerSDR.pdb
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.csprojResolveAssemblyReference.cache
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.DJConsoleUI.DJConsoleSelect.resources
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.DJConsoleMK2Config.resources
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.DJConsoleMP3e2Config.resources
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Debug\PowerSDR.DJConsoleMP3LEConfig.resources
