@@ -123,10 +123,10 @@
   <data name="textBox3.Text" xml:space="preserve">
     <value>Add or Edit DX Cluster's or reverse Beacon telnet address and port# and your call sign.
 Like: ve7cc.net:23 or k1rfi.com:7300 or telnet.reversebeacon.net:7000
-The Self-Extractor now automatically installs both the SWL.csv and DXLOC.txt files for you.
- Right Click on the Waterfall ID CALLSIGN box to see SWL.csv  and DXLOC.txt files
-Visit http://www.eibispace.de/ to download the latest CSV file and rename to
-SWL.csv The DXLOC.txt file will be updated in the download ZIP file as needed.</value>
+Left Click on spot to go to Freq and set Mode, or Right Click on spot to open QRZ page.
+Panadapter: Left Click on DX Spot + CTRL key to open QRZ page or Shift key to see Spotters
+Panadapter: Left Click on Memory spot + CTRL key  to set Freq &amp; Mode.
+Panadapter: Left Click on Red Dots  + CTRL key to go to Freq and Mode of DX station</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>

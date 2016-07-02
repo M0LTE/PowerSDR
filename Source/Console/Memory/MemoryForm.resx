@@ -130,6 +130,14 @@ TO USE THE HYPERLINK:
 RIGHT CLICK mouse on the Memory (Row)
 </value>
   </data>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>Highlight a memory by a single Left Click on a Row.
+You can Drag a file or URL directy onto the highlighted Row to save a Hyperlink.
+Right Click on a highlighted Row to go to the Hyperlink or open the File.
+Double Left Click to change the Flex to that Memory Frequency/mode
+ALT + M keys to save new Memory Directly from the Panadapter Display.
+Spotter can Display all your Memories (in Blue on the Panadapter)</value>
+  </data>
   <data name="MemoryRecordAdd.ToolTip" xml:space="preserve">
     <value>TO ADD A URL OR FILE HYPERLINK TO A MEMORY:
 Select a Memory (Row) with your mouse

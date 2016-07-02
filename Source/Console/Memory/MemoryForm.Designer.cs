@@ -60,6 +60,7 @@ namespace PowerSDR
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MemoryForm));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.chkMemoryFormClose = new System.Windows.Forms.CheckBoxTS();
             this.btnSelect = new System.Windows.Forms.ButtonTS();
             this.btnMemoryRecordDelete = new System.Windows.Forms.ButtonTS();
@@ -79,7 +80,7 @@ namespace PowerSDR
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(982, 423);
             this.dataGridView1.TabIndex = 1;
@@ -90,13 +91,24 @@ namespace PowerSDR
             this.dataGridView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.dataGridView1_DragEnter);
             this.dataGridView1.DoubleClick += new System.EventHandler(this.btnSelect_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox1.Location = new System.Drawing.Point(428, 433);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(566, 49);
+            this.textBox1.TabIndex = 13;
+            this.textBox1.Text = resources.GetString("textBox1.Text");
+            // 
             // chkMemoryFormClose
             // 
             this.chkMemoryFormClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMemoryFormClose.Image = null;
-            this.chkMemoryFormClose.Location = new System.Drawing.Point(361, 450);
+            this.chkMemoryFormClose.Location = new System.Drawing.Point(347, 433);
             this.chkMemoryFormClose.Name = "chkMemoryFormClose";
-            this.chkMemoryFormClose.Size = new System.Drawing.Size(129, 20);
+            this.chkMemoryFormClose.Size = new System.Drawing.Size(89, 43);
             this.chkMemoryFormClose.TabIndex = 12;
             this.chkMemoryFormClose.Text = "Close after selection";
             this.toolTip1.SetToolTip(this.chkMemoryFormClose, "Check to close the Memory window after an entry has been selected");
@@ -161,6 +173,7 @@ namespace PowerSDR
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 488);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkMemoryFormClose);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.btnMemoryRecordDelete);
@@ -174,6 +187,7 @@ namespace PowerSDR
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MemoryForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         } //INITCOMPOENT
 
@@ -186,6 +200,7 @@ namespace PowerSDR
         private System.Windows.Forms.ButtonTS btnSelect;
         private System.Windows.Forms.CheckBoxTS chkMemoryFormClose;
         public System.Windows.Forms.ButtonTS MemoryRecordAdd;
+        private System.Windows.Forms.TextBox textBox1;
     } //memoryform
 
 } //PowerSDR

@@ -1544,7 +1544,7 @@ namespace PowerSDR
                
                     }
 
-                    double bright = 300;      // amplitude factor
+                    double bright = 400;      // was 300 amplitude factor
 
                     int n1 = 0;   // used by USB/LSB routine
                     int n2 = 0;

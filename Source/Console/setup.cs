@@ -55,9 +55,10 @@ namespace PowerSDR
         public static SpotControl SpotForm;                       // ke9ns add DX spotter function
         public static ScanControl ScanForm;                       // ke9ns add freq Scanner function
 
-     //   public static VolumeControl volumecontrol;
+        //   public static VolumeControl volumecontrol;
 
-      
+        HidDevice.PowerMate powerMate = new HidDevice.PowerMate();  // link back to PowerMate.cpp and PowerMate.h
+
         private Progress progress;
 		private ArrayList KeyList;
 		private int sound_card;
@@ -1055,6 +1056,10 @@ namespace PowerSDR
         private TrackBarTS tbGridOffset;
         public CheckBoxTS chkBoxMRX;
         public CheckBoxTS chkTXMeter2;
+        public CheckBoxTS chkBoxPM;
+        private GroupBoxTS groupBoxTS1;
+        private LabelTS labelTS15;
+        public NumericUpDownTS udSpeedPM;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1252,12 +1257,15 @@ namespace PowerSDR
             // End MOD
         
         
-        }
+        } // setup
 
 		protected override void Dispose( bool disposing )
 		{
 			if( disposing )
 			{
+
+              //  Debug.WriteLine("dispose");
+                
 				if(components != null)
 				{
 					components.Dispose();
@@ -1409,6 +1417,10 @@ namespace PowerSDR
             this.chkSpaceNavFlyPanadapter = new System.Windows.Forms.CheckBoxTS();
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
+            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS15 = new System.Windows.Forms.LabelTS();
+            this.chkBoxPM = new System.Windows.Forms.CheckBoxTS();
+            this.udSpeedPM = new System.Windows.Forms.NumericUpDownTS();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnConfigure = new System.Windows.Forms.Button();
@@ -2312,6 +2324,8 @@ namespace PowerSDR
             this.tpGeneralNavigation.SuspendLayout();
             this.grpOptSpaceNav.SuspendLayout();
             this.tpUserInterface.SuspendLayout();
+            this.groupBoxTS1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tpAudio.SuspendLayout();
             this.tcAudio.SuspendLayout();
@@ -4450,6 +4464,7 @@ namespace PowerSDR
             // 
             // tpUserInterface
             // 
+            this.tpUserInterface.Controls.Add(this.groupBoxTS1);
             this.tpUserInterface.Controls.Add(this.groupBox1);
             this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
             this.tpUserInterface.Name = "tpUserInterface";
@@ -4457,6 +4472,67 @@ namespace PowerSDR
             this.tpUserInterface.TabIndex = 6;
             this.tpUserInterface.Text = "User Interface";
             this.tpUserInterface.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxTS1
+            // 
+            this.groupBoxTS1.Controls.Add(this.labelTS15);
+            this.groupBoxTS1.Controls.Add(this.chkBoxPM);
+            this.groupBoxTS1.Controls.Add(this.udSpeedPM);
+            this.groupBoxTS1.Location = new System.Drawing.Point(376, 30);
+            this.groupBoxTS1.Name = "groupBoxTS1";
+            this.groupBoxTS1.Size = new System.Drawing.Size(168, 158);
+            this.groupBoxTS1.TabIndex = 53;
+            this.groupBoxTS1.TabStop = false;
+            this.groupBoxTS1.Text = "PowerMate";
+            // 
+            // labelTS15
+            // 
+            this.labelTS15.Image = null;
+            this.labelTS15.Location = new System.Drawing.Point(66, 22);
+            this.labelTS15.Name = "labelTS15";
+            this.labelTS15.Size = new System.Drawing.Size(54, 16);
+            this.labelTS15.TabIndex = 5;
+            this.labelTS15.Text = "Speed:";
+            // 
+            // chkBoxPM
+            // 
+            this.chkBoxPM.Image = null;
+            this.chkBoxPM.Location = new System.Drawing.Point(6, 121);
+            this.chkBoxPM.Name = "chkBoxPM";
+            this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
+            this.chkBoxPM.TabIndex = 6;
+            this.chkBoxPM.Text = "Active";
+            this.chkBoxPM.CheckedChanged += new System.EventHandler(this.chkBoxPM_CheckedChanged);
+            // 
+            // udSpeedPM
+            // 
+            this.udSpeedPM.DecimalPlaces = 1;
+            this.udSpeedPM.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udSpeedPM.Location = new System.Drawing.Point(126, 20);
+            this.udSpeedPM.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Name = "udSpeedPM";
+            this.udSpeedPM.Size = new System.Drawing.Size(36, 20);
+            this.udSpeedPM.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
+            this.udSpeedPM.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udSpeedPM.ValueChanged += new System.EventHandler(this.udSpeedPM_ValueChanged);
             // 
             // groupBox1
             // 
@@ -16085,6 +16161,8 @@ namespace PowerSDR
             this.grpOptSpaceNav.ResumeLayout(false);
             this.grpOptSpaceNav.PerformLayout();
             this.tpUserInterface.ResumeLayout(false);
+            this.groupBoxTS1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tpAudio.ResumeLayout(false);
@@ -26837,10 +26915,66 @@ namespace PowerSDR
         // ke9ns add
         private void chkTXMeter2_CheckedChanged(object sender, EventArgs e)
         {
-            Debug.WriteLine("HELP");
+          //  Debug.WriteLine("HELP");
             console.TXMeter2 = chkTXMeter2.Checked;
             
         }
+
+        private void checkBoxTS1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelTS16_Click(object sender, EventArgs e)
+        {
+
+        }  
+
+        //==========================================================================
+        // ke9ns add PowerMate
+        private void chkBoxPM_CheckedChanged(object sender, EventArgs e)
+        {
+
+           
+            if (chkBoxPM.Checked == true)
+            {
+                if (console.KBON == 0) // only do if not already done
+                {
+                    if (!powerMate.Initialize())   // on load of form find Knob
+                    {
+                        console.KBON = 0;
+                        Debug.WriteLine("COULD NOT FIND KNOB2==============");
+                    }
+                    else
+                    {
+                        console.KBON = 1;
+                        Debug.WriteLine("FOUND KNOB2=============="+console.KBON);
+                         powerMate.ButtonEvent += new HidDevice.PowerMate.ButtonHandler(console.OnButtonEvent);      // create button event
+                         powerMate.RotateEvent += new HidDevice.PowerMate.RotationHandler(console.OnRotateEvent);    // create rotation event
+                        
+                        //  this.powerMate.LedBrightness = 60;              // turns on LED light at startup
+
+
+                    }
+                }
+            }
+            else
+            {
+               
+               if (console.KBON == 1) powerMate.Shutdown();
+                console.KBON = 0;
+
+            }
+
+   
+        }
+
+        private void udSpeedPM_ValueChanged(object sender, EventArgs e)
+        {
+            udSpeedPM.Value = udSpeedPM.Value + 0;
+
+        }
+
     } // class setup
 
     #region PADeviceInfo Helper Class

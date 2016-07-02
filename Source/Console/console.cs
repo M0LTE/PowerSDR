@@ -133,11 +133,15 @@ using Flex.Control;
 
 namespace PowerSDR
 {
-    #region Enums
+  
 
-   
+  
 
-	public enum FWCATUMode
+
+
+        #region Enums
+
+    public enum FWCATUMode
 	{
 		FIRST = -1,
 		Bypass,
@@ -594,6 +598,15 @@ namespace PowerSDR
     unsafe public class Console : System.Windows.Forms.Form
 	{
 
+        HidDevice.PowerMate powerMate = new HidDevice.PowerMate();  // ke9ns add link back to PowerMate.cpp and PowerMate.h
+                                                                    
+
+       
+        public int KBON = 0; // ke9n add 1=knob present 0=knob not present
+        public int speed = 0;
+        public int lastvalue = 0;
+        public int stepsize = 500;
+
 
         //============================================================================ ke9ns ad
         //============================================================================ ke9ns add
@@ -622,6 +635,7 @@ namespace PowerSDR
         public static Stream meter_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met3.jpg");
         // Stream myStream = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met4.jpg");
 
+        public static Stream meter1_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.s-meter-collins3.png");
 
         //==================================================================================================
 
@@ -660,6 +674,8 @@ namespace PowerSDR
 		public Mutex calibration_mutex = new Mutex();	
 
 		public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+
+        public HidDevice.PowerMate PowerMate; // ke9ns add communicate with powermate HID
 
         public SpotControl SpotForm;                       // ke9ns add DX spotter function
         public ScanControl ScanForm;                       // ke9ns add freq Scanner function
@@ -1517,8 +1533,13 @@ namespace PowerSDR
         {
 
           
-          //  this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-         //   this.AutoScaleMode = AutoScaleMode.Dpi;  // ke9ns test
+
+
+
+
+            //  this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            //   this.AutoScaleMode = AutoScaleMode.Dpi;  // ke9ns test
+
 
 
             //====================================================================================
@@ -2101,11 +2122,14 @@ namespace PowerSDR
 
             InitConsole();										// Initialize all forms and main variables            
 
-            Splash.SetStatus("Finished");						// Set progress point
-            // Activates double buffering
-            //SetStyle(ControlStyles.DoubleBuffer, true);
+            Splash.SetStatus("Finished");                       // Set progress point
+                                                                // Activates double buffering
+                                                                //SetStyle(ControlStyles.DoubleBuffer, true);
 
-          
+           
+            //===================================================================================
+            
+
 
             this.SetStyle(ControlStyles.UserPaint |
                ControlStyles.AllPaintingInWmPaint |
@@ -2456,6 +2480,13 @@ namespace PowerSDR
         public bool reset_db = false;
 		protected override void Dispose( bool disposing )
 		{
+
+
+            if (KBON == 1)
+            {
+                powerMate.Shutdown(); // ke9ns add 
+            }
+          
 
 #if (NO_DJ)
             //mod DH1TW
@@ -7437,8 +7468,8 @@ namespace PowerSDR
 		private void InitConsole()
 		{
 
-          
 
+         
 
 
 #if (DEBUG)
@@ -7813,13 +7844,13 @@ namespace PowerSDR
 			last_band = "";						// initialize bandstack
 
             tune_step_list = new List<TuneStep>();  // initialize wheel tuning list array
-            tune_step_list.Add(new TuneStep(1, "1Hz"));
-            tune_step_list.Add(new TuneStep(10, "10Hz"));
-            tune_step_list.Add(new TuneStep(50, "50Hz"));
-            tune_step_list.Add(new TuneStep(100, "100Hz"));
+            tune_step_list.Add(new TuneStep(1, "1Hz")); //0
+            tune_step_list.Add(new TuneStep(10, "10Hz")); //1
+            tune_step_list.Add(new TuneStep(50, "50Hz")); //2
+            tune_step_list.Add(new TuneStep(100, "100Hz")); //3
             tune_step_list.Add(new TuneStep(250, "250Hz"));
             tune_step_list.Add(new TuneStep(500, "500Hz"));
-            tune_step_list.Add(new TuneStep(1000, "1kHz"));
+            tune_step_list.Add(new TuneStep(1000, "1kHz")); //6
             tune_step_list.Add(new TuneStep(2500, "2.5kHz"));
             tune_step_list.Add(new TuneStep(5000, "5kHz"));
             tune_step_list.Add(new TuneStep(6250, "6.25kHz"));
@@ -28362,7 +28393,7 @@ namespace PowerSDR
                                 comboMeterTXMode.SelectedIndex > comboMeterTXMode.Items.Count - 1)
                                 comboMeterTXMode.SelectedIndex = 0;
 
-                            // ke9ns add below
+                            // ke9ns add below for 2nd meter
                             if (comboMeterTX1Mode.Items.Contains("Ref Pwr"))
                                 comboMeterTX1Mode.Items.Remove("Ref Pwr");
                             if (comboMeterTX1Mode.Items.Contains("SWR"))
@@ -33671,7 +33702,7 @@ namespace PowerSDR
 					if(comboMeterTXMode.SelectedIndex < 0)
 						comboMeterTXMode.SelectedIndex = 0;
 
-                    // ke9ns add below
+                    // ke9ns add below for 2nd tx meter
                     if (!comboMeterTX1Mode.Items.Contains("Ref Pwr"))
                         comboMeterTX1Mode.Items.Insert(1, "Ref Pwr");
                     if (!comboMeterTX1Mode.Items.Contains("SWR"))
@@ -36040,6 +36071,15 @@ namespace PowerSDR
 
                                 } // red ticks and text
 
+
+                                //--------------------------------------
+                                //ke9ns add
+                                //--------------------------------------
+
+                             //   Image src = new Bitmap(meter1_image);
+                              //  g.DrawImage(src, new Rectangle(45, 70, 65, 30));  // rectangle to show bitmap image in
+                                
+                               //---------------------------------------------
 
                                 if (FREQA < 30)
                                 {
@@ -41271,8 +41311,8 @@ namespace PowerSDR
 								break;
 							case MeterTXMode.SWR:
 								double swr = 0.0;
-								if(chkTUN.Checked)
-								{
+							//	if(chkTUN.Checked)  //ke9ns remove to allow swr anytime AM or FM modes mostly
+							//	{
 									switch(current_model)
 									{
 										case Model.FLEX5000:
@@ -41287,11 +41327,11 @@ namespace PowerSDR
 											//output = swr.ToString("f1")+" : 1 ";
 											break;
 									}
-								}
-								else
-								{
-									//output = "in TUN only ";
-								}
+							//	}
+							//	else
+							//	{
+							//		//output = "in TUN only ";
+							//	}
 								new_meter_data = (float)swr;
 								break;
 							case MeterTXMode.OFF:
@@ -41413,8 +41453,8 @@ namespace PowerSDR
                                     break;
                                 case MeterTXMode.SWR:
                                     double swr = 0.0;
-                                    if (chkTUN.Checked)
-                                    {
+                                  //  if (chkTUN.Checked) // ke9ns removed to allow SWR during AM or FM modes as well as tune
+                                   // {
                                         switch (current_model)
                                         {
                                             case Model.FLEX5000:
@@ -41429,11 +41469,11 @@ namespace PowerSDR
                                                 //output = swr.ToString("f1")+" : 1 ";
                                                 break;
                                         }
-                                    }
-                                    else
-                                    {
+                                  //  }
+                                   // else
+                                  //  {
                                         //output = "in TUN only ";
-                                    }
+                                  //  }
                                     rx2_meter_new_data = (float)swr;
                                     break;
                                 case MeterTXMode.OFF:
@@ -45902,8 +45942,7 @@ namespace PowerSDR
 
 		private void WheelTune_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if(e.Button == MouseButtons.Left)
-				ChangeTuneStepUp();
+			if(e.Button == MouseButtons.Left)	ChangeTuneStepUp();
 		}
 
 
@@ -59403,7 +59442,7 @@ namespace PowerSDR
         {
          //   Debug.WriteLine("leave   ");
             WaveForm.CreatePlay = true;   // create wave file
-   
+                                          // "bright" variable controls brightness of txwaterID
         } // callsignTextBox_Leave
 
 
@@ -61577,7 +61616,148 @@ namespace PowerSDR
         }
 
 
-       
-    } // class console
+
+
+        //============================================================================================
+        // ke9ns add everything below as part of PowerMate add one
+        //================================================================================================
+        // Button Push event handler
+        //================================================================================================
+       public void OnButtonEvent(HidDevice.PowerMate.ButtonState bs, int value, int value1, int value2)
+        {
+          
+            switch (bs)   // 2 cases UP or DOwn
+            {
+                case HidDevice.PowerMate.ButtonState.Down:
+                    {
+                        Trace.WriteLine(" down");
+                        if (RIT == true)
+                        {
+                            RITValue = 0; // reset RIT back to zero if you hit the KNOB
+                        }
+                        else
+                        {
+                            if (tune_step_index >= 6)
+                            {
+                                tune_step_index = 3 % tune_step_list.Count;
+                                txtWheelTune.Text = tune_step_list[tune_step_index].Name;
+
+                            }
+                            else 
+                            {
+                                ChangeTuneStepUp();
+                            }
+                        }
+                    }
+                    break;
+
+                case HidDevice.PowerMate.ButtonState.Up:
+                    {
+                        Trace.WriteLine("up");
+                       
+                    }
+                    break;
+            } // switch
+     
+
+        } // onbutton
+
+      
+
+        //================================================================================================
+        //   LED brightness event handler (slider)
+        //================================================================================================
+
+        public void OnSliderBrightness(object sender, EventArgs e)
+        {
+            TrackBar slider = sender as TrackBar;
+
+            if (slider != null)
+            {
+              //  LEDV = (int)slider.Value;
+                this.powerMate.LedBrightness = (byte)slider.Value; // get slider bar value to set LED
+
+
+                Trace.WriteLine(slider.Value.ToString());
+            }
+
+        }
+          
+
+        //================================================================================================
+        // rotation value event handler
+        //================================================================================================
+
+        public void OnRotateEvent(int value1)
+        {
+          // Trace.WriteLine("ROTATE "+ value1);
+
+            if (((lastvalue < 0) && (value1 > 0)) || ((lastvalue > 0) && (value1 < 0)))
+            {
+                speed = 0;
+                lastvalue = value1;
+                return;
+            }
+
+            lastvalue = value1;
+
+            if (speed < (int)setupForm.udSpeedPM.Value)
+            {
+
+                speed++;
+                return;
+            }
+            else speed = 0;
+
+           
+            //---------------------------------------------
+            if (value1 < 0)
+            {
+                if (RIT == true)
+                {
+                    RITValue = RITValue - 1;
+                }
+                else
+                {
+                    Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+                }
+            }
+            else
+            {
+                if (RIT == true)
+                {
+                    RITValue = RITValue + 1;
+                }
+                else
+                {
+                    Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
+                }
+            }
+
+
+        } //onrotateevent
+
+        //================================================================================================
+        // rotation value to screen invoked from above
+        //================================================================================================
+
+        void SetRotateLabel()
+        {
+          //  this.rotationLabel.Text = currentRotationalValue.ToString();
+
+        }
+        //================================================================================================
+        // rotation value to screen invoked from above
+        //================================================================================================
+
+        void SetSENDLabel()
+        {
+
+         
+
+        }
+        
+
+        } // class console
 
 } // powerSDR

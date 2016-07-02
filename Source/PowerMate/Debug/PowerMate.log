@@ -1,0 +1,36 @@
+﻿Build started 6/22/2016 10:03:49 PM.
+     1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\PowerMate\PowerMate.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\PowerMate.tlog\unsuccessfulbuild".
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /AI"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _MBCS /Gm- /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"Debug\PowerMate.pch" /Fo"Debug\\" /Fd"Debug\vc140.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib Stdafx.cpp
+         Stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /AI"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _MBCS /Gm- /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Debug\PowerMate.pch" /Fo"Debug\\" /Fd"Debug\vc140.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib AssemblyInfo.cpp PowerMate.cpp EventsHelper.cpp
+         AssemblyInfo.cpp
+         PowerMate.cpp
+     1>c:\users\radio\documents\visual studio 2015\projects\powersdr_v2.7.2\source\powermate\PowerMate.h(1184): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+     1>c:\users\radio\documents\visual studio 2015\projects\powersdr_v2.7.2\source\powermate\PowerMate.h(1097): warning C4101: 'dwNumberOfBytesRead': unreferenced local variable
+         EventsHelper.cpp
+         Generating Code...
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _MBCS /Gm- /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fp"Debug\PowerMate.pch" /Fa"Debug\\" /Fo"Debug\\" /Fd"Debug\vc140.pdb" /analyze- /errorReport:prompt "C:\Users\RADIO\AppData\Local\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cpp"
+         .NETFramework,Version=v4.0.AssemblyAttributes.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /l"0x0409" /nologo /fo"Debug\app.res" app.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Debug\PowerMate.dll" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Debug\PowerMate.pdb" /ASSEMBLYDEBUG /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 /SAFESEH /DLL Debug\app.res
+         Debug\AssemblyInfo.obj
+         Debug\PowerMate.obj
+         Debug\Stdafx.obj
+         Debug\EventsHelper.obj
+         "Debug\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
+     1>PowerMate.obj : error LNK2020: unresolved token (0A00003F) "extern "C" int __cdecl _snprintf(char *,unsigned int,char const *,...)" (?_snprintf@@$$J0YAHPADIPBDZZ)
+     1>PowerMate.obj : error LNK2020: unresolved token (0A000040) "extern "C" int __cdecl _snprintf(char *,unsigned int,char const *,...)" (?_snprintf@@$$J0YAHPADIPBDZZ)
+     1>PowerMate.obj : error LNK2001: unresolved external symbol "extern "C" int __cdecl _snprintf(char *,unsigned int,char const *,...)" (?_snprintf@@$$J0YAHPADIPBDZZ)
+     1>C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Debug\PowerMate.dll : fatal error LNK1120: 3 unresolved externals
+     1>Done Building Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\PowerMate\PowerMate.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:03.30
