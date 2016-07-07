@@ -5744,6 +5744,7 @@ namespace PowerSDR
 		}
 
 
+       
 
 
 		public static int[] GetBandStackNum() // ke9ns mod for GEN SWL bands

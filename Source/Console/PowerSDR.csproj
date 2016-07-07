@@ -78,7 +78,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NO_WIDETX;NO_MCL_PM;NO_KE9NS;NO_DJ</DefineConstants>
+    <DefineConstants>DEBUG;NO_WIDETX;NO_MCL_PM;NO_KE9NS;NO_DJ</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -542,6 +542,9 @@
     <Compile Include="ringbuffer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="stack.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="setup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -806,6 +809,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RamWarnForm.resx">
       <DependentUpon>RamWarnForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="stack.resx">
+      <DependentUpon>stack.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="setup.resx">
       <DependentUpon>setup.cs</DependentUpon>

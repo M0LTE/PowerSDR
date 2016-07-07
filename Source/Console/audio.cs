@@ -4620,6 +4620,13 @@ namespace PowerSDR
               
                 if (!localmox) // RX Mode
                 {
+
+                    if (console.chkRX1MUTE.Checked == true) // ke9ns add to allow MUTE of just RX1 only
+                    {
+                        ClearBuffer(out_l4, frameCount); // 
+                        ClearBuffer(out_r4, frameCount);
+                    }
+
                     // if RX2 is present, combine the outputs ---- A (GRE)
                     if (rx2_enabled) 
                     {
@@ -4630,8 +4637,11 @@ namespace PowerSDR
                     // non-scaled output is already in the Line Out channel
 
                     // Scale the output for the headphones
-                    ScaleBuffer(out_l4, out_r2, frameCount, (float)monitor_volume);
-                    ScaleBuffer(out_r4, out_l2, frameCount, (float)monitor_volume);
+                    ScaleBuffer(out_l4, out_r2, frameCount, (float)monitor_volume); // original 
+                    ScaleBuffer(out_r4, out_l2, frameCount, (float)monitor_volume); // original
+
+                 //   ScaleBuffer(out_l4, out_r2, frameCount, (float)0); // ke9ns mod
+                 //   ScaleBuffer(out_r4, out_l2, frameCount, (float)0); // ke9ns mod
 
                     // Copy the output for the Ext Spkr
                     CopyBuffer(out_l2, out_l3, frameCount);
@@ -4674,8 +4684,11 @@ namespace PowerSDR
                     CopyBuffer(out_l2, out_l4, frameCount);
 
                     // Scale the output for the headphones
-                    ScaleBuffer(out_l2, out_l2, frameCount, (float)monitor_volume);
-                    ScaleBuffer(out_r2, out_r2, frameCount, (float)monitor_volume);
+                    ScaleBuffer(out_l2, out_l2, frameCount, (float)monitor_volume); // original
+                    ScaleBuffer(out_r2, out_r2, frameCount, (float)monitor_volume); // original
+
+                  //  ScaleBuffer(out_l2, out_l2, frameCount, (float)50); // ke9ns mod
+                  //  ScaleBuffer(out_r2, out_r2, frameCount, (float)50); // ke9ns mod
 
                     // Copy the output for the Ext Spkr
                     CopyBuffer(out_l2, out_l3, frameCount);
@@ -4695,8 +4708,11 @@ namespace PowerSDR
                         CopyBuffer(out_l3, out_l4, frameCount);
 
                         // Scale the output for the headphones
-                        ScaleBuffer(out_l3, out_r2, frameCount, (float)monitor_volume);
-                        ScaleBuffer(out_r3, out_l2, frameCount, (float)monitor_volume);
+                        ScaleBuffer(out_l3, out_r2, frameCount, (float)monitor_volume); // original
+                        ScaleBuffer(out_r3, out_l2, frameCount, (float)monitor_volume); // original
+
+                    //    ScaleBuffer(out_l3, out_r2, frameCount, (float)50); //ke9ns mod
+                   //     ScaleBuffer(out_r3, out_l2, frameCount, (float)50);
 
                         // Copy the output for the Ext Spkr
                         CopyBuffer(out_l2, out_l3, frameCount);

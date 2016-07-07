@@ -1,9 +1,9 @@
-﻿Build started 6/28/2016 2:32:37 PM.
+﻿Build started 7/5/2016 10:33:25 PM.
      1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\PowerMate\PowerMate.vcxproj" on node 2 (Rebuild target(s)).
      1>_PrepareForClean:
          Deleting file "Release\PowerMate.tlog\PowerMate.lastbuildstate".
        InitializeBuildStatus:
-         Touching "Release\PowerMate.tlog\unsuccessfulbuild".
+         Creating "Release\PowerMate.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
        GenerateTargetFrameworkMonikerAttribute:
        Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
        ClCompile:
@@ -34,4 +34,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.32
+Time Elapsed 00:00:05.29

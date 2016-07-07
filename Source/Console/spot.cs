@@ -68,6 +68,7 @@ namespace PowerSDR
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
         public  Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+        public static StackControl StackForm;                     // ke9ns add  communications with spot.cs and stack
 
         public DXMemList dxmemlist;
 
@@ -124,6 +125,9 @@ namespace PowerSDR
             InitializeComponent();
             console = c;
             Display.SpotForm = this;  // allows Display to see public data (not public static data)
+            StackControl.SpotForm = this; // allows Stack to see public data from spot
+
+
 
             Common.RestoreForm(this, "SpotForm", true);
 
