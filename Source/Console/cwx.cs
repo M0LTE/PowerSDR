@@ -1534,8 +1534,7 @@ namespace PowerSDR
 				return;
 			}
 
-			if(console.RX1DSPMode != DSPMode.CWL &&
-				console.RX1DSPMode != DSPMode.CWU)
+			if(console.RX1DSPMode != DSPMode.CWL && 	console.RX1DSPMode != DSPMode.CWU)
 			{
 				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
 					"CWX Error: Wrong Mode",
@@ -1547,12 +1546,14 @@ namespace PowerSDR
 			quit = true;
 			kquit = true;
 			while (quit) Thread.Sleep(10);
+
 			pause = 60000/tel;
 			tqq = " . ";
 			setptt(true);
 			setkey(true);
 			keying = true;
-		}
+
+		} //keybutton
 
 		private void CWX_Load(object sender, System.EventArgs e)
 		{		
@@ -1685,7 +1686,8 @@ namespace PowerSDR
 			clear_show();
 			quit = true;
 			kquit = true;
-		}
+
+        }
 		private void udWPM_ValueChanged(object sender, System.EventArgs e)
 		{
 			cwxwpm = (int)udWPM.Value;
@@ -1948,8 +1950,10 @@ namespace PowerSDR
 		private void process_element()		// called at the element rate
 		{
 			byte data;
-				
-			if (quit)		// shut 'er all down
+
+         
+
+            if (quit)		// shut 'er all down
 			{
 				quitshut();
 				quit = false;
@@ -2102,8 +2106,7 @@ namespace PowerSDR
 
 		private void queue_start(int qmsg)			// queue message n for start
 		{
-			if(console.RX1DSPMode != DSPMode.CWL &&
-				console.RX1DSPMode != DSPMode.CWU)
+			if(console.RX1DSPMode != DSPMode.CWL &&	console.RX1DSPMode != DSPMode.CWU)
 			{
 				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
 					"CWX Error: Wrong Mode",
@@ -2116,7 +2119,9 @@ namespace PowerSDR
 			quit = true;
 			while (quit) Thread.Sleep(10);
 
-			switch (qmsg)
+
+
+            switch (qmsg)
 			{
 				case 1: tqq = txt1.Text; break;
 				case 2: tqq = txt2.Text; break;
@@ -2133,7 +2138,7 @@ namespace PowerSDR
 			loadmsg(tqq);
 			push_fifo(0x4);			// end
 			
-		}
+		} //queue_start
 
 		private void loadchar(char cc)	// convert and load a single character
 		{		// this is the guts of loadmsg and work much the same way
@@ -2167,6 +2172,7 @@ namespace PowerSDR
 			}
 		}
 
+        // ke9ns load text of message into a buffer here
 		private void loadmsg(string t)	// load string t to the element fifo
 		{
 			string s;
@@ -2174,8 +2180,8 @@ namespace PowerSDR
 			bool npause;
 			uint v, n;
 			char cc;
-	
-			nc = t.Length;
+           // Debug.WriteLine("send message1 ========================");
+            nc = t.Length;
 			if (nc < 1)			// handle zero length string
 			{
 				t = "?";
@@ -2237,12 +2243,19 @@ namespace PowerSDR
 				}
 	
 				ii++;			// bump fetch index
-				nc--;			//  and tally me banana ...
-			}
+				nc--;           //  and tally me banana ...
+
+
+              
+
+             //   Debug.WriteLine("send message2 ========================");
+
+            } // while
+
 
 			if (npause == false) push_fifo(EL_END);	// stuff an end command if no
 													// pauses in the message
-		}
+		} // loadmsg
 
 
 

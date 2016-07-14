@@ -607,6 +607,8 @@ namespace PowerSDR
         public int lastvalue = 0;
         public CheckBoxTS chkRX1MUTE;
         private Label label2;
+        private TextBoxTS txtNOAA2;
+        private TextBoxTS txtNOAA;
         public int stepsize = 500;
 
 
@@ -1522,8 +1524,8 @@ namespace PowerSDR
         public ToolStripTextBox callsignTextBox;
         private ToolStripMenuItem ScanMenuItem;
         public OpenFileDialog openFileDialog1;
-        private TextBoxTS regBox;
-        private TextBoxTS regBox1;
+        public TextBoxTS regBox;
+        public TextBoxTS regBox1;
         public ToolStripMenuItem spotterMenu;
         public CheckBoxTS checkBoxID;
         private Label label1;
@@ -2777,6 +2779,24 @@ namespace PowerSDR
             this.comboMeterTX1Mode = new System.Windows.Forms.ComboBoxTS();
             this.label2 = new System.Windows.Forms.Label();
             this.chkRX1MUTE = new System.Windows.Forms.CheckBoxTS();
+            this.ptbCWSpeed = new PowerSDR.PrettyTrackBar();
+            this.ptbRX2Pan = new PowerSDR.PrettyTrackBar();
+            this.ptbRX2Gain = new PowerSDR.PrettyTrackBar();
+            this.ptbRX1Gain = new PowerSDR.PrettyTrackBar();
+            this.ptbPanSubRX = new PowerSDR.PrettyTrackBar();
+            this.ptbRX0Gain = new PowerSDR.PrettyTrackBar();
+            this.ptbPanMainRX = new PowerSDR.PrettyTrackBar();
+            this.ptbPWR = new PowerSDR.PrettyTrackBar();
+            this.ptbRF = new PowerSDR.PrettyTrackBar();
+            this.ptbAF = new PowerSDR.PrettyTrackBar();
+            this.ptbVACTXGain = new PowerSDR.PrettyTrackBar();
+            this.ptbVACRXGain = new PowerSDR.PrettyTrackBar();
+            this.ptbDisplayZoom = new PowerSDR.PrettyTrackBar();
+            this.ptbDisplayPan = new PowerSDR.PrettyTrackBar();
+            this.ptbFilterShift = new PowerSDR.PrettyTrackBar();
+            this.ptbFilterWidth = new PowerSDR.PrettyTrackBar();
+            this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
+            this.picRX2Meter = new System.Windows.Forms.PictureBox();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.panelModeSpecificFM = new System.Windows.Forms.PanelTS();
             this.lblFMMemory = new System.Windows.Forms.LabelTS();
@@ -2788,7 +2808,6 @@ namespace PowerSDR
             this.lblFMMic = new System.Windows.Forms.LabelTS();
             this.labelTS7 = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificCW = new System.Windows.Forms.PanelTS();
-            this.ptbCWSpeed = new PowerSDR.PrettyTrackBar();
             this.lblCWSpeed = new System.Windows.Forms.LabelTS();
             this.grpSemiBreakIn = new System.Windows.Forms.GroupBoxTS();
             this.lblCWBreakInDelay = new System.Windows.Forms.LabelTS();
@@ -2824,48 +2843,35 @@ namespace PowerSDR
             this.panelRX2Mode = new System.Windows.Forms.PanelTS();
             this.panelRX2Display = new System.Windows.Forms.PanelTS();
             this.panelRX2Mixer = new System.Windows.Forms.PanelTS();
-            this.ptbRX2Pan = new PowerSDR.PrettyTrackBar();
-            this.ptbRX2Gain = new PowerSDR.PrettyTrackBar();
             this.lblRX2Pan = new System.Windows.Forms.Label();
             this.lblRX2Vol = new System.Windows.Forms.Label();
             this.lblRX2Mute = new System.Windows.Forms.Label();
             this.panelMultiRX = new System.Windows.Forms.PanelTS();
-            this.ptbRX1Gain = new PowerSDR.PrettyTrackBar();
-            this.ptbPanSubRX = new PowerSDR.PrettyTrackBar();
-            this.ptbRX0Gain = new PowerSDR.PrettyTrackBar();
-            this.ptbPanMainRX = new PowerSDR.PrettyTrackBar();
             this.panelDSP = new System.Windows.Forms.PanelTS();
             this.panelVFO = new System.Windows.Forms.PanelTS();
             this.lblCPUMeter = new System.Windows.Forms.LabelTS();
             this.panelDateTime = new System.Windows.Forms.PanelTS();
+            this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
+            this.txtNOAA = new System.Windows.Forms.TextBoxTS();
             this.txtTime = new System.Windows.Forms.TextBoxTS();
             this.txtDate = new System.Windows.Forms.TextBoxTS();
             this.panelSoundControls = new System.Windows.Forms.PanelTS();
-            this.ptbPWR = new PowerSDR.PrettyTrackBar();
-            this.ptbRF = new PowerSDR.PrettyTrackBar();
-            this.ptbAF = new PowerSDR.PrettyTrackBar();
             this.lblAF = new System.Windows.Forms.LabelTS();
             this.lblPreamp = new System.Windows.Forms.LabelTS();
             this.lblPWR = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificDigital = new System.Windows.Forms.PanelTS();
             this.lblVACTXIndicator = new System.Windows.Forms.LabelTS();
             this.lblVACRXIndicator = new System.Windows.Forms.LabelTS();
-            this.ptbVACTXGain = new PowerSDR.PrettyTrackBar();
-            this.ptbVACRXGain = new PowerSDR.PrettyTrackBar();
             this.lblDigTXProfile = new System.Windows.Forms.LabelTS();
             this.lblRXGain = new System.Windows.Forms.LabelTS();
             this.grpVACStereo = new System.Windows.Forms.GroupBoxTS();
             this.lblTXGain = new System.Windows.Forms.LabelTS();
             this.grpDIGSampleRate = new System.Windows.Forms.GroupBoxTS();
             this.panelDisplay = new System.Windows.Forms.PanelTS();
-            this.ptbDisplayZoom = new PowerSDR.PrettyTrackBar();
-            this.ptbDisplayPan = new PowerSDR.PrettyTrackBar();
             this.picDisplay = new System.Windows.Forms.PictureBox();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
             this.lblDisplayPan = new System.Windows.Forms.LabelTS();
             this.panelFilter = new System.Windows.Forms.PanelTS();
-            this.ptbFilterShift = new PowerSDR.PrettyTrackBar();
-            this.ptbFilterWidth = new PowerSDR.PrettyTrackBar();
             this.radFilter1 = new System.Windows.Forms.RadioButtonTS();
             this.lblFilterHigh = new System.Windows.Forms.LabelTS();
             this.lblFilterLow = new System.Windows.Forms.LabelTS();
@@ -2899,7 +2905,6 @@ namespace PowerSDR
             this.txtVFOBFreq = new System.Windows.Forms.TextBoxTS();
             this.btnBandHF = new System.Windows.Forms.ButtonTS();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
-            this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
             this.lblMultiSMeter = new System.Windows.Forms.LabelTS();
             this.txtMultiText = new System.Windows.Forms.TextBoxTS();
             this.lblTuneStep = new System.Windows.Forms.LabelTS();
@@ -2909,7 +2914,6 @@ namespace PowerSDR
             this.grpDisplaySplit = new System.Windows.Forms.GroupBoxTS();
             this.chkRX2 = new System.Windows.Forms.CheckBoxTS();
             this.grpRX2Meter = new System.Windows.Forms.GroupBoxTS();
-            this.picRX2Meter = new System.Windows.Forms.PictureBox();
             this.lblRX2Meter = new System.Windows.Forms.LabelTS();
             this.txtRX2Meter = new System.Windows.Forms.TextBoxTS();
             this.lblRX2Band = new System.Windows.Forms.LabelTS();
@@ -2951,11 +2955,28 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udXIT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Pan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Gain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPanSubRX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX0Gain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPanMainRX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
             this.panelBandHF.SuspendLayout();
             this.panelModeSpecificFM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).BeginInit();
             this.panelModeSpecificCW.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
             this.grpSemiBreakIn.SuspendLayout();
             this.panelModeSpecificPhone.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbMic)).BeginInit();
@@ -2970,41 +2991,24 @@ namespace PowerSDR
             this.panelRX2Mode.SuspendLayout();
             this.panelRX2Display.SuspendLayout();
             this.panelRX2Mixer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Pan)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Gain)).BeginInit();
             this.panelMultiRX.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPanSubRX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX0Gain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPanMainRX)).BeginInit();
             this.panelDSP.SuspendLayout();
             this.panelVFO.SuspendLayout();
             this.panelDateTime.SuspendLayout();
             this.panelSoundControls.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).BeginInit();
             this.panelModeSpecificDigital.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).BeginInit();
             this.grpVACStereo.SuspendLayout();
             this.grpDIGSampleRate.SuspendLayout();
             this.panelDisplay.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).BeginInit();
             this.panelFilter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             this.panelMode.SuspendLayout();
             this.grpVFOA.SuspendLayout();
             this.grpVFOB.SuspendLayout();
             this.grpMultimeter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             this.grpVFOBetween.SuspendLayout();
             this.grpDisplaySplit.SuspendLayout();
             this.grpRX2Meter.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
             this.panelBandVHF.SuspendLayout();
             this.panelBandGN.SuspendLayout();
             this.panelRX2DSP.SuspendLayout();
@@ -5548,6 +5552,267 @@ namespace PowerSDR
             this.chkRX1MUTE.Name = "chkRX1MUTE";
             this.toolTip1.SetToolTip(this.chkRX1MUTE, resources.GetString("chkRX1MUTE.ToolTip"));
             // 
+            // ptbCWSpeed
+            // 
+            resources.ApplyResources(this.ptbCWSpeed, "ptbCWSpeed");
+            this.ptbCWSpeed.HeadImage = null;
+            this.ptbCWSpeed.LargeChange = 1;
+            this.ptbCWSpeed.Maximum = 60;
+            this.ptbCWSpeed.Minimum = 1;
+            this.ptbCWSpeed.Name = "ptbCWSpeed";
+            this.ptbCWSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbCWSpeed.SmallChange = 1;
+            this.ptbCWSpeed.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbCWSpeed, resources.GetString("ptbCWSpeed.ToolTip"));
+            this.ptbCWSpeed.Value = 25;
+            this.ptbCWSpeed.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbCWSpeed_Scroll);
+            // 
+            // ptbRX2Pan
+            // 
+            resources.ApplyResources(this.ptbRX2Pan, "ptbRX2Pan");
+            this.ptbRX2Pan.HeadImage = null;
+            this.ptbRX2Pan.LargeChange = 1;
+            this.ptbRX2Pan.Maximum = 100;
+            this.ptbRX2Pan.Minimum = 0;
+            this.ptbRX2Pan.Name = "ptbRX2Pan";
+            this.ptbRX2Pan.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Pan.SmallChange = 1;
+            this.ptbRX2Pan.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2Pan, resources.GetString("ptbRX2Pan.ToolTip"));
+            this.ptbRX2Pan.Value = 50;
+            this.ptbRX2Pan.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Pan_Scroll);
+            // 
+            // ptbRX2Gain
+            // 
+            resources.ApplyResources(this.ptbRX2Gain, "ptbRX2Gain");
+            this.ptbRX2Gain.HeadImage = null;
+            this.ptbRX2Gain.LargeChange = 1;
+            this.ptbRX2Gain.Maximum = 100;
+            this.ptbRX2Gain.Minimum = 0;
+            this.ptbRX2Gain.Name = "ptbRX2Gain";
+            this.ptbRX2Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX2Gain.SmallChange = 1;
+            this.ptbRX2Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2Gain, resources.GetString("ptbRX2Gain.ToolTip"));
+            this.ptbRX2Gain.Value = 100;
+            this.ptbRX2Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Gain_Scroll);
+            // 
+            // ptbRX1Gain
+            // 
+            resources.ApplyResources(this.ptbRX1Gain, "ptbRX1Gain");
+            this.ptbRX1Gain.HeadImage = null;
+            this.ptbRX1Gain.LargeChange = 1;
+            this.ptbRX1Gain.Maximum = 100;
+            this.ptbRX1Gain.Minimum = 0;
+            this.ptbRX1Gain.Name = "ptbRX1Gain";
+            this.ptbRX1Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX1Gain.SmallChange = 1;
+            this.ptbRX1Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX1Gain, resources.GetString("ptbRX1Gain.ToolTip"));
+            this.ptbRX1Gain.Value = 100;
+            this.ptbRX1Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX1Gain_Scroll);
+            // 
+            // ptbPanSubRX
+            // 
+            resources.ApplyResources(this.ptbPanSubRX, "ptbPanSubRX");
+            this.ptbPanSubRX.HeadImage = null;
+            this.ptbPanSubRX.LargeChange = 1;
+            this.ptbPanSubRX.Maximum = 100;
+            this.ptbPanSubRX.Minimum = 0;
+            this.ptbPanSubRX.Name = "ptbPanSubRX";
+            this.ptbPanSubRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPanSubRX.SmallChange = 1;
+            this.ptbPanSubRX.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPanSubRX, resources.GetString("ptbPanSubRX.ToolTip"));
+            this.ptbPanSubRX.Value = 50;
+            this.ptbPanSubRX.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPanSubRX_Scroll);
+            // 
+            // ptbRX0Gain
+            // 
+            resources.ApplyResources(this.ptbRX0Gain, "ptbRX0Gain");
+            this.ptbRX0Gain.HeadImage = null;
+            this.ptbRX0Gain.LargeChange = 1;
+            this.ptbRX0Gain.Maximum = 100;
+            this.ptbRX0Gain.Minimum = 0;
+            this.ptbRX0Gain.Name = "ptbRX0Gain";
+            this.ptbRX0Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.ptbRX0Gain.SmallChange = 1;
+            this.ptbRX0Gain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX0Gain, resources.GetString("ptbRX0Gain.ToolTip"));
+            this.ptbRX0Gain.Value = 100;
+            this.ptbRX0Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX0Gain_Scroll);
+            // 
+            // ptbPanMainRX
+            // 
+            resources.ApplyResources(this.ptbPanMainRX, "ptbPanMainRX");
+            this.ptbPanMainRX.HeadImage = null;
+            this.ptbPanMainRX.LargeChange = 1;
+            this.ptbPanMainRX.Maximum = 100;
+            this.ptbPanMainRX.Minimum = 0;
+            this.ptbPanMainRX.Name = "ptbPanMainRX";
+            this.ptbPanMainRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPanMainRX.SmallChange = 1;
+            this.ptbPanMainRX.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPanMainRX, resources.GetString("ptbPanMainRX.ToolTip"));
+            this.ptbPanMainRX.Value = 50;
+            this.ptbPanMainRX.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPanMainRX_Scroll);
+            // 
+            // ptbPWR
+            // 
+            resources.ApplyResources(this.ptbPWR, "ptbPWR");
+            this.ptbPWR.HeadImage = null;
+            this.ptbPWR.LargeChange = 1;
+            this.ptbPWR.Maximum = 100;
+            this.ptbPWR.Minimum = 0;
+            this.ptbPWR.Name = "ptbPWR";
+            this.ptbPWR.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbPWR.SmallChange = 1;
+            this.ptbPWR.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
+            this.ptbPWR.Value = 50;
+            this.ptbPWR.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
+            // 
+            // ptbRF
+            // 
+            resources.ApplyResources(this.ptbRF, "ptbRF");
+            this.ptbRF.HeadImage = null;
+            this.ptbRF.LargeChange = 1;
+            this.ptbRF.Maximum = 120;
+            this.ptbRF.Minimum = -20;
+            this.ptbRF.Name = "ptbRF";
+            this.ptbRF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRF.SmallChange = 1;
+            this.ptbRF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRF, resources.GetString("ptbRF.ToolTip"));
+            this.ptbRF.Value = 90;
+            this.ptbRF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRF_Scroll);
+            // 
+            // ptbAF
+            // 
+            resources.ApplyResources(this.ptbAF, "ptbAF");
+            this.ptbAF.HeadImage = null;
+            this.ptbAF.LargeChange = 1;
+            this.ptbAF.Maximum = 100;
+            this.ptbAF.Minimum = 0;
+            this.ptbAF.Name = "ptbAF";
+            this.ptbAF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbAF.SmallChange = 1;
+            this.ptbAF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbAF, resources.GetString("ptbAF.ToolTip"));
+            this.ptbAF.Value = 50;
+            this.ptbAF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbAF_Scroll);
+            // 
+            // ptbVACTXGain
+            // 
+            resources.ApplyResources(this.ptbVACTXGain, "ptbVACTXGain");
+            this.ptbVACTXGain.HeadImage = null;
+            this.ptbVACTXGain.LargeChange = 1;
+            this.ptbVACTXGain.Maximum = 40;
+            this.ptbVACTXGain.Minimum = -40;
+            this.ptbVACTXGain.Name = "ptbVACTXGain";
+            this.ptbVACTXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbVACTXGain.SmallChange = 1;
+            this.ptbVACTXGain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbVACTXGain, resources.GetString("ptbVACTXGain.ToolTip"));
+            this.ptbVACTXGain.Value = 0;
+            this.ptbVACTXGain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbVACTXGain_Scroll);
+            // 
+            // ptbVACRXGain
+            // 
+            resources.ApplyResources(this.ptbVACRXGain, "ptbVACRXGain");
+            this.ptbVACRXGain.HeadImage = null;
+            this.ptbVACRXGain.LargeChange = 1;
+            this.ptbVACRXGain.Maximum = 40;
+            this.ptbVACRXGain.Minimum = -40;
+            this.ptbVACRXGain.Name = "ptbVACRXGain";
+            this.ptbVACRXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbVACRXGain.SmallChange = 1;
+            this.ptbVACRXGain.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbVACRXGain, resources.GetString("ptbVACRXGain.ToolTip"));
+            this.ptbVACRXGain.Value = 0;
+            this.ptbVACRXGain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbVACRXGain_Scroll);
+            // 
+            // ptbDisplayZoom
+            // 
+            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
+            this.ptbDisplayZoom.HeadImage = null;
+            this.ptbDisplayZoom.LargeChange = 1;
+            this.ptbDisplayZoom.Maximum = 240;
+            this.ptbDisplayZoom.Minimum = 10;
+            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
+            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayZoom.SmallChange = 1;
+            this.ptbDisplayZoom.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
+            this.ptbDisplayZoom.Value = 150;
+            this.ptbDisplayZoom.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
+            // 
+            // ptbDisplayPan
+            // 
+            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
+            this.ptbDisplayPan.HeadImage = null;
+            this.ptbDisplayPan.LargeChange = 1;
+            this.ptbDisplayPan.Maximum = 1000;
+            this.ptbDisplayPan.Minimum = 0;
+            this.ptbDisplayPan.Name = "ptbDisplayPan";
+            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayPan.SmallChange = 1;
+            this.ptbDisplayPan.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
+            this.ptbDisplayPan.Value = 500;
+            this.ptbDisplayPan.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
+            this.ptbDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseDown);
+            this.ptbDisplayPan.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseUp);
+            // 
+            // ptbFilterShift
+            // 
+            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
+            this.ptbFilterShift.HeadImage = null;
+            this.ptbFilterShift.LargeChange = 1;
+            this.ptbFilterShift.Maximum = 1000;
+            this.ptbFilterShift.Minimum = -1000;
+            this.ptbFilterShift.Name = "ptbFilterShift";
+            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterShift.SmallChange = 1;
+            this.ptbFilterShift.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
+            this.ptbFilterShift.Value = 0;
+            this.ptbFilterShift.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
+            // 
+            // ptbFilterWidth
+            // 
+            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
+            this.ptbFilterWidth.HeadImage = null;
+            this.ptbFilterWidth.LargeChange = 1;
+            this.ptbFilterWidth.Maximum = 15000;
+            this.ptbFilterWidth.Minimum = 0;
+            this.ptbFilterWidth.Name = "ptbFilterWidth";
+            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterWidth.SmallChange = 1;
+            this.ptbFilterWidth.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
+            this.ptbFilterWidth.Value = 10;
+            this.ptbFilterWidth.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
+            // 
+            // picMultiMeterDigital
+            // 
+            this.picMultiMeterDigital.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.picMultiMeterDigital, "picMultiMeterDigital");
+            this.picMultiMeterDigital.Name = "picMultiMeterDigital";
+            this.picMultiMeterDigital.TabStop = false;
+            this.toolTip1.SetToolTip(this.picMultiMeterDigital, resources.GetString("picMultiMeterDigital.ToolTip"));
+            this.picMultiMeterDigital.Click += new System.EventHandler(this.picMultiMeterDigital_Click);
+            this.picMultiMeterDigital.Paint += new System.Windows.Forms.PaintEventHandler(this.picMultiMeterDigital_Paint);
+            // 
+            // picRX2Meter
+            // 
+            this.picRX2Meter.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.picRX2Meter, "picRX2Meter");
+            this.picRX2Meter.Name = "picRX2Meter";
+            this.picRX2Meter.TabStop = false;
+            this.toolTip1.SetToolTip(this.picRX2Meter, resources.GetString("picRX2Meter.ToolTip"));
+            this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
+            // 
             // panelBandHF
             // 
             resources.ApplyResources(this.panelBandHF, "panelBandHF");
@@ -5670,21 +5935,6 @@ namespace PowerSDR
             this.panelModeSpecificCW.Controls.Add(this.chkCWSidetone);
             this.panelModeSpecificCW.Controls.Add(this.chkCWIambic);
             this.panelModeSpecificCW.Name = "panelModeSpecificCW";
-            // 
-            // ptbCWSpeed
-            // 
-            resources.ApplyResources(this.ptbCWSpeed, "ptbCWSpeed");
-            this.ptbCWSpeed.HeadImage = null;
-            this.ptbCWSpeed.LargeChange = 1;
-            this.ptbCWSpeed.Maximum = 60;
-            this.ptbCWSpeed.Minimum = 1;
-            this.ptbCWSpeed.Name = "ptbCWSpeed";
-            this.ptbCWSpeed.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbCWSpeed.SmallChange = 1;
-            this.ptbCWSpeed.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbCWSpeed, resources.GetString("ptbCWSpeed.ToolTip"));
-            this.ptbCWSpeed.Value = 25;
-            this.ptbCWSpeed.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbCWSpeed_Scroll);
             // 
             // lblCWSpeed
             // 
@@ -6028,36 +6278,6 @@ namespace PowerSDR
             this.panelRX2Mixer.Controls.Add(this.chkRX2Mute);
             this.panelRX2Mixer.Name = "panelRX2Mixer";
             // 
-            // ptbRX2Pan
-            // 
-            resources.ApplyResources(this.ptbRX2Pan, "ptbRX2Pan");
-            this.ptbRX2Pan.HeadImage = null;
-            this.ptbRX2Pan.LargeChange = 1;
-            this.ptbRX2Pan.Maximum = 100;
-            this.ptbRX2Pan.Minimum = 0;
-            this.ptbRX2Pan.Name = "ptbRX2Pan";
-            this.ptbRX2Pan.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Pan.SmallChange = 1;
-            this.ptbRX2Pan.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2Pan, resources.GetString("ptbRX2Pan.ToolTip"));
-            this.ptbRX2Pan.Value = 50;
-            this.ptbRX2Pan.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Pan_Scroll);
-            // 
-            // ptbRX2Gain
-            // 
-            resources.ApplyResources(this.ptbRX2Gain, "ptbRX2Gain");
-            this.ptbRX2Gain.HeadImage = null;
-            this.ptbRX2Gain.LargeChange = 1;
-            this.ptbRX2Gain.Maximum = 100;
-            this.ptbRX2Gain.Minimum = 0;
-            this.ptbRX2Gain.Name = "ptbRX2Gain";
-            this.ptbRX2Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX2Gain.SmallChange = 1;
-            this.ptbRX2Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2Gain, resources.GetString("ptbRX2Gain.ToolTip"));
-            this.ptbRX2Gain.Value = 100;
-            this.ptbRX2Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Gain_Scroll);
-            // 
             // lblRX2Pan
             // 
             resources.ApplyResources(this.lblRX2Pan, "lblRX2Pan");
@@ -6087,66 +6307,6 @@ namespace PowerSDR
             this.panelMultiRX.Controls.Add(this.chkPanSwap);
             this.panelMultiRX.Controls.Add(this.chkEnableMultiRX);
             this.panelMultiRX.Name = "panelMultiRX";
-            // 
-            // ptbRX1Gain
-            // 
-            resources.ApplyResources(this.ptbRX1Gain, "ptbRX1Gain");
-            this.ptbRX1Gain.HeadImage = null;
-            this.ptbRX1Gain.LargeChange = 1;
-            this.ptbRX1Gain.Maximum = 100;
-            this.ptbRX1Gain.Minimum = 0;
-            this.ptbRX1Gain.Name = "ptbRX1Gain";
-            this.ptbRX1Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX1Gain.SmallChange = 1;
-            this.ptbRX1Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX1Gain, resources.GetString("ptbRX1Gain.ToolTip"));
-            this.ptbRX1Gain.Value = 100;
-            this.ptbRX1Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX1Gain_Scroll);
-            // 
-            // ptbPanSubRX
-            // 
-            resources.ApplyResources(this.ptbPanSubRX, "ptbPanSubRX");
-            this.ptbPanSubRX.HeadImage = null;
-            this.ptbPanSubRX.LargeChange = 1;
-            this.ptbPanSubRX.Maximum = 100;
-            this.ptbPanSubRX.Minimum = 0;
-            this.ptbPanSubRX.Name = "ptbPanSubRX";
-            this.ptbPanSubRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPanSubRX.SmallChange = 1;
-            this.ptbPanSubRX.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPanSubRX, resources.GetString("ptbPanSubRX.ToolTip"));
-            this.ptbPanSubRX.Value = 50;
-            this.ptbPanSubRX.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPanSubRX_Scroll);
-            // 
-            // ptbRX0Gain
-            // 
-            resources.ApplyResources(this.ptbRX0Gain, "ptbRX0Gain");
-            this.ptbRX0Gain.HeadImage = null;
-            this.ptbRX0Gain.LargeChange = 1;
-            this.ptbRX0Gain.Maximum = 100;
-            this.ptbRX0Gain.Minimum = 0;
-            this.ptbRX0Gain.Name = "ptbRX0Gain";
-            this.ptbRX0Gain.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ptbRX0Gain.SmallChange = 1;
-            this.ptbRX0Gain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX0Gain, resources.GetString("ptbRX0Gain.ToolTip"));
-            this.ptbRX0Gain.Value = 100;
-            this.ptbRX0Gain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX0Gain_Scroll);
-            // 
-            // ptbPanMainRX
-            // 
-            resources.ApplyResources(this.ptbPanMainRX, "ptbPanMainRX");
-            this.ptbPanMainRX.HeadImage = null;
-            this.ptbPanMainRX.LargeChange = 1;
-            this.ptbPanMainRX.Maximum = 100;
-            this.ptbPanMainRX.Minimum = 0;
-            this.ptbPanMainRX.Name = "ptbPanMainRX";
-            this.ptbPanMainRX.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPanMainRX.SmallChange = 1;
-            this.ptbPanMainRX.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPanMainRX, resources.GetString("ptbPanMainRX.ToolTip"));
-            this.ptbPanMainRX.Value = 50;
-            this.ptbPanMainRX.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPanMainRX_Scroll);
             // 
             // panelDSP
             // 
@@ -6193,12 +6353,34 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.panelDateTime, "panelDateTime");
             this.panelDateTime.BackColor = System.Drawing.Color.Transparent;
+            this.panelDateTime.Controls.Add(this.txtNOAA2);
+            this.panelDateTime.Controls.Add(this.txtNOAA);
             this.panelDateTime.Controls.Add(this.labelTS4);
             this.panelDateTime.Controls.Add(this.labelTS3);
             this.panelDateTime.Controls.Add(this.txtTime);
             this.panelDateTime.Controls.Add(this.txtDate);
             this.panelDateTime.Controls.Add(this.lblCPUMeter);
             this.panelDateTime.Name = "panelDateTime";
+            // 
+            // txtNOAA2
+            // 
+            this.txtNOAA2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtNOAA2.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.txtNOAA2, "txtNOAA2");
+            this.txtNOAA2.Name = "txtNOAA2";
+            this.txtNOAA2.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtNOAA2, resources.GetString("txtNOAA2.ToolTip"));
+            this.txtNOAA2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
+            // 
+            // txtNOAA
+            // 
+            this.txtNOAA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtNOAA.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.txtNOAA, "txtNOAA");
+            this.txtNOAA.Name = "txtNOAA";
+            this.txtNOAA.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
+            this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
             // 
             // txtTime
             // 
@@ -6239,51 +6421,6 @@ namespace PowerSDR
             this.panelSoundControls.Controls.Add(this.chkRX1Preamp);
             this.panelSoundControls.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelSoundControls.Name = "panelSoundControls";
-            // 
-            // ptbPWR
-            // 
-            resources.ApplyResources(this.ptbPWR, "ptbPWR");
-            this.ptbPWR.HeadImage = null;
-            this.ptbPWR.LargeChange = 1;
-            this.ptbPWR.Maximum = 100;
-            this.ptbPWR.Minimum = 0;
-            this.ptbPWR.Name = "ptbPWR";
-            this.ptbPWR.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbPWR.SmallChange = 1;
-            this.ptbPWR.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
-            this.ptbPWR.Value = 50;
-            this.ptbPWR.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
-            // 
-            // ptbRF
-            // 
-            resources.ApplyResources(this.ptbRF, "ptbRF");
-            this.ptbRF.HeadImage = null;
-            this.ptbRF.LargeChange = 1;
-            this.ptbRF.Maximum = 120;
-            this.ptbRF.Minimum = -20;
-            this.ptbRF.Name = "ptbRF";
-            this.ptbRF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRF.SmallChange = 1;
-            this.ptbRF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRF, resources.GetString("ptbRF.ToolTip"));
-            this.ptbRF.Value = 90;
-            this.ptbRF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRF_Scroll);
-            // 
-            // ptbAF
-            // 
-            resources.ApplyResources(this.ptbAF, "ptbAF");
-            this.ptbAF.HeadImage = null;
-            this.ptbAF.LargeChange = 1;
-            this.ptbAF.Maximum = 100;
-            this.ptbAF.Minimum = 0;
-            this.ptbAF.Name = "ptbAF";
-            this.ptbAF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbAF.SmallChange = 1;
-            this.ptbAF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbAF, resources.GetString("ptbAF.ToolTip"));
-            this.ptbAF.Value = 50;
-            this.ptbAF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbAF_Scroll);
             // 
             // lblAF
             // 
@@ -6332,36 +6469,6 @@ namespace PowerSDR
             this.lblVACRXIndicator.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             resources.ApplyResources(this.lblVACRXIndicator, "lblVACRXIndicator");
             this.lblVACRXIndicator.Name = "lblVACRXIndicator";
-            // 
-            // ptbVACTXGain
-            // 
-            resources.ApplyResources(this.ptbVACTXGain, "ptbVACTXGain");
-            this.ptbVACTXGain.HeadImage = null;
-            this.ptbVACTXGain.LargeChange = 1;
-            this.ptbVACTXGain.Maximum = 40;
-            this.ptbVACTXGain.Minimum = -40;
-            this.ptbVACTXGain.Name = "ptbVACTXGain";
-            this.ptbVACTXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbVACTXGain.SmallChange = 1;
-            this.ptbVACTXGain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbVACTXGain, resources.GetString("ptbVACTXGain.ToolTip"));
-            this.ptbVACTXGain.Value = 0;
-            this.ptbVACTXGain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbVACTXGain_Scroll);
-            // 
-            // ptbVACRXGain
-            // 
-            resources.ApplyResources(this.ptbVACRXGain, "ptbVACRXGain");
-            this.ptbVACRXGain.HeadImage = null;
-            this.ptbVACRXGain.LargeChange = 1;
-            this.ptbVACRXGain.Maximum = 40;
-            this.ptbVACRXGain.Minimum = -40;
-            this.ptbVACRXGain.Name = "ptbVACRXGain";
-            this.ptbVACRXGain.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbVACRXGain.SmallChange = 1;
-            this.ptbVACRXGain.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbVACRXGain, resources.GetString("ptbVACRXGain.ToolTip"));
-            this.ptbVACRXGain.Value = 0;
-            this.ptbVACRXGain.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbVACRXGain_Scroll);
             // 
             // lblDigTXProfile
             // 
@@ -6419,38 +6526,6 @@ namespace PowerSDR
             this.panelDisplay.Controls.Add(this.txtDisplayPeakFreq);
             this.panelDisplay.Controls.Add(this.lblDisplayPan);
             this.panelDisplay.Name = "panelDisplay";
-            // 
-            // ptbDisplayZoom
-            // 
-            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
-            this.ptbDisplayZoom.HeadImage = null;
-            this.ptbDisplayZoom.LargeChange = 1;
-            this.ptbDisplayZoom.Maximum = 240;
-            this.ptbDisplayZoom.Minimum = 10;
-            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
-            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayZoom.SmallChange = 1;
-            this.ptbDisplayZoom.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
-            this.ptbDisplayZoom.Value = 150;
-            this.ptbDisplayZoom.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
-            // 
-            // ptbDisplayPan
-            // 
-            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
-            this.ptbDisplayPan.HeadImage = null;
-            this.ptbDisplayPan.LargeChange = 1;
-            this.ptbDisplayPan.Maximum = 1000;
-            this.ptbDisplayPan.Minimum = 0;
-            this.ptbDisplayPan.Name = "ptbDisplayPan";
-            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayPan.SmallChange = 1;
-            this.ptbDisplayPan.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
-            this.ptbDisplayPan.Value = 500;
-            this.ptbDisplayPan.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
-            this.ptbDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseDown);
-            this.ptbDisplayPan.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ptbDisplayPan_MouseUp);
             // 
             // picDisplay
             // 
@@ -6510,36 +6585,6 @@ namespace PowerSDR
             this.panelFilter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelFilter.Name = "panelFilter";
             this.panelFilter.Paint += new System.Windows.Forms.PaintEventHandler(this.panelFilter_Paint);
-            // 
-            // ptbFilterShift
-            // 
-            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
-            this.ptbFilterShift.HeadImage = null;
-            this.ptbFilterShift.LargeChange = 1;
-            this.ptbFilterShift.Maximum = 1000;
-            this.ptbFilterShift.Minimum = -1000;
-            this.ptbFilterShift.Name = "ptbFilterShift";
-            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterShift.SmallChange = 1;
-            this.ptbFilterShift.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
-            this.ptbFilterShift.Value = 0;
-            this.ptbFilterShift.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
-            // 
-            // ptbFilterWidth
-            // 
-            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
-            this.ptbFilterWidth.HeadImage = null;
-            this.ptbFilterWidth.LargeChange = 1;
-            this.ptbFilterWidth.Maximum = 15000;
-            this.ptbFilterWidth.Minimum = 0;
-            this.ptbFilterWidth.Name = "ptbFilterWidth";
-            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterWidth.SmallChange = 1;
-            this.ptbFilterWidth.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
-            this.ptbFilterWidth.Value = 10;
-            this.ptbFilterWidth.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
             // 
             // radFilter1
             // 
@@ -6860,16 +6905,6 @@ namespace PowerSDR
             this.grpMultimeter.Name = "grpMultimeter";
             this.grpMultimeter.TabStop = false;
             // 
-            // picMultiMeterDigital
-            // 
-            this.picMultiMeterDigital.BackColor = System.Drawing.Color.Black;
-            resources.ApplyResources(this.picMultiMeterDigital, "picMultiMeterDigital");
-            this.picMultiMeterDigital.Name = "picMultiMeterDigital";
-            this.picMultiMeterDigital.TabStop = false;
-            this.toolTip1.SetToolTip(this.picMultiMeterDigital, resources.GetString("picMultiMeterDigital.ToolTip"));
-            this.picMultiMeterDigital.Click += new System.EventHandler(this.picMultiMeterDigital_Click);
-            this.picMultiMeterDigital.Paint += new System.Windows.Forms.PaintEventHandler(this.picMultiMeterDigital_Paint);
-            // 
             // lblMultiSMeter
             // 
             resources.ApplyResources(this.lblMultiSMeter, "lblMultiSMeter");
@@ -6952,15 +6987,6 @@ namespace PowerSDR
             this.grpRX2Meter.ForeColor = System.Drawing.Color.White;
             this.grpRX2Meter.Name = "grpRX2Meter";
             this.grpRX2Meter.TabStop = false;
-            // 
-            // picRX2Meter
-            // 
-            this.picRX2Meter.BackColor = System.Drawing.Color.Black;
-            resources.ApplyResources(this.picRX2Meter, "picRX2Meter");
-            this.picRX2Meter.Name = "picRX2Meter";
-            this.picRX2Meter.TabStop = false;
-            this.toolTip1.SetToolTip(this.picRX2Meter, resources.GetString("picRX2Meter.ToolTip"));
-            this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
             // 
             // lblRX2Meter
             // 
@@ -7293,11 +7319,28 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udXIT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Pan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Gain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPanSubRX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX0Gain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPanMainRX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
             this.panelBandHF.ResumeLayout(false);
             this.panelModeSpecificFM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
             this.panelModeSpecificCW.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
             this.grpSemiBreakIn.ResumeLayout(false);
             this.panelModeSpecificPhone.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbMic)).EndInit();
@@ -7312,34 +7355,19 @@ namespace PowerSDR
             this.panelRX2Mode.ResumeLayout(false);
             this.panelRX2Display.ResumeLayout(false);
             this.panelRX2Mixer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Pan)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Gain)).EndInit();
             this.panelMultiRX.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX1Gain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPanSubRX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX0Gain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPanMainRX)).EndInit();
             this.panelDSP.ResumeLayout(false);
             this.panelVFO.ResumeLayout(false);
             this.panelDateTime.ResumeLayout(false);
             this.panelDateTime.PerformLayout();
             this.panelSoundControls.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).EndInit();
             this.panelModeSpecificDigital.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbVACTXGain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbVACRXGain)).EndInit();
             this.grpVACStereo.ResumeLayout(false);
             this.grpDIGSampleRate.ResumeLayout(false);
             this.panelDisplay.ResumeLayout(false);
             this.panelDisplay.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).EndInit();
             this.panelFilter.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             this.panelMode.ResumeLayout(false);
             this.grpVFOA.ResumeLayout(false);
             this.grpVFOA.PerformLayout();
@@ -7347,13 +7375,11 @@ namespace PowerSDR
             this.grpVFOB.PerformLayout();
             this.grpMultimeter.ResumeLayout(false);
             this.grpMultimeter.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             this.grpVFOBetween.ResumeLayout(false);
             this.grpVFOBetween.PerformLayout();
             this.grpDisplaySplit.ResumeLayout(false);
             this.grpRX2Meter.ResumeLayout(false);
             this.grpRX2Meter.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
             this.panelBandVHF.ResumeLayout(false);
             this.panelBandGN.ResumeLayout(false);
             this.panelRX2DSP.ResumeLayout(false);
@@ -13091,7 +13117,7 @@ namespace PowerSDR
                     SpotControl.VFOHIGH = 30000000; // 
                     radBand10.Checked = true;
                     regBox.Text = band_10m_register.ToString();
-                    regBox1.Text = band_10m_index.ToString();
+                    regBox1.Text = (band_10m_index + 1).ToString();
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
@@ -42416,7 +42442,7 @@ namespace PowerSDR
 			}
 		}
 
-		private int last_sec;		// for time of day clock
+		private int last_sec, last_sec1;		// for time of day clock
 		private DateTime last_date;	// for date
 		private void timer_clock_Tick(object sender, System.EventArgs e)
 		{
@@ -42450,15 +42476,56 @@ namespace PowerSDR
 					if(sec != last_sec)
 					{
 						last_sec = sec;
-						txtTime.Text = "UTC "+DateTime.UtcNow.ToString("HH:mm:ss");
+						txtTime.Text = "UTC " + DateTime.UtcNow.ToString("HH:mm:ss");
 					}
 					break;
 				case DateTimeMode.OFF:
 					txtDate.Text = "";
 					txtTime.Text = "";
 					break;
-			}
-		}
+			} // switch
+
+
+            //---------------------------------------------------
+            // ke9ns add below
+
+            int sec1 = DateTime.Now.Second;
+            if (sec1 != last_sec1)
+            {
+                last_sec1 = sec1;
+
+                if (noaaON == 1)
+                {
+                  //  Debug.WriteLine("time = "+ DateTime.UtcNow.Minute);
+
+                    if ((DateTime.UtcNow.Minute == 0) || (suncounter == 2))
+                    {
+                        if ((suncounter == 0) || (suncounter == 2))
+                        {
+                            Thread t = new Thread(new ThreadStart(NOAA));
+                            t.IsBackground = true;
+                            t.Priority = ThreadPriority.Lowest;
+                            t.Name = "NOAA Space Weather Thread";
+                            t.Start();
+
+                        }
+                    }
+                    else
+                    {
+                      if (suncounter == 1)  suncounter = 0;
+                    }
+
+                    txtNOAA.Text = "SFI: " + SFI + ", A: " + Aindex;
+                    txtNOAA2.Text = "SpcWX: " + RadioBlackout;
+                }
+                else
+                {
+                    txtNOAA.Text = "Space WX: OFF";
+                    txtNOAA2.Text = "Click On";
+                }
+            }
+
+        } //timer_clock_tick
 
 		private void Tune()
 		{
@@ -47534,8 +47601,7 @@ namespace PowerSDR
 
 		private void DateTime_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if(current_datetime_mode+1 == DateTimeMode.LAST)
-				CurrentDateTimeMode = DateTimeMode.OFF;
+			if(current_datetime_mode+1 == DateTimeMode.LAST) CurrentDateTimeMode = DateTimeMode.OFF;
 			else CurrentDateTimeMode = current_datetime_mode+1;
 		}
 
@@ -55385,10 +55451,10 @@ namespace PowerSDR
 				chkSquelch.Location = new Point(chk_squelch_basis.X,chk_squelch_basis.Y+(v_delta/2));
 				picSquelch.Location = new Point(pic_sql_basis.X,pic_sql_basis.Y+(v_delta/2));
 				ptbSquelch.Location = new Point(tb_sql_basis.X,tb_sql_basis.Y+(v_delta/2));
-                panelAntenna.Location = new Point(gr_antenna_basis.X, gr_antenna_basis.Y + (v_delta / 8) + (v_delta / 2));
+                panelAntenna.Location = new Point(gr_antenna_basis.X, gr_antenna_basis.Y + (v_delta / 8) + (v_delta / 2)); // ke9ns mod was /8 /2
 				chkBCI.Location = new Point(chk_bci_basis.X,chk_bci_basis.Y+(v_delta/8)+(v_delta/2));
 				//button1.Location = new Point(button1_basis.X,button1_basis.Y+(v_delta/8)+(v_delta/2));
-                panelDateTime.Location = new Point(gr_date_time_basis.X, gr_date_time_basis.Y + (v_delta / 2) + (v_delta / 4));
+                panelDateTime.Location = new Point(gr_date_time_basis.X, gr_date_time_basis.Y + (v_delta / 2) + (v_delta / 4)); // ke9ns mod was /2  /4
 				//lblCPUMeter.Location = new Point(lbl_cpu_meter_basis.X,lbl_cpu_meter_basis.Y+(v_delta/8)+(v_delta/2)+(v_delta/4));
 			
 				//panelRX2Divider.Location = new Point(pan_rx2_divider_basis.X, pan_rx2_divider_basis.Y+v_delta);
@@ -55678,14 +55744,15 @@ namespace PowerSDR
 
             if(FWCEEPROM.VUOK)  SetVURXPath();
 
-            if (chkRX2.Checked==true)
+            if (chkRX2.Checked==true) // ke9ns add
             {
                 label2.Visible = true;
                 chkRX1MUTE.Visible = true;
             }
             else
             {
-                label2.Visible = false;
+                chkRX1MUTE.Checked = false;   // ke9ns add uncheck when RX2 turned off
+                label2.Visible = false;        // and hide box and text
                 chkRX1MUTE.Visible = false;
             }
 
@@ -61683,7 +61750,7 @@ namespace PowerSDR
        }
 
         //=========================================================
-        // ke9ns add
+        // ke9ns add open up bandstack window when you click on the bandstack index
         private void regBox1_Click(object sender, EventArgs e)
         {
             if (StackForm == null || StackForm.IsDisposed)  StackForm = new StackControl(this);
@@ -61693,17 +61760,206 @@ namespace PowerSDR
 
 
         //==============================================================
-        // ke9ns add
+        // ke9ns add  open up bandstack window when you click on the bandstack index
         private void regBox_Click(object sender, EventArgs e)
         {
-            if (StackForm == null || StackForm.IsDisposed)
-                StackForm = new StackControl(this);
+            if (StackForm == null || StackForm.IsDisposed) StackForm = new StackControl(this);
             StackForm.Show();
             StackForm.Focus();
         }
 
 
+        //=====================================================================
+        // ke9ns add
+        private void txtNOAA_MouseDown(object sender, MouseEventArgs e)
+        {
 
+            if (noaaON == 0)
+            {
+                noaaON = 1; // turn on space weather
+                btnHidden.Focus();
+            }
+            else
+            {
+                noaaON = 0; // shut down thread
+                suncounter = 2;
+                RadioBlackout = GeoBlackout = "";
+
+                txtNOAA.Text = "Space WX: OFF";
+                txtNOAA2.Text = "Click On";
+            }
+
+           
+
+        } // txtNOAA_Mousedown
+
+        //========================================================================
+        //========================================================================
+        // ke9ns add
+
+        public static int suncounter = 2; // for space weather
+        public static int noaaON = 0; // for space weather
+        public static int SFI = 0;       // for Space weather
+        public static int SN = 0;        // for Space weather
+        public static int Aindex = 0;    // for Space weather
+        public static int Kindex = 0;    // for Space weather
+        public static string RadioBlackout = " ";
+        public static string GeoBlackout = " ";
+        private string serverPath;       // for Space weather
+
+        public void NOAA()
+        {
+           
+          //  while (noaaON == 1)
+          //  {
+             //   Thread.Sleep(50); // slow down the thread here
+
+             //   if ((DateTime.UtcNow.Minute == 0) || (suncounter == 2))
+              //  {
+                //    if ((suncounter == 0) || (suncounter == 2))
+                 //   {
+                        Debug.WriteLine("GET NOAA=========");
+
+                        suncounter = 1;
+                        serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
+
+                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
+
+                        //  textBox1.Text += "Attempt to download Space Weather \r\n";
+
+                        request.KeepAlive = true;
+                        request.UsePassive = true;
+                        request.UseBinary = true;
+
+                        request.Method = WebRequestMethods.Ftp.DownloadFile;
+                        string username = "anonymous";
+                        string password = "guest";
+                        request.Credentials = new NetworkCredential(username, password);
+
+                        string noaa = null;
+
+                        try
+                        {
+                            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                            Stream responseStream = response.GetResponseStream();
+                            StreamReader reader = new StreamReader(responseStream);
+                            noaa = reader.ReadToEnd();
+
+                            reader.Close();
+                            response.Close();
+                            //   Debug.WriteLine("noaa=== " + noaa);
+
+                            //   textBox1.Text += "NOAA Download complete \r\n";
+
+
+
+                            //--------------------------------------------------------------------
+                            if (noaa.Contains("Solar flux ")) // 
+                            {
+
+                                int ind = noaa.IndexOf("Solar flux ") + 11;
+
+                                try
+                                {
+                                    SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
+                                    Debug.WriteLine("SFI " + SFI);
+                                }
+                                catch (Exception)
+                                {
+                                    SFI = 0;
+                                }
+
+
+                            } // SFI
+
+                            if (noaa.Contains("A-index ")) // 
+                            {
+
+                                int ind = noaa.IndexOf("A-index ") + 8;
+
+                                try
+                                {
+                                    Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
+                                    Debug.WriteLine("Aindex " + Aindex);
+                                }
+                                catch (Exception)
+                                {
+                                    Aindex = 0;
+                                }
+
+
+                            } // Aindex
+
+                            if (noaa.Contains("Radio blackouts reaching the ")) // 
+                            {
+
+                                int ind = noaa.IndexOf("Radio blackouts reaching the ") + 29;
+
+                                try
+                                {
+                                    RadioBlackout = noaa.Substring(ind, 2);
+                                    Debug.WriteLine("Radio Blackout " + RadioBlackout);
+                                }
+                                catch (Exception)
+                                {
+                                    RadioBlackout = " ";
+                                }
+
+
+                            } // radio blackouts
+
+                            if (noaa.Contains("level occurred") && noaa.Contains("Geomagnetic storms reaching the ")) // 
+                            {
+
+                                int ind = noaa.IndexOf("Geomagnetic storms reaching the ") + 32;
+
+                                try
+                                {
+                                    GeoBlackout = noaa.Substring(ind, 2);
+                                    Debug.WriteLine("Geomagnetic storms" + GeoBlackout);
+                                }
+                                catch (Exception)
+                                {
+                                    GeoBlackout = " ";
+                                }
+
+
+                            } // radio blackouts
+
+                            if (RadioBlackout != " ")
+                            {
+                                RadioBlackout = RadioBlackout + GeoBlackout;
+                                Debug.WriteLine("radio-geo " + RadioBlackout);
+
+
+                            }
+                            else
+                            {
+                                RadioBlackout = GeoBlackout;
+                                Debug.WriteLine("geo " + RadioBlackout);
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            noaaON = 0; // failure to get data
+                        }
+                //    } // suncounter
+
+//                } // datetime minute = 0
+  //              else suncounter = 0;
+
+    //        } // while (drop out of thread when noaaON = 0
+
+            Debug.WriteLine("endof NOAA thread");
+
+
+        } // NOAA
+
+
+        //============================================================================
+        // ke9ns add to determine if you want the peak db numbers to appear in the lower right of the pan display area
         private void txtDisplayPeakPower_TextChanged(object sender, EventArgs e)
         {
             if (peak1 == 1) peak1 = 0;

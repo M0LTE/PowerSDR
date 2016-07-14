@@ -71,10 +71,7 @@ namespace PowerSDR
 
             Common.RestoreForm(this, "StackForm", true);
 
-            //  Debug.WriteLine("BANDSTACK STUFF "+console.last_band);
-            //  Debug.WriteLine("BANDSTACK STUFF " + console.band_160m_index);
-            //  Debug.WriteLine("BANDSTACK STUFF " + console.band_80m_index);
-
+         
 
             bandstackupdate();
 
@@ -199,6 +196,7 @@ namespace PowerSDR
         private void StackControl_Load(object sender, EventArgs e)
         {
             bandstackupdate();
+          
 
         }
 
@@ -210,9 +208,7 @@ namespace PowerSDR
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "StackForm");
-            //  console.MemoryList.Save();
-
-
+         
 
         }
 
@@ -244,18 +240,13 @@ namespace PowerSDR
             string bigmessage1 = null; // each freq string
             string bigmessage2 = null; // each memory string
 
-            //   if (console.last_band == null) console.last_band = ;
-
+        
             for (iii = 0; iii < 41; iii++)
             {
                 if (band_list[iii] == console.last_band) break; // this is the current band_list index 
             }
 
-          //  Debug.WriteLine("==========last_band " + console.last_band);
-          //  Debug.WriteLine("==========last_band index " + iii);
-          //  Debug.WriteLine("==========bandstack index " + console.band_stacks[iii]);
-
-
+      
             for (int ii = 0; ii < console.band_stacks[iii]; ii++)
             {
                 if (DB.GetBandStack(band_list[iii], ii, out mode, out filter, out freq))
@@ -313,17 +304,42 @@ namespace PowerSDR
 
             //  bigmessage += (DX_FULLSTRING[ii] + DXmode + " " + (DX_country[ii].PadRight(8)).Substring(0, 8) + " :" + DX_Age[ii] + "\r\n");
 
-
+          
 
             textBox1.Text = bigmessage; // update screen
+         
+
+
+            int value;
+            if (int.TryParse(console.regBox1.Text, out value))
+            {
+
+                //  Debug.WriteLine("value " + value);
+                //   Debug.WriteLine("textlength " + textBox1.TextLength);
+                //  Debug.WriteLine("textlength " + bigmessage.Length);
+
+              //  resultTextBox.Text = "Please wait...";   // this never appears
+            //  Task.Factory.StartNew(() => functionThatTakesASecondOrTwoToRun()).ContinueWith((t) => textBox1.Text = t.Result,
+              //  TaskScheduler.FromCurrentSynchronizationContext());
+
+                textBox1.SelectionStart = (value - 1) * 28;
+                    textBox1.SelectionLength = 28;
+                
+            }
+            else
+            {
+                Debug.WriteLine("no value");
+                textBox1.SelectionStart = 0;
+                textBox1.SelectionLength = 0;
+            }
+
 
         } // bandstackupdate
 
 
-//======================================================================== 
-     void updateindex()    
-
-{
+        //======================================================================== 
+        void updateindex()    
+    {
         switch(console.RX1Band)
 			{
 				case Band.B160M:

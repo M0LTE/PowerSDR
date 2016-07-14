@@ -3771,12 +3771,13 @@ namespace PowerSDR
         public static bool SUN = false; // true = on
         public static bool GRAYLINE = false; // true = on
 
-
+        public static int suncounter = 0; // for space weather
         public static int SFI = 0;       // for Space weather
         public static int SN = 0;        // for Space weather
         public static int Aindex = 0;    // for Space weather
         public static int Kindex = 0;    // for Space weather
         public static string RadioBlackout = " ";
+        public static string GeoBlackout = " ";
         private string serverPath;       // for Space weather
 
 
@@ -3876,101 +3877,13 @@ namespace PowerSDR
 
             textBox1.Text += "Attempt login to:  NOAA Space Weather Prediction Center \r\n";
 
-            serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
-
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
-
-            textBox1.Text += "Attempt to download Space Weather \r\n";
-
-            request.KeepAlive = true;
-            request.UsePassive = true;
-            request.UseBinary = true;
-
-            request.Method = WebRequestMethods.Ftp.DownloadFile;
-            string username = "anonymous";
-            string password = "guest";
-            request.Credentials = new NetworkCredential(username, password);
-
-            string noaa = null;
-
-            try
+            if (Console.noaaON == 0)
             {
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-
-                Stream responseStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(responseStream);
-                noaa = reader.ReadToEnd();
-
-                reader.Close();
-                response.Close();
-             //   Debug.WriteLine("noaa=== " + noaa);
-
-                textBox1.Text += "NOAA Download complete \r\n";
-
-           
-
-            //--------------------------------------------------------------------
-            if (noaa.Contains("Solar flux ")) // 
-            {
-
-                int ind = noaa.IndexOf("Solar flux ") + 11;
-
-                try
-                {
-                    SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
-                    Debug.WriteLine("SFI " + SFI);
-                }
-                catch (Exception)
-                {
-                    SFI = 0;
-                }
-
-
-            } // SFI
-
-            if (noaa.Contains("A-index ")) // 
-            {
-
-                int ind = noaa.IndexOf("A-index ") + 8;
-
-                try
-                {
-                    Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
-                  Debug.WriteLine("Aindex " + Aindex);
-                }
-                catch (Exception)
-                {
-                    Aindex = 0;
-                }
-
-
-            } // Aindex
-
-            if (noaa.Contains("Radio blackouts reaching the ")) // 
-            {
-
-                int ind = noaa.IndexOf("Radio blackouts reaching the ") + 29;
-
-                try
-                {
-                    RadioBlackout = noaa.Substring(ind, 2);
-                      Debug.WriteLine("Radio Blackout " + RadioBlackout);
-                }
-                catch (Exception)
-                {
-                    RadioBlackout = " ";
-                }
-
-
-            } // radio blackouts
-
+                NOAA(); // get noaa space data
             }
-            catch (Exception ex)
-            {
-                //   Debug.WriteLine("noaa fault=== " + ex);
-                textBox1.Text += "Failed to download Space Weather \r\n";
 
-            }
+         //   textBox1.Text += "NOAA Download complete \r\n";
+
 
             //--------------------------------------------------------------------------------------------
             // stay in this thread loop until you turn off tracking
@@ -4470,9 +4383,30 @@ namespace PowerSDR
 
                             g.DrawImage(src, Sun_X - 10, Sun_Y - 10, 23, 27); // draw SUN 20 x 20 pixel
 
-                            g.DrawString("SFI " + SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
-                            g.DrawString("A " + Aindex.ToString("D") + ", " + RadioBlackout, font1, grid_text_brush, Sun_X + 15, Sun_Y);
-                         
+                            if (Console.noaaON == 0)
+                            {
+                                g.DrawString("SFI " + SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
+                                g.DrawString("A " + Aindex.ToString("D") + ", " + RadioBlackout, font1, grid_text_brush, Sun_X + 15, Sun_Y);
+
+                                if (suncounter > 40) // check every 40 minutes
+                                {
+                                    NOAA();
+                                    suncounter = 0;
+                                    Debug.WriteLine("NOAA GET=============");
+
+                                }
+                                else
+                                {
+                                    suncounter++;
+                                }
+                            }
+                            else
+                            {
+
+                                g.DrawString("SFI " + Console.SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
+                                g.DrawString("A " + Console.Aindex.ToString("D") + ", " + Console.RadioBlackout, font1, grid_text_brush, Sun_X + 15, Sun_Y);
+
+                            }
 
                         } // sun tracker enabled
 
@@ -5192,8 +5126,143 @@ namespace PowerSDR
            
               //  console.RecallMemory(recordToRestore);
 
-        }
+        } //chkboxmem_checked
 
+        //========================================================================
+        //========================================================================
+
+       public void NOAA()
+        { 
+
+           serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
+
+          //  textBox1.Text += "Attempt to download Space Weather \r\n";
+
+            request.KeepAlive = true;
+            request.UsePassive = true;
+            request.UseBinary = true;
+
+            request.Method = WebRequestMethods.Ftp.DownloadFile;
+            string username = "anonymous";
+            string password = "guest";
+            request.Credentials = new NetworkCredential(username, password);
+
+            string noaa = null;
+
+            try
+            {
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream);
+                noaa = reader.ReadToEnd();
+
+                reader.Close();
+                response.Close();
+             //   Debug.WriteLine("noaa=== " + noaa);
+
+             //   textBox1.Text += "NOAA Download complete \r\n";
+
+           
+
+            //--------------------------------------------------------------------
+            if (noaa.Contains("Solar flux ")) // 
+            {
+
+                int ind = noaa.IndexOf("Solar flux ") + 11;
+
+                try
+                {
+                    SFI = (int)(Convert.ToDouble(noaa.Substring(ind, 3)));
+                    Debug.WriteLine("SFI " + SFI);
+                }
+                catch (Exception)
+                {
+                    SFI = 0;
+                }
+
+
+            } // SFI
+
+            if (noaa.Contains("A-index ")) // 
+            {
+
+                int ind = noaa.IndexOf("A-index ") + 8;
+
+                try
+                {
+                    Aindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
+                  Debug.WriteLine("Aindex " + Aindex);
+                }
+                catch (Exception)
+                {
+                    Aindex = 0;
+                }
+
+
+            } // Aindex
+
+            if (noaa.Contains("Radio blackouts reaching the ")) // 
+            {
+
+                int ind = noaa.IndexOf("Radio blackouts reaching the ") + 29;
+
+                try
+                {
+                    RadioBlackout = noaa.Substring(ind, 2);
+                      Debug.WriteLine("Radio Blackout " + RadioBlackout);
+                }
+                catch (Exception)
+                {
+                    RadioBlackout = " ";
+                }
+
+
+            } // radio blackouts
+          
+            if (!noaa.Contains("No space weather storms ") && noaa.Contains("Geomagnetic storms reaching the ")) // 
+            {
+
+                int ind = noaa.IndexOf("Geomagnetic storms reaching the ") + 32;
+
+                try
+                {
+                    GeoBlackout = noaa.Substring(ind, 2);
+                    Debug.WriteLine("Geomagnetic storms" + GeoBlackout);
+                }
+                catch (Exception)
+                {
+                    GeoBlackout = " ";
+                }
+
+
+            } // radio blackouts
+
+                if (RadioBlackout != " ")
+                {
+                    RadioBlackout = RadioBlackout + GeoBlackout;
+                    Debug.WriteLine("radio-geo " + RadioBlackout);
+
+
+                }
+                else
+                {
+                    RadioBlackout = GeoBlackout;
+                    Debug.WriteLine("geo " + RadioBlackout);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //   Debug.WriteLine("noaa fault=== " + ex);
+                textBox1.Text += "Failed to download Space Weather \r\n";
+
+            }
+
+
+    } // NOAA
 
 
     } // Spotcontrol
