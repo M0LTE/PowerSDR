@@ -1210,8 +1210,8 @@ namespace PowerSDR
         private System.Windows.Forms.LabelTS lblFilterWidth;
 		private System.Windows.Forms.ButtonTS btnBandHF;
         private System.Windows.Forms.ButtonTS btnBandVHF;
-        private System.Windows.Forms.LabelTS lblCWSpeed;
-		private System.Windows.Forms.ButtonTS btnIFtoVFO;
+        public LabelTS lblCWSpeed;
+        private System.Windows.Forms.ButtonTS btnIFtoVFO;
         private System.Windows.Forms.ButtonTS btnZeroBeat;
 		private System.Windows.Forms.TextBoxTS txtTime;
         private System.Windows.Forms.RadioButtonTS radModeDIGU;
@@ -1435,7 +1435,7 @@ namespace PowerSDR
         private LabelTS lblNoiseGateVal;
         private PrettyTrackBar ptbFilterWidth;
         private PrettyTrackBar ptbFilterShift;
-        private PrettyTrackBar ptbCWSpeed;
+        public PrettyTrackBar ptbCWSpeed;
         private PrettyTrackBar ptbPanMainRX;
         private PrettyTrackBar ptbPanSubRX;
         private PrettyTrackBar ptbRX2RF;
@@ -2797,6 +2797,8 @@ namespace PowerSDR
             this.ptbFilterWidth = new PowerSDR.PrettyTrackBar();
             this.picMultiMeterDigital = new System.Windows.Forms.PictureBox();
             this.picRX2Meter = new System.Windows.Forms.PictureBox();
+            this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
+            this.txtNOAA = new System.Windows.Forms.TextBoxTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.panelModeSpecificFM = new System.Windows.Forms.PanelTS();
             this.lblFMMemory = new System.Windows.Forms.LabelTS();
@@ -2851,8 +2853,6 @@ namespace PowerSDR
             this.panelVFO = new System.Windows.Forms.PanelTS();
             this.lblCPUMeter = new System.Windows.Forms.LabelTS();
             this.panelDateTime = new System.Windows.Forms.PanelTS();
-            this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
-            this.txtNOAA = new System.Windows.Forms.TextBoxTS();
             this.txtTime = new System.Windows.Forms.TextBoxTS();
             this.txtDate = new System.Windows.Forms.TextBoxTS();
             this.panelSoundControls = new System.Windows.Forms.PanelTS();
@@ -5813,6 +5813,26 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.picRX2Meter, resources.GetString("picRX2Meter.ToolTip"));
             this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
             // 
+            // txtNOAA2
+            // 
+            this.txtNOAA2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtNOAA2.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.txtNOAA2, "txtNOAA2");
+            this.txtNOAA2.Name = "txtNOAA2";
+            this.txtNOAA2.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtNOAA2, resources.GetString("txtNOAA2.ToolTip"));
+            this.txtNOAA2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
+            // 
+            // txtNOAA
+            // 
+            this.txtNOAA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtNOAA.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.txtNOAA, "txtNOAA");
+            this.txtNOAA.Name = "txtNOAA";
+            this.txtNOAA.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
+            this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
+            // 
             // panelBandHF
             // 
             resources.ApplyResources(this.panelBandHF, "panelBandHF");
@@ -6361,26 +6381,6 @@ namespace PowerSDR
             this.panelDateTime.Controls.Add(this.txtDate);
             this.panelDateTime.Controls.Add(this.lblCPUMeter);
             this.panelDateTime.Name = "panelDateTime";
-            // 
-            // txtNOAA2
-            // 
-            this.txtNOAA2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.txtNOAA2.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.txtNOAA2, "txtNOAA2");
-            this.txtNOAA2.Name = "txtNOAA2";
-            this.txtNOAA2.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.txtNOAA2, resources.GetString("txtNOAA2.ToolTip"));
-            this.txtNOAA2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
-            // 
-            // txtNOAA
-            // 
-            this.txtNOAA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.txtNOAA.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.txtNOAA, "txtNOAA");
-            this.txtNOAA.Name = "txtNOAA";
-            this.txtNOAA.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
-            this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
             // 
             // txtTime
             // 
@@ -8307,11 +8307,26 @@ namespace PowerSDR
                 setupForm.SaveTXProfileData();
             }
 
-            if(setupForm != null)		// make sure Setup form is deallocated
+
+         
+            if (setupForm != null)		// make sure Setup form is deallocated
 				setupForm.Dispose();
-			if(cwxForm != null)			// make sure CWX form is deallocated
-				cwxForm.Dispose();
-			chkPower.Checked = false;	// make sure power is off		
+
+            // ke9ns add
+            //    if (SpotForm != null)      // make sure spotter form is deallocated
+            //       SpotForm.Dispose();
+
+            // ke9ns add
+            //  if (ScanForm != null)      // make sure scanner form is deallocated
+            //      ScanForm.Dispose();
+
+            //   if (StackForm != null)      // make sure bandstack form is deallocated
+            //      StackForm.Dispose();
+
+          //  if (cwxForm != null)            // make sure CWX form is deallocated
+          //      cwxForm.Dispose();
+
+            chkPower.Checked = false;	// make sure power is off		
 			ckQuickRec.Checked = false; // make sure recording is stopped
 			
 			//			if(draw_display_thread != null)
@@ -42515,11 +42530,42 @@ namespace PowerSDR
                       if (suncounter == 1)  suncounter = 0;
                     }
 
-                    txtNOAA.Text = "SFI: " + SFI + ", A: " + Aindex;
+
+                    // ke9ns add
+                    // A    K
+                    // 0    0  Quiet
+                    // 2    1 
+                    // 3    1
+                    // 4    1  Unsettled
+                    // 7    2 
+                    // 15   3  Active
+                    // 27   4
+                    // 48   5  Minor Storm
+                    // 80   6
+                    // 132  7  Severe Storm
+                    // 208  8  Major Storm
+                    // 400  9
+
+
+
+                    if ((Kindex > 4)||(RadioBlackout != " "))
+                    {
+                        txtNOAA.ForeColor = Color.Red;
+                        txtNOAA2.ForeColor = Color.Red;
+                    }
+                    else
+                    {
+                        txtNOAA.ForeColor = Color.White;
+                        txtNOAA2.ForeColor = Color.White;
+                    }
+
+                    txtNOAA.Text = "SF " + SFI + " A " + Aindex + " K " + Kindex;
                     txtNOAA2.Text = "SpcWX: " + RadioBlackout;
                 }
                 else
                 {
+                    txtNOAA.ForeColor = Color.White;
+                    txtNOAA2.ForeColor = Color.White;
                     txtNOAA.Text = "Space WX: OFF";
                     txtNOAA2.Text = "Click On";
                 }
@@ -45905,16 +45951,19 @@ namespace PowerSDR
 		}
 
 
-
+        // ke9ns mod (link up with CWX panel)
 		private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
 		{
             lblCWSpeed.Text = "Speed:  "+ptbCWSpeed.Value.ToString()+" WPM";
             CWKeyer.WPM = ptbCWSpeed.Value;
 
-			if(ptbCWSpeed.Focused) btnHidden.Focus();
-		}
+            if (cwxForm != null && !cwxForm.IsDisposed) cwxForm.udWPM.Value = ptbCWSpeed.Value;
 
-		private void chkVOX_CheckedChanged(object sender, System.EventArgs e)
+            if (ptbCWSpeed.Focused) btnHidden.Focus();
+
+        } // ptbCWSpeed_Scroll
+
+        private void chkVOX_CheckedChanged(object sender, System.EventArgs e)
 		{
             if ((vac_enabled || vac2_enabled) == false)
             {
@@ -61783,7 +61832,7 @@ namespace PowerSDR
             {
                 noaaON = 0; // shut down thread
                 suncounter = 2;
-                RadioBlackout = GeoBlackout = "";
+                RadioBlackout = GeoBlackout = " ";
 
                 txtNOAA.Text = "Space WX: OFF";
                 txtNOAA2.Text = "Click On";
@@ -61809,15 +61858,7 @@ namespace PowerSDR
 
         public void NOAA()
         {
-           
-          //  while (noaaON == 1)
-          //  {
-             //   Thread.Sleep(50); // slow down the thread here
-
-             //   if ((DateTime.UtcNow.Minute == 0) || (suncounter == 2))
-              //  {
-                //    if ((suncounter == 0) || (suncounter == 2))
-                 //   {
+         
                         Debug.WriteLine("GET NOAA=========");
 
                         suncounter = 1;
@@ -61891,6 +61932,25 @@ namespace PowerSDR
 
                             } // Aindex
 
+                            if (noaa.Contains("K-index ") && noaa.Contains(" was ")) // 
+                            {
+
+                                int ind = noaa.IndexOf(" was ") + 5;
+
+                                try
+                                {
+                                    Kindex = (int)(Convert.ToDouble(noaa.Substring(ind, 2)));
+                                    Debug.WriteLine("Kindex " + Aindex);
+                                }
+                                catch (Exception)
+                                {
+                                    Kindex = 0;
+                                }
+
+
+                            } // Kindex
+
+
                             if (noaa.Contains("Radio blackouts reaching the ")) // 
                             {
 
@@ -61940,18 +62000,12 @@ namespace PowerSDR
                                 Debug.WriteLine("geo " + RadioBlackout);
                             }
 
-                        }
+                        } // try
                         catch (Exception ex)
                         {
                             noaaON = 0; // failure to get data
                         }
-                //    } // suncounter
-
-//                } // datetime minute = 0
-  //              else suncounter = 0;
-
-    //        } // while (drop out of thread when noaaON = 0
-
+               
             Debug.WriteLine("endof NOAA thread");
 
 

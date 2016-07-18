@@ -2872,7 +2872,10 @@ namespace PowerSDR
 			else chkDash.BackColor = SystemColors.Control;
 		}
 
-		private void PollKey()
+
+        //====================================================================
+        // ke9ns THREAD to check CW KEY
+     	private void PollKey()
 		{
 			bool dot, dash, rca_ptt, mic_ptt;
 			while(ckKeyPoll.Checked)
@@ -2890,6 +2893,9 @@ namespace PowerSDR
 			}
 		}
 
+
+
+        // ke9ns activate looking at the CW KEY
 		private void ckKeyPoll_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(ckKeyPoll.Checked)
@@ -2901,6 +2907,8 @@ namespace PowerSDR
 				t.Start();
 			}
 		}
+
+
 
 		private void chkHeadphone_CheckedChanged(object sender, System.EventArgs e)
 		{

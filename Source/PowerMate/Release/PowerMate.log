@@ -1,4 +1,4 @@
-﻿Build started 7/7/2016 9:11:24 AM.
+﻿Build started 7/14/2016 3:58:40 PM.
      1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\PowerMate\PowerMate.vcxproj" on node 2 (Rebuild target(s)).
      1>_PrepareForClean:
          Deleting file "Release\PowerMate.tlog\PowerMate.lastbuildstate".
@@ -33,4 +33,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.83
+Time Elapsed 00:00:02.80
