@@ -50,7 +50,9 @@ namespace PowerSDR
         private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
 
         private Console console;
-		private WaveOptions waveOptionsForm;
+
+		private WaveOptions WaveOptions;
+
 		private ArrayList file_list;
         private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\PowerSDR";
 
@@ -104,7 +106,7 @@ namespace PowerSDR
 			
 			file_list = new ArrayList();
 			currently_playing = -1;
-			waveOptionsForm = new WaveOptions();
+			WaveOptions = new WaveOptions();
 			this.ActiveControl = btnAdd;
 			Common.RestoreForm(this, "WaveOptions", false);
 		}
@@ -571,6 +573,19 @@ namespace PowerSDR
             set { QPFile = value; }
         }
 
+
+        //=======================================================
+        // ke9ns add rec/playid turn on post audio
+
+        
+        public  bool RECPLAY
+        {
+            get { return false; }
+
+            set {  WaveOptions.RECPLAY1 = value;   }
+        }
+
+
         #region Misc Routines
         //=============================================================================================================
         //=============================================================================================================
@@ -891,7 +906,7 @@ namespace PowerSDR
                 }
                 else
                 {
-                    long_sample_rate = waveOptionsForm.SampleRate;
+                    long_sample_rate = WaveOptions.SampleRate;
                     short_sample_rate = long_sample_rate / 1000;
                 }
                 
@@ -1077,11 +1092,11 @@ namespace PowerSDR
 
 		private void mnuWaveOptions_Click(object sender, System.EventArgs e)
 		{
-			if(waveOptionsForm == null || waveOptionsForm.IsDisposed)
-				waveOptionsForm = new WaveOptions();
+			if(WaveOptions == null || WaveOptions.IsDisposed)
+				WaveOptions = new WaveOptions();
 
-			waveOptionsForm.Show();
-			waveOptionsForm.Focus();
+			WaveOptions.Show();
+			WaveOptions.Focus();
 		}
 
 		private void udPreamp_ValueChanged(object sender, System.EventArgs e)
@@ -1291,7 +1306,7 @@ namespace PowerSDR
 
                 }
 
-				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, waveOptionsForm.SampleRate, file_name);
+				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, WaveOptions.SampleRate, file_name);
                 /*if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
                 {
                     string file_name2 = file_name + "-rx2";

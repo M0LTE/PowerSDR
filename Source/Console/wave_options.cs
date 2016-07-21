@@ -40,16 +40,17 @@ namespace PowerSDR
 	/// </summary>
 	public class WaveOptions : System.Windows.Forms.Form
 	{
-		#region Variable Declaration
+        #region Variable Declaration
 
-		private System.Windows.Forms.GroupBoxTS grpReceive;
-		private System.Windows.Forms.RadioButtonTS radRXPreProcessed;
-		private System.Windows.Forms.GroupBoxTS groupBox1;
+      
+        private System.Windows.Forms.GroupBoxTS grpReceive;
+        public RadioButtonTS radRXPreProcessed;
+        private System.Windows.Forms.GroupBoxTS groupBox1;
 		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.RadioButtonTS radRXPostProcessed;
-		private System.Windows.Forms.RadioButtonTS radTXPostProcessed;
-		private System.Windows.Forms.RadioButtonTS radTXPreProcessed;
-		private System.Windows.Forms.GroupBoxTS grpAudioSampleRate1;
+        public RadioButtonTS radRXPostProcessed;
+        public RadioButtonTS radTXPostProcessed;
+        public RadioButtonTS radTXPreProcessed;
+        private System.Windows.Forms.GroupBoxTS grpAudioSampleRate1;
 		private System.Windows.Forms.ComboBoxTS comboSampleRate;
         private TextBox txtWaveOptionsForm;
 		private System.ComponentModel.IContainer components;
@@ -95,39 +96,19 @@ namespace PowerSDR
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WaveOptions));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.txtWaveOptionsForm = new System.Windows.Forms.TextBox();
-            this.grpAudioSampleRate1 = new System.Windows.Forms.GroupBoxTS();
             this.comboSampleRate = new System.Windows.Forms.ComboBoxTS();
-            this.groupBox1 = new System.Windows.Forms.GroupBoxTS();
             this.radTXPostProcessed = new System.Windows.Forms.RadioButtonTS();
             this.radTXPreProcessed = new System.Windows.Forms.RadioButtonTS();
-            this.grpReceive = new System.Windows.Forms.GroupBoxTS();
             this.radRXPostProcessed = new System.Windows.Forms.RadioButtonTS();
             this.radRXPreProcessed = new System.Windows.Forms.RadioButtonTS();
+            this.txtWaveOptionsForm = new System.Windows.Forms.TextBox();
+            this.grpAudioSampleRate1 = new System.Windows.Forms.GroupBoxTS();
+            this.groupBox1 = new System.Windows.Forms.GroupBoxTS();
+            this.grpReceive = new System.Windows.Forms.GroupBoxTS();
             this.grpAudioSampleRate1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.grpReceive.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // txtWaveOptionsForm
-            // 
-            this.txtWaveOptionsForm.Location = new System.Drawing.Point(182, 12);
-            this.txtWaveOptionsForm.Multiline = true;
-            this.txtWaveOptionsForm.Name = "txtWaveOptionsForm";
-            this.txtWaveOptionsForm.ReadOnly = true;
-            this.txtWaveOptionsForm.Size = new System.Drawing.Size(175, 226);
-            this.txtWaveOptionsForm.TabIndex = 37;
-            this.txtWaveOptionsForm.Text = resources.GetString("txtWaveOptionsForm.Text");
-            // 
-            // grpAudioSampleRate1
-            // 
-            this.grpAudioSampleRate1.Controls.Add(this.comboSampleRate);
-            this.grpAudioSampleRate1.Location = new System.Drawing.Point(8, 182);
-            this.grpAudioSampleRate1.Name = "grpAudioSampleRate1";
-            this.grpAudioSampleRate1.Size = new System.Drawing.Size(168, 56);
-            this.grpAudioSampleRate1.TabIndex = 36;
-            this.grpAudioSampleRate1.TabStop = false;
-            this.grpAudioSampleRate1.Text = "Wave File Sample Rate";
             // 
             // comboSampleRate
             // 
@@ -147,17 +128,6 @@ namespace PowerSDR
             this.comboSampleRate.Size = new System.Drawing.Size(64, 21);
             this.comboSampleRate.TabIndex = 4;
             this.toolTip1.SetToolTip(this.comboSampleRate, "Sample Rate -- Set the sampling rate for a post processed wave file ");
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.radTXPostProcessed);
-            this.groupBox1.Controls.Add(this.radTXPreProcessed);
-            this.groupBox1.Location = new System.Drawing.Point(8, 96);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(168, 80);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Transmit";
             // 
             // radTXPostProcessed
             // 
@@ -183,17 +153,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.radTXPreProcessed, "Raw Input (Microphone, Digital, etc)");
             this.radTXPreProcessed.CheckedChanged += new System.EventHandler(this.radTXPreProcessed_CheckedChanged);
             // 
-            // grpReceive
-            // 
-            this.grpReceive.Controls.Add(this.radRXPostProcessed);
-            this.grpReceive.Controls.Add(this.radRXPreProcessed);
-            this.grpReceive.Location = new System.Drawing.Point(8, 8);
-            this.grpReceive.Name = "grpReceive";
-            this.grpReceive.Size = new System.Drawing.Size(168, 80);
-            this.grpReceive.TabIndex = 0;
-            this.grpReceive.TabStop = false;
-            this.grpReceive.Text = "Receive";
-            // 
             // radRXPostProcessed
             // 
             this.radRXPostProcessed.Image = null;
@@ -217,6 +176,48 @@ namespace PowerSDR
             this.radRXPreProcessed.Text = "Pre-Processed Audio";
             this.toolTip1.SetToolTip(this.radRXPreProcessed, "The raw audio coming out of the radio (11kHz IF)");
             this.radRXPreProcessed.CheckedChanged += new System.EventHandler(this.radRXPreProcessed_CheckedChanged);
+            // 
+            // txtWaveOptionsForm
+            // 
+            this.txtWaveOptionsForm.Location = new System.Drawing.Point(182, 12);
+            this.txtWaveOptionsForm.Multiline = true;
+            this.txtWaveOptionsForm.Name = "txtWaveOptionsForm";
+            this.txtWaveOptionsForm.ReadOnly = true;
+            this.txtWaveOptionsForm.Size = new System.Drawing.Size(175, 226);
+            this.txtWaveOptionsForm.TabIndex = 37;
+            this.txtWaveOptionsForm.Text = resources.GetString("txtWaveOptionsForm.Text");
+            // 
+            // grpAudioSampleRate1
+            // 
+            this.grpAudioSampleRate1.Controls.Add(this.comboSampleRate);
+            this.grpAudioSampleRate1.Location = new System.Drawing.Point(8, 182);
+            this.grpAudioSampleRate1.Name = "grpAudioSampleRate1";
+            this.grpAudioSampleRate1.Size = new System.Drawing.Size(168, 56);
+            this.grpAudioSampleRate1.TabIndex = 36;
+            this.grpAudioSampleRate1.TabStop = false;
+            this.grpAudioSampleRate1.Text = "Wave File Sample Rate";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radTXPostProcessed);
+            this.groupBox1.Controls.Add(this.radTXPreProcessed);
+            this.groupBox1.Location = new System.Drawing.Point(8, 96);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(168, 80);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Transmit";
+            // 
+            // grpReceive
+            // 
+            this.grpReceive.Controls.Add(this.radRXPostProcessed);
+            this.grpReceive.Controls.Add(this.radRXPreProcessed);
+            this.grpReceive.Location = new System.Drawing.Point(8, 8);
+            this.grpReceive.Name = "grpReceive";
+            this.grpReceive.Size = new System.Drawing.Size(168, 80);
+            this.grpReceive.TabIndex = 0;
+            this.grpReceive.TabStop = false;
+            this.grpReceive.Text = "Receive";
             // 
             // WaveOptions
             // 
@@ -245,6 +246,22 @@ namespace PowerSDR
 		{
 			get { return int.Parse(comboSampleRate.Text); }
 		}
+
+
+        public  bool RECPLAY1
+        {
+            get { return false; }
+            set
+            {
+                radRXPostProcessed.Checked = value;
+                radTXPostProcessed.Checked = value;
+
+                Audio.RecordRXPreProcessed = false;
+                Audio.RecordTXPreProcessed = false;
+            }
+
+        }
+
 
         public bool RXPreProcessed
         {

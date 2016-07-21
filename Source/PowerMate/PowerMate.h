@@ -160,21 +160,23 @@ namespace HidDevice
 		
 				HWND hWnd = FindWindow(NULL, L"PowerMateWnd");
 				
-				Trace::WriteLine("DETECT IF PowerMate RUNNING");
+			//	Trace::WriteLine("DETECT IF PowerMate RUNNING");
 
 				if(NULL != hWnd)
 				{
-					Trace::WriteLine("PowerMate is RUNNING");
+				//	Trace::WriteLine("PowerMate is RUNNING");
 					
 					PostMessage(hWnd, WM_CLOSE,0,0);
 
 					if( WaitForSingleObject(hp, 5000)!= WAIT_OBJECT_0)
 					{
-						Trace::WriteLine("Failure to close PowerMate.exe");
+					//	Trace::WriteLine("Failure to close PowerMate.exe");
 						return false;
 					}
 					else
-						Trace::WriteLine("PowerMate.exe has been closed");
+					{
+						//	Trace::WriteLine("PowerMate.exe has been closed");
+					}
 				}
 			}
 	
@@ -202,7 +204,7 @@ namespace HidDevice
 			
 			if (INVALID_HANDLE_VALUE == hDevInfoSet)
 			{
-				Trace::WriteLine("SetupDiGetClassDevs");
+			//	Trace::WriteLine("SetupDiGetClassDevs");
 				return false;
 			}
 
@@ -261,7 +263,7 @@ namespace HidDevice
 
 							if( (int)HidAttributes::ProductID == hidAttr.ProductID && (int)HidAttributes::VendorID  == hidAttr.VendorID )
 							{
-								Trace::WriteLine("FOUND GRIFFIN KNOB");
+								//Trace::WriteLine("FOUND GRIFFIN KNOB");
 								handleToDevice = hDevice;
 
 								KBON = 1;
@@ -370,12 +372,16 @@ namespace HidDevice
 			{ 
 				UCHAR reportBuffer[7] = { 0 };
 
-				if( NULL != handleToDevice )
+				if (NULL != handleToDevice)
 				{
 					BOOLEAN error = HidD_GetInputReport(handleToDevice, reportBuffer, sizeof(reportBuffer));  // read KNOB
 
-					if( FALSE == error )
-						Trace::WriteLine("failure to get input report - brightness");	
+					if (FALSE == error)
+					{
+						//	Trace::WriteLine("failure to get input report - brightness");	
+					}
+					
+				
 				}
 
 				return reportBuffer[4];

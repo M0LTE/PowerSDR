@@ -130,7 +130,7 @@ namespace PowerSDR
             this.textBox1.MaxLength = 1000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(233, 221);
+            this.textBox1.Size = new System.Drawing.Size(233, 202);
             this.textBox1.TabIndex = 60;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -138,7 +138,8 @@ namespace PowerSDR
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(160, 300);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button1.Location = new System.Drawing.Point(165, 280);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 61;
@@ -148,8 +149,9 @@ namespace PowerSDR
             // 
             // chkAlwaysOnTop
             // 
+            this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(12, 299);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(12, 280);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
             this.chkAlwaysOnTop.TabIndex = 59;
@@ -159,7 +161,7 @@ namespace PowerSDR
             // StackControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(252, 331);
+            this.ClientSize = new System.Drawing.Size(252, 313);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkAlwaysOnTop);
@@ -312,19 +314,20 @@ namespace PowerSDR
 
 
             int value;
+
             if (int.TryParse(console.regBox1.Text, out value))
             {
 
-                //  Debug.WriteLine("value " + value);
-                //   Debug.WriteLine("textlength " + textBox1.TextLength);
-                //  Debug.WriteLine("textlength " + bigmessage.Length);
-
-              //  resultTextBox.Text = "Please wait...";   // this never appears
-            //  Task.Factory.StartNew(() => functionThatTakesASecondOrTwoToRun()).ContinueWith((t) => textBox1.Text = t.Result,
-              //  TaskScheduler.FromCurrentSynchronizationContext());
-
-                textBox1.SelectionStart = (value - 1) * 28;
-                    textBox1.SelectionLength = 28;
+                if (value > 0)
+                {
+                    textBox1.SelectionStart = (value - 1) * 28;       // start of each bandstack line
+                    textBox1.SelectionLength = 28;                    // length of each bandstack line
+                }
+                else
+                {
+                    textBox1.SelectionStart = 0;
+                    textBox1.SelectionLength = 0;
+                }
                 
             }
             else
@@ -339,7 +342,7 @@ namespace PowerSDR
 
 
         //======================================================================== 
-        void updateindex()    
+    void updateindex()    
     {
         switch(console.RX1Band)
 			{

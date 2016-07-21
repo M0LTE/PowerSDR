@@ -26776,7 +26776,7 @@ namespace PowerSDR
         }
 
 
-        // ke9ns add
+        // ke9ns add RIGHT CLICK on SKIN goes to skin folder
         private void comboAppSkin_MouseDown(object sender, MouseEventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
@@ -26966,8 +26966,8 @@ namespace PowerSDR
 
             }
 
-   
-        }
+
+        } //chkBoxPM_CheckedChanged
 
         private void udSpeedPM_ValueChanged(object sender, EventArgs e)
         {

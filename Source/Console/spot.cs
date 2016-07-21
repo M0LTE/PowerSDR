@@ -1855,11 +1855,11 @@ namespace PowerSDR
                                 int pos = DX_Station[DX_Index1].IndexOf(' '); // find the
                                 DX_Station[DX_Index1] = DX_Station[DX_Index1].Substring(0, pos); // reduce the call without the
                             }
-                            catch (FormatException e)
+                            catch (FormatException )
                             {
                                 DX_Spotter[DX_Index1] = "NA";
                               }
-                            catch (ArgumentOutOfRangeException e)
+                            catch (ArgumentOutOfRangeException )
                             {
                                 DX_Spotter[DX_Index1] = "NA";
                             }
