@@ -12,17 +12,17 @@ PowerSDR modifications beyond 2.7.2 are provided by dh1tw for the DJConsole, and
 
 Currently compiling under Visual Studio 2015 (VS2015) and NET 4.5.2
 After you download and install VS2015, you must then download and install the VS2015 "UPDATE 3" & "Patch" 1
-The PowerSDR "console" design form is so complex and large that Visual Studio can take forever to properly 
-update itself and become out of sync with the console.cs file.
-So always hit the save button before going back into (i.e. viewing) the "Design" form in VS. 
-If you get an error message trying to view the "Design", close the console (both Design and CS files) and reload.
+Sometimes the visual design form can become out of sync with its .cs code file.
+This can happen if you change some code in the .cs file that VS wants you to change from the design form.
+If you get an error message trying to view the "Design" form, close the console (both Design and CS files) and reload.
+Its best to always verify that you can properly view the design form, then hit save.
 
 
 You can run the build from within VS or directly from the VS project release or debug folders.
 
-PowerSDR.exe is the only file needed in the PowerSDR build.
+PowerSDR.exe and PowerSDR.exe.config are the only files needed in the PowerSDR build. I rename them to PowerSDR_T8.
 DttSP.dll is the only file needed in the DttSP build.
-powermate.dll is the only file needed in the PowerMate build.
+PowerMate.dll is the only file needed in the PowerMate build.
 
 Do a full rebuild the first time you open the project in VS, before doing anything else.
 
