@@ -3,15 +3,16 @@ the GPL Open Source PowerSDR 2.7.2 SVN: 5123 code provided by Flex Radio Systems
 With generous help provided by Flex Radio Systems, Inc.
 
 
-This Source code includes 3 project under the PowerSDR umbrella: DttSP written in C, PowerMate written in C++, and PowerSDR written in C#
+This Source code includes 3 projects under the PowerSDR umbrella: DttSP written in C, PowerMate written in C++, and PowerSDR written in C#
 
 DttSP and PowerSDR code was provided by Flex Radio Systems, Inc.
 PowerMate code was provided by Griffin, Clev R. Munke, and Darrin Kohn ke9ns
 PowerSDR modifications beyond 2.7.2 are provided by dh1tw for the DJConsole, and Darrin Kohn ke9ns
-
+SWL.csv file from eibispace.de (thank you)
+dxloc.txt file initially from HRD (thank you), modified by me Darrin ke9ns 
 
 Currently compiling under Visual Studio 2015 (VS2015) and NET 4.5.2
-After you download and install VS2015, you must then download and install the VS2015 "UPDATE 3" & "Patch" 1
+After you download and install VS2015, you must then download and install the VS2015 "UPDATE 3" & "Patch" 3
 Sometimes the visual design form can become out of sync with its .cs code file.
 This can happen if you change some code in the .cs file that VS wants you to change from the design form.
 If you get an error message trying to view the "Design" form, close the console (both Design and CS files) and reload.
@@ -23,6 +24,7 @@ You can run the build from within VS or directly from the VS project release or 
 PowerSDR.exe and PowerSDR.exe.config are the only files needed in the PowerSDR build. I rename them to PowerSDR_T8.
 DttSP.dll is the only file needed in the DttSP build.
 PowerMate.dll is the only file needed in the PowerMate build.
+ALSO: vcruntime140.dll needs to be copied onto the target computer (PSDR program files folder, or download the free VC 2015 runtime installer)
 
 Do a full rebuild the first time you open the project in VS, before doing anything else.
 

@@ -84,7 +84,8 @@ namespace PowerSDR
 		private uint[] mbits = new uint[64];	// the Morse element maps
 		private string[] a2m2 = new string[64]; // in ASCII order from 32-95
 
-		private bool quit, kquit;	// shutdown flags
+		private bool quit, kquit;   // shutdown flags    
+                                    //ke9ns kquit is set by ESC key
 		private int pause;			// # cycles left to pause
 
 		public static Mutex cwfifo2 = new Mutex();	// around the key fifo
@@ -93,7 +94,7 @@ namespace PowerSDR
 		private int pin2;			// fifo input pointer
 		private int pout2;			// fifo output pointer
 
-		public static Mutex cwfifo = new Mutex();	// around the element fifo
+		public static Mutex cwfifo = new Mutex();	// around the element fifo     ke9ns syncronized resource
 		private byte[] elfifo = new byte[32768];	// the code element fifo
 		private int infifo;			// # entries in the fifo
 		private int pin;			// fifo input pointer
@@ -296,13 +297,19 @@ namespace PowerSDR
 		}
 		private void quitshut()
 		{
-			clear_fifo();
+            Debug.WriteLine("quitshut 1");
+            clear_fifo();
 			clear_fifo2();
 			setptt(false);
 			setkey(false);
 			ttx = 0;  pause = 0; newptt = 0;
 			keying = false;
+
+            Debug.WriteLine("quitshut 2");
+
 		}
+
+
 		private void clear_fifo()
 		{
 			cwfifo.WaitOne();
@@ -311,6 +318,8 @@ namespace PowerSDR
 			pout = 0;
 			cwfifo.ReleaseMutex();
 		}
+
+
 		private void push_fifo(byte data)
 		{
 			cwfifo.WaitOne();
@@ -322,6 +331,9 @@ namespace PowerSDR
 
 //			Debug.WriteLine("push " + data);
 		}
+
+
+
 		private byte pop_fifo()
 		{
 			byte data;
@@ -758,7 +770,7 @@ namespace PowerSDR
 			CATReadThread.Start();
 
 //			ttdel = 50;
-		}
+		} // CWX
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -1611,18 +1623,25 @@ namespace PowerSDR
 		
 		private void s1_Click(object sender, System.EventArgs e)
 		{
-			queue_start(1);
-		}
+          
+            queue_start(1);
+           
+        }
 
-		private void s2_Click(object sender, System.EventArgs e)
-		{	
-			queue_start(2);
-		}
+        private void s2_Click(object sender, System.EventArgs e)
+		{
+          
+            queue_start(2);
+          
+        }
 
 		private void s3_Click(object sender, System.EventArgs e)
-		{
-			queue_start(3);
-		}
+        {
+           
+
+            queue_start(3);
+           
+        }
 
 		private void s4_Click(object sender, System.EventArgs e)
 		{
@@ -2057,11 +2076,13 @@ namespace PowerSDR
 			setkey(false);
 		}
 
+
+        //===============================================================================================
 		// keyboardFifo pops keys from fifo2 and then calls loadchar() to
 		// convert to Morse elements in infifo.  The routine will sleep until
 		// most of the Morse character has been output by watching infifo.
 
-		private void keyboardFifo()		// thread to watch the keyboard fifo
+		private void keyboardFifo()		// THREAD to watch the keyboard fifo
 		{
 			byte b;
 			char c;
@@ -2080,7 +2101,7 @@ namespace PowerSDR
 						kquit = false;
 					}
 					//else 
-					if (b >= 32)
+					if (b >= 32) // ke9ns only take characters from the 'space' char on up.
 					{
 						loadchar(c);
 						while (infifo > 2)
@@ -2092,14 +2113,17 @@ namespace PowerSDR
 				}
 				else Thread.Sleep(20);	// this was originally 10 ms
 			}
-		}
 
-		// the keyboardDisplay() thread pulls keys from the left hand edge (top)
-		// of the keyboard display and stuffs them into fifo2 then causes the display
-		// to be updated.  The keys are put into the display buffer by the keystroke event
-		// handler.
+        } // thread keyboardFifo()
 
-		private void keyboardDisplay()		// watch and maintain the the keyboard display
+
+        //=====================================================================================
+        // the keyboardDisplay() thread pulls keys from the left hand edge (top)
+        // of the keyboard display and stuffs them into fifo2 then causes the display
+        // to be updated.  The keys are put into the display buffer by the keystroke event
+        // handler.
+
+        private void keyboardDisplay()		// THREAD watch and maintain the the keyboard display
 		{
 			char topkey;
 			int i;
@@ -2131,11 +2155,17 @@ namespace PowerSDR
 				}
 				else Thread.Sleep(20);		// this was originally 10 ms
 			}
-		}
 
-		private void queue_start(int qmsg)			// queue message n for start
+        } // thread keyboardDisplay()
+
+
+
+        //===============================================================================================
+        private void queue_start(int qmsg)			// queue message n for start
 		{
-			if(console.RX1DSPMode != DSPMode.CWL &&	console.RX1DSPMode != DSPMode.CWU)
+            Debug.WriteLine("start of queue===================");
+
+            if ((console.RX1DSPMode != DSPMode.CWL) &&	(console.RX1DSPMode != DSPMode.CWU))
 			{
 				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
 					"CWX Error: Wrong Mode",
@@ -2144,11 +2174,17 @@ namespace PowerSDR
 				return;
 			}
 
-			kquit = true;
-			quit = true;
-			while (quit) Thread.Sleep(10);
+			//kquit = true;
+			//quit = true;
 
+            Debug.WriteLine("before middle of queue===================");
 
+            while (quit)
+            {
+                Thread.Sleep(10);
+            }
+
+            Debug.WriteLine("middle of queue===================");
 
             switch (qmsg)
 			{
@@ -2164,13 +2200,22 @@ namespace PowerSDR
 				default: tqq = "?bad msg?"; break;
 			}
 
-			loadmsg(tqq);
+            if (tqq.Length < 1) return; // ke9ns add  return if clicked on empty string
+
+            Debug.WriteLine("size of tqq= "+tqq.Length);
+
+            loadmsg(tqq);
+
 			push_fifo(0x4);			// end
+
+            Debug.WriteLine("end of queue===================");
 			
 		} //queue_start
 
-		private void loadchar(char cc)	// convert and load a single character
-		{		// this is the guts of loadmsg and work much the same way
+
+        //==========================================================================================
+		private void loadchar(char cc)	     // convert and load a single character
+		{		                             // this is the guts of loadmsg and work much the same way
 			uint v,n;
 			int ic;
 
@@ -2199,10 +2244,13 @@ namespace PowerSDR
 				v <<= 1;
 				n--;
 			}
-		}
+        } // loadchar
 
+
+
+        //==================================================================================
         // ke9ns load text of message into a buffer here
-		private void loadmsg(string t)	// load string t to the element fifo
+        private void loadmsg(string t)	// load string t to the element fifo
 		{
 			string s;
 			int ii, nc,ic;

@@ -108,14 +108,15 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                2.500000, 2.500000, "WWV Time",						false,
-								5.000000, 5.000000, "WWV Time",						false,
-								10.000000, 10.000000, "WWV Time",					false,
-								15.000000, 15.000000, "WWV Time",					false,
-								20.000000, 20.000000, "WWV Time",					false,
-                                3.330000, 3.330000, "CHU Time",                      false,
-                                7.850000, 7.850000, "CHU Time",                      false,
-                                14.670000, 14.670000, "CHU Time",                    false,
+                                2.500000, 2.500000, "WWV Time",					false,
+								5.000000, 5.000000, "WWV Time",					false,
+								10.000000, 10.000000, "WWV Time",				false,
+								15.000000, 15.000000, "WWV Time",			    false,
+								20.000000, 20.000000, "WWV Time",			    false,
+                                25.000000, 25.000000, "WWV Time",               false,  // ke9ns add
+                                3.330000, 3.330000, "CHU Time",                 false,
+                                7.850000, 7.850000, "CHU Time",                 false,
+                                14.670000, 14.670000, "CHU Time",               false,
                                 4.996000, 4.996000, "RWM",                      false,
                                 9.996000, 9.996000, "RWM",                     	false,
                                 14.996000, 14.996000, "RWM",                   	false,
@@ -156,7 +157,9 @@ namespace PowerSDR
                 dr["TX"] = (bool)data[i * 4 + 3];
                 t.Rows.Add(dr);
             }
-        }
+
+        } //  AddBandTextSWB()
+
 
         private static void ClearBandText()
         {
@@ -2132,6 +2135,7 @@ namespace PowerSDR
 								"WWV", "SAM", "F5", 10.000000,
 								"WWV", "SAM", "F5", 15.000000,
 								"WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
@@ -2202,6 +2206,7 @@ namespace PowerSDR
 								"WWV", "SAM", "F5", 10.000000,
 								"WWV", "SAM", "F5", 15.000000,
 								"WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
@@ -2273,6 +2278,7 @@ namespace PowerSDR
 								"WWV", "SAM", "F5", 10.000000,
 								"WWV", "SAM", "F5", 15.000000,
 								"WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
@@ -2352,6 +2358,7 @@ namespace PowerSDR
 								"WWV", "SAM", "F5", 10.000000,
 								"WWV", "SAM", "F5", 15.000000,
 								"WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
@@ -2425,6 +2432,7 @@ namespace PowerSDR
 								"WWV", "SAM", "F5", 10.000000,
 								"WWV", "SAM", "F5", 15.000000,
 								"WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
@@ -5810,10 +5818,43 @@ namespace PowerSDR
 		}
 
 
+        //==================================================================================================
+        // ke9ns add
+        public static void AddBandText( double freq, double freq1, string name, bool tx)
+        {
+            DataRow dr = ds.Tables["BandText"].NewRow();
+            dr["Low"] = freq;
+            dr["High"] = freq1;
+            dr["Name"] = name;
+            dr["TX"] = tx;
+            ds.Tables["BandText"].Rows.Add(dr);
+        }
+
+
+        //===========================================================
+        // ke9ns add
+        public static void WWV25()
+        {
+
+            DataTable t = ds.Tables["BandText"];
+            object[] data = {
+                                2500000, 2500000, "WWV Time",                 false,
+            };
+
+            int i = 0;
+
+            DataRow dr = t.NewRow();
+            dr["Low"] = (double)data[i * 4 + 0];
+            dr["High"] = (double)data[i * 4 + 1];
+            dr["Name"] = (string)data[i * 4 + 2];
+            dr["TX"] = (bool)data[i * 4 + 3];
+            t.Rows.Add(dr);
+
+        } // WWV25;
 
 
 
-		public static void SaveBandStack(string band, int index, string mode, string filter, double freq)
+        public static void SaveBandStack(string band, int index, string mode, string filter, double freq)
 		{
 			DataRow[] rows = ds.Tables["BandStack"].Select("'"+band+"' = BandName");
 
