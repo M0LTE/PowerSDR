@@ -410,6 +410,8 @@ namespace PowerSDR
 
             if (DB.GetBandStack(last_band, band_index, out mode, out filter, out freq))
             {
+                filter = filter.Substring(0, 2); // ke9ns add for bandstack lockout
+
                 console.SetBand(mode, filter, freq);
             }
 

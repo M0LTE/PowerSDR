@@ -1103,7 +1103,7 @@ namespace PowerSDR
                 {
                     autobright3 = 0;
 
-                    if ((console.chkPower.Checked) && (value == 2) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)))
+                    if ((console.chkPower.Checked) && (value == 2) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)))// PANADAPTER
                     {
                         autobright6 = value; // RX1 adjust
                         return;
@@ -5770,6 +5770,7 @@ namespace PowerSDR
         unsafe static private bool DrawPanadapter(Graphics g, int W, int H, int rx, bool bottom)
 		{
             bool local_mox = false;                 // whether you are transmitting or not
+            A3B = A2B = AB = 0;    // ke9ns auto brightness
 
             if (rx == 1 && !tx_on_vfob && mox) local_mox = true;
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
@@ -6011,10 +6012,15 @@ namespace PowerSDR
 
 
             //=========================================================================
-            // ke9ns auto
+            // ke9ns add auto
                 if (autobright6 == 2) // RX1
                 {
-                    if ((!mox) && (rx == 1)) AB = AB + (long)max; // ke9ns add autobright feature 
+                    if ((!mox) && (rx == 1))
+                    {
+                      //  Debug.Write("AB6=");
+
+                        AB = AB + (long)max; // ke9ns add autobright feature 
+                    }
 
                 }
 
@@ -6024,9 +6030,13 @@ namespace PowerSDR
 
             //=========================================================================
             //=========================================================================
-            // ke9ns auto
+            // ke9ns add auto
             if (autobright6 == 2) // rx1 adjust
             {
+                Debug.WriteLine(" ");
+
+                Debug.WriteLine("==========AUTOBRIGHT6=================");
+
                 AB1[0] = AB / W; // get avg of the entire read
 
                 AB3 = (float)(AB1[0]);

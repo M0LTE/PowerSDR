@@ -116,6 +116,8 @@ using System.Text;
 using System.Windows.Forms;
 //using System.Threading.Tasks; // ke9ns add net 4.5
 
+using System.Speech.Synthesis; // ke9ns add
+
 
 using PortTalk;
 //using System.Object;
@@ -605,7 +607,7 @@ namespace PowerSDR
         private TextBoxTS txtNOAA2;    // ke9ns add for space weather on main console screen
         private TextBoxTS txtNOAA;    // ke9ns add for space weather on main console screen
 
-
+        SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
         //============================================================================ ke9ns add
@@ -2535,58 +2537,12 @@ namespace PowerSDR
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.timer_clock = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemRX1FilterReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStripFilterRX2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItemRX2FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemRX2FilterReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.timer_navigate = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStripNotch = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripNotchDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchRemember = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripNotchNormal = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchDeep = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchVeryDeep = new System.Windows.Forms.ToolStripMenuItem();
-            this.timerNotchZoom = new System.Windows.Forms.Timer(this.components);
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uCBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.antennaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.relaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aTUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.flexControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.GrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TXIDMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
-            this.picSquelch = new System.Windows.Forms.PictureBox();
-            this.panelDisplay2 = new System.Windows.Forms.PanelTS();
             this.btnTNFAdd = new System.Windows.Forms.ButtonTS();
             this.chkTNF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayPeak = new System.Windows.Forms.CheckBoxTS();
             this.comboDisplayMode = new System.Windows.Forms.ComboBoxTS();
             this.chkDisplayAVG = new System.Windows.Forms.CheckBoxTS();
-            this.ptbRX2Squelch = new PowerSDR.PrettyTrackBar();
             this.ptbRX2RF = new PowerSDR.PrettyTrackBar();
-            this.panelOptions = new System.Windows.Forms.PanelTS();
             this.chkFWCATU = new System.Windows.Forms.CheckBoxTS();
             this.chkFWCATUBypass = new System.Windows.Forms.CheckBoxTS();
             this.ckQuickPlay = new System.Windows.Forms.CheckBoxTS();
@@ -2793,6 +2749,52 @@ namespace PowerSDR
             this.picRX2Meter = new System.Windows.Forms.PictureBox();
             this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
             this.txtNOAA = new System.Windows.Forms.TextBoxTS();
+            this.timer_clock = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemRX1FilterReset = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripFilterRX2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItemRX2FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemRX2FilterReset = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer_navigate = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuStripNotch = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripNotchDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchRemember = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripNotchNormal = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchDeep = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchVeryDeep = new System.Windows.Forms.ToolStripMenuItem();
+            this.timerNotchZoom = new System.Windows.Forms.Timer(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uCBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.antennaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.relaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aTUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.flexControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TXIDMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
+            this.picSquelch = new System.Windows.Forms.PictureBox();
+            this.panelDisplay2 = new System.Windows.Forms.PanelTS();
+            this.ptbRX2Squelch = new PowerSDR.PrettyTrackBar();
+            this.panelOptions = new System.Windows.Forms.PanelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.panelModeSpecificFM = new System.Windows.Forms.PanelTS();
             this.lblFMMemory = new System.Windows.Forms.LabelTS();
@@ -2930,16 +2932,7 @@ namespace PowerSDR
             this.btnBandHF1 = new System.Windows.Forms.ButtonTS();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.ptbSquelch = new PowerSDR.PrettyTrackBar();
-            this.contextMenuStripFilterRX1.SuspendLayout();
-            this.contextMenuStripFilterRX2.SuspendLayout();
-            this.contextMenuStripNotch.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
-            this.panelDisplay2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
-            this.panelOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
@@ -2967,6 +2960,15 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
+            this.contextMenuStripFilterRX1.SuspendLayout();
+            this.contextMenuStripFilterRX2.SuspendLayout();
+            this.contextMenuStripNotch.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
+            this.panelDisplay2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
+            this.panelOptions.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.panelModeSpecificFM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).BeginInit();
@@ -3020,339 +3022,6 @@ namespace PowerSDR
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
             // 
-            // timer_clock
-            // 
-            this.timer_clock.Enabled = true;
-            this.timer_clock.Tick += new System.EventHandler(this.timer_clock_Tick);
-            // 
-            // contextMenuStripFilterRX1
-            // 
-            this.contextMenuStripFilterRX1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemRX1FilterConfigure,
-            this.toolStripMenuItemRX1FilterReset});
-            this.contextMenuStripFilterRX1.Name = "contextMenuStripFilterRX1";
-            resources.ApplyResources(this.contextMenuStripFilterRX1, "contextMenuStripFilterRX1");
-            // 
-            // toolStripMenuItemRX1FilterConfigure
-            // 
-            this.toolStripMenuItemRX1FilterConfigure.Name = "toolStripMenuItemRX1FilterConfigure";
-            resources.ApplyResources(this.toolStripMenuItemRX1FilterConfigure, "toolStripMenuItemRX1FilterConfigure");
-            this.toolStripMenuItemRX1FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterConfigure_Click);
-            // 
-            // toolStripMenuItemRX1FilterReset
-            // 
-            this.toolStripMenuItemRX1FilterReset.Name = "toolStripMenuItemRX1FilterReset";
-            resources.ApplyResources(this.toolStripMenuItemRX1FilterReset, "toolStripMenuItemRX1FilterReset");
-            this.toolStripMenuItemRX1FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterReset_Click);
-            // 
-            // contextMenuStripFilterRX2
-            // 
-            this.contextMenuStripFilterRX2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemRX2FilterConfigure,
-            this.toolStripMenuItemRX2FilterReset});
-            this.contextMenuStripFilterRX2.Name = "contextMenuStripFilterRX2";
-            resources.ApplyResources(this.contextMenuStripFilterRX2, "contextMenuStripFilterRX2");
-            // 
-            // toolStripMenuItemRX2FilterConfigure
-            // 
-            this.toolStripMenuItemRX2FilterConfigure.Name = "toolStripMenuItemRX2FilterConfigure";
-            resources.ApplyResources(this.toolStripMenuItemRX2FilterConfigure, "toolStripMenuItemRX2FilterConfigure");
-            this.toolStripMenuItemRX2FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterConfigure_Click);
-            // 
-            // toolStripMenuItemRX2FilterReset
-            // 
-            this.toolStripMenuItemRX2FilterReset.Name = "toolStripMenuItemRX2FilterReset";
-            resources.ApplyResources(this.toolStripMenuItemRX2FilterReset, "toolStripMenuItemRX2FilterReset");
-            this.toolStripMenuItemRX2FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterReset_Click);
-            // 
-            // timer_navigate
-            // 
-            this.timer_navigate.Tick += new System.EventHandler(this.timer_navigate_Tick);
-            // 
-            // timer2
-            // 
-            this.timer2.Interval = 200;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // contextMenuStripNotch
-            // 
-            this.contextMenuStripNotch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripNotchDelete,
-            this.toolStripNotchRemember,
-            this.toolStripSeparator1,
-            this.toolStripNotchNormal,
-            this.toolStripNotchDeep,
-            this.toolStripNotchVeryDeep});
-            this.contextMenuStripNotch.Name = "contextMenuStripNotch";
-            resources.ApplyResources(this.contextMenuStripNotch, "contextMenuStripNotch");
-            // 
-            // toolStripNotchDelete
-            // 
-            this.toolStripNotchDelete.Name = "toolStripNotchDelete";
-            resources.ApplyResources(this.toolStripNotchDelete, "toolStripNotchDelete");
-            this.toolStripNotchDelete.Click += new System.EventHandler(this.toolStripNotchDelete_Click);
-            // 
-            // toolStripNotchRemember
-            // 
-            this.toolStripNotchRemember.Name = "toolStripNotchRemember";
-            resources.ApplyResources(this.toolStripNotchRemember, "toolStripNotchRemember");
-            this.toolStripNotchRemember.Click += new System.EventHandler(this.toolStripNotchRemember_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-            // 
-            // toolStripNotchNormal
-            // 
-            this.toolStripNotchNormal.Name = "toolStripNotchNormal";
-            resources.ApplyResources(this.toolStripNotchNormal, "toolStripNotchNormal");
-            this.toolStripNotchNormal.Click += new System.EventHandler(this.toolStripNotchNormal_Click);
-            // 
-            // toolStripNotchDeep
-            // 
-            this.toolStripNotchDeep.Checked = true;
-            this.toolStripNotchDeep.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolStripNotchDeep.Name = "toolStripNotchDeep";
-            resources.ApplyResources(this.toolStripNotchDeep, "toolStripNotchDeep");
-            this.toolStripNotchDeep.Click += new System.EventHandler(this.toolStripNotchDeep_Click);
-            // 
-            // toolStripNotchVeryDeep
-            // 
-            this.toolStripNotchVeryDeep.Name = "toolStripNotchVeryDeep";
-            resources.ApplyResources(this.toolStripNotchVeryDeep, "toolStripNotchVeryDeep");
-            this.toolStripNotchVeryDeep.Click += new System.EventHandler(this.toolStripNotchVeryDeep_Click);
-            // 
-            // timerNotchZoom
-            // 
-            this.timerNotchZoom.Interval = 1000;
-            this.timerNotchZoom.Tick += new System.EventHandler(this.timerNotchZoom_Tick);
-            // 
-            // menuStrip1
-            // 
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
-            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setupToolStripMenuItem,
-            this.memoryToolStripMenuItem,
-            this.waveToolStripMenuItem,
-            this.equalizerToolStripMenuItem,
-            this.xVTRsToolStripMenuItem,
-            this.cWXToolStripMenuItem,
-            this.uCBToolStripMenuItem,
-            this.mixerToolStripMenuItem,
-            this.antennaToolStripMenuItem,
-            this.relaysToolStripMenuItem,
-            this.aTUToolStripMenuItem,
-            this.flexControlToolStripMenuItem,
-            this.eSCToolStripMenuItem,
-            this.GrayMenuItem,
-            this.TXIDMenuItem,
-            this.callsignTextBox,
-            this.ScanMenuItem,
-            this.spotterMenu,
-            this.herosToolStripMenuItem,
-            this.aboutToolStripMenuItem,
-            this.remoteProfilesToolStripMenuItem,
-            this.reportBugToolStripMenuItem});
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.ShowItemToolTips = true;
-            // 
-            // setupToolStripMenuItem
-            // 
-            this.setupToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
-            this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
-            // 
-            // memoryToolStripMenuItem
-            // 
-            this.memoryToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
-            resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
-            this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
-            // 
-            // waveToolStripMenuItem
-            // 
-            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
-            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
-            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
-            // 
-            // equalizerToolStripMenuItem
-            // 
-            this.equalizerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.equalizerToolStripMenuItem.Name = "equalizerToolStripMenuItem";
-            resources.ApplyResources(this.equalizerToolStripMenuItem, "equalizerToolStripMenuItem");
-            this.equalizerToolStripMenuItem.Click += new System.EventHandler(this.equalizerToolStripMenuItem_Click);
-            // 
-            // xVTRsToolStripMenuItem
-            // 
-            this.xVTRsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.xVTRsToolStripMenuItem.Name = "xVTRsToolStripMenuItem";
-            resources.ApplyResources(this.xVTRsToolStripMenuItem, "xVTRsToolStripMenuItem");
-            this.xVTRsToolStripMenuItem.Click += new System.EventHandler(this.xVTRsToolStripMenuItem_Click);
-            // 
-            // cWXToolStripMenuItem
-            // 
-            this.cWXToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.cWXToolStripMenuItem.Name = "cWXToolStripMenuItem";
-            resources.ApplyResources(this.cWXToolStripMenuItem, "cWXToolStripMenuItem");
-            this.cWXToolStripMenuItem.Click += new System.EventHandler(this.cWXToolStripMenuItem_Click);
-            // 
-            // uCBToolStripMenuItem
-            // 
-            this.uCBToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.uCBToolStripMenuItem.Name = "uCBToolStripMenuItem";
-            resources.ApplyResources(this.uCBToolStripMenuItem, "uCBToolStripMenuItem");
-            this.uCBToolStripMenuItem.Click += new System.EventHandler(this.uCBToolStripMenuItem_Click);
-            // 
-            // mixerToolStripMenuItem
-            // 
-            this.mixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.mixerToolStripMenuItem.Name = "mixerToolStripMenuItem";
-            resources.ApplyResources(this.mixerToolStripMenuItem, "mixerToolStripMenuItem");
-            this.mixerToolStripMenuItem.Click += new System.EventHandler(this.mixerToolStripMenuItem_Click);
-            // 
-            // antennaToolStripMenuItem
-            // 
-            this.antennaToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.antennaToolStripMenuItem.Name = "antennaToolStripMenuItem";
-            resources.ApplyResources(this.antennaToolStripMenuItem, "antennaToolStripMenuItem");
-            this.antennaToolStripMenuItem.Click += new System.EventHandler(this.antennaToolStripMenuItem_Click);
-            // 
-            // relaysToolStripMenuItem
-            // 
-            this.relaysToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.relaysToolStripMenuItem.Name = "relaysToolStripMenuItem";
-            resources.ApplyResources(this.relaysToolStripMenuItem, "relaysToolStripMenuItem");
-            this.relaysToolStripMenuItem.Click += new System.EventHandler(this.relaysToolStripMenuItem_Click);
-            // 
-            // aTUToolStripMenuItem
-            // 
-            this.aTUToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.aTUToolStripMenuItem.Name = "aTUToolStripMenuItem";
-            resources.ApplyResources(this.aTUToolStripMenuItem, "aTUToolStripMenuItem");
-            this.aTUToolStripMenuItem.Click += new System.EventHandler(this.aTUToolStripMenuItem_Click);
-            // 
-            // flexControlToolStripMenuItem
-            // 
-            this.flexControlToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.flexControlToolStripMenuItem.Name = "flexControlToolStripMenuItem";
-            resources.ApplyResources(this.flexControlToolStripMenuItem, "flexControlToolStripMenuItem");
-            this.flexControlToolStripMenuItem.Click += new System.EventHandler(this.flexControlToolStripMenuItem_Click);
-            // 
-            // eSCToolStripMenuItem
-            // 
-            resources.ApplyResources(this.eSCToolStripMenuItem, "eSCToolStripMenuItem");
-            this.eSCToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.eSCToolStripMenuItem.Name = "eSCToolStripMenuItem";
-            this.eSCToolStripMenuItem.Click += new System.EventHandler(this.eSCToolStripMenuItem_Click);
-            // 
-            // GrayMenuItem
-            // 
-            this.GrayMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.GrayMenuItem.Name = "GrayMenuItem";
-            resources.ApplyResources(this.GrayMenuItem, "GrayMenuItem");
-            this.GrayMenuItem.Click += new System.EventHandler(this.GrayMenuItem_Click);
-            // 
-            // TXIDMenuItem
-            // 
-            resources.ApplyResources(this.TXIDMenuItem, "TXIDMenuItem");
-            this.TXIDMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.TXIDMenuItem.Name = "TXIDMenuItem";
-            this.TXIDMenuItem.CheckedChanged += new System.EventHandler(this.TXIDMenuItem_CheckedChanged);
-            this.TXIDMenuItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TXIDMenuItem_MouseDown);
-            this.TXIDMenuItem.MouseHover += new System.EventHandler(this.TXIDMenuItem_MouseHover);
-            // 
-            // callsignTextBox
-            // 
-            resources.ApplyResources(this.callsignTextBox, "callsignTextBox");
-            this.callsignTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.callsignTextBox.Name = "callsignTextBox";
-            this.callsignTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.callsignTextBox.Leave += new System.EventHandler(this.callsignTextBox_Leave);
-            this.callsignTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.callsignTextBox_MouseDown);
-            this.callsignTextBox.MouseEnter += new System.EventHandler(this.callsignTextBox_MouseEnter);
-            this.callsignTextBox.MouseLeave += new System.EventHandler(this.callsignTextBox_MouseLeave);
-            this.callsignTextBox.TextChanged += new System.EventHandler(this.callsignTextBox_TextChanged_1);
-            // 
-            // ScanMenuItem
-            // 
-            this.ScanMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ScanMenuItem.Name = "ScanMenuItem";
-            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
-            this.ScanMenuItem.Click += new System.EventHandler(this.ScanMenuItem_Click);
-            // 
-            // spotterMenu
-            // 
-            resources.ApplyResources(this.spotterMenu, "spotterMenu");
-            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.spotterMenu.Name = "spotterMenu";
-            this.spotterMenu.CheckedChanged += new System.EventHandler(this.spotterMenu_CheckedChanged);
-            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
-            this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
-            // 
-            // herosToolStripMenuItem
-            // 
-            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
-            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
-            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // remoteProfilesToolStripMenuItem
-            // 
-            this.remoteProfilesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.remoteProfilesToolStripMenuItem.Name = "remoteProfilesToolStripMenuItem";
-            resources.ApplyResources(this.remoteProfilesToolStripMenuItem, "remoteProfilesToolStripMenuItem");
-            this.remoteProfilesToolStripMenuItem.Click += new System.EventHandler(this.remoteProfilesToolStripMenuItem_Click);
-            // 
-            // reportBugToolStripMenuItem
-            // 
-            this.reportBugToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
-            resources.ApplyResources(this.reportBugToolStripMenuItem, "reportBugToolStripMenuItem");
-            this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "QuickAudio";
-            // 
-            // picRX2Squelch
-            // 
-            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
-            this.picRX2Squelch.Name = "picRX2Squelch";
-            this.picRX2Squelch.TabStop = false;
-            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
-            // 
-            // picSquelch
-            // 
-            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picSquelch, "picSquelch");
-            this.picSquelch.Name = "picSquelch";
-            this.picSquelch.TabStop = false;
-            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
-            // 
-            // panelDisplay2
-            // 
-            resources.ApplyResources(this.panelDisplay2, "panelDisplay2");
-            this.panelDisplay2.BackColor = System.Drawing.Color.Transparent;
-            this.panelDisplay2.Controls.Add(this.btnTNFAdd);
-            this.panelDisplay2.Controls.Add(this.chkTNF);
-            this.panelDisplay2.Controls.Add(this.chkDisplayPeak);
-            this.panelDisplay2.Controls.Add(this.comboDisplayMode);
-            this.panelDisplay2.Controls.Add(this.chkDisplayAVG);
-            this.panelDisplay2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panelDisplay2.Name = "panelDisplay2";
-            // 
             // btnTNFAdd
             // 
             this.btnTNFAdd.FlatAppearance.BorderSize = 0;
@@ -3403,20 +3072,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkDisplayAVG, resources.GetString("chkDisplayAVG.ToolTip"));
             this.chkDisplayAVG.CheckedChanged += new System.EventHandler(this.chkDisplayAVG_CheckedChanged);
             // 
-            // ptbRX2Squelch
-            // 
-            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
-            this.ptbRX2Squelch.HeadImage = null;
-            this.ptbRX2Squelch.LargeChange = 1;
-            this.ptbRX2Squelch.Maximum = 0;
-            this.ptbRX2Squelch.Minimum = -160;
-            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
-            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Squelch.SmallChange = 1;
-            this.ptbRX2Squelch.TabStop = false;
-            this.ptbRX2Squelch.Value = -150;
-            this.ptbRX2Squelch.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
-            // 
             // ptbRX2RF
             // 
             resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
@@ -3431,23 +3086,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
             this.ptbRX2RF.Value = 90;
             this.ptbRX2RF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
-            // 
-            // panelOptions
-            // 
-            resources.ApplyResources(this.panelOptions, "panelOptions");
-            this.panelOptions.BackColor = System.Drawing.Color.Transparent;
-            this.panelOptions.Controls.Add(this.chkFWCATU);
-            this.panelOptions.Controls.Add(this.chkFWCATUBypass);
-            this.panelOptions.Controls.Add(this.ckQuickPlay);
-            this.panelOptions.Controls.Add(this.chkMON);
-            this.panelOptions.Controls.Add(this.ckQuickRec);
-            this.panelOptions.Controls.Add(this.chkMUT);
-            this.panelOptions.Controls.Add(this.chkMOX);
-            this.panelOptions.Controls.Add(this.chkTUN);
-            this.panelOptions.Controls.Add(this.chkX2TR);
-            this.panelOptions.Controls.Add(this.comboTuneMode);
-            this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panelOptions.Name = "panelOptions";
             // 
             // chkFWCATU
             // 
@@ -3476,6 +3114,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.ckQuickPlay, resources.GetString("ckQuickPlay.ToolTip"));
             this.ckQuickPlay.CheckedChanged += new System.EventHandler(this.ckQuickPlay_CheckedChanged);
             this.ckQuickPlay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ckQuickPlay_MouseDown);
+            this.ckQuickPlay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ckQuickPlay_MouseUp);
             // 
             // chkMON
             // 
@@ -4851,7 +4490,7 @@ namespace PowerSDR
             this.comboMeterTXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterTXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterTXMode.DropDownWidth = 72;
-            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterTXMode, "comboMeterTXMode");
             this.comboMeterTXMode.Name = "comboMeterTXMode";
             this.toolTip1.SetToolTip(this.comboMeterTXMode, resources.GetString("comboMeterTXMode.ToolTip"));
@@ -4862,7 +4501,7 @@ namespace PowerSDR
             this.comboMeterRXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterRXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterRXMode.DropDownWidth = 72;
-            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterRXMode, "comboMeterRXMode");
             this.comboMeterRXMode.Name = "comboMeterRXMode";
             this.toolTip1.SetToolTip(this.comboMeterRXMode, resources.GetString("comboMeterRXMode.ToolTip"));
@@ -5084,7 +4723,7 @@ namespace PowerSDR
             this.comboRX2MeterMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboRX2MeterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2MeterMode.DropDownWidth = 72;
-            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboRX2MeterMode, "comboRX2MeterMode");
             this.comboRX2MeterMode.Name = "comboRX2MeterMode";
             this.toolTip1.SetToolTip(this.comboRX2MeterMode, resources.GetString("comboRX2MeterMode.ToolTip"));
@@ -5290,6 +4929,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.autoBrightBox, resources.GetString("autoBrightBox.ToolTip"));
             this.autoBrightBox.Click += new System.EventHandler(this.autoBrightBox_Click);
             this.autoBrightBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.autoBrightBox_MouseDown);
+            this.autoBrightBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.autoBrightBox_MouseUp);
             // 
             // radBandGN13
             // 
@@ -5529,7 +5169,7 @@ namespace PowerSDR
             this.comboMeterTX1Mode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterTX1Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterTX1Mode.DropDownWidth = 72;
-            this.comboMeterTX1Mode.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboMeterTX1Mode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterTX1Mode, "comboMeterTX1Mode");
             this.comboMeterTX1Mode.Name = "comboMeterTX1Mode";
             this.toolTip1.SetToolTip(this.comboMeterTX1Mode, resources.GetString("comboMeterTX1Mode.ToolTip"));
@@ -5828,6 +5468,370 @@ namespace PowerSDR
             this.txtNOAA.ReadOnly = true;
             this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
             this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
+            // 
+            // timer_clock
+            // 
+            this.timer_clock.Enabled = true;
+            this.timer_clock.Tick += new System.EventHandler(this.timer_clock_Tick);
+            // 
+            // contextMenuStripFilterRX1
+            // 
+            this.contextMenuStripFilterRX1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemRX1FilterConfigure,
+            this.toolStripMenuItemRX1FilterReset});
+            this.contextMenuStripFilterRX1.Name = "contextMenuStripFilterRX1";
+            resources.ApplyResources(this.contextMenuStripFilterRX1, "contextMenuStripFilterRX1");
+            // 
+            // toolStripMenuItemRX1FilterConfigure
+            // 
+            this.toolStripMenuItemRX1FilterConfigure.Name = "toolStripMenuItemRX1FilterConfigure";
+            resources.ApplyResources(this.toolStripMenuItemRX1FilterConfigure, "toolStripMenuItemRX1FilterConfigure");
+            this.toolStripMenuItemRX1FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterConfigure_Click);
+            // 
+            // toolStripMenuItemRX1FilterReset
+            // 
+            this.toolStripMenuItemRX1FilterReset.Name = "toolStripMenuItemRX1FilterReset";
+            resources.ApplyResources(this.toolStripMenuItemRX1FilterReset, "toolStripMenuItemRX1FilterReset");
+            this.toolStripMenuItemRX1FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterReset_Click);
+            // 
+            // contextMenuStripFilterRX2
+            // 
+            this.contextMenuStripFilterRX2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemRX2FilterConfigure,
+            this.toolStripMenuItemRX2FilterReset});
+            this.contextMenuStripFilterRX2.Name = "contextMenuStripFilterRX2";
+            resources.ApplyResources(this.contextMenuStripFilterRX2, "contextMenuStripFilterRX2");
+            // 
+            // toolStripMenuItemRX2FilterConfigure
+            // 
+            this.toolStripMenuItemRX2FilterConfigure.Name = "toolStripMenuItemRX2FilterConfigure";
+            resources.ApplyResources(this.toolStripMenuItemRX2FilterConfigure, "toolStripMenuItemRX2FilterConfigure");
+            this.toolStripMenuItemRX2FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterConfigure_Click);
+            // 
+            // toolStripMenuItemRX2FilterReset
+            // 
+            this.toolStripMenuItemRX2FilterReset.Name = "toolStripMenuItemRX2FilterReset";
+            resources.ApplyResources(this.toolStripMenuItemRX2FilterReset, "toolStripMenuItemRX2FilterReset");
+            this.toolStripMenuItemRX2FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterReset_Click);
+            // 
+            // timer_navigate
+            // 
+            this.timer_navigate.Tick += new System.EventHandler(this.timer_navigate_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 200;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // contextMenuStripNotch
+            // 
+            this.contextMenuStripNotch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripNotchDelete,
+            this.toolStripNotchRemember,
+            this.toolStripSeparator1,
+            this.toolStripNotchNormal,
+            this.toolStripNotchDeep,
+            this.toolStripNotchVeryDeep});
+            this.contextMenuStripNotch.Name = "contextMenuStripNotch";
+            resources.ApplyResources(this.contextMenuStripNotch, "contextMenuStripNotch");
+            // 
+            // toolStripNotchDelete
+            // 
+            this.toolStripNotchDelete.Name = "toolStripNotchDelete";
+            resources.ApplyResources(this.toolStripNotchDelete, "toolStripNotchDelete");
+            this.toolStripNotchDelete.Click += new System.EventHandler(this.toolStripNotchDelete_Click);
+            // 
+            // toolStripNotchRemember
+            // 
+            this.toolStripNotchRemember.Name = "toolStripNotchRemember";
+            resources.ApplyResources(this.toolStripNotchRemember, "toolStripNotchRemember");
+            this.toolStripNotchRemember.Click += new System.EventHandler(this.toolStripNotchRemember_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // toolStripNotchNormal
+            // 
+            this.toolStripNotchNormal.Name = "toolStripNotchNormal";
+            resources.ApplyResources(this.toolStripNotchNormal, "toolStripNotchNormal");
+            this.toolStripNotchNormal.Click += new System.EventHandler(this.toolStripNotchNormal_Click);
+            // 
+            // toolStripNotchDeep
+            // 
+            this.toolStripNotchDeep.Checked = true;
+            this.toolStripNotchDeep.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripNotchDeep.Name = "toolStripNotchDeep";
+            resources.ApplyResources(this.toolStripNotchDeep, "toolStripNotchDeep");
+            this.toolStripNotchDeep.Click += new System.EventHandler(this.toolStripNotchDeep_Click);
+            // 
+            // toolStripNotchVeryDeep
+            // 
+            this.toolStripNotchVeryDeep.Name = "toolStripNotchVeryDeep";
+            resources.ApplyResources(this.toolStripNotchVeryDeep, "toolStripNotchVeryDeep");
+            this.toolStripNotchVeryDeep.Click += new System.EventHandler(this.toolStripNotchVeryDeep_Click);
+            // 
+            // timerNotchZoom
+            // 
+            this.timerNotchZoom.Interval = 1000;
+            this.timerNotchZoom.Tick += new System.EventHandler(this.timerNotchZoom_Tick);
+            // 
+            // menuStrip1
+            // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
+            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setupToolStripMenuItem,
+            this.memoryToolStripMenuItem,
+            this.waveToolStripMenuItem,
+            this.equalizerToolStripMenuItem,
+            this.xVTRsToolStripMenuItem,
+            this.cWXToolStripMenuItem,
+            this.uCBToolStripMenuItem,
+            this.mixerToolStripMenuItem,
+            this.antennaToolStripMenuItem,
+            this.relaysToolStripMenuItem,
+            this.aTUToolStripMenuItem,
+            this.flexControlToolStripMenuItem,
+            this.eSCToolStripMenuItem,
+            this.GrayMenuItem,
+            this.TXIDMenuItem,
+            this.callsignTextBox,
+            this.ScanMenuItem,
+            this.spotterMenu,
+            this.herosToolStripMenuItem,
+            this.aboutToolStripMenuItem,
+            this.remoteProfilesToolStripMenuItem,
+            this.reportBugToolStripMenuItem});
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.ShowItemToolTips = true;
+            // 
+            // setupToolStripMenuItem
+            // 
+            this.setupToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
+            resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
+            this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
+            // 
+            // memoryToolStripMenuItem
+            // 
+            this.memoryToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
+            resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
+            this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
+            // 
+            // waveToolStripMenuItem
+            // 
+            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
+            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
+            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
+            // 
+            // equalizerToolStripMenuItem
+            // 
+            this.equalizerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.equalizerToolStripMenuItem.Name = "equalizerToolStripMenuItem";
+            resources.ApplyResources(this.equalizerToolStripMenuItem, "equalizerToolStripMenuItem");
+            this.equalizerToolStripMenuItem.Click += new System.EventHandler(this.equalizerToolStripMenuItem_Click);
+            // 
+            // xVTRsToolStripMenuItem
+            // 
+            this.xVTRsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.xVTRsToolStripMenuItem.Name = "xVTRsToolStripMenuItem";
+            resources.ApplyResources(this.xVTRsToolStripMenuItem, "xVTRsToolStripMenuItem");
+            this.xVTRsToolStripMenuItem.Click += new System.EventHandler(this.xVTRsToolStripMenuItem_Click);
+            // 
+            // cWXToolStripMenuItem
+            // 
+            this.cWXToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.cWXToolStripMenuItem.Name = "cWXToolStripMenuItem";
+            resources.ApplyResources(this.cWXToolStripMenuItem, "cWXToolStripMenuItem");
+            this.cWXToolStripMenuItem.Click += new System.EventHandler(this.cWXToolStripMenuItem_Click);
+            // 
+            // uCBToolStripMenuItem
+            // 
+            this.uCBToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.uCBToolStripMenuItem.Name = "uCBToolStripMenuItem";
+            resources.ApplyResources(this.uCBToolStripMenuItem, "uCBToolStripMenuItem");
+            this.uCBToolStripMenuItem.Click += new System.EventHandler(this.uCBToolStripMenuItem_Click);
+            // 
+            // mixerToolStripMenuItem
+            // 
+            this.mixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.mixerToolStripMenuItem.Name = "mixerToolStripMenuItem";
+            resources.ApplyResources(this.mixerToolStripMenuItem, "mixerToolStripMenuItem");
+            this.mixerToolStripMenuItem.Click += new System.EventHandler(this.mixerToolStripMenuItem_Click);
+            // 
+            // antennaToolStripMenuItem
+            // 
+            this.antennaToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.antennaToolStripMenuItem.Name = "antennaToolStripMenuItem";
+            resources.ApplyResources(this.antennaToolStripMenuItem, "antennaToolStripMenuItem");
+            this.antennaToolStripMenuItem.Click += new System.EventHandler(this.antennaToolStripMenuItem_Click);
+            // 
+            // relaysToolStripMenuItem
+            // 
+            this.relaysToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.relaysToolStripMenuItem.Name = "relaysToolStripMenuItem";
+            resources.ApplyResources(this.relaysToolStripMenuItem, "relaysToolStripMenuItem");
+            this.relaysToolStripMenuItem.Click += new System.EventHandler(this.relaysToolStripMenuItem_Click);
+            // 
+            // aTUToolStripMenuItem
+            // 
+            this.aTUToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aTUToolStripMenuItem.Name = "aTUToolStripMenuItem";
+            resources.ApplyResources(this.aTUToolStripMenuItem, "aTUToolStripMenuItem");
+            this.aTUToolStripMenuItem.Click += new System.EventHandler(this.aTUToolStripMenuItem_Click);
+            // 
+            // flexControlToolStripMenuItem
+            // 
+            this.flexControlToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.flexControlToolStripMenuItem.Name = "flexControlToolStripMenuItem";
+            resources.ApplyResources(this.flexControlToolStripMenuItem, "flexControlToolStripMenuItem");
+            this.flexControlToolStripMenuItem.Click += new System.EventHandler(this.flexControlToolStripMenuItem_Click);
+            // 
+            // eSCToolStripMenuItem
+            // 
+            resources.ApplyResources(this.eSCToolStripMenuItem, "eSCToolStripMenuItem");
+            this.eSCToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.eSCToolStripMenuItem.Name = "eSCToolStripMenuItem";
+            this.eSCToolStripMenuItem.Click += new System.EventHandler(this.eSCToolStripMenuItem_Click);
+            // 
+            // GrayMenuItem
+            // 
+            this.GrayMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.GrayMenuItem.Name = "GrayMenuItem";
+            resources.ApplyResources(this.GrayMenuItem, "GrayMenuItem");
+            this.GrayMenuItem.Click += new System.EventHandler(this.GrayMenuItem_Click);
+            // 
+            // TXIDMenuItem
+            // 
+            resources.ApplyResources(this.TXIDMenuItem, "TXIDMenuItem");
+            this.TXIDMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.TXIDMenuItem.Name = "TXIDMenuItem";
+            this.TXIDMenuItem.CheckedChanged += new System.EventHandler(this.TXIDMenuItem_CheckedChanged);
+            this.TXIDMenuItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TXIDMenuItem_MouseDown);
+            this.TXIDMenuItem.MouseHover += new System.EventHandler(this.TXIDMenuItem_MouseHover);
+            // 
+            // callsignTextBox
+            // 
+            resources.ApplyResources(this.callsignTextBox, "callsignTextBox");
+            this.callsignTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.callsignTextBox.Name = "callsignTextBox";
+            this.callsignTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.callsignTextBox.Leave += new System.EventHandler(this.callsignTextBox_Leave);
+            this.callsignTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.callsignTextBox_MouseDown);
+            this.callsignTextBox.MouseEnter += new System.EventHandler(this.callsignTextBox_MouseEnter);
+            this.callsignTextBox.MouseLeave += new System.EventHandler(this.callsignTextBox_MouseLeave);
+            this.callsignTextBox.TextChanged += new System.EventHandler(this.callsignTextBox_TextChanged_1);
+            // 
+            // ScanMenuItem
+            // 
+            this.ScanMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ScanMenuItem.Name = "ScanMenuItem";
+            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
+            this.ScanMenuItem.Click += new System.EventHandler(this.ScanMenuItem_Click);
+            // 
+            // spotterMenu
+            // 
+            resources.ApplyResources(this.spotterMenu, "spotterMenu");
+            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.spotterMenu.Name = "spotterMenu";
+            this.spotterMenu.CheckedChanged += new System.EventHandler(this.spotterMenu_CheckedChanged);
+            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
+            this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
+            // 
+            // herosToolStripMenuItem
+            // 
+            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
+            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
+            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // remoteProfilesToolStripMenuItem
+            // 
+            this.remoteProfilesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.remoteProfilesToolStripMenuItem.Name = "remoteProfilesToolStripMenuItem";
+            resources.ApplyResources(this.remoteProfilesToolStripMenuItem, "remoteProfilesToolStripMenuItem");
+            this.remoteProfilesToolStripMenuItem.Click += new System.EventHandler(this.remoteProfilesToolStripMenuItem_Click);
+            // 
+            // reportBugToolStripMenuItem
+            // 
+            this.reportBugToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
+            resources.ApplyResources(this.reportBugToolStripMenuItem, "reportBugToolStripMenuItem");
+            this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "QuickAudio";
+            // 
+            // picRX2Squelch
+            // 
+            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
+            this.picRX2Squelch.Name = "picRX2Squelch";
+            this.picRX2Squelch.TabStop = false;
+            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
+            // 
+            // picSquelch
+            // 
+            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picSquelch, "picSquelch");
+            this.picSquelch.Name = "picSquelch";
+            this.picSquelch.TabStop = false;
+            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
+            // 
+            // panelDisplay2
+            // 
+            resources.ApplyResources(this.panelDisplay2, "panelDisplay2");
+            this.panelDisplay2.BackColor = System.Drawing.Color.Transparent;
+            this.panelDisplay2.Controls.Add(this.btnTNFAdd);
+            this.panelDisplay2.Controls.Add(this.chkTNF);
+            this.panelDisplay2.Controls.Add(this.chkDisplayPeak);
+            this.panelDisplay2.Controls.Add(this.comboDisplayMode);
+            this.panelDisplay2.Controls.Add(this.chkDisplayAVG);
+            this.panelDisplay2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panelDisplay2.Name = "panelDisplay2";
+            // 
+            // ptbRX2Squelch
+            // 
+            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
+            this.ptbRX2Squelch.HeadImage = null;
+            this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.Maximum = 0;
+            this.ptbRX2Squelch.Minimum = -160;
+            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
+            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Squelch.SmallChange = 1;
+            this.ptbRX2Squelch.TabStop = false;
+            this.ptbRX2Squelch.Value = -150;
+            this.ptbRX2Squelch.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
+            // 
+            // panelOptions
+            // 
+            resources.ApplyResources(this.panelOptions, "panelOptions");
+            this.panelOptions.BackColor = System.Drawing.Color.Transparent;
+            this.panelOptions.Controls.Add(this.chkFWCATU);
+            this.panelOptions.Controls.Add(this.chkFWCATUBypass);
+            this.panelOptions.Controls.Add(this.ckQuickPlay);
+            this.panelOptions.Controls.Add(this.chkMON);
+            this.panelOptions.Controls.Add(this.ckQuickRec);
+            this.panelOptions.Controls.Add(this.chkMUT);
+            this.panelOptions.Controls.Add(this.chkMOX);
+            this.panelOptions.Controls.Add(this.chkTUN);
+            this.panelOptions.Controls.Add(this.chkX2TR);
+            this.panelOptions.Controls.Add(this.comboTuneMode);
+            this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panelOptions.Name = "panelOptions";
             // 
             // panelBandHF
             // 
@@ -7295,17 +7299,7 @@ namespace PowerSDR
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Console_MouseWheel);
             this.Resize += new System.EventHandler(this.Console_Resize);
-            this.contextMenuStripFilterRX1.ResumeLayout(false);
-            this.contextMenuStripFilterRX2.ResumeLayout(false);
-            this.contextMenuStripNotch.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
-            this.panelDisplay2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
-            this.panelOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
@@ -7333,6 +7327,16 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
+            this.contextMenuStripFilterRX1.ResumeLayout(false);
+            this.contextMenuStripFilterRX2.ResumeLayout(false);
+            this.contextMenuStripNotch.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
+            this.panelDisplay2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
+            this.panelOptions.ResumeLayout(false);
             this.panelBandHF.ResumeLayout(false);
             this.panelModeSpecificFM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
@@ -12720,16 +12724,69 @@ namespace PowerSDR
 			g.Dispose();
 		}
 
-		public void SaveBand()
-		{
-			// Used in Bandstacking algorithm
-			double freq = Math.Round(VFOAFreq, 6);
+        public string[] filter2 = new string[20]; // ke9ns add for bandstack locking
+        public int iii = 0;
 
-			string filter = rx1_filter.ToString();
+      
+        //==================================================================================
+        // ke9ns add
+        public void SaveBand1()
+        {
+
+            try
+            {
+                StackForm.bandstackupdate(); // ke9ns add: to update filter2[]
+
+                iii = Convert.ToInt32((string)regBox1.Text);
+                Debug.WriteLine("LOCK STATUS filter2[] = " + filter2[iii]);
+
+                iii = iii - 1;
+
+
+                 Debug.WriteLine("index status = " + iii);
+
+            }
+            catch
+            {
+                Debug.WriteLine("Cant get bandstack info");
+                iii = 0;
+                filter2[0] = "";
+
+            }
+
+            if (filter2[iii] == "@")
+            {
+
+                BandStackLock = 1;
+            }
+            else
+            {
+                BandStackLock = 0;
+
+            }
+
+        } // SaveBand1()
+
+
+        //======================================================================================
+        public void SaveBand()
+		{
+
+            SaveBand1(); // get bandstack Locking info
+     
+           
+
+            // Used in Bandstacking algorithm
+            double freq = Math.Round(VFOAFreq, 6);
+
+			string filter = rx1_filter.ToString() + filter2[iii]; // ke9ns mod  (add filter2 for bandstack locking)
+
+            Debug.WriteLine("filter2");
 
 			string mode = rx1_dsp_mode.ToString();
 
-			switch(rx1_band)
+         
+            switch (rx1_band)
 			{
 				case Band.B160M:
 					if(freq >= 1.8 && freq < 2.0)
@@ -12927,9 +12984,13 @@ namespace PowerSDR
                         DB.SaveBandStack("11M", band_11m_index, mode, filter, freq);
                     break;
 
-
-
             } // switch rx1band
+
+         //   if (StackForm != null)
+         //   {
+          //      StackForm.textBox1.SelectionStart = (iii * 31);
+          //      StackForm.textBox1.SelectionLength = 31;
+          //  }
 
         } // saveband
 
@@ -12937,11 +12998,15 @@ namespace PowerSDR
  
 		public void SetBand(string mode, string filter, double freq)
 		{
+            if (filter.Contains("@"))
+            {
+                filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+            }
+          
 			// Set mode, filter, and frequency according to passed parameters
 			RX1DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode, true);
 
-			if(rx1_dsp_mode != DSPMode.DRM &&
-				rx1_dsp_mode != DSPMode.SPEC)
+			if(rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC)
 			{
 				RX1Filter = (Filter)Enum.Parse(typeof(Filter), filter, true);
 			}
@@ -18930,6 +18995,34 @@ namespace PowerSDR
             {
 
                 UpdateBandButtonColors(); // ke9ns add to update the regBOX bandstack values on screen
+
+                if (StackForm != null)
+                {
+                    int value;
+                    StackForm.textBox1.Focus();
+
+                    if (int.TryParse(regBox1.Text, out value))
+                    {
+
+                        if (value > 0)
+                        {
+                            StackForm.textBox1.SelectionStart = (value - 1) * 31;       // start of each bandstack line
+                            StackForm.textBox1.SelectionLength = 31;                    // length of each bandstack line
+                        }
+                        else
+                        {
+                            StackForm.textBox1.SelectionStart = 0;
+                            StackForm.textBox1.SelectionLength = 31;
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.WriteLine("no value");
+                        StackForm.textBox1.SelectionStart = 0;
+                        StackForm.textBox1.SelectionLength = 31;
+                    }
+                }
 
                 //
                 switch (RX1Band)
@@ -30272,9 +30365,14 @@ namespace PowerSDR
 
             if (b)
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 VFOBFreq = freq;
                 RX2DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode);
                 VFOBFreq = freq;
+               
                 RX2Filter = (Filter)Enum.Parse(typeof(Filter), filter);
             }
 
@@ -51707,6 +51805,10 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_160m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51728,6 +51830,10 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_80m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51776,6 +51882,10 @@ namespace PowerSDR
                 double freq;
                 if (DB.GetBandStack(last_band, band_60m_index, out mode, out filter, out freq))
                 {
+                    if (filter.Contains("@"))
+                    {
+                        filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                    }
                     SetBand(mode, filter, freq);
                 }
            /*  } */
@@ -51798,6 +51908,10 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_40m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51819,6 +51933,10 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_30m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51840,6 +51958,10 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_20m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))
+                {
+                    filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                }
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51861,6 +51983,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_17m_index, out mode, out filter, out freq))
             {
+                if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+                
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51883,6 +52007,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_15m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51904,6 +52030,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_12m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51925,6 +52053,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_10m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51946,6 +52076,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_6m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51967,6 +52099,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_2m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -51988,6 +52122,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_wwv_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -52011,6 +52147,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_gen_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -52033,6 +52171,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_gen_index, out mode, out filter, out freq))
             {
+              if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -52114,12 +52254,17 @@ namespace PowerSDR
             for (int i = 0; i < 3; i++)
             {
                 DB.GetBandStack(last_band, i, out mode, out filter, out freq);
+
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 if (freq < start_freq || freq > end_freq)
                     DB.SaveBandStack(last_band, i, mode, filter, start_freq + i * 0.001);
             }
 
             if (DB.GetBandStack(last_band, index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -57615,6 +57760,11 @@ namespace PowerSDR
 
                 if (b)
                 {
+                    if (filter.Contains("@"))
+                    {
+                        filter = filter.Substring(0, (filter.Length)-1); // ke9ns add for bandstack lockout
+                    }
+
                     VFOBFreq = freq;
                     RX2DSPMode = (DSPMode)Enum.Parse(typeof(DSPMode), mode);
 
@@ -59909,6 +60059,8 @@ namespace PowerSDR
         public void autoBrightBox_Click(object sender, EventArgs e)
         {
 
+          
+
             if (Display.continuum == 0)
             {
                 Display.AutoBright = 1; // adjust RX or TX
@@ -59959,6 +60111,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_LMF_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -59986,6 +60140,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_120m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60007,6 +60163,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_90m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60028,6 +60186,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_61m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60049,6 +60209,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_49m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60070,6 +60232,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_41m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60091,6 +60255,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_31m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60112,6 +60278,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_25m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60133,6 +60301,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_22m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60154,6 +60324,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_19m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60175,6 +60347,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_16m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60196,6 +60370,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_14m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60217,6 +60393,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_13m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -60238,6 +60416,8 @@ namespace PowerSDR
             double freq;
             if (DB.GetBandStack(last_band, band_11m_index, out mode, out filter, out freq))
             {
+                 if (filter.Contains("@"))  filter = filter.Substring(0, (filter.Length) - 1); // ke9ns add for bandstack lockout
+
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
@@ -61484,6 +61664,7 @@ namespace PowerSDR
 
             if ((me.Button == System.Windows.Forms.MouseButtons.Right))
             {
+                autoBrightBox.ForeColor = Color.LightPink;
 
                 if (Display.continuum == 0)
                 {
@@ -61498,6 +61679,10 @@ namespace PowerSDR
 
 
             } // right click
+            else
+            {
+                autoBrightBox.ForeColor = Color.LightSkyBlue;
+            }
 
 
         } // autobrightbox_mousedown
@@ -61670,12 +61855,13 @@ namespace PowerSDR
         // ke9ns add allow you to play sequential quickaudio by right clicking
         private void ckQuickPlay_MouseDown(object sender, MouseEventArgs e)
         {
-
+          
             MouseEventArgs me = (MouseEventArgs)e;
 
 
             if (me.Button == System.Windows.Forms.MouseButtons.Right)
             {
+
                 if (WaveForm.chkQuickAudioFolder.Checked == true)
                 {
                   
@@ -61690,7 +61876,7 @@ namespace PowerSDR
                         return;
 
                     }
-                  
+
                     openFileDialog1.InitialDirectory = String.Empty;
                     
                     openFileDialog1.InitialDirectory = filePath; // ke9ns  file to quickplay subfolder but could also be wave_folder;
@@ -61819,8 +62005,25 @@ namespace PowerSDR
             if (StackForm == null || StackForm.IsDisposed)  StackForm = new StackControl(this);
             StackForm.Show();
             StackForm.Focus();
+
+          
+
+        }// regBox1_Click
+
+        // ke9ns add
+        public static int bslock = 0;
+
+        public static int BandStackLock
+        {
+            get { return bslock; }
+            set
+            {
+                  bslock = value;
+    
+            }
         }
 
+       
 
         //==============================================================
         // ke9ns add  open up bandstack window when you click on the bandstack index
@@ -62122,6 +62325,20 @@ namespace PowerSDR
                 UpdateBandButtonColors();
                 }
             } // right click
+        }
+
+        private void autoBrightBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            autoBrightBox.ForeColor = Color.White;
+        }
+
+        private void ckQuickPlay_MouseUp(object sender, MouseEventArgs e)
+        {
+          
+
+            //  ckQuickPlay.ContextMenu.Show() = false;
+
+            // textBox1.ShortcutsEnabled = false;
         }
 
 

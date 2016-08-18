@@ -39,9 +39,11 @@ namespace PowerSDR
 {
 	class DB
 	{
-		#region Variable Declaration
+        #region Variable Declaration
 
-		public static DataSet ds;
+        public static Console console;   // ke9ns mod  to allow console to pass back values to stack screen
+
+        public static DataSet ds;
 
         /// <summary>
         /// the complete filename of the datbase file to use including the full path
@@ -5800,7 +5802,11 @@ namespace PowerSDR
 			mode = (string)((DataRow)rows[index])["Mode"];
 			filter = (string)((DataRow)rows[index])["Filter"];
 			freq = (double)((DataRow)rows[index])["Freq"];
-			return true;
+
+
+            return true;
+
+
         } //GetBandStack
 
 
@@ -5852,7 +5858,9 @@ namespace PowerSDR
 
         } // WWV25;
 
+        public static int filter3 = 0;
 
+      
 
         public static void SaveBandStack(string band, int index, string mode, string filter, double freq)
 		{
@@ -5862,24 +5870,39 @@ namespace PowerSDR
 
 			foreach(DataRow datarow in rows)			// prevent duplicates
 			{
-				if((string)datarow["BandName"] == band &&
-					(double)datarow["Freq"] == freq)
+				if((string)datarow["BandName"] == band && (double)datarow["Freq"] == freq)
 				{
 					datarow["Filter"] = filter;
 					datarow["Mode"] = mode;
+
+                    Debug.WriteLine("====DUPLICATE===");
 					return;
 				}
 			}
+          
+            filter3 = Console.BandStackLock;
+          
+            Debug.WriteLine("database check for lock status= "+ filter3);
 
-			index = index % rows.Length;
+            if (filter3 == 1) // ke9ns add (for bandstack locking)
+            {
+                Debug.WriteLine("====LOCKED DONT UPDATE THIS BANDSTACK FREQ===");
+                return;
+            }
+
+         
+            index = index % rows.Length;
 
 			DataRow d = (DataRow)rows[index];
 			d["Mode"] = mode;
 			d["Filter"] = filter;
 			d["Freq"] = freq;
-		}
 
+            Debug.WriteLine("=====SAVEBANDSTACK====");
 
+        } //savebandstack
+
+    
 
 
         // This removes the notches from the state database so we can rewrite all of them without

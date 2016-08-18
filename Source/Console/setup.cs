@@ -12245,7 +12245,7 @@ namespace PowerSDR
             // clrbtnMeterLow
             // 
             this.clrbtnMeterLow.Automatic = "Automatic";
-            this.clrbtnMeterLow.Color = System.Drawing.Color.White;
+            this.clrbtnMeterLow.Color = System.Drawing.Color.CornflowerBlue;
             this.clrbtnMeterLow.Image = null;
             this.clrbtnMeterLow.Location = new System.Drawing.Point(80, 24);
             this.clrbtnMeterLow.MoreColors = "More Colors...";
