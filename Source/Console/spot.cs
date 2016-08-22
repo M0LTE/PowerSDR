@@ -68,16 +68,12 @@ namespace PowerSDR
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
         public Setup setupForm;                             // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
-        public static StackControl StackForm;                     // ke9ns add  communications with spot.cs and stack
-        public static SwlControl SwlForm;                     // ke9ns add  communications with spot.cs and swl
+        public StackControl StackForm;                      // ke9ns add  communications with spot.cs and stack
+        public SwlControl SwlForm;                          // ke9ns add  communications with spot.cs and swl
 
-        public DXMemList dxmemlist;
+        public DXMemList dxmemlist;                         //  ke9ns add comm with dx cluster list
 
         //   public static Display display;
-
-        //   public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
-
-       
 
 
         //   private ArrayList file_list;
@@ -128,9 +124,7 @@ namespace PowerSDR
             console = c;
             Display.SpotForm = this;  // allows Display to see public data (not public static data)
             StackControl.SpotForm = this; // allows Stack to see public data from spot
-            SwlControl.SpotForm = this; // allows swl to see public data from spot
-
-
+          //  SwlControl.SpotForm = this; // allows swl to see public data from spot
 
             Common.RestoreForm(this, "SpotForm", true);
 
@@ -175,6 +169,7 @@ namespace PowerSDR
 
             }
 
+         
 
         } // spotcontrol
 
@@ -201,8 +196,8 @@ namespace PowerSDR
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -222,6 +217,7 @@ namespace PowerSDR
             this.nameBox = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.SWLbutton2 = new System.Windows.Forms.Button();
             this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSWL2 = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
@@ -236,7 +232,6 @@ namespace PowerSDR
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
-            this.SWLbutton2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -457,14 +452,14 @@ namespace PowerSDR
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.Location = new System.Drawing.Point(12, 7);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
@@ -483,14 +478,14 @@ namespace PowerSDR
             this.dataGridView2.AllowUserToResizeRows = false;
             this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView2.Location = new System.Drawing.Point(463, 281);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
@@ -498,6 +493,18 @@ namespace PowerSDR
             this.dataGridView2.TabIndex = 75;
             this.toolTip1.SetToolTip(this.dataGridView2, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
             this.dataGridView2.Visible = false;
+            // 
+            // SWLbutton2
+            // 
+            this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.SWLbutton2.Location = new System.Drawing.Point(666, 447);
+            this.SWLbutton2.Name = "SWLbutton2";
+            this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
+            this.SWLbutton2.TabIndex = 76;
+            this.SWLbutton2.Text = "SWL list";
+            this.toolTip1.SetToolTip(this.SWLbutton2, "Click to turn On/Off Shortwave Spotting to the Panadapter");
+            this.SWLbutton2.UseVisualStyleBackColor = true;
+            this.SWLbutton2.Click += new System.EventHandler(this.SWLbutton2_Click);
             // 
             // chkBoxMem
             // 
@@ -686,19 +693,6 @@ namespace PowerSDR
             this.chkDXMode.UseVisualStyleBackColor = true;
             this.chkDXMode.Visible = false;
             // 
-            // SWLbutton2
-            // 
-            this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton2.Location = new System.Drawing.Point(547, 479);
-            this.SWLbutton2.Name = "SWLbutton2";
-            this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
-            this.SWLbutton2.TabIndex = 76;
-            this.SWLbutton2.Text = "SWL list";
-            this.toolTip1.SetToolTip(this.SWLbutton2, "Click to turn On/Off Shortwave Spotting to the Panadapter");
-            this.SWLbutton2.UseVisualStyleBackColor = true;
-            this.SWLbutton2.Visible = false;
-            this.SWLbutton2.Click += new System.EventHandler(this.SWLbutton2_Click);
-            // 
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -886,7 +880,8 @@ namespace PowerSDR
             }
             else
             {
-                 file_name = console.AppDataPath + "SWL.csv"; //   eibispace.de  sked - b15.csv
+                Debug.WriteLine("LOOK FOR SWL FILE " + console.AppDataPath);
+                file_name = console.AppDataPath + "SWL.csv"; //   eibispace.de  sked - b15.csv
             }
 
             if (!File.Exists(file_name))
@@ -5284,11 +5279,8 @@ namespace PowerSDR
 
         private void SWLbutton2_Click(object sender, EventArgs e)
         {
-          //  if (SwlForm == null || SwlForm.IsDisposed) SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
-
-            SwlForm.Show();
-            SwlForm.Focus();
-
+            console.SWLFORM = true;
+            
 
         }
     } // Spotcontrol

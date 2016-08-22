@@ -131,7 +131,7 @@ namespace PowerSDR
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(26, 410);
+            this.button1.Location = new System.Drawing.Point(24, 372);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -141,7 +141,7 @@ namespace PowerSDR
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(123, 410);
+            this.button2.Location = new System.Drawing.Point(121, 372);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
@@ -150,7 +150,7 @@ namespace PowerSDR
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(220, 410);
+            this.button3.Location = new System.Drawing.Point(218, 372);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 2;
@@ -159,7 +159,7 @@ namespace PowerSDR
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(220, 354);
+            this.button4.Location = new System.Drawing.Point(218, 316);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 3;
@@ -169,7 +169,7 @@ namespace PowerSDR
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(26, 354);
+            this.button5.Location = new System.Drawing.Point(24, 316);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 4;
@@ -179,7 +179,7 @@ namespace PowerSDR
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(123, 354);
+            this.button6.Location = new System.Drawing.Point(121, 316);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 5;
@@ -194,7 +194,7 @@ namespace PowerSDR
             this.lowFBox.Location = new System.Drawing.Point(12, 151);
             this.lowFBox.Name = "lowFBox";
             this.lowFBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.lowFBox.Size = new System.Drawing.Size(186, 29);
+            this.lowFBox.Size = new System.Drawing.Size(172, 29);
             this.lowFBox.TabIndex = 6;
             this.lowFBox.Click += new System.EventHandler(this.lowFBox_Click);
             this.lowFBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lowFBox_KeyDown);
@@ -215,7 +215,7 @@ namespace PowerSDR
             this.textBox3.Location = new System.Drawing.Point(12, 12);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(610, 104);
+            this.textBox3.Size = new System.Drawing.Size(555, 104);
             this.textBox3.TabIndex = 9;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
@@ -224,10 +224,10 @@ namespace PowerSDR
             // 
             this.currFBox.BackColor = System.Drawing.Color.LightYellow;
             this.currFBox.Font = new System.Drawing.Font("Courier New", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.currFBox.Location = new System.Drawing.Point(220, 151);
+            this.currFBox.Location = new System.Drawing.Point(201, 151);
             this.currFBox.Name = "currFBox";
             this.currFBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.currFBox.Size = new System.Drawing.Size(189, 29);
+            this.currFBox.Size = new System.Drawing.Size(178, 29);
             this.currFBox.TabIndex = 10;
             // 
             // label2
@@ -242,7 +242,7 @@ namespace PowerSDR
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(435, 135);
+            this.label1.Location = new System.Drawing.Point(394, 135);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(110, 13);
             this.label1.TabIndex = 20;
@@ -252,10 +252,10 @@ namespace PowerSDR
             // 
             this.highFBox.BackColor = System.Drawing.Color.LightYellow;
             this.highFBox.Font = new System.Drawing.Font("Courier New", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.highFBox.Location = new System.Drawing.Point(438, 151);
+            this.highFBox.Location = new System.Drawing.Point(397, 151);
             this.highFBox.Name = "highFBox";
             this.highFBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.highFBox.Size = new System.Drawing.Size(184, 29);
+            this.highFBox.Size = new System.Drawing.Size(170, 29);
             this.highFBox.TabIndex = 21;
             this.highFBox.Click += new System.EventHandler(this.highFBox_Click);
             this.highFBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.highFBox_KeyDown);
@@ -263,7 +263,7 @@ namespace PowerSDR
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(217, 135);
+            this.label3.Location = new System.Drawing.Point(198, 135);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(142, 13);
             this.label3.TabIndex = 22;
@@ -300,7 +300,7 @@ namespace PowerSDR
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(532, 424);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(461, 372);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
             this.chkAlwaysOnTop.TabIndex = 59;
@@ -310,7 +310,7 @@ namespace PowerSDR
             // ScanControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(648, 474);
+            this.ClientSize = new System.Drawing.Size(586, 411);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);

@@ -117,6 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="textBox3.Text" xml:space="preserve">
+    <value>SWL STATIONS CURRENTLY ON THE AIR: BY FREQUENCY
+LEFT CLICK : Go to that STATION frequency.
+USE THE SEARCH WINDOW TO NARROW 
+Example: Type cuba for "radio habana cuba"
+Note: Many stations will not be heard since they may not be beaming towards you</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
