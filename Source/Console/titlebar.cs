@@ -42,7 +42,7 @@ namespace PowerSDR
         
          public const string BUILT_BY = "Mods Compiled by [KE9NS]";
 #endif    
-        public const string VERSION_SUFFIX = " 082216T9"; // Make this "" for production
+        public const string VERSION_SUFFIX = " 082816T9"; // Make this "" for production
 
         public const string ALPHABETA = ""; // change to "Alpha" or "" as appropriate
 

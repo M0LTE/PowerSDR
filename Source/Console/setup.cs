@@ -2701,11 +2701,12 @@ namespace PowerSDR
             // 
             // udDDSCorrection
             // 
+            this.udDDSCorrection.DecimalPlaces = 1;
             this.udDDSCorrection.Increment = new decimal(new int[] {
-            10,
+            5,
             0,
             0,
-            0});
+            65536});
             this.udDDSCorrection.Location = new System.Drawing.Point(104, 24);
             this.udDDSCorrection.Maximum = new decimal(new int[] {
             1000000,
@@ -24111,7 +24112,8 @@ namespace PowerSDR
 			//this.Close();
 			cat.Show();
 			cat.Focus();
-		}
+            cat.WindowState = FormWindowState.Normal; // ke9ns add
+        }
 
 		//Modified 10/12/08 BT to change "SDR-1000" to "PowerSDR"
 		private void comboCATRigType_SelectedIndexChanged(object sender, System.EventArgs e)

@@ -3,13 +3,16 @@ the GPL Open Source PowerSDR 2.7.2 SVN: 5123 code provided by Flex Radio Systems
 With generous help provided by Flex Radio Systems, Inc.
 
 
-This Source code includes 3 projects under the PowerSDR umbrella: DttSP written in C, PowerMate written in C++, and PowerSDR written in C#
+This Source code includes 4 project under the PowerSDR umbrella: DttSP written in C, PowerMate written in C++, PowerSDR written in C#, and Visual Studio Installer (to create the installer)
 
 DttSP and PowerSDR code was provided by Flex Radio Systems, Inc.
-PowerMate code was provided by Griffin, Clev R. Munke, and Darrin Kohn ke9ns
-PowerSDR modifications beyond 2.7.2 are provided by dh1tw for the DJConsole, and Darrin Kohn ke9ns
+PowerMate code was provided by Griffin, Clev R. Munke, and me Darrin ke9ns
+PowerSDR modifications beyond 2.7.2 are provided by: me Darrin ke9ns, and dh1tw for the DJConsole code
 SWL.csv file from eibispace.de (thank you)
-dxloc.txt file initially from HRD (thank you), modified by me Darrin ke9ns 
+dxloc.txt file initially from HRD (thank you), modified by me Darrin ke9ns
+PowerSDR_ke9ns_Installer_RevT9.msi The actual installer program to move the files into the properlocations (including skins) ke9ns
+To create the Installer, you must go to VS->Tools->Extensions and updates and download the free "Visual Studio Installer Projects" by Microsoft
+
 
 Currently compiling under Visual Studio 2015 (VS2015) and NET 4.5.2
 After you download and install VS2015, you must then download and install the VS2015 "UPDATE 3" & "Patch" 3
