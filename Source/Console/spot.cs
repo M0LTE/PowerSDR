@@ -61,6 +61,8 @@ namespace PowerSDR
         private static System.Reflection.Assembly myAssembly2 = System.Reflection.Assembly.GetExecutingAssembly();
         public static Stream Map_image = myAssembly2.GetManifestResourceStream("PowerSDR.Resources.picD1.png");     // MAP
 
+        public static Stream Map_image2 = myAssembly2.GetManifestResourceStream("PowerSDR.Resources.picD2.png");     // MAP with lat / long on it
+
         private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
         public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");       // SUN
 
@@ -3633,7 +3635,13 @@ namespace PowerSDR
                     if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    if (MAP == null) console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    if (MAP == null)
+                    {
+                        if (Console.DXR == 0)
+                        console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
+
+                    }
                     else console.picDisplay.BackgroundImage = MAP;
  
                 } // SUN or GRAY LINE checked
@@ -3662,7 +3670,13 @@ namespace PowerSDR
                     if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    if (MAP == null)   console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    if (MAP == null)
+                    {
+                        if (Console.DXR == 0)  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
+
+                      //  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    }
                     else console.picDisplay.BackgroundImage = MAP;
       
                 } // only do if SUN or GRAY LINE checked
@@ -3708,7 +3722,12 @@ namespace PowerSDR
                     if (Skin1 == null) Skin1 = console.picDisplay.BackgroundImage;
                     console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    if (MAP == null) console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    if (MAP == null)
+                    {
+                        if (Console.DXR == 0)   console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                        else console.picDisplay.BackgroundImage = Image.FromStream(Map_image2);
+                        //  console.picDisplay.BackgroundImage = Image.FromStream(Map_image);
+                    }
                     else console.picDisplay.BackgroundImage = MAP;
 
                 }
@@ -4380,7 +4399,8 @@ namespace PowerSDR
                         //-------------------------------------------------------------------------------------------------
                         //-------------------------------------------------------------------------------------------------
 
-                        MAP = new Bitmap(Map_image); // load up Map image
+                        if (Console.DXR == 0)  MAP = new Bitmap(Map_image); // load up Map image
+                        else MAP = new Bitmap(Map_image2); // load up Map image
 
                         Graphics g = Graphics.FromImage(MAP);
 
@@ -4396,7 +4416,7 @@ namespace PowerSDR
 
                             g.DrawImage(src, Sun_X - 10, Sun_Y - 10, 23, 27); // draw SUN 20 x 20 pixel
 
-                            if (Console.noaaON == 0)
+                            if (Console.noaaON == 0) // do below if console space weather OFF
                             {
                                 g.DrawString("SFI " + SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
                                 g.DrawString("A " + Aindex.ToString("D") + ", " + RadioBlackout, font1, grid_text_brush, Sun_X + 15, Sun_Y);
@@ -4413,7 +4433,7 @@ namespace PowerSDR
                                     suncounter++;
                                 }
                             }
-                            else
+                            else // console space weather ON
                             {
 
                                 g.DrawString("SFI " + Console.SFI.ToString("D"), font1, grid_text_brush, Sun_X + 15, Sun_Y - 10);
@@ -5145,9 +5165,12 @@ namespace PowerSDR
         //========================================================================
 
        public void NOAA()
-        { 
+        {
 
-           serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
+            RadioBlackout = " ";
+            GeoBlackout = " ";
+
+            serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
 
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
 
@@ -5234,6 +5257,7 @@ namespace PowerSDR
 
 
             } // radio blackouts
+           
           
             if (!noaa.Contains("No space weather storms ") && noaa.Contains("Geomagnetic storms reaching the ")) // 
             {

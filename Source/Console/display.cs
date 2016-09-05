@@ -2612,9 +2612,10 @@ namespace PowerSDR
 				{
                  
 					g.DrawLine(tx_filter_pen, filter_left_x, H+top, filter_left_x, H+H);		// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_left_x+1, H+top, filter_left_x+1, H+H);	// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x, H+top, filter_right_x, H+H);	// draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x+1, H+top, filter_right_x+1, H+H);// draw tx filter overlay
+				//	g.DrawLine(tx_filter_pen, filter_left_x+1, H+top, filter_left_x+1, H+H);    // draw tx filter overlay
+
+                    g.DrawLine(tx_filter_pen, filter_right_x, H+top, filter_right_x, H+H);	// draw tx filter overlay
+				//	g.DrawLine(tx_filter_pen, filter_right_x+1, H+top, filter_right_x+1, H+H);// draw tx filter overlay
 				}
                 else if ((!tx_on_vfob) && (!bottom)) // ke9ns if transmitting on normal RX1 draw lines // KE9NS ADD  fix mistake made by flex
 				{
@@ -2622,10 +2623,10 @@ namespace PowerSDR
                     // ke9ns pgrid ORANGE LEFT and RIGHT TX WIDTH LINES for TRANSMITTER ONLY
                    
 					g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);		// LEFT draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_left_x+1, top, filter_left_x+1, H);	// draw tx filter overlay
+					//g.DrawLine(tx_filter_pen, filter_left_x+1, top, filter_left_x+1, H);	// draw tx filter overlay
 				
                     g.DrawLine(tx_filter_pen, filter_right_x, top, filter_right_x, H);	    // RIGHT draw tx filter overlay
-					g.DrawLine(tx_filter_pen, filter_right_x+1, top, filter_right_x+1, H);   // draw tx filter overlay
+					//g.DrawLine(tx_filter_pen, filter_right_x+1, top, filter_right_x+1, H);   // draw tx filter overlay
 				}
 			} // draw filter width lines
 		
@@ -3166,7 +3167,7 @@ namespace PowerSDR
                                 actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
                                 actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
                                 actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
-                                actual_fgrid == 50.08 || actual_fgrid == 52.0 ||
+                                actual_fgrid == 50.0 || actual_fgrid == 52.0 || // ke9ns fix from 50.08
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);

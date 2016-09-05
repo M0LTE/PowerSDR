@@ -43120,7 +43120,7 @@ namespace PowerSDR
 
             if (e.Shift == true) // ke9ns add (check for CTRL key 
             {
-                if (DXR == 0) DXR = 1; // show Spotters on panadapter
+                if (DXR == 0) DXR = 1; // show Spotters on panadapter (and now also display the world map with lat/long coords)
                 else DXR = 0; // clear
             }
             else

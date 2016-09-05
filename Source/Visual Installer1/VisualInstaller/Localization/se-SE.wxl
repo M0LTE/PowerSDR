@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="se-SE" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="FirstOne" Overridable="yes">Hej det är första meddelandet</String>
+    <String Id="SecondOne" Overridable="yes">Hej det är andra meddelandet</String>
+  
+  <!--Welcome Page-->
+  <String Id="WelcomePage_WelcomeText" Overridable="yes">Välkommen till {0} installation.</String>
+  <String Id="WelcomePage_WelcomeAgreeText" Overridable="yes">Du måste godkänna licensvillkorena innan du kan installera {0}.</String>
+  <String Id="WelcomePage_AgreeToLicense" Overridable="yes">Jag godkänner licensvillkorna.</String>
+
+  <!--Sql Server Connection Page-->
+  <String Id="SqlServerPage_Title" Overridable="yes">SQL Server Anslutning</String>
+  <String Id="SqlServerPage_ServerName" Overridable="yes">Server namn:</String>
+  <String Id="SqlServerPage_Refresh" Overridable="yes">Uppdatera</String>
+  <String Id="SqlServerPage_UseWindowsAuthentication" Overridable="yes">Använd Windows Autentisering</String>
+  <String Id="SqlServerPage_UseSQLAuthentication" Overridable="yes">Använd SQL Server Autentisering</String>
+  <String Id="SqlServerPage_Username" Overridable="yes">Användarnamn:</String>
+  <String Id="SqlServerPage_Password" Overridable="yes">Lösenord:</String>
+  <String Id="SqlServerPage_SelectEnterDatabase" Overridable="yes">Välj eller or ange en databas:</String>
+  <String Id="SqlServerPage_CreateDatabase" Overridable="yes">Skapa en databas</String>
+  <String Id="SqlServerPage_TestConnection" Overridable="yes">Testa anslutningen</String>
+  <String Id="SqlServerPage_EnterServerName" Overridable="yes">Ange ett servernamn</String>
+  <String Id="SqlServerPage_Connectionestablished" Overridable="yes">Anslutning etablerad</String>
+  <String Id="SqlServerPage_CreateDatabaseQuestion" Overridable="yes">Är du säker på att du vill skapa en ny databas '{0}'?</String>
+  <String Id="SqlServerPage_CreateDatabaseTitle" Overridable="yes">Skapa en SQL databas</String>
+  <String Id="SqlServerPage_DatabaseCreated" Overridable="yes">Databas '{0}' är skapad.</String>
+
+  <!--Progress Page-->
+  <String Id="ProgressPage_Acquiring" Overridable="yes">Nedladdning:</String>
+  <String Id="ProgressPage_Applying" Overridable="yes">Tillämpning:</String>
+  <String Id="ProgressPage_TitleInstalling" Overridable="yes">Installerar...</String>
+  <String Id="ProgressPage_TitleWaitWhileInstalling" Overridable="yes">Vänta medans programmet {0} installeras på din dator. Detta kan ta några minuter.</String>
+  <String Id="ProgressPage_TitleUninstalling" Overridable="yes">Avinstallerar...</String>
+  <String Id="ProgressPage_TitleWaitWhileUninstalling" Overridable="yes">Vänta medans programmet {0} avinstalleras på din dator. Detta kan ta några minuter.</String>
+  <String Id="ProgressPage_TitleRepairing" Overridable="yes">Reparerar...</String>
+  <String Id="ProgressPage_TitleWaitWhileRepairing" Overridable="yes">Vänta medans programmet {0} repareras på din dator. Detta kan ta några minuter.</String>
+  <String Id="ProgressPage_TitleCancelling" Overridable="yes">Tar bort...</String>
+  <String Id="ProgressPage_TitleWaitWhileCancelling" Overridable="yes">Vänta medans programmet {0} tas bort från din dator. Detta kan ta några minuter.</String>
+  <String Id="ProgressPage_TitleInstallationStateUnknown" Overridable="yes">Installationens tillstånd är okänt.</String>
+
+  <!--Maintenance Page-->
+  <String Id="MaintenancePage_Title" Overridable="yes">Reparera eller ta bort programmet</String>
+  <String Id="MaintenancePage_SubTitle" Overridable="yes">Välj operationen du vill utföra.</String>
+
+  <!--License Validation Page-->
+  <String Id="LicenseValidationPage_Title" Overridable="yes">Licens validering</String>
+  <String Id="LicenseValidationPage_MachineKey" Overridable="yes">Machine Nykel</String>
+  <String Id="LicenseValidationPage_LicenseKey" Overridable="yes">Licens Nykel</String>
+
+  <!--Finish Page-->
+  <String Id="FinishPage_TitleInstallComplete" Overridable="yes">Installationen är klar</String>
+  <String Id="FinishPage_SubTitleInstallThankYou" Overridable="yes">Tack för att du använder {0}!</String>
+  <String Id="FinishPage_TitleUninstallComplete" Overridable="yes">Borttagningen är klar</String>
+  <String Id="FinishPage_SubTitleUninstallThankYou" Overridable="yes">Tack för att du använder {0}!</String>
+  <String Id="FinishPage_TitleRepairComplete" Overridable="yes">Reparationen är klar</String>
+  <String Id="FinishPage_SubTitleRepairThankYou" Overridable="yes">Tack för att du använder {0}!</String>
+  <String Id="FinishPage_Reboot" Overridable="yes">För att slutföra åtgärden en omstart krävs. Starta om systemet genom att klicka på "Starta om nu"</String>
+  <String Id="FinishPage_ActionCancelled" Overridable="yes">Aktionen avbryts</String>
+
+  <!--FinishError Page-->
+  <String Id="FinishError_Title" Overridable="yes">Ett fel har inträffat</String>
+
+  <!--SystemValidationPage_Title Page-->
+  <String Id="SystemValidationPage_Title" Overridable="yes">System validering</String>
+  
+  <!--Buttons -->
+  <String Id="Button_Next" Overridable="yes">Nästa</String>
+  <String Id="Button_Install" Overridable="yes">Installera</String>
+  <String Id="Button_Previous" Overridable="yes">Back</String>
+  <String Id="Button_Cancel" Overridable="yes">Avbryt</String>
+  <String Id="Button_Repair" Overridable="yes">Reparera</String>
+  <String Id="Button_Uninstall" Overridable="yes">Ta bort</String>
+  <String Id="Button_Close" Overridable="yes">Stänga</String>
+  <String Id="Button_Restart" Overridable="yes">Starta om Nu</String>
+  <String Id="Button_Refresh" Overridable="yes">Uppdatera</String>
+
+  <!--General -->
+  <String Id="General_CancelQuestion" Overridable="yes">Är du säker på att du vill avbryta?</String>
+  <String Id="General_Close" Overridable="yes">Stänga</String>
+
+  <!-- MessageBox -->
+  <String Id="MsgBox_Ok" Overridable="yes">Ok</String>
+  <String Id="MsgBox_Cancel" Overridable="yes">Avbryt</String>
+  <String Id="MsgBox_Abort" Overridable="yes">Abort</String>
+  <String Id="MsgBox_Retry" Overridable="yes">Försök igen</String>
+  <String Id="MsgBox_Yes" Overridable="yes">Ja</String>
+  <String Id="MsgBox_No" Overridable="yes">Nej</String>
+  <String Id="MsgBox_Ignore" Overridable="yes">Ignorera</String>
+
+  <!-- error handling -->
+  <String Id="Error_MsgBoxTitle" Overridable="yes">{0} Fel</String>
+  
+  <!-- error messages -->
+  <String Id="ErrorMessage_NoInternetConnection" Overridable="yes">Ingen internetuppkoppling finns tillgänglig.\r\nKontrollera att du är ansluten till Internet.</String>
+  <String Id="ErrorMessage_FileDownloadError" Overridable="yes">Det gick inte att hämta filen '{0}'</String>
+
+</WixLocalization>

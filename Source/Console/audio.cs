@@ -3938,7 +3938,7 @@ namespace PowerSDR
             // handle Direct IQ for VAC1
 #region vac1IQ
 
-            if (vac_enabled && vac_output_iq && rb_vacOUT_l != null && rb_vacOUT_r != null && rx1_in_l != null && rx1_in_r != null)
+            if (vac_enabled && vac_output_iq && (rb_vacOUT_l != null) && (rb_vacOUT_r != null) && (rx1_in_l != null) && (rx1_in_r != null) )
             {
                 if ((rb_vacOUT_l.WriteSpace() >= frameCount) && (rb_vacOUT_r.WriteSpace() >= frameCount))
                 {
@@ -4333,32 +4333,36 @@ namespace PowerSDR
 
             //---------------------------------------------------------------------------------------------------------
             // ke9ns testdsp audio playback ov wav file (both RX and TX)
-/*
-#if !NO_WIDETX
-            if (wave_playback)
-            {
-                //  Debug.WriteLine("wave playback ===================="); // ke9ns testdsp
+            /*
+            #if !NO_WIDETX
+                        if (wave_playback)
+                        {
+                            //  Debug.WriteLine("wave playback ===================="); // ke9ns testdsp
 
-                    wave_file_reader.GetPlayBuffer(out_l2, out_r2); // WAV file audio streamed into in_l and in_r 
+                                wave_file_reader.GetPlayBuffer(out_l2, out_r2); // WAV file audio streamed into in_l and in_r 
 
-                   ScaleBuffer(out_l2, out_l2, frameCount, (float)wave_preamp);
-                   ScaleBuffer(out_r2, out_r2, frameCount, (float)wave_preamp);
-            
+                               ScaleBuffer(out_l2, out_l2, frameCount, (float)wave_preamp);
+                               ScaleBuffer(out_r2, out_r2, frameCount, (float)wave_preamp);
 
 
-            } // audio file playback
 
-#endif 
- */       
+                        } // audio file playback
+
+            #endif 
+             */
             //---------------------------------------------------------------------------------
             // scale output for VAC1 -- use chan 4 as spare buffer
 
             #region vac1scale
 
-            if ( (vac_enabled) && (!vac_output_iq) && (rb_vacIN_l != null) && (rb_vacIN_r != null) && (rb_vacOUT_l != null) && (rb_vacOUT_r != null) )
+        //    if ((vac_enabled) && (!vac_output_iq) && (rb_vacIN_l != null) && (rb_vacIN_r != null) && (rb_vacOUT_l != null) && (rb_vacOUT_r != null))
+
+            if ( (vac_enabled) && (!vac_output_iq)  && (rb_vacIN_l != null) && (rb_vacIN_r != null) && (rb_vacOUT_l != null) && (rb_vacOUT_r != null) )
 			{
-				if(!localmox)
-				{
+                Debug.WriteLine("VAC TESTING ENTER");
+
+                if ((!localmox))
+              	{
 
                   //  if (monitor_volume == 0) // ke9ns test to mute vac1 audio from the mute button (it works, but that is not the intent of the MUT button as flex designed it)
                    // {
@@ -4370,8 +4374,16 @@ namespace PowerSDR
                    // {
                         ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
                         ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
-                   // }
-				}
+                    Debug.WriteLine("VAC TESTING1");
+                    // }
+                }
+                else if ( (console.MuteRX1OnVFOBTX == false))
+                {
+                    ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
+                    ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
+
+                    Debug.WriteLine("VAC TESTING2");
+                }
                 else if(mon)
 				{
 

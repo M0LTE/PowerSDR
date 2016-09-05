@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fr-FR" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="FirstOne" Overridable="yes">Bonjour, ceci est le premier message</String>
+    <String Id="SecondOne" Overridable="yes">Bonjour, ceci est le second message</String>
+  
+  <!--Welcome Page-->
+  <String Id="WelcomePage_WelcomeText" Overridable="yes">Bienvenue dans le processus d'installation du {0}.</String>
+  <String Id="WelcomePage_WelcomeAgreeText" Overridable="yes">Vous devez accepter les termes et les conditions de la license pour pouvoir continuer l'installation de {0}.</String>
+  <String Id="WelcomePage_AgreeToLicense" Overridable="yes">J'accepte les conditions et les termes de la license.</String>
+  <String Id="WelcomePage_AgreeToSendFeedback" Overridable="yes">Envoyer des informations relatives à mon installation.</String>
+  
+  <!--LayoutWelcome Page-->
+  <String Id="LayoutWelcomePage_WelcomeText" Overridable="yes">Bienvenue dans le programme d'installation de {0}. Vous êtes dans le mode d'installation administrative.</String>
+  <String Id="LayoutWelcomePage_WelcomeAgreeText" Overridable="yes">Vous devez accepter les termes du contrat de licence avant de procéder à l'installation de {0}.</String>
+  <String Id="LayoutWelcomePage_AgreeToLicense" Overridable="yes">J'accepte les termes du contrat de licence.</String>
+  <String Id="LayoutWelcomePage_PathDescription" Overridable="yes">Répertoire d'installation:</String>
+
+  <!--Sql Server Connection Page-->
+  <String Id="SqlServerPage_Title" Overridable="yes">Connection au Serveur SQL</String>
+  <String Id="SqlServerPage_ServerName" Overridable="yes">Nom du Serveur:</String>
+  <String Id="SqlServerPage_Refresh" Overridable="yes">Rafraichir</String>
+  <String Id="SqlServerPage_UseWindowsAuthentication" Overridable="yes">Utiliser l'authentification windows</String>
+  <String Id="SqlServerPage_UseSQLAuthentication" Overridable="yes">Utiliser l'Authentification SQL Serveur</String>
+  <String Id="SqlServerPage_Username" Overridable="yes">Nom de l'utilisateur:</String>
+  <String Id="SqlServerPage_Password" Overridable="yes">Mot de passe:</String>
+  <String Id="SqlServerPage_SelectEnterDatabase" Overridable="yes">Selectionner ou Entrer le nom de la Base de Données:</String>
+  <String Id="SqlServerPage_CreateDatabase" Overridable="yes">Créer une Base de Données</String>
+  <String Id="SqlServerPage_TestConnection" Overridable="yes">Test de la Connexion</String>
+  <String Id="SqlServerPage_EnterServerName" Overridable="yes">Veuillez entrer le nom du serveur</String>
+  <String Id="SqlServerPage_Connectionestablished" Overridable="yes">Connexion établie</String>
+  <String Id="SqlServerPage_CreateDatabaseQuestion" Overridable="yes">Voulez-vous réellement créer la nouvelle Base de Données "{0}"?</String>
+  <String Id="SqlServerPage_CreateDatabaseTitle" Overridable="yes">Créer la Base de Données SQL </String>
+  <String Id="SqlServerPage_DatabaseCreated" Overridable="yes">La Base de Données "{0}" a été créée.</String>
+
+  <!--Progress Page-->
+  <String Id="ProgressPage_Acquiring" Overridable="yes">Obtention en cours:</String>
+  <String Id="ProgressPage_Applying" Overridable="yes">Mise en place:</String>
+  <String Id="ProgressPage_TitleInstalling" Overridable="yes">Installation en cours...</String>
+  <String Id="ProgressPage_TitleWaitWhileInstalling" Overridable="yes">Veuillez attendre pendant l'installation de {0} sur votre ordinateur. Cela peut prendre quelques minutes.</String>
+  <String Id="ProgressPage_TitleUninstalling" Overridable="yes">Désinstallation en cours...</String>
+  <String Id="ProgressPage_TitleWaitWhileUninstalling" Overridable="yes">Veuillez attendre pendant la désinstallation de {0} sur votre ordinateur. Cela peut prendre quelques minutes.</String>
+  <String Id="ProgressPage_TitleRepairing" Overridable="yes">Réparation en cours...</String>
+  <String Id="ProgressPage_TitleWaitWhileRepairing" Overridable="yes">Veuillez attendre pendant la réparation de {0} sur votre ordinateur. Cela peut prendre quelques minutes.</String>
+  <String Id="ProgressPage_TitleCancelling" Overridable="yes">Annulation en cours...</String>
+  <String Id="ProgressPage_TitleWaitWhileCancelling" Overridable="yes">Veuillez attendre pendant l'annulation de l'installation sur votre ordinateur. Cela peut prendre quelques minutes.</String>
+  <String Id="ProgressPage_TitleInstallationStateUnknown" Overridable="yes">Le status de l'installation est inconnu.</String>
+  <String Id="ProgressPage_Caching" Overridable="yes">Mise en mémoire</String>
+  <String Id="ProgressPage_Downloading" Overridable="yes">Téléchargement</String>
+  <String Id="ProgressPage_DownloadSize" Overridable="yes">{0} sur {1} MB</String>
+  <String Id="ProgressPage_OverallProgress" Overridable="yes">Progrès général:</String>
+  <String Id="ProgressPage_CurrentPackage" Overridable="yes">Paquet:</String>
+  <String Id="ProgressPage_TitleUpdateReplace" Overridable="yes">Mise à jour de l'installation...</String>
+  <String Id="ProgressPage_TitleWaitWhileUpdateReplace" Overridable="yes">Veuillez attendre pendant le téléchargement de la nouvelle version de l'installeur. Ceci peut prendre quelques minutes.</String>
+  <String Id="ProgressPage_TitleLayout" Overridable="yes">Création de l'image disque...</String>
+  <String Id="ProgressPage_TitleWaitWhileLayout" Overridable="yes">Veuillez attendre pendant que l'installeur prépare l'image disque de l'instalaltion. Ceci peut prendre quelques minutes.</String>
+
+
+  <!-- Update Available Page-->
+  <String Id="UpdateAvailablePage_Title" Overridable="yes">Une nouvelle version est disponible.</String>
+  <String Id="UpdateAvailablePage_SubTitle" Overridable="yes">Une nouvelle version du produit est disponible. Selectionner 'Installation de la dernière version' pour télécharger et installer cette nouvelle version.</String>
+  <String Id="UpdateAvailablePage_CheckBoxText" Overridable="yes">Installation de la dernière version</String>
+  <String Id="UpdateAvailablePage_UpdateInformationTitle" Overridable="yes">Information de Mise à jour:</String>
+
+  <!--Maintenance Page-->
+  <String Id="MaintenancePage_Title" Overridable="yes">Réparer ou Désinstaller l'application</String>
+  <String Id="MaintenancePage_SubTitle" Overridable="yes">Sélectionner l'opération à exécuter.</String>
+
+  <!--License Validation Page-->
+  <String Id="LicenseValidationPage_Title" Overridable="yes">Validation de la License</String>
+  <String Id="LicenseValidationPage_MachineKey" Overridable="yes">Clé de la Machine</String>
+  <String Id="LicenseValidationPage_LicenseKey" Overridable="yes">Clé de la License</String>
+
+  <!--Finish Page-->
+  <String Id="FinishPage_TitleInstallComplete" Overridable="yes">L'Installation est terminée</String>
+  <String Id="FinishPage_SubTitleInstallThankYou" Overridable="yes">Merci d'avoir choisi {0}!</String>
+  <String Id="FinishPage_TitleUninstallComplete" Overridable="yes">La Désinstallation est terminée</String>
+  <String Id="FinishPage_SubTitleUninstallThankYou" Overridable="yes">Merci d'utiliser {0}!</String>
+  <String Id="FinishPage_TitleRepairComplete" Overridable="yes">La Réparation est terminée</String>
+  <String Id="FinishPage_SubTitleRepairThankYou" Overridable="yes">Merci d'utiliser {0}!</String>
+  <String Id="FinishPage_Reboot" Overridable="yes">Pour terminer l'opération, le système doit être redémarré. Veuillez redémarrer votre système en appuyant sur "Redémarrer".</String>
+  <String Id="FinishPage_ActionCancelled" Overridable="yes">Action Annulée.</String>
+  <String Id="FinishPage_Warning" Overridable="yes">Avertissement:</String>
+  <String Id="FinishPage_TitleLayoutComplete" Overridable="yes">Création de l'image disque terminée.</String>
+  <String Id="FinishPage_SubTitleLayoutThankYou" Overridable="yes">Merci d'utiliser {0}!</String>
+  <String Id="FinishPage_StartProduct" Overridable="yes">Exécuter maintenant {0}.</String>
+  
+  
+  
+  <!--FinishError Page-->
+  <String Id="FinishError_Title" Overridable="yes">Une erreur est survenue</String>
+
+  <!--SystemValidationPage_Title Page-->
+  <String Id="SystemValidationPage_Title" Overridable="yes">Validation du Système</String>
+  
+  <!-- NewerVersionInstalled Page-->
+  <String Id="NewerVersionInstalledPage_Title" Overridable="yes">Une nouvelle version a été installée</String>
+  <String Id="NewerVersionInstalledPage_ErrorMessage" Overridable="yes">La version plus récente de {0} est déjà installée. (Version installée: {1}).\r\n\r\nL'installation de cette version du produit n'est pas possible.</String>
+  <String Id="SystemValidationPage_Title" Overridable="yes">Validation du Système d'Exploitation</String>
+
+  <!-- Help -->
+  <String Id="HelpPage_Title" Overridable="yes">Arguments acceptés pour la ligne de commande</String>
+  <String Id="HelpPage_CommandLineArguments" Overridable="yes">
+	  Les arguments suivants de la ligne de commande sont acceptés:
+    
+    Paramètres de l'interface:
+    -q, -quiet, -s, -silent = installation silencieuse
+    -passive = installation avec affichage uniquement de la bar de progression
+
+    Commandes de l'installeur:
+    -uninstall = désinstallation
+    -repair = réparation (ou installation du produit s'il n'existe pas)
+    -package,-update = installation (par défault)
+    -layout = création d'une image locale/administrateur 
+
+    Gestion du redémarrage:
+    -norestart = supprime tous les redémarrages
+    -promptrestart = demande de confirmation pour chaque redémarrage (par défault)
+
+    Logging:
+    -l, -log = sauvegarde des affichages sur fichier (par défault dans le répertoire temporaire: TempFolder)
+    -logtoconsole = affichages á la console, si démarrage en mode console
+    
+    Aide:
+    -? = affichage de cette information
+
+    Paramètres additionnels:
+    INSTALLDIR - Répertoire d'Installation de l´application
+    SQLCONNECTIONSTRING - Chaine de connection SQL si nécessaire pour l'application
+    LICENSESTRING - La clé de la License si nécessaire pour l'application
+    
+    usage: PARAMETER=value 
+    
+  </String>
+  
+  <!--Path selection page -->
+  <String Id="PathSelectionPage_TitleText" Overridable="yes">Vous pouvez modifier les répertoires d'installation.</String>
+
+
+  <!--Buttons -->
+  <String Id="Button_Next" Overridable="yes">Suivant</String>
+  <String Id="Button_Install" Overridable="yes">Installer</String>
+  <String Id="Button_Previous" Overridable="yes">Précédent</String>
+  <String Id="Button_Cancel" Overridable="yes">Annuler</String>
+  <String Id="Button_Repair" Overridable="yes">Réparer</String>
+  <String Id="Button_Uninstall" Overridable="yes">Désinstaller</String>
+  <String Id="Button_Close" Overridable="yes">Fermer</String>
+  <String Id="Button_Restart" Overridable="yes">Redémarer</String>
+  <String Id="Button_Refresh" Overridable="yes">Rafraichir</String>
+
+  <!--General -->
+  <String Id="General_CancelQuestion" Overridable="yes">Voulez-vous vraiment abandonner?</String>
+  <String Id="General_Close" Overridable="yes">Fermer</String>
+  <String Id="General_InstallDir" Overridable="yes">Répertoire du programme</String>
+  <String Id="General_DataDir" Overridable="yes">Répertoire des données</String>
+  <String Id="General_BackupDir" Overridable="yes">Répertoire de sauvegarde</String>
+  <String Id="General_LogDir" Overridable="yes">Répertoire du journal</String>
+  <String Id="General_TempDir" Overridable="yes">Répertoire temporaire</String>
+  <String Id="General_MB" Overridable="yes">{0:0.00} Mo</String>
+  <String Id="General_GB" Overridable="yes">{0:0.00} Go</String>
+  <String Id="General_InstallSizeInformation" Overridable="yes">Les répertoires d'installation sélectionnés sont valides.\r\nEspace disque requis: {0}</String>
+
+  
+  <!-- MessageBox -->
+  <String Id="MsgBox_Ok" Overridable="yes">Ok</String>
+  <String Id="MsgBox_Cancel" Overridable="yes">Annuler</String>
+  <String Id="MsgBox_Abort" Overridable="yes">Abandonner</String>
+  <String Id="MsgBox_Retry" Overridable="yes">RéEssayer</String>
+  <String Id="MsgBox_Yes" Overridable="yes">Oui</String>
+  <String Id="MsgBox_No" Overridable="yes">Non</String>
+  <String Id="MsgBox_Ignore" Overridable="yes">Ignorer</String>
+
+  <!-- error handling -->
+  <String Id="Error_MsgBoxTitle" Overridable="yes">Erreur {0}</String>
+  
+  <!-- error messages -->
+  <String Id="ErrorMessage_InternetConnectivityErrorCaption" Overridable="yes">Erreur de connexion à Internet</String>
+  <String Id="ErrorMessage_InternetConnectivityError" Overridable="yes">Impossible de télécharger le fichier\r\n\r\n'{0}'\r\n\r\nAssurez-vous que vous êtes bien connecté à Internet.</String>
+
+  <String Id="ErrorMessage_InvalidPath_UncPathNotAllowed" Overridable="yes">Les chemins réseau (UNC) ne sont pas autorisés pour '{0}'.\r\nMerci de remplacer '{0}' par un chemin non UNC.</String>
+  <String Id="ErrorMessage_InvalidPath_DriveNotRead" Overridable="yes">Le disque '{0}' n'est pas prêt.\r\nMerci de remplacer '{1}' par un disque valide.</String>
+  <String Id="ErrorMessage_InvalidPath_RemovableDrive" Overridable="yes">Le disque {0}' est un disque amovible. L'installation sur un disque amovible n'est pas autorisée.\r\nMerci de remplacer '{1}' par un disque non amovible.</String>
+  <String Id="ErrorMessage_InvalidPath_CDRomNotAllowed" Overridable="yes">Le disque '{0}' est en lecture seule.\r\nMerci de remplacer '{1}' par un autre disque</String>
+  <String Id="ErrorMessage_InvalidPath_NetworkNotAllowed" Overridable="yes">Le disque '{0}' est un emplacement réseau.\r\nMerci de remplacer '{1}' par un autre disque</String>
+  <String Id="ErrorMessage_InvalidPath_DriveNotFound" Overridable="yes">Le disque '{0}' n'est pas disponible.\r\nMerci de remplacer '{1}' par un autre disque</String>
+  <String Id="ErrorMessage_InvalidPath_NotEnoughDiskSpacce" Overridable="yes">Espace insuffisant sur le disque'{0}'\r\nRequis: {1}, Disponible: {2} </String>
+  <String Id="ErrorMessage_InvalidPath_PathEmpty" Overridable="yes">Aucun chemin défini pour '{0}'\r\nMerci de remplacer '{0}' par un chemin valide</String>
+  <String Id="ErrorMessage_InvalidPath_UnknownReason" Overridable="yes" >Le chemin défini pour '{0}' est incorrect.\r\nMerci de remplacer '{0}' par un chemin valide</String>
+  
+</WixLocalization>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?define VisualInstallerUiOutDir = $(env.VisualInstaller) ?>
+  <?define VisualInstallerUiDll = $(env.VisualInstaller)\Xeam.VisualInstaller.Ui.dll ?>
+  <?define VisualInstallerCorePath = $(env.VisualInstaller) ?>
+  <?define VisualInstallerFolderPath = VisualInstaller\ ?>
+
+  <Fragment>
+    <PayloadGroup Id="VisualInstallerRuntimeFiles" >
+      <!-- main config -->
+      <Payload Name='BootstrapperCore.config' SourceFile='$(var.VisualInstallerCorePath)Payload\BootstrapperCore.config' />
+
+      <!-- additional config -->
+      <Payload Name='Configuration.xml' SourceFile='$(var.VisualInstallerFolderPath)VisualInstallerConfig.xml'  />
+
+      <!-- assembly payload -->
+      <Payload SourceFile='$(var.VisualInstallerCorePath)\Xeam.VisualInstaller.dll' />
+      
+      <!-- assembly pdb only debug -->
+      <?ifdef Debug?>
+      <Payload SourceFile='$(var.VisualInstallerCorePath)\Xeam.VisualInstaller.pdb' />
+      <?endif?>
+      
+      <!-- assembly payload -->
+      <Payload SourceFile='$(var.VisualInstallerCorePath)\Xeam.VisualInstaller.Data.dll' />
+
+      <!-- license validation assembly payload -->
+      <Payload SourceFile='$(var.VisualInstallerCorePath)\Xeam.DummyLicenseValidator.dll' />
+
+      <!-- system validation assembly payload -->
+      <Payload SourceFile='$(var.VisualInstallerCorePath)\Xeam.VisualInstaller.SystemValidation.dll' />
+
+      <!-- Laika42.VisualInstaller.Ui.dll -->
+      <Payload SourceFile='$(var.VisualInstallerUiDll)' />
+
+      <!-- resource payload files -->
+      <Payload SourceFile='Resources\license.rtf' />
+      <Payload SourceFile='$(var.VisualInstallerUiOutDir)Resources\ok.png' />
+      <Payload SourceFile='$(var.VisualInstallerUiOutDir)Resources\notok.png' />
+      <Payload SourceFile='$(var.VisualInstallerUiOutDir)Resources\warning.png' />
+
+
+      <!-- Localization resource payload files -->
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\en-US.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\de-DE.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\fr-FR.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\es-ES.wxl' />
+
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\systemvalidation_en-US.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\systemvalidation_de-DE.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\systemvalidation_fr-FR.wxl' />
+      <Payload SourceFile='$(var.VisualInstallerFolderPath)Localization\systemvalidation_es-ES.wxl' />
+
+    </PayloadGroup>
+	</Fragment>
+</Wix>

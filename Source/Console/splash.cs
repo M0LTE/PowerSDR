@@ -139,9 +139,9 @@ namespace PowerSDR
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(164, 160);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(52, 20);
+            this.textBox1.Size = new System.Drawing.Size(95, 20);
             this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "RevT9";
+            this.textBox1.Text = "Rev 090516T9";
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // lblTimeRemaining

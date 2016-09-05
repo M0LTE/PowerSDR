@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+
+  <!-- System reboot validation -->
+  <String Id="SystemRebootPending_Text" Overridable="yes">Pending system reboot</String>
+  <String Id="SystemRebootPending_Error" Overridable="yes">A system reboot is pending. Please restart your system before you continue with the installation.</String>
+  <String Id="SystemRebootPending_Warning" Overridable="yes">A system reboot is pending. It is recommended to restart the system before continuing with the installation.</String>
+  <String Id="SystemRebootPending_Ok" Overridable="yes">There is no system reboot pending.</String>
+  <String Id="SystemRebootPending_HelpActionButton" Overridable="yes">Reboot system</String>
+
+  <String Id="AnotherInstallationRunning_Text" Overridable="yes">Check for other installations running</String>
+  <String Id="AnotherInstallationRunning_Error" Overridable="yes">Another installation is already running on your system. Please complete the other installation before you continue with this installation.</String>
+  <String Id="AnotherInstallationRunning_Warning" Overridable="yes">Another installation is already running on your system. Please complete the other installation before you continue with this installation.</String>
+  <String Id="AnotherInstallationRunning_Ok" Overridable="yes">There is no other installation running on your system.</String>
+
+  <String Id="IISVersion_Text" Overridable="yes">IIS {0} or above and IIS roles</String>
+  <String Id="IISVersion_Error" Overridable="yes">IIS {0} or above with the following active roles is required:\r\n\r\n{1}\r\nPlease install IIS on your system before you continue with the installation.</String>
+  <String Id="IISVersion_Warning" Overridable="yes">IIS {0} or above with the following active roles is required:\r\n\r\n{1}\r\nIIS {0} is recommended. Please update your IIS version before you continue with the installation.</String>
+  <String Id="IISVersion_Ok" Overridable="yes">The installed IIS version {0} is sufficient. Required IIS roles:\r\n\r\n{1}\r\n</String>
+  <String Id="IISVersion_Failed" Overridable="yes">An error occured during IIS validation.</String>
+  <String Id="IISVersion_HelpActionButton" Overridable="yes">Activate required Features and Roles</String>
+  <String Id="IISVersion_HelpActionText" Overridable="yes">Activating IIS role with required features...</String>
+  <String Id="IISVersion_Active" Overridable="yes"> - role is active</String>
+  <String Id="IISVersion_NotActive" Overridable="yes"> - must be actived</String>
+  <String Id="IISVersion_HelpActionError" Overridable="yes">IIS Roles could not be activated.\r\nPlease install the required IIS version and roles using "feature and roles" configuration of your operating system.</String>
+  <String Id="IISVersion_HelpActionActivated_RestartRequired" Overridable="yes">IIS Roles was activated.\r\nPlease restart your system before you continue with the installation.</String>
+
+  <String Id="OsVersion_Text" Overridable="yes">Operating System Version</String>
+  <String Id="OsVersion_Error" Overridable="yes">Your operating system '{0}' is not compatible.\r\n\r\nThe following operating systems are supported:\r\n{1}</String>
+  <String Id="OsVersion_ErrorServicePack" Overridable="yes">Your operating system '{0}' requires a newer Service Pack. Please update your operating system.\r\n\r\nThe following operating systems are supported:\r\n{1}</String>
+  <String Id="OsVersion_Ok" Overridable="yes">Your operating system '{0}' is supported.</String>
+  <String Id="OsVersion_ValidationError" Overridable="yes">An error occured during operating system validation. Your operating system could not be validated</String>
+  <String Id="OsVersion_HelpActionButton" Overridable="yes">Start Windows Update</String>
+
+  <String Id="RunningProcess_Text" Overridable="yes">Running applications</String>
+  <String Id="RunningProcess_Error" Overridable="yes">Please close the following applications in order to continue with the installation:\r\n\r\n{0}</String>
+  <String Id="RunningProcess_Warning" Overridable="yes">It is recommended to close following applications before continue with the installation:\r\n\r\n{0}</String>
+  <String Id="RunningProcess_Ok" Overridable="yes">None of the following application is running: \r\n\r\n{0}.\r\nPlease do no start them during the installation.</String>
+  
+  <String Id="WixToolsetVersion_Text" Overridable="yes">WiX Toolset {0} or higher</String>
+  <String Id="WixToolsetVersion_Error" Overridable="yes">WiX Toolset {0} or higher is required. Download and install WiX Toolset before you continue with the installation.</String>
+  <String Id="WixToolsetVersion_Warning" Overridable="yes">WiX Toolset {0} or higher is required. Download and install WiX Toolset before you continue with the installation.</String>
+  <String Id="WixToolsetVersion_Ok" Overridable="yes">WiX Toolset {0} is installed on your system</String>
+  <String Id="WixToolsetVersion_HelpActionButton" Overridable="yes">Download WiX Toolset</String>
+
+  <String Id="VisualStudioVersion_Text" Overridable="yes">Microsoft Visual Studio</String>
+  <String Id="VisualStudioVersion_Error" Overridable="yes">Microsoft Visual Studio is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="VisualStudioVersion_Warning" Overridable="yes">Microsoft Visual Studio is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="VisualStudioVersion_Ok" Overridable="yes">At least one of the supported Microsoft Visual Studio Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+  <String Id="Word_Text" Overridable="yes">Microsoft Word</String>
+  <String Id="Word_Error" Overridable="yes">Microsoft Word is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="Word_Warning" Overridable="yes">Microsoft Word is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="Word_Ok" Overridable="yes">At least one of the supported Microsoft Word Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+  <String Id="Excel_Text" Overridable="yes">Microsoft Excel</String>
+  <String Id="Excel_Error" Overridable="yes">Microsoft Excel is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="Excel_Warning" Overridable="yes">Microsoft Excel is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="Excel_Ok" Overridable="yes">At least one of the supported Microsoft Excel Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+  <String Id="Outlook_Text" Overridable="yes">Microsoft Outlook</String>
+  <String Id="Outlook_Error" Overridable="yes">Microsoft Outlook is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="Outlook_Warning" Overridable="yes">Microsoft Outlook is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="Outlook_Ok" Overridable="yes">At least one of the supported Microsoft Outlook Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+  <String Id="PowerPoint_Text" Overridable="yes">Microsoft PowerPoint</String>
+  <String Id="PowerPoint_Error" Overridable="yes">Microsoft PowerPoint is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="PowerPoint_Warning" Overridable="yes">Microsoft PowerPoint is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="PowerPoint_Ok" Overridable="yes">At least one of the supported Microsoft PowerPoint Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+  <String Id="Visio_Text" Overridable="yes">Microsoft Visio</String>
+  <String Id="Visio_Error" Overridable="yes">Microsoft Visio is required. Supported Versions:\r\n\r\n{0}</String>
+  <String Id="Visio_Warning" Overridable="yes">Microsoft Visio is recommended. Recommended Versions:\r\n\r\n{0}</String>
+  <String Id="Visio_Ok" Overridable="yes">At least one of the supported Microsoft Visio Version was found on your system. Supported Versions:\r\n\r\n{0}</String>
+
+
+</WixLocalization>

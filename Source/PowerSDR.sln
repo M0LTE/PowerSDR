@@ -107,7 +107,6 @@ Global
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|x64.ActiveCfg = Release
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|x64.Build.0 = Release
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Any CPU.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Any CPU.Build.0 = Release
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Mixed Platforms.ActiveCfg = Release
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Mixed Platforms.Build.0 = Release
 		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Win32.ActiveCfg = Release
