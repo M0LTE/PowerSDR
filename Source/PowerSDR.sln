@@ -12,8 +12,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DttSP", "DttSP\DttSP.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PowerMate", "PowerMate\PowerMate.vcxproj", "{BBD70852-1A81-4232-B094-C87BEDE243C9}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PowerSDR_Installer", "..\..\PowerSDR_Installer\PowerSDR_Installer\PowerSDR_Installer.vdproj", "{253DFB79-587D-4D5D-A39F-BCE848C38F85}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,29 +88,6 @@ Global
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.ActiveCfg = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.Build.0 = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|x64.ActiveCfg = Release|Win32
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Any CPU.ActiveCfg = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Any CPU.Build.0 = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Mixed Platforms.Build.0 = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Win32.ActiveCfg = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|Win32.Build.0 = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|x64.ActiveCfg = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Debug|x64.Build.0 = Debug
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Any CPU.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Any CPU.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Mixed Platforms.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Mixed Platforms.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Win32.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|Win32.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|x64.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Interleaved|x64.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Any CPU.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Mixed Platforms.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Mixed Platforms.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Win32.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|Win32.Build.0 = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|x64.ActiveCfg = Release
-		{253DFB79-587D-4D5D-A39F-BCE848C38F85}.Release|x64.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

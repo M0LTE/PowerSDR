@@ -3182,6 +3182,8 @@ namespace PowerSDR
                                 else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
                                 else offsetL = (int)((label.Length) * 4.1) - 8;
 
+                              
+
                                 if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
                                 else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
 
@@ -3198,6 +3200,8 @@ namespace PowerSDR
                                         else g.DrawLine(grid_pen_dark, x3, top, x3, H);
                                     }
                                 }
+
+
                             }
                             else
                             {
@@ -3256,7 +3260,7 @@ namespace PowerSDR
                     // draw band edge markers for bands not 60m
                     int[] band_edge_list_r3 = { 18068000, 18168000, 1810000, 2000000, 3500000, 3800000,
 				                                7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
-				                                24890000, 24990000, 28000000, 29700000, 50080000, 52000000, 144000000, 146000000 };
+				                                24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 }; // ke9ns fix 50080000
 
                     for (int i = 0; i < band_edge_list_r3.Length; i++)
                     {
