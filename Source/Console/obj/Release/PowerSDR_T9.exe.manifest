@@ -4,7 +4,7 @@
   <description asmv2:iconFile="PowerSDR.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="PowerSDR_T9" version="2.7.2.40510" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="PowerSDR_T9" version="2.7.2.38119" language="neutral" processorArchitecture="x86" />
     <commandLine file="PowerSDR_T9.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -145,13 +145,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PowerSDR_T9.exe" size="9118520">
-      <assemblyIdentity name="PowerSDR_T9" version="2.7.2.40510" language="neutral" processorArchitecture="x86" />
+      <assemblyIdentity name="PowerSDR_T9" version="2.7.2.38119" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>6wVT6mN/pZY77JdxNGOqx6H5NvC3IKRpMW7cmAdUBXE=</dsig:DigestValue>
+        <dsig:DigestValue>rkDdAGRAPc0yhJEjteJbp1HvdsLNYUoAZw0jYUt2zX8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -212,18 +212,6 @@
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
         <dsig:DigestValue>orXp3QVBCZhKguX0ZWO2kQPLEgg0CriktrX9q6h1Kfc=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Json.dll" size="66408">
-      <assemblyIdentity name="System.Json" version="4.0.0.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>JlcauXY1nkRuhTWRErgM2+Ytw4uccdkLVGoEaERV3fk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

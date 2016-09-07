@@ -179,10 +179,6 @@
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Json.4.0.20126.16343\lib\net40\System.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms">

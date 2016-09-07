@@ -1088,8 +1088,10 @@ namespace PowerSDR
         private static byte autobright2 = 0; //  ke9ns ADD from console rx2 waterfall bright adjust
         private static byte autobright3 = 0; //  ke9ns ADD from console TX waterfall bright adjust
         private static byte autobright6 = 0; //  ke9ns ADD from console rx1 panadapter bright adjust
+        private static byte autobright7 = 0; //  ke9ns ADD from console rx1 panadapter scale adjust (for small signal or standard signal)
 
-        public static byte AutoBright       // this is called or set in console
+
+        public static byte AutoBright       // this is called or set in console 1=adjust waterfall, 2=adjust Pan level, 3=adjust Pan scale (small signal), 4=adjust Pan scale (standard)
         {
             get { return autobright; }
             set
@@ -1103,22 +1105,44 @@ namespace PowerSDR
                 {
                     autobright3 = 0;
 
-                    if ((console.chkPower.Checked) && (value == 2) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)))// PANADAPTER
+                   
+
+                    if ( (console.chkPower.Checked) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)) )// PANADAPTER
                     {
-                        autobright6 = value; // RX1 adjust
-                        return;
-                    }
-                    else
-                    {
-                        autobright6 = 0;
-                       
+                        if (value == 2)
+                        {
+                            autobright6 = value; // RX1 adjust 
+                            return;
+                        }
+                        else if (value == 3)
+                        {
+                            autobright7 = value; // RX1 adjust small signal scale
+                            return;
+                        }
+                        else if (value == 4)
+                        {
+                            AB_Peak = -200;
+                            AB_Count = 0;
+                            autobright7 = value; // RX1 adjust standard signal scale
+                            return;
+                        }
+                        else
+                        {
+                            autobright7 = 0;
+                            autobright6 = 0;
+                        }
                     }
 
-
-                    if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.WATERFALL) || (current_display_mode == DisplayMode.PANAFALL))) autobright = value; // RX1 adjust
+                    if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.WATERFALL) || (current_display_mode == DisplayMode.PANAFALL)))
+                    {
+                        autobright = value; // RX1 adjust
+                    }
                     else autobright = 0;
 
-                    if ( (console.chkRX2.Checked) && ((current_display_mode_bottom == DisplayMode.WATERFALL) || (current_display_mode_bottom == DisplayMode.PANAFALL)))   autobright2 = value;   // RX2 adjust
+                    if ((console.chkRX2.Checked) && ((current_display_mode_bottom == DisplayMode.WATERFALL) || (current_display_mode_bottom == DisplayMode.PANAFALL)))
+                    {
+                        autobright2 = value;   // RX2 adjust
+                    }
                     else autobright2 = 0;
 
                     
@@ -6022,13 +6046,31 @@ namespace PowerSDR
                 {
                     if ((!mox) && (rx == 1))
                     {
-                      //  Debug.Write("AB6=");
-
-                        AB = AB + (long)max; // ke9ns add autobright feature 
+                      
+                        AB = AB + (long)max; // ke9ns add autobright feature (detect floor)
                     }
 
-                }
+                } // autobright == 2
 
+                else if (autobright7 > 2)
+                {
+                    if ((!mox) && (rx == 1))
+                    {
+                       // Debug.Write("max=" + max +" ");
+                         
+
+                        if ((int)max > AB_Peak) // ke9ns values show up as -115.234 db
+                        {
+                            AB_Peak = (int)max;    // ke9ns add detect peak
+                            Debug.Write("peak=" + AB_Peak + " ");
+                        }
+                       
+
+                        AB = AB + (long)max; // ke9ns add detect floor
+                    }
+
+                } // autobright == 3 or == 4
+               
 
             }  // for loop from 0 to W wide
 
@@ -6053,12 +6095,75 @@ namespace PowerSDR
                     console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
                     SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
 
+                }
                
 
+            } // autobright = 2
+
+
+            //=========================================================================
+            //=========================================================================
+            // ke9ns add auto scale pan
+           else if (autobright7 == 3) // rx1 adjust
+            {
+                Debug.WriteLine(" ");
+
+                Debug.WriteLine("==========AUTOBRIGHT7 small signal=================");
+
+                AB1[0] = AB / W; // get avg of the entire read
+
+                AB3 = (float)(AB1[0]);
+
+                autobright7 = autobright3 = autobright = 0; // turn off feature
+
+                if ((AB3 > -170) && (AB3 < -50))
+                {
+                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
+                    SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
+
                 }
+                if ((AB3 > -170) && (AB3 < -50))
+                {
+                  //  console.setupForm.udDisplayGridMax.Value = (AB_Peak + 10);
+                    SpectrumGridMax = (AB_Peak + 10);
+                    Debug.WriteLine("SMALL scale=== " + SpectrumGridMax);
+                }
+
                 //  Debug.WriteLine("rx1 value " + AB3);
 
-            } // autobright = 1
+            } // autobright = 3
+
+            //=========================================================================
+            //=========================================================================
+            // ke9ns add auto scale pan
+            else if (autobright7 == 4) // rx1 adjust
+            {
+                Debug.WriteLine(" ");
+
+                Debug.WriteLine("==========AUTOBRIGHT7 standard signal=================");
+
+                AB1[0] = AB / W; // get avg of the entire read
+
+                AB3 = (float)(AB1[0]);
+
+                autobright7 = autobright3 = autobright = 0; // turn off feature
+
+                if ((AB3 > -170) && (AB3 < -50))
+                {
+                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
+                    SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
+                    
+                }
+                if ((AB3 > -170) && (AB3 < -50))
+                {
+                  //  console.setupForm.udDisplayGridMax.Value = console.AutoPanScaleMax;
+                    SpectrumGridMax = console.AutoPanScaleMax;
+                      Debug.WriteLine("standard scale== " + console.AutoPanScaleMax);
+                }
+
+
+
+            } // autobright = 4
 
 
             //================================================================
@@ -6401,6 +6506,9 @@ namespace PowerSDR
         private static long AB = 0; // ke9ns for autobright accumulator across a single W length line of data
         private static long[] AB1 = new long[10];// ke9ns
         private static float AB3 = 0; // ke9ns
+
+        private static int AB_Peak = -200; // ke9ns peak signal for scaling small signals
+        private static int AB_Count = 0; // ke9ns counter for determining peak signal
 
         // RX2
         private static long A2B = 0; // ke9ns for autobright
@@ -7146,12 +7254,12 @@ namespace PowerSDR
 
                 } // for i loop (W wide)
 
-               if ((continuum == 1) && (rx==1))  itemp_last = itemp; // ke9ns add used to draw to screen
+               if ((continuum == 1) && (rx == 1))  itemp_last = itemp; // ke9ns add used to draw to screen
                
                
                
                 //=========================================================================
-                // ke9ns add autobright (auto water leve) feature
+                // ke9ns add autobright (auto water level) feature
                 //=========================================================================
 
                 if (mox)

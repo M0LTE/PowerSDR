@@ -68,8 +68,8 @@ namespace PowerSDR
         private System.Windows.Forms.TabPage tpDisplay;
 		private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
         public NumericUpDownTS udDisplayGridMin;
-        private System.Windows.Forms.NumericUpDownTS udDisplayGridMax;
-		private System.Windows.Forms.LabelTS lblDisplayGridStep;
+        public NumericUpDownTS udDisplayGridMax;
+        private System.Windows.Forms.LabelTS lblDisplayGridStep;
 		private System.Windows.Forms.LabelTS lblDisplayGridMin;
 		private System.Windows.Forms.LabelTS lblDisplayGridMax;
         public TabPage tpGeneral;
@@ -21944,14 +21944,16 @@ namespace PowerSDR
 			if(udDisplayGridMax.Value <= udDisplayGridMin.Value)
 				udDisplayGridMax.Value = udDisplayGridMin.Value + 10;
 			Display.SpectrumGridMax = (int)udDisplayGridMax.Value;
-		}
+          //  console.AutoPanScaleMax = (int)udDisplayGridMax.Value; // ke9ns add storage of original  value
+        }
 
 		private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
 		{
 			if(udDisplayGridMin.Value >= udDisplayGridMax.Value)
 				udDisplayGridMin.Value = udDisplayGridMax.Value - 10;
 			Display.SpectrumGridMin = (int)udDisplayGridMin.Value;
-		}
+           // console.AutoPanScaleMin = (int)udDisplayGridMin.Value; // ke9ns add storage of original  value
+        }
 
 		private void udDisplayGridStep_ValueChanged(object sender, System.EventArgs e)
 		{
