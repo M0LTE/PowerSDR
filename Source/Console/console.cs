@@ -1,4 +1,4 @@
-//=================================================================
+﻿//=================================================================
 // console.cs
 //=================================================================
 // PowerSDR is a C# implementation of a Software Defined Radio. 
@@ -672,10 +672,14 @@ namespace PowerSDR
 		private bool calibration_running = false;
 		private bool displaydidit = false;
 		//private bool calibrationdidit = false;
-		public Mutex calibration_mutex = new Mutex();	
+		public Mutex calibration_mutex = new Mutex();
 
-		public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
-
+      
+        public Http httpFile;
+   
+        public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+      
+      
         public HidDevice.PowerMate PowerMate;              // ke9ns add communicate with powermate HID
 
         public SpotControl SpotForm;                       // ke9ns add DX spotter function
@@ -1254,8 +1258,8 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkCWIambic;
 		private System.Windows.Forms.LabelTS lblCWPitchFreq;
         private System.Windows.Forms.NumericUpDownTS udCWPitch;
-        private System.Windows.Forms.LabelTS lblDisplayPan;
-		private System.Windows.Forms.ButtonTS btnDisplayPanCenter;
+        public LabelTS lblDisplayPan;
+        private System.Windows.Forms.ButtonTS btnDisplayPanCenter;
         private System.Windows.Forms.LabelTS lblDisplayZoom;
 		private System.Windows.Forms.LabelTS lblTransmitProfile;
 		private System.Windows.Forms.CheckBoxTS chkX2TR;
@@ -1494,7 +1498,7 @@ namespace PowerSDR
         public MenuStrip menuStrip1;
         private ToolStripMenuItem setupToolStripMenuItem;
         private ToolStripMenuItem memoryToolStripMenuItem;
-        private ToolStripMenuItem waveToolStripMenuItem;
+        public ToolStripMenuItem waveToolStripMenuItem;
         private ToolStripMenuItem equalizerToolStripMenuItem;
         private ToolStripMenuItem xVTRsToolStripMenuItem;
         private ToolStripMenuItem cWXToolStripMenuItem;
@@ -1752,9 +1756,9 @@ namespace PowerSDR
                         list_det_num++; 
                         if (r.Present) list_det_present++; 
                         break;
-                    case Model.SDR1000:
-                    case Model.SOFTROCK40:
-                        list_undet_num++; break;
+                 //   case Model.SDR1000:
+                  //  case Model.SOFTROCK40:
+                   //     list_undet_num++; break;
                 }
             }
 
@@ -1965,7 +1969,7 @@ namespace PowerSDR
                             DB.SaveVars("Options", ref list);
                         }
                         break;
-                    case Model.SDR1000:
+                  /*  case Model.SDR1000:
                         current_model = Model.SDR1000;
                         fwc_init = false;
                         hid_init = false;
@@ -1986,7 +1990,7 @@ namespace PowerSDR
                             DB.SaveVars("Options", ref list);
                         }
                         break;
-                    default:
+                  */  default:
                         current_model = Model.DEMO;
                         fwc_init = false;
                         hid_init = false;
@@ -2225,8 +2229,8 @@ namespace PowerSDR
                     case Model.FLEX5000: s = "FLEX-5000"; break;
                     case Model.FLEX3000: s = "FLEX-3000"; break;
                     case Model.FLEX1500: s = "FLEX-1500"; break;
-                    case Model.SDR1000:  s = "SDR-1000";  break;
-                    case Model.SOFTROCK40: s = "SoftRock"; break;
+                  //  case Model.SDR1000:  s = "SDR-1000";  break;
+                  //  case Model.SOFTROCK40: s = "SoftRock"; break;
                     case Model.DEMO:     s = "Demo"; break;
                 }
 
@@ -2472,7 +2476,7 @@ namespace PowerSDR
 
 #if (NO_DJ)
             //mod DH1TW
-        //    this.Text = "PowerSDR-UI 0.997 based on FlexRadio Systems� PowerSDR� 2.7.2";
+        //    this.Text = "PowerSDR-UI 0.997 based on FlexRadio Systems™ PowerSDR™ 2.7.2";
             //endmod
 
 #endif
@@ -2537,58 +2541,12 @@ namespace PowerSDR
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.timer_clock = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemRX1FilterReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStripFilterRX2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItemRX2FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemRX2FilterReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.timer_navigate = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.contextMenuStripNotch = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripNotchDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchRemember = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripNotchNormal = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchDeep = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripNotchVeryDeep = new System.Windows.Forms.ToolStripMenuItem();
-            this.timerNotchZoom = new System.Windows.Forms.Timer(this.components);
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uCBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.antennaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.relaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aTUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.flexControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.GrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.TXIDMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
-            this.picSquelch = new System.Windows.Forms.PictureBox();
-            this.panelDisplay2 = new System.Windows.Forms.PanelTS();
             this.btnTNFAdd = new System.Windows.Forms.ButtonTS();
             this.chkTNF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayPeak = new System.Windows.Forms.CheckBoxTS();
             this.comboDisplayMode = new System.Windows.Forms.ComboBoxTS();
             this.chkDisplayAVG = new System.Windows.Forms.CheckBoxTS();
-            this.ptbRX2Squelch = new PowerSDR.PrettyTrackBar();
             this.ptbRX2RF = new PowerSDR.PrettyTrackBar();
-            this.panelOptions = new System.Windows.Forms.PanelTS();
             this.chkFWCATU = new System.Windows.Forms.CheckBoxTS();
             this.chkFWCATUBypass = new System.Windows.Forms.CheckBoxTS();
             this.ckQuickPlay = new System.Windows.Forms.CheckBoxTS();
@@ -2795,6 +2753,54 @@ namespace PowerSDR
             this.picRX2Meter = new System.Windows.Forms.PictureBox();
             this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
             this.txtNOAA = new System.Windows.Forms.TextBoxTS();
+            this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
+            this.lblDisplayPan = new System.Windows.Forms.LabelTS();
+            this.timer_clock = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemRX1FilterReset = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripFilterRX2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItemRX2FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemRX2FilterReset = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer_navigate = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.contextMenuStripNotch = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripNotchDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchRemember = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripNotchNormal = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchDeep = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripNotchVeryDeep = new System.Windows.Forms.ToolStripMenuItem();
+            this.timerNotchZoom = new System.Windows.Forms.Timer(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uCBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.antennaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.relaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aTUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.flexControlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GrayMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TXIDMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
+            this.picSquelch = new System.Windows.Forms.PictureBox();
+            this.panelDisplay2 = new System.Windows.Forms.PanelTS();
+            this.ptbRX2Squelch = new PowerSDR.PrettyTrackBar();
+            this.panelOptions = new System.Windows.Forms.PanelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.panelModeSpecificFM = new System.Windows.Forms.PanelTS();
             this.lblFMMemory = new System.Windows.Forms.LabelTS();
@@ -2865,8 +2871,6 @@ namespace PowerSDR
             this.grpDIGSampleRate = new System.Windows.Forms.GroupBoxTS();
             this.panelDisplay = new System.Windows.Forms.PanelTS();
             this.picDisplay = new System.Windows.Forms.PictureBox();
-            this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
-            this.lblDisplayPan = new System.Windows.Forms.LabelTS();
             this.panelFilter = new System.Windows.Forms.PanelTS();
             this.radFilter1 = new System.Windows.Forms.RadioButtonTS();
             this.lblFilterHigh = new System.Windows.Forms.LabelTS();
@@ -2932,16 +2936,7 @@ namespace PowerSDR
             this.btnBandHF1 = new System.Windows.Forms.ButtonTS();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.ptbSquelch = new PowerSDR.PrettyTrackBar();
-            this.contextMenuStripFilterRX1.SuspendLayout();
-            this.contextMenuStripFilterRX2.SuspendLayout();
-            this.contextMenuStripNotch.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
-            this.panelDisplay2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
-            this.panelOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
@@ -2969,6 +2964,15 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
+            this.contextMenuStripFilterRX1.SuspendLayout();
+            this.contextMenuStripFilterRX2.SuspendLayout();
+            this.contextMenuStripNotch.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
+            this.panelDisplay2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
+            this.panelOptions.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.panelModeSpecificFM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).BeginInit();
@@ -3022,339 +3026,6 @@ namespace PowerSDR
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
             // 
-            // timer_clock
-            // 
-            this.timer_clock.Enabled = true;
-            this.timer_clock.Tick += new System.EventHandler(this.timer_clock_Tick);
-            // 
-            // contextMenuStripFilterRX1
-            // 
-            this.contextMenuStripFilterRX1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemRX1FilterConfigure,
-            this.toolStripMenuItemRX1FilterReset});
-            this.contextMenuStripFilterRX1.Name = "contextMenuStripFilterRX1";
-            resources.ApplyResources(this.contextMenuStripFilterRX1, "contextMenuStripFilterRX1");
-            // 
-            // toolStripMenuItemRX1FilterConfigure
-            // 
-            this.toolStripMenuItemRX1FilterConfigure.Name = "toolStripMenuItemRX1FilterConfigure";
-            resources.ApplyResources(this.toolStripMenuItemRX1FilterConfigure, "toolStripMenuItemRX1FilterConfigure");
-            this.toolStripMenuItemRX1FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterConfigure_Click);
-            // 
-            // toolStripMenuItemRX1FilterReset
-            // 
-            this.toolStripMenuItemRX1FilterReset.Name = "toolStripMenuItemRX1FilterReset";
-            resources.ApplyResources(this.toolStripMenuItemRX1FilterReset, "toolStripMenuItemRX1FilterReset");
-            this.toolStripMenuItemRX1FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterReset_Click);
-            // 
-            // contextMenuStripFilterRX2
-            // 
-            this.contextMenuStripFilterRX2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemRX2FilterConfigure,
-            this.toolStripMenuItemRX2FilterReset});
-            this.contextMenuStripFilterRX2.Name = "contextMenuStripFilterRX2";
-            resources.ApplyResources(this.contextMenuStripFilterRX2, "contextMenuStripFilterRX2");
-            // 
-            // toolStripMenuItemRX2FilterConfigure
-            // 
-            this.toolStripMenuItemRX2FilterConfigure.Name = "toolStripMenuItemRX2FilterConfigure";
-            resources.ApplyResources(this.toolStripMenuItemRX2FilterConfigure, "toolStripMenuItemRX2FilterConfigure");
-            this.toolStripMenuItemRX2FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterConfigure_Click);
-            // 
-            // toolStripMenuItemRX2FilterReset
-            // 
-            this.toolStripMenuItemRX2FilterReset.Name = "toolStripMenuItemRX2FilterReset";
-            resources.ApplyResources(this.toolStripMenuItemRX2FilterReset, "toolStripMenuItemRX2FilterReset");
-            this.toolStripMenuItemRX2FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterReset_Click);
-            // 
-            // timer_navigate
-            // 
-            this.timer_navigate.Tick += new System.EventHandler(this.timer_navigate_Tick);
-            // 
-            // timer2
-            // 
-            this.timer2.Interval = 200;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // contextMenuStripNotch
-            // 
-            this.contextMenuStripNotch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripNotchDelete,
-            this.toolStripNotchRemember,
-            this.toolStripSeparator1,
-            this.toolStripNotchNormal,
-            this.toolStripNotchDeep,
-            this.toolStripNotchVeryDeep});
-            this.contextMenuStripNotch.Name = "contextMenuStripNotch";
-            resources.ApplyResources(this.contextMenuStripNotch, "contextMenuStripNotch");
-            // 
-            // toolStripNotchDelete
-            // 
-            this.toolStripNotchDelete.Name = "toolStripNotchDelete";
-            resources.ApplyResources(this.toolStripNotchDelete, "toolStripNotchDelete");
-            this.toolStripNotchDelete.Click += new System.EventHandler(this.toolStripNotchDelete_Click);
-            // 
-            // toolStripNotchRemember
-            // 
-            this.toolStripNotchRemember.Name = "toolStripNotchRemember";
-            resources.ApplyResources(this.toolStripNotchRemember, "toolStripNotchRemember");
-            this.toolStripNotchRemember.Click += new System.EventHandler(this.toolStripNotchRemember_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-            // 
-            // toolStripNotchNormal
-            // 
-            this.toolStripNotchNormal.Name = "toolStripNotchNormal";
-            resources.ApplyResources(this.toolStripNotchNormal, "toolStripNotchNormal");
-            this.toolStripNotchNormal.Click += new System.EventHandler(this.toolStripNotchNormal_Click);
-            // 
-            // toolStripNotchDeep
-            // 
-            this.toolStripNotchDeep.Checked = true;
-            this.toolStripNotchDeep.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolStripNotchDeep.Name = "toolStripNotchDeep";
-            resources.ApplyResources(this.toolStripNotchDeep, "toolStripNotchDeep");
-            this.toolStripNotchDeep.Click += new System.EventHandler(this.toolStripNotchDeep_Click);
-            // 
-            // toolStripNotchVeryDeep
-            // 
-            this.toolStripNotchVeryDeep.Name = "toolStripNotchVeryDeep";
-            resources.ApplyResources(this.toolStripNotchVeryDeep, "toolStripNotchVeryDeep");
-            this.toolStripNotchVeryDeep.Click += new System.EventHandler(this.toolStripNotchVeryDeep_Click);
-            // 
-            // timerNotchZoom
-            // 
-            this.timerNotchZoom.Interval = 1000;
-            this.timerNotchZoom.Tick += new System.EventHandler(this.timerNotchZoom_Tick);
-            // 
-            // menuStrip1
-            // 
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
-            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setupToolStripMenuItem,
-            this.memoryToolStripMenuItem,
-            this.waveToolStripMenuItem,
-            this.equalizerToolStripMenuItem,
-            this.xVTRsToolStripMenuItem,
-            this.cWXToolStripMenuItem,
-            this.uCBToolStripMenuItem,
-            this.mixerToolStripMenuItem,
-            this.antennaToolStripMenuItem,
-            this.relaysToolStripMenuItem,
-            this.aTUToolStripMenuItem,
-            this.flexControlToolStripMenuItem,
-            this.eSCToolStripMenuItem,
-            this.GrayMenuItem,
-            this.TXIDMenuItem,
-            this.callsignTextBox,
-            this.ScanMenuItem,
-            this.spotterMenu,
-            this.herosToolStripMenuItem,
-            this.aboutToolStripMenuItem,
-            this.remoteProfilesToolStripMenuItem,
-            this.reportBugToolStripMenuItem});
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.ShowItemToolTips = true;
-            // 
-            // setupToolStripMenuItem
-            // 
-            this.setupToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
-            this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
-            // 
-            // memoryToolStripMenuItem
-            // 
-            this.memoryToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
-            resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
-            this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
-            // 
-            // waveToolStripMenuItem
-            // 
-            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
-            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
-            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
-            // 
-            // equalizerToolStripMenuItem
-            // 
-            this.equalizerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.equalizerToolStripMenuItem.Name = "equalizerToolStripMenuItem";
-            resources.ApplyResources(this.equalizerToolStripMenuItem, "equalizerToolStripMenuItem");
-            this.equalizerToolStripMenuItem.Click += new System.EventHandler(this.equalizerToolStripMenuItem_Click);
-            // 
-            // xVTRsToolStripMenuItem
-            // 
-            this.xVTRsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.xVTRsToolStripMenuItem.Name = "xVTRsToolStripMenuItem";
-            resources.ApplyResources(this.xVTRsToolStripMenuItem, "xVTRsToolStripMenuItem");
-            this.xVTRsToolStripMenuItem.Click += new System.EventHandler(this.xVTRsToolStripMenuItem_Click);
-            // 
-            // cWXToolStripMenuItem
-            // 
-            this.cWXToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.cWXToolStripMenuItem.Name = "cWXToolStripMenuItem";
-            resources.ApplyResources(this.cWXToolStripMenuItem, "cWXToolStripMenuItem");
-            this.cWXToolStripMenuItem.Click += new System.EventHandler(this.cWXToolStripMenuItem_Click);
-            // 
-            // uCBToolStripMenuItem
-            // 
-            this.uCBToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.uCBToolStripMenuItem.Name = "uCBToolStripMenuItem";
-            resources.ApplyResources(this.uCBToolStripMenuItem, "uCBToolStripMenuItem");
-            this.uCBToolStripMenuItem.Click += new System.EventHandler(this.uCBToolStripMenuItem_Click);
-            // 
-            // mixerToolStripMenuItem
-            // 
-            this.mixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.mixerToolStripMenuItem.Name = "mixerToolStripMenuItem";
-            resources.ApplyResources(this.mixerToolStripMenuItem, "mixerToolStripMenuItem");
-            this.mixerToolStripMenuItem.Click += new System.EventHandler(this.mixerToolStripMenuItem_Click);
-            // 
-            // antennaToolStripMenuItem
-            // 
-            this.antennaToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.antennaToolStripMenuItem.Name = "antennaToolStripMenuItem";
-            resources.ApplyResources(this.antennaToolStripMenuItem, "antennaToolStripMenuItem");
-            this.antennaToolStripMenuItem.Click += new System.EventHandler(this.antennaToolStripMenuItem_Click);
-            // 
-            // relaysToolStripMenuItem
-            // 
-            this.relaysToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.relaysToolStripMenuItem.Name = "relaysToolStripMenuItem";
-            resources.ApplyResources(this.relaysToolStripMenuItem, "relaysToolStripMenuItem");
-            this.relaysToolStripMenuItem.Click += new System.EventHandler(this.relaysToolStripMenuItem_Click);
-            // 
-            // aTUToolStripMenuItem
-            // 
-            this.aTUToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.aTUToolStripMenuItem.Name = "aTUToolStripMenuItem";
-            resources.ApplyResources(this.aTUToolStripMenuItem, "aTUToolStripMenuItem");
-            this.aTUToolStripMenuItem.Click += new System.EventHandler(this.aTUToolStripMenuItem_Click);
-            // 
-            // flexControlToolStripMenuItem
-            // 
-            this.flexControlToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.flexControlToolStripMenuItem.Name = "flexControlToolStripMenuItem";
-            resources.ApplyResources(this.flexControlToolStripMenuItem, "flexControlToolStripMenuItem");
-            this.flexControlToolStripMenuItem.Click += new System.EventHandler(this.flexControlToolStripMenuItem_Click);
-            // 
-            // eSCToolStripMenuItem
-            // 
-            resources.ApplyResources(this.eSCToolStripMenuItem, "eSCToolStripMenuItem");
-            this.eSCToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.eSCToolStripMenuItem.Name = "eSCToolStripMenuItem";
-            this.eSCToolStripMenuItem.Click += new System.EventHandler(this.eSCToolStripMenuItem_Click);
-            // 
-            // GrayMenuItem
-            // 
-            this.GrayMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.GrayMenuItem.Name = "GrayMenuItem";
-            resources.ApplyResources(this.GrayMenuItem, "GrayMenuItem");
-            this.GrayMenuItem.Click += new System.EventHandler(this.GrayMenuItem_Click);
-            // 
-            // TXIDMenuItem
-            // 
-            resources.ApplyResources(this.TXIDMenuItem, "TXIDMenuItem");
-            this.TXIDMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.TXIDMenuItem.Name = "TXIDMenuItem";
-            this.TXIDMenuItem.CheckedChanged += new System.EventHandler(this.TXIDMenuItem_CheckedChanged);
-            this.TXIDMenuItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TXIDMenuItem_MouseDown);
-            this.TXIDMenuItem.MouseHover += new System.EventHandler(this.TXIDMenuItem_MouseHover);
-            // 
-            // callsignTextBox
-            // 
-            resources.ApplyResources(this.callsignTextBox, "callsignTextBox");
-            this.callsignTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.callsignTextBox.Name = "callsignTextBox";
-            this.callsignTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.callsignTextBox.Leave += new System.EventHandler(this.callsignTextBox_Leave);
-            this.callsignTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.callsignTextBox_MouseDown);
-            this.callsignTextBox.MouseEnter += new System.EventHandler(this.callsignTextBox_MouseEnter);
-            this.callsignTextBox.MouseLeave += new System.EventHandler(this.callsignTextBox_MouseLeave);
-            this.callsignTextBox.TextChanged += new System.EventHandler(this.callsignTextBox_TextChanged_1);
-            // 
-            // ScanMenuItem
-            // 
-            this.ScanMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ScanMenuItem.Name = "ScanMenuItem";
-            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
-            this.ScanMenuItem.Click += new System.EventHandler(this.ScanMenuItem_Click);
-            // 
-            // spotterMenu
-            // 
-            resources.ApplyResources(this.spotterMenu, "spotterMenu");
-            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.spotterMenu.Name = "spotterMenu";
-            this.spotterMenu.CheckedChanged += new System.EventHandler(this.spotterMenu_CheckedChanged);
-            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
-            this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
-            // 
-            // herosToolStripMenuItem
-            // 
-            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
-            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
-            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // remoteProfilesToolStripMenuItem
-            // 
-            this.remoteProfilesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.remoteProfilesToolStripMenuItem.Name = "remoteProfilesToolStripMenuItem";
-            resources.ApplyResources(this.remoteProfilesToolStripMenuItem, "remoteProfilesToolStripMenuItem");
-            this.remoteProfilesToolStripMenuItem.Click += new System.EventHandler(this.remoteProfilesToolStripMenuItem_Click);
-            // 
-            // reportBugToolStripMenuItem
-            // 
-            this.reportBugToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
-            resources.ApplyResources(this.reportBugToolStripMenuItem, "reportBugToolStripMenuItem");
-            this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "QuickAudio";
-            // 
-            // picRX2Squelch
-            // 
-            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
-            this.picRX2Squelch.Name = "picRX2Squelch";
-            this.picRX2Squelch.TabStop = false;
-            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
-            // 
-            // picSquelch
-            // 
-            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picSquelch, "picSquelch");
-            this.picSquelch.Name = "picSquelch";
-            this.picSquelch.TabStop = false;
-            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
-            // 
-            // panelDisplay2
-            // 
-            resources.ApplyResources(this.panelDisplay2, "panelDisplay2");
-            this.panelDisplay2.BackColor = System.Drawing.Color.Transparent;
-            this.panelDisplay2.Controls.Add(this.btnTNFAdd);
-            this.panelDisplay2.Controls.Add(this.chkTNF);
-            this.panelDisplay2.Controls.Add(this.chkDisplayPeak);
-            this.panelDisplay2.Controls.Add(this.comboDisplayMode);
-            this.panelDisplay2.Controls.Add(this.chkDisplayAVG);
-            this.panelDisplay2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panelDisplay2.Name = "panelDisplay2";
-            // 
             // btnTNFAdd
             // 
             this.btnTNFAdd.FlatAppearance.BorderSize = 0;
@@ -3405,20 +3076,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkDisplayAVG, resources.GetString("chkDisplayAVG.ToolTip"));
             this.chkDisplayAVG.CheckedChanged += new System.EventHandler(this.chkDisplayAVG_CheckedChanged);
             // 
-            // ptbRX2Squelch
-            // 
-            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
-            this.ptbRX2Squelch.HeadImage = null;
-            this.ptbRX2Squelch.LargeChange = 1;
-            this.ptbRX2Squelch.Maximum = 0;
-            this.ptbRX2Squelch.Minimum = -160;
-            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
-            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Squelch.SmallChange = 1;
-            this.ptbRX2Squelch.TabStop = false;
-            this.ptbRX2Squelch.Value = -150;
-            this.ptbRX2Squelch.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
-            // 
             // ptbRX2RF
             // 
             resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
@@ -3433,23 +3090,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
             this.ptbRX2RF.Value = 90;
             this.ptbRX2RF.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
-            // 
-            // panelOptions
-            // 
-            resources.ApplyResources(this.panelOptions, "panelOptions");
-            this.panelOptions.BackColor = System.Drawing.Color.Transparent;
-            this.panelOptions.Controls.Add(this.chkFWCATU);
-            this.panelOptions.Controls.Add(this.chkFWCATUBypass);
-            this.panelOptions.Controls.Add(this.ckQuickPlay);
-            this.panelOptions.Controls.Add(this.chkMON);
-            this.panelOptions.Controls.Add(this.ckQuickRec);
-            this.panelOptions.Controls.Add(this.chkMUT);
-            this.panelOptions.Controls.Add(this.chkMOX);
-            this.panelOptions.Controls.Add(this.chkTUN);
-            this.panelOptions.Controls.Add(this.chkX2TR);
-            this.panelOptions.Controls.Add(this.comboTuneMode);
-            this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panelOptions.Name = "panelOptions";
             // 
             // chkFWCATU
             // 
@@ -5833,6 +5473,386 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
             this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
             // 
+            // lblDisplayZoom
+            // 
+            this.lblDisplayZoom.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.lblDisplayZoom, "lblDisplayZoom");
+            this.lblDisplayZoom.Name = "lblDisplayZoom";
+            this.toolTip1.SetToolTip(this.lblDisplayZoom, resources.GetString("lblDisplayZoom.ToolTip"));
+            this.lblDisplayZoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayZoom_MouseDown);
+            // 
+            // lblDisplayPan
+            // 
+            this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.lblDisplayPan, "lblDisplayPan");
+            this.lblDisplayPan.Name = "lblDisplayPan";
+            this.toolTip1.SetToolTip(this.lblDisplayPan, resources.GetString("lblDisplayPan.ToolTip"));
+            this.lblDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayPan_MouseDown);
+            // 
+            // timer_clock
+            // 
+            this.timer_clock.Enabled = true;
+            this.timer_clock.Tick += new System.EventHandler(this.timer_clock_Tick);
+            // 
+            // contextMenuStripFilterRX1
+            // 
+            this.contextMenuStripFilterRX1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemRX1FilterConfigure,
+            this.toolStripMenuItemRX1FilterReset});
+            this.contextMenuStripFilterRX1.Name = "contextMenuStripFilterRX1";
+            resources.ApplyResources(this.contextMenuStripFilterRX1, "contextMenuStripFilterRX1");
+            // 
+            // toolStripMenuItemRX1FilterConfigure
+            // 
+            this.toolStripMenuItemRX1FilterConfigure.Name = "toolStripMenuItemRX1FilterConfigure";
+            resources.ApplyResources(this.toolStripMenuItemRX1FilterConfigure, "toolStripMenuItemRX1FilterConfigure");
+            this.toolStripMenuItemRX1FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterConfigure_Click);
+            // 
+            // toolStripMenuItemRX1FilterReset
+            // 
+            this.toolStripMenuItemRX1FilterReset.Name = "toolStripMenuItemRX1FilterReset";
+            resources.ApplyResources(this.toolStripMenuItemRX1FilterReset, "toolStripMenuItemRX1FilterReset");
+            this.toolStripMenuItemRX1FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX1FilterReset_Click);
+            // 
+            // contextMenuStripFilterRX2
+            // 
+            this.contextMenuStripFilterRX2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemRX2FilterConfigure,
+            this.toolStripMenuItemRX2FilterReset});
+            this.contextMenuStripFilterRX2.Name = "contextMenuStripFilterRX2";
+            resources.ApplyResources(this.contextMenuStripFilterRX2, "contextMenuStripFilterRX2");
+            // 
+            // toolStripMenuItemRX2FilterConfigure
+            // 
+            this.toolStripMenuItemRX2FilterConfigure.Name = "toolStripMenuItemRX2FilterConfigure";
+            resources.ApplyResources(this.toolStripMenuItemRX2FilterConfigure, "toolStripMenuItemRX2FilterConfigure");
+            this.toolStripMenuItemRX2FilterConfigure.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterConfigure_Click);
+            // 
+            // toolStripMenuItemRX2FilterReset
+            // 
+            this.toolStripMenuItemRX2FilterReset.Name = "toolStripMenuItemRX2FilterReset";
+            resources.ApplyResources(this.toolStripMenuItemRX2FilterReset, "toolStripMenuItemRX2FilterReset");
+            this.toolStripMenuItemRX2FilterReset.Click += new System.EventHandler(this.toolStripMenuItemRX2FilterReset_Click);
+            // 
+            // timer_navigate
+            // 
+            this.timer_navigate.Tick += new System.EventHandler(this.timer_navigate_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 200;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // contextMenuStripNotch
+            // 
+            this.contextMenuStripNotch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripNotchDelete,
+            this.toolStripNotchRemember,
+            this.toolStripSeparator1,
+            this.toolStripNotchNormal,
+            this.toolStripNotchDeep,
+            this.toolStripNotchVeryDeep});
+            this.contextMenuStripNotch.Name = "contextMenuStripNotch";
+            resources.ApplyResources(this.contextMenuStripNotch, "contextMenuStripNotch");
+            // 
+            // toolStripNotchDelete
+            // 
+            this.toolStripNotchDelete.Name = "toolStripNotchDelete";
+            resources.ApplyResources(this.toolStripNotchDelete, "toolStripNotchDelete");
+            this.toolStripNotchDelete.Click += new System.EventHandler(this.toolStripNotchDelete_Click);
+            // 
+            // toolStripNotchRemember
+            // 
+            this.toolStripNotchRemember.Name = "toolStripNotchRemember";
+            resources.ApplyResources(this.toolStripNotchRemember, "toolStripNotchRemember");
+            this.toolStripNotchRemember.Click += new System.EventHandler(this.toolStripNotchRemember_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // toolStripNotchNormal
+            // 
+            this.toolStripNotchNormal.Name = "toolStripNotchNormal";
+            resources.ApplyResources(this.toolStripNotchNormal, "toolStripNotchNormal");
+            this.toolStripNotchNormal.Click += new System.EventHandler(this.toolStripNotchNormal_Click);
+            // 
+            // toolStripNotchDeep
+            // 
+            this.toolStripNotchDeep.Checked = true;
+            this.toolStripNotchDeep.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripNotchDeep.Name = "toolStripNotchDeep";
+            resources.ApplyResources(this.toolStripNotchDeep, "toolStripNotchDeep");
+            this.toolStripNotchDeep.Click += new System.EventHandler(this.toolStripNotchDeep_Click);
+            // 
+            // toolStripNotchVeryDeep
+            // 
+            this.toolStripNotchVeryDeep.Name = "toolStripNotchVeryDeep";
+            resources.ApplyResources(this.toolStripNotchVeryDeep, "toolStripNotchVeryDeep");
+            this.toolStripNotchVeryDeep.Click += new System.EventHandler(this.toolStripNotchVeryDeep_Click);
+            // 
+            // timerNotchZoom
+            // 
+            this.timerNotchZoom.Interval = 1000;
+            this.timerNotchZoom.Tick += new System.EventHandler(this.timerNotchZoom_Tick);
+            // 
+            // menuStrip1
+            // 
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
+            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setupToolStripMenuItem,
+            this.memoryToolStripMenuItem,
+            this.waveToolStripMenuItem,
+            this.equalizerToolStripMenuItem,
+            this.xVTRsToolStripMenuItem,
+            this.cWXToolStripMenuItem,
+            this.uCBToolStripMenuItem,
+            this.mixerToolStripMenuItem,
+            this.antennaToolStripMenuItem,
+            this.relaysToolStripMenuItem,
+            this.aTUToolStripMenuItem,
+            this.flexControlToolStripMenuItem,
+            this.eSCToolStripMenuItem,
+            this.GrayMenuItem,
+            this.TXIDMenuItem,
+            this.callsignTextBox,
+            this.ScanMenuItem,
+            this.spotterMenu,
+            this.herosToolStripMenuItem,
+            this.aboutToolStripMenuItem,
+            this.remoteProfilesToolStripMenuItem,
+            this.reportBugToolStripMenuItem});
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.ShowItemToolTips = true;
+            // 
+            // setupToolStripMenuItem
+            // 
+            this.setupToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
+            resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
+            this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
+            // 
+            // memoryToolStripMenuItem
+            // 
+            this.memoryToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
+            resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
+            this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
+            // 
+            // waveToolStripMenuItem
+            // 
+            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
+            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
+            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
+            // 
+            // equalizerToolStripMenuItem
+            // 
+            this.equalizerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.equalizerToolStripMenuItem.Name = "equalizerToolStripMenuItem";
+            resources.ApplyResources(this.equalizerToolStripMenuItem, "equalizerToolStripMenuItem");
+            this.equalizerToolStripMenuItem.Click += new System.EventHandler(this.equalizerToolStripMenuItem_Click);
+            // 
+            // xVTRsToolStripMenuItem
+            // 
+            this.xVTRsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.xVTRsToolStripMenuItem.Name = "xVTRsToolStripMenuItem";
+            resources.ApplyResources(this.xVTRsToolStripMenuItem, "xVTRsToolStripMenuItem");
+            this.xVTRsToolStripMenuItem.Click += new System.EventHandler(this.xVTRsToolStripMenuItem_Click);
+            // 
+            // cWXToolStripMenuItem
+            // 
+            this.cWXToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.cWXToolStripMenuItem.Name = "cWXToolStripMenuItem";
+            resources.ApplyResources(this.cWXToolStripMenuItem, "cWXToolStripMenuItem");
+            this.cWXToolStripMenuItem.Click += new System.EventHandler(this.cWXToolStripMenuItem_Click);
+            // 
+            // uCBToolStripMenuItem
+            // 
+            this.uCBToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.uCBToolStripMenuItem.Name = "uCBToolStripMenuItem";
+            resources.ApplyResources(this.uCBToolStripMenuItem, "uCBToolStripMenuItem");
+            this.uCBToolStripMenuItem.Click += new System.EventHandler(this.uCBToolStripMenuItem_Click);
+            // 
+            // mixerToolStripMenuItem
+            // 
+            this.mixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.mixerToolStripMenuItem.Name = "mixerToolStripMenuItem";
+            resources.ApplyResources(this.mixerToolStripMenuItem, "mixerToolStripMenuItem");
+            this.mixerToolStripMenuItem.Click += new System.EventHandler(this.mixerToolStripMenuItem_Click);
+            // 
+            // antennaToolStripMenuItem
+            // 
+            this.antennaToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.antennaToolStripMenuItem.Name = "antennaToolStripMenuItem";
+            resources.ApplyResources(this.antennaToolStripMenuItem, "antennaToolStripMenuItem");
+            this.antennaToolStripMenuItem.Click += new System.EventHandler(this.antennaToolStripMenuItem_Click);
+            // 
+            // relaysToolStripMenuItem
+            // 
+            this.relaysToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.relaysToolStripMenuItem.Name = "relaysToolStripMenuItem";
+            resources.ApplyResources(this.relaysToolStripMenuItem, "relaysToolStripMenuItem");
+            this.relaysToolStripMenuItem.Click += new System.EventHandler(this.relaysToolStripMenuItem_Click);
+            // 
+            // aTUToolStripMenuItem
+            // 
+            this.aTUToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aTUToolStripMenuItem.Name = "aTUToolStripMenuItem";
+            resources.ApplyResources(this.aTUToolStripMenuItem, "aTUToolStripMenuItem");
+            this.aTUToolStripMenuItem.Click += new System.EventHandler(this.aTUToolStripMenuItem_Click);
+            // 
+            // flexControlToolStripMenuItem
+            // 
+            this.flexControlToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.flexControlToolStripMenuItem.Name = "flexControlToolStripMenuItem";
+            resources.ApplyResources(this.flexControlToolStripMenuItem, "flexControlToolStripMenuItem");
+            this.flexControlToolStripMenuItem.Click += new System.EventHandler(this.flexControlToolStripMenuItem_Click);
+            // 
+            // eSCToolStripMenuItem
+            // 
+            resources.ApplyResources(this.eSCToolStripMenuItem, "eSCToolStripMenuItem");
+            this.eSCToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.eSCToolStripMenuItem.Name = "eSCToolStripMenuItem";
+            this.eSCToolStripMenuItem.Click += new System.EventHandler(this.eSCToolStripMenuItem_Click);
+            // 
+            // GrayMenuItem
+            // 
+            this.GrayMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.GrayMenuItem.Name = "GrayMenuItem";
+            resources.ApplyResources(this.GrayMenuItem, "GrayMenuItem");
+            this.GrayMenuItem.Click += new System.EventHandler(this.GrayMenuItem_Click);
+            // 
+            // TXIDMenuItem
+            // 
+            resources.ApplyResources(this.TXIDMenuItem, "TXIDMenuItem");
+            this.TXIDMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.TXIDMenuItem.Name = "TXIDMenuItem";
+            this.TXIDMenuItem.CheckedChanged += new System.EventHandler(this.TXIDMenuItem_CheckedChanged);
+            this.TXIDMenuItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TXIDMenuItem_MouseDown);
+            this.TXIDMenuItem.MouseHover += new System.EventHandler(this.TXIDMenuItem_MouseHover);
+            // 
+            // callsignTextBox
+            // 
+            resources.ApplyResources(this.callsignTextBox, "callsignTextBox");
+            this.callsignTextBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.callsignTextBox.Name = "callsignTextBox";
+            this.callsignTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.callsignTextBox.Leave += new System.EventHandler(this.callsignTextBox_Leave);
+            this.callsignTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.callsignTextBox_MouseDown);
+            this.callsignTextBox.MouseEnter += new System.EventHandler(this.callsignTextBox_MouseEnter);
+            this.callsignTextBox.MouseLeave += new System.EventHandler(this.callsignTextBox_MouseLeave);
+            this.callsignTextBox.TextChanged += new System.EventHandler(this.callsignTextBox_TextChanged_1);
+            // 
+            // ScanMenuItem
+            // 
+            this.ScanMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ScanMenuItem.Name = "ScanMenuItem";
+            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
+            this.ScanMenuItem.Click += new System.EventHandler(this.ScanMenuItem_Click);
+            // 
+            // spotterMenu
+            // 
+            resources.ApplyResources(this.spotterMenu, "spotterMenu");
+            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.spotterMenu.Name = "spotterMenu";
+            this.spotterMenu.CheckedChanged += new System.EventHandler(this.spotterMenu_CheckedChanged);
+            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
+            this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
+            // 
+            // herosToolStripMenuItem
+            // 
+            this.herosToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.herosToolStripMenuItem.Name = "herosToolStripMenuItem";
+            resources.ApplyResources(this.herosToolStripMenuItem, "herosToolStripMenuItem");
+            this.herosToolStripMenuItem.Click += new System.EventHandler(this.herosToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // remoteProfilesToolStripMenuItem
+            // 
+            this.remoteProfilesToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.remoteProfilesToolStripMenuItem.Name = "remoteProfilesToolStripMenuItem";
+            resources.ApplyResources(this.remoteProfilesToolStripMenuItem, "remoteProfilesToolStripMenuItem");
+            this.remoteProfilesToolStripMenuItem.Click += new System.EventHandler(this.remoteProfilesToolStripMenuItem_Click);
+            // 
+            // reportBugToolStripMenuItem
+            // 
+            this.reportBugToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.reportBugToolStripMenuItem.Name = "reportBugToolStripMenuItem";
+            resources.ApplyResources(this.reportBugToolStripMenuItem, "reportBugToolStripMenuItem");
+            this.reportBugToolStripMenuItem.Click += new System.EventHandler(this.reportBugToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "QuickAudio";
+            // 
+            // picRX2Squelch
+            // 
+            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
+            this.picRX2Squelch.Name = "picRX2Squelch";
+            this.picRX2Squelch.TabStop = false;
+            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
+            // 
+            // picSquelch
+            // 
+            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picSquelch, "picSquelch");
+            this.picSquelch.Name = "picSquelch";
+            this.picSquelch.TabStop = false;
+            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
+            // 
+            // panelDisplay2
+            // 
+            resources.ApplyResources(this.panelDisplay2, "panelDisplay2");
+            this.panelDisplay2.BackColor = System.Drawing.Color.Transparent;
+            this.panelDisplay2.Controls.Add(this.btnTNFAdd);
+            this.panelDisplay2.Controls.Add(this.chkTNF);
+            this.panelDisplay2.Controls.Add(this.chkDisplayPeak);
+            this.panelDisplay2.Controls.Add(this.comboDisplayMode);
+            this.panelDisplay2.Controls.Add(this.chkDisplayAVG);
+            this.panelDisplay2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panelDisplay2.Name = "panelDisplay2";
+            // 
+            // ptbRX2Squelch
+            // 
+            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
+            this.ptbRX2Squelch.HeadImage = null;
+            this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.Maximum = 0;
+            this.ptbRX2Squelch.Minimum = -160;
+            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
+            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Squelch.SmallChange = 1;
+            this.ptbRX2Squelch.TabStop = false;
+            this.ptbRX2Squelch.Value = -150;
+            this.ptbRX2Squelch.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
+            // 
+            // panelOptions
+            // 
+            resources.ApplyResources(this.panelOptions, "panelOptions");
+            this.panelOptions.BackColor = System.Drawing.Color.Transparent;
+            this.panelOptions.Controls.Add(this.chkFWCATU);
+            this.panelOptions.Controls.Add(this.chkFWCATUBypass);
+            this.panelOptions.Controls.Add(this.ckQuickPlay);
+            this.panelOptions.Controls.Add(this.chkMON);
+            this.panelOptions.Controls.Add(this.ckQuickRec);
+            this.panelOptions.Controls.Add(this.chkMUT);
+            this.panelOptions.Controls.Add(this.chkMOX);
+            this.panelOptions.Controls.Add(this.chkTUN);
+            this.panelOptions.Controls.Add(this.chkX2TR);
+            this.panelOptions.Controls.Add(this.comboTuneMode);
+            this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panelOptions.Name = "panelOptions";
+            // 
             // panelBandHF
             // 
             resources.ApplyResources(this.panelBandHF, "panelBandHF");
@@ -6541,20 +6561,6 @@ namespace PowerSDR
             this.picDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseMove);
             this.picDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseUp);
             this.picDisplay.Resize += new System.EventHandler(this.picDisplay_Resize);
-            // 
-            // lblDisplayZoom
-            // 
-            this.lblDisplayZoom.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblDisplayZoom, "lblDisplayZoom");
-            this.lblDisplayZoom.Name = "lblDisplayZoom";
-            this.toolTip1.SetToolTip(this.lblDisplayZoom, resources.GetString("lblDisplayZoom.ToolTip"));
-            this.lblDisplayZoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayZoom_MouseDown);
-            // 
-            // lblDisplayPan
-            // 
-            this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblDisplayPan, "lblDisplayPan");
-            this.lblDisplayPan.Name = "lblDisplayPan";
             // 
             // panelFilter
             // 
@@ -7300,17 +7306,7 @@ namespace PowerSDR
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Console_MouseWheel);
             this.Resize += new System.EventHandler(this.Console_Resize);
-            this.contextMenuStripFilterRX1.ResumeLayout(false);
-            this.contextMenuStripFilterRX2.ResumeLayout(false);
-            this.contextMenuStripNotch.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
-            this.panelDisplay2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
-            this.panelOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
@@ -7338,6 +7334,16 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
+            this.contextMenuStripFilterRX1.ResumeLayout(false);
+            this.contextMenuStripFilterRX2.ResumeLayout(false);
+            this.contextMenuStripNotch.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
+            this.panelDisplay2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
+            this.panelOptions.ResumeLayout(false);
             this.panelBandHF.ResumeLayout(false);
             this.panelModeSpecificFM.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbFMMic)).EndInit();
@@ -7549,7 +7555,7 @@ namespace PowerSDR
                 TDxDevice.Connect();
                 if (TDxDevice.IsConnected)
                 {
-                    this.timer_navigate.Interval = 100;
+                    this.timer_navigate.Interval = 100; // 100mseconds
                     this.timer_navigate.Enabled = true;
                 }
             }
@@ -7568,6 +7574,9 @@ namespace PowerSDR
             FWC.console = this;
 			Display.console = this;  //
 
+            Http.console = this;
+
+           
             Setup.console = this;                 // ke9ns add  setup.cs to this console so setup can talk to console
 
             SpotControl.console = this;           // ke9ns add  spot.cs to this console so spot can talk to console
@@ -7972,8 +7981,7 @@ namespace PowerSDR
 				*/
 			}
 
-			if(current_model == Model.SDR1000)
-                hw = new HW(0x378);				// create hardware object
+		//	if(current_model == Model.SDR1000)              hw = new HW(0x378);				// create hardware object
 
             //BT 5/3/10 moved siolistener to last init item to prevent default data
             //being sent via CAT
@@ -7987,22 +7995,24 @@ namespace PowerSDR
 
 			eqForm = new EQForm(this);
 
-			InitFilterPresets();				// Initialize filter values
+			InitFilterPresets();                // Initialize filter values
 
+           
             StackForm = new StackControl(this); // ke9ns add communicate with bandstack controls
             SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
-
+            httpFile = new Http(this);
+           
             setupForm = new Setup(this);        // ke9ns  create Setup form (needed so you can send data to setup form) Repeat for any form you want to send data too
-
+          
          
             setupForm.StartPosition = FormStartPosition.Manual;
 			
 			switch(current_model)
 			{
-				case Model.SDR1000:
-					Hdw.Init();							// Power down hardware
-					Hdw.StandBy();						// initialize hardware device
-					break;
+			//	 case Model.SDR1000:
+				//	Hdw.Init();							// Power down hardware
+				//	Hdw.StandBy();						// initialize hardware device
+				//	break;
 					/*case Model.SDRX:
 						if(fwc_init)
 						{
@@ -8181,6 +8191,8 @@ namespace PowerSDR
             ptbRF_Scroll(this, EventArgs.Empty);
             ptbVACRXGain_Scroll(this, EventArgs.Empty);
             ptbVACTXGain_Scroll(this, EventArgs.Empty);
+
+
 			CalcDisplayFreq();
 
 			tune_step_index--;					// Setup wheel tuning
@@ -8221,8 +8233,7 @@ namespace PowerSDR
 
             SetCurrentFlexControlMode(null, current_flexcontrol_mode);
 
-            if (flexcontrol_autodetect)
-                FlexControlScan();
+            if (flexcontrol_autodetect)  FlexControlScan();
 
 		} //Initconsole
 
@@ -8238,6 +8249,7 @@ namespace PowerSDR
         private void FlexControlScan_ThreadFunction()
         {
             FlexControlManager.Rescan();
+
             if (FlexControlManager.DeviceCount == 0) return;
             
             if (flexControlBasicForm.FlexControl == null)
@@ -8409,6 +8421,10 @@ namespace PowerSDR
             writer2.Write(callsign);                             // callsign for waterfall ID
             writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
 
+            writer2.Write((byte)PAON);                           // temp/volts on/off console display
+            writer2.Write((byte)noaaON);                          // space weather console display
+
+            
             writer2.Write("end");
 
             //  writer2.Write(callsign);                  // callsign test
@@ -8419,6 +8435,7 @@ namespace PowerSDR
             stream2.Close();   // close stream
                                //   Debug.WriteLine("save database file on exit");
 
+            PAON = 0;       // shut down PAON thread
             //--------------------------------------------------------------------
 
          //   Debug.WriteLine("-nameB " + SpotControl.nameB);
@@ -9020,10 +9037,21 @@ namespace PowerSDR
 
             //--------------------------------------------------------
             // ke9ns add  open up database for my stuff  here
+           // AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\";
+            string file_name3 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\" + "mem.bak"; // save original Memory.xml file just in case T10
+            string file_name4 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\" + "memory.xml"; // save original Memory.xml file just in case T10
+
+            if ((!File.Exists(file_name3)) && (File.Exists(file_name4)))
+            {
+                Debug.WriteLine("Backing up Memory file 1 time");
+
+                System.IO.File.Copy(file_name4, file_name3); // old > new
+
+            }
+
 
             string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
 
-         
 
             if (!File.Exists(file_name2))
             {
@@ -9051,6 +9079,9 @@ namespace PowerSDR
             
                 writer2.Write(callsign);                             // callsign for waterfall ID
                 writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
+
+                writer2.Write((byte)PAON);                           // temp/volts on/off console display
+                writer2.Write((byte)noaaON);                          // space weather console display
 
                 writer2.Write("end");
 
@@ -9085,20 +9116,37 @@ namespace PowerSDR
                 callsign = reader2.ReadString();                                   // callsign for waterfall ID
                 lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
 
+                PAON = reader2.ReadByte();                                       // temp/volt on/off display
+                noaaON = reader2.ReadByte();                                // space weather console display
+
                 reader2.Close();    // close  file
                 stream2.Close();   // close stream
                                    //   Debug.WriteLine("Read database file");
+
             } // yes ke9ns.dat file does exist
 
+
+            //ke9ns add
+            if (setupForm.chkBoxHTTP.Checked == true)
+            {
+              //   HttpServer2(); // ke9ns  start server
+
+                Debug.WriteLine("ke9ns8 httplaunch");
+
+                HttpServer = true;
+
+             //  httpFile.HttpServer1();
+
+            }
 
          //   Debug.WriteLine("1nameB " + SpotControl.nameB);
          //   Debug.WriteLine("1portB " + SpotControl.portB);
          //   Debug.WriteLine("1callB " + SpotControl.callB);
-        //    Debug.WriteLine("1nodeB " + SpotControl.nodeB);
+         //    Debug.WriteLine("1nodeB " + SpotControl.nodeB);
 
             if (Display.GridOff == 1)
             {
-                setupForm.gridBoxTS.CheckedChanged -= setupForm.gridBoxTS_CheckedChanged;
+                setupForm.gridBoxTS.CheckedChanged -= setupForm.gridBoxTS_CheckedChanged;  // ke9ns turn off checkchanged temporarily    // ke9ns turn off valuechanged temporarily 
                 setupForm.gridBoxTS.Checked = true;
                 setupForm.gridBoxTS.CheckedChanged += setupForm.gridBoxTS_CheckedChanged;
 
@@ -10336,16 +10384,13 @@ namespace PowerSDR
 
 			}
 
-           
-           
-
-
-
-
+      
             Common.ForceFormOnScreen(this);
 			Common.ForceFormOnScreen(setupForm);
 
-		} // getstate
+            tempVFOAFreq = VFOAFreq; // ke9ns add get CTUN ready quickly
+          
+        } // getstate
 
         private string VerToString(uint ver)
         {
@@ -13013,7 +13058,12 @@ namespace PowerSDR
 			}
 
 			VFOAFreq = freq;
-		}
+
+            
+            tempVFOAFreq = VFOAFreq; // ke9ns add  CTUN operation changed freq so update temp value
+           
+
+        } // setband
 
 		private void ChangeTuneStepUp()
 		{
@@ -18085,7 +18135,10 @@ namespace PowerSDR
 		// aliased 
 		public void AdjustDisplayDataForBandEdge(ref float[] display_data) 
 		{
-			if ( current_model != Model.SOFTROCK40)  // -- no aliasing going on 
+
+            return;
+
+		/*	if ( current_model != Model.SOFTROCK40)  // -- no aliasing going on 
 				return;   
 
 			if ( rx1_dsp_mode == DSPMode.DRM )  // for now don't worry about aliasing in DRM land 
@@ -18128,6 +18181,7 @@ namespace PowerSDR
 				// Debug.WriteLine("data_high: " + bin_num); 
 			}
 			return;		
+            */
 		}
 		// end kb9yig sr40 mod 
 
@@ -18159,7 +18213,9 @@ namespace PowerSDR
 
 		private void UpdateExtCtrl()
 		{
-			if(current_model != Model.SDR1000) return;
+            return;
+
+          /*  if (current_model != Model.SDR1000) return;
 
 			switch(TXBand)
 			{
@@ -18236,7 +18292,7 @@ namespace PowerSDR
 						Hdw.X2 = (byte)((Hdw.X2 & 0xC0) | x2_2_tx);
 					break;
 			}
-
+*/
         } // UpdateExtCtrl()
 
         // Added 06/24/05 BT for CAT commands
@@ -18763,9 +18819,11 @@ namespace PowerSDR
 		}
 
         //===============================================================================
-        //ke9ns comes here when you change zoom levels
+        //ke9ns comes here when you change zoom levels or 
 		public void CalcDisplayFreq()
 		{
+
+          
 			if(Display.CurrentDisplayMode != DisplayMode.PANADAPTER &&
 				Display.CurrentDisplayMode != DisplayMode.WATERFALL &&
 				Display.CurrentDisplayMode != DisplayMode.PANAFALL &&
@@ -18778,14 +18836,14 @@ namespace PowerSDR
 			double spur_tune_width = 0;
             switch (current_model)
             {
-                case Model.SDR1000:
-                    spur_tune_width = 200e6 / Math.Pow(2, 16);
-                    break;
+              //  case Model.SDR1000:
+              //      spur_tune_width = 200e6 / Math.Pow(2, 16);
+              //      break;
                 case Model.FLEX5000:
-                    spur_tune_width = 500e6 / Math.Pow(2, 16);
+                    spur_tune_width = 7629.39453125;   // 500e6 / Math.Pow(2, 16); // ke9ns 500mhz / 65536 = 7629.39453125
                     break;
                 case Model.FLEX3000:
-                    spur_tune_width = 499.201e6 / Math.Pow(2, 16);
+                    spur_tune_width = 7617.20275879; //  499.201e6 / Math.Pow(2, 16);
                     break;
                 case Model.FLEX1500:
                     double clock = 384e6;
@@ -18795,18 +18853,19 @@ namespace PowerSDR
                     if (!chkSR.Checked) spur_tune_width = 2000;
 
                     break;
-            }
+            } // switch current_model
 
-			double zoom_factor = (ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - ptbDisplayZoom.Value) * 0.01;
+			double zoom_factor = (ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - ptbDisplayZoom.Value) * 0.01; // (240+10-value)*.01    range from .1 to 2.4
 			
-			int low = (int)(-10000.0*sample_rate1/48000.0*zoom_factor);
+			int low = (int)(-10000.0 * sample_rate1 / 48000.0 * zoom_factor); //-40000 with zoom =1 or -96000 with zoom=.5
 			int high = -low;
-			int width = high - low;
-			if (width > sample_rate1-2*spur_tune_width)
-				width = (int)(sample_rate1-2*spur_tune_width);
+			int width = high - low; // ke9ns in hz    40000- -40000 = +80000 at 192k SR and Zoom = 1x
 
-			int abs_low = (int)(-(double)sample_rate1*0.5 - if_freq*1e6 + spur_tune_width);
-			int abs_high = (int)((double)sample_rate1*0.5 - if_freq*1e6 - spur_tune_width);
+			if (width > sample_rate1 - 2 * spur_tune_width)	width = (int)(sample_rate1 - 2*spur_tune_width);
+
+            // ke9ns below calculates the +/- hz of the full absolute widest the display could be (with no zoom at all)
+			int abs_low = (int)(-(double)sample_rate1 *0.5 - if_freq * 1e6 + spur_tune_width); // (-192000 * .5) - (0.009000 * 1000000) + 7629.39453125 = -96000 - 9000 + 7629.39453125  = -97373
+            int abs_high = (int)((double)sample_rate1 *0.5 - if_freq * 1e6 - spur_tune_width); // +97373 
 
 			if(high > abs_high)
 			{
@@ -18814,28 +18873,46 @@ namespace PowerSDR
 				high = abs_high;
 				low = high - width;
 			}
-
+ 
 			if(low < abs_low)
 			{
 				//Debug.WriteLine("low: "+low+"  abs_low: "+abs_low);
 				low = abs_low;
-				high = low+width;
+				high = low + width;
 			}
 
-			int max_pan_width = (int)(sample_rate1-2*spur_tune_width-width);
-			int pan_freq = max_pan_width * ptbDisplayPan.Value / ptbDisplayPan.Maximum;
+            // ke9ns Factor in the PAN slider (which allows you to slide around within the absolute limits)
+			int max_pan_width = (int)(sample_rate1 - 2 * spur_tune_width - width); // ke9ns  192000 - (2 * 7629.39453125) - 80000 = 96741
 
-			low = abs_low + pan_freq;
-			high = low + width;
+            int pan_freq = max_pan_width * ptbDisplayPan.Value / ptbDisplayPan.Maximum; // ke9ns 96741 * 593 / 1000 = 57367
+         
+            low = abs_low + pan_freq; // ke9ns -97373 + 57367 = -40000
+         
+            low = low - (int)CTUN1_HZ; // ke9ns add CTUN (adjust display so it appears as if the VFOA bandpass is moving but not the panadapter and not the waterfall 
+     
+            high = low + width; // -4000 + 8000 = 40000
 
-			Display.RXDisplayLow = Display.TXDisplayLow = low;
+         //   if (CTUN == true) CTUN3 = 1; // ke9ns add dont allow rundisplay() thread from updating display while in CTUN mode
+
+            Display.RXDisplayLow = Display.TXDisplayLow = low; // ke9ns at 192k SR  low = -96000 with zoom =.5
 			Display.RXDisplayHigh = Display.TXDisplayHigh = high;
+           
+          //  Debug.WriteLine("Display Limits: " + low + ", " + high);
 
-            //Debug.WriteLine("Display Limits: " + low + ", " + high);
 
-			UpdateDisplay(); // force a redraw of the picDisplay since you have new freq edges based on new zoom level
+            if (CTUN == true) // ke9ns add
+            {
+                 VFOAFreq = tempVFOAFreq; // CTUN operation changed freq
+            }
+         
+            UpdateDisplay(); // force a redraw of the picDisplay since you have new freq edges based on new zoom level
+
+
+          //  CTUN3 = 0;
 
         } //CalcDisplayFreq()
+
+
 
         private void UpdateRXDisplayVars(int l, int h)
 		{
@@ -19503,7 +19580,7 @@ namespace PowerSDR
 			if(temp_c > 50 || temp_c < 18)
 			{
 				progress.Hide();
-				MessageBox.Show("Temperature ("+temp_c.ToString("f0")+"�C) is outside of normal range (18-50�C).",
+				MessageBox.Show("Temperature ("+temp_c.ToString("f0")+"°C) is outside of normal range (18-50°C).",
 					"PA Bias Cal Error: Temp",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
@@ -21239,9 +21316,9 @@ namespace PowerSDR
             float[] a = new float[Display.BUFFER_SIZE];
             switch (current_model)
             {
-                case Model.SDR1000:
+              //  case Model.SDR1000:
                 case Model.DEMO:
-                case Model.SOFTROCK40:
+              //  case Model.SOFTROCK40:
                     //bool rx_only = SetupForm.RXOnly;					// Save RX Only Setting
                     //SetupForm.RXOnly = true;
 
@@ -23019,7 +23096,7 @@ namespace PowerSDR
             PreampMode preamp = rx1_preamp_mode;		// save current preamp setting
             switch (current_model)
             {
-                case Model.SDR1000:
+              //  case Model.SDR1000:
                 case Model.FLEX5000:
                     RX1PreampMode = PreampMode.HIGH;			// set preamp to high
                     break;
@@ -25175,18 +25252,19 @@ namespace PowerSDR
                         VFOAFreq = value;
                 }
             }
-        }
+        } // TXFreq
+
+
+        //======================================================================================
 
         private FlexControlMode current_flexcontrol_mode = FlexControlMode.Basic;
         public void SetCurrentFlexControlMode(object sender, FlexControlMode mode)
         {
             current_flexcontrol_mode = mode;
             
-            if(flexControlBasicForm != null)
-                flexControlBasicForm.FlexControlMode = mode;
+            if(flexControlBasicForm != null)  flexControlBasicForm.FlexControlMode = mode;
 
-            if(flexControlAdvancedForm != null)
-                flexControlAdvancedForm.FlexControlMode = mode;
+            if(flexControlAdvancedForm != null)   flexControlAdvancedForm.FlexControlMode = mode;
 
             if (sender != null)
             {
@@ -25195,12 +25273,12 @@ namespace PowerSDR
                     case FlexControlMode.Basic:
                         flexControlBasicForm.Location = flexControlAdvancedForm.Location;
                         flexControlBasicForm.Show();
-                        flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add
+                     //   flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add
                         break;
                     case FlexControlMode.Advanced:
                         flexControlAdvancedForm.Location = flexControlBasicForm.Location;
                         flexControlAdvancedForm.Show();
-                        flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
+                    //    flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
                         break;
                 }
             }
@@ -26382,7 +26460,91 @@ namespace PowerSDR
 			set{chkShowTXCWFreq.Checked = value;}
 		}
 
-		public bool ShowTXFilter
+        //=============================
+        // ke9ns add  scheduler calls this to set audio to POST and 48k SR for small file size recordings
+        public bool RECPOST
+        {
+          //  get { return WaveForm.checkBoxRecord.Checked; }
+            set
+            {
+             
+                if (value == true)
+                {
+                    WaveForm.RECPLAY = true;                 // this sets recording to POST (not IQ pre) 
+                    WaveForm.RECPLAY2 = true;                // and reduces .wav to 48000 SR to save file size
+
+                    WaveForm.checkBoxRecord.Checked = true; // start recording
+
+                }
+                else
+                {
+                  //  WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
+                    WaveForm.checkBoxRecord.Checked = value; // start recording
+
+                }
+
+
+            }
+
+        }
+
+        public bool RECPOST1
+        {
+            //  get { return WaveForm.checkBoxRecord.Checked; }
+            set
+            {
+                  WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
+            }
+
+        }
+        // ke9ns add when schedule recording comes up, turn WAVE RED
+        public bool REC1
+        {
+            //  get { return WaveForm.checkBoxRecord.Checked; }
+            set
+            {
+                if (value == false)
+                {
+                    waveToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
+                    waveToolStripMenuItem.Text = "Wave";
+                   
+                }
+                else
+                {
+                    waveToolStripMenuItem.ForeColor = Color.Red;
+                    waveToolStripMenuItem.Text = "Record";
+
+                  
+                }
+            }
+
+        } // REC1
+
+        // ke9ns add when schedule comes up, turn Memory RED
+        public bool SCHED1
+        {
+            //  get { return WaveForm.checkBoxRecord.Checked; }
+            set
+            {
+                if (value == false)
+                {
+                   
+                    memoryToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
+                    memoryToolStripMenuItem.Text = "Memory";
+                }
+                else
+                {
+                  
+                    memoryToolStripMenuItem.ForeColor = Color.Red;
+                    memoryToolStripMenuItem.Text = "Mem Sched";
+                }
+            }
+
+        } // REC1
+
+
+
+        public bool ShowTXFilter
 		{
 			get{return chkShowTXFilter.Checked;}
 			set{chkShowTXFilter.Checked = value;}
@@ -26973,7 +27135,8 @@ namespace PowerSDR
 //==========================================================================================
 
 
-		private Color gen_background_color = SystemColors.Control;//k6jca 1/13/08
+		private static Color gen_background_color = SystemColors.Control;//k6jca 1/13/08
+
 		public Color GenBackgroundColor							  //k6jca  1/13/08
 		{
 			get
@@ -26995,8 +27158,8 @@ namespace PowerSDR
 			set { chkVFOSync.Checked = value; }
 		}
 
-		private Color vfo_background_color = Color.Black;
-		public Color VFOBackgroundColor
+		private static Color vfo_background_color = Color.Black;
+		public  Color VFOBackgroundColor
 		{
 			get { return vfo_background_color; }
 			set
@@ -27013,7 +27176,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color meter_digital_text_color = Color.Yellow;
+		private static Color meter_digital_text_color = Color.Yellow;
 		public Color MeterDigitalTextColor
 		{
 			get { return meter_digital_text_color; }
@@ -27025,7 +27188,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color meter_digital_background_color = Color.Black;
+		private static Color meter_digital_background_color = Color.Black;
 		public Color MeterDigitalBackgroundColor
 		{
 			get { return meter_digital_background_color; }
@@ -27037,7 +27200,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color band_background_color = Color.Black;
+		private static Color band_background_color = Color.Black;
 		public Color BandBackgroundColor
 		{
 			get { return band_background_color; }
@@ -27052,7 +27215,7 @@ namespace PowerSDR
 
         //===========================================================================
         // ke9ns EDGE meter colors
-        private Color edge_meter_background_color = Color.Black;
+        private static Color edge_meter_background_color = Color.Black;
 		public Color EdgeMeterBackgroundColor
 		{
 			get { return edge_meter_background_color; }
@@ -27081,7 +27244,7 @@ namespace PowerSDR
             } // set
 		}
       
-		private Color edge_low_color = Color.White;
+		private static Color edge_low_color = Color.White;
 		public Color EdgeLowColor
 		{
 			get { return edge_low_color; }
@@ -27096,7 +27259,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color edge_high_color = Color.Red;
+		private static Color edge_high_color = Color.Red;
 		public Color EdgeHighColor
 		{
 			get { return edge_high_color; }
@@ -27111,7 +27274,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color edge_avg_color = Color.Yellow;  // ke9ns needle color
+		private static Color edge_avg_color = Color.Yellow;  // ke9ns needle color
 		public Color EdgeAVGColor
 		{
 			get { return edge_avg_color; }
@@ -27131,7 +27294,7 @@ namespace PowerSDR
         //===========================================================================
         // ke9ns ANALOG meter colors
 
-        private Color analog_low_color = Color.White;
+        private static Color analog_low_color = Color.White;
         public Color AnalogLowColor
         {
             get { return analog_low_color; }
@@ -27146,7 +27309,7 @@ namespace PowerSDR
             }
         }
 
-        private Color analog_high_color = Color.Red;
+        private static Color analog_high_color = Color.Red;
         public Color AnalogHighColor
         {
             get { return analog_high_color; }
@@ -27161,7 +27324,7 @@ namespace PowerSDR
             }
         }
 
-        private Color analog_avg_color = Color.Yellow;  // ke9ns needle color
+        private static Color analog_avg_color = Color.Yellow;  // ke9ns needle color
         public Color AnalogAVGColor
         {
             get { return analog_avg_color; }
@@ -27177,7 +27340,7 @@ namespace PowerSDR
             }
         }
 
-        private Color analog_meter_background_color = Color.Black;
+        private static Color analog_meter_background_color = Color.Black;
         public Color AnalogMeterBackgroundColor
         {
             get { return analog_meter_background_color; }
@@ -27209,7 +27372,7 @@ namespace PowerSDR
         } // AnalogMeterBackgroundcolor
 
 
-        private Color meter_background_color = Color.Black; // ke9ns used by original meter 
+        private static Color meter_background_color = Color.Black; // ke9ns used by original meter 
 /*
         public Color MeterBackgroundColor
         {
@@ -27233,7 +27396,7 @@ namespace PowerSDR
         //=======================================================================
 
 
-        private Color peak_background_color = Color.Black;
+        private static Color peak_background_color = Color.Black;
 		public Color PeakBackgroundColor
 		{
 			get { return peak_background_color; }
@@ -27266,7 +27429,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color small_vfo_color = Color.OrangeRed;	
+		private static Color small_vfo_color = Color.OrangeRed;	
 		public Color SmallVFOColor
 		{
 			get { return small_vfo_color; }
@@ -28641,7 +28804,7 @@ namespace PowerSDR
                             chkPower.Enabled = false;
                         }
                         break;
-                    case Model.SDR1000:
+                 /*   case Model.SDR1000:
                         MinFreq = Math.Max(if_freq, 0.000001);
                         if (XVTRPresent)
                             MaxFreq = 146.0;
@@ -28677,7 +28840,7 @@ namespace PowerSDR
                         chkFWCATU.Visible = false;
                         chkFWCATUBypass.Visible = false;
                         break;
-                    case Model.DEMO:
+                 */   case Model.DEMO:
                         MinFreq = Math.Max(if_freq, 0.000001);
                         if (XVTRPresent)
                             MaxFreq = 146.0;
@@ -28727,13 +28890,13 @@ namespace PowerSDR
 			set
 			{
 				soft_rock_center_freq = value;
-				if(current_model == Model.SOFTROCK40)
+			/*	if(current_model == Model.SOFTROCK40)
 				{
 					MinFreq = soft_rock_center_freq - sample_rate1/2*1e-6;
 					MaxFreq = soft_rock_center_freq + sample_rate1/2*1e-6;
 					if(setupForm != null)
 						txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-				}
+				} */
 			}
 		}
 
@@ -29367,9 +29530,9 @@ namespace PowerSDR
 			long tw = 0;
 			switch(current_model)
 			{
-				case Model.SDR1000:
-					tw = (long)(0xFFFFFFFFFFFF*freq/corrected_dds_clock);
-					break;
+				//case Model.SDR1000:
+				//	tw = (long)(0xFFFFFFFFFFFF*freq/corrected_dds_clock);
+				//	break;
 				case Model.FLEX3000:
 				case Model.FLEX5000:
 					tw = (long)(0xFFFFFFFF*freq/fwc_corrected_dds_clock);
@@ -29386,9 +29549,9 @@ namespace PowerSDR
 			double freq = 0.0;
 			switch(current_model)
 			{
-				case Model.SDR1000:
-					freq = tw*corrected_dds_clock/0xFFFFFFFFFFFF;
-					break;
+				//case Model.SDR1000:
+				//	freq = tw*corrected_dds_clock/0xFFFFFFFFFFFF;
+				//	break;
 				case Model.FLEX3000:
 				case Model.FLEX5000:
 					freq = tw*fwc_corrected_dds_clock/0xFFFFFFFF;
@@ -29416,7 +29579,7 @@ namespace PowerSDR
                     {
                         case Model.FLEX5000:
                         case Model.FLEX3000:
-                            FWC.SetRX1FreqTW(tw, freq);
+                            FWC.SetRX1FreqTW(tw, freq); // ke9ns send new freq to radio 
                             break;
                         case Model.FLEX1500:
                             USBHID.SetFreqTW(tw);
@@ -29523,6 +29686,9 @@ namespace PowerSDR
                                     rx1_dds_freq_tw = sr_tw;
                                     rx1_dds_freq_mhz = (float)TW2Freq(sr_tw) * (float)(500.0 / fwc_corrected_dds_clock);
                                     rx1_dds_freq_updated = true;
+                                 //   Debug.WriteLine("DDS_FREQ===sr_tw=====" + sr_tw);
+                                //    Debug.WriteLine("DDS_FREQ===freqMhz=====" + rx1_dds_freq_mhz);
+
                                     //FWC.SetRX1FreqTW(sr_tw, (float)TW2Freq(sr_tw) * (float)(500.0 / fwc_corrected_dds_clock));
                                     //FWC.SetRX1Freq((float)TW2Freq(sr_tw) * (float)(500.0 / fwc_corrected_dds_clock));
                                     break;
@@ -29704,7 +29870,7 @@ namespace PowerSDR
 					tuning_word = sr_tuning_word;
 				}
 
-                if (current_model == Model.SDR1000)
+             /*   if (current_model == Model.SDR1000)
                 {
                     if (Hdw.DDSTuningWord != tuning_word)
                         WBIRRX1Holdoff();
@@ -29712,9 +29878,9 @@ namespace PowerSDR
                     Hdw.DDSTuningWord = tuning_word;
                     SetHWFilters(dds_freq);
                 }
-				if(!mox) dsp.GetDSPRX(0, 0).RXOsc = dsp_osc_freq;
+			*/	if(!mox) dsp.GetDSPRX(0, 0).RXOsc = dsp_osc_freq;
 			}
-		}
+		} // DDSfreq
 
 		public double TuningWordToFreq(long word)
 		{
@@ -29829,12 +29995,12 @@ namespace PowerSDR
 			{
 				x2_enabled = value;
 				X2TR = value;
-                if (current_model == Model.SDR1000)
-                {
-                    if (value && mox)
-                        Hdw.X2 |= 0x40;
-                    else Hdw.X2 &= 0xBF;
-                }
+              //  if (current_model == Model.SDR1000)
+              //  {
+                 //   if (value && mox)
+                  //      Hdw.X2 |= 0x40;
+                 //   else Hdw.X2 &= 0xBF;
+               // }
 			}
 		}
 
@@ -31788,7 +31954,7 @@ namespace PowerSDR
 			float num = 0f;
             switch(current_model)
             {
-                case Model.SDR1000:            
+              /*  case Model.SDR1000:            
                     if (pa_present && VFOAFreq < 30.0)
                     {
                         //pa_power_mutex.WaitOne();
@@ -31804,7 +31970,7 @@ namespace PowerSDR
                         ret_val = num.ToString("f2") + " W";
                     }
                     break;
-                case Model.FLEX5000:
+              */  case Model.FLEX5000:
                 case Model.FLEX3000:          
                     power = FWCPAPower(pa_fwd_power);
                     ret_val = power.ToString("f0") + " W";
@@ -31853,9 +32019,9 @@ namespace PowerSDR
 			double power = 0.0;
             switch (current_model)
             {
-                case Model.SDR1000:
-                    power = PAPower(pa_rev_power);
-                    break;
+              //  case Model.SDR1000:
+               //     power = PAPower(pa_rev_power);
+             //       break;
                 case Model.FLEX5000:
                 case Model.FLEX3000:
                     power = FWCPAPower(pa_rev_power);
@@ -31874,9 +32040,9 @@ namespace PowerSDR
 
             switch (current_model)
             {
-                case Model.SDR1000:
-                    swr = SWR(pa_fwd_power, pa_rev_power);
-                    break;
+              //  case Model.SDR1000:
+              //      swr = SWR(pa_fwd_power, pa_rev_power);
+             //       break;
                 case Model.FLEX5000:
                 case Model.FLEX3000:
                     swr = FWCSWR(pa_fwd_power, pa_rev_power);
@@ -32865,7 +33031,7 @@ namespace PowerSDR
                         if (!hid_init) return;
                         USBHID.SetPreamp((FLEX1500PreampMode)rx1_preamp_mode);
                         break;
-                    case Model.SDR1000:
+                /*    case Model.SDR1000:
                         switch (rx1_preamp_mode)
                         {
                             case PreampMode.OFF:
@@ -32885,7 +33051,7 @@ namespace PowerSDR
                                 Hdw.GainRelay = false;
                                 break;
                         }
-                        break;
+                        break; */
                 }
 
                 switch (current_model)
@@ -33330,7 +33496,7 @@ namespace PowerSDR
 		}
 
 		private int sample_rate1 = 48000;
-		public int SampleRate1
+		public int SampleRate1         //ke9ns used only by wave.cs
 		{
 			get { return sample_rate1; }
 			set 
@@ -33353,12 +33519,15 @@ namespace PowerSDR
 					case DisplayMode.WATERFALL:
 					case DisplayMode.PANAFALL:
 					case DisplayMode.PANASCOPE:
-						CalcDisplayFreq();
+
+                     
+						if (CTUN == false) CalcDisplayFreq(); // ke9ns mod
+
 						btnDisplayPanCenter.PerformClick();
 						break;
 				}				
 			}
-		}
+		} // SampleRate1
 
 		private int sample_rate2 = 48000;
 		public int SampleRate2
@@ -33506,7 +33675,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color vfo_text_light_color = Color.Yellow;
+		private static Color vfo_text_light_color = Color.Yellow;
 		public Color VFOTextLightColor
 		{
 			get { return vfo_text_light_color; }
@@ -33522,7 +33691,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color vfo_text_dark_color = Color.Olive;
+		private static Color vfo_text_dark_color = Color.Olive;
 		public Color VFOTextDarkColor
 		{
 			get { return vfo_text_dark_color; }
@@ -33545,7 +33714,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color band_text_light_color = Color.Lime;
+		private static Color band_text_light_color = Color.Lime;
 		public Color BandTextLightColor
 		{
 			get { return band_text_light_color; }
@@ -33560,7 +33729,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color band_text_dark_color = Color.Green;
+		private static Color band_text_dark_color = Color.Green;
 		public Color BandTextDarkColor
 		{
 			get { return band_text_dark_color; }
@@ -33575,7 +33744,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color peak_text_color = Color.DodgerBlue;
+		private static Color peak_text_color = Color.DodgerBlue;
 		public Color PeakTextColor
 		{
 			get { return peak_text_color; }
@@ -33591,7 +33760,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color out_of_band_color = Color.DimGray;
+		private static Color out_of_band_color = Color.DimGray;
 		public Color OutOfBandColor
 		{
 			get { return out_of_band_color; }
@@ -33603,7 +33772,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color button_selected_color = Color.Yellow;
+		private static Color button_selected_color = Color.Yellow;
 		public Color ButtonSelectedColor
 		{
 			get { return button_selected_color; }
@@ -33619,7 +33788,7 @@ namespace PowerSDR
 //=================================================================
         // ke9ns old ORIGINAL meter colors
 
-		private Color meter_left_color = Color.Green;
+		private static Color meter_left_color = Color.Green;
 		public Color MeterLeftColor
 		{
 			get { return meter_left_color; }
@@ -33630,7 +33799,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color meter_right_color = Color.Lime;
+		private static Color meter_right_color = Color.Lime;
 		public Color MeterRightColor
 		{
 			get { return meter_right_color; }
@@ -33643,7 +33812,7 @@ namespace PowerSDR
 
 //=======================================================================
 
-		private Color rx1_band_color = Color.Yellow;
+		private static Color rx1_band_color = Color.Yellow;
 		public Color RX1BandColor
 		{
 			get { return rx1_band_color; }
@@ -33653,7 +33822,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color rx2_band_color = Color.Green;
+		private static Color rx2_band_color = Color.Green;
 		public Color RX2BandColor
 		{
 			get { return rx2_band_color; }
@@ -33663,7 +33832,7 @@ namespace PowerSDR
 			}
 		}
 
-		private Color tx_band_color = Color.Red;
+		private static Color tx_band_color = Color.Red;
 		public Color TXBandColor
 		{
 			get { return tx_band_color; }
@@ -34187,7 +34356,8 @@ namespace PowerSDR
 			switch(current_display_engine)
 			{
 				case DisplayEngine.GDI_PLUS:
-					picDisplay.Invalidate();
+                    picDisplay.Invalidate();
+                    
 					break;
 					/*case DisplayEngine.DIRECT_X:
 						Display.RenderDirectX();
@@ -34380,11 +34550,30 @@ namespace PowerSDR
 						t.Start();*/
 					break;
 			}
-		}
+		} //picDisplay_paint
 
+
+        //=========================================================================================
 		private double avg_num = -130.0;
         double FREQA = 0; // ke9ns ADD used for S9 meter correction (-93db above 30mhz)
         double FREQB = 0; // ke9ns ADD used for S9 meter correction (-93db above 30mhz)
+
+        static Pen low_brush1;  // white
+        static Pen high_brush2; // blue
+        static Pen high_brush1; // red
+        static Pen high_brush3; // yellow
+        static Pen high_brush5; // 
+        static Pen high_brush4; // 
+
+        static Pen line_pen;
+        static Pen line_dark_pen;
+
+        static Pen MBC; // ke9ns meter background color
+
+        static SolidBrush b;
+        static SolidBrush low_brush; // white
+        static SolidBrush high_brush; // red
+
 
         private void picMultiMeterDigital_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
@@ -34392,12 +34581,17 @@ namespace PowerSDR
 			int W = picMultiMeterDigital.ClientSize.Width;
 			Graphics g = e.Graphics;
 			double num;
+           
 			int pixel_x = 0;
             int pixel_x1 = 0; // ke9ns ADD for peak routine
 			string output = "";
 
-          //  Debug.WriteLine("freqA " + FREQA);
-          //  Debug.WriteLine("freqB " + FREQB);
+            //  Debug.WriteLine("freqA " + FREQA);
+            //  Debug.WriteLine("freqB " + FREQB);
+
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+
 
             switch (current_meter_display_mode)
 			{
@@ -34405,23 +34599,25 @@ namespace PowerSDR
 
                 //=============================================================
                 //=============================================================
-                // KE9NS mod 1 RX1 ANALOGTR7 METERS
+                // KE9NS mod 1 RX1 ANALOG TR7 METERS
                 //=============================================================
                 //=============================================================
 
                     
                 case MultiMeterDisplayMode.Original:
 #region AnalogTR7
-                   
+    
                     if (meter_data_ready)
                     {
                         current_meter_data = new_meter_data;
                         meter_data_ready = false;
                     }
 
+                    
+
                     if (avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
                     {
-                        num = avg_num = current_meter_data;
+                        num = avg_num = current_meter_data; // ke9ns mod was _data
                     }
                     else
                     {
@@ -34431,10 +34627,13 @@ namespace PowerSDR
                             num = avg_num = current_meter_data * 0.2 + avg_num * 0.8; // slow decay
                     }
 
-                    g.DrawRectangle(new Pen(meter_background_color), 0, 0, W, H);
 
-                  SolidBrush low_brush = new SolidBrush(edge_low_color); // white
-                  SolidBrush high_brush = new SolidBrush(edge_high_color); // red
+                   
+                   
+                    g.DrawRectangle(new Pen(meter_background_color), 0, 0, W, H); // ke9ns refresh meter background for next needle update
+
+                  low_brush = new SolidBrush(edge_low_color); // white
+                  high_brush = new SolidBrush(edge_high_color); // red
 
                 //=============================================
                 // Receiver meters ke9ns10
@@ -34449,21 +34648,17 @@ namespace PowerSDR
                             case MeterRXMode.SIGNAL_PEAK:       // ke9ns ADD
 
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                               
+                                                             
                            
                                 int Origin_x = W / 2;
                                 int Origin_y = (int)( (double)(H * 1.5)) ; // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
 
-                                Pen low_brush1 = new Pen(edge_low_color);  // white
+                                 low_brush1 = new Pen(edge_low_color);  // white
 
-                                Pen high_brush2 = new Pen(Brushes.Red); // blue
+                                 high_brush2 = new Pen(Brushes.Red); // blue
 
-                                Pen high_brush1 = new Pen(Brushes.Red); // red
+                                 high_brush1 = new Pen(Brushes.Red); // red
                                 double spacing;
                                 double string_height = 0;
 
@@ -34474,6 +34669,7 @@ namespace PowerSDR
                                  Image src = new Bitmap(meter_image);
 
                                 // Image src = new Bitmap("Met3.jpg"); // local image only, but now embeded resource
+
                                 g.DrawImage(src, new Rectangle(0, 5,W,H));  // rectangle to show bitmap image in
 
                                 
@@ -34518,7 +34714,7 @@ namespace PowerSDR
                                 g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 4, (int)spacing, 2);
                                 for (int i = 1; i < 7; i++)
                                 {
-                                    SolidBrush b = low_brush;
+                                     b = low_brush;
                                     if (i == 6) b = high_brush;
                                     g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3-3, 1, 6);
                                     g.FillRectangle(b, (int)(i * spacing), H - 8 -6- 6, 2, 12);
@@ -34562,10 +34758,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-                               
+                                
                                 double line1 = 0;
                                 int angle_start = 45;
                                 int angle_span = 90;
@@ -34573,13 +34766,13 @@ namespace PowerSDR
                                 int Origin_x = W / 2;
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                                Pen low_brush1 = new Pen(edge_low_color);  // white
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush1 = new Pen(Brushes.Red); // red
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                             //   Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                Pen high_brush5 = new Pen(Brushes.Green); // 
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+                                 low_brush1 = new Pen(edge_low_color);  // white
+                                 high_brush2 = new Pen(Brushes.Blue); // blue
+                                 high_brush1 = new Pen(Brushes.Red); // red
+                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
+                             //   high_brush4 = new Pen(Brushes.BurlyWood); //  
+                                 high_brush5 = new Pen(Brushes.Green); // 
+                                 high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
 
                                 double spacing = (W * 0.665 - 2.0) / 3.0;
@@ -34857,10 +35050,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for SWR
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                             
                                  line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -35047,10 +35237,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                             
                                 line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -35241,21 +35428,18 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);
 
-                        Pen line_pen = new Pen(edge_avg_color);
-                        Pen line_dark_pen = new Pen(
+                        line_pen = new Pen(edge_avg_color);
+                        line_dark_pen = new Pen(
                             Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
                             (edge_avg_color.G + edge_meter_background_color.G) / 2,
                             (edge_avg_color.B + edge_meter_background_color.B) / 2));
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                      
                         g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H);
                         g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
                         g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
+
+                    
                     }
                     else if (  // TX meter movments
                                  ( (mox && current_meter_tx_mode != MeterTXMode.OFF) && ( (current_meter_tx_mode == MeterTXMode.LVL_G) || 
@@ -35280,14 +35464,10 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
-                     
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
                         
 
-                        Pen line_pen = new Pen(Color.Blue);
-                        line_pen.Width = 3.0F;
+                        line_pen = new Pen(Color.Blue);
+                        line_pen.Width = 2.8F;
 
 
                         int Origin_x = W / 2;
@@ -35304,9 +35484,7 @@ namespace PowerSDR
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
+                    
                     
                     } // SWR TX curved needle
 
@@ -35320,12 +35498,9 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(Color.Red); // rx 
+                        line_pen = new Pen(Color.Red); // rx 
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                       
                          // 54 = 10 watts" 
                         // 80 = 40 watts
 
@@ -35345,16 +35520,10 @@ namespace PowerSDR
                             int POSH = (int)((double)(H * 1.6) * Math.Sin(signal));
 
 
+                        line_pen.Width = 2.8F; // 2.5f
 
-
-                        line_pen.Width = 2.5F;
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
-                       
+       
                               
                     } // power
                       // SIGNAL ONLY===TR7==RX1=========================================================================================================
@@ -35372,17 +35541,11 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(Color.Yellow); // rx 
+                        line_pen = new Pen(Color.Yellow); // rx 
                        
-
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                   
-                      
+                       
                         int Origin_x = (W / 2)-3;
-                        int Origin_y = (int)((double)(H * 1.84)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+                        int Origin_y = (int)((double)(H * 1.9)); // 1.84 slightly below meter window area (where virtual meter adjustment screw would be)
 
                         double angle_start = 45;
                         double angle_span = 89;
@@ -35394,11 +35557,11 @@ namespace PowerSDR
                             signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                             signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                            int POSW1 = (int)((double)(H * 1.6) * Math.Cos(signal));  // convert signal to arc
-                            int POSH1 = (int)((double)(H * 1.6) * Math.Sin(signal));
+                            int POSW1 = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc 1.6
+                            int POSH1 = (int)((double)(H * 1.65) * Math.Sin(signal));
 
                             line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
@@ -35407,19 +35570,15 @@ namespace PowerSDR
                         signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                         signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                        int POSW = (int)( (double)(H*1.6) * Math.Cos(signal) );  // convert signal to arc
-                        int POSH = (int)( (double)(H*1.6) * Math.Sin(signal) );
+                        int POSW = (int)( (double)(H*1.65) * Math.Cos(signal) );  // convert signal to arc 1.6 is length of needle
+                        int POSH = (int)( (double)(H*1.65) * Math.Sin(signal) );
 
                         line_pen = new Pen(Color.Yellow);
 
-                        line_pen.Width = 2.5F;
+                        line_pen.Width = 2.6F; // 2.5
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
        
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
-                    
+    
                
                     } //   if meter is ON in RX or TX mode, then draw line
 
@@ -35477,12 +35636,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                       /* case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                      */  case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -35575,7 +35734,7 @@ namespace PowerSDR
 									string_height = size.Height-2.0;
 									
 									g.TextRenderingHint = TextRenderingHint.AntiAlias;
-									g.SmoothingMode = SmoothingMode.AntiAlias;
+                                    g.SmoothingMode = SmoothingMode.AntiAlias;
                                   
                                     g.DrawString((-1+i*2).ToString(), f, low_brush, (int)(i*spacing-string_width+(int)(i/5)), (int)(H-8-12-3-string_height));
                           
@@ -35637,7 +35796,7 @@ namespace PowerSDR
 
                                 for (int i=1; i < 7; i++)
 								{
-									SolidBrush b = low_brush;
+									 b = low_brush;
 									if(i == 6) b = high_brush;
 									g.FillRectangle(b, (int)(i*spacing-spacing/2), H-8-3-3, 1, 6);
 									g.FillRectangle(b, (int)(i*spacing), H-8-6-6, 2, 12);
@@ -35686,10 +35845,11 @@ namespace PowerSDR
 									double string_width = size.Width-2.0;
 									string_height = size.Height-2.0;
 									
-									//g.TextRenderingHint = TextRenderingHint.AntiAlias;
-									//g.SmoothingMode = SmoothingMode.AntiAlias;
+									g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                    g.SmoothingMode = SmoothingMode.AntiAlias;
+
 									g.DrawString(s, f, low_brush, (int)(i*spacing-string_width*s.Length+1.0-(int)(i/2)+(int)(i/3)), (int)(H-8-12-3-string_height));
-									//g.SmoothingMode = SmoothingMode.None;
+									
 								}
 								spacing = (W*0.335-2.0-3.0)/3.0;
 								for(int i=1; i<4; i++)
@@ -35957,20 +36117,17 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);
 
-                        Pen line_pen = new Pen(edge_avg_color);
-						Pen line_dark_pen = new Pen(
+                       line_pen = new Pen(edge_avg_color);
+						line_dark_pen = new Pen(
 							Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
 							(edge_avg_color.G+edge_meter_background_color.G)/2,
 							(edge_avg_color.B+edge_meter_background_color.B)/2));
 
-						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+					 
                         if ((current_meter_rx_mode == MeterRXMode.SIGNAL_PEAK) && (!mox && current_meter_rx_mode != MeterRXMode.OFF))  // ke9ns ADD
                         {
                             line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, pixel_x1, 0, pixel_x1, H);
                   
                         } // peak
@@ -35980,11 +36137,7 @@ namespace PowerSDR
                         g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H);
 						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
 						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
-
-
-                        g.InterpolationMode = InterpolationMode.Default;
-						g.SmoothingMode = SmoothingMode.Default;
-
+    
 
                     }
         //===================================================
@@ -36037,12 +36190,12 @@ namespace PowerSDR
 								case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                      /*  case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                      */  case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -36122,10 +36275,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                           
                                 double line1 = 0;
                                 double angle_start = 45;
                                 double angle_span = 90;
@@ -36134,14 +36284,14 @@ namespace PowerSDR
                                 int Origin_y = (int)( (double)(H * 1.5)) ; // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
                                
-                                Pen low_brush1 = new Pen(analog_low_color);  // white
+                                low_brush1 = new Pen(analog_low_color);  // white
                                 
 
-                                Pen high_brush1 = new Pen(analog_high_color); // red Brushes.Red
+                                high_brush1 = new Pen(analog_high_color); // red Brushes.Red
                                 // ke9ns lines under numbers to signify the type of meter
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); //  
+                                high_brush2 = new Pen(Brushes.Blue); // blue
+                                high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                high_brush4 = new Pen(Brushes.DarkSlateGray); //  
 
                                 double spacing = ((double)W * 0.5 - 2.0) / 5.0;
                                 double string_height = 0;
@@ -36338,7 +36488,7 @@ namespace PowerSDR
                                 g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 4, (int)spacing, 2);
                                 for (int i = 1; i < 7; i++)
                                 {
-                                    SolidBrush b = low_brush;
+                                     b = low_brush;
                                     if (i == 6) b = high_brush;
                                     g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3-3, 1, 6);
                                     g.FillRectangle(b, (int)(i * spacing), H - 8 - 6-6, 2, 12);
@@ -36382,10 +36532,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                         
                                double line1 = 0;
                                int angle_start = 45;
                                int angle_span = 90;
@@ -36394,13 +36541,13 @@ namespace PowerSDR
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
                               
-                                Pen low_brush1 = new Pen(analog_low_color);  // white
-                                Pen high_brush1 = new Pen(analog_high_color); // red
+                                 low_brush1 = new Pen(analog_low_color);  // white
+                                 high_brush1 = new Pen(analog_high_color); // red
 
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                Pen high_brush5 = new Pen(Brushes.Green); // 
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+                                 high_brush2 = new Pen(Brushes.Blue); // blue
+                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                 high_brush5 = new Pen(Brushes.Green); // 
+                                 high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
                                 double spacing = (W * 0.665 - 2.0) / 3.0;
                                 double string_height = 0;
@@ -36571,8 +36718,8 @@ namespace PowerSDR
                                     
                                 
                                
-                                 low_brush1 = new Pen(analog_low_color);  // white
-                                 high_brush1 = new Pen(analog_high_color); // red
+                                low_brush1 = new Pen(analog_low_color);  // white
+                                high_brush1 = new Pen(analog_high_color); // red
 
                                 high_brush2 = new Pen(Brushes.Blue); // blue
                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
@@ -36592,10 +36739,7 @@ namespace PowerSDR
 
                                     low_brush1.Width = 3.0F;
 
-                                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                    g.SmoothingMode = SmoothingMode.HighQuality;
-                                    g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                            
                                     g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
 
 
@@ -36768,10 +36912,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for SWR
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                            
                                line1 = 0;
                                angle_start = 45;
                                angle_span = 90;
@@ -36973,10 +37114,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                            
                                  line1 = 0;
                                  angle_start = 45;
                                  angle_span = 90;
@@ -37172,25 +37310,21 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);
 
-                        Pen line_pen = new Pen(edge_avg_color); // yellow
+                         line_pen = new Pen(edge_avg_color); // yellow
 
 
-                       Pen line_dark_pen = new Pen(
+                      line_dark_pen = new Pen(
                             Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
                             (edge_avg_color.G + edge_meter_background_color.G) / 2,
                             (edge_avg_color.B + edge_meter_background_color.B) / 2));
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                    
 
                         g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H);
                         g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
                         g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
+                       
                     } // edge needle
 
                     else if (  // TX meter movements
@@ -37217,18 +37351,12 @@ namespace PowerSDR
                          pixel_x = Math.Max(0, pixel_x);
                          pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(analog_avg_color);
-
-                         g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                         g.SmoothingMode = SmoothingMode.HighQuality;
-                         g.SmoothingMode = SmoothingMode.AntiAlias;
+                         line_pen = new Pen(analog_avg_color);
                         
                          line_pen = new Pen(analog_high_color); // Color.Red
 
-                        line_pen.Width = 3.0F;
-
-
-
+                         line_pen.Width = 2.8F; // was 2.8F
+                     
                          int Origin_x = W / 2;
                          int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
@@ -37240,17 +37368,17 @@ namespace PowerSDR
                          int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
                          int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
 
-                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+                        
+                        g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+                       
+
+                        //  Debug.WriteLine("Signal " + signal);
 
 
-                         g.InterpolationMode = InterpolationMode.Default;
-                         g.SmoothingMode = SmoothingMode.Default;
-
-                         //  Debug.WriteLine("Signal " + signal);
-
- 
                     } // TX curved needle
-                  
+
                     else if (  // SIGNAL, AVG SIGNAL, SIGNAL PEAK rx1 ANALOG
                                  ( ((current_meter_rx_mode == MeterRXMode.SIGNAL_STRENGTH) || (current_meter_rx_mode == MeterRXMode.SIGNAL_AVERAGE) ||
                                      (current_meter_rx_mode == MeterRXMode.SIGNAL_PEAK) ) &&  (!mox && current_meter_rx_mode != MeterRXMode.OFF) )
@@ -37273,15 +37401,9 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);
 
-                        Pen line_pen = new Pen(analog_avg_color);
+                       line_pen = new Pen(analog_avg_color);
                         
-                       
-                    
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                       
+                     
                       
                         int Origin_x = W / 2;
                         int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
@@ -37301,7 +37423,7 @@ namespace PowerSDR
 
                             line_pen = new Pen(analog_high_color); // Color.Red
 
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
                         } // peak
@@ -37310,29 +37432,37 @@ namespace PowerSDR
 
                        
 
-                        line_pen.Width = 3.0F;
+                        line_pen.Width = 2.6F; // was 2.6F
+
                         signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                         signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
                         int POSW = (int)( (double)(H*1.25) * Math.Cos(signal) );  // convert signal to arc
                         int POSH = (int)( (double)(H*1.25) * Math.Sin(signal) );
-                      
+
+                        /*
+                         line_dark_pen = new Pen(
+                                              Color.FromArgb((analog_avg_color.R + analog_meter_background_color.R) / 2,
+                                              (analog_avg_color.G + analog_meter_background_color.G) / 2,
+                                          (analog_avg_color.B + analog_meter_background_color.B) / 2));
+
+                        line_dark_pen.Width = 1.0F; // was 2.8F
+
+
+                        g.DrawLine(line_dark_pen, Origin_x - 1, Origin_y, Origin_x - POSW - 1, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+*/
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
-                      
+                     //   g.DrawLine(line_dark_pen, Origin_x + 1, Origin_y, Origin_x - POSW + 1, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-                         
-                                                                
 
                     } //   if meter is ON in RX or TX mode, then draw line
 
-                  
-       
-//=============================================
-// Type NUMBERS in dbM above meter movement
-//=============================================
+
+
+                    //=============================================
+                    // Type NUMBERS in dbM above meter movement
+                    //=============================================
                     meter_timer.Stop();
 
                     format = "f0";
@@ -37382,12 +37512,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                      /*  case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                      */  case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -37447,6 +37577,10 @@ namespace PowerSDR
             int pixel_x1 = 0; // ke9ns ADD for new meters
 			string output = "";
 
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+
             //---------------------------------------------------------------------------------------------
             bool mox2 = false; // ke9ns add
 
@@ -37494,8 +37628,8 @@ namespace PowerSDR
 
 					g.DrawRectangle(new Pen(meter_background_color), 0, 0, W, H);
 
-					SolidBrush low_brush = new SolidBrush(edge_low_color);
-					SolidBrush high_brush = new SolidBrush(edge_high_color);
+					 low_brush = new SolidBrush(edge_low_color);
+					 high_brush = new SolidBrush(edge_high_color);
 
 
                     if (!mox2)
@@ -37512,20 +37646,17 @@ namespace PowerSDR
                             case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
 
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                           
 
                                 int Origin_x = W / 2;
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
 
-                                Pen low_brush1 = new Pen(edge_low_color);  // white
+                                low_brush1 = new Pen(edge_low_color);  // white
 
-                                Pen high_brush2 = new Pen(Brushes.Red); // blue
+                                high_brush2 = new Pen(Brushes.Red); // blue
 
-                                Pen high_brush1 = new Pen(Brushes.Red); // red
+                                high_brush1 = new Pen(Brushes.Red); // red
                                 double spacing;
                                 double string_height = 0;
                                 //=======================================
@@ -37580,7 +37711,7 @@ namespace PowerSDR
                                 g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
                                 for (int i = 1; i < 7; i++)
                                 {
-                                    SolidBrush b = low_brush;
+                                     b = low_brush;
                                     if (i == 6) b = high_brush;
                                     g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
                                     g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
@@ -37623,10 +37754,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                          
                                 double line1 = 0;
                                 int angle_start = 45;
                                 int angle_span = 90;
@@ -37634,13 +37762,13 @@ namespace PowerSDR
                                 int Origin_x = W / 2;
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                                Pen low_brush1 = new Pen(edge_low_color);  // white
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush1 = new Pen(Brushes.Red); // red
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                low_brush1 = new Pen(edge_low_color);  // white
+                                high_brush2 = new Pen(Brushes.Blue); // blue
+                                high_brush1 = new Pen(Brushes.Red); // red
+                                high_brush3 = new Pen(Brushes.Yellow); // yellow
                                                                            //   Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                Pen high_brush5 = new Pen(Brushes.Green); // 
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+                                high_brush5 = new Pen(Brushes.Green); // 
+                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
 
                                 double spacing = (W * 0.665 - 2.0) / 3.0;
@@ -37918,10 +38046,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for SWR
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                        
                                 line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -38108,10 +38233,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                         
                                 line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -38310,21 +38432,17 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);
 
-                        Pen line_pen = new Pen(edge_avg_color);
-                        Pen line_dark_pen = new Pen(
+                        line_pen = new Pen(edge_avg_color);
+                        line_dark_pen = new Pen(
                             Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
                             (edge_avg_color.G + edge_meter_background_color.G) / 2,
                             (edge_avg_color.B + edge_meter_background_color.B) / 2));
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                   
                         g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H);
                         g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
                         g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
+                       
                     }
                     else if (  // TX meter movements
                                  ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.LVL_G) ||
@@ -38350,13 +38468,10 @@ namespace PowerSDR
                         pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
+                
 
-
-                        Pen line_pen = new Pen(Color.Blue);
-                        line_pen.Width = 3.0F;
+                        line_pen = new Pen(Color.Blue);
+                        line_pen.Width = 2.8F;
 
 
                         int Origin_x = W / 2;
@@ -38373,8 +38488,7 @@ namespace PowerSDR
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
+                      
 
 
                     } // SWR TX curved needle
@@ -38389,11 +38503,9 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(Color.Red); // rx 
+                        line_pen = new Pen(Color.Red); // rx 
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
+                      
 
                         // 54 = 10 watts" 
                         // 80 = 40 watts
@@ -38414,12 +38526,8 @@ namespace PowerSDR
                         int POSH = (int)((double)(H * 1.6) * Math.Sin(signal));
 
 
-                        line_pen.Width = 2.5F;
+                        line_pen.Width = 2.8F;
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
 
 
 
@@ -38439,17 +38547,11 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(Color.Yellow); // rx 
-
-
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                        line_pen = new Pen(Color.Yellow); // rx 
 
 
                         int Origin_x = (W / 2) - 3;
-                        int Origin_y = (int)((double)(H * 1.84)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+                        int Origin_y = (int)((double)(H * 1.9)); // 1.84 slightly below meter window area (where virtual meter adjustment screw would be)
 
                         double angle_start = 45;
                         double angle_span = 89;
@@ -38461,11 +38563,11 @@ namespace PowerSDR
                             signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                             signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                            int POSW1 = (int)((double)(H * 1.6) * Math.Cos(signal));  // convert signal to arc
-                            int POSH1 = (int)((double)(H * 1.6) * Math.Sin(signal));
+                            int POSW1 = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc 1.6 length of needle
+                            int POSH1 = (int)((double)(H * 1.65) * Math.Sin(signal));
 
                             line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
@@ -38474,20 +38576,16 @@ namespace PowerSDR
                         signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                         signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                        int POSW = (int)((double)(H * 1.6) * Math.Cos(signal));  // convert signal to arc
-                        int POSH = (int)((double)(H * 1.6) * Math.Sin(signal));
+                        int POSW = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc
+                        int POSH = (int)((double)(H * 1.65) * Math.Sin(signal));
 
                         line_pen = new Pen(Color.Yellow);
 
-                        line_pen.Width = 2.5F;
+                        line_pen.Width = 2.6F;
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
-
-
+                     
                     } //   if meter is ON in RX or TX mode, then draw line
 
 
@@ -38506,22 +38604,19 @@ namespace PowerSDR
 						pixel_x = Math.Max(0, pixel_x);
 						pixel_x = Math.Min(W-3, pixel_x);
 
-						Pen line_pen = new Pen(edge_avg_color);
-						Pen line_dark_pen = new Pen(
+						line_pen = new Pen(edge_avg_color);
+						line_dark_pen = new Pen(
 							Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
 							(edge_avg_color.G+edge_meter_background_color.G)/2,
 							(edge_avg_color.B+edge_meter_background_color.B)/2));
 
-						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
+						
 
 						g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H);
 						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
 						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
 
-						g.InterpolationMode = InterpolationMode.Default;
-						g.SmoothingMode = SmoothingMode.Default;
+						
 					}
 
                    
@@ -38552,13 +38647,10 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);
 
-                        Pen line_pen = new Pen(Color.Yellow); // rx 
-                      //  Pen line_dark_pen = 
+                        line_pen = new Pen(Color.Yellow); // rx 
+                      //  line_dark_pen = 
                       //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
                             
                        
 
@@ -38598,9 +38690,6 @@ namespace PowerSDR
 
 
                       
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
 
                        
                        
@@ -38658,12 +38747,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                      /*  case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                     */   case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -38824,7 +38913,7 @@ namespace PowerSDR
                                 g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
                                 for (int i = 1; i < 7; i++)
                                 {
-                                    SolidBrush b = low_brush;
+                                     b = low_brush;
                                     if (i == 6) b = high_brush;
                                     g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
                                     g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
@@ -39145,21 +39234,18 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);
 
-                        Pen line_pen = new Pen(edge_avg_color);
-						Pen line_dark_pen = new Pen(
+                        line_pen = new Pen(edge_avg_color);
+						line_dark_pen = new Pen(
 							Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
 							(edge_avg_color.G+edge_meter_background_color.G)/2,
 							(edge_avg_color.B+edge_meter_background_color.B)/2));
 
-						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+					
 
                         if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
                         {
                             line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, pixel_x1, 0, pixel_x1, H);
 
                         } // peak
@@ -39170,8 +39256,7 @@ namespace PowerSDR
 						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
 
 
-                        g.InterpolationMode = InterpolationMode.Default;
-						g.SmoothingMode = SmoothingMode.Default;
+                      
 					}
 
     //====================================================
@@ -39227,12 +39312,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                      /*  case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                      */  case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -39315,9 +39400,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength ke9ns12
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
+                             
 
                                 double line1 = 0;
                                 double angle_start = 45;
@@ -39327,13 +39410,13 @@ namespace PowerSDR
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
 
-                                Pen low_brush1 = new Pen(analog_low_color);  // white
+                                low_brush1 = new Pen(analog_low_color);  // white
 
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush1 = new Pen(analog_high_color); // red 
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                                                           // Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+                                high_brush2 = new Pen(Brushes.Blue); // blue
+                                high_brush1 = new Pen(analog_high_color); // red 
+                                high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                                                           // high_brush4 = new Pen(Brushes.BurlyWood); //  
+                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
 
                                 double spacing = ((double)W * 0.5 - 2.0) / 5.0;
@@ -39359,10 +39442,7 @@ namespace PowerSDR
 
                                 high_brush4.Width = 3.0F;
 
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                              
                                 g.DrawArc(high_brush4, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
 
 
@@ -39522,7 +39602,7 @@ namespace PowerSDR
                                 g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
                                 for (int i = 1; i < 7; i++)
                                 {
-                                    SolidBrush b = low_brush;
+                                     b = low_brush;
                                     if (i == 6) b = high_brush;
                                     g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
                                     g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
@@ -39567,10 +39647,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                              
                                 double line1 = 0;
                                 int angle_start = 45;
                                 int angle_span = 90;
@@ -39579,13 +39656,13 @@ namespace PowerSDR
                                 int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
 
-                                Pen low_brush1 = new Pen(analog_low_color);  // white
-                                Pen high_brush1 = new Pen(analog_high_color); // red
+                                low_brush1 = new Pen(analog_low_color);  // white
+                                high_brush1 = new Pen(analog_high_color); // red
 
-                                Pen high_brush2 = new Pen(Brushes.Blue); // blue
-                                Pen high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                Pen high_brush5 = new Pen(Brushes.Green); // 
-                                Pen high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+                                high_brush2 = new Pen(Brushes.Blue); // blue
+                                high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                high_brush5 = new Pen(Brushes.Green); // 
+                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
                                 double spacing = (W * 0.665 - 2.0) / 3.0;
                                 double string_height = 0;
@@ -39777,10 +39854,7 @@ namespace PowerSDR
 
                                     low_brush1.Width = 3.0F;
 
-                                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                    g.SmoothingMode = SmoothingMode.HighQuality;
-                                    g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                                 
                                     g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
 
 
@@ -39953,10 +40027,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for SWR RX2
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                               
                                 line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -40158,10 +40229,7 @@ namespace PowerSDR
                                 //=================================================================
                                 // Draw curved meter movement for signal strength
                                 //=================================================================
-                                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                              
                                 line1 = 0;
                                 angle_start = 45;
                                 angle_span = 90;
@@ -40361,22 +40429,18 @@ namespace PowerSDR
 						pixel_x = Math.Max(0, pixel_x);
 						pixel_x = Math.Min(W-3, pixel_x);
                        
-                        Pen line_pen = new Pen(edge_avg_color); // yellow
+                        line_pen = new Pen(edge_avg_color); // yellow
                     
-						Pen line_dark_pen = new Pen(
+						line_dark_pen = new Pen(
 							Color.FromArgb((analog_avg_color.R+edge_meter_background_color.R)/2,
 							(edge_avg_color.G+edge_meter_background_color.G)/2,
 							(edge_avg_color.B+edge_meter_background_color.B)/2));
 
-						g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-						g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+						
 						g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H);
 						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
 						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
-						g.InterpolationMode = InterpolationMode.Default;
-						g.SmoothingMode = SmoothingMode.Default;
+						
 					}
 
                     else if (  // TX meter movements
@@ -40404,15 +40468,12 @@ namespace PowerSDR
                         pixel_x = Math.Max(0, pixel_x);
                         pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
 
-                        Pen line_pen = new Pen(analog_avg_color);
+                        line_pen = new Pen(analog_avg_color);
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
+                      
                         line_pen = new Pen(analog_high_color); // Color.Red
 
-                        line_pen.Width = 3.0F;
+                        line_pen.Width = 2.8F;
 
 
 
@@ -40430,9 +40491,7 @@ namespace PowerSDR
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
 
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
+                     
                         //  Debug.WriteLine("Signal " + signal);
 
 
@@ -40463,16 +40522,12 @@ namespace PowerSDR
                         pixel_x1 = Math.Max(0, pixel_x1);
                         pixel_x1 = Math.Min(W - 3, pixel_x1);
 
-                        Pen line_pen = new Pen(analog_avg_color);
+                        line_pen = new Pen(analog_avg_color);
 
-                      //  Pen line_dark_pen = 
+                      //  line_dark_pen = 
                       //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
 
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                                                            
+                                                             
 
                         int Origin_x = W / 2;
                         int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
@@ -40493,7 +40548,7 @@ namespace PowerSDR
 
                             line_pen = new Pen(analog_high_color); // color.red
 
-                            line_pen.Width = 3.5F;
+                            line_pen.Width = 3.0F;
                             g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
                         } // peak
@@ -40506,16 +40561,11 @@ namespace PowerSDR
 
                         line_pen = new Pen(analog_avg_color); // color.yellow
 
-                        line_pen.Width = 3.0F;
+                        line_pen.Width = 2.6F;
                         g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
                         // ke9ns 7
-                    
-                       
-
-                        g.InterpolationMode = InterpolationMode.Default;
-                        g.SmoothingMode = SmoothingMode.Default;
-
+                      
                        
                       
                     } //   if meter is ON in RX or TX mode, then draw line
@@ -40577,12 +40627,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                      /*  case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                        case Model.FLEX5000:
+                                      */  case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -40646,23 +40696,21 @@ namespace PowerSDR
 
         private void panelVFOAHover_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			if(vfoa_hover_digit < 0)
-				return;
+			if(vfoa_hover_digit < 0) return;
 
 			int x = 0;
 			int width = 0;
 
 			if(small_lsd && txtVFOALSD.Visible)
 			{
-				x += (vfo_char_width+vfo_char_space)*vfoa_hover_digit;
-				if(vfoa_hover_digit > 3)
-					x += (vfo_decimal_space-vfo_char_space);
+				x += (vfo_char_width + vfo_char_space) * vfoa_hover_digit;
+				if(vfoa_hover_digit > 3) x += (vfo_decimal_space - vfo_char_space);
 				
 				if(vfoa_hover_digit > 6)
 				{
 					x += vfo_small_char_width;
-					x += (vfo_small_char_width+vfo_small_char_space-vfo_char_width-vfo_char_space)*(vfoa_hover_digit-6);
-					width = x+vfo_small_char_width;
+					x += (vfo_small_char_width + vfo_small_char_space - vfo_char_width - vfo_char_space) * (vfoa_hover_digit - 6);
+					width = x + vfo_small_char_width;
 				}
 				else width = x+vfo_char_width;
 			}
@@ -40675,9 +40723,9 @@ namespace PowerSDR
 			}
 
 			e.Graphics.DrawLine(new Pen(txtVFOAFreq.ForeColor, 2.0f), x, 1, width, 1);
-		}
+        } //panelVFOAHover_Paint
 
-		private void panelVFOBHover_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        private void panelVFOBHover_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			if(vfob_hover_digit < 0)
 				return;
@@ -40714,36 +40762,41 @@ namespace PowerSDR
 		{
 			double dttsp_osc = dsp.GetDSPRX(0, 0).RXOsc;
 		
-            // Debug.WriteLine("last vfo: " + avg_last_ddsfreq + " vfo: " + DDSFreq); 
+           //  Debug.WriteLine("last vfo:  vfo: " + DDSFreq); 
 			if(buffer[0] == Display.CLEAR_FLAG)
 			{
-				//Debug.WriteLine("Clearing average buf"); 
-				for(int i=0; i < Display.BUFFER_SIZE; i++)
-					buffer[i] = new_data[i];
+                //	Debug.WriteLine("Clearing average buf"); 
+                for (int i = 0; i < Display.BUFFER_SIZE; i++) // buffer size of 4096 bytes
+                {
+                    buffer[i] = new_data[i];
+                }
 			}
 			else
-			{					
-				// wjt added -- stop hosing the avg display when scrolling the vfo 
-				if((rx1_avg_last_ddsfreq != 0 && rx1_avg_last_ddsfreq != DDSFreq) || 
-					(current_model == Model.SOFTROCK40 &&
-					rx1_avg_last_dttsp_osc != dttsp_osc))   // vfo has changed, need to shift things around 
+			{
+                
+                // wjt added -- stop hosing the avg display when scrolling the vfo 
+                if ((rx1_avg_last_ddsfreq != 0 && rx1_avg_last_ddsfreq != DDSFreq) || (current_model == Model.SOFTROCK40 &&	rx1_avg_last_dttsp_osc != dttsp_osc))   // vfo has changed, need to shift things around 
 				{ 
 					//Debug.WriteLine("dttsp_osc: " + dttsp_osc); 
+
+
 					double delta_vfo; 
-					if ( current_model != Model.SOFTROCK40 ) 
-					{ 					
+				//	if ( current_model != Model.SOFTROCK40 ) 
+				//	{ 					
 						delta_vfo = DDSFreq - rx1_avg_last_ddsfreq;
 						delta_vfo *= 1e6; // vfo in mhz moron!
-					}
-					else 
-					{ 						
-						delta_vfo = dttsp_osc - rx1_avg_last_dttsp_osc; 
-						delta_vfo = -delta_vfo; 
-						//Debug.WriteLine("update from dttsp delta_vfo: " + delta_vfo); 
-					} 					
-					double hz_per_bin = sample_rate1/Display.BUFFER_SIZE; 
+					//}
+				//	else 
+				//	{ 						
+					//	delta_vfo = dttsp_osc - rx1_avg_last_dttsp_osc; 
+					//	delta_vfo = -delta_vfo; 
+					//	Debug.WriteLine("update from dttsp delta_vfo: " + delta_vfo); 
+				//	} 
+                
+                    					
+					double hz_per_bin = sample_rate1/Display.BUFFER_SIZE;   // ke9ns 192000 / 4096 = 46.875 hz per bin
 
-					int bucket_shift = (int)(delta_vfo/hz_per_bin);
+					int bucket_shift = (int)(delta_vfo/hz_per_bin); // ke9ns 
 
                     double leftover = delta_vfo - ((double)bucket_shift *  hz_per_bin);
 
@@ -40761,7 +40814,7 @@ namespace PowerSDR
 					{  
 						bucket_shift += 1; 
 						total_leftover -= 1;
-						//Debug.WriteLine("bump up"); 
+					//	Debug.WriteLine("bump up"); 
 					}
 
                     rx1_last_bin_shift_leftover = total_leftover; 
@@ -40822,27 +40875,38 @@ namespace PowerSDR
 						old_mult = Display.waterfall_avg_mult_old;
 						break;
 					default:
-						new_mult = Display.display_avg_mult_new;
-						old_mult = Display.display_avg_mult_old;
+						new_mult = Display.display_avg_mult_new;  // ke9ns  =.2
+						old_mult = Display.display_avg_mult_old; // ke9ns = .8
 						break;
 				}
 
-				for(int i=0; i < Display.BUFFER_SIZE; i++)
-					buffer[i] = new_data[i] = 
-						(float)(new_data[i]*new_mult + 
-						buffer[i]*old_mult);					
-			}			
+                for (int i = 0; i < Display.BUFFER_SIZE; i++) // 4096up
+                {
+                 //   if ((UPDATEOFF1 > 0)) // if changing freq using CTUN, dont avg for a few cycles
+                  //  {
+                       
+                   //     buffer[i] = new_data[i]; // ke9ns 
+                  //  }
+                 //  else
+                  //  {
+                        buffer[i] = new_data[i] = (float)((new_data[i] * new_mult) + (buffer[i] * old_mult)); // ke9ns 80% old data and 20% new data when averaging
+                  //  }
+                }
 
-			if ( buffer[0] == Display.CLEAR_FLAG )  
-			{ 
+            }   // if(buffer[0] != Display.CLEAR_FLAG)		
+
+            if ( buffer[0] == Display.CLEAR_FLAG)  // ke9ns =-999.999F
+            { 
 				rx1_avg_last_ddsfreq = 0; 
-				rx1_avg_last_dttsp_osc = 0; 
-			}
+				rx1_avg_last_dttsp_osc = 0;
+             //   Debug.WriteLine("2Clearing average buf");
+            }
 			else 
 			{
 				rx1_avg_last_ddsfreq = DDSFreq; 
-				rx1_avg_last_dttsp_osc = dttsp_osc; 
-			}
+				rx1_avg_last_dttsp_osc = dttsp_osc;
+              //  Debug.WriteLine("3Clearing average buf");
+            }
 
 		} // rx1 avg display
 
@@ -40871,17 +40935,18 @@ namespace PowerSDR
 				{ 
 					//Debug.WriteLine("dttsp_osc: " + dttsp_osc); 
 					double delta_vfo; 
-					if ( current_model != Model.SOFTROCK40 ) 
-					{ 					
+				//	if ( current_model != Model.SOFTROCK40 ) 
+				//	{ 					
 						delta_vfo = DDSFreq - rx2_avg_last_ddsfreq;
 						delta_vfo *= 1e6; // vfo in mhz moron!
-					}
-					else 
-					{ 						
-						delta_vfo = dttsp_osc - rx2_avg_last_dttsp_osc; 
-						delta_vfo = -delta_vfo; 
+				//	}
+				//	else 
+				//	{ 						
+					//	delta_vfo = dttsp_osc - rx2_avg_last_dttsp_osc; 
+					//	delta_vfo = -delta_vfo; 
 						//Debug.WriteLine("update from dttsp delta_vfo: " + delta_vfo); 
-					} 					
+				//	} 
+                					
 					double hz_per_bin = sample_rate1/Display.BUFFER_SIZE; 
 
 					int bucket_shift = (int)(delta_vfo/hz_per_bin); 
@@ -41029,7 +41094,7 @@ namespace PowerSDR
 						displaydidit = true;
 					}
 
-					if(!Display.DataReady)
+					if(!Display.DataReady) // ke9ns only get update from Dttsp when display indicates it already used the last data
 					{
 						switch(Display.CurrentDisplayMode)
 						{
@@ -41044,8 +41109,14 @@ namespace PowerSDR
 							case DisplayMode.PANADAPTER:
 							case DisplayMode.PANAFALL:
 							case DisplayMode.PANASCOPE:
-								fixed(float* ptr = &Display.new_display_data[0])
-                                    DttSP.GetPanadapter(top_thread, ptr);                // ke9ns  refers to DttSP.dll Process_Panadapter in update.c file
+
+                                
+                                    fixed (float* ptr = &Display.new_display_data[0])
+                                    {
+                                        DttSP.GetPanadapter(top_thread, ptr);                // ke9ns  refers to DttSP.dll Process_Panadapter in update.c file
+                                    }
+                               
+
 #if (WRITE_FFT_TEST)
                                 for (int i = 0; i < Display.new_display_data.Length; i++)
                                     writer.Write(Display.new_display_data[i]);
@@ -41069,10 +41140,13 @@ namespace PowerSDR
 								//Audio.phase_mutex.ReleaseMutex();
 								break;
 						}
-                        Display.DataReady = true;
-					}
-					
-                    if(chkSplitDisplay.Checked && !Display.DataReadyBottom)
+
+                         Display.DataReady = true; // dont allow screen to show next line of pan data until UPDATEOFF is clear
+                     
+
+                    } // if(!Display.DataReady)
+
+                    if (chkSplitDisplay.Checked && !Display.DataReadyBottom)
                     {
 						switch(Display.CurrentDisplayModeBottom)
 						{
@@ -41115,17 +41189,24 @@ namespace PowerSDR
 					}					
 				}
 
-				UpdateDisplay();
-				
-				if(chkPower.Checked)
-					Thread.Sleep(display_delay);
-			}	
+                 UpdateDisplay(); // ke9ns 
+
+
+                if (chkPower.Checked)
+                {
+                   // if (UPDATEOFF > 0) Thread.Sleep(display_delay/4); // ke9sn mod  increase update speed to screen for short time when CTUN is on
+                   // else
+                    Thread.Sleep(display_delay);
+                }
+
+
+			} // power on and display on	
 			//			display_running = false;
 
 #if (WRITE_FFT_TEST)
             writer.Close();
 #endif
-		}
+		} // RunDisplay() thread
 
 
         //===============================================================================
@@ -41468,7 +41549,7 @@ namespace PowerSDR
 							case MeterTXMode.FORWARD_POWER:
 								switch(current_model)
 								{
-                                    case Model.SDR1000:
+                                   /* case Model.SDR1000:
                                         if (pa_present && VFOAFreq < 30.0)
                                         {
                                             power = PAPower(pa_fwd_power);
@@ -41483,7 +41564,7 @@ namespace PowerSDR
                                             new_meter_data = num;
                                         }
                                         break;
-									case Model.FLEX5000:
+								*/	case Model.FLEX5000:
 									case Model.FLEX3000:
 										//output = ((double)pa_fwd_power/4096*2.5).ToString("f3")+" V";
 										power = FWCPAPower(pa_fwd_power);
@@ -41510,14 +41591,14 @@ namespace PowerSDR
 										//output = power.ToString("f0")+" W";
 										new_meter_data = (float)power;
 										break;
-                                    case Model.SDR1000:
+                                 /*  case Model.SDR1000:
                                         if (pa_present && VFOAFreq < 30.0)
                                             power = PAPower(pa_rev_power);
                                         else power = 0.0;
                                         //output = power.ToString("f0")+" W";
                                         new_meter_data = (float)power;
                                         break;
-									default:
+								*/	default:
 										power = 0.0;
 										//output = power.ToString("f0")+" W";
 										new_meter_data = (float)power;
@@ -41535,12 +41616,12 @@ namespace PowerSDR
 											swr = FWCSWR(pa_fwd_power, pa_rev_power);
 											//output = swr.ToString("f1")+" : 1 ";	
 											break;
-										case Model.SDR1000:
+									/*	case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 swr = SWR(pa_fwd_power, pa_rev_power);
                                             else swr = 1.0;
 											//output = swr.ToString("f1")+" : 1 ";
-											break;
+											break; */
 									}
 							//	}
 							//	else
@@ -41610,7 +41691,7 @@ namespace PowerSDR
                                 case MeterTXMode.FORWARD_POWER:
                                     switch (current_model)
                                     {
-                                        case Model.SDR1000:
+                                     /*   case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                             {
                                                 power = PAPower(pa_fwd_power);
@@ -41625,7 +41706,7 @@ namespace PowerSDR
                                                 rx2_meter_new_data = num;
                                             }
                                             break;
-                                        case Model.FLEX5000:
+                                     */   case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             //output = ((double)pa_fwd_power/4096*2.5).ToString("f3")+" V";
                                             power = FWCPAPower(pa_fwd_power);
@@ -41652,13 +41733,13 @@ namespace PowerSDR
                                             //output = power.ToString("f0")+" W";
                                             rx2_meter_new_data = (float)power;
                                             break;
-                                        case Model.SDR1000:
+                                    /*    case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 power = PAPower(pa_rev_power);
                                             else power = 0.0;
                                             //output = power.ToString("f0")+" W";
                                             rx2_meter_new_data = (float)power;
-                                            break;
+                                            break; */
                                         default:
                                             power = 0.0;
                                             //output = power.ToString("f0")+" W";
@@ -41677,12 +41758,12 @@ namespace PowerSDR
                                                 swr = FWCSWR(pa_fwd_power, pa_rev_power);
                                                 //output = swr.ToString("f1")+" : 1 ";	
                                                 break;
-                                            case Model.SDR1000:
+                                         /*   case Model.SDR1000:
                                                 if (pa_present && VFOAFreq < 30.0)
                                                     swr = SWR(pa_fwd_power, pa_rev_power);
                                                 else swr = 1.0;
                                                 //output = swr.ToString("f1")+" : 1 ";
-                                                break;
+                                                break; */
                                         }
                                   //  }
                                    // else
@@ -41717,7 +41798,8 @@ namespace PowerSDR
 
                 //end:
                 if (chkPower.Checked) Thread.Sleep(Math.Min(meter_delay, meter_dig_delay));
-			}
+			} //
+
 		} //updateMultimeter
 
 
@@ -42060,8 +42142,9 @@ namespace PowerSDR
                     else
 					{
 						byte b = 0;
-                        if(current_model == Model.SDR1000)
-                            b = Hdw.StatusPort();
+                     //   if(current_model == Model.SDR1000)  b = Hdw.StatusPort();
+
+
 						mic_ptt = (b & (byte)StatusPin.Dot) != 0;
 						x2_ptt = (b & (byte)StatusPin.PIN_11) != 0;
 						if(usb_present) x2_ptt = !x2_ptt;
@@ -42441,7 +42524,8 @@ namespace PowerSDR
         // ke9ns mod this is where the CPU% is updated, I added the PA volt and temp
         //===============================================================================
         //===============================================================================
-        private static byte PAON = 0; // ke9ns add
+        private static byte PAON = 0; // ke9ns add  1=C, 2=F, 0=off
+        private static byte PAONT = 0; // 1=thread running, 0=thread not running yet
         private static int val1  = 2;  // ke9ns add
         private static int val2 = 2;  // ke9ns add
         private int last_sec1;		// ke9ns add for time of day clock
@@ -42456,7 +42540,7 @@ namespace PowerSDR
             // adding PA temp and volt increases total time to .05 seconds from .005
 
 
-         
+       
             int chan = 4;
             switch (current_model)
             {
@@ -42470,7 +42554,7 @@ namespace PowerSDR
                     chan = 0;
                     break;
             }
-           
+          
 
             if (chan > 0)
             {
@@ -42481,44 +42565,52 @@ namespace PowerSDR
 
                 if (PAON==1) // if you click on temp C or volt it toggle on/off
                 {
-                    FWC.ReadPAADC(chan, out val1);
+                    if (PAONT == 0)
+                    {
+                        PAONT = 1;
 
-                    float volts = (float)val1 / 4096 * 2.5f;
+                        Thread t5 = new Thread(new ThreadStart(TempVolts));
+                        t5.IsBackground = true;
+                        t5.Priority = ThreadPriority.Lowest;
+                        t5.Name = "Temp and VOlts reading Thread";
+                        t5.Start();
+                    }
+
+                    float volts = (float)Volts_Value / 4096 * 2.5f;
                     double temp_c = 301 - volts * 1000 / 2.2;
+                    labelTS3.Text = "Temp C°:  " + temp_c.ToString("f0"); // ke9ns ADD
 
-                    labelTS3.Text = "Temp C�:  " + temp_c.ToString("f0"); // ke9ns ADD
-
-
-                    FWC.ReadPAADC(2, out val2);
-
-                    volts = (float)val2 / 4096 * 2.5f;
+                    volts = (float)Temp_Value / 4096 * 2.5f;
                     float v138 = volts * 11;
-
                     labelTS4.Text = "Volts:  " + v138.ToString("f1");    // ke9ns ADD
                 }
 
                 else if (PAON == 2) // toggle temp to F
                 {
-                    FWC.ReadPAADC(chan, out val1);
+                    if (PAONT == 0)
+                    {
+                        PAONT = 1;
 
-                    float volts = (float)val1 / 4096 * 2.5f;
+                        Thread t5 = new Thread(new ThreadStart(TempVolts));
+                        t5.IsBackground = true;
+                        t5.Priority = ThreadPriority.Lowest;
+                        t5.Name = "Temp and VOlts reading Thread";
+                        t5.Start();
+                    }
 
+                    float volts = (float)Volts_Value / 4096 * 2.5f;
                     double temp_c = (((301 - volts * 1000 / 2.2) * 9) / 5) + 32; // convert c to f
+                    labelTS3.Text = "Temp F°:  " + temp_c.ToString("f0"); // ke9ns ADD
 
-                    labelTS3.Text = "Temp F�:  " + temp_c.ToString("f0"); // ke9ns ADD
-
-
-                    FWC.ReadPAADC(2, out val2);
-
-                    volts = (float)val2 / 4096 * 2.5f;
+            
+                    volts = (float)Temp_Value / 4096 * 2.5f;
                     float v138 = volts * 11;
-
                     labelTS4.Text = "Volts:  " + v138.ToString("f1");    // ke9ns ADD
                 }
 
                 else
                 {
-                    labelTS3.Text = "Temp C�: click";
+                    labelTS3.Text = "Temp C°: click";
                     labelTS4.Text = "Volts: click ";
                 }
 
@@ -42602,21 +42694,49 @@ namespace PowerSDR
                     txtNOAA.Text = "Space WX: OFF";
                     txtNOAA2.Text = "Click On";
                 }
-            }
-
-
-
-
-
-
+            } // if sec1 != lastsec
 
             //    stopWatch.Stop();        
             //   TimeSpan ts = stopWatch.Elapsed;
             //    Debug.WriteLine("RunTime1 " + ts);
 
 
-
         } // timer_cpu_meter_Tick
+
+        int Volts_Value = 0;
+        int Temp_Value = 0;
+
+        //============================================================================================
+        // ke9ns add thread for temp,volts
+        private void TempVolts()
+        {
+            while (PAON > 0)
+            {
+                int chan = 4;
+                switch (current_model)
+                {
+                    case Model.FLEX5000:
+                        chan = 4;
+                        break;
+                    case Model.FLEX3000:
+                        chan = 3;
+                        break;
+                    default:
+                        chan = 0;
+                        break;
+                }
+
+           
+                FWC.ReadPAADC(chan, out Volts_Value);
+                FWC.ReadPAADC(2, out Temp_Value);
+
+                Thread.Sleep(1000); // ke9ns 1 sec update
+            }
+
+            PAONT = 0;
+
+        } // TempVolts() thread
+
 
 
 
@@ -43119,7 +43239,7 @@ namespace PowerSDR
 		{
             
 
-            if (e.Shift == true) // ke9ns add (check for CTRL key 
+            if ((e.Shift == true) && (callsignfocus == 0) )// ke9ns add (check for CTRL key but not while callsign text box is in focus)
             {
                 if (DXR == 0) DXR = 1; // show Spotters on panadapter (and now also display the world map with lat/long coords)
                 else DXR = 0; // clear
@@ -43278,7 +43398,7 @@ namespace PowerSDR
                                 } // USB
                                 VFOAFreq = (double)freq1 / 1000000; // convert to MHZ
 
-                               Debug.WriteLine("freq " + VFOAFreq);
+                            //   Debug.WriteLine("freq " + VFOAFreq);
 
                                 if (SpotForm.chkDXMode.Checked == true)
                                 {
@@ -43590,13 +43710,13 @@ namespace PowerSDR
                                     flex5000ProdTestForm.WindowState = FormWindowState.Normal; // ke9ns add
                                 }
                                 break;
-                            case Model.SDR1000:
+                         /*   case Model.SDR1000:
                                 if (ProdTestForm == null || ProdTestForm.IsDisposed)
                                     ProdTestForm = new ProductionTest(this);
                                 ProdTestForm.Show();
                                 ProdTestForm.Focus();
                                 ProdTestForm.WindowState = FormWindowState.Normal; // ke9ns add
-                                break;
+                                break; */
                         }
                         break;
 					case Keys.R:
@@ -43621,14 +43741,14 @@ namespace PowerSDR
                         }
                         break;
 					case Keys.T:
-						if(pa_present && current_model == Model.SDR1000)
+					/*	if(pa_present && current_model == Model.SDR1000)
 						{
 							if(PAQualForm == null || PAQualForm.IsDisposed)
 								PAQualForm = new PAQualify(this);
 							PAQualForm.Show();
 							PAQualForm.Focus();
                             PAQualForm.WindowState = FormWindowState.Normal; // ke9ns add
-                        }
+                        } */
 						break;
                     case Keys.V:
                         if (fwc_init && current_model == Model.FLEX5000 && FWCEEPROM.VUOK)
@@ -44714,11 +44834,11 @@ namespace PowerSDR
 
                 switch (current_model)
                 {
-                    case Model.SDR1000:
+                   /* case Model.SDR1000:
                         Hdw.PowerOn();
                         Hdw.DDSTuningWord = 0;
                         break;
-
+*/
                     case Model.FLEX5000:
                         if (fwc_init) FWC.SetStandby(false);
                         fwc_dds_freq = 0.0f;
@@ -44784,9 +44904,9 @@ namespace PowerSDR
                 {
                     case Model.FLEX5000:
                     case Model.FLEX3000:
-                    case Model.SDR1000:
+                  //  case Model.SDR1000:
                     case Model.DEMO:
-                    case Model.SOFTROCK40:
+                  //  case Model.SOFTROCK40:
                         if (!Audio.Start())
                         {
                             chkPower.Checked = false;
@@ -44990,7 +45110,7 @@ namespace PowerSDR
 
                 timer_peak_text.Enabled = true;
 
-                if (current_model == Model.SDR1000 && atu_present)
+              /*  if (current_model == Model.SDR1000 && atu_present)
                 {
                     int counter = 0;
                     while (((Hdw.StatusPort() & (byte)StatusPin.PA_DATA)) == 0)
@@ -45009,7 +45129,7 @@ namespace PowerSDR
                     }
                     Hdw.PA_ATUTune(ATUTuneMode.BYPASS);
                 }
-
+*/
                 CWKeyer.Reset();
                 CWPTT.Start();
 
@@ -45100,8 +45220,7 @@ namespace PowerSDR
 
                 if (!(fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)))
                 {
-                    if(current_model == Model.SDR1000)
-                        Hdw.StandBy();
+                  //  if(current_model == Model.SDR1000)     Hdw.StandBy();
                 }
                 else
                 {
@@ -45129,10 +45248,10 @@ namespace PowerSDR
 
                 switch (current_model)
                 {
-                    case Model.SDR1000:
+                  //  case Model.SDR1000:
                     case Model.FLEX5000:
                     case Model.FLEX3000:
-                    case Model.SOFTROCK40:
+                  //  case Model.SOFTROCK40:
                     case Model.DEMO:
                         Audio.callback_return = 2;
                         Audio.StopAudio();
@@ -45215,6 +45334,8 @@ namespace PowerSDR
 				case "Spectrum":
 					Display.CurrentDisplayMode = DisplayMode.SPECTRUM;
 					UpdateRXDisplayVars((int)udFilterLow.Value, (int)udFilterHigh.Value);
+                    CTUN1 = false;
+
 					break; 
 				case "Panadapter":
 					Display.CurrentDisplayMode = DisplayMode.PANADAPTER;
@@ -45223,23 +45344,26 @@ namespace PowerSDR
 					break;
 				case "Scope":
 					Display.CurrentDisplayMode = DisplayMode.SCOPE;
-					break;
+                    CTUN1 = false;
+                    break;
 				case "Phase":
 					Display.CurrentDisplayMode = DisplayMode.PHASE;
-					break;
+                    CTUN1 = false;
+                    break;
 				case "Phase2":
 					Display.CurrentDisplayMode = DisplayMode.PHASE2;
-					break;
+                    CTUN1 = false;
+                    break;
 				case "Waterfall":
 					Display.CurrentDisplayMode = DisplayMode.WATERFALL;
 					CalcDisplayFreq();
 					break;
 				case "Histogram":
 					Display.CurrentDisplayMode = DisplayMode.HISTOGRAM;
-					break;
+                    CTUN1 = false;
+                    break;
 				case "Panafall":
 					Display.CurrentDisplayMode = DisplayMode.PANAFALL;
-                  
                     CalcDisplayFreq();
 					break;
                 case "Panascope":
@@ -45248,11 +45372,13 @@ namespace PowerSDR
 					break;
                 case "Continuum":
                     Display.CurrentDisplayMode = DisplayMode.CONTINUUM;
+                    CTUN1 = false;
                     CalcDisplayFreq();
                     break;
                 case "Off":
 					Display.CurrentDisplayMode = DisplayMode.OFF;
-					break;
+                    CTUN1 = false;
+                    break;
 			}
 
 #if (!NO_TNF)
@@ -45647,7 +45773,7 @@ namespace PowerSDR
             bool exit = false;
             switch (current_model)
             {
-                case Model.SDR1000:
+              /*  case Model.SDR1000:
                     switch (comboPreamp.Text)
                     {
                         case "Off":
@@ -45668,7 +45794,7 @@ namespace PowerSDR
                             break;
                     }
                     break;
-                case Model.FLEX1500:
+              */  case Model.FLEX1500:
                     switch (comboPreamp.Text)
                     {
                         case "-10":
@@ -45742,7 +45868,7 @@ namespace PowerSDR
 
 			if(num_channels == 2)
 			{
-				if(current_model == Model.SDR1000)  Hdw.MuteRelay = chkMUT.Checked;
+				//if(current_model == Model.SDR1000)  Hdw.MuteRelay = chkMUT.Checked;
 			}
 
             if (chkMUT.Checked)
@@ -45939,11 +46065,11 @@ namespace PowerSDR
                     int index2 = 0;
                     while (powers[index2] < pwr) index2++;
 
-                    if (current_model == Model.SDR1000 && pwr < 10)
+                  /*  if (current_model == Model.SDR1000 && pwr < 10)
                     {
                         new_volume = Math.Sqrt(pwr / 10.0 * Math.Pow(power_table[(int)b][3], 2.0)) / audio_volts1;
                     }
-                    if (index1 == index2)
+                  */  if (index1 == index2)
                     {
                         new_volume = power_table[(int)b][index1] / audio_volts1;
                     }
@@ -46374,10 +46500,10 @@ namespace PowerSDR
 			    }
 			    else
 			    {
-                    if (chkPower.Checked && mox && current_model == Model.SDR1000)
-                    {
-                        Hdw.MuteRelay = !chkMON.Checked;
-                    }
+                 //   if (chkPower.Checked && mox && current_model == Model.SDR1000)
+                  //  {
+                  //      Hdw.MuteRelay = !chkMON.Checked;
+                  //  }
 			    }
 
 
@@ -46422,8 +46548,7 @@ namespace PowerSDR
 
 		private void HdwMOXChanged(bool tx, double freq)
 		{
-			if(current_model == Model.SDR1000)
-				Hdw.UpdateHardware = false;
+		//	if(current_model == Model.SDR1000)		Hdw.UpdateHardware = false;
 
 			if(tx)
 			{
@@ -46557,7 +46682,7 @@ namespace PowerSDR
 
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 }
-                else if(current_model == Model.SDR1000)
+               /* else if(current_model == Model.SDR1000)
 				{
 					if(xvtr_present && Hdw.XVTR_RF)
 					{
@@ -46607,7 +46732,8 @@ namespace PowerSDR
                     if (rx1_dsp_mode != DSPMode.DRM &&
                     rx1_dsp_mode != DSPMode.SPEC)
                         if_shift = true;
-				}				
+				}
+                */				
 			}   
 
             if (!fwc_init && !hid_init && current_model != Model.FLEX5000 && current_model != Model.FLEX3000 && current_model != Model.FLEX1500)
@@ -46666,8 +46792,7 @@ namespace PowerSDR
                 chkPower.BackColor = Color.Red;
             }
 
-			if(current_model == Model.SDR1000)
-				comboPreamp.Enabled = !chkMOX.Checked;
+		//	if(current_model == Model.SDR1000)				comboPreamp.Enabled = !chkMOX.Checked;
 			setupForm.MOX = chkMOX.Checked;
 			ResetMultiMeterPeak();
 			//chkMOX.BackColor = button_selected_color;
@@ -46722,8 +46847,8 @@ namespace PowerSDR
 			for(int i=0; i<meter_text_history.Length; i++)
 				meter_text_history[i] = 0.0f;
 
-			if(!fwc_init || current_model == Model.SDR1000)
-				comboPreamp.Enabled = !chkMOX.Checked;
+			if(!fwc_init) // || current_model == Model.SDR1000)
+                comboPreamp.Enabled = !chkMOX.Checked;
 			setupForm.MOX = chkMOX.Checked;
 			ResetMultiMeterPeak();
 			chkMOX.BackColor = SystemColors.Control;
@@ -46771,14 +46896,14 @@ namespace PowerSDR
             }
 
             // only allow softrock style xmit  for cw and ssb for now
-            if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU &&
-                rx1_dsp_mode != DSPMode.USB && rx1_dsp_mode != DSPMode.LSB &&
-                ( /* current_model == Model.SDR1000_DDSLOCKED || */ current_model == Model.SOFTROCK40)
-                )
-            {
-                chkMOX.Checked = false;
-                return;
-            }
+         //   if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU &&
+         //       rx1_dsp_mode != DSPMode.USB && rx1_dsp_mode != DSPMode.LSB &&
+          //      ( /* current_model == Model.SDR1000_DDSLOCKED || */ current_model == Model.SOFTROCK40)
+          //      )
+          //  {
+           //    chkMOX.Checked = false;
+           //     return;
+          //  }
 
             bool tx = chkMOX.Checked;
 
@@ -47704,8 +47829,7 @@ namespace PowerSDR
 			{
 				if(comboTuneMode.SelectedIndex == (int)ATUTuneMode.BYPASS)
 				{
-                    if(current_model == Model.SDR1000)
-    					Hdw.PA_ATUTune(ATUTuneMode.BYPASS);	
+                  //  if(current_model == Model.SDR1000)    					Hdw.PA_ATUTune(ATUTuneMode.BYPASS);	
 					tuned_band = Band.FIRST;
 					if(chkTUN.BackColor == button_selected_color)
 						chkTUN.BackColor = SystemColors.Control;
@@ -47792,6 +47916,10 @@ namespace PowerSDR
 			if(chkEnableMultiRX.Checked) txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 			if(chkSR.Checked) chkSR.BackColor = button_selected_color;
 			else chkSR.BackColor = SystemColors.Control;
+
+            tempVFOAFreq = VFOAFreq; // ke9ns add
+            CTUN1_HZ = 0; // ke9ns add when changing SR, reset CTUN
+
             CalcDisplayFreq();
 		}
 
@@ -47944,14 +48072,14 @@ namespace PowerSDR
                         flexControlBasicForm = new FlexControlBasicForm(this);
                     flexControlBasicForm.Show();
                     flexControlBasicForm.Focus();
-                    flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add
+                 //   flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add to allow clicking the menu item name to bring the screen back up from the windows tray
                     break;
                 case FlexControlMode.Advanced:
                     if (flexControlAdvancedForm == null || flexControlAdvancedForm.IsDisposed)
                         flexControlAdvancedForm = new FlexControlAdvancedForm(this);
                     flexControlAdvancedForm.Show();
                     flexControlAdvancedForm.Focus();
-                    flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
+                //    flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
                     break;
             }
         }
@@ -48168,8 +48296,7 @@ namespace PowerSDR
 			else
 				chkBCI.BackColor = SystemColors.Control;
 			
-            if(current_model == Model.SDR1000)
-                SetHWFilters(dds_freq);
+          //  if(current_model == Model.SDR1000)                SetHWFilters(dds_freq);
 		}
 
         public bool CheckForTXCW()
@@ -48284,6 +48411,39 @@ namespace PowerSDR
             //			if(this.ActiveControl is NumericUpDownTS) return;
 
 
+            if (CTUN == true)
+            {
+                if (e.Delta == 0) return;
+                int mousewheel = (e.Delta > 0 ? 1 : -1); // 1 per click
+
+                if ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL) || (Display.CurrentDisplayMode == DisplayMode.PANASCOPE) || (Display.CurrentDisplayMode == DisplayMode.WATERFALL))
+                {
+                   UPDATEOFF = 2; // ke9ns let system know not to update screen for a little while pan
+                }
+                
+              
+                if (mousewheel < 0)
+                {
+                    CTUN1_HZ = CTUN1_HZ - CurrentTuneStepHz;// ke9ns add allow bandpass window to scroll across display instead of display freq scroll under bandpass.
+                    tempVFOAFreq = VFOAFreq - (double)CurrentTuneStepHz / 1e6; // vfoafreq in mhz
+                    CalcDisplayFreq(); // ke9ns keep display from moving
+
+                }
+                else // value >= 0
+                {
+
+                    CTUN1_HZ = CTUN1_HZ + CurrentTuneStepHz;// ke9ns add allow bandpass window to scroll across display instead of display freq scroll under bandpass.
+                    tempVFOAFreq = VFOAFreq + (double)CurrentTuneStepHz / 1e6;
+                    CalcDisplayFreq(); // ke9ns keep display from moving
+
+                }
+             //   Debug.WriteLine("CTUN=" + CTUN1_HZ);
+
+                return;
+
+               
+
+            } // ctun mode
 
             if (this.ActiveControl is TextBoxTS ||
 				this.ActiveControl is NumericUpDownTS ||
@@ -48313,8 +48473,9 @@ namespace PowerSDR
 					int right = grpVFOA.Left+txtVFOAFreq.Left+txtVFOAFreq.Width;
 					if(vfoa_hover_digit < 0)
 					{
-						int x = right + 2 - (vfo_pixel_offset - 5);
-						while(x < e.X && mult > 0.0000011)
+						int x = right + 2 - (vfo_pixel_offset - 5); //ke9ns was    right + 2 - (vfo_pixel_offset - 5);
+
+                        while (x < e.X && mult > 0.0000011)
 						{
 							mult /= 10.0;
 							x += vfo_char_width;
@@ -48369,7 +48530,7 @@ namespace PowerSDR
 					{
 						freq = VFOASubFreq;
 						mult = 1000.0;
-						right = grpVFOA.Left+txtVFOABand.Left+txtVFOABand.Width;
+						right = grpVFOA.Left + txtVFOABand.Left + txtVFOABand.Width;
 						if(vfoa_sub_hover_digit < 0)
 						{
 							int x = right + 2 - (vfo_sub_pixel_offset - 5);
@@ -48662,10 +48823,10 @@ namespace PowerSDR
                             FWC.SetXVTRRXOn(true);
                             FWC.SetXVTRSplit(xvtrForm.GetXVTRRF(rx1_xvtr_index));
                             break;
-                        case Model.SDR1000:
-                            if (chkPower.Checked)
-                                Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
-                            break;
+                      //  case Model.SDR1000:
+                        //    if (chkPower.Checked)
+                        //        Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
+                        //    break;
                         default:
                             break;
                     }
@@ -48685,10 +48846,10 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRRXOn(false);
                             break;
-                        case Model.SDR1000:
-                            if (chkPower.Checked)
-                                Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
-                            break;
+                      //  case Model.SDR1000:
+                       //     if (chkPower.Checked)
+                       //         Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
+                        //    break;
                         default:
                             break;
                     }   
@@ -48706,8 +48867,8 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRTXOn(true);
                             break;
-                        case Model.SDR1000:
-                            break;
+                      //  case Model.SDR1000:
+                        //    break;
                         default:
                             break;
                     }
@@ -48724,8 +48885,8 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRTXOn(false);
                             break;
-                        case Model.SDR1000:
-                            break;
+                      //  case Model.SDR1000:
+                      //      break;
                         default:
                             break;
                     }
@@ -49075,8 +49236,11 @@ namespace PowerSDR
 							int diff;
 							if(rx2_enabled) diff = (int)((VFOASubFreq - VFOAFreq)*1e6);
 							else diff = (int)((VFOBFreq - VFOAFreq)*1e6);
+
 							if(chkRIT.Checked && !mox) diff -= (int)udRIT.Value;
+
 							int rx2_osc = (int)(dsp.GetDSPRX(0, 0).RXOsc - diff);
+
 							if(rx2_osc > -sample_rate1/2 && rx2_osc < sample_rate1/2)
 							{
 								dsp.GetDSPRX(0, 1).RXOsc = rx2_osc;
@@ -49155,7 +49319,7 @@ namespace PowerSDR
 				{
 					switch(current_model)
 					{
-						case Model.SDR1000:
+					//	case Model.SDR1000:
 						case Model.DEMO:
 							if(Audio.wave_playback)
 							{
@@ -49184,7 +49348,7 @@ namespace PowerSDR
 								}
 							}
 							break;
-						case Model.SOFTROCK40:
+					/*	case Model.SOFTROCK40:
 							//!!!!drm patch
 							double osc_freq = soft_rock_center_freq*1e6 - freq*1e6;
 							if ( rx1_dsp_mode  == DSPMode.DRM ) // if we're in DRM mode we need to be offset 12khz
@@ -49195,7 +49359,7 @@ namespace PowerSDR
 							tuned_freq = freq;
 							//Debug.WriteLine("osc_freq: "+osc_freq.ToString("f6"));
 							dsp.GetDSPRX(0, 0).RXOsc = osc_freq;
-							break;
+							break; */
 					}
 				}
 			}			
@@ -49334,7 +49498,7 @@ namespace PowerSDR
 			double vfoa = VFOAFreq;
 
 			txtVFOABand.Text = freq.ToString("f6"); 
-			Display.VFOASub = (long)(freq*1e6);
+			Display.VFOASub = (long)(freq*1e6); // ke9ns convert 14.123456 mhz to 14123456 hz
             if (chkTUN.Checked && chkVFOATX.Checked && chkVFOSplit.Checked)
             {
                 switch (dsp.GetDSPTX(0).CurrentDSPMode)
@@ -49431,8 +49595,8 @@ namespace PowerSDR
                             case Model.FLEX5000:
                                 FWC.SetXVTRTXOn(true);
                                 break;
-                            case Model.SDR1000:
-                                break;
+                         //   case Model.SDR1000:
+                         //       break;
                             default:
                                 break;
                         }
@@ -49445,8 +49609,8 @@ namespace PowerSDR
                             case Model.FLEX5000:
                                 FWC.SetXVTRTXOn(false);
                                 break;
-                            case Model.SDR1000:
-                                break;
+                          //  case Model.SDR1000:
+                            //    break;
                             default:
                                 break;
                         }
@@ -50187,16 +50351,20 @@ namespace PowerSDR
 			panelVFOBHover.Invalidate();
 		}
 
+
+        //==============================================================================================
 		private void panelVFOAHover_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			Control c1 = (Control)sender;
 			Control c2 = txtVFOAFreq;
 
-			int client_width = (c1.Size.Width - c1.ClientSize.Width)+(c2.Size.Width-c2.ClientSize.Width);
-			int client_height = (c1.Size.Height - c1.ClientSize.Height)+(c2.Size.Height-c2.ClientSize.Height);
-			int x_offset = c1.Left-c2.Left - client_width/2;
-			int y_offset = c1.Top-c2.Top - client_height/2;
-			txtVFOAFreq_MouseMove(sender, new MouseEventArgs(e.Button, e.Clicks, e.X+x_offset, e.Y+y_offset, e.Delta));
+			int client_width = (c1.Size.Width - c1.ClientSize.Width) + (c2.Size.Width - c2.ClientSize.Width);
+			int client_height = (c1.Size.Height - c1.ClientSize.Height) + (c2.Size.Height - c2.ClientSize.Height);
+
+            int x_offset = c1.Left - c2.Left - client_width / 2;
+			int y_offset = c1.Top - c2.Top - client_height / 2;
+
+			txtVFOAFreq_MouseMove(sender, new MouseEventArgs(e.Button, e.Clicks, e.X + x_offset, e.Y + y_offset, e.Delta));
 			
 			/*txtVFOAFreq_MouseMove(sender, new MouseEventArgs(MouseButtons.None, 0,
 				e.X+panelVFOAHover.Left-10, e.Y+panelVFOAHover.Top, 0));*/
@@ -50238,6 +50406,8 @@ namespace PowerSDR
 				new MouseEventArgs(e.Button, e.Clicks, e.X+165, e.Y+25, e.Delta));*/
 		}
 
+
+        //=====================================================================================
 		private void txtVFOAMSD_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			txtVFOAMSD.Visible = false;
@@ -50974,7 +51144,9 @@ namespace PowerSDR
 
             switch (e.Button)
 			{
-				case MouseButtons.Left:
+
+         
+                case MouseButtons.Left:
                     bool near_notch = false;
                     if (!mox)
 					{
@@ -51141,10 +51313,26 @@ namespace PowerSDR
 
 								if((Display.CurrentDisplayModeBottom == DisplayMode.OFF) || (!rx2_enabled)) // ke9ns mod (in case when rX2 display is off
 								{
-									if(current_click_tune_mode == ClickTuneMode.VFOA)
-										VFOAFreq = Math.Round(freq, 6);
-									else
-										VFOBFreq = Math.Round(freq, 6);
+                                    if (current_click_tune_mode == ClickTuneMode.VFOA)
+
+                                        if (CTUN == true) // if click jump while in CTUN, then use CTUN method
+                                        {
+
+                                            if ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL) || (Display.CurrentDisplayMode == DisplayMode.PANASCOPE) || (Display.CurrentDisplayMode == DisplayMode.WATERFALL))
+                                            {
+                                               UPDATEOFF = 2; // ke9ns let system know not to update screen for a little while pan
+                                            }
+
+                                            tempVFOAFreq = Math.Round(freq, 6); // ke9ns going to be new freq
+                                            CTUN1_HZ = CTUN1_HZ + (long)((tempVFOAFreq - VFOAFreq)*1e6);
+                                            CalcDisplayFreq(); // ke9ns keep display from moving
+                                        }
+                                        else
+                                        {
+                                            VFOAFreq = Math.Round(freq, 6);
+                                        }
+                                    else
+                                        VFOBFreq = Math.Round(freq, 6);
 								}
 								else
 								{
@@ -51448,7 +51636,11 @@ namespace PowerSDR
 						else ChangeTuneStepUp();
 					}
 					break;
-			}
+
+
+
+			} // switch e.button
+
 		} //picdisplay mouse down
 
 
@@ -51708,7 +51900,9 @@ namespace PowerSDR
 
 		private void ptbDisplayPan_Scroll(object sender, System.EventArgs e)
 		{
-			CalcDisplayFreq();
+          //  CTUN1_HZ = 0; // ke9ns add
+
+            CalcDisplayFreq();
 			if(ptbDisplayPan.Focused) btnHidden.Focus();
 
           
@@ -51719,6 +51913,9 @@ namespace PowerSDR
 		{
 			//double edge_alias = 7200.0;
 			//double if_freq = 11025.0;
+
+                 CTUN1_HZ = 0; // reset CTUN to center
+         
 			double spur_tune_width = 200e6 / Math.Pow(2, 16);
 			if(fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
 				spur_tune_width = 500e6 / Math.Pow(2, 16);
@@ -51744,7 +51941,7 @@ namespace PowerSDR
 
 		private void ptbDisplayZoom_Scroll(object sender, System.EventArgs e)
 		{
-			double zoom_factor = 1.0 / ((ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - ptbDisplayZoom.Value) * 0.01);
+			double zoom_factor = 1.0 / ((ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - ptbDisplayZoom.Value) * 0.01); // ke9ns  .4 full left to 10 full right
 			
 			if(zoom_factor == 0.5) radDisplayZoom05.Checked = true;
 			else if(zoom_factor == 1.0)	radDisplayZoom1x.Checked = true;
@@ -52556,7 +52753,7 @@ namespace PowerSDR
                     chkTNF.Enabled = true;
                     btnTNFAdd.Enabled = true;
 					break;
-			}
+			} // SetRX1mode
 
             switch(new_mode)
 			{
@@ -54005,7 +54202,7 @@ namespace PowerSDR
 					txtVFOABand.ReadOnly = false;
 					txtVFOABand_LostFocus(this, EventArgs.Empty);
 					panelVFOASubHover.Visible = true;
-					return;
+					return;     
 				}
 				else if(chkEnableMultiRX.Checked)
 				{
@@ -55222,8 +55419,7 @@ namespace PowerSDR
                     //this.Close();
                     break;
                 case WM_DEVICECHANGE:
-                    if (flexcontrol_autodetect)
-                        FlexControlScan();
+                    if (flexcontrol_autodetect)  FlexControlScan();
                     break;
                 default:
                     base.WndProc(ref m);
@@ -55526,6 +55722,8 @@ namespace PowerSDR
 
                 ckQuickPlay.Enabled = !ckQuickRec.Checked;
             }
+
+            //--------------------------------------------------
             else // ke9ns original way to doing quickaudio
             {
                 if (ckQuickRec.Checked)
@@ -56299,7 +56497,7 @@ namespace PowerSDR
 					rx2_if_freq = setupForm.IFFreq;
 					CalcDisplayFreq();
 					break;
-			}
+			} // set RX2 mode
 
            	switch(new_mode)
 			{
@@ -58307,8 +58505,9 @@ namespace PowerSDR
 
         private void timer_navigate_Tick(object sender, System.EventArgs e)
         {
-            if (TDxSensor == null)
-                return;
+          
+            if (TDxSensor == null)  return;
+
             TDxInput.Vector3D t = TDxSensor.Translation;
             TDxInput.AngleAxis r = TDxSensor.Rotation;
             TDxDevice.Keyboard.IsKeyDown(1);
@@ -58325,7 +58524,18 @@ namespace PowerSDR
                 //click
                 TDxCurrentVFO = !TDxCurrentVFO;
             }
+/* ke9ns
+            New control axes have been added to the SpaceNavigator support:
 
+    Twist controls VFOA(or if in split, VFOB)
+
+    Push forward/ backward zooms the panadapter
+
+     Push left / right pans the panadapter
+
+       Push up / down controls the filter width
+
+*/
             if (spacenav_controlvfos)
             {
                 del = Math.Exp(r.Angle / 10.0) - 1.0;
@@ -58377,7 +58587,7 @@ namespace PowerSDR
                     ptbFilterWidth_Scroll(this.ptbFilterWidth, EventArgs.Empty);
                 }
             }
-        }
+        } // timer_navigate_tick
 
         public void PressKeyboardButton(Keys keyCode)
         {
@@ -58434,7 +58644,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                case Model.SDR1000:
+              //  case Model.SDR1000:
                     switch(rx1_preamp_mode)
                     {
                         case PreampMode.OFF:
@@ -59443,14 +59653,14 @@ namespace PowerSDR
                         flexControlBasicForm = new FlexControlBasicForm(this);
                     flexControlBasicForm.Show();
                     flexControlBasicForm.Focus();
-                    flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add
+                  //  flexControlBasicForm.WindowState = FormWindowState.Normal; // ke9ns add
                     break;
                 case FlexControlMode.Advanced:
                     if (flexControlAdvancedForm == null || flexControlAdvancedForm.IsDisposed)
                         flexControlAdvancedForm = new FlexControlAdvancedForm(this);
                     flexControlAdvancedForm.Show();
                     flexControlAdvancedForm.Focus();
-                    flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
+                 //   flexControlAdvancedForm.WindowState = FormWindowState.Normal; // ke9ns add
                     break;
             }
         }
@@ -59732,6 +59942,9 @@ namespace PowerSDR
             {
                 PAON = 0;
             }
+
+           
+
         } //  click on AMPS
 
 
@@ -59944,7 +60157,7 @@ namespace PowerSDR
 
             Brush bg = new SolidBrush(Color.Transparent);
 
-            Pen borderPen = new Pen(borderBrush,3.0f);
+            borderPen = new Pen(borderBrush,3.0f);
 
             SizeF strSize = g.MeasureString(grpVFOA.Text, grpVFOA.Font);
 
@@ -61838,13 +62051,15 @@ namespace PowerSDR
         public bool AutoPanScale = false;  // ke9ns add true = readjust the pan scale for small signals, false = go back to large scale pan
         public int AutoPanScaleMin = -140; // ke9ns
         public int AutoPanScaleMax = -20; // ke9ns
+        public int AutoPanScaleStep = 10; // ke9ns
 
         private void lblDisplayZoom_MouseDown(object sender, MouseEventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
             if ((me.Button == System.Windows.Forms.MouseButtons.Right))
             {
-            
+
+             
                 if (setupForm == null || setupForm.IsDisposed)
                     setupForm = new Setup(this);
 
@@ -61872,11 +62087,11 @@ namespace PowerSDR
                         AutoPanScale = true;
                         AutoPanScaleMin = Display.SpectrumGridMin; // ke9ns store original value so you can go back when you toggle to standard signals again
                         AutoPanScaleMax = Display.SpectrumGridMax;
+                        AutoPanScaleStep = Display.SpectrumGridStep;
+
                         Display.AutoBright = 3; // adjust RX pan scale to small signals
 
                     }
-
-                   
 
 
                     Debug.WriteLine("AutoPanScale = " + AutoPanScale);
@@ -62078,6 +62293,9 @@ namespace PowerSDR
           
             if ((!TXIDMenuItem.Checked) && (callsignTextBox.BackColor == Color.MediumSpringGreen) && (chkPower.Checked)) // cant transmit unless you have a valid callsign waterfall id wave file and Radio is ON
             {
+                // WaveOptions.RECPLAY1 = true; // force wave into POST
+                WaveForm.RECPLAY = true;
+
                 Txfh = TXFilterHigh;         // save original filter size
                 TXFilterHigh = 2600;         // reduce size for text waterfall ID
 
@@ -62215,7 +62433,7 @@ namespace PowerSDR
             if (checkBoxID.Checked == true)
             {
 
-                WaveForm.RECPLAY = true;
+                WaveForm.RECPLAY = true; // ke9ns also sets waveoptions.recplay1 which sets POST
        
             }
 
@@ -62224,7 +62442,7 @@ namespace PowerSDR
 
 
         public static int suncounter = 2; // for space weather
-        public static int noaaON = 0; // for space weather
+        public static byte noaaON = 0; // for space weather
         public static int SFI = 0;       // for Space weather
         public static int SN = 0;        // for Space weather
         public static int Aindex = 0;    // for Space weather
@@ -62576,17 +62794,64 @@ namespace PowerSDR
             }
 
         }
-          
+
+        public static int CTUN3 = 0; // ke9ns add keep rundisplay() thread from updating pan and water too soon in CTUn mode
+        public static bool CTUN = false; // ke9ns add CTUN feature ON/OFF
+        public static long CTUN1_HZ = 0; // ke9ns add used in Calcdisplayfreq() to keep display from moving and allow vfoa bandpass to move across display
+        public double tempVFOAFreq = 0.0; //  ke9ns add hold new vfo freq seperate from real vfoafreq to sync up display movement
+        public static int UPDATEOFF = 0; // ke9ns add pan & waterfall delay while CTUN is on and your sliding across the display
+      
+        //============================================================================
+        // ke9ns add CTUN=0 normal, 1=main bandpass moves (just like the sub does across the display)
+        //   public static bool ctun = false;
+
+
+        // ke9ns add to turn on/off CTUN feature
+        private void lblDisplayPan_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (CTUN == false)
+            {
+              //  CTUN1_HZ = 0;
+                CTUN = true;
+                lblDisplayPan.ForeColor = Color.Red;
+            }
+            else
+            {
+              //  CTUN1_HZ = 0;
+                CTUN = false;
+                lblDisplayPan.ForeColor = Color.White;
+
+            }
+
+        } // pan text from console window
+
+
+        // ke9ns add  make sure to turn off CTUN if not in water, or pan or panfall modes
+        private bool CTUN1
+        {
+            get
+            {
+                return CTUN;
+            }
+            set
+            {
+                CTUN = value;
+                if (CTUN == true) lblDisplayPan.ForeColor = Color.Red;
+                else lblDisplayPan.ForeColor = Color.White;
+
+            }
+
+
+        } // CTUN1
 
         //================================================================================================
-        // rotation value event handler
+        // PowerMate Griffin Knob rotation value event handler
         //================================================================================================
-
         public void OnRotateEvent(int value1)
         {
           // Trace.WriteLine("ROTATE "+ value1);
 
-            if (((lastvalue < 0) && (value1 > 0)) || ((lastvalue > 0) && (value1 < 0)))
+            if (((lastvalue < 0) && (value1 > 0)) || ((lastvalue > 0) && (value1 < 0))) // if knob changes directions, reset speed counter
             {
                 speed = 0;
                 lastvalue = value1;
@@ -62599,35 +62864,86 @@ namespace PowerSDR
             {
 
                 speed++;
-                return;
+                return; // wait until you turn knob in 1 direction far enough to exceed speed rating you set in setup.cs
             }
-            else speed = 0;
+            else speed = 0; // you turned knob far enough so reset speed counter
 
-           
-            //---------------------------------------------
-            if (value1 < 0)
+
+
+            if (CTUN == false)
             {
-                if (RIT == true)
+                //---------------------------------------------
+                if (value1 < 0)
                 {
-                    RITValue = RITValue - 1;
+                    if (RIT == true)
+                    {
+                        RITValue = RITValue - 1;
+                    }
+                    else
+                    {
+                        Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+                    }
                 }
-                else
+                else // value >= 0
                 {
-                    Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+                    if (RIT == true)
+                    {
+                        RITValue = RITValue + 1;
+                    }
+                    else
+                    {
+                        Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
+                    }
                 }
-            }
+            } // CTUN false
             else
             {
-                if (RIT == true)
+                /*
+                double test =  dsp.GetDSPRX(0, 0).RXOsc; // ke9ns dsp
+
+                Debug.WriteLine("getDSPRX " + test);
+
+                if (value1 < 0)
                 {
-                    RITValue = RITValue + 1;
+                 dsp.GetDSPRX(0, 0).RXOsc = test - 1000;
                 }
                 else
                 {
-                    Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
-                }
-            }
+                    dsp.GetDSPRX(0, 0).RXOsc = test + 1000;
 
+                }
+
+               return;
+               */
+
+
+                if ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL) || (Display.CurrentDisplayMode == DisplayMode.PANASCOPE) || (Display.CurrentDisplayMode == DisplayMode.WATERFALL))
+                {
+                    UPDATEOFF = 2; // ke9ns let system know not to update screen for a little while pan
+                }
+               
+                if (value1 < 0)
+                {
+                    CTUN1_HZ = CTUN1_HZ - CurrentTuneStepHz;// ke9ns add allow bandpass window to scroll across display instead of display freq scroll under bandpass.
+                    tempVFOAFreq = VFOAFreq - (double)CurrentTuneStepHz / 1e6; // vfoafreq in mhz
+                    CalcDisplayFreq(); // ke9ns keep display from moving
+
+                }
+                else // value >= 0
+                {
+                  
+                    CTUN1_HZ = CTUN1_HZ + CurrentTuneStepHz;// ke9ns add allow bandpass window to scroll across display instead of display freq scroll under bandpass.
+                    tempVFOAFreq = VFOAFreq + (double)CurrentTuneStepHz / 1e6;
+                    CalcDisplayFreq(); // ke9ns keep display from moving
+
+                }
+
+
+
+             //   Debug.WriteLine("CTUN="+ CTUN1_HZ);
+
+
+            } // CTUN true
 
         } //onrotateevent
 
@@ -62650,8 +62966,301 @@ namespace PowerSDR
          
 
         }
-        
 
-        } // class console
+      
+       
+        public static int m_port = 0;   // ke9ns add port# 
+        public static bool m_terminated = true;
+
+
+
+        /*
+              // netsh http add urlacl url=http://*:8081/ user=\Everyone
+
+               public static HttpListener m_listener;
+               public static Bitmap bitmap;
+               public static HttpListenerContext context;
+
+                //==================================================================================================
+                // ke9ns add  HTTP Server (with help from Nickolas  Николай   RN3KK)
+                //==================================================================================================
+                public void HttpServer2()
+                {
+                     m_listener = new HttpListener();
+
+                    //    m_listener.Prefixes.Add("http://localhost:8081/");
+                    //     m_listener.Prefixes.Add("http://127.0.0.1:8081/");
+
+
+                    Debug.WriteLine("HTTPLISTENER==================");
+
+
+                    try
+                    {
+                        Debug.WriteLine("PORT======" + setupForm.HTTP_PORT);
+                        Debug.WriteLine("USER======" + setupForm.HTTP_USER);
+                        Debug.WriteLine("PASS======" + setupForm.HTTP_PASS);
+                    }
+                    catch(Exception e)
+                    {
+
+                        Debug.WriteLine("exception" + e);
+                        return;
+
+                    }
+
+                    try
+                    {
+                        m_listener.Prefixes.Add("http://*:" + setupForm.HTTP_PORT + "/"); // ke9ns setup port# to use for server
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine("PORT exception" + e);
+                        return;
+                    }
+
+
+                    m_terminated = false; // start the thread up
+
+                    m_listener.AuthenticationSchemes = AuthenticationSchemes.Basic; // ke9ns add user and password
+
+                    //  thread = new Thread(loop);
+                    //   thread.Start();
+                    Debug.WriteLine("START THREAD LISTENER");
+
+                    Thread t = new Thread(new ThreadStart(HTTPSERVER3));
+                    t.Name = "HTTP SERVER THREAD";
+                    t.IsBackground = true;
+                    t.Priority = ThreadPriority.Normal;
+                    t.Start();
+
+                } // HttpServer(int port)
+
+                //==================================================================
+                // ke9ns add Thread start
+                public void HTTPSERVER3()
+                {
+                    Debug.WriteLine("START LISTENER");
+
+                    try
+                    {
+                        m_listener.Start();
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine("Cannot start thread "+ e);
+
+                        terminate(); 
+                    }
+
+                    Debug.WriteLine("LISTENER STARTED");
+
+                    while (!m_terminated)
+                    {
+
+                        Thread.Sleep(50);
+
+                        try
+                        {
+                            context = m_listener.GetContext(); //Block until a connection comes in
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("getcontext fault " + e);
+
+                            break;
+                        }
+
+                        context.Response.StatusCode = 200; // this is what we will send back to person who opened the connection
+                        context.Response.SendChunked = true;
+
+                        HttpListenerRequest request = context.Request;
+                        Debug.WriteLine("HttpListenerRequest=" + request);
+
+
+                        HttpListenerBasicIdentity Ident = (HttpListenerBasicIdentity)context.User.Identity;
+
+                        if((Ident.Name != setupForm.HTTP_USER) || (Ident.Password != setupForm.HTTP_PASS))
+                        {
+                            Debug.WriteLine("User and Pass dont match, fail");
+                            //  m_terminated = true;
+                            continue;
+                        }
+
+                        // Obtain a response object.
+                        HttpListenerResponse response = context.Response;
+                        Debug.WriteLine(" HttpListenerResponse=" + response);
+
+
+                        //-----------------------------------------------------
+                        // ke9ns generage a JPG of the display aread (picDisplay)
+
+
+
+       
+                        bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
+                        picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
+                        bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
+
+
+                        if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
+                        {
+
+                            Debug.WriteLine("SAVED JPG FILE");
+
+                            FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");     
+                            FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
+                            BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
+
+                            byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
+
+                            picDisplayReader.Close();
+                            picDisplayStream.Close();
+
+                            response.ContentType = "image/jpg"; // let listener know what type of data it is
+                            response.ContentLength64 = picDisplayOutput.Length;
+
+                            Stream OutputStream = response.OutputStream;
+
+                            OutputStream.Write(picDisplayOutput, 0, picDisplayOutput.Length); // transmit picDisplay image
+
+                            OutputStream.Close(); // dont transmitting image of picDisplay
+
+                        } // if picDisplay.JPG image created do above
+
+                    } // while (!m_terminated) 
+
+                    Debug.WriteLine("ENDING THREAD");
+
+                    m_terminated = true;
+
+                    setupForm.chkBoxHTTP.Checked = false;
+
+                    try
+                    {
+                        m_listener.Close();
+
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("1close THREAD " + e);
+                    }
+
+                   // if (m_listener != null && m_listener.IsListening)
+                 //   {
+                   //     Debug.WriteLine("STOPPING THREAD");
+
+                   //     m_listener.Stop();
+                  //  }
+
+                } // HTTPSERVER thread
+
+
+
+
+                //-------------------------------------------------------
+                // ke9ns add
+                public static void terminate()
+                {
+
+                    m_terminated = true;
+
+                    try
+                    {
+                        m_listener.Close(); // try and close the getcontext thread
+
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.WriteLine("close THREAD " + e);
+                    }
+                }
+
+        
+                //=======================================================================================
+                public byte[] getImage()
+                {
+                    Debug.WriteLine("GET IMAGE=7=================");
+
+                    bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
+                    picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
+                    bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
+
+
+                 //   if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
+                 //   {
+
+                        Debug.WriteLine("SAVED JPG FILE===================");
+
+                        FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");
+                        FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
+                        BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
+
+                    byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
+
+                        picDisplayReader.Close();
+                        picDisplayStream.Close();
+
+
+                  //  } // if picDisplay.JPG image created do above
+                 //   else picDisplayOutput = null;
+
+                    Debug.WriteLine("GET IMAGE DONE======================");
+
+                    return picDisplayOutput;
+
+                } // getImage()
+
+                */
+
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add allows Http server to talk with Setup through Console
+        public bool HttpServer
+        {
+         
+            set
+            {
+                httpFile.HttpServer1();
+            } 
+
+        } //HttpServer
+
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add allows Http server to talk with Setup through Console
+        public int HTTP_PORT
+        {
+            get
+            {
+                return (int)setupForm.udHttpPort.Value;
+            }
+            
+        } // HTTP_PORT
+
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add allows Http server to talk with Setup through Console
+        public string HTTP_USER
+        {
+            get
+            {
+                return setupForm.txtHttpUser.Text; 
+            }
+
+        } // HTTP_PORT
+          //=========================================================================================
+          //=========================================================================================
+          // ke9ns add allows Http server to talk with Setup through Console
+        public string HTTP_PASS
+        {
+            get
+            {
+                return setupForm.txtHttpPass.Text;
+            }
+
+        } // HTTP_PORT
+
+    } // class console
 
 } // powerSDR

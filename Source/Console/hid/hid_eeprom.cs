@@ -47,6 +47,7 @@ namespace PowerSDR
 
             USBHID.GetPASN(out pa_serial);
             USBHID.GetPARev(out pa_rev);
+ 
 			
 			byte[] data; // get last cal date/time
             USBHID.ReadEEPROM(0x1820, 8, out data);
@@ -285,7 +286,11 @@ namespace PowerSDR
 			//set { pa_serial = value; }
 		}
 
-		private static uint pa_rev;
+        
+
+      
+
+        private static uint pa_rev;
 		public static uint PARev
 		{
 			get { return pa_rev; }

@@ -120,6 +120,34 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <data name="udHttpPort.ToolTip" xml:space="preserve">
+    <value>Select Port# to allow Remote Login by adding the Port# 
+to the end of the URL
+Example:  http://192.168.0.100:8081
+or http://localhost:8081
+
+But you must also add this port# to your Routers "Port Forward" options
+If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
+  </data>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>If Activate Check Box does not stay CHECKED with the Port# you choose,
+You must do the following  (using Port# 8081 as an example)
+1) Run Command Prompt As ADMIN
+2) Type in the following:   netsh http add urlacl url=http://*:8081/ user=\Everyone
+3) "Port Forward" Port# 8081 in your router, which means you need to know the IP address of this computer.
+4) Go to windows Control panel and Windows Firewall. Add a incoming RULE to allow port# 8081 through your Firewall
+
+You only need to do this 1 time.
+
+When you open a Browser window of the PC running PowerSDR type: http://localhost:8081
+you will get a snapshot of the Display area
+
+If accessing remotely you will need to know the IP address of your Home (DSL, cable modem, etc.)
+then type:  http://&lt;home IP address&gt;:8081
+
+
+</value>
+  </data>
   <data name="tbWaterOffset.ToolTip" xml:space="preserve">
     <value>Use this to Lighten or Darken the Waterfall by 20db UP or DOWN from the "Automatic" avg found
 If you find the "AutoWater Level" is too dark, increase this slider

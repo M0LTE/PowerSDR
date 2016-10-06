@@ -310,7 +310,7 @@ namespace PowerSDR
             // ScanControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(586, 411);
+            this.ClientSize = new System.Drawing.Size(580, 407);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -330,6 +330,7 @@ namespace PowerSDR
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(330, 446);
             this.Name = "ScanControl";
             this.Text = "Scanner";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ScanControl_FormClosing);

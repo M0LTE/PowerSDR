@@ -293,7 +293,7 @@ NO WARRANTY
 12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</value>
   </data>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>PowerSDR 2.7.2 ke9ns Rev T9:
+    <value>PowerSDR 2.7.2 ke9ns Rev T10:
 
 For Revision history visit: http://ke9ns.com/flexpage.html/#GPLREV
 
@@ -305,6 +305,9 @@ TX Waterfall ID DOC file:
 "file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PowerSDR%20TX%20Waterfall%20ID.docx"
 
 Each Video covers additional features not covered in earlier videos:
+
+YouTube Video Describing RevT10: https://www.youtube.com/embed/JtKY6lwMTVY
+YouTube Video Describing RevT9: https://www.youtube.com/embed/Cv-Jm2j3jw8
 
 YouTube Video Describing RevT8: https://www.youtube.com/embed/1JHV_CDQwIU
 YouTube Video Describing RevT8: https://www.youtube.com/embed/5xjzl5IkiJg

@@ -130,14 +130,6 @@ TO USE THE HYPERLINK:
 RIGHT CLICK mouse on the Memory (Row)
 </value>
   </data>
-  <data name="textBox1.Text" xml:space="preserve">
-    <value>Highlight a memory by a single Left Click on a Row.
-You can Drag a file or URL directy onto the highlighted Row to save a Hyperlink.
-Right Click on a highlighted Row to go to the Hyperlink or open the File.
-Double Left Click to change the Flex to that Memory Frequency/mode
-ALT + M keys to save new Memory Directly from the Panadapter Display.
-Spotter can Display all your Memories (in Blue on the Panadapter)</value>
-  </data>
   <data name="MemoryRecordAdd.ToolTip" xml:space="preserve">
     <value>TO ADD A URL OR FILE HYPERLINK TO A MEMORY:
 Select a Memory (Row) with your mouse
@@ -149,6 +141,20 @@ RIGHT CLICK mouse on the Memory (Row)
 
 </value>
   </data>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>Highlight a memory by a single Left Click on a Row.
+You can Drag a file or URL directy onto the highlighted Row to save a Hyperlink.
+Right Click on a highlighted Row to go to the Hyperlink or open the File.
+Double Left Click to change the Flex to that Memory Frequency/mode
+From the Panadapter use ALT + M keys to save new Memory Directly from the Pan.
+Spotter can Display all your Memories (in Blue on the Panadapter)</value>
+  </data>
+  <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
+  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>297, 17</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

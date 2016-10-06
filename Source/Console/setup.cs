@@ -39,8 +39,8 @@ using System.IO.Ports;
 using TDxInput;
 using System.Xml;
 
-using FlexCW;
-using Flex.Control;
+using FlexCW;           //
+using Flex.Control;     // ke9ns add
 
 
 namespace PowerSDR
@@ -54,6 +54,8 @@ namespace PowerSDR
 
         public static SpotControl SpotForm;                       // ke9ns add DX spotter function
         public static ScanControl ScanForm;                       // ke9ns add freq Scanner function
+     //   public static Http httpFile;
+
 
         //   public static VolumeControl volumecontrol;
 
@@ -1057,9 +1059,17 @@ namespace PowerSDR
         public CheckBoxTS chkBoxMRX;
         public CheckBoxTS chkTXMeter2;
         public CheckBoxTS chkBoxPM;
-        private GroupBoxTS groupBoxTS1;
+        public GroupBoxTS groupBoxTS1;
         private LabelTS labelTS15;
         public NumericUpDownTS udSpeedPM;
+        public CheckBoxTS chkBoxHTTP;
+        private GroupBox groupBox2;
+        private LabelTS labelTS16;
+        public NumericUpDownTS udHttpPort;
+        public TextBoxTS txtHttpPass;
+        public TextBoxTS txtHttpUser;
+        private LabelTS labelTS18;
+        private LabelTS labelTS17;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1068,12 +1078,15 @@ namespace PowerSDR
 
 		public Setup(Console c)
 		{
-   
+            Debug.WriteLine("SETUP  FILE OPEN");
+
             InitializeComponent();
                                                      
             console = c;
             openFileDialog1.InitialDirectory = String.Empty;
             openFileDialog1.InitialDirectory = console.AppDataPath;
+
+         
 
 #if(!DEBUG)
 			comboGeneralProcessPriority.Items.Remove("Idle");
@@ -1255,7 +1268,7 @@ namespace PowerSDR
             InitDJConsoles();
 
             // End MOD
-        
+          
         
         } // setup
 
@@ -1417,6 +1430,14 @@ namespace PowerSDR
             this.chkSpaceNavFlyPanadapter = new System.Windows.Forms.CheckBoxTS();
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtHttpPass = new System.Windows.Forms.TextBoxTS();
+            this.txtHttpUser = new System.Windows.Forms.TextBoxTS();
+            this.labelTS18 = new System.Windows.Forms.LabelTS();
+            this.labelTS17 = new System.Windows.Forms.LabelTS();
+            this.labelTS16 = new System.Windows.Forms.LabelTS();
+            this.udHttpPort = new System.Windows.Forms.NumericUpDownTS();
+            this.chkBoxHTTP = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS15 = new System.Windows.Forms.LabelTS();
             this.chkBoxPM = new System.Windows.Forms.CheckBoxTS();
@@ -2324,6 +2345,8 @@ namespace PowerSDR
             this.tpGeneralNavigation.SuspendLayout();
             this.grpOptSpaceNav.SuspendLayout();
             this.tpUserInterface.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).BeginInit();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -4448,6 +4471,7 @@ namespace PowerSDR
             this.chkSpaceNavFlyPanadapter.Size = new System.Drawing.Size(109, 17);
             this.chkSpaceNavFlyPanadapter.TabIndex = 1;
             this.chkSpaceNavFlyPanadapter.Text = "Panadapter Flight";
+            this.toolTip1.SetToolTip(this.chkSpaceNavFlyPanadapter, "Use the Tilt features to adjust the Pan Slider, Zoom Slider,and step size");
             this.chkSpaceNavFlyPanadapter.UseVisualStyleBackColor = true;
             // 
             // chkSpaceNavControlVFOs
@@ -4465,6 +4489,8 @@ namespace PowerSDR
             // 
             // tpUserInterface
             // 
+            this.tpUserInterface.BackColor = System.Drawing.Color.Gray;
+            this.tpUserInterface.Controls.Add(this.groupBox2);
             this.tpUserInterface.Controls.Add(this.groupBoxTS1);
             this.tpUserInterface.Controls.Add(this.groupBox1);
             this.tpUserInterface.Location = new System.Drawing.Point(4, 22);
@@ -4472,7 +4498,115 @@ namespace PowerSDR
             this.tpUserInterface.Size = new System.Drawing.Size(592, 318);
             this.tpUserInterface.TabIndex = 6;
             this.tpUserInterface.Text = "User Interface";
-            this.tpUserInterface.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.txtHttpPass);
+            this.groupBox2.Controls.Add(this.txtHttpUser);
+            this.groupBox2.Controls.Add(this.labelTS18);
+            this.groupBox2.Controls.Add(this.labelTS17);
+            this.groupBox2.Controls.Add(this.labelTS16);
+            this.groupBox2.Controls.Add(this.udHttpPort);
+            this.groupBox2.Controls.Add(this.chkBoxHTTP);
+            this.groupBox2.Location = new System.Drawing.Point(32, 184);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(505, 100);
+            this.groupBox2.TabIndex = 54;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "HttpServer";
+            this.toolTip1.SetToolTip(this.groupBox2, resources.GetString("groupBox2.ToolTip"));
+            // 
+            // txtHttpPass
+            // 
+            this.txtHttpPass.Location = new System.Drawing.Point(187, 32);
+            this.txtHttpPass.MaxLength = 50;
+            this.txtHttpPass.Name = "txtHttpPass";
+            this.txtHttpPass.Size = new System.Drawing.Size(90, 20);
+            this.txtHttpPass.TabIndex = 11;
+            this.txtHttpPass.Text = "powersdr";
+            this.toolTip1.SetToolTip(this.txtHttpPass, "Select Password to login with Remotely");
+            this.txtHttpPass.TextChanged += new System.EventHandler(this.txtHttpPass_TextChanged);
+            this.txtHttpPass.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtHttpPass_MouseDown);
+            // 
+            // txtHttpUser
+            // 
+            this.txtHttpUser.Location = new System.Drawing.Point(80, 32);
+            this.txtHttpUser.MaxLength = 50;
+            this.txtHttpUser.Name = "txtHttpUser";
+            this.txtHttpUser.Size = new System.Drawing.Size(90, 20);
+            this.txtHttpUser.TabIndex = 10;
+            this.txtHttpUser.Text = "powersdr";
+            this.toolTip1.SetToolTip(this.txtHttpUser, "User Name to login with Remotely");
+            this.txtHttpUser.TextChanged += new System.EventHandler(this.txtHttpUser_TextChanged);
+            this.txtHttpUser.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtHttpUser_MouseDown);
+            // 
+            // labelTS18
+            // 
+            this.labelTS18.Image = null;
+            this.labelTS18.Location = new System.Drawing.Point(204, 16);
+            this.labelTS18.Name = "labelTS18";
+            this.labelTS18.Size = new System.Drawing.Size(73, 16);
+            this.labelTS18.TabIndex = 9;
+            this.labelTS18.Text = "Password:";
+            // 
+            // labelTS17
+            // 
+            this.labelTS17.Image = null;
+            this.labelTS17.Location = new System.Drawing.Point(97, 16);
+            this.labelTS17.Name = "labelTS17";
+            this.labelTS17.Size = new System.Drawing.Size(73, 16);
+            this.labelTS17.TabIndex = 8;
+            this.labelTS17.Text = "User Name:";
+            // 
+            // labelTS16
+            // 
+            this.labelTS16.Image = null;
+            this.labelTS16.Location = new System.Drawing.Point(6, 50);
+            this.labelTS16.Name = "labelTS16";
+            this.labelTS16.Size = new System.Drawing.Size(34, 16);
+            this.labelTS16.TabIndex = 7;
+            this.labelTS16.Text = "Port:";
+            // 
+            // udHttpPort
+            // 
+            this.udHttpPort.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udHttpPort.Location = new System.Drawing.Point(6, 69);
+            this.udHttpPort.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udHttpPort.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udHttpPort.Name = "udHttpPort";
+            this.udHttpPort.Size = new System.Drawing.Size(54, 20);
+            this.udHttpPort.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.udHttpPort, resources.GetString("udHttpPort.ToolTip"));
+            this.udHttpPort.Value = new decimal(new int[] {
+            8081,
+            0,
+            0,
+            0});
+            this.udHttpPort.ValueChanged += new System.EventHandler(this.udHttpPort_ValueChanged);
+            this.udHttpPort.MouseDown += new System.Windows.Forms.MouseEventHandler(this.udHttpPort_MouseDown);
+            // 
+            // chkBoxHTTP
+            // 
+            this.chkBoxHTTP.Image = null;
+            this.chkBoxHTTP.Location = new System.Drawing.Point(9, 19);
+            this.chkBoxHTTP.Name = "chkBoxHTTP";
+            this.chkBoxHTTP.Size = new System.Drawing.Size(68, 31);
+            this.chkBoxHTTP.TabIndex = 7;
+            this.chkBoxHTTP.Text = "Active";
+            this.toolTip1.SetToolTip(this.chkBoxHTTP, "Check to turn ON Http Server.\r\n");
+            this.chkBoxHTTP.CheckedChanged += new System.EventHandler(this.chkBoxHTTP_CheckedChanged);
             // 
             // groupBoxTS1
             // 
@@ -4481,7 +4615,7 @@ namespace PowerSDR
             this.groupBoxTS1.Controls.Add(this.udSpeedPM);
             this.groupBoxTS1.Location = new System.Drawing.Point(376, 30);
             this.groupBoxTS1.Name = "groupBoxTS1";
-            this.groupBoxTS1.Size = new System.Drawing.Size(168, 158);
+            this.groupBoxTS1.Size = new System.Drawing.Size(168, 135);
             this.groupBoxTS1.TabIndex = 53;
             this.groupBoxTS1.TabStop = false;
             this.groupBoxTS1.Text = "PowerMate";
@@ -4489,7 +4623,7 @@ namespace PowerSDR
             // labelTS15
             // 
             this.labelTS15.Image = null;
-            this.labelTS15.Location = new System.Drawing.Point(66, 22);
+            this.labelTS15.Location = new System.Drawing.Point(47, 23);
             this.labelTS15.Name = "labelTS15";
             this.labelTS15.Size = new System.Drawing.Size(54, 16);
             this.labelTS15.TabIndex = 5;
@@ -4498,7 +4632,7 @@ namespace PowerSDR
             // chkBoxPM
             // 
             this.chkBoxPM.Image = null;
-            this.chkBoxPM.Location = new System.Drawing.Point(6, 121);
+            this.chkBoxPM.Location = new System.Drawing.Point(6, 85);
             this.chkBoxPM.Name = "chkBoxPM";
             this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
             this.chkBoxPM.TabIndex = 6;
@@ -4513,7 +4647,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udSpeedPM.Location = new System.Drawing.Point(126, 20);
+            this.udSpeedPM.Location = new System.Drawing.Point(107, 21);
             this.udSpeedPM.Maximum = new decimal(new int[] {
             8,
             0,
@@ -4525,7 +4659,7 @@ namespace PowerSDR
             0,
             0});
             this.udSpeedPM.Name = "udSpeedPM";
-            this.udSpeedPM.Size = new System.Drawing.Size(36, 20);
+            this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
             this.udSpeedPM.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
             this.udSpeedPM.Value = new decimal(new int[] {
@@ -6206,7 +6340,7 @@ namespace PowerSDR
             0,
             0});
             this.udDisplayMeterDelay.Minimum = new decimal(new int[] {
-            50,
+            10,
             0,
             0,
             0});
@@ -16097,7 +16231,7 @@ namespace PowerSDR
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(616, 392);
+            this.ClientSize = new System.Drawing.Size(614, 392);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
             this.Controls.Add(this.btnResetDB);
@@ -16162,6 +16296,9 @@ namespace PowerSDR
             this.grpOptSpaceNav.ResumeLayout(false);
             this.grpOptSpaceNav.PerformLayout();
             this.tpUserInterface.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).EndInit();
             this.groupBoxTS1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -26973,13 +27110,132 @@ namespace PowerSDR
 
         } //chkBoxPM_CheckedChanged
 
+
+        // ke9ns add
         private void udSpeedPM_ValueChanged(object sender, EventArgs e)
         {
-            udSpeedPM.Value = udSpeedPM.Value + 0;
+            udSpeedPM.Value = udSpeedPM.Value + 0;// in console.cs  public void OnRotateEvent(int value1)
+
+            // in console.cs  public void OnButtonEvent(HidDevice.PowerMate.ButtonState bs, int value, int value1, int value2)
+            // in console.cs but not used right public void OnSliderBrightness(object sender, EventArgs e)
+
 
         }
 
+        //===========================================================================================
+        // ke9ns add
+        private void chkBoxHTTP_CheckedChanged(object sender, EventArgs e)
+        {
+              if (chkBoxHTTP.Checked == true)
+               {
+
+                if (Console.m_terminated == true)
+                {
+                  
+                    Debug.WriteLine("CALL HTTPSERVER1");
+
+                    try
+                    {
+                       
+                        //  console.HttpServer2();
+                      //  httpFile.HttpServer1();
+
+                        console.HttpServer = true;
+
+                    }
+                    catch (Exception e1)
+                    {
+                        Debug.WriteLine("bad call "+ e1);
+                    }
+
+
+                }
+
+               }
+              else
+              {
+                Http.terminate();
+                       
+              }
+
+        }
+
+
+        // ke9ns add
+        private void txtHttpUser_MouseDown(object sender, MouseEventArgs e)
+        {
+            Http.terminate();
+            chkBoxHTTP.Checked = false;
+      
+        }
+
+        // ke9ns add
+        private void txtHttpPass_MouseDown(object sender, MouseEventArgs e)
+        {
+            Http.terminate();
+            chkBoxHTTP.Checked = false;
+        }
+
+        // ke9ns add
+        private void udHttpPort_MouseDown(object sender, MouseEventArgs e)
+        {
+            Http.terminate();
+            chkBoxHTTP.Checked = false;
+        }
+
+        // ke9ns add
+        private void udHttpPort_ValueChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        // ke9ns add
+        private void txtHttpUser_TextChanged(object sender, EventArgs e)
+        {
+           
+           
+        }
+
+        // ke9ns add
+        private void txtHttpPass_TextChanged(object sender, EventArgs e)
+        {
+          
+        }
+
+        public int HTTP_PORT // ke9ns add
+        {
+            get
+            {
+               
+                //  return udHttpPort.Value.ToString();
+                return (int)udHttpPort.Value;
+            }
+            
+        }
+
+        public string HTTP_USER // ke9ns add
+        {
+            get
+            {
+                 return txtHttpUser.Text;
+            }
+           
+        }
+
+        public string HTTP_PASS // ke9ns add
+        {
+            get
+            {
+                Debug.WriteLine("pass3=====" + txtHttpPass.Text);
+
+                return txtHttpPass.Text;
+            }
+           
+        }
+
     } // class setup
+
+
 
     #region PADeviceInfo Helper Class
 

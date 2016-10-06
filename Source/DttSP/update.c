@@ -181,8 +181,7 @@ DttSP_EXP void AudioReset (void)
 	reset_em = TRUE;
 }
 
-DttSP_EXP void
-SetRXManualNotchEnable(unsigned int thread, unsigned int subrx, unsigned int index, BOOLEAN setit)
+DttSP_EXP void SetRXManualNotchEnable(unsigned int thread, unsigned int subrx, unsigned int index, BOOLEAN setit)
 {
 	fprintf(stderr, "DttSP::SetRXManualNotchEnable(%u, %u, %u, %u)\n", thread, subrx, index, setit);
 	fflush(stderr);
@@ -191,8 +190,7 @@ SetRXManualNotchEnable(unsigned int thread, unsigned int subrx, unsigned int ind
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetRXManualNotchBW(unsigned int thread, unsigned int subrx, unsigned int index, double BW)
+DttSP_EXP void SetRXManualNotchBW(unsigned int thread, unsigned int subrx, unsigned int index, double BW)
 {
 	//REAL w0,sw,cw,alpha;
 	fprintf(stderr, "DttSP::SetRXManualNotchBW(%u, %u, %u, %lf)\n", thread, subrx, index, BW);
@@ -219,8 +217,7 @@ SetRXManualNotchBW(unsigned int thread, unsigned int subrx, unsigned int index, 
 	sem_post(&top[thread].sync.upd.sem);
 
 }
-DttSP_EXP void
-SetRXManualNotchFreq(unsigned int thread, unsigned int subrx, unsigned int index, double F0)
+DttSP_EXP void SetRXManualNotchFreq(unsigned int thread, unsigned int subrx, unsigned int index, double F0)
 {
 	REAL w0,sw,cw,alpha;
 	fprintf(stderr, "DttSP::SetRXManualNotchFreq(%u, %u, %u, %lf)\n", thread, subrx, index, F0);
@@ -244,8 +241,7 @@ SetRXManualNotchFreq(unsigned int thread, unsigned int subrx, unsigned int index
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetRXDCBlock(unsigned int thread, unsigned int subrx, BOOLEAN setit)
+DttSP_EXP void SetRXDCBlock(unsigned int thread, unsigned int subrx, BOOLEAN setit)
 {
 	//fprintf(stderr, "DttSP: DCBlock(%u, %u)=%u\n", thread, subrx, setit), fflush(stderr);
 	sem_wait(&top[thread].sync.upd.sem);
@@ -253,32 +249,28 @@ SetRXDCBlock(unsigned int thread, unsigned int subrx, BOOLEAN setit)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetRXDCBlockGain(unsigned int thread, unsigned int subrx, REAL gain)
+DttSP_EXP void SetRXDCBlockGain(unsigned int thread, unsigned int subrx, REAL gain)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].dcb->gain = gain;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetTXDCBlock (unsigned int thread, BOOLEAN setit)
+DttSP_EXP void SetTXDCBlock (unsigned int thread, BOOLEAN setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].dcb.flag = setit;
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetTXFMDeviation(unsigned int thread, double deviation)
+DttSP_EXP void SetTXFMDeviation(unsigned int thread, double deviation)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].fm.cvtmod2freq = (REAL) (deviation * TWOPI / uni[thread].samplerate);
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetRXFMDeviation(unsigned int thread, unsigned int k, double deviation)
+DttSP_EXP void SetRXFMDeviation(unsigned int thread, unsigned int k, double deviation)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][k].fm.gen->deviation = (REAL)deviation;
@@ -288,8 +280,7 @@ SetRXFMDeviation(unsigned int thread, unsigned int k, double deviation)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetCTCSSFreq(unsigned int thread, double freq_hz)
+DttSP_EXP void SetCTCSSFreq(unsigned int thread, double freq_hz)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	//tx[thread].fm.ctcss.freq_hz = (REAL)freq_hz;
@@ -298,8 +289,7 @@ SetCTCSSFreq(unsigned int thread, double freq_hz)
 
 }
 
-DttSP_EXP void
-SetCTCSSFlag(unsigned int thread, BOOLEAN flag)
+DttSP_EXP void SetCTCSSFlag(unsigned int thread, BOOLEAN flag)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	//tx[thread].fm.ctcss.freq_hz = (REAL)freq_hz;
@@ -310,8 +300,7 @@ SetCTCSSFlag(unsigned int thread, BOOLEAN flag)
 
 }
 
-DttSP_EXP void
-SetFMSquelchThreshold(unsigned int thread, unsigned int k, REAL threshold)
+DttSP_EXP void SetFMSquelchThreshold(unsigned int thread, unsigned int k, REAL threshold)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][k].fm.gen->squelch_threshold_weak = threshold;
@@ -434,8 +423,7 @@ Release_Update ()
 	sem_post (&top[2].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetRXOutputGain(unsigned int thread, unsigned int subrx, double g)
+DttSP_EXP void SetRXOutputGain(unsigned int thread, unsigned int subrx, double g)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].output_gain = (REAL)g;
@@ -458,8 +446,7 @@ SetOscPhase(double phase)
 	sem_post(&top[0].sync.upd.sem);
 }
 
-DttSP_EXP int
-SetRXOsc (unsigned int thread, unsigned subrx, double newfreq)
+DttSP_EXP int SetRXOsc (unsigned int thread, unsigned subrx, double newfreq)
 {
 	if (fabs (newfreq) >= 0.5 * uni[thread].samplerate)
 		return -1;

@@ -846,6 +846,8 @@ namespace PowerSDR
             txtGPIOResult.Text = b.ToString("X");
         }
 
+       
+
         private void btnTune_Click(object sender, EventArgs e)
         {
             if (txtTune.Text == "") return;
@@ -877,7 +879,7 @@ namespace PowerSDR
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
+        {*
             Flex1500.StopAudioListener();
         }
          */

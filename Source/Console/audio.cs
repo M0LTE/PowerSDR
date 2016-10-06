@@ -378,8 +378,8 @@ namespace PowerSDR
 		public static bool wave_playback = false;
 		public static WaveFileWriter wave_file_writer;
         public static WaveFileWriter wave_file_writer2;
-		public static WaveFileReader wave_file_reader;    // ke9ns   RX1 WaveFileReader
-        public static WaveFileReader wave_file_reader2;   // ke9ns   RX2 
+		public static WaveFileReader1 wave_file_reader;    // ke9ns   RX1 WaveFileReader
+        public static WaveFileReader1 wave_file_reader2;   // ke9ns   RX2 
 		public static bool two_tone = false;
 		//public static Mutex phase_mutex = new Mutex();
 		public static bool testing = false;
@@ -1386,6 +1386,8 @@ namespace PowerSDR
                     if (!record_rx_preprocessed)
                     {
                         wave_file_writer.AddWriteBuffer(out_l, out_r);
+
+
                     }
                 }
                 else
@@ -2537,8 +2539,9 @@ namespace PowerSDR
 					if(record_rx_preprocessed)
 					{
 						wave_file_writer.AddWriteBuffer(in_l, in_r);
-					}
-				}
+                       
+                    }
+                }
 				else
 				{
 					if(record_tx_preprocessed)
@@ -3538,7 +3541,7 @@ namespace PowerSDR
 
 
             //---------------------------------------------------------------------------------------------------------
-            // ke9ns  audio playback ov wav file (both RX and TX)
+            // ke9ns  audio playback of wav file (both RX and TX)
 //#if NO_WIDETX
             if (wave_playback)                 
             {
@@ -4296,6 +4299,10 @@ namespace PowerSDR
 					if(!record_rx_preprocessed)
 					{
 						wave_file_writer.AddWriteBuffer(out_l_ptr1, out_r_ptr1);    // record RX1:  rx1_out_l & rx1_out_r,   out_l1 & out_r1
+
+
+
+                       //     Debug.WriteLine("2===========testing"); // ke9ns testdsp
 
                         if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);  // record RX2
 					}

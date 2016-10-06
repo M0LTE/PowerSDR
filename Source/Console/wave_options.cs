@@ -51,7 +51,7 @@ namespace PowerSDR
         public RadioButtonTS radTXPostProcessed;
         public RadioButtonTS radTXPreProcessed;
         private System.Windows.Forms.GroupBoxTS grpAudioSampleRate1;
-		private System.Windows.Forms.ComboBoxTS comboSampleRate;
+        public ComboBoxTS comboSampleRate;
         private TextBox txtWaveOptionsForm;
 		private System.ComponentModel.IContainer components;
 
@@ -247,12 +247,18 @@ namespace PowerSDR
 			get { return int.Parse(comboSampleRate.Text); }
 		}
 
-
+        public bool temp_record; // ke9ns add save the status of pre to put back when done
+       //-------------------------------------------------------------------------------
+        // ke9ns add  to force audio into POST mode (for quick audio and TX waterfall ID and scheduler)
         public  bool RECPLAY1
         {
             get { return false; }
             set
             {
+
+                temp_record = Audio.RecordRXPreProcessed; // save original value
+
+
                 radRXPostProcessed.Checked = value;
                 radTXPostProcessed.Checked = value;
 
@@ -281,12 +287,14 @@ namespace PowerSDR
 
 		private void radRXPreProcessed_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radRXPreProcessed.Checked)
-			{
-                comboSampleRate.Enabled = false;
+            if (radRXPreProcessed.Checked)
+            {
+                  comboSampleRate.Enabled = false;
                 Audio.RecordRXPreProcessed = true;
-			}
-		}
+            }
+            else Debug.WriteLine("Wav");
+
+        }
 
 		private void radRXPostProcessed_CheckedChanged(object sender, System.EventArgs e)
 		{

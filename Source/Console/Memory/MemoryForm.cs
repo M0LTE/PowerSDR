@@ -6,7 +6,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
+// as published by the Free Software Foundation; either version 
 // of the License, or (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -27,17 +27,18 @@
 //=================================================================
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
+
+//reference Nuget Package NAudio.Lame
+using NAudio;
+using NAudio.Wave;
+using NAudio.Lame;
+
 
 namespace PowerSDR
 {
@@ -46,10 +47,38 @@ namespace PowerSDR
         #region Variable Declaration
 
         private Console console;
+        public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
 
+      
         #endregion
 
         #region Constructor
+
+        /*
+      <Group>Am Broadcast</Group>
+      <RXFreq>0.78</RXFreq>
+      <Name>WBBM 780</Name>
+      <DSPMode>SAM</DSPMode>
+      <Scan>true</Scan>
+      <TuneStep>500Hz</TuneStep>
+      <RPTR>Low</RPTR>
+      <RPTROffset>0</RPTROffset>
+      <CTCSSOn>true</CTCSSOn>
+      <CTCSSFreq>114.8</CTCSSFreq>
+      <Deviation>2500</Deviation>
+      <Power>64</Power>
+      <Split>false</Split>
+      <TXFreq>0.78</TXFreq>
+      <RXFilter>VAR1</RXFilter>
+      <RXFilterLow>-5000</RXFilterLow>
+      <RXFilterHigh>3407</RXFilterHigh>
+      <Comments>http://chicago.cbslocal.com/station/wbbm-newsradio-780-and-1059fm/</Comments>
+      <AGCMode>MED</AGCMode>
+      <AGCT>76</AGCT>
+
+      */
+
+
 
         public MemoryForm(Console c)
         {
@@ -86,14 +115,14 @@ namespace PowerSDR
             comboboxColumnTuneStep.HeaderText = "Tune Step";
             comboboxColumnTuneStep.ValueType = typeof(string);
             
-            // RPT
+            // RPT repeater mode
             DataGridViewComboBoxColumn comboboxColumnRPTR = new DataGridViewComboBoxColumn();
             comboboxColumnRPTR.DataPropertyName = "RPTR";
             comboboxColumnRPTR.Name = "RPTR";
             comboboxColumnRPTR.HeaderText = "RPTR";
             comboboxColumnRPTR.ValueType = typeof(FMTXMode);
 
-            // CTCSS
+            // FM CTCSS
             DataGridViewComboBoxColumn comboboxColumnCTCSS = new DataGridViewComboBoxColumn();
             comboboxColumnCTCSS.DataPropertyName = "CTCSSFreq";
             comboboxColumnCTCSS.Name = "CTCSSFreq";
@@ -171,6 +200,7 @@ namespace PowerSDR
             dataGridView1.Columns.Remove("RPTR");
             dataGridView1.Columns.Insert(index, comboboxColumnRPTR);
 
+
             
             index = dataGridView1.Columns["CTCSSFreq"].Index;
             dataGridView1.Columns.Remove("CTCSSFreq");
@@ -198,6 +228,13 @@ namespace PowerSDR
             dataGridView1.Columns["RXFilterHigh"].HeaderText = "RX Filter High";
             dataGridView1.Columns["AGCT"].HeaderText = "AGC-T";
 
+            //---------------------------------------------------------------------------------------------------
+            dataGridView1.Columns["StartDate"].HeaderText = "Schedule Start"; // ke9ns add
+            dataGridView1.Columns["Repeating"].HeaderText = "Weekly"; // ke9ns add
+            dataGridView1.Columns["Repeatingm"].HeaderText = "Monthly"; // ke9ns add
+
+
+
             // set the default display for floating point values
             dataGridView1.Columns["RXFreq"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dataGridView1.Columns["RXFreq"].DefaultCellStyle.Format = "f6";
@@ -209,8 +246,35 @@ namespace PowerSDR
 
             dataGridView1.CellValidating += new DataGridViewCellValidatingEventHandler(dataGridView1_CellValidating);
 
-      
-       
+            // dataGridView1.CurrentCell = dataGridView1[0, Convert.ToInt16(portBox2.Text)];
+
+
+            //----------------------------------------------------------------------------------
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
+
+            if (!Directory.Exists(wave_folder))
+            {
+                // create PowerSDR audio folder if it does not exist
+                Directory.CreateDirectory(wave_folder);
+            }
+            // openFileDialog1.InitialDirectory = console.AppDataPath;
+            openFileDialog1.InitialDirectory = String.Empty;
+            openFileDialog1.InitialDirectory = wave_folder;
+
+
+
+            //-------------------------------------------------------------------
+            Thread t = new Thread(new ThreadStart(SCHEDULER));
+
+            t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+            t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
+            t.Name = "Scheduler Thread";
+            t.IsBackground = true;
+            t.Priority = ThreadPriority.BelowNormal;
+            t.Start();
+
+
         } //memoryform
 
 
@@ -298,6 +362,9 @@ namespace PowerSDR
 
             }
 
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
+
+
         } //dataGridView1_CellMouseDown
 
 
@@ -314,14 +381,15 @@ namespace PowerSDR
        //    Trace.WriteLine("Call Value " + dataGridView1[e.ColumnIndex, e.RowIndex].Value); // 
 
             RIndex = e.RowIndex; // last row you clicked on 
-         //   CIndex = e.ColumnIndex; // last column you clicked on 
+                                 //   CIndex = e.ColumnIndex; // last column you clicked on 
 
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
 
         } // dataGridView1_CellClick
 
 
         //============================================================================================================================================
-         void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
      
             // handle floating point fields
@@ -345,7 +413,8 @@ namespace PowerSDR
                 return;
             }
 
-      
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
+
         } // dataGridView1_CellValidating
 
         #endregion
@@ -387,9 +456,11 @@ namespace PowerSDR
                 e.Effect = DragDropEffects.None;
             }
 
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
 
         } //MemoryRecordAdd_DragEnter
 
+     
 
         //=========================================================================================================================================
         // Ke9ns add YOUR URL (after being VERIFIED) YOU LET GO THE LEFT MOUSE BUTTON TO DROP ONTO THE ADD BUTTON
@@ -403,15 +474,23 @@ namespace PowerSDR
             console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
                 console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
                 (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
-                console.RX1FilterHigh, URLTEXT, console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+                console.RX1FilterHigh, URLTEXT, console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF,
+                DateTime.Now, ScheduleOn.Checked,(int)ScheduleDurationTime.Value, ScheduleRepeat.Checked, ScheduleRecord.Checked, ScheduleRepeatm.Checked, (int)ScheduleExtra.Value
+
+                ));
 
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
-        
+
+
+
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
 
 
         } // MemoryRecordAdd_DragDrop
 
+
+     
 
         //=========================================================================================================================================
         // Ke9ns  this is the ADD button
@@ -429,7 +508,11 @@ namespace PowerSDR
                 console.MemoryList.List.Add(new MemoryRecord("New Spot", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
                    console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
                    (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
-                   console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+                   console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF,
+                   DateTime.Now, ScheduleOn.Checked, (int)ScheduleDurationTime.Value, ScheduleRepeat.Checked, ScheduleRecord.Checked, ScheduleRepeatm.Checked, (int)ScheduleExtra.Value
+
+
+                   ));
 
             }
             else
@@ -437,10 +520,17 @@ namespace PowerSDR
                 console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, mem_name, console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
                     console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
                     (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
-                    console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+                    console.RX1FilterHigh, "", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF,
+                     DateTime.Now, ScheduleOn.Checked, (int)ScheduleDurationTime.Value, ScheduleRepeat.Checked, ScheduleRecord.Checked, ScheduleRepeatm.Checked, (int)ScheduleExtra.Value
+
+
+
+                   ));
             }
 
-            Console.ALTM = false;
+            ScheduleUpdate(); // ke9ns add update schedule boxes from selected memory
+
+            Console.ALTM = false; // alt+M memory add from display and keyboard instead of being in the Memory screen
 
             Common.SaveForm(this, "MemoryForm");    // w4tme
             console.MemoryList.Save();              // w4tme 
@@ -639,6 +729,768 @@ namespace PowerSDR
         {
 
         }
+
+        private void MemoryForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+        //===============================================================================
+        //===============================================================================
+        //===============================================================================
+        // ke9ns add Schedule duration of recording if enabled
+        private void ScheduleDurationTime_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                LASTUTC = 0;
+                dataGridView1["Duration", RIndex].Value = ScheduleDurationTime.Value; // ke9ns add put schedule start duration in selected in field box
+                console.MemoryList.Save();
+            }
+            catch(Exception)
+            {
+
+            }
+
+
+        } // ScheduleDurationTime_ValueChanged
+
+
+        //===============================================================================
+        // ke9ns add Schedule weekly ON/OFF
+        private void ScheduleRepeat_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ScheduleRepeat.Checked == true) ScheduleRepeatm.Checked = false; // only allow either weekly or monthly
+
+            poweroff = 0; // reset flag
+            try
+            {
+                 dataGridView1["Repeating", RIndex].Value = ScheduleRepeat.Checked; // ke9ns add put schedule start duration in selected in field box
+
+                if ((ScheduleRepeat.Checked == false) && (ScheduleRepeatm.Checked == false))
+                {
+                    if (DurationCount > 1)
+                    {
+                        LASTUTC = UTCNEW;
+                        DurationCount = 1; // to turn things off immediatly if you toggle on/off into off
+
+                    }
+                }
+                LASTUTC = 0; // force a schedule refresh
+                console.MemoryList.Save();
+            }
+            catch (Exception)
+            {
+
+            }
+        } // ScheduleRepeat_CheckedChanged
+
+        //===============================================================================
+        // ke9ns add Schedule monthly ON/OFF
+        private void ScheduleRepeatm_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ScheduleRepeatm.Checked == true) ScheduleRepeat.Checked = false;    // only allow either weekly or monthly
+            poweroff = 0; // reset flag
+
+            try
+            {
+               
+                dataGridView1["Repeatingm", RIndex].Value = ScheduleRepeatm.Checked; // ke9ns add put schedule start duration in selected in field box
+
+                if ((ScheduleRepeat.Checked == false) && (ScheduleRepeatm.Checked == false))
+                {
+                    if (DurationCount > 1)
+                    {
+                        LASTUTC = UTCNEW;
+                        DurationCount = 1; // to turn things off immediatly if you toggle on/off into off
+
+                    }
+                }
+                LASTUTC = 0; // force a schedule refresh
+                console.MemoryList.Save();
+            }
+            catch (Exception)
+            {
+
+            }
+
+        } // ScheduleRepeatm_CheckedChanged
+
+
+        //===============================================================================
+        // ke9ns add Schedule Record ON/OFF
+        private void ScheduleRecord_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                LASTUTC = 0;
+                dataGridView1["Recording", RIndex].Value = ScheduleRecord.Checked; // ke9ns add put schedule start duration in selected in field box
+                console.MemoryList.Save();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        //===============================================================================
+        // ke9ns add Schedule ON/OFF (NOT USED AT THIS TIME)
+        private void ScheduleOn_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+               
+                if (ScheduleOn.Checked == false)
+                {
+                    if (DurationCount > 1)
+                    {
+                        LASTUTC = UTCNEW;
+                        DurationCount = 1; // to turn things off immediatly if you toggle on/off into off
+                        
+                    }
+                }
+
+                LASTUTC = 0;
+                dataGridView1["ScheduleOn", RIndex].Value = ScheduleOn.Checked; // ke9ns add put schedule ON/OFF in selected in field box
+                console.MemoryList.Save();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+
+        //===============================================================================
+        // ke9ns add DATE for datetime for schedule
+        private void ScheduleStartDate_ValueChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine("startdate value changed");
+
+            ScheduleStartDate.Value = ScheduleStartDate.Value.Date + ScheduleStartTime.Value.TimeOfDay;
+
+            try
+            {
+                LASTUTC = 0;
+                dataGridView1["StartDate", RIndex].Value = ScheduleStartDate.Value;           // ke9ns schedule date and time (local format) 
+                console.MemoryList.Save();
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+        } // ScheduleStartDate_ValueChanged
+
+
+
+        /*
+     <Group>Am Broadcast</Group>
+     <RXFreq>0.78</RXFreq>
+     <Name>WBBM 780</Name>
+     <DSPMode>SAM</DSPMode>
+     <Scan>true</Scan>
+     <TuneStep>500Hz</TuneStep>
+     <RPTR>Low</RPTR>
+     <RPTROffset>0</RPTROffset>
+     <CTCSSOn>true</CTCSSOn>
+     <CTCSSFreq>114.8</CTCSSFreq>
+     <Deviation>2500</Deviation>
+     <Power>64</Power>
+     <Split>false</Split>
+     <TXFreq>0.78</TXFreq>
+     <RXFilter>VAR1</RXFilter>
+     <RXFilterLow>-5000</RXFilterLow>
+     <RXFilterHigh>3407</RXFilterHigh>
+     <Comments>http://chicago.cbslocal.com/station/wbbm-newsradio-780-and-1059fm/</Comments>
+     <AGCMode>MED</AGCMode>
+     <AGCT>76</AGCT>
+     
+     <StartDate>2016-09-11T21:40:37.8856177-05:00</StartDate>
+      <ScheduleOn>false</ScheduleOn>
+      <Duration>30</Duration>
+      <Recording>false</Recording>
+      <Repeating>false</Repeating>
+      <Repeatingm>false</Repeatingm>
+      <Extra>0</Extra>
+
+
+          
+  int temp;
+                if (!int.TryParse((string)e.FormattedValue, out temp))   dataGridView1[e.ColumnIndex, e.RowIndex].Value = 0;
+
+     */
+
+        //=========================================================================================
+        // ke9ns add  update the boxes at the bottom of the memory screen
+        public void ScheduleUpdate()
+        {
+
+            if (dataGridView1.Rows.Count < 1) return; // dont update if you have no memories to update
+            if (RIndex < 0) return; // dont update if your clicking on the headers and not a memory
+
+            MemComments.Text = (string)dataGridView1["comments", RIndex].Value; // ke9ns add put comments selected in field box
+
+           
+            MemGroup.Text = (string)dataGridView1["Group", RIndex].Value;
+            MemName.Text = (string)dataGridView1["Name", RIndex].Value;
+
+
+            double s = (double)dataGridView1["RXFreq", RIndex].Value;
+
+            MemFreq.Text = s.ToString("F6");
+
+            try // ke9ns upgrading an old database may fail before its upgraded
+            {
+
+                ScheduleStartDate.ValueChanged -= new System.EventHandler(ScheduleStartDate_ValueChanged);  // ke9ns turn off checkchanged temporarily    // ke9ns turn off valuechanged temporarily 
+              
+                ScheduleStartDate.Value = (DateTime)dataGridView1["StartDate", RIndex].Value; // ke9ns add put schedule start date in selected in field box
+                ScheduleStartTime.Value = (DateTime)dataGridView1["StartDate", RIndex].Value; // ke9ns add put schedule start date in selected in field box
+
+                ScheduleStartDate.ValueChanged += new System.EventHandler(ScheduleStartDate_ValueChanged);  // ke9ns turn off checkchanged temporarily    // ke9ns turn off valuechanged temporarily 
+
+                ScheduleOn.Checked = (bool)dataGridView1["ScheduleOn", RIndex].Value; // ke9ns add put schedule ON/OFF in selected in field box
+
+                if ((int)dataGridView1["Duration", RIndex].Value > 120) dataGridView1["Duration", RIndex].Value = 120;
+                else if ((int)dataGridView1["Duration", RIndex].Value < 0) dataGridView1["Duration", RIndex].Value = 0;
+
+                ScheduleDurationTime.Value = (int)dataGridView1["Duration", RIndex].Value; // ke9ns add put schedule start duration in selected in field box
+
+                ScheduleRepeat.Checked = (bool)dataGridView1["Repeating", RIndex].Value; // ke9ns add put schedule repeat in selected in field box
+                ScheduleRecord.Checked = (bool)dataGridView1["Recording", RIndex].Value; // ke9ns add put schedule recording in selected in field box
+
+            }
+            catch(Exception)
+            {
+                ScheduleStartDate.Value = DateTime.Now;
+                ScheduleStartTime.Value = DateTime.Now;
+
+                ScheduleOn.Checked = false;
+                ScheduleDurationTime.Value = 0;
+                ScheduleRepeat.Checked = false;
+                ScheduleRecord.Checked = false;
+            }
+
+        } //ScheduleUpdate()
+
+        private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = chkAlwaysOnTop.Checked;
+        }
+
+
+        public static DateTime UTCD = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+
+        public static string FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
+
+        public static int UTCNEW = Convert.ToInt16(FD);                                       // convert 24hr UTC to int
+
+        public static int LASTUTC = 0;   // ke9ns update 1 time per minute
+        public static int DurationCount = 0; // ke9ns duration audio recording counter
+
+        private int daycheck = 0; // ke9ns temp day of week repeat
+        private int ScheduleOnce = 0; // ke9ns 1=already scheduled
+        private int poweroff = 0; // ke9ns 1=power was off at start of recording so turn it back off when done.
+
+        //====================================================================================================
+        //====================================================================================================
+        //====================================================================================================
+        //====================================================================================================
+        //====================================================================================================
+        // ke9ns add Thread routine (checks the scheduler)
+        private void SCHEDULER()  // ke9ns Thread opeation (runs in en-us culture) runs the scheduler 
+        {
+            Debug.WriteLine("SCHEDULER==========================================");
+
+            for (;;)
+            {
+                UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+                FD = UTCD.ToString("HHmm");
+                UTCNEW = Convert.ToInt16(FD);
+
+                try
+                {
+
+                    if ((UTCNEW != LASTUTC) && (dataGridView1.Rows.Count > 0)) // check 1 time per minute
+                    {
+                       
+                        LASTUTC = UTCNEW;
+
+                       
+                        if (DurationCount > 1) // check audio recording start/stop
+                        {
+
+                            DurationCount--;
+                           
+                            ScheduleRemain.Text = DurationCount.ToString();
+
+                            Debug.WriteLine("Audio countdown" + DurationCount);
+
+                            continue; // skip checking schedule while recording
+
+                            // record audio here
+                        }
+                        else if (DurationCount == 1) // only turn off recording if 1 time
+                        {
+                            console.RECPOST = false; // turn off audio recording
+
+                            ScheduleRecord.ForeColor = Color.Black;
+                            ScheduleRemain.ForeColor = Color.Black;
+                            DurationCount = 0;
+                            ScheduleRemain.Text = DurationCount.ToString();  // ke9ns add put schedule start duration in selected in field box
+
+                            console.REC1 = false; // turn off RED sign over Wave item
+                            console.SCHED1 = false; // turn off RED sign over Memory item
+
+                            console.RECPOST1 = true; // restore SR back to original
+
+                            Thread t1 = new Thread(new ThreadStart(TOMP3));
+
+                            t1.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+                            t1.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
+                            t1.Name = "mp3 Thread";
+                            t1.IsBackground = true;
+                            t1.Priority = ThreadPriority.Normal;
+                            t1.Start();
+
+                            if (poweroff == 1) // power was off when recording started, so turn power off when done
+                            {
+                                console.chkPower.Checked = false; // turn off Radio
+                                poweroff = 0; // reset flag
+                            }
+
+                          
+                         //   Audio.RecordRXPreProcessed = temp_record; //return to original state
+                         //   WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size
+
+
+                        } // duration==1
+
+                        if (ScheduleOnce == UTCNEW) continue; // if you turn off a scheduled event, then wait 1 minute before checking anything again
+
+                        Debug.WriteLine("Total Memories " + dataGridView1.Rows.Count);
+
+                        for (int aa = 0; aa < dataGridView1.Rows.Count; aa++) // get current # of memories we have available; ii++)   
+                        {
+                            daycheck = 0;
+
+                            if (((bool)dataGridView1["Repeating", aa].Value == true) || ((bool)dataGridView1["Repeatingm", aa].Value == true)) // check only memories that the schedule is enabled
+                            {
+
+                              //  Debug.WriteLine("Date and Time " + dataGridView1["StartDate", aa].Value);
+
+                                DateTime temp1 = (DateTime)dataGridView1["StartDate", aa].Value; // save date and time for checking
+
+
+                                //-----------------------------------------------------------------------------
+                                // ke9ns check if Memory repeats every week 
+                                if ((bool)dataGridView1["Repeating", aa].Value == true) // check every week
+                                {
+                                    Debug.WriteLine("Weekly Enabled current day: " + DateTime.Now.DayOfWeek + " Day recorded: "+temp1.DayOfWeek);
+
+                                    if (DateTime.Now.DayOfWeek == temp1.DayOfWeek)
+                                    {
+                                        daycheck = 1; // matches the day of week
+                                    }
+                                }
+
+                                //-------------------------------------------------------------------------------------------
+                                // ke9ns check if Memory repeats every month on the same day (like 3rd thursday) 
+                                if ((bool)dataGridView1["Repeatingm", aa].Value == true) // check every week
+                                {
+                                    Debug.WriteLine("Monthly Enabled current day: " + DateTime.Now.DayOfWeek + "Day recorded: " + temp1.DayOfWeek);
+
+                                    if (DateTime.Now.DayOfWeek == temp1.DayOfWeek) // check first to see you are on the correct day (like thrusday)
+                                    {
+                                        DateTime temp2 = temp1; // temp holder for current temp1 we are trying to check out
+
+
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //-------------------------------------------------------------------------------------------------------------
+                                        // ke9ns check how many weeks (with the scheduled day) in the ORIGINAL sheduled month
+                                        int totalmonthweeks = 0;
+                                        int originalweek = 0;
+
+                                        for (int x=1;x < 32;x++) // find what week your day of the week was in to check for repeats
+                                        {
+                                            try
+                                            {
+                                                temp2 = new DateTime(temp1.Year, temp1.Month, x);
+                                                if (temp2.DayOfWeek == temp1.DayOfWeek) // check for the day of week match (Like Monday)
+                                                {
+                                                    totalmonthweeks++;
+                                                    Debug.WriteLine("ORINGAL Day of week match: " + x);
+
+                                                    if (temp2.Day == temp1.Day) // check day of the month (1 to 31) that the Monday occured
+                                                    {
+                                                        // Y now represents the week of the month that the original schedule was set for (1st week, 2nd week, 3rd week, 4th of month
+                                                        // 4th week must be considered just the Last week of month since some months wont have a 4th week for that particular day.
+                                                        Debug.WriteLine("Found week of month of original schedule date: " + totalmonthweeks);
+                                                        originalweek = totalmonthweeks; // week of month
+
+                                                    } //if (temp2.Day == temp1.Day)
+
+                                                } //if (temp2.DayOfWeek == temp1.DayOfWeek) 
+                                          
+                                            }
+                                            catch(Exception) // exceeded days of month
+                                            {
+                                                Debug.WriteLine("End of Month before 31 days.");
+                                                break;
+                                            }
+       
+                                        } // for x loop through entire month
+
+                                        Debug.WriteLine("End of Month found # of weeks of the scheduled day: " + totalmonthweeks);
+
+                                        if (originalweek == totalmonthweeks)
+                                        {
+                                            Debug.WriteLine("Original Month day of week was Last week of that month");
+                                            originalweek = 10; // signifies its the last week of the month
+                                        }
+
+
+
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //-------------------------------------------------------------------------------------------------------------
+                                        // ke9ns check how many weeks (with the scheduled day) in the current month
+                                        int totalcurrentmonthweeks = 0;
+                                        int[] week = new int[6]; // could be up to 5 weeks of a particular day of week (monday)
+
+                                        for (int x = 1; x < 32; x++) // find what week your day of the week was in to check for repeats
+                                        {
+                                            try
+                                            {
+                                                temp2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, x); // current month
+
+                                                if (temp2.DayOfWeek == temp1.DayOfWeek) // check for the day of week match (Like Monday)
+                                                {
+                                                    totalcurrentmonthweeks++;
+                                                    week[totalcurrentmonthweeks] = x; // record the day of the month for every week that matches the day of week (like Monday)
+
+                                                    Debug.WriteLine("Day of week match: " + week[totalcurrentmonthweeks]);
+
+                                                } //if (temp2.DayOfWeek == temp1.DayOfWeek) 
+
+
+                                            }
+                                            catch (Exception) // exceeded days of month
+                                            {
+                                                Debug.WriteLine("End of month before 31 days");
+                                                break;
+                                            }
+
+
+                                        } // for x loop through entire month
+
+                                        Debug.WriteLine("End of Current Month found # of weeks of the scheduled day: " + totalcurrentmonthweeks);
+
+
+
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //---------------------------------------------------------------------------------------------------------
+                                        //---------------------------------------------------------------------------------------------------------
+                                        // now check the if today is the matching week for the original schedule day of week (monday) (1st,2nd,3rd, or last week)
+                                       
+                                        if (originalweek == 10) // looking for last week of the current month
+                                        {
+                                            if (totalcurrentmonthweeks == 3) // only 3 weeks in current month
+                                            {
+                                                if (week[3] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                                {
+                                                    Debug.WriteLine("LAST(3rd) WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                   daycheck = 1; // matches the day of week
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (week[4] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                                {
+                                                    Debug.WriteLine("LAST (4th) WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                    daycheck = 1; // matches the day of week
+                                                }
+                                            }
+
+                                        } // last week of month
+                                        else if (originalweek == 1)
+                                        {
+                                            if (week[1] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                            {
+                                                Debug.WriteLine("First WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                daycheck = 1; // matches the day of week
+                                            }
+                                        }
+                                        else if (originalweek == 2)
+                                        {
+                                            if (week[2] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                            {
+                                                Debug.WriteLine("Second WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                daycheck = 1; // matches the day of week
+                                            }
+                                            else
+                                            {
+                                                Debug.WriteLine("Second WEEK OF THE MONTH MATCHES BAD " + DateTime.Now.Day + " week[2] "+week[2]);
+                                            }
+                                        }
+                                        else if (originalweek == 3)
+                                        {
+                                            if (week[3] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                            {
+                                                Debug.WriteLine("3rd WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                daycheck = 1; // matches the day of week
+                                            }
+                                        }
+                                        else if (originalweek == 4)
+                                        {
+                                            if (week[4] == DateTime.Now.Day) // if last week of this month matches the current Day#
+                                            {
+                                                Debug.WriteLine("4th WEEK OF THE MONTH MATCHES GOOD " + DateTime.Now.Day);
+                                                daycheck = 1; // matches the day of week
+                                            }
+                                        }
+
+                                    } // if (DateTime.Now.DayOfWeek == temp1.DayOfWeek) Monday = Monday
+
+
+                                } // if ((bool)dataGridView1["Repeatingm", aa].Value == true) 
+
+
+                                //-----------------------------------------------------------------------------
+                                // ke9ns check for Date and Time Matching with schedule of particular memory
+                                if ((temp1.Date == DateTime.Now.Date) || (daycheck == 1)) // check for Schedule DATE matchup
+                                {
+                                    Debug.WriteLine("DATE Match " + temp1.Date);
+                               
+                                    if ((temp1.TimeOfDay.Hours == DateTime.Now.TimeOfDay.Hours) && (temp1.TimeOfDay.Minutes == DateTime.Now.TimeOfDay.Minutes))
+                                    {
+
+                                        Debug.WriteLine("TIME match=" + aa);
+
+
+                                        if (console.chkPower.Checked == false) // was power OFF?
+                                        {
+                                            console.chkPower.Checked = true; // turn on Radio
+                                            poweroff = 1; // power was off at time of recording
+                                        }
+                                        else poweroff = 0; // power was ON at time of recording
+
+                                        if (!console.MOX) // only change freq if not transmitting
+                                        {
+                                            ScheduleOnce = UTCNEW; // record the time you selected a scheduled event
+
+                                            int index = aa;        //dataGridView1.CurrentCell.RowIndex;
+
+                                            if (index < 0 || index > console.MemoryList.List.Count - 1) // index out of range
+                                                continue;
+
+                                            console.changeComboFMMemory(index); // ke9ns this will call recallmemory in console 
+
+                                            Debug.WriteLine("INDEX clicked " + index);
+
+                                            //  Debug.WriteLine("INDEX clicked " + dataGridView1.);
+
+                                            if (chkMemoryFormClose.Checked) // ke9ns this saves position of memory form window on your screen when you closed it.
+                                            {
+                                                Common.SaveForm(this, "MemoryForm");    // w4tme
+                                                console.MemoryList.Save();              // w4tme 
+                                                this.Close();
+                                            }
+
+                                            console.SCHED1 = true;
+                                            DurationCount = (int)dataGridView1["Duration", aa].Value;
+                                            ScheduleRemain.Text = DurationCount.ToString();
+
+                                            if ((bool)dataGridView1["Recording", aa].Value == true)
+                                            {
+                                                AutoClosingMessageBox.Show("A Scheduled Recording has been started.\nYou can end the recording early by Checking OFF both Weekly & Monthly boxes. ", "Scheduled Recording Started", 4000);
+
+                                                Debug.WriteLine("Start AUDIO RECORDING1 ");
+
+                                                console.RECPOST = true; // force audio recorder into POST and 48k  (but save original values) start WAV/MP3 recording
+
+                                                ScheduleRecord.ForeColor = Color.Red;
+                                                ScheduleRemain.ForeColor = Color.Red;
+    
+                                                console.REC1 = true; // red sign over Wave menu item
+
+                                            } // Recording ON
+                                            else
+                                            {
+                                                AutoClosingMessageBox.Show("Scheduled Frequency Change has occured\n", "Scheduled Frequency change", 4000);
+                                                
+                                            }
+
+                                            // check for audio recording
+
+                                        } // !MOX
+                                        else // transmitting so pop up message box
+                                        {
+                                            AutoClosingMessageBox.Show("Scheduled Frequency change and/or Recording could not take place while Transmitting", "Scheduled Memory Event", 4000);
+
+
+                                            /*
+                                            MessageBox.Show("You were transmitting during a Scheduled Frequency change.\n" +
+                                               "You will need to manually go to the Frequency to keep your Schedule.",
+                                               "Frequency: " + dataGridView1["RXFreq", aa].Value + " Mhz.",
+                                               MessageBoxButtons.OK,
+                                               MessageBoxIcon.Error);
+                                               */
+
+                                        } // MOX
+
+                                        continue; // no need to check further in memories, found one on your schedule
+                                    } // TIME matches
+
+                                } // DATE matches
+
+                            } // found schedule ON in a memory
+
+                        } // loop aa through memories
+
+                    } //wait time to increment by 1 minute before checking
+
+                } // try
+                catch(Exception)
+                {
+                    // thread not ready yet since database doesnt contain schedule data yet
+                    Debug.WriteLine("Thread not ready3===============");
+                    ScheduleRecord.ForeColor = Color.Black;
+                    ScheduleRemain.ForeColor = Color.Black;
+                    console.RECPOST = false; // force audio recorder into POST
+
+                    console.REC1 = false;
+                    console.SCHED1 = false;
+
+
+                }
+
+                Thread.Sleep(50); // slow down the thread here
+            } // for loop (main)
+
+        } // thread SCHEDULER() 
+
+     
+        private string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\PowerSDR";
+
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            string argument = @"/root," + wave_folder;
+            Debug.WriteLine("path===:" + wave_folder);
+
+            System.Diagnostics.Process.Start("explorer.exe", argument);
+
+          //  Debug.WriteLine("WaveControl.scheduleName " + WaveControl.scheduleName);
+          //  WaveToMP3(WaveControl.scheduleName, WaveControl.scheduleName1, 128);
+          //  Debug.WriteLine("WaveControl.scheduleNameMP3 " + WaveControl.scheduleName1);
+
+        }
+
+        // ke9ns add  NOT USED AT THE MOMENT
+        public static void WaveToMP3(string waveFileName, string mp3FileName, int bitRate = 128)
+        {
+            using (var reader = new WaveFileReader(waveFileName))
+            using (var writer = new LameMP3FileWriter(mp3FileName, reader.WaveFormat, LAMEPreset.VBR_90))
+                reader.CopyTo(writer);
+        }
+
+        //=======================================================================================================================
+        // ke9ns add
+        //Thread
+        public void TOMP3()
+        {
+            try
+            {
+                using (var reader = new WaveFileReader(WaveControl.scheduleName)) // closes reader when done using
+                using (var writer = new LameMP3FileWriter(WaveControl.scheduleName1, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using
+                {
+                    reader.CopyTo(writer);
+                }
+            }
+            catch(Exception)
+            {
+
+            }
+            Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
+
+            try
+            {
+               
+                System.IO.File.Delete(WaveControl.scheduleName);
+
+                Debug.WriteLine("DEL the WAV FILE" + WaveControl.scheduleName);
+
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+        } // MP3 conversion thread. ends when conversion from wav to mp3 is done.
+
+
+       //  MemoryStream ms = new MemoryStream();
+       // ke9ns add
+        public static void ConvertWavStreamToMp3File(ref MemoryStream ms, string savetofilename)
+        {
+            //rewind to beginning of stream
+            ms.Seek(0, SeekOrigin.Begin);
+
+            using (var retMs = new MemoryStream())
+            using (var rdr = new WaveFileReader(ms))
+            using (var wtr = new LameMP3FileWriter(savetofilename, rdr.WaveFormat, LAMEPreset.VBR_90))
+            {
+                rdr.CopyTo(wtr);
+            }
+        }
+    
+
+       
+     
+        
+        
+
+
+
+        //====================================================================================================
+        public class AutoClosingMessageBox
+        {
+            System.Threading.Timer _timeoutTimer;
+            string _caption;
+
+            AutoClosingMessageBox(string text, string caption, int timeout)
+            {
+                _caption = caption;
+                _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
+                    null, timeout, System.Threading.Timeout.Infinite);
+                using (_timeoutTimer)
+                    MessageBox.Show(text, caption);
+            }
+            public static void Show(string text, string caption, int timeout)
+            {
+                new AutoClosingMessageBox(text, caption, timeout);
+            }
+            void OnTimerElapsed(object state)
+            {
+                IntPtr mbWnd = FindWindow("#32770", _caption); // lpClassName is #32770 for MessageBox
+                if (mbWnd != IntPtr.Zero)
+                    SendMessage(mbWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                _timeoutTimer.Dispose();
+            }
+            const int WM_CLOSE = 0x0010;
+            [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+            static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+            static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        } // AutoClosingMessageBox
+
+      
     } // memoryform
 
-} // powerSDR
+    } // powerSDR

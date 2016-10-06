@@ -40,6 +40,12 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
+//reference Nuget Package NAudio.Lame
+using NAudio;
+using NAudio.Wave;
+using NAudio.Lame;
+
+
 namespace PowerSDR
 {
 	public class WaveControl : System.Windows.Forms.Form
@@ -59,14 +65,14 @@ namespace PowerSDR
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.CheckBoxTS checkBoxPlay;
 		private System.Windows.Forms.GroupBoxTS groupBox2;
-		private System.Windows.Forms.CheckBoxTS checkBoxRecord;
-		private System.Windows.Forms.GroupBoxTS grpPlayback;
+        public CheckBoxTS checkBoxRecord;
+        private System.Windows.Forms.GroupBoxTS grpPlayback;
 		private System.Windows.Forms.ButtonTS btnStop;
 		private System.Windows.Forms.CheckBoxTS checkBoxPause;
 		private System.Windows.Forms.ButtonTS btnPrevious;
 		private System.Windows.Forms.ButtonTS btnNext;
-		private System.Windows.Forms.ListBox lstPlaylist;
-		private System.Windows.Forms.ButtonTS btnAdd;
+        public ListBox lstPlaylist;
+        private System.Windows.Forms.ButtonTS btnAdd;
 		private System.Windows.Forms.ButtonTS btnRemove;
 		private System.Windows.Forms.CheckBoxTS checkBoxRandom;
 		private System.Windows.Forms.GroupBox grpPlaylist;
@@ -86,6 +92,7 @@ namespace PowerSDR
         public CheckBoxTS createBoxTS; // ke9ns add
         public CheckBoxTS chkQuickAudioFolder; // ke9ns add
         private TextBox textBox1;
+        public CheckBoxTS chkBoxMP3;
         private IContainer components;
 
 		#region Constructor and Destructor
@@ -143,6 +150,8 @@ namespace PowerSDR
             this.btnRemove = new System.Windows.Forms.ButtonTS();
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.mnuWaveOptions = new System.Windows.Forms.MenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.chkQuickAudioFolder = new System.Windows.Forms.CheckBoxTS();
             this.createBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.TXIDBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickPlay = new System.Windows.Forms.CheckBoxTS();
@@ -160,8 +169,7 @@ namespace PowerSDR
             this.checkBoxPause = new System.Windows.Forms.CheckBoxTS();
             this.btnStop = new System.Windows.Forms.ButtonTS();
             this.checkBoxPlay = new System.Windows.Forms.CheckBoxTS();
-            this.chkQuickAudioFolder = new System.Windows.Forms.CheckBoxTS();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.chkBoxMP3 = new System.Windows.Forms.CheckBoxTS();
             this.grpPlaylist.SuspendLayout();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbPreamp)).BeginInit();
@@ -229,6 +237,7 @@ namespace PowerSDR
             // 
             // lstPlaylist
             // 
+            this.lstPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lstPlaylist.Location = new System.Drawing.Point(16, 56);
             this.lstPlaylist.Name = "lstPlaylist";
             this.lstPlaylist.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
@@ -258,6 +267,24 @@ namespace PowerSDR
             this.mnuWaveOptions.Index = 0;
             this.mnuWaveOptions.Text = "Options";
             this.mnuWaveOptions.Click += new System.EventHandler(this.mnuWaveOptions_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(8, 294);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(392, 62);
+            this.textBox1.TabIndex = 59;
+            // 
+            // chkQuickAudioFolder
+            // 
+            this.chkQuickAudioFolder.Image = null;
+            this.chkQuickAudioFolder.Location = new System.Drawing.Point(8, 362);
+            this.chkQuickAudioFolder.Name = "chkQuickAudioFolder";
+            this.chkQuickAudioFolder.Size = new System.Drawing.Size(172, 26);
+            this.chkQuickAudioFolder.TabIndex = 58;
+            this.chkQuickAudioFolder.Text = "QuickAudio Save Folder";
+            this.chkQuickAudioFolder.CheckedChanged += new System.EventHandler(this.chkQuickAudioFolder_CheckedChanged);
             // 
             // createBoxTS
             // 
@@ -484,28 +511,21 @@ namespace PowerSDR
             this.checkBoxPlay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxPlay.CheckedChanged += new System.EventHandler(this.checkBoxPlay_CheckedChanged);
             // 
-            // chkQuickAudioFolder
+            // chkBoxMP3
             // 
-            this.chkQuickAudioFolder.Image = null;
-            this.chkQuickAudioFolder.Location = new System.Drawing.Point(8, 362);
-            this.chkQuickAudioFolder.Name = "chkQuickAudioFolder";
-            this.chkQuickAudioFolder.Size = new System.Drawing.Size(172, 26);
-            this.chkQuickAudioFolder.TabIndex = 58;
-            this.chkQuickAudioFolder.Text = "QuickAudio Save Folder";
-            this.chkQuickAudioFolder.CheckedChanged += new System.EventHandler(this.chkQuickAudioFolder_CheckedChanged);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(8, 294);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(392, 62);
-            this.textBox1.TabIndex = 59;
+            this.chkBoxMP3.Image = null;
+            this.chkBoxMP3.Location = new System.Drawing.Point(182, 362);
+            this.chkBoxMP3.Name = "chkBoxMP3";
+            this.chkBoxMP3.Size = new System.Drawing.Size(165, 26);
+            this.chkBoxMP3.TabIndex = 60;
+            this.chkBoxMP3.Text = "QuickAudio Create MP3\r\n";
+            this.chkBoxMP3.CheckedChanged += new System.EventHandler(this.chkBoxMP3_CheckedChanged);
             // 
             // WaveControl
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(416, 391);
+            this.ClientSize = new System.Drawing.Size(416, 405);
+            this.Controls.Add(this.chkBoxMP3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkQuickAudioFolder);
             this.Controls.Add(this.createBoxTS);
@@ -518,6 +538,7 @@ namespace PowerSDR
             this.Controls.Add(this.grpPlayback);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Menu = this.mainMenu1;
+            this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "WaveControl";
             this.Text = "Wave File Controls";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.WaveControl_Closing);
@@ -575,15 +596,49 @@ namespace PowerSDR
 
 
         //=======================================================
-        // ke9ns add rec/playid turn on post audio
-
-        
+        // ke9ns add   rec/playid & waterID &  scheduler turn on post audio (called from console)
         public  bool RECPLAY
         {
             get { return false; }
 
-            set {  WaveOptions.RECPLAY1 = value;   }
-        }
+            set
+            {
+                WaveOptions.RECPLAY1 = value;
+               
+            }
+        } // RECPLAY
+
+        //=======================================================
+        // ke9ns add scheduler reduce file size by SR wav file reduction 
+        public bool RECPLAY2
+        {
+            get { return false; }
+
+            set
+            {
+              
+                quickmp3SR = WaveOptions.comboSampleRate.Text; // save SR value before reducing
+                WaveOptions.comboSampleRate.Text = "48000"; // reduce file size
+            }
+        } // RECPLAY2
+
+
+        // ke9ns add  restore original SR back when done with scheduled recording
+        public bool RECPLAY3
+        {
+            get { return false; }
+
+            set
+            {
+
+                WaveOptions.radRXPreProcessed.Checked = WaveOptions.temp_record;
+                WaveOptions.radTXPreProcessed.Checked = WaveOptions.temp_record;
+               
+                WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size SR
+                
+            }
+        } // RECPLAY3
+
 
 
         #region Misc Routines
@@ -699,7 +754,7 @@ namespace PowerSDR
            
             if (!rx2)
             {
-                 Audio.wave_file_reader = new WaveFileReader(             // ke9ns   RX1 format of RIFF wave file to read
+                 Audio.wave_file_reader = new WaveFileReader1(             // ke9ns   RX1 format of RIFF wave file to read
                     this,
                     console.BlockSize1,
                     (int)fmt.format,	// use floating point
@@ -709,7 +764,7 @@ namespace PowerSDR
             }
             else
             {
-                Audio.wave_file_reader2 = new WaveFileReader(            // ke9ns   RX2 format of RIFF wave file to read
+                Audio.wave_file_reader2 = new WaveFileReader1(            // ke9ns   RX2 format of RIFF wave file to read
                     this,
                     console.BlockSize1,
                     (int)fmt.format,	// use floating point
@@ -887,6 +942,9 @@ namespace PowerSDR
 
 
 
+        public static string scheduleName; // ke9ns add for saving file name of recording
+        public static string scheduleName1; // ke9ns add for saving file name of recording
+        public static string scheduleName2; // ke9ns add for saving file name of recording
 
         private void checkBoxRecord_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -920,14 +978,22 @@ namespace PowerSDR
                 // temp = console.AppDataPath + temp;
 
                 temp = wave_folder + "\\" + temp;
-                
-                string file_name = temp + ".wav";
+
+                scheduleName2 = temp;
+
+                scheduleName1 = temp + ".mp3"; // ke9ns add 
+
+                string file_name = temp + ".wav";  // ke9ns this is the file created
+
+                scheduleName = file_name; // ke9ns add
+
                 string file_name2 = file_name + "-rx2";
 				
 				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, long_sample_rate, file_name);
 
                 if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
                     Audio.wave_file_writer2 = new WaveFileWriter(console.BlockSize1, 2, long_sample_rate, file_name2);
+
 			} // checkbox record
 
 			
@@ -946,9 +1012,9 @@ namespace PowerSDR
 				checkBoxRecord.BackColor = SystemColors.Control;
 				//MessageBox.Show("The file has been written to the following location:\n"+file_name);
 			}
-		}
+        } // checkBoxRecord_CheckedChanged(
 
-		private void btnAdd_Click(object sender, System.EventArgs e)
+        private void btnAdd_Click(object sender, System.EventArgs e)
 		{
 			openFileDialog1.ShowDialog();
 		}
@@ -1140,8 +1206,8 @@ namespace PowerSDR
 		private bool temp_cpdr = false;
 		private bool temp_dx = false;
 
-        public static int QAC = 0;
-
+        public static int QAC = 0; // ke9ns add
+       
         //==================================================================================
         // ke9ns  mod needed since MON now toggle pre and post audio. quickplay should always be post 
         private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
@@ -1152,9 +1218,16 @@ namespace PowerSDR
             {
                 System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
 
-        
-                  if (QPFile != null)  file_name = QPFile; // ke9ns check file name passed from console play button
-                  else file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+
+                if (QPFile != null)
+                {
+                    file_name = QPFile; // ke9ns check file name passed from console play button
+                    
+                }
+                else
+                {
+                    file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                }
       
 
             }
@@ -1274,15 +1347,22 @@ namespace PowerSDR
         }// quickplay changed
 
 
+        public static string quickmp3SR; // ke9ns add
 
+        public static string quickmp3; // ke9ns add
         //============================================================================================
         private void chkQuickRec_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(chkQuickRec.Checked)
 			{
-				temp_record = Audio.RecordRXPreProcessed;
 
-				Audio.RecordRXPreProcessed = false; // set this FALSE temporarily
+                temp_record = Audio.RecordRXPreProcessed;
+                quickmp3SR = WaveOptions.comboSampleRate.Text;
+
+                if (chkBoxMP3.Checked == true)
+                    WaveOptions.comboSampleRate.Text = "48000"; // reduce file size
+
+                Audio.RecordRXPreProcessed = false;                            //ke9ns add  set this FALSE temporarily
 
 				chkQuickRec.BackColor = console.ButtonSelectedColor;
 
@@ -1293,10 +1373,14 @@ namespace PowerSDR
                 if (chkQuickAudioFolder.Checked == true)
                 {
                     QAC++;
-                    System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
+                    System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns add create sub directory
+                    System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudioMP3"); // ke9ns add create sub directory
+
                     file_name = console.AppDataPath + "QuickAudio"+ "\\SDRQuickAudio"+QAC.ToString() +".wav";
 
-                 //   Debug.WriteLine("qac" + QAC);
+                    quickmp3 = console.AppDataPath + "QuickAudioMP3" + "\\SDRQuickAudio" + QAC.ToString() + ".mp3"; // ke9ns add mp3
+                    
+                    //   Debug.WriteLine("qac" + QAC);
 
                 }
                 else
@@ -1304,15 +1388,19 @@ namespace PowerSDR
 
                     file_name = console.AppDataPath + "SDRQuickAudio.wav";
 
+                    quickmp3 = console.AppDataPath + "SDRQuickAudio.mp3"; // ke9ns add mp3
+
                 }
 
 				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, WaveOptions.SampleRate, file_name);
+
                 /*if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
                 {
                     string file_name2 = file_name + "-rx2";
                     Audio.wave_file_writer2 = new WaveFileWriter(console.BlockSize1, 2, waveOptionsForm.SampleRate, file_name2);
                 }*/
-			}
+
+			} //chkQuickRec.checked
 			
 			Audio.wave_record = chkQuickRec.Checked;
 
@@ -1336,7 +1424,29 @@ namespace PowerSDR
                 }
 
                 Audio.RecordRXPreProcessed = temp_record; //return to original state
-			}
+                WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size
+
+                //---------------------------------------------------------
+                // ke9ns add save an MP3 to go along with the WAV file
+                if (chkBoxMP3.Checked == true)
+                {
+                    try
+                    {
+                        using (var reader = new WaveFileReader(file_name)) // closes reader when done using
+                        using (var writer = new LameMP3FileWriter(quickmp3, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using (90=90% quality variable bit rate)
+                        {
+                            reader.CopyTo(writer);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                       
+                    }
+                    Debug.WriteLine("DONE WITH MP3 CREATION" + quickmp3);
+
+                }
+
+            } //   if (!chkQuickRec.Checked)
 
         } //  chkQuickRec_CheckedChanged
 
@@ -2022,6 +2132,11 @@ namespace PowerSDR
 
         } // chkQuickAudioFolder_CheckedChanged
 
+        private void chkBoxMP3_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
 
         //================================================================================================================
         //================================================================================================================
@@ -2441,7 +2556,7 @@ namespace PowerSDR
     //        start Thread (processbuffers) to play wave file audio while doing other things
     //=============================================================================================
     //=============================================================================================
-    unsafe public class WaveFileReader
+    unsafe public class WaveFileReader1         
 	{
 		private WaveControl wave_form;
 		private BinaryReader reader;
@@ -2463,9 +2578,10 @@ namespace PowerSDR
 		private bool eof = false;
 
 		unsafe private void* resamp_l, resamp_r;
+        private MemoryStream ms;
 
         //=====================================================================================
-        public WaveFileReader(
+        public WaveFileReader1(
 			WaveControl form,
 			int frames,
 			int fmt,
@@ -2534,6 +2650,8 @@ namespace PowerSDR
 			t.Start();
            
         } // wavefilereader()
+
+      
 
 
 

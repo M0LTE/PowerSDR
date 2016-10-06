@@ -1,4 +1,4 @@
-//=================================================================
+﻿//=================================================================
 // Spot.cs
 // created by Darrin Kohn ke9ns
 //
@@ -90,8 +90,6 @@ namespace PowerSDR
         public TextBox portBox2;
         private TextBox statusBox;
         private Button button1;
-        private CheckBox checkBoxUSspot;
-        private CheckBox checkBoxWorld;
         private TextBox statusBoxSWL;
         private Label label1;
         private Label label2;
@@ -111,10 +109,16 @@ namespace PowerSDR
         public CheckBoxTS chkBoxDIG;
         public CheckBoxTS chkBoxPan;
         private DataGridView dataGridView1;
-        public CheckBoxTS chkBoxSWL2;
         public CheckBoxTS chkBoxMem;
         public DataGridView dataGridView2;
         private Button SWLbutton2;
+        public CheckBoxTS chkBoxNA;
+        public CheckBoxTS chkBoxWrld;
+        private NumericUpDownTS udDisplayLat;
+        private NumericUpDownTS udDisplayLong;
+        private Label label3;
+        private Label label4;
+        public CheckBoxTS chkBoxBeam;
         private IContainer components;
 
 
@@ -149,7 +153,7 @@ namespace PowerSDR
             dataGridView1.AllowUserToAddRows = true;
             dataGridView1.AllowUserToDeleteRows = true;
             dataGridView1.AutoGenerateColumns = false;
-
+            
             
             if (!File.Exists(file_name))
             {
@@ -209,8 +213,6 @@ namespace PowerSDR
             this.portBox2 = new System.Windows.Forms.TextBox();
             this.statusBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.checkBoxUSspot = new System.Windows.Forms.CheckBox();
-            this.checkBoxWorld = new System.Windows.Forms.CheckBox();
             this.statusBoxSWL = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -220,8 +222,9 @@ namespace PowerSDR
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.SWLbutton2 = new System.Windows.Forms.Button();
+            this.udDisplayLong = new System.Windows.Forms.NumericUpDownTS();
+            this.udDisplayLat = new System.Windows.Forms.NumericUpDownTS();
             this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
-            this.chkBoxSWL2 = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
@@ -232,16 +235,23 @@ namespace PowerSDR
             this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxBeam = new System.Windows.Forms.CheckBoxTS();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayLat)).BeginInit();
             this.SuspendLayout();
             // 
             // SWLbutton
             // 
             this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton.Location = new System.Drawing.Point(585, 446);
+            this.SWLbutton.Location = new System.Drawing.Point(614, 434);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton.TabIndex = 2;
@@ -272,10 +282,11 @@ namespace PowerSDR
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(12, 107);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
+            this.textBox1.MaxLength = 10000000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(729, 280);
+            this.textBox1.Size = new System.Drawing.Size(759, 280);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -285,7 +296,7 @@ namespace PowerSDR
             // 
             this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox1.Location = new System.Drawing.Point(667, 450);
+            this.nodeBox1.Location = new System.Drawing.Point(657, 432);
             this.nodeBox1.MaxLength = 50;
             this.nodeBox1.Name = "nodeBox1";
             this.nodeBox1.Size = new System.Drawing.Size(84, 22);
@@ -300,10 +311,10 @@ namespace PowerSDR
             // textBox3
             // 
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(272, 7);
+            this.textBox3.Location = new System.Drawing.Point(287, 7);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(469, 94);
+            this.textBox3.Size = new System.Drawing.Size(484, 94);
             this.textBox3.TabIndex = 8;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
@@ -312,7 +323,7 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(654, 513);
+            this.callBox.Location = new System.Drawing.Point(682, 514);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
             this.callBox.Size = new System.Drawing.Size(87, 22);
@@ -327,7 +338,7 @@ namespace PowerSDR
             // 
             this.portBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox2.Location = new System.Drawing.Point(695, 447);
+            this.portBox2.Location = new System.Drawing.Point(695, 434);
             this.portBox2.MaxLength = 7;
             this.portBox2.Name = "portBox2";
             this.portBox2.Size = new System.Drawing.Size(56, 22);
@@ -365,35 +376,11 @@ namespace PowerSDR
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // checkBoxUSspot
-            // 
-            this.checkBoxUSspot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBoxUSspot.AutoSize = true;
-            this.checkBoxUSspot.Location = new System.Drawing.Point(12, 462);
-            this.checkBoxUSspot.Name = "checkBoxUSspot";
-            this.checkBoxUSspot.Size = new System.Drawing.Size(163, 17);
-            this.checkBoxUSspot.TabIndex = 14;
-            this.checkBoxUSspot.Text = "North American Spotters only";
-            this.checkBoxUSspot.UseVisualStyleBackColor = true;
-            this.checkBoxUSspot.CheckedChanged += new System.EventHandler(this.checkBoxUSspot_CheckedChanged);
-            // 
-            // checkBoxWorld
-            // 
-            this.checkBoxWorld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBoxWorld.AutoSize = true;
-            this.checkBoxWorld.Location = new System.Drawing.Point(12, 485);
-            this.checkBoxWorld.Name = "checkBoxWorld";
-            this.checkBoxWorld.Size = new System.Drawing.Size(182, 17);
-            this.checkBoxWorld.TabIndex = 15;
-            this.checkBoxWorld.Text = "Exclude North American Spotters";
-            this.checkBoxWorld.UseVisualStyleBackColor = true;
-            this.checkBoxWorld.CheckedChanged += new System.EventHandler(this.checkBoxWorld_CheckedChanged);
-            // 
             // statusBoxSWL
             // 
             this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBoxSWL.Location = new System.Drawing.Point(585, 406);
+            this.statusBoxSWL.Location = new System.Drawing.Point(613, 406);
             this.statusBoxSWL.Name = "statusBoxSWL";
             this.statusBoxSWL.Size = new System.Drawing.Size(156, 22);
             this.statusBoxSWL.TabIndex = 16;
@@ -414,7 +401,7 @@ namespace PowerSDR
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(582, 390);
+            this.label2.Location = new System.Drawing.Point(611, 390);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 18;
@@ -423,7 +410,7 @@ namespace PowerSDR
             // btnTrack
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTrack.Location = new System.Drawing.Point(272, 513);
+            this.btnTrack.Location = new System.Drawing.Point(272, 480);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
@@ -436,7 +423,7 @@ namespace PowerSDR
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(683, 450);
+            this.nameBox.Location = new System.Drawing.Point(686, 434);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -465,7 +452,7 @@ namespace PowerSDR
             this.dataGridView1.Location = new System.Drawing.Point(12, 7);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(254, 94);
+            this.dataGridView1.Size = new System.Drawing.Size(269, 94);
             this.dataGridView1.TabIndex = 72;
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
@@ -493,46 +480,99 @@ namespace PowerSDR
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.Size = new System.Drawing.Size(254, 94);
             this.dataGridView2.TabIndex = 75;
-            this.toolTip1.SetToolTip(this.dataGridView2, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
+            this.toolTip1.SetToolTip(this.dataGridView2, "memories");
             this.dataGridView2.Visible = false;
             // 
             // SWLbutton2
             // 
             this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton2.Location = new System.Drawing.Point(666, 447);
+            this.SWLbutton2.Location = new System.Drawing.Point(695, 434);
             this.SWLbutton2.Name = "SWLbutton2";
             this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton2.TabIndex = 76;
             this.SWLbutton2.Text = "SWL list";
-            this.toolTip1.SetToolTip(this.SWLbutton2, "Click to turn On/Off Shortwave Spotting to the Panadapter");
+            this.toolTip1.SetToolTip(this.SWLbutton2, "Searchable SWL listing window. Showing only SWL stations curently \r\non the AIR");
             this.SWLbutton2.UseVisualStyleBackColor = true;
             this.SWLbutton2.Click += new System.EventHandler(this.SWLbutton2_Click);
+            // 
+            // udDisplayLong
+            // 
+            this.udDisplayLong.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.udDisplayLong.DecimalPlaces = 4;
+            this.udDisplayLong.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDisplayLong.Location = new System.Drawing.Point(602, 517);
+            this.udDisplayLong.Maximum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            this.udDisplayLong.Minimum = new decimal(new int[] {
+            180,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayLong.Name = "udDisplayLong";
+            this.udDisplayLong.Size = new System.Drawing.Size(74, 20);
+            this.udDisplayLong.TabIndex = 80;
+            this.toolTip1.SetToolTip(this.udDisplayLong, "Enter Longitude in deg (-180 to 180) for Beam Heading\r\n- for West of 0 GMT line\r\n" +
+        "+ for East of 0 GMT line\r\n\r\nLeft Click on PowerSDR Display and Hit SHIFT key to " +
+        "\r\ntoggle Lat/Long map");
+            this.udDisplayLong.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udDisplayLong.ValueChanged += new System.EventHandler(this.udDisplayLong_ValueChanged);
+            // 
+            // udDisplayLat
+            // 
+            this.udDisplayLat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.udDisplayLat.DecimalPlaces = 4;
+            this.udDisplayLat.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDisplayLat.Location = new System.Drawing.Point(525, 517);
+            this.udDisplayLat.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.udDisplayLat.Minimum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            -2147483648});
+            this.udDisplayLat.Name = "udDisplayLat";
+            this.udDisplayLat.Size = new System.Drawing.Size(71, 20);
+            this.udDisplayLat.TabIndex = 79;
+            this.toolTip1.SetToolTip(this.udDisplayLat, "Enter Latitude in deg (90 to -90) for Beam Heading\r\n+ for Northern Hemisphere\r\n- " +
+        "for Southern Hemisphere\r\n\r\nLeft Click on PowerSDR Display and Hit SHIFT key to \r" +
+        "\ntoggle Lat/Long map");
+            this.udDisplayLat.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udDisplayLat.ValueChanged += new System.EventHandler(this.udDisplayLat_ValueChanged);
             // 
             // chkBoxMem
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxMem.Image = null;
-            this.chkBoxMem.Location = new System.Drawing.Point(474, 511);
+            this.chkBoxMem.Location = new System.Drawing.Point(224, 513);
             this.chkBoxMem.Name = "chkBoxMem";
-            this.chkBoxMem.Size = new System.Drawing.Size(128, 24);
+            this.chkBoxMem.Size = new System.Drawing.Size(123, 24);
             this.chkBoxMem.TabIndex = 74;
             this.chkBoxMem.Text = "MEMORIES to Pan";
             this.toolTip1.SetToolTip(this.chkBoxMem, "Show Memories directly on Panadapter.\r\n\r\nLEFT CLICK on visible Memory + CTRL to s" +
         "et Mode\r\n\r\nLEFT CLICK on PAN + ALT + M keys to save New Memory\r\n");
             this.chkBoxMem.CheckedChanged += new System.EventHandler(this.chkBoxMem_CheckedChanged);
-            // 
-            // chkBoxSWL2
-            // 
-            this.chkBoxSWL2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxSWL2.Image = null;
-            this.chkBoxSWL2.Location = new System.Drawing.Point(676, 450);
-            this.chkBoxSWL2.Name = "chkBoxSWL2";
-            this.chkBoxSWL2.Size = new System.Drawing.Size(65, 24);
-            this.chkBoxSWL2.TabIndex = 73;
-            this.chkBoxSWL2.Text = "Alternate SWL2.txt";
-            this.toolTip1.SetToolTip(this.chkBoxSWL2, "Show Country or Calls on Map for just the Panadapter freq you are viewing.\r\n");
-            this.chkBoxSWL2.Visible = false;
-            this.chkBoxSWL2.CheckedChanged += new System.EventHandler(this.chkBoxSWL2_CheckedChanged);
             // 
             // chkBoxPan
             // 
@@ -670,11 +710,65 @@ namespace PowerSDR
         " only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
             // 
+            // chkBoxBeam
+            // 
+            this.chkBoxBeam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxBeam.Image = null;
+            this.chkBoxBeam.Location = new System.Drawing.Point(416, 504);
+            this.chkBoxBeam.Name = "chkBoxBeam";
+            this.chkBoxBeam.Size = new System.Drawing.Size(88, 24);
+            this.chkBoxBeam.TabIndex = 83;
+            this.chkBoxBeam.Text = "Map Beam";
+            this.toolTip1.SetToolTip(this.chkBoxBeam, "Check To Show Beam heading on map in (deg)\r\n");
+            this.chkBoxBeam.CheckedChanged += new System.EventHandler(this.chkBoxBeam_CheckedChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(522, 497);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 13);
+            this.label3.TabIndex = 81;
+            this.label3.Text = "Your Lat and Long (+/- deg)\r\n";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(694, 497);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(71, 13);
+            this.label4.TabIndex = 82;
+            this.label4.Text = "Your Call sign";
+            // 
+            // chkBoxWrld
+            // 
+            this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxWrld.Image = null;
+            this.chkBoxWrld.Location = new System.Drawing.Point(10, 485);
+            this.chkBoxWrld.Name = "chkBoxWrld";
+            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
+            this.chkBoxWrld.TabIndex = 78;
+            this.chkBoxWrld.Text = "Exclude North American Spotters";
+            this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
+            // 
+            // chkBoxNA
+            // 
+            this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxNA.Image = null;
+            this.chkBoxNA.Location = new System.Drawing.Point(10, 451);
+            this.chkBoxNA.Name = "chkBoxNA";
+            this.chkBoxNA.Size = new System.Drawing.Size(165, 35);
+            this.chkBoxNA.TabIndex = 77;
+            this.chkBoxNA.Text = "North American Spotters only";
+            this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
+            // 
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(638, 485);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(670, 464);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(103, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
@@ -687,7 +781,7 @@ namespace PowerSDR
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(654, 515);
+            this.chkDXMode.Location = new System.Drawing.Point(682, 516);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
@@ -698,11 +792,18 @@ namespace PowerSDR
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(753, 548);
+            this.ClientSize = new System.Drawing.Size(783, 548);
+            this.Controls.Add(this.chkBoxBeam);
+            this.Controls.Add(this.SWLbutton);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.udDisplayLong);
+            this.Controls.Add(this.udDisplayLat);
+            this.Controls.Add(this.chkBoxWrld);
+            this.Controls.Add(this.chkBoxNA);
             this.Controls.Add(this.SWLbutton2);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.chkBoxMem);
-            this.Controls.Add(this.chkBoxSWL2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chkBoxPan);
             this.Controls.Add(this.chkBoxDIG);
@@ -720,8 +821,6 @@ namespace PowerSDR
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.statusBoxSWL);
-            this.Controls.Add(this.checkBoxWorld);
-            this.Controls.Add(this.checkBoxUSspot);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusBox);
             this.Controls.Add(this.portBox2);
@@ -729,11 +828,11 @@ namespace PowerSDR
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.nodeBox1);
             this.Controls.Add(this.SSBbutton);
-            this.Controls.Add(this.SWLbutton);
             this.Controls.Add(this.chkDXMode);
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1000, 1000);
+            this.MinimumSize = new System.Drawing.Size(799, 370);
             this.Name = "SpotControl";
             this.Text = "DX / SWL Spotter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpotControl_FormClosing);
@@ -741,6 +840,8 @@ namespace PowerSDR
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udDisplayLat)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -876,15 +977,10 @@ namespace PowerSDR
         {
             string file_name =" ";
 
-            if (chkBoxSWL2.Checked == true)
-            {
-                 file_name = console.AppDataPath + "SWL2.txt"; // Sigmera
-            }
-            else
-            {
+          
                 Debug.WriteLine("LOOK FOR SWL FILE " + console.AppDataPath);
                 file_name = console.AppDataPath + "SWL.csv"; //   eibispace.de  sked - b15.csv
-            }
+            
 
             if (!File.Exists(file_name))
             {
@@ -943,6 +1039,23 @@ namespace PowerSDR
 
         } // SWLbutton_Click
 
+
+          // these are pulled from SWL2.csv file
+        public static string[] SWL2_Station = new string[20000];       // Station name
+        public static int[] SWL2_Freq = new int[20000];              // in hz
+        public static byte[] SWL2_Band = new byte[20000];              // in Mhz
+     
+        public static string[] SWL2_Lang = new string[20000];          // language of transmitter
+        public static int[] SWL2_TimeN = new int[20000];                // UTC time of operation ON air
+        public static int[] SWL2_TimeF = new int[20000];                // UTC time of operation OFF air
+        public static string[] SWL2_Mode = new string[20000];          // operating mode
+        public static string[] SWL2_Day = new string[20000];          // days of operation
+        public static string[] SWL2_Loc = new string[20000];          // location of transmitter
+        public static string[] SWL2_Target = new string[20000];          // target area of station
+        public static int SWL2_Index1;  // local index that reset back to 0 after reaching max
+        public static byte Flag21 = 0; // flag to skip header line in SWL.csv file
+
+
         // these are pulled from SWL.csv file
         public static string[] SWL_Station = new string[20000];       // Station name
         public static int[] SWL_Freq = new int[20000];              // in hz
@@ -954,6 +1067,8 @@ namespace PowerSDR
         public static int[] SWL_TimeF = new int[20000];                // UTC time of operation OFF air
         public static string[] SWL_Mode = new string[20000];          // operating mode
         public static string[] SWL_Day = new string[20000];          // days of operation
+        public static byte[] SWL_Day1 = new byte[20000];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
+
         public static string[] SWL_Loc = new string[20000];          // location of transmitter
         public static string[] SWL_Target = new string[20000];          // target area of station
 
@@ -973,31 +1088,176 @@ namespace PowerSDR
         public static byte Flag1 = 0; // flag to skip header line in SWL.csv file
 
         public static DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+        public static byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek-1));   // this is the day. Mon = 1
+
+
+
         public static string FD = UTCD.ToString("HHmm");                                       // get 24hr 4 digit UTC NOW
-
+       
         public static int UTCNEW1 = Convert.ToInt16(FD);                                       // convert 24hr UTC to int
-        
 
-     
+      
+
 
 
         //=======================================================================================
         //=======================================================================================
-        //ke9ns start SWL spotting
+        //ke9ns start SWL spotting THREAD 1 and done
         private void SWLSPOTTER()
         {
 
             string file_name = " ";
+            string file_name1 = " ";
 
-            if (chkBoxSWL2.Checked == true)
-            {
-                file_name = console.AppDataPath + "SWL2.txt"; // sigmera
-            }
-            else
-            {
+            int FLAG22 = 0;
+
+           
               file_name  = console.AppDataPath + "SWL.csv"; //  sked - b15.csv  
-            }
+              file_name1 = console.AppDataPath + "SWL2.csv"; // ke9ns extra swl freq that eibispace.de wont add
 
+
+
+            //-------------------------------------- SWL2.csv (ke9ns list of extra swl freqs to load)
+            if (File.Exists(file_name1))
+            {
+
+                try
+                {
+                    stream2 = new FileStream(file_name1, FileMode.Open); // open file
+                    reader2 = new BinaryReader(stream2, Encoding.ASCII);
+
+
+                }
+                catch (Exception)
+                {
+                    goto SWL1; // no extra SWL2 file, so just use SWL.csv file instead
+                   
+                }
+
+                var result = new StringBuilder();
+
+                if (SP3_Active == 0) // dont reset if already scanned in  database
+                {
+                    SWL2_Index1 = 0; // how big is the SWL.CSV data file in lines
+                    Flag21 = 0;
+
+                }
+
+                statusBoxSWL.Text = "Reading SWL2 ";
+
+                //------------------------------------------------------------------
+                for (;;)
+                {
+
+                    if (SP3_Active == 1) // aleady scanned database
+                    {
+                        break; // dont rescan database over 
+                    }
+
+                    if (SP1_Active == 0)
+                    {
+
+                        reader2.Close();    // close  file
+                        stream2.Close();   // close stream
+
+                        statusBoxSWL.ForeColor = Color.Black;
+                        statusBoxSWL.Text = "Off";
+
+                        if (SP_Active == 0)
+                        {
+                            console.spotterMenu.ForeColor = Color.White;
+                            console.spotterMenu.Text = "Spotter";
+                        }
+
+                        return;
+                    }
+
+                    statusBoxSWL.ForeColor = Color.Red;
+                    //    statusBoxSWL.Text = "Reading " + SWL_Index1.ToString();
+
+
+                    if (SP_Active == 0)
+                    {
+                        console.spotterMenu.ForeColor = Color.Yellow;
+                        console.spotterMenu.Text = "Reading";
+                    }
+
+                    try
+                    {
+                        var newChar = (char)reader2.ReadChar();
+
+                        if (newChar == '\r')
+                        {
+                            newChar = (char)reader2.ReadChar(); // read \n char to finishline
+
+                            if (Flag21 == 1)
+                            {
+
+                                string[] values;
+
+                                values = result.ToString().Split(';'); // split line up into segments divided by ;
+
+                                SWL2_Freq[SWL2_Index1] = (int)(Convert.ToDouble(values[0]) * 1000); // get freq and convert to hz
+                                SWL2_Band[SWL2_Index1] = (byte)(SWL2_Freq[SWL2_Index1] / 1000000); // get freq and convert to mhz
+
+                                SWL2_TimeN[SWL2_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
+                                SWL2_TimeF[SWL2_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
+                                SWL2_Day[SWL2_Index1] = values[2]; // get days ON
+                                SWL2_Loc[SWL2_Index1] = values[3]; // get location of station
+                                SWL2_Mode[SWL2_Index1] = "USB"; // get opeating mode
+                                SWL2_Station[SWL2_Index1] = values[4]; // get station name
+                                SWL2_Lang[SWL2_Index1] = values[5]; // get language
+                                SWL2_Target[SWL2_Index1] = values[6]; // get station target area
+                    
+                                SWL2_Index1++;
+
+                            } // SWL Spots
+                            else Flag21 = 1;
+
+                            result = new StringBuilder(); // clean up for next line
+
+                        }
+                        else
+                        {
+                            result.Append(newChar);  // save char
+                        }
+
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        SWL2_Index1--;
+                        // textBox1.Text = "End of SWL FILE at "+ SWL_Index1.ToString();
+
+                        break; // done with file
+                    }
+                    catch (Exception)
+                    {
+                        //  Debug.WriteLine("excpt======== " + e);
+                        //     textBox1.Text = e.ToString();
+
+                        break; // done with file
+                    }
+
+
+                } // for loop until end of file is reached
+
+
+                // Debug.WriteLine("reached SWL end of file");
+
+
+                reader2.Close();    // close  file
+                stream2.Close();   // close stream
+
+          
+            } // if file exists SWL2
+
+
+            // at this point we have SWL2 data read in
+
+            SWL1:;
+
+            //-------------------------------------- SWL.csv
             if (File.Exists(file_name))
             {
 
@@ -1005,6 +1265,8 @@ namespace PowerSDR
                 {
                     stream2 = new FileStream(file_name, FileMode.Open); // open file
                     reader2 = new BinaryReader(stream2, Encoding.ASCII);
+
+
                 }
                 catch(Exception)
                 {
@@ -1033,6 +1295,7 @@ namespace PowerSDR
                 }
                 statusBoxSWL.Text = "Reading ";
 
+                //------------------------------------------------------------------
                 for (;;)
                 {
 
@@ -1073,114 +1336,21 @@ namespace PowerSDR
                     {
                         var newChar = (char)reader2.ReadChar();
 
-                        if (((chkBoxSWL2.Checked == false) && (newChar == '\r')) || ((chkBoxSWL2.Checked == true) && (newChar == '\n'))  )
+                        if ( newChar == '\r' )
                         {
-                            if (chkBoxSWL2.Checked == false)  newChar = (char)reader2.ReadChar(); // read \n char to finishline
+                            newChar = (char)reader2.ReadChar(); // read \n char to finishline
 
                             if (Flag1 == 1)
                             {
 
                                 string[] values;
-
-                                //--------------------------------------------------------------------------------------------
-                                if (chkBoxSWL2.Checked == true) // SWL2.TXT file only
-                                {
-                                    values = result.ToString().Split('|'); // split line up into segments divided by | char
-
-                                    SWL_Freq[SWL_Index1] = (int)(Convert.ToDouble(values[0]) * 1000000); // get freq and convert to hz
-
-
-                                    SWL_Band[SWL_Index1] = (byte)(SWL_Freq[SWL_Index1] / 1000000); // get freq and convert to mhz
-
-
-                                    if (SWL_Band[SWL_Index1] > SWL_Index)
-                                    {
-                                        //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
-                                        SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
-                                        VFOHLast = 0; // refresh pan screen while loading
-                                        SWL_Index++;
-                                    }
-
-
-                                    SWL_TimeN[SWL_Index1] = 0;
-                                    SWL_TimeF[SWL_Index1] = 2400;
-
-                                    SWL_Mode[SWL_Index1] = values[1]; // get opeating mode
-
-                                    SWL_Day[SWL_Index1] = "na"; // get days ON
-
-                                    SWL_Loc[SWL_Index1] = "na"; // get location of station
-
-                                  //  Debug.WriteLine("namebefore " + values[2]);
-
-                                    if (values[2].Contains("_")) // get rid of date time stamp
-                                    {
-                                        int ind = values[2].IndexOf("_");
-
-                                        var temp = new StringBuilder();
-                                      if((ind-7) > 0)  temp.Append( values[2].Substring(0, ind - 7));
-                                       
-                                        if (values[2].Length > (ind + 5))
-                                        {
-                                          //  Debug.WriteLine("len " + values[2].Length);
-
-                                          //  Debug.WriteLine("ind " + ind);
-                                            temp.Append(values[2].Substring(ind + 5, values[2].Length-ind-5));
-                                           
-                                        }
-                                       
-                                        values[2] = temp.ToString();
-                                       
-                                     //   Debug.WriteLine("nameafter " + values[2]);
-
-                                    } // contains _
-
-                                    if (values[2].Contains("_")) // 2nd look: get rid of date time stamp
-                                    {
-                                        int ind = values[2].IndexOf("_");
-
-                                        var temp = new StringBuilder();
-                                        if ((ind - 7) > 0) temp.Append(values[2].Substring(0, ind - 7));
-
-                                        if (values[2].Length > (ind + 5))
-                                        {
-                                          //  Debug.WriteLine("len " + values[2].Length);
-
-                                         //   Debug.WriteLine("ind " + ind);
-                                            temp.Append(values[2].Substring(ind + 5, values[2].Length - ind - 5));
-
-                                        }
-
-                                        values[2] = temp.ToString();
-
-                                        //   Debug.WriteLine("nameafter " + values[2]);
-
-                                    } // 2nd check contains _
-
-
-                                    SWL_Station[SWL_Index1] = values[2]; // get station name
-
-
-                                    SWL_Lang[SWL_Index1] = "na"; // get language
-
-                                    SWL_Target[SWL_Index1] = "na"; // get station target area
-
-
-                                    SWL_Index1++;
-
-                                
-
-                                }
-                                //--------------------------------------------------------------------------------------------
-                                else // SWL.CSV file only
-                                {
+                             
                                   values = result.ToString().Split(';'); // split line up into segments divided by ;
 
                                     SWL_Freq[SWL_Index1] = (int)(Convert.ToDouble(values[0]) * 1000); // get freq and convert to hz
-
                                     SWL_Band[SWL_Index1] = (byte)(SWL_Freq[SWL_Index1] / 1000000); // get freq and convert to mhz
 
-
+/*
                                     if (SWL_Band[SWL_Index1] > SWL_Index)
                                     {
                                         //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
@@ -1188,58 +1358,257 @@ namespace PowerSDR
                                         VFOHLast = 0; // refresh pan screen while loading
                                         SWL_Index++;
                                     }
-
-
+*/
                                     SWL_TimeN[SWL_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
                                     SWL_TimeF[SWL_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
 
-                                    SWL_Day[SWL_Index1] = values[2]; // get days ON
+                               
+                                if (values[2].Contains("-"))
+                                {
+                                    byte temp3 = 0;
+                                    byte temp4 = 0;
+                                    SWL_Day1[SWL_Index1] = 0;
 
-                                    SWL_Loc[SWL_Index1] = values[3]; // get location of station
+                                    string temp1 = values[2].Substring(0, 2); // start day
+                                    string temp2 = values[2].Substring(3, 2); // end day
+   
 
-                                    SWL_Mode[SWL_Index1] = "AM"; // get opeating mode
+                                    if (temp1 == "Tu") temp3 = 1;             // get your start day position
+                                    else if (temp1 == "We") temp3 = 2;
+                                    else if (temp1 == "Th") temp3 = 3;
+                                    else if (temp1 == "Fr") temp3 = 4;
+                                    else if (temp1 == "Sa") temp3 = 5;
+                                    else if (temp1 == "Su") temp3 = 6;
+                                    else temp3 = 0;
 
-                                    SWL_Station[SWL_Index1] = values[4]; // get station name
-
-                                    SWL_Lang[SWL_Index1] = values[5]; // get language
-
-                                    SWL_Target[SWL_Index1] = values[6]; // get station target area
-
-
-                                    if (SWL_Index > 0)
+                                    if (temp2 == "Tu") temp4 = 1;           // get your end day position
+                                    else if (temp2 == "We") temp4 = 2;
+                                    else if (temp2 == "Th") temp4 = 3;
+                                    else if (temp2 == "Fa") temp4 = 4;
+                                    else if (temp2 == "Sa") temp4 = 5;
+                                    else if (temp2 == "Su") temp4 = 6;
+                                    else temp4 = 0;
+                               
+                                    if (temp3 < temp4) // example mo thru fi
                                     {
-                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]))// if same name and freq then check times
+                                        for (int x = temp3; x <= temp4;x++)
                                         {
-                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1])) goto BYPASS; // duplicate
-
+                                            SWL_Day1[SWL_Index1] |= (byte)(1 << x);
+                                        }
+                                    } // example mo thru fi
+                                    else // example fr thru tu
+                                    {
+                                        for (int x = temp3; x < 7; x++)
+                                        {
+                                            SWL_Day1[SWL_Index1] |= (byte)(1 << x);
+                                        }
+                                        for (int x = 0; x <= temp4; x++)
+                                        {
+                                            SWL_Day1[SWL_Index1] |= (byte)(1 << x);
                                         }
 
-                                    }
 
-                                    SWL_Index1++;
-
-
-                                    BYPASS:;
-
-                                    //   Debug.Write(" freq " + SWL_Freq[SWL_Index1]);
-                                    //   Debug.Write(" Band " + SWL_Band[SWL_Index1]);
-                                    //   Debug.Write(" ON time " + SWL_TimeN[SWL_Index1]);
-                                    //    Debug.Write(" OFF time " + SWL_TimeF[SWL_Index1]);
-                                    //    Debug.Write(" days " + SWL_Day[SWL_Index1]);
-                                    //   Debug.Write(" LOC " + SWL_Loc[SWL_Index1]);
-                                    //  Debug.Write(" Station Name " + SWL_Station[SWL_Index1]);
-                                    //  Debug.Write(" Lang " + SWL_Lang[SWL_Index1]);
-                                    //   Debug.WriteLine(" target " + SWL_Target[SWL_Index1]);
-
-                                    // remarks
-                                    // ? P
-                                    // ? Start
-                                    // ? Stop 
+                                    } // example fr thru tu
 
 
-                                } // SWL.CSV file only
+                                } // contains -
 
-                               
+                                else if (values[2] == "Mo") SWL_Day1[SWL_Index1] |= 1;
+                                else if (values[2] == "Tu") SWL_Day1[SWL_Index1] |= 2;
+                                else if (values[2] == "We") SWL_Day1[SWL_Index1] |= 4;
+                                else if (values[2] == "Th") SWL_Day1[SWL_Index1] |= 8;
+                                else if (values[2] == "Fr") SWL_Day1[SWL_Index1] |= 16;
+                                else if (values[2] == "Sa") SWL_Day1[SWL_Index1] |= 32;
+                                else if (values[2] == "Su") SWL_Day1[SWL_Index1] |= 64;
+
+                               else SWL_Day1[SWL_Index1] = 127;
+
+                               SWL_Day[SWL_Index1] = values[2]; // get days ON
+
+
+                             //   if (SWL_Freq[SWL_Index1] == 6050000)
+                              //  {
+                              //      Debug.WriteLine("Station name "+SWL_Station[SWL_Index1] +" Days " + SWL_Day[SWL_Index1] + " # " + SWL_Day1[SWL_Index1]);
+                             //   }
+
+
+                                    SWL_Loc[SWL_Index1] = values[3]; // get location of station
+                                    SWL_Mode[SWL_Index1] = "AM"; // get opeating mode
+                                    SWL_Station[SWL_Index1] = values[4]; // get station name
+                                    SWL_Lang[SWL_Index1] = values[5]; // get language
+                                    SWL_Target[SWL_Index1] = values[6]; // get station target area
+
+                                // check for DUPS
+                                    if (SWL_Index > 0)
+                                    {
+
+                                       // ke9ns if the Station Name and Station Freq and Station Days are the same, then check time (below)
+                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) && (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))            // if same NAME and FREQ then check times
+                                        {
+
+                                            if ((SWL_TimeN[SWL_Index1 - 1] < SWL_TimeN[SWL_Index1])) // if the start time matches do below
+                                            {
+                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
+                                                {
+
+                                                  //  if (SWL_Freq[SWL_Index1] == 6075000)
+                                                  //  {
+                                                    //    Debug.WriteLine("Station DUP longer end time: " + SWL_Station[SWL_Index1 - 1]);
+                                                   //     Debug.WriteLine("Old start time, new end time: " + SWL_TimeN[SWL_Index1 - 1] + " , " + SWL_TimeN[SWL_Index1]);
+                                                   //     Debug.WriteLine("Old end time, new end time: " + SWL_TimeF[SWL_Index1 - 1] + " , " + SWL_TimeF[SWL_Index1]);
+                                                 //   }
+
+                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1])
+                                                    {
+                                                       SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+                                                    }
+
+                                                    goto BYPASS; // duplicate
+                                                }
+
+                                            }
+
+
+                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1])) // if the start time matches do below
+                                            {
+
+                                                if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
+                                                {
+
+                                               // if (SWL_Freq[SWL_Index1] == 6075000)
+                                               // {
+                                                //    Debug.WriteLine("Station DUP longer end time: " + SWL_Station[SWL_Index1 - 1]);
+                                                //    Debug.WriteLine("Old start time, new end time: " + SWL_TimeN[SWL_Index1 - 1] + " , " + SWL_TimeN[SWL_Index1]);
+                                               //     Debug.WriteLine("Old end time, new end time: " + SWL_TimeF[SWL_Index1 - 1] + " , " + SWL_TimeF[SWL_Index1]);
+                                              //  }
+                                                    SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+
+                                                    goto BYPASS; // duplicate
+                                                }
+
+
+                                            } // if time on matches
+                                       
+                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1]))         // if ON time adn OFF times match then DUP
+                                            {
+
+                                          //  if (SWL_Freq[SWL_Index1] == 6075000)
+                                          //  {
+                                           //     Debug.WriteLine("Station DUP same start and end time: " + SWL_Station[SWL_Index1 - 1]);
+                                          //  }
+
+                                                goto BYPASS; // duplicate
+                                            }
+
+
+                                        } // name and freq match
+
+                                    }  //  if (SWL_Index > 0)
+
+
+
+                                //--------------------------------
+
+                                FLAG22 = 0; // reset for next line
+
+                                if ((SWL2_Index1 > 0) && (SWL_Index1 > 2)) // only try and merge SWL2 into SWL if SWL2 exists
+                                {
+                                    int lowfreq = SWL_Freq[SWL_Index1 - 1]; // prior freq read in
+                                    int highfreq = SWL_Freq[SWL_Index1]; // freq just read in now
+                                   
+                                    // now check to see if any SWL2 freqs can fit in between lines of the SWL file
+                                    for (int q = 0; q < SWL2_Index1; q++)
+                                    {
+
+                                        if ((SWL2_Freq[q] < highfreq) ) // are you below the current (just read in) swl listing?
+                                        {
+                                            if ( (SWL2_Freq[q] >= lowfreq)) // are you above the last read in swl listing?
+                                            {
+                                                // move this "just read in" SWL line forward in the index to insert SWL2 entry
+                                                SWL_Freq[SWL_Index1 + 1] = SWL_Freq[SWL_Index1];
+                                                SWL_Band[SWL_Index1 + 1] = SWL_Band[SWL_Index1];
+                                                SWL_TimeN[SWL_Index1 + 1] = SWL_TimeN[SWL_Index1];
+                                                SWL_TimeF[SWL_Index1 + 1] = SWL_TimeF[SWL_Index1];
+                                                SWL_Day[SWL_Index1 + 1] = SWL_Day[SWL_Index1];
+                                                SWL_Loc[SWL_Index1 + 1] = SWL_Loc[SWL_Index1];
+                                                SWL_Mode[SWL_Index1 + 1] = SWL_Mode[SWL_Index1];
+                                                SWL_Station[SWL_Index1 + 1] = SWL_Station[SWL_Index1];
+                                                SWL_Lang[SWL_Index1 + 1] = SWL_Lang[SWL_Index1];
+                                                SWL_Target[SWL_Index1 + 1] = SWL_Target[SWL_Index1];
+
+
+                                                // save SWL2 entry into SWL listing 
+                                                SWL_Freq[SWL_Index1] = SWL2_Freq[q];
+                                                SWL_Band[SWL_Index1] = SWL2_Band[q];
+                                                SWL_TimeN[SWL_Index1] = SWL2_TimeN[q];
+                                                SWL_TimeF[SWL_Index1] = SWL2_TimeF[q];
+                                                SWL_Day[SWL_Index1] = SWL2_Day[q];
+                                                SWL_Loc[SWL_Index1] = SWL2_Loc[q];
+                                                SWL_Mode[SWL_Index1] = SWL2_Mode[q];
+                                                SWL_Station[SWL_Index1] = SWL2_Station[q];
+                                                SWL_Lang[SWL_Index1] = SWL2_Lang[q];
+                                                SWL_Target[SWL_Index1] = SWL2_Target[q];
+
+                                             //   Debug.WriteLine("INSERT 2 HERE= index="+SWL_Index1+ " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+
+                                                FLAG22 = 1; // flag that you inserted a new SWL2 line into SWL
+                                                SWL_Index1++;
+
+                                            } // if ( (SWL2_Freq[q] >= lowfreq)) // are you above the last read in swl listing?
+
+                                        } //  if ((SWL2_Freq[q] < highfreq) ) // are you below the current (just read in) swl listing?
+                                        else
+                                        {
+                                          //  Debug.WriteLine("BREAK");
+                                            break; // break out of this SWL2 loop
+                                        }
+
+                                    } // for loop through SWL2
+
+                                } // if ((SWL2_Index1 > 0) && (SWL_Index1 > 2))
+
+                             
+                                //-----------------------------------
+
+
+                                if (SWL_Band[SWL_Index1] > SWL_Index)
+                                {
+                                    //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
+                                    SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
+                                    VFOHLast = 0; // refresh pan screen while loading
+                                    SWL_Index++;
+                                }
+
+                             //   if (FLAG22 == 0) Debug.WriteLine("NEW index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+                            //    else Debug.WriteLine("AFTER-> index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+
+                                SWL_Index1++; // save this
+
+                              
+
+                                BYPASS:;
+
+                            //  if (FLAG22 == 0)  Debug.WriteLine("BY index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+
+
+                                //   Debug.Write(" freq " + SWL_Freq[SWL_Index1]);
+                                //   Debug.Write(" Band " + SWL_Band[SWL_Index1]);
+                                //   Debug.Write(" ON time " + SWL_TimeN[SWL_Index1]);
+                                //    Debug.Write(" OFF time " + SWL_TimeF[SWL_Index1]);
+                                //    Debug.Write(" days " + SWL_Day[SWL_Index1]);
+                                //   Debug.Write(" LOC " + SWL_Loc[SWL_Index1]);
+                                //  Debug.Write(" Station Name " + SWL_Station[SWL_Index1]);
+                                //  Debug.Write(" Lang " + SWL_Lang[SWL_Index1]);
+                                //   Debug.WriteLine(" target " + SWL_Target[SWL_Index1]);
+
+                                // remarks
+                                // ? P
+                                // ? Start
+                                // ? Stop 
+
+
+
+
 
                             } // SWL Spots
                             else Flag1 = 1;
@@ -1260,7 +1629,7 @@ namespace PowerSDR
 
                         break; // done with file
                     }
-                    catch (Exception e)
+                    catch (Exception )
                     {
                       //  Debug.WriteLine("excpt======== " + e);
                    //     textBox1.Text = e.ToString();
@@ -1277,6 +1646,9 @@ namespace PowerSDR
 
                 reader2.Close();    // close  file
                 stream2.Close();   // close stream
+
+
+
 
 
                 SP3_Active = 1; // done loading swl database (Good)
@@ -1296,6 +1668,9 @@ namespace PowerSDR
                 // ke9ns process lines of SWL data here
 
             } // if file exists
+
+
+
 
 
             //-----------------------------------------
@@ -1494,7 +1869,8 @@ namespace PowerSDR
         public static string[] DX_Grid = new string[1000];          // grid
         public static string[] DX_Age = new string[1000];           // how old is the spot
 
-  
+        public static int[] DX_Beam = new int[1000];                // beam heading from your lat/long
+     
         public static int[] DX_X = new int[1000];                   // x pixel location on map (before any scaling) Longitude
         public static int[] DX_Y = new int[1000];                   // y pixel location on map (before any scaling) Latitude
         public static string[] DX_country = new string[1000];       // country
@@ -2638,7 +3014,7 @@ namespace PowerSDR
                             //=================================================================
                             //=================================================================
                             // ke9ns DX SPOT FILTERS (EXCLUDE NA HERE)
-                            if (checkBoxWorld.Checked) // filter out US calls signs
+                            if (chkBoxWrld.Checked) // filter out US calls signs
                             {
 
                                 string us1 = DX_Spotter[DX_Index1].Substring(1, 1); // grab first char of Spotter callsign becuase I added a < > around the spotter callsign
@@ -2683,7 +3059,7 @@ namespace PowerSDR
 
 
                             }
-                            else if (checkBoxUSspot.Checked) // filter out call signs outside of NA
+                            else if (chkBoxNA.Checked) // filter out call signs outside of NA
                             {
 
                                 string us1 = DX_Spotter[DX_Index1].Substring(1, 1);// was 0,1 now 1,1 because I added <>
@@ -2759,8 +3135,11 @@ namespace PowerSDR
                                     DX_Mode2[ii] = DX_Mode2[ii + 1];
 
                                     DX_country[ii] = DX_country[ii + 1];
+
                                     DX_X[ii] = DX_X[ii + 1];
                                     DX_Y[ii] = DX_Y[ii + 1];
+
+                                    DX_Beam[ii] = DX_Beam[ii + 1];
 
                                 }
 
@@ -2796,6 +3175,7 @@ namespace PowerSDR
                                     DX_country[ii] = DX_country[ii + 1];
                                     DX_X[ii] = DX_X[ii + 1];
                                     DX_Y[ii] = DX_Y[ii + 1];
+                                    DX_Beam[ii] = DX_Beam[ii + 1];
                                 }
 
                             } // for ii check for dup in list
@@ -2838,6 +3218,7 @@ namespace PowerSDR
                                 DX_country[ii] = DX_country[ii - 1];
                                 DX_X[ii] = DX_X[ii - 1];
                                 DX_Y[ii] = DX_Y[ii - 1];
+                                DX_Beam[ii] = DX_Beam[ii - 1];
 
                             } // for ii
 
@@ -3059,7 +3440,7 @@ namespace PowerSDR
             // Crosscheck Station Call sign Prefix with data from DXLOC.txt (lat and lon) 
             // and create a list of Country, Callsign, X, Y on unscaled map
 
-            if ((SP8_Active == 1) && (SP_Active > 2)  && (SP5_Active == 1 ) && (DX_Index > 0 )) // do if dxloc.txt file loaded in
+            if ((SP8_Active == 1) && (SP_Active > 2)  && (DX_Index > 0 )) // do if dxloc.txt file loaded in        && (SP5_Active == 1 )
             {
 
                 int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
@@ -3071,6 +3452,7 @@ namespace PowerSDR
                 DX_Y[0] = 0;
                 DX_X[0] = 0;
                 DX_country[0] = null;
+                DX_Beam[0] = 0; 
 
                 int kk = 0;
 
@@ -3091,7 +3473,9 @@ namespace PowerSDR
 
                         DX_country[0] = DXLOC_country[kk]; // save country into dx spotter list (pulled from dxloc list)
 
-                        Debug.WriteLine("MAPPER " + DX_Station[0] + " " + DX_X[0] + " " + DX_Y[0] + " cntry " + DX_country[0] + " prefix " + DXLOC_prefix[kk] + " lat " + DXLOC_LAT[kk] + " lon " + DXLOC_LON[kk]);
+                        DX_Beam[0] = BeamHeading(DXLOC_LAT[kk], DXLOC_LON[kk]);
+
+                        Debug.WriteLine("MAPPER " + DX_Station[0] + " " + DX_X[0] + " " + DX_Y[0] + " cntry " + DX_country[0] + " prefix " + DXLOC_prefix[kk] + " lat " + DXLOC_LAT[kk] + " lon " + DXLOC_LON[kk] + " BEAM "+DX_Beam[0]);
 
                         break; // got a match so break
 
@@ -3103,6 +3487,7 @@ namespace PowerSDR
                 {
                     DX_country[0] = " -- "; // dont have a match so need to add to list
 
+                    DX_Beam[0] = 0;
                     Debug.WriteLine("MAPPER NO MACH FOR Station" + DX_Station[0]);
 
                 }
@@ -3111,7 +3496,7 @@ namespace PowerSDR
             else
             {
                 DX_country[0] = " -- "; // dont have a match so need to add to list
-
+                DX_Beam[0] = 0;
                 //  Debug.WriteLine("mapper OFF");
 
             }
@@ -3162,8 +3547,9 @@ namespace PowerSDR
 
                 else DXmode = "     ";
 
-                bigmessage += (DX_FULLSTRING[ii]+ DXmode+ " " + (DX_country[ii].PadRight(8)).Substring(0,8) + " :"+ DX_Age[ii]  + "\r\n" );
-            
+              // old   bigmessage += (DX_FULLSTRING[ii]+ DXmode+ " " + (DX_country[ii].PadRight(8)).Substring(0,8) + " :"+ DX_Age[ii]  + "\r\n" );
+                bigmessage += (DX_FULLSTRING[ii] + DXmode + " " + (DX_country[ii].PadRight(8)).Substring(0, 8) + ": "+ DX_Beam[ii].ToString().PadLeft(3) + "° :" + DX_Age[ii] + "\r\n"); // adds 6
+
             } // for loop to update dx spot window
 
             if (pause == false)  textBox1.Text = bigmessage; // update screen
@@ -3389,37 +3775,38 @@ namespace PowerSDR
             nameB = nameBox.Text;
         }
 
-
-        private void checkBoxUSspot_CheckedChanged(object sender, EventArgs e)
+   
+        private void chkBoxNA_CheckedChanged(object sender, EventArgs e)
         {
+      
+                if (chkBoxNA.Checked == true)
+                {
 
-            if (checkBoxUSspot.Checked == true)
-            {
+                    //   Debug.WriteLine("US SPOT CHECKED");
+                    chkBoxWrld.Checked = false;
 
-                //   Debug.WriteLine("US SPOT CHECKED");
-                checkBoxWorld.Checked = false;
+                }
+                else
+                {
+                    //   Debug.WriteLine("US SPOT UN-CHECKED");
+                }
+           
+        }
 
-            }
-            else
-            {
-                //   Debug.WriteLine("US SPOT UN-CHECKED");
-            }
-
-        } //checkBoxUSspot_CheckedChanged(
-
-
-        private void checkBoxWorld_CheckedChanged(object sender, EventArgs e)
+        private void chkBoxWrld_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxWorld.Checked == true)
+            if (chkBoxWrld.Checked == true)
             {
-                checkBoxUSspot.Checked = false;
+                chkBoxNA.Checked = false;
                 //   Debug.WriteLine("world SPOT CHECKED");
             }
             else
             {
                 //   Debug.WriteLine("world SPOT UN-CHECKED");
             }
-        } // checkBoxWorld_CheckedChanged
+        }
+       
+
 
         private void statusBox_Click(object sender, EventArgs e)
         {
@@ -3447,7 +3834,8 @@ namespace PowerSDR
         } // statusBox_Click
 
 
-       
+        public int LineLength = 105; // was 99
+
         private void textBox1_MouseUp(object sender, MouseEventArgs e)
         {
             textBox1.ShortcutsEnabled = false;
@@ -3460,7 +3848,7 @@ namespace PowerSDR
 
                 int ii = textBox1.SelectionStart;
 
-                byte iii = (byte)(ii / 99); // get line  /82  or /86 if AGE turned on or 91 if mode is also on /99 if country added
+                byte iii = (byte)(ii / LineLength); // get line  /82  or /86 if AGE turned on or 91 if mode is also on /99 if country added but now /105 with DX_Beam heading
 
                 if (DX_Index > iii)
                 {
@@ -3562,7 +3950,7 @@ namespace PowerSDR
                 {
                     int ii = textBox1.GetCharIndexFromPosition(e.Location);
 
-                    byte iii = (byte)(ii / 99);  // get line  /82  or /86 if AGE turned on or 91 if mode is also on /99 if country added
+                    byte iii = (byte)(ii / LineLength);  // get line  /82  or /86 if AGE turned on or 91 if mode is also on /99 if country added
                     
                     if (DX_Index > iii)
                     {
@@ -4560,8 +4948,10 @@ namespace PowerSDR
 
                                         if (chkMapCountry.Checked == true) // spot country on map
                                         {
-                                             g.DrawString(DX_country[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]]); // use Pandapdater holder[] data
-                                     
+                                            if (chkBoxBeam.Checked == true) g.DrawString(DX_country[Display.holder[ii]] + "(" + DX_Beam[Display.holder[ii]] + "°)", font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]]); // use Pandapdater holder[] data
+                                            else  g.DrawString(DX_country[Display.holder[ii]] , font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]]); // use Pandapdater holder[] data
+
+
                                         } // chkMapCountry true = draw country name on map
 
                                         else if (chkMapCall.Checked == true)  // else show call signs on map
@@ -4589,8 +4979,10 @@ namespace PowerSDR
                                             kk++; // increment for next country
 
                                             Flag11 = 0; // reset flag
-                                            g.DrawString(DX_Station[Display.holder[ii]], font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]] + yy[rr]); // Station  name
-                                 
+
+                                            if (chkBoxBeam.Checked == true)  g.DrawString(DX_Station[Display.holder[ii]] + "(" + DX_Beam[Display.holder[ii]] + "°)", font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]] + yy[rr]); // Station  name
+                                            else  g.DrawString(DX_Station[Display.holder[ii]] , font2, grid_text_brush, DX_X[Display.holder[ii]], DX_Y[Display.holder[ii]] + yy[rr]); // Station  name
+
                                         } // chkMapCall true = draw all sign on map
 
 
@@ -4612,7 +5004,8 @@ namespace PowerSDR
 
                                         if (chkMapCountry.Checked == true) // spot country on map
                                         {
-                                            g.DrawString(DX_country[spots[ii]], font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]]); // use Pandapdater holder[] data
+                                            if (chkBoxBeam.Checked == true) g.DrawString(DX_country[spots[ii]] + "(" + DX_Beam[spots[ii]] + "°)", font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]]); // use Pandapdater holder[] data
+                                           else  g.DrawString(DX_country[spots[ii]] , font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]]); // use Pandapdater holder[] data
 
                                         } // chkMapCountry true = draw country name on map
 
@@ -4641,8 +5034,9 @@ namespace PowerSDR
                                             kk++; // increment for next country
 
                                             Flag11 = 0; // reset flag
-                                          
-                                            g.DrawString(DX_Station[spots[ii]], font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]] + yy[rr]); // Station  name
+
+                                            if (chkBoxBeam.Checked == true) g.DrawString(DX_Station[spots[ii]] + "(" + DX_Beam[spots[ii]] + "°)", font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]] + yy[rr]); // Station  name
+                                           else  g.DrawString(DX_Station[spots[ii]] , font2, grid_text_brush, DX_X[spots[ii]], DX_Y[spots[ii]] + yy[rr]); // Station  name
 
 
                                         } // chkMapCall true = draw all sign on map
@@ -4664,9 +5058,10 @@ namespace PowerSDR
 
                                         if (chkMapCountry.Checked == true) // spot country on map
                                         {
-                                            
-                                                g.DrawString(DX_country[ii], font2, grid_text_brush, DX_X[ii], DX_Y[ii]); // country name
-                                           
+
+                                            if (chkBoxBeam.Checked == true) g.DrawString(DX_country[ii] + "(" + DX_Beam[ii] + "°)", font2, grid_text_brush, DX_X[ii], DX_Y[ii]); // country name
+                                            else g.DrawString(DX_country[ii] , font2, grid_text_brush, DX_X[ii], DX_Y[ii]); // country name
+
 
 
                                         } // chkMapCountry true = draw country name on map
@@ -4697,7 +5092,8 @@ namespace PowerSDR
 
                                             Flag11 = 0; // reset flag
 
-                                            g.DrawString(DX_Station[ii], font2, grid_text_brush, DX_X[ii], DX_Y[ii] + yy[rr]); // Station  name
+                                            if (chkBoxBeam.Checked == true) g.DrawString(DX_Station[ii] + "(" + DX_Beam[ii] + "°)", font2, grid_text_brush, DX_X[ii], DX_Y[ii] + yy[rr]); // Station  name
+                                            else  g.DrawString(DX_Station[ii] , font2, grid_text_brush, DX_X[ii], DX_Y[ii] + yy[rr]); // Station  name
 
 
                                         } // chkMapCall true = draw all sign on map
@@ -5113,16 +5509,8 @@ namespace PowerSDR
 
         }
 
-        public static bool SWL2 = false;
-
-        private void chkBoxSWL2_CheckedChanged(object sender, EventArgs e)
-        {
-            SP3_Active = 0;
-            SP1_Active = 0;
-
-            if (chkBoxSWL2.Checked == true) SWL2 = true;
-            else SWL2 = false;
-        }
+      
+      
 
 
         public static byte SP6_Active = 0; // 1= turn on MEMORY in panadapter
@@ -5161,10 +5549,40 @@ namespace PowerSDR
 
         } //chkboxmem_checked
 
+
+
+        //=====================================================
+        private void SWLbutton2_Click(object sender, EventArgs e)
+        {
+            console.SWLFORM = true; // open up SWL search window
+
+
+        }
+
+
+        //=====================================================
+        // Your station Lat and Long used in Beam heading for Spots
+        private void udDisplayLat_ValueChanged(object sender, EventArgs e)
+        {
+            Map_Last = 1;
+        }
+
+        private void udDisplayLong_ValueChanged(object sender, EventArgs e)
+        {
+            Map_Last = 1;
+        }
+
+        // ke9ns put beam heading on map
+        private void chkBoxBeam_CheckedChanged(object sender, EventArgs e)
+        {
+            Map_Last = 1;
+
+        }
+
         //========================================================================
         //========================================================================
 
-       public void NOAA()
+        public void NOAA()
         {
 
             RadioBlackout = " ";
@@ -5301,12 +5719,45 @@ namespace PowerSDR
 
     } // NOAA
 
-        private void SWLbutton2_Click(object sender, EventArgs e)
-        {
-            console.SWLFORM = true;
-            
 
-        }
+        //=====================================================
+        //ke9ns formulat to calculate beam heading
+        // thanks to: http://www.movable-type.co.uk/scripts/latlong.html 
+        //Formula: θ = atan2( sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ ) 
+        //  where φ1, λ1 is the start point (lat, long), φ2,λ2 (lat, long) the end point       (Δλ is the difference in longitude)
+        //For final bearing, simply take the initial bearing from the end point to the start point and reverse it (using θ = (θ+180) % 360).
+
+        double LatDest = 0; // radians.  but equals -90 to 90 deg
+        double LongDest = 0;  // radians. but equals -180 to 180 deg
+
+        double LatStart = 0; // radians.  but equals -90 to 90 deg
+        double LongStart = 0;  // radians. but equals -180 to 180 deg
+
+        public int BeamHeading(double SpotLat, double SpotLong)
+        {
+
+            LatStart = (Math.PI / 180.0) * (double)udDisplayLat.Value; // convert degree's to radians
+            LongStart = (Math.PI / 180.0) * (double)udDisplayLong.Value;
+
+            LatDest = (Math.PI / 180.0) * SpotLat;  // convert degree's to rads
+            LongDest = (Math.PI / 180.0) * SpotLong;
+
+            double y = Math.Sin(LongDest - LongStart) * Math.Cos(LatDest);
+            double x = Math.Cos(LatStart) * Math.Sin(LatDest) - Math.Sin(LatStart) * Math.Cos(LatDest) * Math.Cos(LongDest - LongStart);
+
+            int Bearing = (int)(Math.Atan2(y, x) * (180.0 / Math.PI));
+         //   Debug.WriteLine("Init Bearing=" + Bearing);
+
+            int FBearing = (int)(((Math.Atan2(y, x) * (180.0 / Math.PI)) + 360) % 360.0 );
+
+         //   Debug.WriteLine("Final Bearing=" + FBearing);
+
+            return FBearing;
+
+
+        } // Beamheading
+
+      
     } // Spotcontrol
 
 

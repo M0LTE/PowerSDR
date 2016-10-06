@@ -112,7 +112,7 @@ namespace PowerSDR
             this.textBox3.Location = new System.Drawing.Point(12, 12);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(233, 79);
+            this.textBox3.Size = new System.Drawing.Size(228, 79);
             this.textBox3.TabIndex = 9;
             this.textBox3.TabStop = false;
             this.textBox3.Text = "Left Click on line to change frequency.\r\nRight Click on line to LOCK/UNLOCK.\r\nCTR" +
@@ -131,7 +131,7 @@ namespace PowerSDR
             this.textBox1.MaxLength = 1000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(233, 177);
+            this.textBox1.Size = new System.Drawing.Size(228, 177);
             this.textBox1.TabIndex = 60;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -162,12 +162,13 @@ namespace PowerSDR
             // StackControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(252, 313);
+            this.ClientSize = new System.Drawing.Size(255, 313);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.textBox3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(200, 200);
             this.Name = "StackControl";
             this.Text = "Band Stack";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StackControl_FormClosing);
@@ -278,21 +279,7 @@ namespace PowerSDR
 
                     }
 
-                    /*
-                     * 
-                    if (filter.Length == 3) // if extra character, then lock this bandstack memory
-                    {
-                        bigmessage3 = " Lock ";
-                        console.filter2[ii] = "L";
-                    }
-                    else
-                    {
-                        bigmessage3 = " ---- ";
-                        console.filter2[ii] = "";
-                    }
-
-
-*/
+                  
                     freq1[ii] = freq;
 
                     bigmessage1 = (ii + 1).ToString() + " : " + freq.ToString("N" + 6) +" :";
@@ -313,23 +300,26 @@ namespace PowerSDR
                                 Debug.WriteLine("found memory" + SpotForm.dataGridView2[0, aa]);
                                 bigmessage2 = " mem :";
 
-                                break;
+                                break; // end the aa loop
                             }
 
 
                         } // for loop through MEMORIES
 
-                    }
+                    } // if (SpotForm != null)
 
                     //----------------------------------------------------------------
 
                     bigmessage1 = bigmessage1 + bigmessage2 + bigmessage3;
                      
-                    bigmessage1 = bigmessage1.PadRight(28); // 16 char long
-                    bigmessage += bigmessage1 + ":\r\n"; // + 3 more
+                    bigmessage1 = bigmessage1.PadRight(28); // was 28 char long
+
+                    bigmessage += bigmessage1 + ":\r\n"; // + 3 more was 31 now 33
+
+                    Debug.WriteLine("LENGTH=====" + bigmessage.Length);
 
 
-                }
+                } // if bandstack available for band
                 else
                 {
                     //  Debug.WriteLine("no bandstack for band "+band_list[iii]);
@@ -701,20 +691,7 @@ namespace PowerSDR
 
                     }
 
-              /*
-                    if (filter1[xxx].Length == 3 )
-                    {
-                        filter1[xxx] = filter1[xxx].Substring(0,2);
-                       // Debug.WriteLine("TOGGLE TO OPEN "+ xxx);
-                    }
-                    else
-                    {
-                        filter1[xxx] = filter1[xxx] + "L";
-
-                       // Debug.WriteLine("TOGGLE TO LOCK "+xxx);
-
-                    }
-*/
+            
                    
 
                     DB.SaveBandStack(console.last_band, xxx, mode1[xxx], filter1[xxx], freq1[xxx] );

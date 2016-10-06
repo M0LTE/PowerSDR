@@ -3813,7 +3813,11 @@ namespace PowerSDR
                 console.MemoryList.List.Add(new MemoryRecord("", console.VFOAFreq, "", console.RX1DSPMode, true, console.TuneStepList[console.TuneStepIndex].Name,
                 console.CurrentFMTXMode, console.FMTXOffsetMHz, console.dsp.GetDSPTX(0).CTCSSFlag, console.dsp.GetDSPTX(0).CTCSSFreqHz, console.PWR,
                 (int)console.dsp.GetDSPTX(0).TXFMDeviation, console.VFOSplit, console.TXFreq, console.RX1Filter, console.RX1FilterLow,
-                console.RX1FilterHigh, newCh + ":", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF));
+                console.RX1FilterHigh, newCh + ":", console.dsp.GetDSPRX(0, 0).RXAGCMode, console.RF,
+
+                 DateTime.Now, false, 0, false, false, false, 0 // ke9ns add for freq scheduler
+
+                ));
 
                 parser.nAns = oldAns;
                 return "";

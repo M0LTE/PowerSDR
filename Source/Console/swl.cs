@@ -56,10 +56,10 @@ namespace PowerSDR
         private System.Windows.Forms.MainMenu mainMenu1;
         private TextBox textBox3;
         private CheckBoxTS chkAlwaysOnTop;
-        public TextBox textBox1;
         private Button button1;
         private RichTextBox richTextBox1;
         private Button button2;
+        private RichTextBox richTextBox2;
         private IContainer components;
 
      //   public DXMemList dxmemlist;
@@ -106,10 +106,10 @@ namespace PowerSDR
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SwlControl));
             this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
@@ -119,30 +119,10 @@ namespace PowerSDR
             this.textBox3.Location = new System.Drawing.Point(12, 12);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(394, 88);
+            this.textBox3.Size = new System.Drawing.Size(394, 97);
             this.textBox3.TabIndex = 9;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox1.BackColor = System.Drawing.Color.LightYellow;
-            this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.HideSelection = false;
-            this.textBox1.Location = new System.Drawing.Point(12, 144);
-            this.textBox1.MaximumSize = new System.Drawing.Size(600, 400);
-            this.textBox1.MaxLength = 100000;
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(394, 359);
-            this.textBox1.TabIndex = 60;
-            this.textBox1.TabStop = false;
-            this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
-            this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
             // 
             // button1
             // 
@@ -157,7 +137,7 @@ namespace PowerSDR
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(106, 113);
+            this.richTextBox1.Location = new System.Drawing.Point(97, 123);
             this.richTextBox1.MaxLength = 20;
             this.richTextBox1.Multiline = false;
             this.richTextBox1.Name = "richTextBox1";
@@ -169,13 +149,28 @@ namespace PowerSDR
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(299, 115);
+            this.button2.Location = new System.Drawing.Point(287, 125);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 63;
             this.button2.Text = "Search";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.richTextBox2.Cursor = System.Windows.Forms.Cursors.Default;
+            this.richTextBox2.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox2.Location = new System.Drawing.Point(12, 163);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richTextBox2.Size = new System.Drawing.Size(394, 331);
+            this.richTextBox2.TabIndex = 64;
+            this.richTextBox2.Text = "";
+            this.richTextBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.richTextBox2_MouseDown);
+            this.richTextBox2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.richTextBox2_MouseUp);
             // 
             // chkAlwaysOnTop
             // 
@@ -192,13 +187,14 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(418, 542);
+            this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.textBox3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(434, 200);
             this.Name = "SwlControl";
             this.Text = "SWL";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SwlControl_FormClosing);
@@ -273,10 +269,10 @@ namespace PowerSDR
               
                 if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
                 {
-                    if ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                    if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                     {
 
-                        Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii]);
+                     //   Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii]);
 
                         swl_index[iii++] = ii; // keep track of frequencies on at the moment
 
@@ -387,10 +383,10 @@ namespace PowerSDR
             Debug.WriteLine("SWL DONE");
 
 
-             textBox1.Text = bigmessage; // update screen
+            
+            richTextBox2.Text = bigmessage; // update screen
 
-          //  textBox1.Focus();
-          //  textBox1.Show();
+                                       
 
 
         } // bandSwlupdate
@@ -404,67 +400,8 @@ namespace PowerSDR
             this.TopMost = chkAlwaysOnTop.Checked;
         }
 
-        private void textBox1_MouseDown(object sender, MouseEventArgs e)
-        {
-            textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up
+      
 
-        }
-
-
-        int xxx = 0;
-
-        private void textBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            textBox1.ShortcutsEnabled = false;
-
-
-            if (e.Button == MouseButtons.Left)
-            {
-                try
-                {
-                    int ii = textBox1.GetCharIndexFromPosition(e.Location);
-
-                    xxx = (ii / 53); //find row 
-
-                    Debug.WriteLine("ii " + ii);
-                    Debug.WriteLine("xxx " + xxx);
-
-                    textBox1.SelectionStart = (xxx * 53);
-                    textBox1.SelectionLength = 53;
-
-                 //   console.SaveBand(); // put away last freq you were on before moving
-
-                    Debug.WriteLine("freq " + SpotControl.SWL_Freq[swl_index[xxx]]); 
-
-                    console.VFOAFreq = ((double)SpotControl.SWL_Freq[swl_index[xxx]]) / 1000000.0; // convert to MHZ
-
-                    if (SpotControl.SWL_Mode[swl_index[xxx]] == "AM") console.RX1DSPMode = DSPMode.SAM;
-                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "SAM") console.RX1DSPMode = DSPMode.SAM;
-                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "USB") console.RX1DSPMode = DSPMode.USB;
-                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "DIGU") console.RX1DSPMode = DSPMode.DIGU;
-
-
-                    textBox1.Focus();
-                    textBox1.Show();
-
-
-                }
-                catch
-                {
-                    Debug.WriteLine("Bad location");
-
-                }
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                // nothing yet
-            }
-
-
-
-            button1.Focus();
-
-        } //textBox1_MouseUp
 
         public static int RIndex1 = 0;
 
@@ -472,7 +409,7 @@ namespace PowerSDR
         {
           
             bandSwlupdate();
-
+            richTextBox2.Focus();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -492,6 +429,70 @@ namespace PowerSDR
             {
                 bandSwlupdate();
             }
+        }
+
+        private void richTextBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            richTextBox2.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up
+
+        }
+
+
+        int xxx = 0;
+
+
+        private void richTextBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            richTextBox2.ShortcutsEnabled = false;
+
+
+            if (e.Button == MouseButtons.Left)
+            {
+                try
+                {
+                    int ii = richTextBox2.GetCharIndexFromPosition(e.Location);
+
+                    xxx = (ii / 52); //find row 
+
+                    Debug.WriteLine("ii " + ii);
+                    Debug.WriteLine("xxx " + xxx);
+
+                    richTextBox2.SelectionStart = (xxx * 52);
+                    richTextBox2.SelectionLength = 52;
+
+                    //   console.SaveBand(); // put away last freq you were on before moving
+                    Debug.WriteLine("INDEX YOU CLICKED ON " + ii);
+                    Debug.WriteLine("INDEX YOU CLICKED ON2 " + xxx);
+
+                    Debug.WriteLine("freq " + SpotControl.SWL_Freq[swl_index[xxx]]);
+
+                    console.VFOAFreq = ((double)SpotControl.SWL_Freq[swl_index[xxx]]) / 1000000.0; // convert to MHZ
+
+                    if (SpotControl.SWL_Mode[swl_index[xxx]] == "AM") console.RX1DSPMode = DSPMode.SAM;
+                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "SAM") console.RX1DSPMode = DSPMode.SAM;
+                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "USB") console.RX1DSPMode = DSPMode.USB;
+                    else if (SpotControl.SWL_Mode[swl_index[xxx]] == "DIGU") console.RX1DSPMode = DSPMode.DIGU;
+
+
+                    richTextBox2.Focus();
+                    richTextBox2.Show();
+
+
+                }
+                catch
+                {
+                    Debug.WriteLine("Bad location");
+
+                }
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                // nothing yet
+            }
+
+
+
+          //  button1.Focus();
         }
     } // Swlcontrol
 

@@ -1387,7 +1387,7 @@ namespace PowerSDR
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(696, 282);
+            this.ClientSize = new System.Drawing.Size(694, 285);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.chkKeyPoll);
             this.Controls.Add(this.udWPM);
@@ -1435,6 +1435,7 @@ namespace PowerSDR
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(280, 230);
             this.Name = "CWX";
             this.Text = "   CW Memories and Keyboard ...";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.CWX_Closing);

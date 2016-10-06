@@ -316,8 +316,23 @@ namespace PowerSDR
             return val;
         }
 
+        //==========================================
+        // ke9ns add
+        public static int SetPABias(uint data1, uint data)
+        {
+             return Flex1500.WriteOp(Opcode.USB_OP_SET_PA_BIAS,(uint)data1,(uint)data);
+     
+        }
+
+      
+
+
+
+
+      
         public static int GetTRXRev(out uint rev)
         {
+
             int val = Flex1500.ReadOp(Opcode.USB_OP_GET_TRX_REV, 0, 0, out rev);
             rev = SwapBytes(rev);
             return val;

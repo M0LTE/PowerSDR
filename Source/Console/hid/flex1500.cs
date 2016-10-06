@@ -61,6 +61,7 @@ namespace PowerSDR
             {
                 string sn = "";
                 Flex1500USB.radioArray[key].GetSerialNumber(out sn);
+
                 if (sn == PROD_TEST_SN)
                 {
                     if (prod_test == IntPtr.Zero)
@@ -298,6 +299,8 @@ namespace PowerSDR
             return s;
         }
 
+
+        //==============================================================================
         public static int WriteOp(USBHID.Opcode opcode, uint param1, uint param2)
         {
             if (r == IntPtr.Zero) return -1;
@@ -313,6 +316,7 @@ namespace PowerSDR
             }
             return Flex1500USB.radioArray[r].ReadOp((uint)opcode, param1, param2, out result);
         }
+        //==============================================================================
 
         public static int WriteEEPROM(ushort offset, byte[] data)
         {

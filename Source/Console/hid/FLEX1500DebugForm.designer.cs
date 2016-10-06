@@ -70,6 +70,7 @@ namespace PowerSDR
             this.chkLED = new System.Windows.Forms.CheckBox();
             this.grpLowLevel = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnEEReadFloat = new System.Windows.Forms.Button();
             this.btnEEWrite = new System.Windows.Forms.Button();
             this.txtOffset = new System.Windows.Forms.TextBox();
             this.lblEEResult = new System.Windows.Forms.Label();
@@ -101,7 +102,6 @@ namespace PowerSDR
             this.lblGPIOByte = new System.Windows.Forms.Label();
             this.txtTune = new System.Windows.Forms.TextBox();
             this.btnTune = new System.Windows.Forms.Button();
-            this.btnEEReadFloat = new System.Windows.Forms.Button();
             this.grpLowLevel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.grpI2c.SuspendLayout();
@@ -246,6 +246,16 @@ namespace PowerSDR
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "EEPROM";
+            // 
+            // btnEEReadFloat
+            // 
+            this.btnEEReadFloat.Location = new System.Drawing.Point(159, 75);
+            this.btnEEReadFloat.Name = "btnEEReadFloat";
+            this.btnEEReadFloat.Size = new System.Drawing.Size(75, 23);
+            this.btnEEReadFloat.TabIndex = 10;
+            this.btnEEReadFloat.Text = "Read Float";
+            this.btnEEReadFloat.UseVisualStyleBackColor = true;
+            this.btnEEReadFloat.Click += new System.EventHandler(this.btnEEReadFloat_Click);
             // 
             // btnEEWrite
             // 
@@ -534,21 +544,11 @@ namespace PowerSDR
             this.btnTune.UseVisualStyleBackColor = true;
             this.btnTune.Click += new System.EventHandler(this.btnTune_Click);
             // 
-            // btnEEReadFloat
-            // 
-            this.btnEEReadFloat.Location = new System.Drawing.Point(159, 75);
-            this.btnEEReadFloat.Name = "btnEEReadFloat";
-            this.btnEEReadFloat.Size = new System.Drawing.Size(75, 23);
-            this.btnEEReadFloat.TabIndex = 10;
-            this.btnEEReadFloat.Text = "Read Float";
-            this.btnEEReadFloat.UseVisualStyleBackColor = true;
-            this.btnEEReadFloat.Click += new System.EventHandler(this.btnEEReadFloat_Click);
-            // 
             // FLEX1500DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(573, 300);
+            this.ClientSize = new System.Drawing.Size(573, 304);
             this.Controls.Add(this.btnTune);
             this.Controls.Add(this.txtTune);
             this.Controls.Add(this.grpGPIO);
@@ -619,7 +619,6 @@ namespace PowerSDR
         private System.Windows.Forms.Button btnTune;
         private System.Windows.Forms.Button btnI2CRead;
         private System.Windows.Forms.Button btnEEReadFloat;
-
     }
 }
 
