@@ -62963,255 +62963,12 @@ namespace PowerSDR
         void SetSENDLabel()
         {
 
-         
+
 
         }
 
-      
-       
-        public static int m_port = 0;   // ke9ns add port# 
-        public static bool m_terminated = true;
 
-
-
-        /*
-              // netsh http add urlacl url=http://*:8081/ user=\Everyone
-
-               public static HttpListener m_listener;
-               public static Bitmap bitmap;
-               public static HttpListenerContext context;
-
-                //==================================================================================================
-                // ke9ns add  HTTP Server (with help from Nickolas  Николай   RN3KK)
-                //==================================================================================================
-                public void HttpServer2()
-                {
-                     m_listener = new HttpListener();
-
-                    //    m_listener.Prefixes.Add("http://localhost:8081/");
-                    //     m_listener.Prefixes.Add("http://127.0.0.1:8081/");
-
-
-                    Debug.WriteLine("HTTPLISTENER==================");
-
-
-                    try
-                    {
-                        Debug.WriteLine("PORT======" + setupForm.HTTP_PORT);
-                        Debug.WriteLine("USER======" + setupForm.HTTP_USER);
-                        Debug.WriteLine("PASS======" + setupForm.HTTP_PASS);
-                    }
-                    catch(Exception e)
-                    {
-
-                        Debug.WriteLine("exception" + e);
-                        return;
-
-                    }
-
-                    try
-                    {
-                        m_listener.Prefixes.Add("http://*:" + setupForm.HTTP_PORT + "/"); // ke9ns setup port# to use for server
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("PORT exception" + e);
-                        return;
-                    }
-
-
-                    m_terminated = false; // start the thread up
-
-                    m_listener.AuthenticationSchemes = AuthenticationSchemes.Basic; // ke9ns add user and password
-
-                    //  thread = new Thread(loop);
-                    //   thread.Start();
-                    Debug.WriteLine("START THREAD LISTENER");
-
-                    Thread t = new Thread(new ThreadStart(HTTPSERVER3));
-                    t.Name = "HTTP SERVER THREAD";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.Normal;
-                    t.Start();
-
-                } // HttpServer(int port)
-
-                //==================================================================
-                // ke9ns add Thread start
-                public void HTTPSERVER3()
-                {
-                    Debug.WriteLine("START LISTENER");
-
-                    try
-                    {
-                        m_listener.Start();
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("Cannot start thread "+ e);
-
-                        terminate(); 
-                    }
-
-                    Debug.WriteLine("LISTENER STARTED");
-
-                    while (!m_terminated)
-                    {
-
-                        Thread.Sleep(50);
-
-                        try
-                        {
-                            context = m_listener.GetContext(); //Block until a connection comes in
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine("getcontext fault " + e);
-
-                            break;
-                        }
-
-                        context.Response.StatusCode = 200; // this is what we will send back to person who opened the connection
-                        context.Response.SendChunked = true;
-
-                        HttpListenerRequest request = context.Request;
-                        Debug.WriteLine("HttpListenerRequest=" + request);
-
-
-                        HttpListenerBasicIdentity Ident = (HttpListenerBasicIdentity)context.User.Identity;
-
-                        if((Ident.Name != setupForm.HTTP_USER) || (Ident.Password != setupForm.HTTP_PASS))
-                        {
-                            Debug.WriteLine("User and Pass dont match, fail");
-                            //  m_terminated = true;
-                            continue;
-                        }
-
-                        // Obtain a response object.
-                        HttpListenerResponse response = context.Response;
-                        Debug.WriteLine(" HttpListenerResponse=" + response);
-
-
-                        //-----------------------------------------------------
-                        // ke9ns generage a JPG of the display aread (picDisplay)
-
-
-
-       
-                        bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-                        picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-                        bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
-
-
-                        if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
-                        {
-
-                            Debug.WriteLine("SAVED JPG FILE");
-
-                            FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");     
-                            FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
-                            BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
-
-                            byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
-
-                            picDisplayReader.Close();
-                            picDisplayStream.Close();
-
-                            response.ContentType = "image/jpg"; // let listener know what type of data it is
-                            response.ContentLength64 = picDisplayOutput.Length;
-
-                            Stream OutputStream = response.OutputStream;
-
-                            OutputStream.Write(picDisplayOutput, 0, picDisplayOutput.Length); // transmit picDisplay image
-
-                            OutputStream.Close(); // dont transmitting image of picDisplay
-
-                        } // if picDisplay.JPG image created do above
-
-                    } // while (!m_terminated) 
-
-                    Debug.WriteLine("ENDING THREAD");
-
-                    m_terminated = true;
-
-                    setupForm.chkBoxHTTP.Checked = false;
-
-                    try
-                    {
-                        m_listener.Close();
-
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("1close THREAD " + e);
-                    }
-
-                   // if (m_listener != null && m_listener.IsListening)
-                 //   {
-                   //     Debug.WriteLine("STOPPING THREAD");
-
-                   //     m_listener.Stop();
-                  //  }
-
-                } // HTTPSERVER thread
-
-
-
-
-                //-------------------------------------------------------
-                // ke9ns add
-                public static void terminate()
-                {
-
-                    m_terminated = true;
-
-                    try
-                    {
-                        m_listener.Close(); // try and close the getcontext thread
-
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("close THREAD " + e);
-                    }
-                }
-
-        
-                //=======================================================================================
-                public byte[] getImage()
-                {
-                    Debug.WriteLine("GET IMAGE=7=================");
-
-                    bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-                    picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-                    bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
-
-
-                 //   if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
-                 //   {
-
-                        Debug.WriteLine("SAVED JPG FILE===================");
-
-                        FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");
-                        FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
-                        BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
-
-                    byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
-
-                        picDisplayReader.Close();
-                        picDisplayStream.Close();
-
-
-                  //  } // if picDisplay.JPG image created do above
-                 //   else picDisplayOutput = null;
-
-                    Debug.WriteLine("GET IMAGE DONE======================");
-
-                    return picDisplayOutput;
-
-                } // getImage()
-
-                */
+       public static bool m_terminated = true; // used by setup.cs and http.cs
 
         //=========================================================================================
         //=========================================================================================
@@ -63238,6 +62995,17 @@ namespace PowerSDR
             
         } // HTTP_PORT
 
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add allows Http server to talk with Setup through Console
+        public int HTTP_REFRESH
+        {
+            get
+            {
+                return (int)setupForm.udHttpRefresh.Value;
+            }
+
+        } // HTTP_REFRESH
         //=========================================================================================
         //=========================================================================================
         // ke9ns add allows Http server to talk with Setup through Console

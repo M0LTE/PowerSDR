@@ -4294,7 +4294,7 @@ namespace PowerSDR
 
                // DayOfWeek UTCDD = UTCD.DayOfWeek; // day is spelled out: Monday, Tuesday
 
-                 byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek-1));   // this is the day. Mon = 1
+                 byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek));   // this is the day. Sun = 0, Mon = 1
 
 
                 SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
@@ -4334,10 +4334,10 @@ namespace PowerSDR
                                 if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
                                 {
 
-                              //  if ((SpotControl.SWL_Freq[ii] == 6050000))
-                              //  {
-                              //      Debug.WriteLine("STATION: " + ii + " , " + SpotControl.SWL_Station[ii] + " , " + SpotControl.SWL_Day1[ii] + " , " + SpotControl.UTCDD);
-                              //  }
+                                if ((SpotControl.SWL_Freq[ii] == 6050000))
+                                {
+                                    Debug.WriteLine("STATION: " + ii + " , " + SpotControl.SWL_Station[ii] + " , " + SpotControl.SWL_Day1[ii] + " , " + SpotControl.UTCDD + " , " + SpotControl.SWL_TimeN[ii] + " , " + SpotControl.SWL_TimeF[ii]);
+                                }
 
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               

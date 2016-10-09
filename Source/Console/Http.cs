@@ -71,7 +71,8 @@ namespace PowerSDR
 
         }
 
-     
+        //   public static bool m_terminated = true; // this is located at the bottom of console.cs
+
 
         //=========================================================================================
         //=========================================================================================
@@ -134,10 +135,14 @@ namespace PowerSDR
     
                 try
                 {
-                    TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
-                  
-                      if ( TcpType != 0)
-                      {
+                      TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
+
+                 //   TcpClient client = m_listener.AcceptTcpClient();
+                 //   string ip = ((IPEndPoint)m_listener.Server.LocalEndPoint).Address.ToString();
+                //    TcpClient tempClient = getHandler(client);
+
+                    if ( TcpType != 0)
+                    {
                         if (TcpType == 1)
                         {
                             ImageRequest(tempClient);
@@ -150,14 +155,25 @@ namespace PowerSDR
                         {
                             UnknownRequest(tempClient);
                         }
-                     }
+                    }
 
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine("get TCP RECEIVE fault " + e);
 
-                    break;
+                    try
+                    {
+                        m_listener.Stop(); // try and close the getcontext thread
+                        m_listener.Start();
+                    }
+                    catch (Exception e1)
+                    {
+                        Debug.WriteLine("close THREAD " + e1);
+                        break;
+                    }
+
+                   
                 }
 
                 Thread.Sleep(50);
@@ -201,13 +217,13 @@ namespace PowerSDR
         {
             switch (getType(tcpClient))
             {
-                case RequestType.GET_IMAGE:
+                case RequestType.GET_IMAGE:   //  ImageRequest(tempClient);
                     TcpType = 1;
                     return tcpClient;
-                case RequestType.GET_HTML_INDEX_PAGE:
+                case RequestType.GET_HTML_INDEX_PAGE: //  WebPageRequest(tempClient);
                     TcpType = 2;
                     return tcpClient;
-                 case RequestType.UNKNOWN:
+                 case RequestType.UNKNOWN: //  UnknownRequest(tempClient);
                     TcpType = 3;
                     return tcpClient;
             }
@@ -258,14 +274,19 @@ namespace PowerSDR
                 SendError(tcpClient, 400);
                 return RequestType.ERROR;
             }
-            else if (RequestUri.CompareTo(IMAGE_REQUEST) == 0)
+
+            else if (RequestUri.CompareTo(IMAGE_REQUEST) == 0)  // /image
             {
                 return RequestType.GET_IMAGE;
             }
+
             else if (RequestUri.CompareTo("/") == 0)
             {
-                return RequestType.GET_HTML_INDEX_PAGE;
+              // return RequestType.GET_IMAGE;
+
+             return RequestType.GET_HTML_INDEX_PAGE;
             }
+
             return RequestType.UNKNOWN;
 
         } // private static RequestType getType(TcpClient tcpClient)
@@ -290,27 +311,34 @@ namespace PowerSDR
             if (imageArray == null)
             {
                 string CodeStr = "500 " + ((System.Net.HttpStatusCode)500).ToString();
+
                 string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";
+
                 string Str = "HTTP/1.1 " + CodeStr + "\nContent-type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
+
                 byte[] Buffer = Encoding.ASCII.GetBytes(Str);
+
                 m_tcpClient.GetStream().Write(Buffer, 0, Buffer.Length);
                 m_tcpClient.Close();
                 return;
             }
-                    
-            string responseHeaders = "HTTP/1.1 200 The file is coming right up!\r\n" +
-                                    "Server: MyOwnServer\r\n" +
+
+            //  "<meta http-equiv= \"refresh\" content= \"500\" > \r\n" +
+
+            string responseHeaders =   "HTTP/1.1 200 The file is coming right up!\r\n" +
+                                     "Server: MyOwnServer\r\n" +
                                     "Content-Length: " + imageArray.Length + "\r\n" +
                                     "Content-Type: image/jpeg\r\n" +
                                     "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
                                     "\r\n";
 
+
+          
             byte[] headerArray = Encoding.ASCII.GetBytes(responseHeaders);
 
             NetworkStream stream = m_tcpClient.GetStream();
 
             stream.Write(headerArray, 0, headerArray.Length);
-
             stream.Write(imageArray, 0, imageArray.Length);
 
             stream.Close();
@@ -328,6 +356,9 @@ namespace PowerSDR
 
         public void UnknownRequest(TcpClient m_tcpClient)
         {
+            Debug.WriteLine("Unknown_REQUEST");
+
+
             if (m_tcpClient == null) return;
 
             string CodeStr = "404 " + ((HttpStatusCode)404).ToString();
@@ -348,19 +379,55 @@ namespace PowerSDR
 
         public void WebPageRequest(TcpClient m_tcpClient)
         {
+            Debug.WriteLine("Web_REQUEST");
+
+
             if (m_tcpClient == null) return;
 
-            string CodeStr = "500 " + ((HttpStatusCode)500).ToString();
-            string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";
-            string Str = "HTTP/1.1 " + CodeStr + "\nContent-type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
+            Debug.WriteLine("Web_REQUEST2");
+
+
+            string timeRefresh_in_ms = getTimeRefresh();
+
+            string CodeStr = "200 " + ((HttpStatusCode)200).ToString();
+
+            string Html = "<!DOCTYPE html>\n" +
+                          "<html>\n" +
+                          "<head>\n" +
+                          "<title></title>\n" +
+                          "</head>\n" +
+                          "<body>\n" +
+                          "<div><img id = 'img' src = \"\"></div>\n" +
+                          "<script type = \"text/javascript\" src = \"https://code.jquery.com/jquery-3.1.1.min.js\"></script>\n" +
+                          "<script type = \"text/javascript\">\n" +
+                          "var link = \"http://\"+window.location.host;\n" +
+                          "console.log(link);\n" +
+                          "setInterval(function(){\n" +
+                          "var now = new Date();\n" +
+                          "$('#img').prop(\"src\",link+\"/image\" + '?_=' + now.getTime());\n" +
+                          "}, " + timeRefresh_in_ms + ");\n" +
+                          "</script>\n" +
+                          "</body>\n" +
+                          "</html>\n";
+
+
+            string Str = "HTTP/1.1 " + CodeStr + "\nContent-Type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
+
+            Debug.WriteLine("STRING TO SEND: " + Str);
+
+
             byte[] Buffer = Encoding.ASCII.GetBytes(Str);
-
             m_tcpClient.GetStream().Write(Buffer, 0, Buffer.Length);
-
             m_tcpClient.Close();
 
-        } //WebPageRequest
+        } // webrequest
 
+        private string getTimeRefresh()
+        {
+            //  return "200"; // ************** Darrin,need add property "Refreh time in ms" and get data from his
+            return console.HTTP_REFRESH.ToString();
+
+        }
 
         //=========================================================================================
         //=========================================================================================

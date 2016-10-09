@@ -254,3 +254,4 @@ C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Cons
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Release\PowerSDR_T10.exe.manifest
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Release\PowerSDR_T10.application
 C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Release\PowerSDR_T10.exe
+C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\Console\obj\Release\PowerSDR.csprojResolveAssemblyReference.cache

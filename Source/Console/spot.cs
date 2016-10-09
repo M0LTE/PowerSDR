@@ -846,7 +846,7 @@ namespace PowerSDR
             this.PerformLayout();
 
         } //initializecomponents
-
+        
 
 
 
@@ -1050,6 +1050,9 @@ namespace PowerSDR
         public static int[] SWL2_TimeF = new int[20000];                // UTC time of operation OFF air
         public static string[] SWL2_Mode = new string[20000];          // operating mode
         public static string[] SWL2_Day = new string[20000];          // days of operation
+        public static byte[] SWL2_Day1 = new byte[20000];          // days of operation mo,tu,we,th,fr,sa,su = 1,2,4,8,16,32,64
+
+
         public static string[] SWL2_Loc = new string[20000];          // location of transmitter
         public static string[] SWL2_Target = new string[20000];          // target area of station
         public static int SWL2_Index1;  // local index that reset back to 0 after reaching max
@@ -1089,7 +1092,7 @@ namespace PowerSDR
 
         public static DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
-        public static byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek-1));   // this is the day. Mon = 1
+        public static byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek));   // this is the day. SUn = 0, Mon = 1
 
 
 
@@ -1204,6 +1207,9 @@ namespace PowerSDR
                                 SWL2_TimeN[SWL2_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
                                 SWL2_TimeF[SWL2_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
                                 SWL2_Day[SWL2_Index1] = values[2]; // get days ON
+
+                                SWL2_Day1[SWL2_Index1] = 127; // digital signals are on 7 days
+
                                 SWL2_Loc[SWL2_Index1] = values[3]; // get location of station
                                 SWL2_Mode[SWL2_Index1] = "USB"; // get opeating mode
                                 SWL2_Station[SWL2_Index1] = values[4]; // get station name
@@ -1362,40 +1368,43 @@ namespace PowerSDR
                                     SWL_TimeN[SWL_Index1] = Convert.ToInt16(values[1].Substring(0, 4)); // get time ON (24hr 4 digit UTC)
                                     SWL_TimeF[SWL_Index1] = Convert.ToInt16(values[1].Substring(5, 4)); // get time OFF
 
-                               
+
+                                  SWL_Day1[SWL_Index1] = 0;
+                                //---------------------------------------------------------------------------------------
+                                // ke9ns look at daysofweek on the air sun=0,mon=1,tue=2, etc
                                 if (values[2].Contains("-"))
                                 {
                                     byte temp3 = 0;
                                     byte temp4 = 0;
-                                    SWL_Day1[SWL_Index1] = 0;
+                                   
 
                                     string temp1 = values[2].Substring(0, 2); // start day
                                     string temp2 = values[2].Substring(3, 2); // end day
-   
 
-                                    if (temp1 == "Tu") temp3 = 1;             // get your start day position
-                                    else if (temp1 == "We") temp3 = 2;
-                                    else if (temp1 == "Th") temp3 = 3;
-                                    else if (temp1 == "Fr") temp3 = 4;
-                                    else if (temp1 == "Sa") temp3 = 5;
-                                    else if (temp1 == "Su") temp3 = 6;
-                                    else temp3 = 0;
 
-                                    if (temp2 == "Tu") temp4 = 1;           // get your end day position
-                                    else if (temp2 == "We") temp4 = 2;
-                                    else if (temp2 == "Th") temp4 = 3;
-                                    else if (temp2 == "Fa") temp4 = 4;
-                                    else if (temp2 == "Sa") temp4 = 5;
-                                    else if (temp2 == "Su") temp4 = 6;
-                                    else temp4 = 0;
-                               
+                                    if (temp1 == "Tu") temp3 = 2;             // get your start day position
+                                    else if (temp1 == "We") temp3 = 3;
+                                    else if (temp1 == "Th") temp3 = 4;
+                                    else if (temp1 == "Fr") temp3 = 5;
+                                    else if (temp1 == "Sa") temp3 = 6;
+                                    else if (temp1 == "Su") temp3 = 0;
+                                    else temp3 = 1; // mon
+
+                                    if (temp2 == "Tu") temp4 = 2;           // get your end day position
+                                    else if (temp2 == "We") temp4 = 3;
+                                    else if (temp2 == "Th") temp4 = 4;
+                                    else if (temp2 == "Fa") temp4 = 5;
+                                    else if (temp2 == "Sa") temp4 = 6;
+                                    else if (temp2 == "Su") temp4 = 0;
+                                    else temp4 = 1; // mon
+
                                     if (temp3 < temp4) // example mo thru fi
                                     {
-                                        for (int x = temp3; x <= temp4;x++)
+                                        for (int x = temp3; x <= temp4; x++)
                                         {
                                             SWL_Day1[SWL_Index1] |= (byte)(1 << x);
                                         }
-                                    } // example mo thru fi
+                                    } // example su thru sa
                                     else // example fr thru tu
                                     {
                                         for (int x = temp3; x < 7; x++)
@@ -1412,27 +1421,28 @@ namespace PowerSDR
 
 
                                 } // contains -
-
-                                else if (values[2] == "Mo") SWL_Day1[SWL_Index1] |= 1;
-                                else if (values[2] == "Tu") SWL_Day1[SWL_Index1] |= 2;
-                                else if (values[2] == "We") SWL_Day1[SWL_Index1] |= 4;
-                                else if (values[2] == "Th") SWL_Day1[SWL_Index1] |= 8;
-                                else if (values[2] == "Fr") SWL_Day1[SWL_Index1] |= 16;
-                                else if (values[2] == "Sa") SWL_Day1[SWL_Index1] |= 32;
-                                else if (values[2] == "Su") SWL_Day1[SWL_Index1] |= 64;
-
-                               else SWL_Day1[SWL_Index1] = 127;
-
-                               SWL_Day[SWL_Index1] = values[2]; // get days ON
-
-
-                             //   if (SWL_Freq[SWL_Index1] == 6050000)
-                              //  {
-                              //      Debug.WriteLine("Station name "+SWL_Station[SWL_Index1] +" Days " + SWL_Day[SWL_Index1] + " # " + SWL_Day1[SWL_Index1]);
-                             //   }
+                                else
+                                { 
+                                   if (values[2].Contains("Mo")) SWL_Day1[SWL_Index1] |= 2;
+                                   if (values[2].Contains("Tu")) SWL_Day1[SWL_Index1] |= 4;
+                                   if (values[2].Contains("We")) SWL_Day1[SWL_Index1] |= 8;
+                                   if (values[2].Contains("Th")) SWL_Day1[SWL_Index1] |= 16;
+                                   if (values[2].Contains("Fr")) SWL_Day1[SWL_Index1] |= 32;
+                                   if (values[2].Contains("Sa")) SWL_Day1[SWL_Index1] |= 64;
+                                   if (values[2].Contains("Su")) SWL_Day1[SWL_Index1] |= 1; // 64
+                                  
+                                } // this checks for Mo,Tu,Sa  etc. etc.
 
 
-                                    SWL_Loc[SWL_Index1] = values[3]; // get location of station
+
+                                if (SWL_Day1[SWL_Index1] == 0) SWL_Day1[SWL_Index1] = 127; // if no days then all 7 days
+                                SWL_Day[SWL_Index1] = values[2]; // get days ON
+
+                                //--------------------------------------------------------------------
+                                if (SWL_Freq[SWL_Index1] == 6050000) Debug.WriteLine("station found" + SWL_Freq[SWL_Index1] + " , "+ SWL_Day1[SWL_Index1]);
+
+
+                                SWL_Loc[SWL_Index1] = values[3]; // get location of station
                                     SWL_Mode[SWL_Index1] = "AM"; // get opeating mode
                                     SWL_Station[SWL_Index1] = values[4]; // get station name
                                     SWL_Lang[SWL_Index1] = values[5]; // get language
@@ -1441,24 +1451,17 @@ namespace PowerSDR
                                 // check for DUPS
                                     if (SWL_Index > 0)
                                     {
-
+                                       //-------------------------------------------------------------------------------------------------
                                        // ke9ns if the Station Name and Station Freq and Station Days are the same, then check time (below)
                                         if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) && (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))            // if same NAME and FREQ then check times
                                         {
 
-                                            if ((SWL_TimeN[SWL_Index1 - 1] < SWL_TimeN[SWL_Index1])) // if the start time matches do below
+                                            if ((SWL_TimeN[SWL_Index1 - 1] < SWL_TimeN[SWL_Index1]))    // first spot has earlier start time than this spot, then do below
                                             {
-                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
+                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the first spot stays on the air past the start of the new spot, then do below
                                                 {
 
-                                                  //  if (SWL_Freq[SWL_Index1] == 6075000)
-                                                  //  {
-                                                    //    Debug.WriteLine("Station DUP longer end time: " + SWL_Station[SWL_Index1 - 1]);
-                                                   //     Debug.WriteLine("Old start time, new end time: " + SWL_TimeN[SWL_Index1 - 1] + " , " + SWL_TimeN[SWL_Index1]);
-                                                   //     Debug.WriteLine("Old end time, new end time: " + SWL_TimeF[SWL_Index1 - 1] + " , " + SWL_TimeF[SWL_Index1]);
-                                                 //   }
-
-                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1])
+                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the first spot leaves the air before the new spot leaves the air then use the new spots finish time
                                                     {
                                                        SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
                                                     }
@@ -1469,18 +1472,32 @@ namespace PowerSDR
                                             }
 
 
+                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) && (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))            // if same NAME and FREQ then check times
+                                        {
+
+                                            if ((SWL_TimeN[SWL_Index1 - 1] > SWL_TimeN[SWL_Index1]))    // first spot has later start time than this new spot
+                                            {
+                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the first spot stays on the air past the start of the new spot, then do below
+                                                {
+                                                    SWL_TimeN[SWL_Index1 - 1] = SWL_TimeN[SWL_Index1]; // use earlier time from new spot
+
+                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1])
+                                                    {
+                                                        SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+                                                    }
+
+                                                    goto BYPASS; // duplicate
+                                                }
+
+                                            }
+                                        }
+
                                             if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1])) // if the start time matches do below
                                             {
 
                                                 if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
                                                 {
-
-                                               // if (SWL_Freq[SWL_Index1] == 6075000)
-                                               // {
-                                                //    Debug.WriteLine("Station DUP longer end time: " + SWL_Station[SWL_Index1 - 1]);
-                                                //    Debug.WriteLine("Old start time, new end time: " + SWL_TimeN[SWL_Index1 - 1] + " , " + SWL_TimeN[SWL_Index1]);
-                                               //     Debug.WriteLine("Old end time, new end time: " + SWL_TimeF[SWL_Index1 - 1] + " , " + SWL_TimeF[SWL_Index1]);
-                                              //  }
+                                
                                                     SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
 
                                                     goto BYPASS; // duplicate
@@ -1491,12 +1508,7 @@ namespace PowerSDR
                                        
                                             if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1]))         // if ON time adn OFF times match then DUP
                                             {
-
-                                          //  if (SWL_Freq[SWL_Index1] == 6075000)
-                                          //  {
-                                           //     Debug.WriteLine("Station DUP same start and end time: " + SWL_Station[SWL_Index1 - 1]);
-                                          //  }
-
+                                      
                                                 goto BYPASS; // duplicate
                                             }
 
@@ -1530,6 +1542,7 @@ namespace PowerSDR
                                                 SWL_TimeN[SWL_Index1 + 1] = SWL_TimeN[SWL_Index1];
                                                 SWL_TimeF[SWL_Index1 + 1] = SWL_TimeF[SWL_Index1];
                                                 SWL_Day[SWL_Index1 + 1] = SWL_Day[SWL_Index1];
+                                                SWL_Day1[SWL_Index1 + 1] = SWL_Day1[SWL_Index1];
                                                 SWL_Loc[SWL_Index1 + 1] = SWL_Loc[SWL_Index1];
                                                 SWL_Mode[SWL_Index1 + 1] = SWL_Mode[SWL_Index1];
                                                 SWL_Station[SWL_Index1 + 1] = SWL_Station[SWL_Index1];
@@ -1543,6 +1556,7 @@ namespace PowerSDR
                                                 SWL_TimeN[SWL_Index1] = SWL2_TimeN[q];
                                                 SWL_TimeF[SWL_Index1] = SWL2_TimeF[q];
                                                 SWL_Day[SWL_Index1] = SWL2_Day[q];
+                                                SWL_Day1[SWL_Index1] = SWL2_Day1[q];
                                                 SWL_Loc[SWL_Index1] = SWL2_Loc[q];
                                                 SWL_Mode[SWL_Index1] = SWL2_Mode[q];
                                                 SWL_Station[SWL_Index1] = SWL2_Station[q];

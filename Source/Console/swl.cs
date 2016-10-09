@@ -264,15 +264,23 @@ namespace PowerSDR
 
             SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
-            for (int ii = 0; ii < SpotControl.SWL_Index1; ii++) // start by checking spots that fall within the mhz range of the panadapter
+         // Debug.WriteLine("Day: " + SpotControl.UTCDD);
+          //  Debug.WriteLine("Day1: " + (byte)UTCD.DayOfWeek);
+
+
+            for (int ii = 0; ii < SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
             {
               
+                // station check 
                 if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
                 {
+                
+                    // station check days on air and time on air
                     if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                     {
 
-                     //   Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii]);
+                    //    Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
+
 
                         swl_index[iii++] = ii; // keep track of frequencies on at the moment
 
@@ -282,6 +290,14 @@ namespace PowerSDR
                         if ((SpotControl.SWL_Station[ii].IndexOf("volmet", StringComparison.OrdinalIgnoreCase) >= 0))
                         {
                             SpotControl.SWL_Mode[ii] = "USB";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("DSC", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("hfdl", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
                         }
                         else if ((SpotControl.SWL_Station[ii].IndexOf("fax", StringComparison.OrdinalIgnoreCase) >= 0))
                         {

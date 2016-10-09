@@ -1070,6 +1070,8 @@ namespace PowerSDR
         public TextBoxTS txtHttpUser;
         private LabelTS labelTS18;
         private LabelTS labelTS17;
+        private LabelTS labelTS19;
+        public NumericUpDownTS udHttpRefresh;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -2298,6 +2300,8 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.udHttpRefresh = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS19 = new System.Windows.Forms.LabelTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2583,6 +2587,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).BeginInit();
             this.grpImpulseTest.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).BeginInit();
             this.SuspendLayout();
             // 
             // tcSetup
@@ -4501,6 +4506,8 @@ namespace PowerSDR
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelTS19);
+            this.groupBox2.Controls.Add(this.udHttpRefresh);
             this.groupBox2.Controls.Add(this.txtHttpPass);
             this.groupBox2.Controls.Add(this.txtHttpUser);
             this.groupBox2.Controls.Add(this.labelTS18);
@@ -4518,7 +4525,7 @@ namespace PowerSDR
             // 
             // txtHttpPass
             // 
-            this.txtHttpPass.Location = new System.Drawing.Point(187, 32);
+            this.txtHttpPass.Location = new System.Drawing.Point(366, 35);
             this.txtHttpPass.MaxLength = 50;
             this.txtHttpPass.Name = "txtHttpPass";
             this.txtHttpPass.Size = new System.Drawing.Size(90, 20);
@@ -4530,7 +4537,7 @@ namespace PowerSDR
             // 
             // txtHttpUser
             // 
-            this.txtHttpUser.Location = new System.Drawing.Point(80, 32);
+            this.txtHttpUser.Location = new System.Drawing.Point(259, 35);
             this.txtHttpUser.MaxLength = 50;
             this.txtHttpUser.Name = "txtHttpUser";
             this.txtHttpUser.Size = new System.Drawing.Size(90, 20);
@@ -4543,7 +4550,7 @@ namespace PowerSDR
             // labelTS18
             // 
             this.labelTS18.Image = null;
-            this.labelTS18.Location = new System.Drawing.Point(204, 16);
+            this.labelTS18.Location = new System.Drawing.Point(383, 19);
             this.labelTS18.Name = "labelTS18";
             this.labelTS18.Size = new System.Drawing.Size(73, 16);
             this.labelTS18.TabIndex = 9;
@@ -4552,7 +4559,7 @@ namespace PowerSDR
             // labelTS17
             // 
             this.labelTS17.Image = null;
-            this.labelTS17.Location = new System.Drawing.Point(97, 16);
+            this.labelTS17.Location = new System.Drawing.Point(276, 19);
             this.labelTS17.Name = "labelTS17";
             this.labelTS17.Size = new System.Drawing.Size(73, 16);
             this.labelTS17.TabIndex = 8;
@@ -4561,7 +4568,7 @@ namespace PowerSDR
             // labelTS16
             // 
             this.labelTS16.Image = null;
-            this.labelTS16.Location = new System.Drawing.Point(6, 50);
+            this.labelTS16.Location = new System.Drawing.Point(83, 19);
             this.labelTS16.Name = "labelTS16";
             this.labelTS16.Size = new System.Drawing.Size(34, 16);
             this.labelTS16.TabIndex = 7;
@@ -4574,7 +4581,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udHttpPort.Location = new System.Drawing.Point(6, 69);
+            this.udHttpPort.Location = new System.Drawing.Point(83, 35);
             this.udHttpPort.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -16228,6 +16235,43 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
+            // udHttpRefresh
+            // 
+            this.udHttpRefresh.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udHttpRefresh.Location = new System.Drawing.Point(166, 36);
+            this.udHttpRefresh.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udHttpRefresh.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udHttpRefresh.Name = "udHttpRefresh";
+            this.udHttpRefresh.Size = new System.Drawing.Size(75, 20);
+            this.udHttpRefresh.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
+            this.udHttpRefresh.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
+            // labelTS19
+            // 
+            this.labelTS19.Image = null;
+            this.labelTS19.Location = new System.Drawing.Point(158, 19);
+            this.labelTS19.Name = "labelTS19";
+            this.labelTS19.Size = new System.Drawing.Size(112, 16);
+            this.labelTS19.TabIndex = 13;
+            this.labelTS19.Text = "Refresh Rate (ms):";
+            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -16539,6 +16583,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).EndInit();
             this.grpImpulseTest.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -27202,17 +27247,22 @@ namespace PowerSDR
           
         }
 
-        public int HTTP_PORT // ke9ns add
+ /*       public int HTTP_PORT // ke9ns add
         {
             get
             {
-               
-                //  return udHttpPort.Value.ToString();
-                return (int)udHttpPort.Value;
+                    return (int)udHttpPort.Value;
             }
             
         }
+        public int HTTP_REFRESH // ke9ns add
+        {
+            get
+            {
+                return (int)udHttpRefresh.Value;
+            }
 
+        }
         public string HTTP_USER // ke9ns add
         {
             get
@@ -27232,7 +27282,7 @@ namespace PowerSDR
             }
            
         }
-
+*/
     } // class setup
 
 
