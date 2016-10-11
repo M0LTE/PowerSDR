@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DttSP", "DttSP\DttSP.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PowerMate", "PowerMate\PowerMate.vcxproj", "{BBD70852-1A81-4232-B094-C87BEDE243C9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wdsp", "wdsp\wdsp.vs2013.vcxproj", "{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,24 @@ Global
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.ActiveCfg = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.Build.0 = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|x64.ActiveCfg = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|Win32.Build.0 = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Debug|x64.ActiveCfg = Debug|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|Any CPU.ActiveCfg = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|Mixed Platforms.ActiveCfg = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|Mixed Platforms.Build.0 = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|Win32.ActiveCfg = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|Win32.Build.0 = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Interleaved|x64.ActiveCfg = Interleaved|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|Win32.ActiveCfg = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|Win32.Build.0 = Release|Win32
+		{6DBDF457-8E84-4DFF-B1E4-A9177D15D89F}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

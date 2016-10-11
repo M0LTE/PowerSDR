@@ -1072,6 +1072,9 @@ namespace PowerSDR
         private LabelTS labelTS17;
         private LabelTS labelTS19;
         public NumericUpDownTS udHttpRefresh;
+        private LabelTS labelTS20;
+        private ComboBoxTS comboROTORPort;
+        private CheckBoxTS chkROTOREnable;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1151,7 +1154,8 @@ namespace PowerSDR
 			comboTXTUNMeter.SelectedIndex = 0;
 			comboMeterType.Text = "Analog";
 			if(comboCATPort.Items.Count > 0) comboCATPort.SelectedIndex = 0;
-			if(comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
+            if (comboROTORPort.Items.Count > 0) comboROTORPort.SelectedIndex = 0;  // ke9ns add
+            if (comboCATPTTPort.Items.Count > 0) comboCATPTTPort.SelectedIndex = 0;
 			comboCATbaud.Text = "1200";
 			comboCATparity.Text = "none";
 			comboCATdatabits.Text = "8";
@@ -1184,7 +1188,22 @@ namespace PowerSDR
                 }
             }
 
-			cmboSigGenRXMode.Text = "Radio";
+
+            // ke9ns add
+            if (comboROTORPort.SelectedIndex < 0)
+            {
+                if (comboROTORPort.Items.Count > 0)
+                    comboROTORPort.SelectedIndex = 0;
+                else
+                {
+                    chkROTOREnable.Checked = false;
+                    chkROTOREnable.Enabled = false;
+                }
+            }
+
+
+
+            cmboSigGenRXMode.Text = "Radio";
 			cmboSigGenTXMode.Text = "Radio";
 
 			if(comboAudioDriver1.SelectedIndex < 0 &&
@@ -1218,7 +1237,13 @@ namespace PowerSDR
 				chkCATEnable_CheckedChanged(this, EventArgs.Empty);
 			}
 
-			if(chkCATPTTEnabled.Checked)
+            // ke9ns add
+            if (chkROTOREnable.Checked)
+            {
+                chkROTOREnable_CheckedChanged(this, EventArgs.Empty);
+            }
+
+            if (chkCATPTTEnabled.Checked)
 			{
 				chkCATPTTEnabled_CheckedChanged(this, EventArgs.Empty);
 			}
@@ -1433,6 +1458,8 @@ namespace PowerSDR
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelTS19 = new System.Windows.Forms.LabelTS();
+            this.udHttpRefresh = new System.Windows.Forms.NumericUpDownTS();
             this.txtHttpPass = new System.Windows.Forms.TextBoxTS();
             this.txtHttpUser = new System.Windows.Forms.TextBoxTS();
             this.labelTS18 = new System.Windows.Forms.LabelTS();
@@ -2221,6 +2248,9 @@ namespace PowerSDR
             this.chkCATPTT_DTR = new System.Windows.Forms.CheckBoxTS();
             this.chkCATPTTEnabled = new System.Windows.Forms.CheckBoxTS();
             this.grpCatControlBox = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS20 = new System.Windows.Forms.LabelTS();
+            this.comboROTORPort = new System.Windows.Forms.ComboBoxTS();
+            this.chkROTOREnable = new System.Windows.Forms.CheckBoxTS();
             this.comboCATPort = new System.Windows.Forms.ComboBoxTS();
             this.comboCATbaud = new System.Windows.Forms.ComboBoxTS();
             this.lblCATBaud = new System.Windows.Forms.LabelTS();
@@ -2300,8 +2330,6 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.udHttpRefresh = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS19 = new System.Windows.Forms.LabelTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2350,6 +2378,7 @@ namespace PowerSDR
             this.grpOptSpaceNav.SuspendLayout();
             this.tpUserInterface.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).BeginInit();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
@@ -2587,7 +2616,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).BeginInit();
             this.grpImpulseTest.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).BeginInit();
             this.SuspendLayout();
             // 
             // tcSetup
@@ -4522,6 +4550,43 @@ namespace PowerSDR
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "HttpServer";
             this.toolTip1.SetToolTip(this.groupBox2, resources.GetString("groupBox2.ToolTip"));
+            // 
+            // labelTS19
+            // 
+            this.labelTS19.Image = null;
+            this.labelTS19.Location = new System.Drawing.Point(158, 19);
+            this.labelTS19.Name = "labelTS19";
+            this.labelTS19.Size = new System.Drawing.Size(112, 16);
+            this.labelTS19.TabIndex = 13;
+            this.labelTS19.Text = "Refresh Rate (ms):";
+            // 
+            // udHttpRefresh
+            // 
+            this.udHttpRefresh.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udHttpRefresh.Location = new System.Drawing.Point(166, 36);
+            this.udHttpRefresh.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.udHttpRefresh.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udHttpRefresh.Name = "udHttpRefresh";
+            this.udHttpRefresh.Size = new System.Drawing.Size(75, 20);
+            this.udHttpRefresh.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
+            this.udHttpRefresh.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
             // 
             // txtHttpPass
             // 
@@ -15149,6 +15214,9 @@ namespace PowerSDR
             // 
             // grpCatControlBox
             // 
+            this.grpCatControlBox.Controls.Add(this.labelTS20);
+            this.grpCatControlBox.Controls.Add(this.comboROTORPort);
+            this.grpCatControlBox.Controls.Add(this.chkROTOREnable);
             this.grpCatControlBox.Controls.Add(this.comboCATPort);
             this.grpCatControlBox.Controls.Add(this.comboCATbaud);
             this.grpCatControlBox.Controls.Add(this.lblCATBaud);
@@ -15162,10 +15230,41 @@ namespace PowerSDR
             this.grpCatControlBox.Controls.Add(this.comboCATstopbits);
             this.grpCatControlBox.Location = new System.Drawing.Point(16, 16);
             this.grpCatControlBox.Name = "grpCatControlBox";
-            this.grpCatControlBox.Size = new System.Drawing.Size(160, 216);
+            this.grpCatControlBox.Size = new System.Drawing.Size(160, 270);
             this.grpCatControlBox.TabIndex = 90;
             this.grpCatControlBox.TabStop = false;
             this.grpCatControlBox.Text = "CAT Control";
+            // 
+            // labelTS20
+            // 
+            this.labelTS20.Image = null;
+            this.labelTS20.Location = new System.Drawing.Point(24, 241);
+            this.labelTS20.Name = "labelTS20";
+            this.labelTS20.Size = new System.Drawing.Size(40, 23);
+            this.labelTS20.TabIndex = 98;
+            this.labelTS20.Text = "Port:";
+            // 
+            // comboROTORPort
+            // 
+            this.comboROTORPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboROTORPort.DropDownWidth = 56;
+            this.comboROTORPort.Location = new System.Drawing.Point(72, 243);
+            this.comboROTORPort.Name = "comboROTORPort";
+            this.comboROTORPort.Size = new System.Drawing.Size(72, 21);
+            this.comboROTORPort.TabIndex = 97;
+            this.toolTip1.SetToolTip(this.comboROTORPort, "Sets the COM port to be used for the CAT interface.");
+            this.comboROTORPort.SelectedIndexChanged += new System.EventHandler(this.comboROTORPort_SelectedIndexChanged);
+            // 
+            // chkROTOREnable
+            // 
+            this.chkROTOREnable.Image = null;
+            this.chkROTOREnable.Location = new System.Drawing.Point(6, 218);
+            this.chkROTOREnable.Name = "chkROTOREnable";
+            this.chkROTOREnable.Size = new System.Drawing.Size(104, 24);
+            this.chkROTOREnable.TabIndex = 96;
+            this.chkROTOREnable.Text = "Enable Rotor";
+            this.toolTip1.SetToolTip(this.chkROTOREnable, "Enable DDutil to control Rotor");
+            this.chkROTOREnable.CheckedChanged += new System.EventHandler(this.chkROTOREnable_CheckedChanged);
             // 
             // comboCATPort
             // 
@@ -16235,43 +16334,6 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
-            // udHttpRefresh
-            // 
-            this.udHttpRefresh.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            65536});
-            this.udHttpRefresh.Location = new System.Drawing.Point(166, 36);
-            this.udHttpRefresh.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.udHttpRefresh.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udHttpRefresh.Name = "udHttpRefresh";
-            this.udHttpRefresh.Size = new System.Drawing.Size(75, 20);
-            this.udHttpRefresh.TabIndex = 12;
-            this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
-            this.udHttpRefresh.Value = new decimal(new int[] {
-            300,
-            0,
-            0,
-            0});
-            // 
-            // labelTS19
-            // 
-            this.labelTS19.Image = null;
-            this.labelTS19.Location = new System.Drawing.Point(158, 19);
-            this.labelTS19.Name = "labelTS19";
-            this.labelTS19.Size = new System.Drawing.Size(112, 16);
-            this.labelTS19.TabIndex = 13;
-            this.labelTS19.Text = "Refresh Rate (ms):";
-            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -16342,6 +16404,7 @@ namespace PowerSDR
             this.tpUserInterface.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).EndInit();
             this.groupBoxTS1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
@@ -16583,7 +16646,6 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).EndInit();
             this.grpImpulseTest.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).EndInit();
             this.ResumeLayout(false);
 
 		}
@@ -16798,13 +16860,18 @@ namespace PowerSDR
 			comboKeyerConnSecondary.Items.Add("CAT");
 
 			comboCATPort.Items.Clear();
-			comboCATPTTPort.Items.Clear();
+            comboROTORPort.Items.Clear();  // ke9ns
+
+            comboCATPTTPort.Items.Clear();
 
 			comboKeyerConnPrimary.Items.AddRange(com_ports);
             comboKeyerConnSecondary.Items.AddRange(com_ports);
 
             comboCATPort.Items.Add("None");
             comboCATPort.Items.AddRange(com_ports);
+
+            comboROTORPort.Items.Add("None");
+            comboROTORPort.Items.AddRange(com_ports);
 
             comboCATPTTPort.Items.Add("None");
             comboCATPTTPort.Items.AddRange(com_ports);
@@ -18027,7 +18094,23 @@ namespace PowerSDR
             }
         }
 
-		public int RXAGCAttack
+        //================================================================
+        // ke9ns add
+        public bool ROTOREnabled
+        {
+            get
+            {
+                if (chkROTOREnable != null) return chkROTOREnable.Checked;
+                else return false;
+            }
+            set
+            {
+                if (chkROTOREnable != null) chkROTOREnable.Checked = value;
+            }
+        } // ROTOREnabled
+
+
+        public int RXAGCAttack
 		{
 			get
 			{
@@ -24044,19 +24127,27 @@ namespace PowerSDR
 		{			
 			if(comboCATPort.Text.StartsWith("COM"))
 				console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
-			console.CATPTTRTS = chkCATPTT_RTS.Checked; 
+
+            if (comboROTORPort.Text.StartsWith("COM"))
+                console.ROTORPort = Int32.Parse(comboROTORPort.Text.Substring(3));  // ke9ns add
+
+            console.CATPTTRTS = chkCATPTT_RTS.Checked; 
 			console.CATPTTDTR = chkCATPTT_DTR.Checked;
 			//console.PTTBitBangEnabled = chkCATPTTEnabled.Checked; 
+
 			if(comboCATPTTPort.Text.StartsWith("COM"))
 				console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3)); 
 			console.CATBaudRate = Convert.ToInt32((string)comboCATbaud.SelectedItem, 10); 
 			console.CATParity = SDRSerialPort.StringToParity((string)comboCATparity.SelectedItem);
 			console.CATDataBits = int.Parse((string)comboCATdatabits.SelectedItem); 
 			console.CATStopBits = SDRSerialPort.StringToStopBits((string)comboCATstopbits.SelectedItem);
+
             console.CATEnabled = chkCATEnable.Checked;
 
-			// make sure the enabled state of bitbang ptt is correct 
-			if ( chkCATPTT_RTS.Checked || chkCATPTT_DTR.Checked ) 
+            console.ROTOREnabled = chkROTOREnable.Checked; // ke9ns add
+
+            // make sure the enabled state of bitbang ptt is correct 
+            if ( chkCATPTT_RTS.Checked || chkCATPTT_DTR.Checked ) 
 			{
 				chkCATPTTEnabled.Enabled = true; 
 			}
@@ -24073,13 +24164,24 @@ namespace PowerSDR
 		public void copyCATPropsToDialogVars() 
 		{ 
 			chkCATEnable.Checked = console.CATEnabled; 
+
 			string port = "COM"+console.CATPort.ToString();
-			if(comboCATPort.Items.Contains(port))
+
+            if (comboCATPort.Items.Contains(port))
 				comboCATPort.Text = port; 
+
 			chkCATPTT_RTS.Checked = console.CATPTTRTS;
 			chkCATPTT_DTR.Checked = console.CATPTTDTR; 
-			chkCATPTTEnabled.Checked = console.PTTBitBangEnabled; 
-			port = "COM"+console.CATPTTBitBangPort.ToString();
+			chkCATPTTEnabled.Checked = console.PTTBitBangEnabled;
+
+            chkROTOREnable.Checked = console.ROTOREnabled; // ke9ns add
+
+            port = "COM" + console.ROTORPort.ToString(); // ke9ns add
+
+            if (comboROTORPort.Items.Contains(port)) // ke9ns add
+                comboROTORPort.Text = port;
+
+            port = "COM"+console.CATPTTBitBangPort.ToString();
 			if(comboCATPTTPort.Items.Contains(port))
 				comboCATPTTPort.Text = port; 
 
@@ -24101,11 +24203,13 @@ namespace PowerSDR
 				return;
 			}
 
-			// make sure we're not using the same comm port as the bit banger 
-			if ( chkCATEnable.Checked && console.PTTBitBangEnabled && 
-				( comboCATPort.Text == comboCATPTTPort.Text ) )
-			{
-				MessageBox.Show("CAT port cannot be the same as Bit Bang Port", "Port Selection Error",
+            // make sure we're not using the same comm port as the bit banger 
+            //	if ( chkCATEnable.Checked && console.PTTBitBangEnabled && 
+            //		( comboCATPort.Text == comboCATPTTPort.Text ) )
+            if (chkCATEnable.Checked && ((console.PTTBitBangEnabled) && (comboCATPort.Text == comboCATPTTPort.Text)
+                  || ((comboROTORPort.Text == comboCATPort.Text) && (chkROTOREnable.Checked))))
+            {
+                MessageBox.Show("CAT port cannot be the same as PTT or ROTOR", "Port Selection Error",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				chkCATEnable.Checked = false; 
 			}
@@ -24142,10 +24246,10 @@ namespace PowerSDR
 					comboKeyerConnSecondary.Text = "None";
 				}
 				console.CATEnabled = false;
-			}			
-		}
+			}
+        } // chkCATEnable_CheckedChanged
 
-		private void enableCAT_HardwareFields(bool enable) 
+        private void enableCAT_HardwareFields(bool enable) 
 		{ 
 			comboCATbaud.Enabled = enable;
 			comboCATparity.Enabled = enable;
@@ -24244,9 +24348,9 @@ namespace PowerSDR
 
 			if(comboCATPort.Text.StartsWith("COM"))
 				console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
-		}
+        } // comboCATPort_SelectedIndexChanged
 
-		private void comboCATPTTPort_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void comboCATPTTPort_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
             if (comboCATPTTPort.Text == "None")
             {
@@ -27247,42 +27351,90 @@ namespace PowerSDR
           
         }
 
- /*       public int HTTP_PORT // ke9ns add
+        private void chkROTOREnable_CheckedChanged(object sender, EventArgs e)
         {
-            get
+
+            if (initializing) return;
+
+            Debug.WriteLine("chkROTORENable=====");
+
+            if (comboROTORPort.Text == "" || !comboROTORPort.Text.StartsWith("COM"))
             {
-                    return (int)udHttpPort.Value;
-            }
-            
-        }
-        public int HTTP_REFRESH // ke9ns add
-        {
-            get
-            {
-                return (int)udHttpRefresh.Value;
+                if (chkROTOREnable.Focused && chkROTOREnable.Checked)
+                {
+                    MessageBox.Show("The ROTOR port \"" + comboROTORPort.Text + "\" is not a valid port.\n" +
+                        "Please select another port.");
+                    chkROTOREnable.Checked = false;
+                }
+                return;
             }
 
-        }
-        public string HTTP_USER // ke9ns add
-        {
-            get
+            // make sure we're not using the same comm port as the bit banger 
+            if (chkROTOREnable.Checked && ((console.PTTBitBangEnabled) && (comboROTORPort.Text == comboCATPTTPort.Text ) 
+                || ((comboROTORPort.Text == comboCATPort.Text) && (chkCATEnable.Checked))))
             {
-                 return txtHttpUser.Text;
+                MessageBox.Show("ROTOR port cannot be the same as PTT or CAT port", "Port Selection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                chkCATEnable.Checked = false;
             }
-           
-        }
 
-        public string HTTP_PASS // ke9ns add
-        {
-            get
+            // if enabled, disable changing of serial port 
+            bool enable_sub_fields = !chkROTOREnable.Checked;
+
+            comboROTORPort.Enabled = enable_sub_fields; // light up COM port field if ENABLE checkbox OFF
+
+             enableCAT_HardwareFields(enable_sub_fields);
+
+            Debug.WriteLine("chkCATEnable.Checked====" + chkCATEnable.Checked);
+
+            if (chkCATEnable.Checked)
             {
-                Debug.WriteLine("pass3=====" + txtHttpPass.Text);
-
-                return txtHttpPass.Text;
+              
+                try
+                {
+                    console.ROTOREnabled = true;
+                }
+                catch (Exception ex)
+                {
+                    console.ROTOREnabled = false;
+                    chkROTOREnable.Checked = false;
+                    MessageBox.Show("Could not initialize ROTOR control.  Exception was:\n\n " + ex.Message +
+                        "\n\nROTOR control has been disabled.", "Error Initializing ROTOR control",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-           
-        }
-*/
+            else
+            {
+               
+                console.ROTOREnabled = false;
+            }
+
+
+        } // chkROTORENable
+
+        private void comboROTORPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboROTORPort.Text == "None")
+            {
+                if (chkROTOREnable.Checked)
+                {
+                    if (comboROTORPort.Focused)
+                        chkROTOREnable.Checked = false;
+                }
+
+                chkROTOREnable.Enabled = false;
+            }
+            else chkROTOREnable.Enabled = true;
+
+            if (comboROTORPort.Text.StartsWith("COM"))
+                console.ROTORPort = Int32.Parse(comboROTORPort.Text.Substring(3));
+
+        } // comboROTORPort_SelectedIndexChanged
+
+        //===============================================================================
+
+
+
     } // class setup
 
 

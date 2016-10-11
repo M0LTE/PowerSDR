@@ -1439,102 +1439,35 @@ namespace PowerSDR
                                 SWL_Day[SWL_Index1] = values[2]; // get days ON
 
                                 //--------------------------------------------------------------------
-                                if (SWL_Freq[SWL_Index1] == 6050000) Debug.WriteLine("station found" + SWL_Freq[SWL_Index1] + " , "+ SWL_Day1[SWL_Index1]);
+                              //  if (SWL_Freq[SWL_Index1] == 6050000) Debug.WriteLine("station found" + SWL_Freq[SWL_Index1] + " , "+ SWL_Day1[SWL_Index1]);
 
 
-                                SWL_Loc[SWL_Index1] = values[3]; // get location of station
+                                    SWL_Loc[SWL_Index1] = values[3]; // get location of station
                                     SWL_Mode[SWL_Index1] = "AM"; // get opeating mode
                                     SWL_Station[SWL_Index1] = values[4]; // get station name
                                     SWL_Lang[SWL_Index1] = values[5]; // get language
                                     SWL_Target[SWL_Index1] = values[6]; // get station target area
 
-                                // check for DUPS
-                                    if (SWL_Index > 0)
-                                    {
-                                       //-------------------------------------------------------------------------------------------------
-                                       // ke9ns if the Station Name and Station Freq and Station Days are the same, then check time (below)
-                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) && (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))            // if same NAME and FREQ then check times
-                                        {
-
-                                            if ((SWL_TimeN[SWL_Index1 - 1] < SWL_TimeN[SWL_Index1]))    // first spot has earlier start time than this spot, then do below
-                                            {
-                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the first spot stays on the air past the start of the new spot, then do below
-                                                {
-
-                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the first spot leaves the air before the new spot leaves the air then use the new spots finish time
-                                                    {
-                                                       SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
-                                                    }
-
-                                                    goto BYPASS; // duplicate
-                                                }
-
-                                            }
 
 
-                                        if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) && (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) && (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))            // if same NAME and FREQ then check times
-                                        {
-
-                                            if ((SWL_TimeN[SWL_Index1 - 1] > SWL_TimeN[SWL_Index1]))    // first spot has later start time than this new spot
-                                            {
-                                                if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1]) // if the first spot stays on the air past the start of the new spot, then do below
-                                                {
-                                                    SWL_TimeN[SWL_Index1 - 1] = SWL_TimeN[SWL_Index1]; // use earlier time from new spot
-
-                                                    if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1])
-                                                    {
-                                                        SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
-                                                    }
-
-                                                    goto BYPASS; // duplicate
-                                                }
-
-                                            }
-                                        }
-
-                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1])) // if the start time matches do below
-                                            {
-
-                                                if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
-                                                {
-                                
-                                                    SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
-
-                                                    goto BYPASS; // duplicate
-                                                }
-
-
-                                            } // if time on matches
-                                       
-                                            if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]) && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1]))         // if ON time adn OFF times match then DUP
-                                            {
-                                      
-                                                goto BYPASS; // duplicate
-                                            }
-
-
-                                        } // name and freq match
-
-                                    }  //  if (SWL_Index > 0)
-
-
-
-                                //--------------------------------
-
+                                //-------------------------------------------------------------------------------------
+                                //-------------------------------------------------------------------------------------
+                                //-------------------------------------------------------------------------------------
+                                // Ke9ns MERGE SWL and SWL2
                                 FLAG22 = 0; // reset for next line
 
                                 if ((SWL2_Index1 > 0) && (SWL_Index1 > 2)) // only try and merge SWL2 into SWL if SWL2 exists
                                 {
                                     int lowfreq = SWL_Freq[SWL_Index1 - 1]; // prior freq read in
                                     int highfreq = SWL_Freq[SWL_Index1]; // freq just read in now
-                                   
+
                                     // now check to see if any SWL2 freqs can fit in between lines of the SWL file
                                     for (int q = 0; q < SWL2_Index1; q++)
                                     {
 
-                                        if ((SWL2_Freq[q] < highfreq) ) // are you below the current (just read in) swl listing?
+                                        if ((SWL2_Freq[q] < highfreq)) // are you below the current (just read in) swl listing?
                                         {
-                                            if ( (SWL2_Freq[q] >= lowfreq)) // are you above the last read in swl listing?
+                                            if ((SWL2_Freq[q] >= lowfreq)) // are you above the last read in swl listing?
                                             {
                                                 // move this "just read in" SWL line forward in the index to insert SWL2 entry
                                                 SWL_Freq[SWL_Index1 + 1] = SWL_Freq[SWL_Index1];
@@ -1563,7 +1496,7 @@ namespace PowerSDR
                                                 SWL_Lang[SWL_Index1] = SWL2_Lang[q];
                                                 SWL_Target[SWL_Index1] = SWL2_Target[q];
 
-                                             //   Debug.WriteLine("INSERT 2 HERE= index="+SWL_Index1+ " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+                                                Debug.WriteLine("INSERT 2 HERE= index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " station name=" + SWL_Station[SWL_Index1]);
 
                                                 FLAG22 = 1; // flag that you inserted a new SWL2 line into SWL
                                                 SWL_Index1++;
@@ -1573,7 +1506,7 @@ namespace PowerSDR
                                         } //  if ((SWL2_Freq[q] < highfreq) ) // are you below the current (just read in) swl listing?
                                         else
                                         {
-                                          //  Debug.WriteLine("BREAK");
+                                            //  Debug.WriteLine("BREAK");
                                             break; // break out of this SWL2 loop
                                         }
 
@@ -1581,28 +1514,91 @@ namespace PowerSDR
 
                                 } // if ((SWL2_Index1 > 0) && (SWL_Index1 > 2))
 
-                             
-                                //-----------------------------------
-
-
                                 if (SWL_Band[SWL_Index1] > SWL_Index)
                                 {
-                                    //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1);
+                                    //  Debug.WriteLine("INDEX MHZ " + SWL_Index + " index1 " + SWL_Index1 + " station name: " + SWL_Station[SWL_Index1] + " Freq: " + SWL_Freq[SWL_Index1]);
                                     SWL_BandL[SWL_Index] = SWL_Index1;                                   // SWL_BandL[0] = highest index under 1mhz, SWL_BandL[1] = highest index under 2mhz
                                     VFOHLast = 0; // refresh pan screen while loading
                                     SWL_Index++;
                                 }
 
-                             //   if (FLAG22 == 0) Debug.WriteLine("NEW index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
-                            //    else Debug.WriteLine("AFTER-> index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+                                //-------------------------------------------------------------------------------------
+                                //-------------------------------------------------------------------------------------
+                                //-------------------------------------------------------------------------------------
+                                // check for DUPS
+                                if (SWL_Index > 0)
+                                {
+                                    //-------------------------------------------------------------------------------------------------
+                                    // ke9ns if the Station Name and Station Freq and Station Days are the same, then check time (below)
+                                    if ((SWL_Station[SWL_Index1 - 1] == SWL_Station[SWL_Index1]) &&     // same station NAME
+                                        (SWL_Freq[SWL_Index1 - 1] == SWL_Freq[SWL_Index1]) &&           // same Freq
+                                        (SWL_Day1[SWL_Index1 - 1] == SWL_Day1[SWL_Index1]))             // same Days on the air
+                                    {
+                                        //------------------------------------------------------------------------------------
+                                        if ((SWL_TimeN[SWL_Index1 - 1] < SWL_TimeN[SWL_Index1]))       // first spot has earlier start time than this spot, then do below
+                                        {
+                                            if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1])    // if the first spot stays on the air past the start of the new spot, then do below
+                                            {
+                                                if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the first spot leaves the air before the new spot leaves the air then use the new spots finish time
+                                                {
+                                                    SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+                                                }
+
+                                                goto BYPASS; // duplicate
+                                            }
+
+                                        }
+
+                                        //------------------------------------------------------------------------------------
+                                        if ((SWL_TimeN[SWL_Index1 - 1] > SWL_TimeN[SWL_Index1]))       // first spot has later start time than this new spot
+                                        {
+                                            if (SWL_TimeF[SWL_Index1 - 1] >= SWL_TimeN[SWL_Index1])    // if the first spot stays on the air past the start of the new spot, then do below
+                                            {
+                                                SWL_TimeN[SWL_Index1 - 1] = SWL_TimeN[SWL_Index1];     // use earlier time from new spot
+
+                                                if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1])
+                                                {
+                                                    SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+                                                }
+
+                                                goto BYPASS; // duplicate
+                                            }
+
+                                        }
+
+                                        //------------------------------------------------------------------------------------
+                                        if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1]))   // if the start time matches do below
+                                        {
+                                            if (SWL_TimeF[SWL_Index1 - 1] < SWL_TimeF[SWL_Index1]) // if the next in the list stays on the air longer, use its end time and bypass
+                                            {
+                                                SWL_TimeF[SWL_Index1 - 1] = SWL_TimeF[SWL_Index1];
+                                                goto BYPASS; // duplicate
+                                            }
+
+                                        } // if time on matches
+
+                                        //------------------------------------------------------------------------------------
+                                        if ((SWL_TimeN[SWL_Index1 - 1] == SWL_TimeN[SWL_Index1])             // same ON time
+                                            && (SWL_TimeF[SWL_Index1 - 1] == SWL_TimeF[SWL_Index1]))         //smae OFF time
+                                        {
+                                            goto BYPASS; // duplicate
+                                        }
+
+
+                                    } // name and freq match
+
+                                }  //  if (SWL_Index > 0)
+
+
 
                                 SWL_Index1++; // save this
 
-                              
+
 
                                 BYPASS:;
 
-                            //  if (FLAG22 == 0)  Debug.WriteLine("BY index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
+
+                                //  if (FLAG22 == 0)  Debug.WriteLine("BY index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " name=" + SWL_Station[SWL_Index1]);
 
 
                                 //   Debug.Write(" freq " + SWL_Freq[SWL_Index1]);
@@ -3949,7 +3945,15 @@ namespace PowerSDR
 
                     } // dxmode checked
 
+                  //  if (setupForm.ROTOREnabled == true)    // ke9ns add send hygain rotor command to DDUtil via the CAT port setup in PowerSDR
+                  //  {
+                        Debug.WriteLine("BEAM HEADING TRANSMIT");
 
+                        console.spotDDUtil_Rotor = "AP1" + DX_Beam[iii].ToString().PadLeft(3, '0') + ";";
+                        console.spotDDUtil_Rotor = ";";
+                        console.spotDDUtil_Rotor = "AM1;";
+
+                  //  } //  if (chkBoxRotor.Checked == true)
                     button1.Focus();
 
                     Map_Last = 2; // redraw map spots

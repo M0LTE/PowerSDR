@@ -251,6 +251,7 @@
     <Compile Include="CAT\SerialRxEvent.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CAT\SIOListenerIII.cs" />
     <Compile Include="CAT\SIOListenerII.cs">
       <SubType>Code</SubType>
     </Compile>

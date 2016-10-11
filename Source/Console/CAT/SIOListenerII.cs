@@ -136,7 +136,10 @@ namespace PowerSDR
 				if ( cat_enabled ) return; // nothing to do already enabled 
 				cat_enabled = true; 
 			}
-			int port_num = console.CATPort; 
+            Debug.WriteLine("==============CAT PORT OPEN");
+
+            int port_num = console.CATPort; 
+
 			SIO = new SDRSerialPort(port_num);
 			SIO.setCommParms(console.CATBaudRate, 
 							console.CATParity, 
@@ -211,8 +214,9 @@ namespace PowerSDR
 				if ( !cat_enabled )  return; /* nothing to do already disabled */ 
 				cat_enabled = false; 
 			}
+            Debug.WriteLine("==============CAT PORT CLOSED");
 
-			if ( SIO != null ) 
+            if ( SIO != null ) 
 			{
 				SIO.Destroy(); 
 				SIO = null; 
