@@ -123,10 +123,20 @@
   <data name="textBox3.Text" xml:space="preserve">
     <value>Add or Edit DX Cluster's or reverse Beacon telnet address and port# and your call sign.
 Like: ve7cc.net:23 or k1rfi.com:7300 or telnet.reversebeacon.net:7000
-Left Click on spot to go to Freq and set Mode, or Right Click on spot to open QRZ page.
-Panadapter: Left Click on DX Spot + CTRL key to open QRZ page or Shift key to see Spotters
-Panadapter: Left Click on Memory spot + CTRL key  to set Freq &amp; Mode.
-Panadapter: Left Click on Red Dots  + CTRL key to go to Freq and Mode of DX station</value>
+Left Click on Spot to go to Freq and set Mode, or Right Click on spot to open QRZ page.
+Left Click on Spot BEAM HEADING to Freq &amp; Mode and Move Antenna using DDUtil
+PAN: Left Click on Left side of DX Spot + CTRL key to open QRZ page or Shift key to see Spotters
+PAN: Left Click on Right side of DX Spot + CTRL key to Move Antenna using DDUtil
+PAN: Left Click on Memory spot + CTRL key  to set Freq &amp; Mode.
+PAN: Left Click on Red Dots  + CTRL key to go to Freq and Mode of DX station</value>
+  </data>
+  <data name="btnBeacon.ToolTip" xml:space="preserve">
+    <value>Click to Run a Beacon check.
+PowerSDR will scan through 14.1, 18.11, 21.15, 24.93, 28.2 mhz
+looking for 18 stations: 4U1UN, VE8AT, W6WX, KH6RS, ZL6B, VK6RBP, 
+JA1IGY, RR9O, VR2B, 4S7B, ZS6DN, 5Z4B, 4X6TU, OH2B, CS3B, LU4AA,
+OA4B, and YV5B in 10 second intervals. Thats 5 frequecies and 18 stations 
+rotating in 10 intervals = 10 * 18 = 180second = 3minutes until a repeat.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>

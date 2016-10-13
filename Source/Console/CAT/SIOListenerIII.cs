@@ -47,7 +47,7 @@ namespace PowerSDR
 			parser = new CATParser(console);
 
 			//event handler for Serial RX Events
-			SDRSerialPort.serial_rx_event += new SerialRXEventHandler(SerialRXEventHandler);
+		//	SDRSerialPort.serial_rx_event += new SerialRXEventHandler(SerialRXEventHandler);
 		
 			if ( console.ROTOREnabled)  // if CAT is on, fire it up 
 			{ 
@@ -91,13 +91,20 @@ namespace PowerSDR
             Debug.WriteLine("==============ROTOR PORT OPEN: " +port_num);
 
             SIO = new SDRSerialPort(port_num);
-			SIO.setCommParms(console.CATBaudRate, 
+		/*	SIO.setCommParms(console.CATBaudRate, 
 							console.CATParity, 
 							console.CATDataBits, 
 							console.CATStopBits,
-                            console.CATHandshake); 
-		
-			Initialize();	
+                            console.CATHandshake);
+                            */
+
+            SIO.setCommParms(9600,                            // ant rotor port is always 9600
+                                console.CATParity,
+                                console.CATDataBits,
+                                console.CATStopBits,
+                                console.CATHandshake);
+
+            Initialize();	
 		}
 /*
         public bool UseForKeyPTT

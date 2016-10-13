@@ -15252,7 +15252,8 @@ namespace PowerSDR
             this.comboROTORPort.Name = "comboROTORPort";
             this.comboROTORPort.Size = new System.Drawing.Size(72, 21);
             this.comboROTORPort.TabIndex = 97;
-            this.toolTip1.SetToolTip(this.comboROTORPort, "Sets the COM port to be used for the CAT interface.");
+            this.toolTip1.SetToolTip(this.comboROTORPort, "Enable DDUtil to control your antenna rotor control.\r\nNote: You must configure DD" +
+        "Util with the other end of the\r\nVirtual port pair.");
             this.comboROTORPort.SelectedIndexChanged += new System.EventHandler(this.comboROTORPort_SelectedIndexChanged);
             // 
             // chkROTOREnable
@@ -15263,7 +15264,7 @@ namespace PowerSDR
             this.chkROTOREnable.Size = new System.Drawing.Size(104, 24);
             this.chkROTOREnable.TabIndex = 96;
             this.chkROTOREnable.Text = "Enable Rotor";
-            this.toolTip1.SetToolTip(this.chkROTOREnable, "Enable DDutil to control Rotor");
+            this.toolTip1.SetToolTip(this.chkROTOREnable, resources.GetString("chkROTOREnable.ToolTip"));
             this.chkROTOREnable.CheckedChanged += new System.EventHandler(this.chkROTOREnable_CheckedChanged);
             // 
             // comboCATPort

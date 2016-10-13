@@ -291,13 +291,25 @@ namespace PowerSDR
                         {
                             SpotControl.SWL_Mode[ii] = "USB";
                         }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("DSC", StringComparison.OrdinalIgnoreCase) >= 0))
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("DSC-", StringComparison.OrdinalIgnoreCase) >= 0))
                         {
                             SpotControl.SWL_Mode[ii] = "DIGU";
                         }
                         else if ((SpotControl.SWL_Station[ii].IndexOf("hfdl", StringComparison.OrdinalIgnoreCase) >= 0))
                         {
                             SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("ALE-", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("Beacon-", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("Maritime", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "USB";
                         }
                         else if ((SpotControl.SWL_Station[ii].IndexOf("fax", StringComparison.OrdinalIgnoreCase) >= 0))
                         {

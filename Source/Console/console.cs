@@ -43499,7 +43499,7 @@ namespace PowerSDR
 
                                 } // chkdxmode checked
 
-
+/*
                         if (setupForm.ROTOREnabled == true)   // ke9ns add send hygain rotor command to DDUtil via the CAT port setup in PowerSDR
                         {
                             Debug.WriteLine("Red DOT BEAM HEADING TRANSMIT");
@@ -43509,7 +43509,7 @@ namespace PowerSDR
                             spotDDUtil_Rotor = "AM1;";
 
                         } //  
-
+*/
 
                         SpotControl.Map_Last = 2; // UPDATE SPOTS ON MAP
 
@@ -43525,9 +43525,9 @@ namespace PowerSDR
                         for (byte ii = 0; ii < DXK; ii++) // check all spot on Panadapter
                         {
                      
-                            if ((x >= DXX[ii]) && (x <= (DXX[ii] + DXW[ii])) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii])))
+                            if ((x >= DXX[ii]) && (x <= (DXX[ii] + (DXW[ii])*3/4)) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii])))
                             {
-                             
+                              
                                 var DXtemp = new StringBuilder("https://www.qrz.com/db/");
                                 DXtemp.Append(DXS[ii]);
 
@@ -43543,15 +43543,26 @@ namespace PowerSDR
                                 return;
 
                             } // index
+                            else if ((x >= DXX[ii] + (DXW[ii]*3/4)) && (x <= (DXX[ii] + DXW[ii])) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii]))) // check for rotor Beam heading 
+                            {
+                                Debug.WriteLine("BEAM HEADING TRANSMIT FROM Display");
 
-                        } // for loop
+                                spotDDUtil_Rotor = "AP1" + SpotControl.DX_Beam[ii].ToString().PadLeft(3, '0') + ";";
+                                spotDDUtil_Rotor = ";";
+                                spotDDUtil_Rotor = "AM1;";
 
-                        if (chkRX2.Checked == true)  // check RX2 click
+
+                            } // check if you clicked on the last half of the call sign
+
+
+                    } // for loop
+
+                    if (chkRX2.Checked == true)  // check RX2 click
                         {
                             for (byte ii = 0; ii < DXK2; ii++)
                             {
                               
-                                if ((x >= DXX[ii + 50]) && (x <= (DXX[ii + 50] + DXW[ii + 50])) && (y >= DXY[ii + 50]) && (y <= (DXY[ii + 50] + DXH[ii + 50])))
+                                if ((x >= DXX[ii + 50]) && (x <= (DXX[ii + 50] + DXW[ii + 50] * 3 / 4)) && (y >= DXY[ii + 50]) && (y <= (DXY[ii + 50] + DXH[ii + 50])))
                                 {
                                     var DXtemp = new StringBuilder("https://www.qrz.com/db/");
                                     DXtemp.Append(DXS[ii + 50]);
@@ -43568,11 +43579,21 @@ namespace PowerSDR
                                     break;
 
                                 } // index
+                                else if ( (x <= (DXX[ii + 50] + DXW[ii + 50] * 3 / 4)) && (y >= DXY[ii + 50]) && (y <= (DXY[ii + 50] + DXH[ii + 50])))
+                               {
+                                     Debug.WriteLine("BEAM HEADING TRANSMIT FROM Display RX2");
+
+                                    spotDDUtil_Rotor = "AP1" + SpotControl.DX_Beam[ii].ToString().PadLeft(3, '0') + ";";
+                                    spotDDUtil_Rotor = ";";
+                                    spotDDUtil_Rotor = "AM1;";
 
 
-                            } // for loop
+                                } // check if you clicked on the last half of the call sign
 
-                        } // rx2 checked on 
+
+                        } // for loop
+
+                    } // rx2 checked on 
 
 
                 } //   if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2))
