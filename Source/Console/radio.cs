@@ -175,7 +175,7 @@ namespace PowerSDR
 
         //=======================================================================================================
 
-        // ke9ns add for my own database
+        // ke9ns add for my own database  RevQ
         public string GetDBFilename1()
         {
             string s = "";
@@ -191,6 +191,8 @@ namespace PowerSDR
 
             return "database_RevQ_" + s + "_" + serial_number + ".xml"; // ke9ns here is the database that will be used 
         }
+       
+      
 
     }
 }

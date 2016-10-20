@@ -56,13 +56,14 @@ namespace PowerSDR
         
         
         //=========================================================================
-            // ke9ns add my own database
+        // ke9ns add my own database RevQ
         private static string file_name1 = "";
         public static string FileName1
         {
             set { file_name1 = value; }
         }
-
+       
+      
 
         #endregion
 
@@ -5546,11 +5547,12 @@ namespace PowerSDR
 		public static bool Init(Model model)
 		{
 
-            if (file_name.Contains("database_F")|| file_name.Contains("database_D")) // ke9ns add  make sure your now looking at RevQ database only
+            
+
+           if (file_name.Contains("database_F")|| file_name.Contains("database_D")) // ke9ns add  make sure your now looking at RevQ database only
             {
                 file_name1 = file_name; // ke9ns use your original to copy into new RevQ database as starting point
-
-                file_name = file_name.Replace("database_", "database_RevQ_");
+                file_name = file_name.Replace("database_", "database-RevQ_");
             }
 
             string backup_filename1 = file_name.Remove(file_name.Length - 4) + "_sbu.xml";     // current session backup (sbu)
@@ -5610,10 +5612,12 @@ namespace PowerSDR
             else // ke9ns add copy over your good original Flex database into RevQdatabase.xml so we dont touch the original just in case
             {
 
-             //   Trace.WriteLine("Must copy original Database " + file_name1); // file_name1 is old database.xml file
-             //  Trace.WriteLine("To new REVQ database " + file_name); // file_name1 is old database.xml file
+                //   Trace.WriteLine("Must copy original Database " + file_name1); // file_name1 is old database.xml file
+                //  Trace.WriteLine("To new REVQ database " + file_name); // file_name1 is old database.xml file
 
-                if (File.Exists(file_name1)) File.Copy(file_name1, file_name, true);  // ke9ns add   File.Copy(old, new)
+
+           
+               if (File.Exists(file_name1)) File.Copy(file_name1, file_name, true);  // ke9ns add   File.Copy(old, new)
 
 
                 if (File.Exists(file_name))  // ke9ns mod  file_name is now looking for RevQ database first

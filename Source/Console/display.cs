@@ -4589,7 +4589,8 @@ namespace PowerSDR
                                 } // for loop to check if DX text will draw over top of Memory text
                             }
 
-                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii);
+                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii); // DX call sign to panadapter
+
                         }
                         else // display SPOTTER on Pan (not the Spotted)
                         {
@@ -6096,20 +6097,23 @@ namespace PowerSDR
                                                                             // this is determined by the ZOOM level of the screen
                                                                             // x1 zoom =  slope = ~1 (that means 1 sample per pixel)
                                                                             // slope > 1 is when you zoom all the way out too see as much as possible (large freq range)
-        
-//=================================================================
-// draw line that makes up spectrum (width of window)
-//=================================================================
-            for(int i=0; i < W; i++)
+            double max1 = 0; // ke9ns for avg the base line your receiving
+
+            //=================================================================
+            // draw line that makes up spectrum (width of window)
+            //=================================================================
+            for (int i=0; i < W; i++)
 			{
 				float max = float.MinValue;                             // max = y point determined by RX data of spectrum as you go from 0 to W
 				float dval = i * slope + start_sample_index;            // dval = how many digital values per pixel (going left to right)
 				int lindex = (int)Math.Floor(dval);                     // L index = int of dval
 				int rindex = (int)Math.Floor(dval + slope);             // R index = int of dval + slope ?
 
+              
 				if(rx == 1)
 				{
-					if (slope <= 1.0 || lindex == rindex)   // if your zoom in there is less than 1 digital value per pixel so fake it.
+        
+                    if (slope <= 1.0 || lindex == rindex)   // if your zoom in there is less than 1 digital value per pixel so fake it.
 					{
 						max =  current_display_data[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data[(lindex+1) % DATA_BUFFER_SIZE] * (dval -(float)lindex);
 					}
@@ -6118,8 +6122,11 @@ namespace PowerSDR
 						for(int j=lindex; j < rindex; j++)
 							if (current_display_data[j % DATA_BUFFER_SIZE] > max) max = current_display_data[j % DATA_BUFFER_SIZE]; // % modulus (i.e. remainder only)
 					}
-				} // rx1
-				else if(rx == 2)
+
+                   
+
+                } // rx1
+                else if(rx == 2)
 				{
 					if (slope <= 1.0 || lindex == rindex) 
 					{
@@ -6150,7 +6157,7 @@ namespace PowerSDR
 				points[i].X = i; //  position as you progress left to right
 
                 if ((K9 == 5) && (K10 != 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H1 / yRange));  // display in 3rds
-                else if ((K9 == 5) && (K10 == 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H2 / yRange));  // dispaly in 4ths
+                else if ((K9 == 5) && (K10 == 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H2 / yRange));  // display in 4ths
 		        else points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H / yRange));  // display normal
 
                 points[i].Y = Math.Min(points[i].Y, H); // returns smaller of the 2 numbers
@@ -6162,8 +6169,16 @@ namespace PowerSDR
                 else if ((bottom)) points[i].Y = points[i].Y + H; // this is the origina only line
 
 
-            //=========================================================================
-            // ke9ns add auto
+                //=========================================================================
+                // ke9ns add
+                if ((console.BeaconSigAvg == true) && rx == 1) // ke9ns add for beacon scanning
+                {
+                    max1 = max1 + max; // sum up entire panadapter line (left to right)
+
+                }
+
+                //=========================================================================
+                // ke9ns add auto
                 if (autobright6 == 2) // RX1
                 {
                     if ((!mox) && (rx == 1))
@@ -6193,6 +6208,12 @@ namespace PowerSDR
 
             }  // for loop from 0 to W wide
 
+            if (console.BeaconSigAvg == true)
+            {
+                SpotControl.BX_dBm2 = (int)(max1 / W); // avg db value of the freq your on now
+               // Debug.WriteLine("displaydbm2 " + max1 / W);
+
+            }
 
             //=========================================================================
             //=========================================================================
@@ -7317,7 +7338,7 @@ namespace PowerSDR
 						max_x = i;
 					}
 
-
+                    
 
                     if ((continuum == 0) || (rx==2)) // ke9ns add special Peak Power db shown vs Time
                     {

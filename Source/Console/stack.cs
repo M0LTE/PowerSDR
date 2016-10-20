@@ -1,5 +1,6 @@
 //=================================================================
 // stack.cs
+// Bandstacking form
 // created by Darrin Kohn ke9ns
 //
 // This program is free software; you can redistribute it and/or
@@ -316,7 +317,7 @@ namespace PowerSDR
 
                     bigmessage += bigmessage1 + ":\r\n"; // + 3 more was 31 now 33
 
-                    Debug.WriteLine("LENGTH=====" + bigmessage.Length);
+                 //   Debug.WriteLine("LENGTH=====" + bigmessage.Length);
 
 
                 } // if bandstack available for band

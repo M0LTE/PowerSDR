@@ -175,7 +175,7 @@ namespace PowerSDR
                             break;
                     }
 
-                    console.DBFileName = console.AppDataPath + r.GetDBFilename();
+                    console.DBFileName = console.AppDataPath + r.GetDBFilename1(); // ke9ns mod 
                     console.RadioToUse = r;
 
                     this.Close();

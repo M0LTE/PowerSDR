@@ -293,7 +293,7 @@ NO WARRANTY
 12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</value>
   </data>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>PowerSDR 2.7.2 ke9ns Rev T10:
+    <value>PowerSDR 2.7.2 ke9ns Rev T11:
 
 For Revision history visit: http://ke9ns.com/flexpage.html/#GPLREV
 
@@ -306,6 +306,7 @@ TX Waterfall ID DOC file:
 
 Each Video covers additional features not covered in earlier videos:
 
+YouTube Video Describing RevT10: https://www.youtube.com/embed/8hAMc_WUa2Q
 YouTube Video Describing RevT10: https://www.youtube.com/embed/JtKY6lwMTVY
 YouTube Video Describing RevT9: https://www.youtube.com/embed/Cv-Jm2j3jw8
 

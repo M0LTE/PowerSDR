@@ -378,7 +378,7 @@ namespace PowerSDR
 		public static bool wave_playback = false;
 		public static WaveFileWriter wave_file_writer;
         public static WaveFileWriter wave_file_writer2;
-		public static WaveFileReader1 wave_file_reader;    // ke9ns   RX1 WaveFileReader
+		public static WaveFileReader1 wave_file_reader;    // ke9ns   RX1 WaveFileReader  (was waveFileReader)
         public static WaveFileReader1 wave_file_reader2;   // ke9ns   RX2 
 		public static bool two_tone = false;
 		//public static Mutex phase_mutex = new Mutex();
@@ -3309,7 +3309,8 @@ namespace PowerSDR
 
             localmox = mox;
 
-     
+        
+
             //=====================================================================================
             // OUTPUT pointer streams
 
@@ -6327,7 +6328,7 @@ namespace PowerSDR
          //   Debug.WriteLine("in_dev1 " + in_dev);
          //   Debug.WriteLine("out_dev1 " + out_dev);
 
-            if (console.CurrentModel == Model.FLEX1500) Debug.WriteLine("audio start retry = "+i+" times");
+            if (console.CurrentModel == Model.FLEX1500) Debug.WriteLine("audio start retry = "+ i +" times");
 
             //if (console.CurrentModel == Model.FLEX1500)
             //Flex1500.StartListener(); // restart listening to commands to start audio
@@ -6335,6 +6336,7 @@ namespace PowerSDR
            
             if (error != 0)
 			{
+                Debug.WriteLine("startaudio()");
                 PortAudioErrorMessageBox(error);
 				return false;
 			}
@@ -6361,6 +6363,7 @@ namespace PowerSDR
 
             if (error != 0)
 			{
+                Debug.WriteLine("startaudio");
                 PortAudioErrorMessageBox(error);
 				return false;
 			}
@@ -6377,9 +6380,12 @@ namespace PowerSDR
                 case (int)PA19.PaErrorCode.paInvalidDevice:
                     string s = "Whoops!  Looks like something has gone wrong in the Audio section.\n" +
                         "Go look in the Setup Form -> Audio Tab to verify the settings there.";
+
                     if (vac_enabled) s += "  Since VAC is enabled, make sure you look at those settings as well.";
+
                     MessageBox.Show(s, "Audio Subsystem Error: Invalid Device",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                     break;
 
                 default:
@@ -6393,6 +6399,8 @@ namespace PowerSDR
         public unsafe static void StopAudio()
 		{
             int error = 0;
+            Debug.WriteLine("STOPAUDIO"); // when windows kms started on vac1
+
             PA19.PA_AbortStream(stream1);
             error = PA19.PA_CloseStream(stream1);
             if (error != 0) PortAudioErrorMessageBox(error);
@@ -6401,6 +6409,7 @@ namespace PowerSDR
 		public unsafe static void StopAudioVAC()
 		{
             int error = 0;
+            Debug.WriteLine("StopAudioVAC");
             PA19.PA_AbortStream(stream2);
             error = PA19.PA_CloseStream(stream2);
           
@@ -6410,6 +6419,8 @@ namespace PowerSDR
         public unsafe static void StopAudioVAC2()
         {
             int error = 0;
+            Debug.WriteLine("StopAudioVAC2");
+
             PA19.PA_AbortStream(stream3);
             error = PA19.PA_CloseStream(stream3);
             if (error != 0) PortAudioErrorMessageBox(error);
