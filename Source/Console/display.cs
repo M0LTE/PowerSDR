@@ -524,7 +524,7 @@ namespace PowerSDR
 		private static int rx_display_high = 4000;
 		public static int RXDisplayHigh
 		{
-			get { return rx_display_high; } // ke9ns +96000 at 192k SR and zoom = .5
+			get { return rx_display_high; } // ke9ns panadapter +96000 at 192k SR and zoom = .5 (different for spectrum display)
             set { rx_display_high = value; }
 		}
 
@@ -3128,7 +3128,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
-                                if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
                                 label = actual_fgrid.ToString("f4");
@@ -3149,11 +3149,11 @@ namespace PowerSDR
 
                                 for (int j = 1; j < inbetweenies; j++)
                                 {
-                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 )
                                     {
                                         float x3 = (float)vgrid + (j * scale);
                                     
-                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H); // ke9ns vertical lines
                                         else g.DrawLine(grid_pen_dark, x3, top, x3, H);
                                     }
                                 }
@@ -4006,7 +4006,22 @@ namespace PowerSDR
                     if (bottom) g.DrawLine(grid_pen, 0, H + y, W, H + y);  // draw lines 
                     else g.DrawLine(grid_pen, 0, y, W, y);
                 }
-                
+
+
+                if (console.BeaconSigAvg == true) // ke9ns add draw blue line to show 0 and 1 threshold for BCD time signal from WWV
+                {
+                    if ((bottom == false) && (SpotForm.WTime == true))
+                    {
+                        int thres = (int)((double)(spectrum_grid_max - SpotForm.WWVThreshold) * H / y_range);
+
+                        g.DrawLine(p3, 100  , thres, W - 100 , thres);
+                        g.DrawString(SpotForm.indexS.ToString(), font, grid_text_brush, 600, thres - 15);
+
+
+                       // g.DrawLine(p3, 100, thres, W - 100, thres);
+                    }
+                }
+
                //   if (bottom) Debug.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top + " num "+num + " gstep "+ grid_step + " Y "+ y + " yrange " + y_range);
                //   else Debug.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top + " num " + num + " gstep " + grid_step + " Y " + y + " yrange " + y_range);
 
@@ -4137,6 +4152,8 @@ namespace PowerSDR
                 else
                 {
                     Console.MMK3 = 0;        // RX3 index to allow call signs to draw after all the vert lines on the screen
+
+                   
                 }
 
                 VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
@@ -4326,19 +4343,13 @@ namespace PowerSDR
                                 if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
 
                             //   Debug.Write(" FREQ-SWL " + ii);
-
-
                           
 
                                 // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
                                 if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
                                 {
 
-                                if ((SpotControl.SWL_Freq[ii] == 6050000))
-                                {
-                                    Debug.WriteLine("STATION: " + ii + " , " + SpotControl.SWL_Station[ii] + " , " + SpotControl.SWL_Day1[ii] + " , " + SpotControl.UTCDD + " , " + SpotControl.SWL_TimeN[ii] + " , " + SpotControl.SWL_TimeF[ii]);
-                                }
-
+                        
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                               
                                     g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
@@ -4483,7 +4494,7 @@ namespace PowerSDR
             //=====================================================================
 
 
-            if (SpotControl.SP_Active != 0)
+            if ((SpotControl.SP_Active != 0) && (SpotForm.beacon1 == false)) // make sure DX cluster is running but Beacon chk is OFF so as to not crowd the screen.
             {
 
                 int iii = 0;                          // ke9ns add stairstep holder
@@ -5731,14 +5742,16 @@ namespace PowerSDR
 		unsafe static private bool DrawSpectrum(Graphics g, int W, int H, bool bottom)
 		{
 			DrawSpectrumGrid(ref g, W, H, bottom);
-			if(points == null || points.Length < W) 
-				points = new Point[W];			// array of points to display
+
+            if (points == null || points.Length < W) points = new Point[W];			// array of points to display
+
 			float slope = 0.0f;						// samples to process per pixel
 			int num_samples = 0;					// number of samples to process
 			int start_sample_index = 0;				// index to begin looking at samples
 			int low = 0;
 			int high = 0;
-			float local_max_y = float.MinValue;
+
+            float local_max_y = float.MinValue;
 
 			if(!mox)
 			{
@@ -5772,8 +5785,8 @@ namespace PowerSDR
 						fixed(void *wptr = &current_display_data[0])
 							Win32.memcpy(wptr, rptr, BUFFER_SIZE*sizeof(float));
 
-					if ( current_model == Model.SOFTROCK40 ) 
-						console.AdjustDisplayDataForBandEdge(ref current_display_data);
+					//if ( current_model == Model.SOFTROCK40 ) 
+					//	console.AdjustDisplayDataForBandEdge(ref current_display_data);
 				}
 				data_ready = false;
 			}
@@ -5809,17 +5822,23 @@ namespace PowerSDR
 			start_sample_index = (BUFFER_SIZE>>1) + (int)((low * BUFFER_SIZE) / sample_rate);
 			num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
 
-			if (start_sample_index < 0) start_sample_index = 0;
-			if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))
-				num_samples = BUFFER_SIZE - start_sample_index;
+          //  Debug.WriteLine("start sample index " + start_sample_index + " , " + num_samples + " , " + sample_rate + " , " + BUFFER_SIZE);
 
-			slope = (float)num_samples/(float)W;
-			for(int i=0; i<W; i++)
+            if (start_sample_index < 0) start_sample_index = 0;
+
+			if ((num_samples - start_sample_index) > (BUFFER_SIZE+1))	num_samples = BUFFER_SIZE - start_sample_index;
+           
+            slope = (float)num_samples/(float)W;
+
+          //  Debug.WriteLine("start sample index2 " + start_sample_index + " , " + num_samples + " , " + sample_rate + " , " + BUFFER_SIZE + " , " + slope);
+
+            for (int i=0; i < W; i++)
 			{
 				float max = float.MinValue;
 				float dval = i*slope + start_sample_index;
 				int lindex = (int)Math.Floor(dval);
-				if(!bottom)
+
+                if (!bottom)
 				{
 					if (slope <= 1) 
 						max =  current_display_data[lindex]*((float)lindex-dval+1) + current_display_data[lindex+1]*(dval-(float)lindex);
@@ -5827,7 +5846,7 @@ namespace PowerSDR
 					{
 						int rindex = (int)Math.Floor(dval + slope);
 						if (rindex > BUFFER_SIZE) rindex = BUFFER_SIZE;
-						for(int j=lindex;j<rindex;j++)
+						for(int j=lindex;j < rindex;j++)
 							if (current_display_data[j] > max) max=current_display_data[j];
 					}
 				}
@@ -6211,9 +6230,9 @@ namespace PowerSDR
             if (console.BeaconSigAvg == true)
             {
                 SpotControl.BX_dBm2 = (int)(max1 / W); // avg db value of the freq your on now
-               // Debug.WriteLine("displaydbm2 " + max1 / W);
+             
 
-            }
+            } //  if (console.BeaconSigAvg == true)
 
             //=========================================================================
             //=========================================================================

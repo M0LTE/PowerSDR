@@ -247,7 +247,8 @@ extern struct _rx
 	REAL norm;
 	COMPLEX azim;
 	long tick;
-} rx[3][MAXRX];
+
+} rx[3][MAXRX];       // extern struct _rx
 
 //------------------------------------------------------------------------
 /* TX */

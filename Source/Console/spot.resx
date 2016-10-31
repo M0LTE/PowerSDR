@@ -120,6 +120,11 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="SWLbutton.ToolTip" xml:space="preserve">
+    <value>Click to turn On/Off Shortwave Spotting to the Panadapter.
+This list includes Short Wave AM Broadcast, Maritime, Military, Beacons
+and Digital signals: ALE, HFDL, Digital Audio (DRM), Stanag, Fax, DSC, Navtex</value>
+  </data>
   <data name="textBox3.Text" xml:space="preserve">
     <value>Add or Edit DX Cluster's or reverse Beacon telnet address and port# and your call sign.
 Like: ve7cc.net:23 or k1rfi.com:7300 or telnet.reversebeacon.net:7000
@@ -130,6 +135,18 @@ PAN: Left Click on Right side of DX Spot + CTRL key to Move Antenna using DDUtil
 PAN: Left Click on Memory spot + CTRL key  to set Freq &amp; Mode.
 PAN: Left Click on Red Dots  + CTRL key to go to Freq and Mode of DX station</value>
   </data>
+  <data name="btnTrack.ToolTip" xml:space="preserve">
+    <value>Click to Turn on/off World Map, and/or  GrayLine (Earth Dark &amp; Light Areas),
+and/or Sun Tracking (position of Sun directly overhead a spot on Earth) on Panadapter.
+Sun Tracking Includes Space Weather (Requires Internet for Weather)</value>
+  </data>
+  <data name="SWLbutton2.ToolTip" xml:space="preserve">
+    <value>Searchable SWL listing window. Showing only SWL stations curently 
+on the AIR (by their Day and Time Slots).
+This list includes Short Wave AM Broadcast, Maritime, Military, Beacons
+and Digital signals: ALE, HFDL, Digital Audio (DRM), Stanag, Fax, DSC, Navtex
+</value>
+  </data>
   <data name="btnBeacon.ToolTip" xml:space="preserve">
     <value>Click to View Beacons stations and optionally scan Beacon Frequencies for signal strength
 
@@ -137,6 +154,29 @@ PowerSDR will scan through 14.1, 18.11, 21.15, 24.93, 28.2 mhz
 looking for 18 stations: 4U1UN, VE8AT, W6WX, KH6RS, ZL6B, VK6RBP, 
 JA1IGY, RR9O, VR2B, 4S7B, ZS6DN, 5Z4B, 4X6TU, OH2B, CS3B, LU4AA,
 OA4B, and YV5B in 10 second intervals. </value>
+  </data>
+  <data name="btnTime.ToolTip" xml:space="preserve">
+    <value>!!!!!Requires running PowerSDR in ADMIN mode!!!!
+!!!!!Requires Internet Connection!!!!!!
+!!!!!Your PC must be set to the correct Local Time Zone!!!!!
+!!!!! Your PC must be set to the correct Daylight Savings setting!!!!!
+Will connect with NIST (National Institute of Standards and Technology).
+Sync up your PC clock time to NIST.
+
+Use this feature before running a Beacon Scan,
+or before running WJST (JT65) or WSPR digital modes</value>
+  </data>
+  <data name="checkBoxWWV.ToolTip" xml:space="preserve">
+    <value>Check this box, then Click  on "Time Sync"
+
+Time Sync will listen to Radio WWV BCD time code 
+found on a 100hz sub-carrier.
+
+Will not work well in noisy conditions or low signal,
+Until I can use a PLL to detect weak signals.
+
+Reception will start on the WWV minute 1khz tone.
+</value>
   </data>
   <data name="BoxBFScan.ToolTip" xml:space="preserve">
     <value>Check to Scan all 18 Beacon Stations 5 Frequecies at each 10 second Interval

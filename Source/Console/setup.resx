@@ -120,18 +120,24 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
-  <data name="chkROTOREnable.ToolTip" xml:space="preserve">
-    <value>Enable DDUtil to control your antenna rotor control.
-Note: You must configure DDUtil with the other end of the
-Virtual port pair.
+  <data name="udHttpRefresh.ToolTip" xml:space="preserve">
+    <value>Select Port# to allow Remote Login by adding the Port# 
+to the end of the URL
+Example:  http://192.168.0.100:8081
+or http://localhost:8081
 
-Left Click on Beam Heading in DX Spot window to Move Antenna
-Left Click on Right half of DX Spot in Pan + CTRL key to Move Antenna
-</value>
+But you must also add this port# to your Routers "Port Forward" options
+If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>157, 17</value>
-  </metadata>
+  <data name="udHttpPort.ToolTip" xml:space="preserve">
+    <value>Select Port# to allow Remote Login by adding the Port# 
+to the end of the URL
+Example:  http://192.168.0.100:8081
+or http://localhost:8081
+
+But you must also add this port# to your Routers "Port Forward" options
+If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
+  </data>
   <data name="groupBox2.ToolTip" xml:space="preserve">
     <value>If Activate Check Box does not stay CHECKED with the Port# you choose,
 You must do the following  (using Port# 8081 as an example)
@@ -151,24 +157,6 @@ then type:  http://&lt;home IP address&gt;:8081
 
 </value>
   </data>
-  <data name="udHttpRefresh.ToolTip" xml:space="preserve">
-    <value>Select Port# to allow Remote Login by adding the Port# 
-to the end of the URL
-Example:  http://192.168.0.100:8081
-or http://localhost:8081
-
-But you must also add this port# to your Routers "Port Forward" options
-If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
-  </data>
-  <data name="udHttpPort.ToolTip" xml:space="preserve">
-    <value>Select Port# to allow Remote Login by adding the Port# 
-to the end of the URL
-Example:  http://192.168.0.100:8081
-or http://localhost:8081
-
-But you must also add this port# to your Routers "Port Forward" options
-If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
-  </data>
   <data name="tbWaterOffset.ToolTip" xml:space="preserve">
     <value>Use this to Lighten or Darken the Waterfall by 20db UP or DOWN from the "Automatic" avg found
 If you find the "AutoWater Level" is too dark, increase this slider
@@ -178,6 +166,15 @@ if you find it too light, decrease this slider.</value>
     <value>Use this to shift the Panadapter Signal up to 20db UP or DOWN the Pandapater from the "Automatic" avg finding
 If you find the Panadapter signal too high up in the window, decrease the slider.
 If you find the Panadapter signal too low in the window, increase the slider.</value>
+  </data>
+  <data name="chkROTOREnable.ToolTip" xml:space="preserve">
+    <value>Enable DDUtil to control your antenna rotor control.
+Note: You must configure DDUtil with the other end of the
+Virtual port pair.
+
+Left Click on Beam Heading in DX Spot window to Move Antenna
+Left Click on Right half of DX Spot in Pan + CTRL key to Move Antenna
+</value>
   </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

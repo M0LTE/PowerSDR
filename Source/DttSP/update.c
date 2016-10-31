@@ -933,8 +933,9 @@ SetRXAGCTop (unsigned int thread, unsigned int subrx, double max_agc)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-GetSAMPLLvals(int thread, int subrx, REAL *alpha, REAL *beta)
+//==============================================================
+// ke9ns ?? find the real carrier for SAM mode ??
+DttSP_EXP void GetSAMPLLvals(int thread, int subrx, REAL *alpha, REAL *beta)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	*alpha = rx[thread][subrx].am.gen->pll.alpha;
@@ -942,22 +943,30 @@ GetSAMPLLvals(int thread, int subrx, REAL *alpha, REAL *beta)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetSAMPLLvals(int thread, int subrx, REAL alpha, REAL beta)
+//==============================================================
+// ke9ns ?? find the real carrier for SAM mode ??
+DttSP_EXP void SetSAMPLLvals(int thread, int subrx, REAL alpha, REAL beta)
 {
 	sem_wait(&top[thread].sync.upd.sem);
-	rx[thread][subrx].am.gen->pll.alpha = alpha;
+
+	rx[thread][subrx].am.gen->pll.alpha = alpha;     // ke9ns member named pll.alpha in a structure that rx[][].am.gen points to
+													 // ke9ns member "am.gen" is part of structure rx[][],  and member "alpha" is part of struture pll
 	rx[thread][subrx].am.gen->pll.beta = beta;
+
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-GetSAMFreq(int thread, int subrx, REAL *freq)
+//==============================================================
+// ke9ns ?? find the real carrier for SAM mode ??
+DttSP_EXP void GetSAMFreq(int thread, int subrx, REAL *freq)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	*freq = rx[thread][subrx].am.gen->pll.freq.f;
 	sem_post(&top[thread].sync.upd.sem);
 }
+
+
+//===============================================================================
 
 DttSP_EXP void
 SetCorrectIQ (unsigned int thread, unsigned int subrx, double phase, double gain)
@@ -1590,36 +1599,42 @@ DttSP_EXP void SetTXAGCCompression (unsigned int thread, double txcompression)
 
 
 //=========================================================================================
-// ke9ns  console uses this to 
+// ke9ns  console uses this to ???
 //=========================================================================================
 DttSP_EXP void Process_ComplexSpectrum (unsigned int thread, float *results)
 {
 	uni[thread].spec.type = SPEC_POST_FILT;
+	
 	uni[thread].spec.scale = SPEC_PWR;
 	//sem_wait (&top[thread].sync.upd.sem);
+	
 	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);
 	//sem_post (&top[thread].sync.upd.sem);
+	
 	compute_complex_spectrum (&uni[thread].spec);
+
 	memcpy ((void *) results, uni[thread].spec.coutput, uni[thread].spec.size * sizeof (COMPLEX));
 }
 
 
 //=========================================================================================
 // ke9ns  console uses this to show Spectrum on Display (ie panadater data just in the bandpass with no filtering)
+// ke9ns start_sample_index = (BUFFER_SIZE >> 1) + (int)((low * BUFFER_SIZE) / Display.SampleRate); BUFFER_SIZE is always 4096,  SR can be 48k, 96k, or 192k
+// ke9ns num_samples = (int)((highsidefilter - lowsidefilter) * BUFFER_SIZE / Display.SampleRate);
 //=========================================================================================
 DttSP_EXP void Process_Spectrum (unsigned int thread, float *results)
 {
-	uni[thread].spec.type = SPEC_POST_FILT;
+	uni[thread].spec.type = SPEC_POST_FILT;                   // ke9ns define the "type" of spectrum, in this case POST_FILT = just the bandpass (based on low and high filter setpoints)
 
-	uni[thread].spec.scale = SPEC_PWR;
+	uni[thread].spec.scale = SPEC_PWR;                        // ke9ns define the scale of the output??? in spot.cs I see -200 values that need to be scaled back to -135 dBm
 
 	//sem_wait (&top[thread].sync.upd.sem);
-	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);
+	snap_spectrum (&uni[thread].spec, uni[thread].spec.type);  //
 
 	//sem_post (&top[thread].sync.upd.sem);
-	compute_spectrum (&uni[thread].spec);
+	compute_spectrum (&uni[thread].spec);                      // 
 
-	memcpy ((void *) results, uni[thread].spec.output, uni[thread].spec.size * sizeof (float));
+	memcpy ((void *) results, uni[thread].spec.output, uni[thread].spec.size * sizeof (float));   // COPY:  DST results <- SRC = spec.output, Size
 
 } // process_spectrum
 
@@ -1639,7 +1654,7 @@ DttSP_EXP void Process_Panadapter (unsigned int thread, float *results)
 	}
 	else // else in RX mode ?
 	{
-		uni[thread].spec.type = SPEC_PRE_FILT; // ke9ns set filter type
+		uni[thread].spec.type = SPEC_PRE_FILT; // ke9ns set filter type   PRE_FILT = entire width of PAN  (POST_FILT = just the bandpass)
 	}
 
 	uni[thread].spec.scale = SPEC_PWR;  // ke9ns set scale of power level
@@ -1731,7 +1746,8 @@ DttSP_EXP void  SetRingBufferOffset(unsigned int thread, int offset)
 
 
 //=========================================================================================
-// ke9ns  console uses this to 
+// ke9ns  console uses this to give a meter reading value based on the type of meter. 
+// ke9ns signal meter gives an dBM value of the bandpass 
 //=========================================================================================
 DttSP_EXP float  CalculateRXMeter (unsigned int thread, unsigned int subrx, METERTYPE mt)
 {

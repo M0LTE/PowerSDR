@@ -1258,7 +1258,7 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkCWSidetone;
 		private System.Windows.Forms.CheckBoxTS chkCWIambic;
 		private System.Windows.Forms.LabelTS lblCWPitchFreq;
-        private System.Windows.Forms.NumericUpDownTS udCWPitch;
+        public System.Windows.Forms.NumericUpDownTS udCWPitch;
         public LabelTS lblDisplayPan;
         private System.Windows.Forms.ButtonTS btnDisplayPanCenter;
         private System.Windows.Forms.LabelTS lblDisplayZoom;
@@ -1277,7 +1277,7 @@ namespace PowerSDR
         private System.Windows.Forms.CheckBoxTS chkTXEQ;
         private System.Windows.Forms.CheckBoxTS chkBCI;
         private System.ComponentModel.IContainer components;
-        private System.Windows.Forms.CheckBoxTS chkEnableMultiRX;
+        public CheckBoxTS chkEnableMultiRX;
         private System.Windows.Forms.ButtonTS btnTuneStepChangeLarger;
 		private System.Windows.Forms.LabelTS lblAntRX1;
         private System.Windows.Forms.LabelTS lblAntTX;
@@ -18892,7 +18892,7 @@ namespace PowerSDR
 
          //   if (CTUN == true) CTUN3 = 1; // ke9ns add dont allow rundisplay() thread from updating display while in CTUN mode
 
-            Display.RXDisplayLow = Display.TXDisplayLow = low; // ke9ns at 192k SR  low = -96000 with zoom =.5
+            Display.RXDisplayLow = Display.TXDisplayLow = low; // ke9ns at 192k SR  low = -96000 with zoom =.5 (different for Spectrum display)
 			Display.RXDisplayHigh = Display.TXDisplayHigh = high;
            
           //  Debug.WriteLine("Display Limits: " + low + ", " + high);
@@ -21057,13 +21057,15 @@ namespace PowerSDR
 			p.Hide();
 		}
 
+
+        //====================================================================================
+        // ke9ns  setup->general->calibration->freq cal->START (comes here as a thread in setup.cs)
         public bool CalibrateFreq(float freq, Progress progress, bool suppress_errors)
         {
             bool retval = false;
-            //bool rx_only = SetupForm.RXOnly;
-            //SetupForm.RXOnly = true;
-
+         
             calibration_running = true;
+
             if (!chkPower.Checked)
             {
                 if (!suppress_errors)
@@ -21109,26 +21111,39 @@ namespace PowerSDR
             Thread.Sleep(200);
             //int ret = 0;
 
+
+            //------------------------------------------------------------
+            // ke9ns First find the DDS offset freq value based on the peak signal spot in the spectrum
+
             float[] buf = new float[Display.BUFFER_SIZE];
             float[] sum = new float[Display.BUFFER_SIZE];
+
             for (int i = 0; i < 10; i++)
             {
                 calibration_mutex.WaitOne();
-                fixed (float* ptr = &buf[0])
-                    DttSP.GetSpectrum(0, ptr);		// get the spectrum values
+
+                fixed (float* ptr = &buf[0])            // ke9ns prevent garbage collecion from moving this pointer data
+                {
+                    DttSP.GetSpectrum(0, ptr);      // get the spectrum values
+                }
+
                 for (int j = 0; j < Display.BUFFER_SIZE; j++)
+                {
                     sum[j] += buf[j];
+                }
+
                 calibration_mutex.ReleaseMutex();
+
                 Thread.Sleep(50);
             }
 
             float max = float.MinValue;
-            //float avg = 0;
+            
             int max_index = 0;
 
             for (int i = 0; i < Display.BUFFER_SIZE; i++)						// find the maximum signal
             {
-                //avg += buf[i];
+               
                 if (sum[i] > max)
                 {
                     max = sum[i];
@@ -21204,28 +21219,45 @@ namespace PowerSDR
             setupForm.ClockOffset = offset;				// Offset the clock based on the difference
             Thread.Sleep(200);
 
+
+            //--------------------------------------------------------------------------
+            // ke9ns ?? get OFFSET2 by PLL, adds to the OFFSET1 (found above)
+
             float a, b;
-            DttSP.GetSAMPLLvals(0, 0, &a, &b);
+            DttSP.GetSAMPLLvals(0, 0, &a, &b);     // ke9ns save original a and b values to put back after you getfreq
+
+
+            Debug.WriteLine("CalibrateFreq a, b " + a + " , " + b);
+            
             float a1 = a * 0.1f;
             float b1 = 0.25f * a1 * a1;
-            DttSP.SetSAMPLLvals(0, 0, a1, b1);
+
+            DttSP.SetSAMPLLvals(0, 0, a1, b1);     // ke9ns a1 = 10% of original value, b1= 25% of a1^2
+
             Thread.Sleep(200);
 
             int counter = 0;
             int samples = 200;
             float sum1 = 0.0f;
-            for (int i = 0; i < samples; i++)
+
+            for (int i = 0; i < samples; i++)                     // ke9ns loop 200 times
             {
                 float temp;
-                DttSP.GetSAMFreq(0, 0, &temp);
+
+                DttSP.GetSAMFreq(0, 0, &temp);                   // ke9ns ?? returns a freq
+
+                Debug.WriteLine("CalibrateFreq temp " + temp);
+
                 sum1 += temp;
                 Thread.Sleep(50);
                 progress.SetPercent((float)((float)++counter / samples));
             }
-                       
+
+            Debug.WriteLine("CalibrateFreq sum1 " + sum1 );
+
             diff = -(float)((sum1 / samples) * sample_rate1 / (2 * Math.PI));
 
-            DttSP.SetSAMPLLvals(0, 0, a, b);  // reset PLL values
+            DttSP.SetSAMPLLvals(0, 0, a, b);                    // reset PLL values
 
             // Calculate the DDS offset
             offset = 0;
@@ -21250,8 +21282,8 @@ namespace PowerSDR
             Debug.WriteLine("  offset2: " + offset);
 
             int current_clock = setupForm.ClockOffset;
-            if (Math.Abs(current_clock + offset) > 40000 ||
-                Math.Abs(current_clock - offset) > 40000)
+
+            if (Math.Abs(current_clock + offset) > 40000 || Math.Abs(current_clock - offset) > 40000)
             {
                 if (!suppress_errors)
                 {
@@ -21264,8 +21296,7 @@ namespace PowerSDR
                 goto end;
             }
 
-            if (Math.Abs(current_clock + offset) > 20000 ||
-                Math.Abs(current_clock - offset) > 20000)
+            if (Math.Abs(current_clock + offset) > 20000 || Math.Abs(current_clock - offset) > 20000)
             {
                 if (!suppress_errors)
                 {
@@ -21281,6 +21312,8 @@ namespace PowerSDR
             setupForm.ClockOffset += offset;				// Offset the clock based on the difference            
             retval = true;
 
+            //----------------------------------------------------------
+
         end:
             //SetupForm.RXOnly = rx_only;					// restore RX Only setting
             RX1Filter = am_filter;							// restore AM filter
@@ -21294,7 +21327,11 @@ namespace PowerSDR
             calibration_running = false;
             progress.Hide();
             return retval;
-        }
+
+        } //CalibrateFreq
+
+
+
 
         public bool CalibrateLevel(float level, float freq, Progress progress, bool suppress_errors)
         {
@@ -26468,8 +26505,8 @@ namespace PowerSDR
             get
             {
                 if (SpotForm != null)
-                {
-                    if ((SpotForm.beacon5 > 0) || (SpotForm.beacon11 > 0)) return true;
+                {  
+                    if ((SpotForm.beacon5 > 0) || (SpotForm.beacon11 > 0) || (SpotForm.WTime == true)) return true;  // if Fast or Slow Beacon scanning is enabled or WWV checking
                     else return false;
                 }
                 else return false;
@@ -32020,7 +32057,66 @@ namespace PowerSDR
 			return num.ToString("f1")+" dBm";
 		}
 
-		public string CATReadADC_L()
+        //=======================================================================================
+        // ke9ns
+        public int ReadAvgStrength(uint sub ) // DttSP.MeterType.AVG_SIGNAL_STRENGTH
+        {
+            float num = 0f;
+            num = DttSP.CalculateRXMeter(0, sub, DttSP.MeterType.AVG_SIGNAL_STRENGTH);
+            num = num +
+                rx1_meter_cal_offset +
+                rx1_preamp_offset[(int)rx1_preamp_mode] +
+                rx1_filter_size_cal_offset +
+                rx1_path_offset +
+                rx1_xvtr_gain_offset;
+            return (int)num;
+        }
+
+        //=======================================================================================
+        // ke9ns
+        public int ReadStrength(uint sub) // DttSP.MeterType.AVG_SIGNAL_STRENGTH
+        {
+            float num = 0f;
+            num = DttSP.CalculateRXMeter(0, sub, DttSP.MeterType.SIGNAL_STRENGTH);
+            num = num +
+                rx1_meter_cal_offset +
+                rx1_preamp_offset[(int)rx1_preamp_mode] +
+                rx1_filter_size_cal_offset +
+                rx1_path_offset +
+                rx1_xvtr_gain_offset;
+            return (int)num;
+        }
+
+        //=======================================================================================
+        // ke9ns
+        public void ReadPLL(uint c, float* a, float* b)     // 
+        {
+            DttSP.GetSAMPLLvals(0, c, a, b);            // ke9ns save original a and b values to put back after you getfreq
+            
+        }
+
+        //=======================================================================================
+        // ke9ns
+        public void SetPLL(uint c, float a, float b)        // a=alpha, b=beta
+        {
+            float a1 = a * 0.1f;
+            float b1 = 0.25f * a1 * a1;            // ke9ns a1 = 10% of original value, b1= 25% of a1^2
+
+            DttSP.SetSAMPLLvals(0, c, a, b);     // ke9ns 
+        }
+
+        //=======================================================================================
+        // ke9ns
+        public float ReadPLLFreq(uint c )     // 
+        {
+            float temp;
+            DttSP.GetSAMFreq(0, c, &temp);                   // ke9ns ?? returns a freq matching the SetPLL ?
+            return temp;
+        }
+
+
+        //==============================================================
+        public string CATReadADC_L()
 		{
 			float num = 0f;
 			num = DttSP.CalculateRXMeter(0, 0, DttSP.MeterType.ADC_REAL);
@@ -32787,7 +32883,8 @@ namespace PowerSDR
 				if(setupForm != null) 
 				{
 					setupForm.TXAF = txaf;
-					if(MOX) ptbAF.Value = txaf;
+                    if ((mox) && ((setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true)))  // ke9ns add (dont go into MON if in full duplex mode, leave as AF)
+                        ptbAF.Value = txaf;
 				}
 			}
 		}
@@ -41167,6 +41264,8 @@ namespace PowerSDR
         //==============================================================
         // =============================================================
 
+        public uint top_thread1 = 0; // ke9ns add
+
         private void RunDisplay()
 		{
 #if (WRITE_FFT_TEST)
@@ -41202,7 +41301,9 @@ namespace PowerSDR
                                 {
                                     DttSP.GetSpectrum(top_thread, ptr);
                                 }
-								break;
+ 
+
+                                break;
 							case DisplayMode.WATERFALL:
 							case DisplayMode.PANADAPTER:
 							case DisplayMode.PANAFALL:
@@ -41391,8 +41492,9 @@ namespace PowerSDR
 
                                 if (multimeter_avg == Display.CLEAR_FLAG) multimeter_avg = num;
 
-                                num = multimeter_avg_mult_old*multimeter_avg + multimeter_avg_mult_new*num;
-								multimeter_avg = num;
+                                num = multimeter_avg_mult_old * multimeter_avg + multimeter_avg_mult_new * num;
+
+                                multimeter_avg = num;
 
                                 if (fwc_init || hid_init)
 								{
@@ -42778,8 +42880,8 @@ namespace PowerSDR
                     }
                     else
                     {
-                        txtNOAA.ForeColor = Color.White;
-                        txtNOAA2.ForeColor = Color.White;
+                        txtNOAA.ForeColor = Color.Yellow;
+                        txtNOAA2.ForeColor = Color.Yellow;
                     }
 
                     txtNOAA.Text = "SF " + SFI + " A " + Aindex + " K " + Kindex;
@@ -46256,7 +46358,7 @@ namespace PowerSDR
 		{
             //udAF.Value = ptbAF.Value;
 
-            if (mox)
+            if ((mox) && ((setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true)) )  // ke9ns add (dont go into MON if in full duplex mode, leave as AF)
             {
                 lblAF.Text = "MON: " + ptbAF.Value.ToString(); // ke9ns add
             }
@@ -46274,36 +46376,42 @@ namespace PowerSDR
 
                 USBHID.SetMonGain(reg_val);
             }
-            else
+            else 
             {
-                if (chkMUT.Checked)
+                if (chkMUT.Checked) // check if in MUTE mode
                 {
                     Audio.MonitorVolume = 0.0;
                 }
-                else if ((num_channels > 2) && mox && !chkMON.Checked)
+                else if ((num_channels > 2) && (mox) && !chkMON.Checked)  // if TX and no MON enabled
                 {
                     // monitor is muted
                     Audio.MonitorVolume = 0.0;
                 }
                 else
                 {
+                   
                     switch (current_model)
                     {
                         case Model.FLEX1500:
                             Audio.MonitorVolume = ptbAF.Value / 100.0 * 0.8; // cap at 80% of Full Scale to prevent popping
                             break;
                         default:
-                            Audio.MonitorVolume = ptbAF.Value / 100.0;
+                           // if ((mox) && (chkVFOBTX.Checked == false || chkRX2.Checked == false))
+                                Audio.MonitorVolume = ptbAF.Value / 100.0;
                             break;
                     }
                 }
                
             }
 
-            if (!MOX) RXAF = ptbAF.Value;
-            else TXAF = ptbAF.Value;
+            if ((mox) && ((setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true) ) )  // ke9ns MOD to prevent MON function when in full duplex (RX2 ON the VFOB TX)
+                TXAF = ptbAF.Value;   // if transmit
+            else  RXAF = ptbAF.Value; // ke9ns if Receive  was !MOX
+
+            
 
 			if(ptbAF.Focused) btnHidden.Focus();
+
 		} // ptbAF_Scroll
 
 		private void ptbRF_Scroll(object sender, System.EventArgs e)
@@ -46660,12 +46768,12 @@ namespace PowerSDR
 // ke9ns 
         private void AudioMOXChanged(bool tx)
 		{
-			if(tx)
-			{
+            if ((tx) && (setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true)) // k9ens mod was just if (tx)  no MON if the full duplex
+    		{
                 Audio.MOX = tx;
-
+            
                ptbAF.Value = txaf;
-               
+             
 
 			}
 			else // rx
@@ -46677,6 +46785,8 @@ namespace PowerSDR
 			//udPWR_ValueChanged(this, EventArgs.Empty);
 			ptbAF_Scroll(this, EventArgs.Empty);				
 		}
+
+
 
 		private void HdwMOXChanged(bool tx, double freq)
 		{
@@ -48242,7 +48352,8 @@ namespace PowerSDR
 			if(setupForm != null) setupForm.CWDisableMonitor = chkCWSidetone.Checked;
 		}
 
-		private void udCWPitch_ValueChanged(object sender, System.EventArgs e)
+        //===============================================================
+		public void udCWPitch_ValueChanged(object sender, System.EventArgs e)
 		{
 			if(setupForm != null) setupForm.CWPitch = (int)udCWPitch.Value;
 			if(udCWPitch.Focused) btnHidden.Focus();
@@ -55271,11 +55382,12 @@ namespace PowerSDR
 							txtVFOBLSD.ForeColor = small_vfo_color;
 							txtVFOBBand.ForeColor = band_text_light_color;
 						}
-					}
-				}
-				dsp.GetDSPRX(0, 1).SetRXFilter(
-					dsp.GetDSPRX(0, 0).RXFilterLow,
-					dsp.GetDSPRX(0, 0).RXFilterHigh);
+                        Debug.WriteLine("MULTIRX HERE");
+
+                    }
+                }
+
+				dsp.GetDSPRX(0, 1).SetRXFilter(dsp.GetDSPRX(0, 0).RXFilterLow, dsp.GetDSPRX(0, 0).RXFilterHigh);   // turn on sub receiver 
 			}
 			else
 			{
@@ -55304,11 +55416,15 @@ namespace PowerSDR
 				if(current_click_tune_mode == ClickTuneMode.VFOB && !chkFullDuplex.Checked && !chkVFOSplit.Checked)
 					CurrentClickTuneMode = ClickTuneMode.VFOA;
 			}
-			Display.SubRX1Enabled = chkEnableMultiRX.Checked;
-            UpdateRX1SubNotches();
-		}
 
-		private void chkPanSwap_CheckedChanged(object sender, System.EventArgs e)
+            Display.SubRX1Enabled = chkEnableMultiRX.Checked;
+            UpdateRX1SubNotches();
+
+        } // chEnableMultiRX_CheckedChanged(
+
+
+
+        private void chkPanSwap_CheckedChanged(object sender, System.EventArgs e)
 		{
 			//if(chkEnableMultiRX.Checked)
 			{

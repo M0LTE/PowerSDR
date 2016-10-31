@@ -51,26 +51,35 @@
 
 typedef enum _ammode
 { AMdet, SAMdet } AMMode;
+
 typedef struct _am_demod
 {
   int size;
   CXB ibuf, obuf;
 
+  //=============================================
+  // ke9ns PLL structure
   struct
   {
     REAL alpha, beta, fast_alpha;
+
     struct
     {
       REAL f, l, h;
     } freq;
+
     REAL phs;
+
     struct
     {
       REAL alpha;
     } iir;
+
     COMPLEX delay;
+
   } pll;
 
+//=====================================
   struct
   {
     REAL curr, prev;
@@ -79,7 +88,8 @@ typedef struct _am_demod
   REAL dc;
   REAL smooth;
   AMMode mode;
-} AMDDesc, *AMD;
+
+} AMDDesc, *AMD;       // typedef struct _am_demod
 
 extern void AMDemod (AMD am);
 extern AMD newAMD (REAL samprate,

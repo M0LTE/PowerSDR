@@ -303,6 +303,14 @@ namespace PowerSDR
                         {
                             SpotControl.SWL_Mode[ii] = "DIGU";
                         }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("ALE4", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("WLO", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
                         else if ((SpotControl.SWL_Station[ii].IndexOf("Beacon-", StringComparison.OrdinalIgnoreCase) >= 0))
                         {
                             SpotControl.SWL_Mode[ii] = "DIGU";

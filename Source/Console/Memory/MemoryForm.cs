@@ -764,6 +764,7 @@ namespace PowerSDR
             if (ScheduleRepeat.Checked == true) ScheduleRepeatm.Checked = false; // only allow either weekly or monthly
 
             poweroff = 0; // reset flag
+
             try
             {
                  dataGridView1["Repeating", RIndex].Value = ScheduleRepeat.Checked; // ke9ns add put schedule start duration in selected in field box
@@ -791,6 +792,7 @@ namespace PowerSDR
         private void ScheduleRepeatm_CheckedChanged(object sender, EventArgs e)
         {
             if (ScheduleRepeatm.Checked == true) ScheduleRepeat.Checked = false;    // only allow either weekly or monthly
+
             poweroff = 0; // reset flag
 
             try
@@ -961,9 +963,10 @@ namespace PowerSDR
 
                 ScheduleRepeat.Checked = (bool)dataGridView1["Repeating", RIndex].Value; // ke9ns add put schedule repeat in selected in field box
                 ScheduleRecord.Checked = (bool)dataGridView1["Recording", RIndex].Value; // ke9ns add put schedule recording in selected in field box
+                ScheduleRepeatm.Checked = (bool)dataGridView1["Repeatingm", RIndex].Value; // ke9ns add put schedule repeat in selected in field box
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 ScheduleStartDate.Value = DateTime.Now;
                 ScheduleStartTime.Value = DateTime.Now;
@@ -972,6 +975,7 @@ namespace PowerSDR
                 ScheduleDurationTime.Value = 0;
                 ScheduleRepeat.Checked = false;
                 ScheduleRecord.Checked = false;
+                ScheduleRepeatm.Checked = false;
             }
 
         } //ScheduleUpdate()
