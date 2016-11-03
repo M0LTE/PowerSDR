@@ -4008,9 +4008,9 @@ namespace PowerSDR
                 }
 
 
-                if (console.BeaconSigAvg == true) // ke9ns add draw blue line to show 0 and 1 threshold for BCD time signal from WWV
+                if ((console.BeaconSigAvg == true)) // ke9ns add draw blue line to show 0 and 1 threshold for BCD time signal from WWV
                 {
-                    if ((bottom == false) && (SpotForm.WTime == true))
+                    if ((bottom == false) && (SpotForm.WTime == true) && (SpotForm.WWVPitch == false))
                     {
                         int thres = (int)((double)(spectrum_grid_max - SpotForm.WWVThreshold) * H / y_range);
 
@@ -4343,11 +4343,16 @@ namespace PowerSDR
                                 if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
 
                             //   Debug.Write(" FREQ-SWL " + ii);
-                          
 
-                                // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
-                                if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
-                                {
+
+                            // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
+
+                            if (
+                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                         )
+                            //   if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
+                            {
 
                         
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
@@ -4421,9 +4426,13 @@ namespace PowerSDR
                       
                         for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
                         {
-                          //  Debug.Write(" drawSWL " + ii);
+                            //  Debug.Write(" drawSWL " + ii);
 
-                            if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                            if (
+                         ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                         ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                          )
+                            //     if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                             {
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
                              
@@ -4440,7 +4449,11 @@ namespace PowerSDR
                         {
                             //  Debug.Write(" drawSWL " + ii);
 
-                            if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                            if (
+                       ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                       ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                        )
+                            //    if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                             {
                                 int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
@@ -5555,6 +5568,7 @@ namespace PowerSDR
 		}
 
         //================================================================================================
+        // ke9ns time vs amplitude using audio.doscope() routine
 		unsafe private static bool DrawScope(Graphics g, int W, int H, bool bottom)
 		{
 			if(scope_min.Length < W) 
@@ -5573,14 +5587,17 @@ namespace PowerSDR
 
 			Point[] points = new Point[W*2];            // create Point array
 
+          //  Debug.WriteLine("scope");
+
             for (int i=0; i < W; i++)						// fill point array
 			{	
 				int pixel = 0;
 
 				if(bottom) pixel = (int)(H/2 * scope_max[i]);
-				else pixel = (int)(H/2 * scope_max[i]);
+				else pixel = (int)(H/2 * scope_max[i]);          // ke9ns scope data scaled to fit display area available
 
-				int y = H/2 - pixel;
+				int y = H/2 - pixel;  // ke9ns this is the actual data moved to the part of the display being used
+
 				points[i].X = i;
 				points[i].Y = y;
 				if(bottom) points[i].Y += H;
@@ -5591,6 +5608,7 @@ namespace PowerSDR
 				y = H/2 - pixel;
 				points[W*2-1-i].X = i;
 				points[W*2-1-i].Y = y;
+
 				if(bottom)points[W*2-1-i].Y += H;
 				//if(points[W*2-1-i].Y == points[i].Y)
 				//	points[W*2-1-i].Y += 1;
@@ -5830,13 +5848,16 @@ namespace PowerSDR
            
             slope = (float)num_samples/(float)W;
 
-          //  Debug.WriteLine("start sample index2 " + start_sample_index + " , " + num_samples + " , " + sample_rate + " , " + BUFFER_SIZE + " , " + slope);
+        //   Debug.WriteLine("start sample index2 " + start_sample_index + " , " + num_samples + " , " + sample_rate + " , " + BUFFER_SIZE + " , " + slope);
 
             for (int i=0; i < W; i++)
 			{
 				float max = float.MinValue;
 				float dval = i*slope + start_sample_index;
 				int lindex = (int)Math.Floor(dval);
+
+            //  if (i== 0)  Debug.WriteLine("spec1: " + lindex + " , " + current_display_data[lindex] + " , "+ ((float)lindex - dval + 1));
+            //    if (i == W-1) Debug.WriteLine("spec2: " + lindex);
 
                 if (!bottom)
 				{
@@ -5863,7 +5884,10 @@ namespace PowerSDR
 					}
 				}
 
-				if(!bottom) max += rx1_display_cal_offset;
+               
+             //   if (lindex == 2046) Debug.WriteLine("MAX before " + max + " , " + current_display_data_bottom[lindex]);
+
+                if (!bottom) max += rx1_display_cal_offset;
 				else max += rx2_display_cal_offset;
 
 				if(!mox)
@@ -5872,7 +5896,9 @@ namespace PowerSDR
 					else max += rx2_preamp_offset;
 				}
 
-				if(max > local_max_y)
+            //   if (lindex == 2047) Debug.WriteLine("MAX after " + max + " , " + rx1_display_cal_offset + " , "+ rx1_preamp_offset );
+
+                if (max > local_max_y)
 				{
 					local_max_y = max;
 					max_x = i;
@@ -6190,7 +6216,7 @@ namespace PowerSDR
 
                 //=========================================================================
                 // ke9ns add
-                if ((console.BeaconSigAvg == true) && rx == 1) // ke9ns add for beacon scanning
+                if ((console.BeaconSigAvg == true) &&( rx == 1)) // ke9ns add for beacon scanning
                 {
                     max1 = max1 + max; // sum up entire panadapter line (left to right)
 

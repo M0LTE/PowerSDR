@@ -7,14 +7,14 @@
     <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="PowerSDR_T11.exe.manifest" size="17643">
+    <dependentAssembly dependencyType="install" codebase="PowerSDR_T11.exe.manifest" size="17639">
       <assemblyIdentity name="PowerSDR_T11.exe" version="1.0.1.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>MvxshETYWhOydkc3a3xmYOGxM8qr8SZdrR+XfUpv0v4=</dsig:DigestValue>
+        <dsig:DigestValue>1w/S1+Cz5BSjfdRS3es7r3G1bur1wztItMCDXPhCQbI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

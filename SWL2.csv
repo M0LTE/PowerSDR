@@ -8,6 +8,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 3016;0000-2400;;AFS;HFDL-Johannesburg;;AFS;;1;;
 3455;0000-2400;;IRL;HFDL-Shannon;;IRL;;1;;
 3497;0000-2400;;USA;HFDL-Barrow;;AK;;1;;
+3589;0000-2400;;Wld;ALE400;;Wld;1;;
 3596;0000-2400;;Wld;ALE-World;;Wld;;1;;
 3791;0000-2400;;Wld;ALE-World;;Wld;;1;;
 3900;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
@@ -56,6 +57,9 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 6661;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;
 6712;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
 6754;0000-2400;;CFB;Trenton Mil Volmet;;CFB;;1;;
+6981;0000-2400;;USA;ALE-USA;;USA;1;;
+7037.5;0000-2400;;Wld;ALE400;;Wld;1;;
+7099.5;0000-2400;;Wld;ALE400;;Wld;1;;
 7102;0000-2400;;Wld;ALE-World;;Wld;;1;;
 7185.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
 7296;0000-2400;;Wld;ALE-World;;Wld;;1;;
@@ -88,8 +92,8 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 10081;0000-2400;;USA;HFDL-San Francisco;;CA;;1;;
 10081;0000-2400;;IRL;HFDL-Shannon;;IRL;;1;;
 10084;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;
-10087;0000-2400;;RUS;HFDL-Krasnoyarsk;;RUS;;1;;
-10093;0000-2400;;USA;HFDL-Barrow;;AK;;1;;
+10087;0000-2400;;RUS;HFDL-Krasnoyarsk;;RU
+10141.5;0000-2400;;Wld;ALE400;;Wld;1;;
 10145.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
 11184;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
 11306;0000-2400;;GUM;HFDL-Agana;;GUM;;1;;
@@ -118,6 +122,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 13324;0000-2400;;USA;HFDL-Molokai;;HWA;;1;;
 13351;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;
 13354;0000-2400;;BHR;HFDL-Muharraq;;BHR;;1;;
+14094;0000-2400;;Wld;ALE400;;Wld;1;;
 14100;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 14109;0000-2400;;Wld;ALE-World;;Wld;;1;;
 14346;0000-2400;;Wld;ALE-World;;Wld;;1;;
@@ -139,9 +144,11 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 17928;0000-2400;;CNR;HFDL-Telde Canarias;;CNR;;1;;
 17967;0000-2400;;BHR;HFDL-Muharraq;;BHR;;1;;
 17985;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
+18104.5;0000-2400;;Wld;ALE400;;Wld;1;;
 18106;0000-2400;;Wld;ALE-World;;Wld;;1;;
 18110;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 18117.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
+21094;0000-2400;;Wld;ALE400;;Wld;1;;
 21096;0000-2400;;Wld;ALE-World;;Wld;;1;;
 21150;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 21432.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
@@ -162,6 +169,6 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 24930;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 24932;0000-2400;;Wld;ALE-World;;Wld;;1;;
 25100;0000-2400;;DSC;Maritime Exclusive;;DSC;;1;;
-28146;0000-2400;;Wld;ALE-World;;Wld;;1;;
+28146;0000-2400;;Wld;ALE400;;Wld;;1;;
 28200;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 28312.5;0000-2400;;Wld;ALE-World;;Wld;;1;;

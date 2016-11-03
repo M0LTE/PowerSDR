@@ -3286,7 +3286,7 @@ namespace PowerSDR
 
 
 
-
+     
 
         //==============================================================================================================         
         // ke9ns  (callback8) called to setup RX and TX streams (to and from the flex radio)
@@ -3309,8 +3309,7 @@ namespace PowerSDR
 
             localmox = mox;
 
-        
-
+           
             //=====================================================================================
             // OUTPUT pointer streams
 
@@ -4270,7 +4269,7 @@ namespace PowerSDR
 
             //-------------------------------------------------------------------------------------
 
-            if (Display.CurrentDisplayMode == DisplayMode.SCOPE || Display.CurrentDisplayMode == DisplayMode.PANASCOPE)  // ke9ns add  no need to do scope if your not using it.
+            if (Display.CurrentDisplayMode == DisplayMode.SCOPE || Display.CurrentDisplayMode == DisplayMode.PANASCOPE  )  // ke9ns add  no need to do scope if your not using it.
             { 
                 if (!localmox)
                 {
@@ -4290,6 +4289,21 @@ namespace PowerSDR
            } // do only if needing scope
 
 
+            //--------------------------------------------------------------
+            // ke9ns add  comes here every 10msec @ 192kSR, 21msec @ 96kSR, 42msec @ 48kSR with 2048 Buffer size
+            if (console.BeaconSigAvg == true)
+            {
+                fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame
+                {
+                    Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
+                }
+
+                console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+
+                // console.WWVReady = true;
+    
+
+            } //   if (console.BeaconSigAvg == true)
             //-------------------------------------------------------------------------------------
             // ke9ns POST AUDIO PROCESSING WAVE RECORDING
 
@@ -4638,14 +4652,16 @@ namespace PowerSDR
             if (!full_duplex)
             {
               
-                if (!localmox) // RX Mode
+                if (!localmox) // RX Mode  (ke9ns only comes here if chkVFOATX is true)
                 {
-
-                    if (console.chkRX1MUTE.Checked == true) // ke9ns add to allow MUTE of just RX1 only
+                    if ((console.chkRX1MUTE.Checked == true)) // ke9ns add to allow MUTE of just RX1 only
                     {
-                        ClearBuffer(out_l4, frameCount); // 
-                        ClearBuffer(out_r4, frameCount);
+                                ClearBuffer(out_l4, frameCount); // 
+                                ClearBuffer(out_r4, frameCount);
+                        //   Debug.Write("testing------------");
+
                     }
+
 
                     // if RX2 is present, combine the outputs ---- A (GRE)
                     if (rx2_enabled) 
@@ -4654,6 +4670,8 @@ namespace PowerSDR
                         AddBuffer(out_r4, out_r3, frameCount);
                     }
 
+
+                  
                     // non-scaled output is already in the Line Out channel
 
                     // Scale the output for the headphones
@@ -4817,10 +4835,29 @@ namespace PowerSDR
                         CopyBuffer(out_r2, out_r4, frameCount);
                     }
                 }
-                else // RX2 is enabled
+                else // ke9ns    RX2 is enabled and full duplex on (ie chkVFOBTX = true)
                 {
+
+                    if ((console.chkRX1MUTE.Checked == true) && ((console.setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false || console.setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == false)) ) // ke9ns add to allow MUTE of just RX1 only
+                    {
+                        ClearBuffer(out_l4, frameCount); // 
+                        ClearBuffer(out_r4, frameCount);
+
+
+                    }
+
                     if (!localmox) // --- ORA
                     {
+
+                        if ((console.chkRX1MUTE.Checked == true)) // ke9ns add to allow MUTE of just RX1 only
+                        {
+                            ClearBuffer(out_l4, frameCount); // 
+                            ClearBuffer(out_r4, frameCount);
+                              
+
+                        }
+
+
                         // combine RX2 audio with RX1
                         AddBuffer(out_l4, out_l3, frameCount);
                         AddBuffer(out_r4, out_r3, frameCount);                    
@@ -5368,9 +5405,12 @@ namespace PowerSDR
 			return 0;
 		}
 
-#endregion
+        #endregion
 
-#region Buffer Operations
+
+
+
+        #region Buffer Operations
 
         unsafe private static float SumBuffer(float* buf, int samples)
         {
@@ -6463,12 +6503,13 @@ namespace PowerSDR
 
 
         //======================================================================================
-        // ke9ns this is for scope and Panascope only
+        // ke9ns this is for scope and Panascope only (framecount on a flex5000 = 2048)
         //======================================================================================
         unsafe private static void DoScope(float* buf, int frameCount)
 		{
 
-            if (Display.CurrentDisplayMode != DisplayMode.SCOPE && Display.CurrentDisplayMode != DisplayMode.PANASCOPE) return; // ke9ns add  no need to do scope if your not using it.
+            //  if (Display.CurrentDisplayMode != DisplayMode.SCOPE && Display.CurrentDisplayMode != DisplayMode.PANASCOPE) return; // ke9ns add  no need to do scope if your not using it.
+        //   Debug.WriteLine("DOSCOPE HERE" + frameCount);
 
             if (scope_min == null || scope_min.Length < scope_display_width) // ke9ns check for screen size change
             {
@@ -6491,11 +6532,11 @@ namespace PowerSDR
 				scope_max = Display.ScopeMax;
 			}
 
-			for(int i=0; i < frameCount; i++)
+			for(int i=0; i < frameCount; i++) // ke9ns 0 to 2048
 			{
-				if(buf[i] < scope_pixel_min) scope_pixel_min = buf[i];
+				if(buf[i] < scope_pixel_min) scope_pixel_min = buf[i]; // ke9ns find the mininum value of this frame
 
-				if(buf[i] > scope_pixel_max) scope_pixel_max = buf[i];
+				if(buf[i] > scope_pixel_max) scope_pixel_max = buf[i]; // ke9ns find the max value of this frame
 
 				scope_sample_index++;
 

@@ -46,6 +46,10 @@ using System.Text.RegularExpressions;
 using System.Net;
 //using System.Runtime.Serialization.Json;
 
+//reference Nuget Package NAudio.Lame
+using NAudio;
+using NAudio.Wave;
+using NAudio.Lame;
 
 
 using System.Net.Sockets;                // ke9ns add for tcpip internet connections
@@ -167,7 +171,8 @@ namespace PowerSDR
         public CheckBoxTS checkBoxWWV;
         private NumericUpDownTS udDisplayWWV;
         private IContainer components;
-
+        private RadioButton checkBoxTone;
+        private TextBox textBox2;
         public DSP dsp;
 
         #region Constructor and Destructor
@@ -253,8 +258,12 @@ namespace PowerSDR
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpotControl));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.SWLbutton = new System.Windows.Forms.Button();
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -275,6 +284,8 @@ namespace PowerSDR
             this.SWLbutton2 = new System.Windows.Forms.Button();
             this.btnBeacon = new System.Windows.Forms.Button();
             this.btnTime = new System.Windows.Forms.Button();
+            this.checkBoxTone = new System.Windows.Forms.RadioButton();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -501,18 +512,34 @@ namespace PowerSDR
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Location = new System.Drawing.Point(12, 7);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Size = new System.Drawing.Size(269, 113);
             this.dataGridView1.TabIndex = 72;
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
@@ -527,18 +554,34 @@ namespace PowerSDR
             this.dataGridView2.AllowUserToResizeColumns = false;
             this.dataGridView2.AllowUserToResizeRows = false;
             this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridView2.Location = new System.Drawing.Point(463, 281);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView2.Size = new System.Drawing.Size(254, 94);
             this.dataGridView2.TabIndex = 75;
             this.toolTip1.SetToolTip(this.dataGridView2, "memories");
@@ -580,6 +623,32 @@ namespace PowerSDR
             this.btnTime.UseVisualStyleBackColor = true;
             this.btnTime.Click += new System.EventHandler(this.btnTime_Click);
             // 
+            // checkBoxTone
+            // 
+            this.checkBoxTone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxTone.AutoSize = true;
+            this.checkBoxTone.Location = new System.Drawing.Point(559, 455);
+            this.checkBoxTone.Name = "checkBoxTone";
+            this.checkBoxTone.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxTone.TabIndex = 93;
+            this.checkBoxTone.TabStop = true;
+            this.checkBoxTone.Text = "Tone";
+            this.toolTip1.SetToolTip(this.checkBoxTone, "ON = BCD sub-Carrier Tone\r\nOFF = no Tone");
+            this.checkBoxTone.UseVisualStyleBackColor = true;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox2.Enabled = false;
+            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox2.Location = new System.Drawing.Point(559, 475);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(37, 20);
+            this.textBox2.TabIndex = 94;
+            this.textBox2.Text = "0";
+            this.toolTip1.SetToolTip(this.textBox2, "Length of Tone in mSec\r\n");
+            this.textBox2.Visible = false;
+            // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -618,7 +687,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayWWV.Location = new System.Drawing.Point(536, 452);
+            this.udDisplayWWV.Location = new System.Drawing.Point(511, 452);
             this.udDisplayWWV.Maximum = new decimal(new int[] {
             4,
             0,
@@ -988,6 +1057,8 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(783, 578);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.checkBoxTone);
             this.Controls.Add(this.udDisplayWWV);
             this.Controls.Add(this.checkBoxWWV);
             this.Controls.Add(this.btnTime);
@@ -6604,9 +6675,11 @@ namespace PowerSDR
         public int beacon8 = 0;       // to store prior high filter before running beacon scan
         public int beacon9= 0;        //to store prior low filter before running beacon scan
         public Filter beacon89;       // to store filter name before running beacon scan
-        public int beacon77 = 600;    // to store cw pitch before running beacon scan
+        public int beacon77 = 0;      // to store cw pitch before running beacon scan
+        public double beacon88 = 0;   // to store vfoa
+        public int beacon66 = 0;      //  to store blocksize
+        public PreampMode beacon55;
 
-        public int oldSR = 48000;     // to store original SR
 
         public bool beacon10 = false; //true indicates op mode has changed (ie scan was run)
 
@@ -7008,8 +7081,10 @@ namespace PowerSDR
             beacon9 = console.RX1FilterLow;         // get low filter so you can restore it when you turn off the beacon check
             beacon89 = console.RX1Filter;           // get filter name so you can restore
             beacon77 = (int)console.udCWPitch.Value;     // get filter name so you can restore
+            beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
+            beacon88 = console.VFOAFreq;          // get vfoa
 
-          
+
             //-----------------------------------------------------------------------
             //-----------------------------------------------------------------------
             while ( (beacon1 == true) ) // only do while the beacon testing is goin on
@@ -7122,12 +7197,14 @@ namespace PowerSDR
 
                         if (beacon10 == true) // put back original op mode, now that the beacon scanner was turned from ON to OFF
                         {
-                            console.udCWPitch.Value = beacon77;     // restore cw pitch value
                             console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
                             console.RX1Filter = beacon89;           // restore filter name
                             console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
                             console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
-                            
+                            console.udCWPitch.Value = beacon77;     // restore cw pitch value
+                            console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
+                            console.VFOAFreq = beacon88;          // get vfoa
+
                             beacon10 = false;
                         }
                     }
@@ -7461,12 +7538,14 @@ namespace PowerSDR
 
             if (beacon10 == true)
             {
-                console.udCWPitch.Value = beacon77;     // restore cw pitch
                 console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
                 console.RX1Filter = beacon89;
                 console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
                 console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
-                
+                console.udCWPitch.Value = beacon77;     // restore cw pitch
+                console.BlockSize1 = beacon66;          // restore blocksize
+                console.VFOAFreq= beacon88;            // restore vfoa
+
             }
 
         } //  private void BeaconSlot()
@@ -7688,7 +7767,13 @@ namespace PowerSDR
 
         } // btnTime_Click
 
-    
+
+
+
+
+        //====================================================================================================================
+        //====================================================================================================================
+
         double[] WWV_Freq = { 2.500100, 5.000100, 10.000100, 15.000100 };  // listen to 100hz tone
         double[] WWV_Freq1 = { 2.5, 5.0, 10.0, 15.0 };                     // listen to 1000khz tone
 
@@ -7701,10 +7786,15 @@ namespace PowerSDR
 
         DateTime WWVNT = DateTime.Now;
 
-        public int WWVThreshold = -150; // the trip point where the PCM BCD data stream from WWV determines a 1 or 0
+        public int WWVThreshold = 0; // the trip point where the PCM BCD data stream from WWV determines a 1 or 0
 
         public int indexP = 0;  // P frame index (with 10 seconds inside it)
         public int indexS = 0; // seconds index inside a P frame
+
+        public int oldSR = 48000;     // to store original SR
+
+        public bool WWVPitch = true;   // true = use pitch detection, false = use signal strength
+
 
         //====================================================================================================================
         //====================================================================================================================
@@ -7719,46 +7809,79 @@ namespace PowerSDR
             beacon8 = console.RX1FilterHigh;        // get high filter so you can restore it when you turn off the beacon check
             beacon9 = console.RX1FilterLow;         // get low filter so you can restore it when you turn off the beacon check
             beacon89 = console.RX1Filter;           // get filter name so you can restore
-            beacon77 = (int)console.udCWPitch.Value; // get filter name so you can restore
+            beacon88 = console.VFOAFreq;            // get freq you were on before 
+            beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
+
+         //   beacon55 = console.CATPreamp;
+
 
             oldSR = console.SampleRate1;            // get SR
 
-           
-
-            if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
+            if (checkBoxTone.Checked == true)
             {
-                Debug.WriteLine("orig SR: " + oldSR);
-
-               console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
-
-                Debug.WriteLine("orig SR Changed to 96k ");
-
-
+                WWVPitch = false;
+            }
+            else
+            {
+                WWVPitch = true;
             }
 
-       
+          //  if (WWVPitch == false)
+           // {
+                if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
+                {
+                    console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
+                
+                }
+          //  }
+
+            textBox2.Text = "";
+            checkBoxTone.Checked = false;   // turn off tone marker when done.
+
+            if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
+
             console.RX1Filter = Filter.VAR1;
-            console.RX1DSPMode = DSPMode.DIGU;
-
-            console.RX1FilterHigh = 30;          // set filter around the 100hz seconds pulse
-            console.RX1FilterLow = -30;
+            Debug.WriteLine("WWV>>0");
 
 
-            console.VFOAFreq = WWV_Freq[(int)udDisplayWWV.Value-1];         // WWV in CWU mode will center on 5000.1 khz
+            if (WWVPitch == false)
+            {
+                console.RX1DSPMode = DSPMode.DIGU;
 
-            console.chkEnableMultiRX.Checked = true;  // enable sub receiver
-            console.VFOBFreq = WWV_Freq1[(int)udDisplayWWV.Value - 1];       // WWV in CWU mode will center on 5000 khz
+                console.UpdateRX1Filters(-30, 30);
 
-            textBox1.Text += "Waiting for Start of Minute!\r\n";
+                textBox1.Text += "Signal Strength detection. Waiting for Start of Minute!\r\n";
 
-            Debug.WriteLine("WWV Time Thread running ");
+                console.VFOAFreq = WWV_Freq[(int)udDisplayWWV.Value - 1];         // WWV in CWU mode will center on 5000.1 khz
 
-           
+                console.chkEnableMultiRX.Checked = true;  // enable sub receiver
+                console.VFOBFreq = WWV_Freq1[(int)udDisplayWWV.Value - 1];       // WWV in CWU mode will center on 5000 khz
+
+              
+            }
+            else
+            {
+                console.chkEnableMultiRX.Checked = false;  // enable sub receiver
+
+              //  console.CATPreamp = PreampMode.OFF;
+
+                console.RX1DSPMode = DSPMode.USB;
+
+                console.UpdateRX1Filters(60, 140);
+
+                textBox1.Text += "Tone detection. Waiting for Start of Minute!\r\n";
+
+                console.VFOAFreq = WWV_Freq1[(int)udDisplayWWV.Value - 1];         // main receiver: WWV in DIGU mode on  sub-Carrier
+
+              
+            }
+
+            console.UpdateDisplay();
+
             int BCDSignal= 0;              // measured BCD data stream dBm signal
             int CarrierSignal = 0;         // measured Carrier dBm signal
+            int CarrierSignalINIT = 0;         // measured Carrier dBm signal
 
-          
-          
             bool BCD1timeFlag = false;
 
             bool BCDONTrig = false;
@@ -7771,14 +7894,18 @@ namespace PowerSDR
             tickON.Reset();
             tickOFF.Reset();
 
-          
-          
-            int CarrierSignalINIT = 0;         // measured signal floor around the WWV signal
+            int BCDMax = 0;
+            int BCDMin = 0;
+                  
+            int BCDSignalON = 0;           // BCD data steam high dbm signal found initially
+            int BCDSignalOFF = 0;           // BCD data steam high dbm signal found initially
 
-            int BCDSignalON = -150;           // BCD data steam high dbm signal found initially
-            int BCDSignalOFF = 0;             // BCD data steam low dbm signal found initially
+      
 
-            int BCDSignalON1 = -150;         // BCD data steam high dbm signal found while running
+            double BCDAdj = 3;                // % adjustment to what it determined to be the High signal
+            int BCDCount = 0;              // counter for the % adjustment
+
+            int BCDSignalON1 = 0;         // BCD data steam high dbm signal found while running
             int BCDSignalOFF1 = 0;           // BCD data steam low dbm signal found while running
 
             int WWVCF = 0;               // fault counter for low signal strength fault
@@ -7798,54 +7925,106 @@ namespace PowerSDR
             bool WWVPos = false;  // true = indicates you got a Position indicator frame at least 1 time before you got the HOLE (i.e. before WWVStart == true)
 
             TimeSpan k1 = new TimeSpan();
-
-            SystemTime st = new SystemTime();
+            SystemTime st = new SystemTime();   // used to update PC time
 
             WWVCF = 0;
 
-            Stopwatch ST = new Stopwatch();
-            ST.Reset();
-            ST.Start();
+            Stopwatch ST = new Stopwatch();   // internal 1 second time keeper
+            Stopwatch ST1 = new Stopwatch();
 
-            BCDSignalOFF = 0;
-
-            CarrierSignalINIT = 0;
             Debug.WriteLine("WWV>>1");
-            while (ST.ElapsedMilliseconds < 2000) // get floor for bcd stream
+
+            ST.Restart();
+
+            while (ST.ElapsedMilliseconds < 2000)    // wait for things to calm down after you make changes to the mode
             {
                 CarrierSignalINIT = 0;
                 BCDSignalOFF = 0;
 
             }
+
+           
+
+            BCDSignalON = 0;         // RESET BCD data steam high dbm signal found while running
+
+            BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+            BCDCount = 0;
+            BCDAdj = 0;
+            
+            Debug.WriteLine("WWV>>2");
+
+            //------------------------------------------------------------------
+            GoertzelCoef(100.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
+
             ST.Restart();
 
-            Debug.WriteLine("WWV>>2");
+            if (WWVPitch == false)  // signal strength based detected
+            {
+                BCDSignalOFF = 0;
+                BCDSignalON = -150;
+                BCDSignalOFF1 = 0;
+                BCDSignalON1 = -150;
+            }
+
+
             while ( ST.ElapsedMilliseconds < 1300)                          // get floor for bcd stream
             {
-                BCDSignal = console.ReadStrength(0);
-                CarrierSignal = console.ReadStrength(1);
 
-                if ((BCDSignal < BCDSignalOFF) && (BCDSignal > -120))       // check low dBm value
+
+                if (WWVPitch == false)  // signal strength based detected
                 {
-                    BCDSignalOFF = BCDSignal;                               // finding the OFF state of this bcd stream area if the WWV signal
-                    CarrierSignalINIT = CarrierSignal;                      // find the carrier level at the same time
-                }
-                if ((BCDSignal > BCDSignalON) && (BCDSignal > -120))        // check high dBm value
+                    BCDSignal = console.ReadStrength(0);            // read wwv 100 hz OFF of carrier point (BCD data stream)            
+                    CarrierSignal = console.ReadStrength(1);        // read WWV 0hz carrier point
+
+                    if ((BCDSignal < BCDSignalOFF) )       // check low dBm value
+                    {
+                        BCDSignalOFF = BCDSignal;                               // finding the OFF state of this bcd stream area if the WWV signal
+                        CarrierSignalINIT = CarrierSignal;                      // find the carrier level at the same time
+                    }
+                    if ((BCDSignal > BCDSignalON) )        // check high dBm value
+                    {
+                        BCDSignalON = BCDSignal;                                // finding the ON state of this bcd stream area if the WWV signal
+                    }
+                } //  if (WWVPitch == false)  // signal strength based detected
+                else
                 {
-                    BCDSignalON = BCDSignal;                                // finding the ON state of this bcd stream area if the WWV signal
+                    BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
+
+                    if (BCDSignal > BCDSignalON)
+                    {
+                        BCDSignalON = BCDSignal;  // get maximum magnitude
+                    }
+
                 }
+
 
             } // for loop 1.3 seconds to test levels
+
+         
+
+            BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+            BCDCount = 0;
+
+            BCDAdj = 3.0;
 
             ST.Stop();
             Debug.WriteLine("WWV>>3");
 
-            Debug.WriteLine("WWV>> Lowest BCD ,  Carrier " + BCDSignalOFF + " , " + CarrierSignalINIT);
+            Debug.WriteLine("WWV>> Highest BCD Mag: " + BCDSignalON + " , SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1);
 
-            textBox1.Text += "WWV BCD Data stream: (0)= " + BCDSignalOFF + "dBm, (1)= " + BCDSignalON + "dBm @ Carrier Level: " + CarrierSignalINIT + "dBm\r\n";
+            if (WWVPitch == false)  // signal strength based detected
+            {
+                textBox1.Text += "WWV BCD Data stream : " + BCDSignalON + "dBm , Carrier: " + CarrierSignal + " dBm, SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
+            }
+            else
+            {
+                textBox1.Text += "WWV BCD Data stream MAG: " + BCDSignalON + " , SR:" + console.SampleRate1 + " , Buffer size: " + console.BlockSize1 + "\r\n";
+
+            }
 
             ST.Restart();
 
+           
             //---------------------------------------------------------------
             //---------------------------------------------------------------
             //---------------------------------------------------------------
@@ -7853,49 +8032,42 @@ namespace PowerSDR
             while (WTime == true)
             {
 
-                //  tempDB3 = BX_dBm2;                  // get floor
-
-                BCDSignal = console.ReadStrength(0);            // read wwv 100 hz OFF of carrier point (BCD data stream)            
-                CarrierSignal = console.ReadStrength(1);        // read WWV 0hz carrier point
-       
-
-                //------------------------------------------------------------------
-                // keep adjusting signal based on signal strength you are seeing
-
-                if ((BCDSignal < BCDSignalOFF1))   // check low dBm value
+                if (WWVPitch == false)  // signal strength based detected
                 {
-                    BCDSignalOFF1 = BCDSignal;                           // finding the OFF state of this bcd stream area if the WWV signal
-                   
-                }
-                if ((BCDSignal > BCDSignalON1))    // check high dBm value
-                {
-                    BCDSignalON1 = BCDSignal;                            // finding the ON state of this bcd stream area if the WWV signal
-                }
+                    BCDSignal = console.ReadStrength(0);            // read wwv 100 hz OFF of carrier point (BCD data stream)            
+                    CarrierSignal = console.ReadStrength(1);        // read WWV 0hz carrier point
 
-                if (ST.ElapsedMilliseconds > 1300)
-                {
-                    CarrierSignalINIT = CarrierSignal;
-                    BCDSignalOFF = BCDSignalOFF1;
-                    BCDSignalON = BCDSignalON1;
-                   
-                    BCDSignalON1 = -150;         // RESET BCD data steam high dbm signal found while running
-                    BCDSignalOFF1 = 0;           // RESET BCD data steam low dbm signal found while running
-                    ST.Restart();
+                    //------------------------------------------------------------------
+                    // keep adjusting signal based on signal strength you are seeing
 
-                 //   textBox1.Text += "WWV BCD Data stream: (0)= " + BCDSignalOFF + "dBm, (1)= " + BCDSignalON + "dBm @ Carrier Level: " + CarrierSignal + "dBm\r\n";
+                    if ((BCDSignal < BCDSignalOFF1))   // check low dBm value
+                    {
+                        BCDSignalOFF1 = BCDSignal;                           // finding the OFF state of this bcd stream area if the WWV signal
 
-                }
+                    }
+                    if ((BCDSignal > BCDSignalON1))    // check high dBm value
+                    {
+                        BCDSignalON1 = BCDSignal;                            // finding the ON state of this bcd stream area if the WWV signal
+                    }
 
-                //-------------------------------------------------
-                // check the carrier signal strength 
+                    if (ST.ElapsedMilliseconds > 1300)
+                    {
+                        CarrierSignalINIT = CarrierSignal;
+                        BCDSignalOFF = BCDSignalOFF1;
+                        BCDSignalON = BCDSignalON1;
 
-                //   WWVFloor = tempDB3;
+                        BCDSignalON1 = -150;         // RESET BCD data steam high dbm signal found while running
+                        BCDSignalOFF1 = 0;           // RESET BCD data steam low dbm signal found while running
+                        ST.Restart();
+
+                        //   textBox1.Text += "WWV BCD Data stream: (0)= " + BCDSignalOFF + "dBm, (1)= " + BCDSignalON + "dBm @ Carrier Level: " + CarrierSignal + "dBm\r\n";
+
+                    }
 
 
-                  
                     if ((uint)(BCDSignalON - BCDSignalOFF) < 6) // if you loose the carrier, then NO GOOD
                     {
-                        if (WWVCF > 30) // FAIL if carrier stays LOW for too long
+                        if (WWVCF > 1000) // FAIL if carrier stays LOW for too long
                         {
                             textBox1.Text += "\r\n";
                             textBox1.Text += "Radio Station WWV: Carrier signal too low, choose different Frequency\r\n";
@@ -7915,12 +8087,75 @@ namespace PowerSDR
                     {
                         WWVCF = 0;
                     }
-    
 
-              
-                WWVThreshold =   BCDSignalOFF + (3*(BCDSignalON - BCDSignalOFF) / 7); // adjust the threshold based on the last seconds ON/OFF dBm values
-            
-                WWVThreshold = WWVThreshold + ((CarrierSignal - CarrierSignalINIT)/3); // adjust the threshold based on the last seconds Carrier dBm values
+                    WWVThreshold = BCDSignalOFF + (3 * (BCDSignalON - BCDSignalOFF) / 7); // adjust the threshold based on the last seconds ON/OFF dBm values
+
+                    WWVThreshold = WWVThreshold + ((CarrierSignal - CarrierSignalINIT) / 3); // adjust the threshold based on the last seconds Carrier dBm values
+
+
+                } // if (WWVPitch == false)  // signal strength based detected
+                else
+                {
+                    BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
+
+
+                    //------------------------------------------------------------------
+                    // keep adjusting signal based on signal strength you are seeing
+
+                    if (BCDSignal > BCDSignalON1)
+                    {
+                        BCDSignalON1 = BCDSignal;  // get maximum magnitude
+                    }
+
+
+                    if (ST.ElapsedMilliseconds > 1300)
+                    {
+
+                        BCDSignalON = BCDSignalON1;
+
+                        BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                        BCDCount = 0;
+
+                        ST.Restart();
+
+                        //   Debug.WriteLine("WWV>>  Highest BCD Mag: " + BCDSignalON  );          // adjust the threshold based on the last seconds ON/OFF dBm values
+
+                    }
+
+
+                    //-------------------------------------------------
+                    // check the carrier signal strength 
+
+
+                    if (BCDSignalON < 1000) // if you loose the carrier, then NO GOOD
+                    {
+                        if (WWVCF > 1000) // FAIL if carrier stays LOW for too long
+                        {
+                            textBox1.Text += "\r\n";
+                            textBox1.Text += "Radio Station WWV: Sub-Carrier signal too low, choose different Frequency\r\n";
+
+                            indexP = 0;     // reset data to catch next minute data stream
+                            indexS = 0;
+                            WWVPos = false;
+                            WWVStart = false;
+                            WWVStop = false;
+                            WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
+                            WTime = false;
+                        }
+                        else WWVCF++;
+
+                    }
+                    else
+                    {
+                        WWVCF = 0;
+                    }
+
+
+                    WWVThreshold = (int)((double)BCDSignalON / BCDAdj);          // 33% of full scale adjust the threshold based on the last seconds ON/OFF dBm values
+
+                } // WWVPitch == true (pitch detection)
+
+
 
 
                 //------------------------------------------------------
@@ -7932,20 +8167,30 @@ namespace PowerSDR
 
                 if (WWVStart == true)   // do below if got HOLE (start of new minute) WWVNewTime timer is running from 0 second
                 {
-                   
+                  
                     // the extra 230 is for the extra time starting WWVNewTime at the end of P0 to the start of the new Minute Second#0
 
                     if (WWVNewTime.ElapsedMilliseconds >= ( 230 + (indexS + (indexP*10))*1000 )   )   // 1000,2000,3000,4000,5000 milliseconds, etc
                     {
                         if (ST.IsRunning) ST.Stop();   // turn off init threshold timer
-                      
-                        CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
-                        BCDSignalOFF = BCDSignalOFF1;
-                        BCDSignalON = BCDSignalON1;
 
-                        BCDSignalON1 = -150;         // RESET BCD data steam high dbm signal found while running
-                        BCDSignalOFF1 = 0;           // RESET BCD data steam low dbm signal found while running
-                       
+                        if (WWVPitch == false)  // signal strength based detected
+                        {
+                            CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
+                            BCDSignalOFF = BCDSignalOFF1;
+                            BCDSignalON = BCDSignalON1;
+
+                            BCDSignalON1 = -150;         // RESET BCD data steam high dbm signal found while running
+                            BCDSignalOFF1 = 0;           // RESET BCD data steam low dbm signal found while running
+                        }
+                        else
+                        {
+
+                            BCDSignalON = BCDSignalON1;
+                            BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                        }
+
+
 
                         if (indexS == 10) // 9, 19,29,39, etc
                         {
@@ -7980,9 +8225,9 @@ namespace PowerSDR
 
                         tickON.Restart();  // we no we will get a BCD tone, but for how long: 170msec= 0, 440msec = 1, or 770msec if it a P frame
 
-                    } //if (WWVNewTime.ElapsedMilliseconds >= (indexS * 1000))
+                   } // if (WWVNewTime.ElapsedMilliseconds >= ( 230 + (indexS + (indexP*10))*1000 )   ) 
 
-                    //--------------------------------------------------------------
+                        //--------------------------------------------------------------
                     if (indexP == 3)
                     {
 
@@ -7994,6 +8239,7 @@ namespace PowerSDR
                             indexP = 0;     // reset data to catch next minute data stream
                             indexS = 0;
                             WWVCF = 0;
+                            BCDAdj = 3;
                             WWVPos = false;
                             WWVStart = false;
                             WWVStop = false;
@@ -8025,6 +8271,7 @@ namespace PowerSDR
                                 WWVNewTime.Stop();
                                 indexP = 0;     // reset data to catch next minute data stream
                                 indexS = 0;
+                                BCDAdj = 3;
                                 WWVCF = 0;
                                 WWVPos = false;
                                 WWVStart = false;
@@ -8041,7 +8288,7 @@ namespace PowerSDR
                             textBox1.Text += "IMPORTANT: Your PC Time will NOT update unless PowerSDR is launched in ADMIN mode!!!!" + "\r\n";
 
 
-                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nDo You Want to Update Your PC Clock?\r\n" +
+                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nDoes this UTC Time look Corrent?\r\nDo You Want to Update Your PC Clock?\r\n" +
                                 "This is the reported WWV UTC Time > " + ww1 + "\r\n An additional correction factor will be added if you select YES",
                                 "WWV PC TIME UPDATE", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2, MessageBoxOptions.DefaultDesktopOnly);
 
@@ -8093,23 +8340,28 @@ namespace PowerSDR
                 //---------------------------------------------------------------
                 //---------------------------------------------------------------
 
-                if (WWVStart == true)
+                if (WWVStart == true) // this means we are trying to receive the time code now (we received the Start HOLE)
                 {
                     if (BCDSignal >= WWVThreshold)             // this should be a 1 in the BCD data stream (or a P Frame signal)
                     {
                         // we already know the BCD tone is already ON
+                        checkBoxTone.Checked = true;
+                        BCDMax = BCDSignal;
                     }
                     else
                     {
-                     
+                        BCDMin = BCDSignal;
+
+                        checkBoxTone.Checked = false;
+
                         if ((int)tickON.ElapsedMilliseconds < 60)
                         {
-                           // keep going because the min BCD length is 170msec, we must have the threshold too high or lost signal in the noise
-
+                            // keep going because the min BCD length is 170msec, we must have the threshold too high or lost signal in the noise
+                           
                         }
                         else
                         {
-                            BCDONTrig = true; // do just 1 time per tick
+                            BCDONTrig = true; // do just 1 time per tick (indicate that its time to check to see how long this tick was
                             tickON.Stop();
                             tickTimeON = (int)tickON.ElapsedMilliseconds;
 
@@ -8140,9 +8392,27 @@ namespace PowerSDR
                                 BCD1 = 1;
                             }
                         }
-                        else
+                        else // you have already found the Sync Hole, but this last tone too short
                         {
                             WWVPos = false;
+                            //  BCDAdj = BCDAdj + 0.2;  // try in decrease the threshold level to keep signal ON longer (increase this number)
+                            //  Debug.WriteLine("Tone dropped too soon, adj threshold "+ WWVThreshold);
+
+                            if (WWVPitch == true)
+                            {
+                                BCDSignalON = BCDSignalON1;
+                                BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                            }
+                            else
+                            {
+                                CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
+
+                                BCDSignalON = BCDSignalON1;
+                                BCDSignalOFF = BCDSignalOFF1;
+                                BCDSignalON1 = -150;
+                                BCDSignalOFF1 = 0;
+                            }
+
                             if (WWVStart == true)
                             {
                                 WWVFault[indexP] = false;
@@ -8159,6 +8429,10 @@ namespace PowerSDR
                 {
                     if (BCDSignal >= WWVThreshold)             // this should be a 1 in the BCD data stream (or a P Frame signal)
                     {
+                        checkBoxTone.Checked = true;
+
+                        BCDMax = BCDSignal;
+
                         tickOFF.Stop();
 
                         if (BCD1timeFlag == false)
@@ -8178,6 +8452,8 @@ namespace PowerSDR
                     }
                     else  // no TONE  this should be a 0 in the BCD data stream
                     {
+                        checkBoxTone.Checked = false;
+                        BCDMin = BCDSignal;
 
                         tickON.Stop();
 
@@ -8186,17 +8462,58 @@ namespace PowerSDR
                             tickTimeON = (int)tickON.ElapsedMilliseconds;
                             BCD1timeFlag = false;
 
+                            textBox2.Text = tickTimeON.ToString();
+
                             BCDOFFTrig = false;
                             BCDONTrig = true;     // GOT A TICK TIMEON 
 
                             tickON.Reset();
                             tickOFF.Start();
 
+                           
+                                if (tickTimeON < 60)
+                                {
+                                //   BCDAdj = BCDAdj + 0.4;  // try in decrease the threshold level to keep signal ON longer (increase this number)
+                                //    Debug.WriteLine("Tone too short, adj threshold down " + WWVThreshold);
+                                    if (WWVPitch == true)
+                                    {
+                                        BCDSignalON = BCDSignalON1;
+                                        BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                                    }
+                                    else
+                                    {
+                                        CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
+                                        BCDSignalON = BCDSignalON1;
+                                        BCDSignalOFF = BCDSignalOFF1;
+                                        BCDSignalON1 = -150;
+                                        BCDSignalOFF1 = 0;
+                                    }
+                                }
+                                else if (tickTimeON > 1000)
+                                {
+                                //   BCDAdj = BCDAdj - 0.4;  // try in increase the threshold level to keep signal ON longer (decrease this number)
+                                //  Debug.WriteLine("Tone on too long, adj threshold up " + WWVThreshold);
+
+                                if (WWVPitch == true)
+                                {
+                                    BCDSignalON = BCDSignalON1;
+                                    BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                                }
+                                else
+                                {
+                                    CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
+                                    BCDSignalON = BCDSignalON1;
+                                    BCDSignalOFF = BCDSignalOFF1;
+                                    BCDSignalON1 = -150;
+                                    BCDSignalOFF1 = 0;
+                                }
+                            }
+                            
                         }
 
                     } //if (BCDSignal >= WWVThreshold) NO
 
-
+                    //-------------------------------------------------------------------------
                     if (BCDONTrig == true)
                     {
                         BCDONTrig = false; // do just 1 time per tick
@@ -8220,6 +8537,8 @@ namespace PowerSDR
                     {
                         BCDOFFTrig = false;
 
+                        textBox2.Text = tickTimeON.ToString();
+
                         if ((WWVPos == true)  && (tickTimeOFF > 1010) && (tickTimeOFF < 1700))  // Long HOLE indicates start of new minute
                         {
 
@@ -8242,7 +8561,14 @@ namespace PowerSDR
                         {
                             if ((WWVPos == true) )  // Long HOLE indicates start of new minute
                             {
-                                textBox1.Text += " >> Position SYNC HOLE > 1230 ?: " + tickTimeOFF + "\r\n";
+                                if (WWVPitch == true)
+                                {
+                                    textBox1.Text += " >> ON:" + tickTimeON + "mSec @ " + BCDMax + " Mag, OFF:" + tickTimeOFF + "mSec, @ " + BCDMin + " Mag\r\n";
+                                }
+                                else
+                                {
+                                    textBox1.Text += " >> ON:" + tickTimeON + "mSec @ " + BCDMax + " dBm, OFF:" + tickTimeOFF + "mSec, @ " + BCDMin + " dBm\r\n";
+                                }
                             }
                             //  Debug.WriteLine("WWV TIME>> Position HOLE?: " + tickTimeOFF);
                             WWVPos = false;
@@ -8267,16 +8593,31 @@ namespace PowerSDR
 
             checkBoxWWV.Checked = false; // turn off WWV checking
 
-            if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
-            {
-                console.setupForm.comboAudioSampleRate1.Text = "192000"; // select 192000 again when done
+          //  if (WWVPitch == false)
+          //  {
+                if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
+                {
+                    console.setupForm.comboAudioSampleRate1.Text = "192000"; // select 192000 again when done
 
-            }
+                }
+
+                console.chkEnableMultiRX.Checked = false;  // enable sub receiver
+
+          //  }
+            textBox2.Text = "";
+            checkBoxTone.Checked = false;   // turn off tone marker when done.
+
 
             console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
             console.RX1Filter = beacon89;           // restore filter name
             console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
             console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
+            console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
+            console.VFOAFreq = beacon88;             // restore VfoA
+
+          //  console.CATPreamp = beacon55;
+
+
             WWVNewTime.Stop();
 
         } // WWVTime()
@@ -8299,10 +8640,53 @@ namespace PowerSDR
          //   beacon11 = 0; // reset when changing
 
         }
-    } // Spotcontrol
 
 
-    public class Win32API
+
+
+        double sPrev = 0.0;
+        double sPrev2 = 0.0;
+
+        double normalizedfreq = 0.0;
+        public double Coeff = 0.0;
+
+        /*
+        //================================================================================================
+        // ke9ns add to detect single Frequecy tones in a data stream
+        public int GoertzelFilter(float[] samples, int start, int end)
+        {
+            sPrev = 0.0;
+            sPrev2 = 0.0;
+    
+            for (int i = start; i < end; i++)   // feedback
+            {
+                double s = samples[i] + Coeff * sPrev - sPrev2;
+                sPrev2 = sPrev;
+                sPrev = s;
+            }
+
+            double power = (sPrev2 * sPrev2) + (sPrev * sPrev) - ((Coeff * sPrev) * sPrev2);  // feedforward
+
+            return (int)power; // magnitude of frequency in question within the stream
+        }
+
+*/
+
+
+        //========================================================================================
+        public void GoertzelCoef( double freq, int SIGNAL_SAMPLE_RATE)
+        {
+   
+            normalizedfreq = freq / SIGNAL_SAMPLE_RATE;
+            Coeff = 2 * Math.Cos(2 * Math.PI * normalizedfreq);
+        }
+
+
+        } // Spotcontrol
+
+        //============================================================
+        // ke9ns used to set PC system time, but PowerSDR needs to be in ADMIn mode for it to take
+        public class Win32API
     {
         [DllImport("Kernel32.dll")]
         public static extern bool SetLocalTime(ref SystemTime Time);
@@ -8377,23 +8761,8 @@ namespace PowerSDR
     }
 
     */
-    /*
-    private double GoertzelFilter(float[] samples, double freq, int start, int end)
-    {
-        double sPrev = 0.0;
-        double sPrev2 = 0.0;
-        int i;
-        double normalizedfreq = freq / SIGNAL_SAMPLE_RATE;
-        double coeff = 2 * Math.Cos(2 * Math.PI * normalizedfreq);
-        for (i = start; i < end; i++)
-        {
-            double s = samples[i] + coeff * sPrev - sPrev2;
-            sPrev2 = sPrev;
-            sPrev = s;
-        }
-        double power = sPrev2 * sPrev2 + sPrev * sPrev - coeff * sPrev * sPrev2;
-        return power;
-    }
+   
+  
 
-    */
+   
 } // powersdr

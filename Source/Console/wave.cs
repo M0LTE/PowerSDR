@@ -1430,6 +1430,7 @@ namespace PowerSDR
                 // ke9ns add save an MP3 to go along with the WAV file
                 if (chkBoxMP3.Checked == true)
                 {
+                 
                     try
                     {
                         using (var reader = new WaveFileReader(file_name)) // closes reader when done using

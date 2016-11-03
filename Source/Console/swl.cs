@@ -276,7 +276,10 @@ namespace PowerSDR
                 {
                 
                     // station check days on air and time on air
-                    if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                    if (
+                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && ( ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])) )   
+                         )
                     {
 
                     //    Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
