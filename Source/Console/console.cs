@@ -21228,12 +21228,16 @@ namespace PowerSDR
             DttSP.GetSAMPLLvals(0, 0, &a, &b);     // ke9ns save original a and b values to put back after you getfreq
 
 
-            Debug.WriteLine("CalibrateFreq a, b " + a + " , " + b);
+            Debug.WriteLine("before CalibrateFreq a=proporational, b=derivative " + a + " , " + b + ", freq: "+freq);
             
             float a1 = a * 0.1f;
             float b1 = 0.25f * a1 * a1;
 
             DttSP.SetSAMPLLvals(0, 0, a1, b1);     // ke9ns a1 = 10% of original value, b1= 25% of a1^2
+                                                   // Loop filter constants: Proportional and derivative?
+
+            Debug.WriteLine("after CalibrateFreq a=proporational, b=derivative " + a + " , " + b);
+
 
             Thread.Sleep(200);
 
@@ -21247,7 +21251,7 @@ namespace PowerSDR
 
                 DttSP.GetSAMFreq(0, 0, &temp);                   // ke9ns ?? returns a freq
 
-                Debug.WriteLine("CalibrateFreq temp " + temp);
+                Debug.WriteLine("CalibrateFreq temp " + i + " , "+ temp);
 
                 sum1 += temp;
                 Thread.Sleep(50);
@@ -21258,7 +21262,8 @@ namespace PowerSDR
 
             diff = -(float)((sum1 / samples) * sample_rate1 / (2 * Math.PI));
 
-            DttSP.SetSAMPLLvals(0, 0, a, b);                    // reset PLL values
+
+            DttSP.SetSAMPLLvals(0, 0, a, b);                    // reset PLL values back when done
 
             // Calculate the DDS offset
             offset = 0;
@@ -32158,11 +32163,20 @@ namespace PowerSDR
         // ke9ns
         public void SetPLL(uint c, float a, float b)        // a=alpha, b=beta
         {
+          
+            DttSP.SetSAMPLLvals(0, c, a, b);     // ke9ns 
+        }
+
+        //=======================================================================================
+        // ke9ns
+        public void SetPLL1(uint c, float a, float b)        // a=alpha, b=beta
+        {
             float a1 = a * 0.1f;
             float b1 = 0.25f * a1 * a1;            // ke9ns a1 = 10% of original value, b1= 25% of a1^2
 
-            DttSP.SetSAMPLLvals(0, c, a, b);     // ke9ns 
+            DttSP.SetSAMPLLvals(0, c, a1, b1);     // ke9ns 
         }
+
 
         //=======================================================================================
         // ke9ns

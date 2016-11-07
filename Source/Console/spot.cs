@@ -286,9 +286,6 @@ namespace PowerSDR
             this.btnTime = new System.Windows.Forms.Button();
             this.checkBoxTone = new System.Windows.Forms.RadioButton();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.udDisplayWWV = new System.Windows.Forms.NumericUpDownTS();
             this.checkBoxWWV = new System.Windows.Forms.CheckBoxTS();
             this.numericUpDownTS1 = new System.Windows.Forms.NumericUpDownTS();
@@ -297,8 +294,6 @@ namespace PowerSDR
             this.chkBoxBeam = new System.Windows.Forms.CheckBoxTS();
             this.udDisplayLong = new System.Windows.Forms.NumericUpDownTS();
             this.udDisplayLat = new System.Windows.Forms.NumericUpDownTS();
-            this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
-            this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
@@ -310,6 +305,11 @@ namespace PowerSDR
             this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -629,12 +629,13 @@ namespace PowerSDR
             this.checkBoxTone.AutoSize = true;
             this.checkBoxTone.Location = new System.Drawing.Point(559, 455);
             this.checkBoxTone.Name = "checkBoxTone";
-            this.checkBoxTone.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxTone.Size = new System.Drawing.Size(46, 17);
             this.checkBoxTone.TabIndex = 93;
             this.checkBoxTone.TabStop = true;
-            this.checkBoxTone.Text = "Tone";
-            this.toolTip1.SetToolTip(this.checkBoxTone, "ON = BCD sub-Carrier Tone\r\nOFF = no Tone");
+            this.checkBoxTone.Text = "Tick";
+            this.toolTip1.SetToolTip(this.checkBoxTone, "ON = BCD sub-Carrier Tick\r\nOFF = no Tick");
             this.checkBoxTone.UseVisualStyleBackColor = true;
+            this.checkBoxTone.CheckedChanged += new System.EventHandler(this.checkBoxTone_CheckedChanged);
             // 
             // textBox2
             // 
@@ -648,36 +649,6 @@ namespace PowerSDR
             this.textBox2.Text = "0";
             this.toolTip1.SetToolTip(this.textBox2, "Length of Tone in mSec\r\n");
             this.textBox2.Visible = false;
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(522, 525);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(139, 13);
-            this.label3.TabIndex = 81;
-            this.label3.Text = "Your Lat and Long (+/- deg)\r\n";
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(693, 525);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(71, 13);
-            this.label4.TabIndex = 82;
-            this.label4.Text = "Your Call sign";
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(541, 506);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(227, 13);
-            this.label5.TabIndex = 84;
-            this.label5.Text = "Setup->CAT Control->DDUtil , for Rotor Control";
             // 
             // udDisplayWWV
             // 
@@ -857,28 +828,6 @@ namespace PowerSDR
             0});
             this.udDisplayLat.ValueChanged += new System.EventHandler(this.udDisplayLat_ValueChanged);
             // 
-            // chkBoxWrld
-            // 
-            this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxWrld.Image = null;
-            this.chkBoxWrld.Location = new System.Drawing.Point(11, 495);
-            this.chkBoxWrld.Name = "chkBoxWrld";
-            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
-            this.chkBoxWrld.TabIndex = 78;
-            this.chkBoxWrld.Text = "Exclude North American Spotters";
-            this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
-            // 
-            // chkBoxNA
-            // 
-            this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(11, 461);
-            this.chkBoxNA.Name = "chkBoxNA";
-            this.chkBoxNA.Size = new System.Drawing.Size(165, 35);
-            this.chkBoxNA.TabIndex = 77;
-            this.chkBoxNA.Text = "North American Spotters only";
-            this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
-            // 
             // chkBoxMem
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -1027,6 +976,58 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkSUN, "Sun will show on Panadapter screen \r\nBut only when using KE9SN6_World 3 only\r\nAnd" +
         " only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(522, 525);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 13);
+            this.label3.TabIndex = 81;
+            this.label3.Text = "Your Lat and Long (+/- deg)\r\n";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(693, 525);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(71, 13);
+            this.label4.TabIndex = 82;
+            this.label4.Text = "Your Call sign";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(541, 506);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(227, 13);
+            this.label5.TabIndex = 84;
+            this.label5.Text = "Setup->CAT Control->DDUtil , for Rotor Control";
+            // 
+            // chkBoxWrld
+            // 
+            this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxWrld.Image = null;
+            this.chkBoxWrld.Location = new System.Drawing.Point(11, 495);
+            this.chkBoxWrld.Name = "chkBoxWrld";
+            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
+            this.chkBoxWrld.TabIndex = 78;
+            this.chkBoxWrld.Text = "Exclude North American Spotters";
+            this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
+            // 
+            // chkBoxNA
+            // 
+            this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxNA.Image = null;
+            this.chkBoxNA.Location = new System.Drawing.Point(11, 461);
+            this.chkBoxNA.Name = "chkBoxNA";
+            this.chkBoxNA.Size = new System.Drawing.Size(165, 35);
+            this.chkBoxNA.TabIndex = 77;
+            this.chkBoxNA.Text = "North American Spotters only";
+            this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
             // 
             // chkAlwaysOnTop
             // 
@@ -3875,7 +3876,7 @@ namespace PowerSDR
 
             } // for loop to update dx spot window
 
-            if ((pause == false) && (beacon1 == false) && (WTime == false))  textBox1.Text = bigmessage; // update screen
+            if ((pause == false) && (beacon == false) && (WTime == false))  textBox1.Text = bigmessage; // update screen
 
 
         } //processTCPMessage
@@ -6692,6 +6693,7 @@ namespace PowerSDR
                 btnBeacon.Text = "Beacon Chk";
                 btnBeacon.ForeColor = Color.Black;
 
+               
                 stopWatch.Stop();
                 stopWatch1.Stop();
 
@@ -6781,7 +6783,7 @@ namespace PowerSDR
             //------------------------------------------------
             //------------------------------------------------
 
-            if (beacon == true) // you just licked to turn on beacon scan
+            if (beacon == true) // you just clicked to turn on beacon scan
             {
 
                 Sun_Top1 = 26;                                     // 45 Y pixel location of top of map
@@ -6823,11 +6825,11 @@ namespace PowerSDR
 
                         BX_Spotter[x * 5 + 4] = BX_Spotter[x * 5 + 3] = BX_Spotter[x * 5 + 2] = BX_Spotter[x * 5 + 1] = BX_Spotter[x * 5] = callBox.Text;               // PowerSDR callsign station (spotter)
                         BX_Message[x * 5 + 4] = BX_Message[x * 5 + 3] = BX_Message[x * 5 + 2] = BX_Message[x * 5 + 1] = BX_Message[x * 5] = "NCDXF/IARU Beacon";        // message field
-                        BX_Mode[x * 5 + 4] = BX_Mode[x * 5 + 3] = BX_Mode[x * 5 + 2] = BX_Mode[x * 5 + 1] = BX_Mode[x * 5] = 1;                                    // operating mode (cw), 
-                        BX_Mode2[x * 5 + 4] = BX_Mode2[x * 5 + 3] = BX_Mode2[x * 5 + 2] = BX_Mode2[x * 5 + 1] = BX_Mode2[x * 5] = 0;                                // operating mode2  (split) no
+                        BX_Mode[x * 5 + 4] = BX_Mode[x * 5 + 3] = BX_Mode[x * 5 + 2] = BX_Mode[x * 5 + 1] = BX_Mode[x * 5] = 1;                                         // operating mode (cw), 
+                        BX_Mode2[x * 5 + 4] = BX_Mode2[x * 5 + 3] = BX_Mode2[x * 5 + 2] = BX_Mode2[x * 5 + 1] = BX_Mode2[x * 5] = 0;                                    // operating mode2  (split) no
 
-                        BX_Grid[x * 5 + 4] = BX_Grid[x * 5 + 3] = BX_Grid[x * 5 + 2] = BX_Grid[x * 5 + 1] = BX_Grid[x * 5] = Beacon_Grid[x];                       // Beacon Grid location 
-                        BX_country[x * 5 + 4] = BX_country[x * 5 + 3] = BX_country[x * 5 + 2] = BX_country[x * 5 + 1] = BX_country[x * 5] = Beacon_Country[x];        // Beacon Country
+                        BX_Grid[x * 5 + 4] = BX_Grid[x * 5 + 3] = BX_Grid[x * 5 + 2] = BX_Grid[x * 5 + 1] = BX_Grid[x * 5] = Beacon_Grid[x];                            // Beacon Grid location 
+                        BX_country[x * 5 + 4] = BX_country[x * 5 + 3] = BX_country[x * 5 + 2] = BX_country[x * 5 + 1] = BX_country[x * 5] = Beacon_Country[x];          // Beacon Country
                         BX_Beam[x * 5 + 4] = BX_Beam[x * 5 + 3] = BX_Beam[x * 5 + 2] = BX_Beam[x * 5 + 1] = BX_Beam[x * 5] = BeamHeading(Beacon_Lat[x], Beacon_Lon[x]); // Beam heading to Beacon from spotter station
 
                         BX_Y[x * 5 + 4] = BX_Y[x * 5 + 3] = BX_Y[x * 5 + 2] = BX_Y[x * 5 + 1] = BX_Y[x * 5] = (int)(((180 - (Beacon_Lat[x] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;   //latitude 90N to -90S
@@ -7025,7 +7027,7 @@ namespace PowerSDR
             seconds = Convert.ToInt16(SEC1.Substring(3, 2));
    
             // seconds = TimeSpan.Parse(SEC1).TotalSeconds; // get total seconds of the day
-            // example: 23:19 = 23min 19sec = min/3 = modulo of 2minutes into a 3 min block + 19sec = 139 seconds into a 180second block
+            // example: 23:19 = 23min 19sec = min%3 = modulo of 2minutes into a 3 min block + 19sec = 139 seconds into a 180second block
 
             SlotSeconds = ((minutes % 3)*60)+seconds;
             TSlot = (SlotSeconds / 10) * 10;
@@ -7082,12 +7084,18 @@ namespace PowerSDR
             beacon89 = console.RX1Filter;           // get filter name so you can restore
             beacon77 = (int)console.udCWPitch.Value;     // get filter name so you can restore
             beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
-            beacon88 = console.VFOAFreq;          // get vfoa
+            beacon88 = console.VFOAFreq;            // get vfoa
 
+
+            beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
+            oldSR = console.SampleRate1;            // get SR
+
+
+            GoertzelCoef(600.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
 
             //-----------------------------------------------------------------------
             //-----------------------------------------------------------------------
-            while ( (beacon1 == true) ) // only do while the beacon testing is goin on
+            while ( (beacon1 == true) ) // only do while the beacon testing is going on
             {
                 Thread.Sleep(10); // slow down the thread here
 
@@ -7110,7 +7118,7 @@ namespace PowerSDR
                     for (int x = 0; x < 18; x++) // find starting station then BX_Index will keep track
                     {
 
-                        if ((BX_TSlot1[x * 5] >= TSlot) && (BX_TSlot1[x * 5] < TSlot + 10))
+                        if ((BX_TSlot1[x * 5] >= TSlot) && (BX_TSlot1[x * 5] < TSlot + 10)) // find the 5 stations currently transmitting for this 10 second slot
                         {
                             BX_Index[0] = x * 5; // this is the start index
                            Debug.WriteLine(">>>TIME2: Current BX_Index[0] 14mhz station# " + BX_Index[0] + " , " + BX_Station[BX_Index[0]]);
@@ -7150,14 +7158,22 @@ namespace PowerSDR
 
                     if (BoxBScan.Checked == true) // fast 3 minute complete scan (5 freq over 18 periods)
                     {
+
+                        if (console.SampleRate1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
+                        {
+                         //   console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
+                         //   if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
+
+                        }
+
+
                         LasttsTime = 0;   // time period for fast scanning each of 5 frequencies
                         stopWatch.Restart(); // reset every time Slot (10 seconds)
 
                       
                         if (beacon5 == 0) // only do one time
                         {
-                    
-                            
+                           
                             beacon5 = 1; // scan all 5 freq fast fast
                             beacon10 = true; // you will put back original op mode when done with scan
                             Debug.WriteLine(">>>BEACON5 RESET..................... ");
@@ -7171,6 +7187,15 @@ namespace PowerSDR
                     }
                     else if (BoxBFScan.Checked == true) // Long slow 15 minute complete scan (1 freq over 18 periods, 5 times)
                     {
+
+                        if (console.SampleRate1 == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
+                        {
+                         //   console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
+                         //   if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
+
+                        }
+
+
                         if (beacon11 == 0) // only do one time
                         {
                             beacon11 = (int)numericUpDownTS1.Value; // 1-5  scan all 5 freq fast fast (6=done)  (normally set to 1
@@ -7197,13 +7222,21 @@ namespace PowerSDR
 
                         if (beacon10 == true) // put back original op mode, now that the beacon scanner was turned from ON to OFF
                         {
-                            console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
-                            console.RX1Filter = beacon89;           // restore filter name
-                            console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
-                            console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
                             console.udCWPitch.Value = beacon77;     // restore cw pitch value
-                            console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
-                            console.VFOAFreq = beacon88;          // get vfoa
+                          
+                            console.UpdateRX1Filters(beacon9, beacon8); // restore filter
+                            console.RX1Filter = beacon89;           // restore filter name
+                            console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
+
+                            console.VFOAFreq = beacon88;             // restore VfoA
+
+                            if (oldSR == 192000)            // 
+                            {
+                                console.setupForm.comboAudioSampleRate1.Text = "192000"; // select 192000 again when done
+                                console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
+
+                            }
+                            console.UpdateDisplay();
 
                             beacon10 = false;
                         }
@@ -7239,12 +7272,19 @@ namespace PowerSDR
 
                             // set mode and freq
                             if (console.RX1DSPMode != DSPMode.CWU) console.RX1DSPMode = DSPMode.CWU;
+
                             if (console.udCWPitch.Value != 600)   console.udCWPitch.Value = 600;
+
                             if (console.RX1Filter != Filter.VAR1) console.RX1Filter = Filter.VAR1;
-                            if (console.RX1FilterHigh != 650) console.RX1FilterHigh = 650;   // set filter for narrow area around the target freq
-                            if (console.RX1FilterLow != 550) console.RX1FilterLow = 550;
+
+                            if ( (console.RX1FilterHigh != 650) || (console.RX1FilterLow != 550) )
+                            {
+                                console.UpdateRX1Filters(550, 650);   // sete cw filter
+                            }
 
                             console.VFOAFreq = (double)Beacon_Freq[beacon11 - 1] / 1e6; // shift 0hz down 600 for cw mode and convert to MHZ
+
+                            console.UpdateDisplay();
 
                             Debug.WriteLine(">>>freq:beacon11, BX_Index[beacon11 - 1] , beacon14: " + beacon11+" , "+ BX_Index[beacon11 - 1] + " , " + beacon14);
 
@@ -7335,22 +7375,31 @@ namespace PowerSDR
                     else // search for a signal
                     {
 
-                        if (BoxBFScan.Checked == true)
+                        if (BoxBFScan.Checked == true) // full scan
                         {
                             stopWatch1.Start();
 
                             ts1 = stopWatch1.Elapsed;
-                            tsTime1 = (double)ts1.Seconds + ((double)ts1.Milliseconds / 1000.0);
+                            tsTime1 = (double)ts1.Seconds + ((double)ts1.Milliseconds / 1000.0); // total time in seconds
 
                             if (tsTime1 >= BandSwitchDelay)    // (beacon6 > 25) // wait for band switching pulse to disapate
                             {
+                                int tempDB = 0;
+                                int tempDB1 = 0;
 
-                                int tempDB = console.ReadAvgStrength(0);
                                
+                                tempDB = console.ReadAvgStrength(0);    // get beacon CW signal strength, but this does not factor out the noise floor (i.e. S5 signal might just be the noise floor at S5)
+
+                              //  tempDB1 = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine  (i.e. this will determine if we are actually hearing a CW signal at 600hz and not just an S5 noise floor)
+
+                             //   Debug.WriteLine("BEACON TONE Detection: " + tempDB1);
+
+
                                 if (tempDB > BX_dBm[beacon14])
                                 {
                                     BX_dBm[beacon14] = tempDB; // get signal strengh avg reading to match avg floor reading
                                 }
+
                                 if (BX_dBm2 > BX_dBm1[beacon14] )
                                     BX_dBm1[beacon14] = BX_dBm2; // value passed back from display.cs noise floor (avg value)
 
@@ -7394,11 +7443,16 @@ namespace PowerSDR
                             if (console.RX1DSPMode != DSPMode.CWU) console.RX1DSPMode = DSPMode.CWU;
                             if (console.udCWPitch.Value != 600) console.udCWPitch.Value = 600;
                             if (console.RX1Filter != Filter.VAR1) console.RX1Filter = Filter.VAR1;
-                            if (console.RX1FilterHigh != 650) console.RX1FilterHigh = 650;   // set filter for narrow area around the target freq
-                            if (console.RX1FilterLow != 550) console.RX1FilterLow = 550;
 
+                            if ((console.RX1FilterHigh != 650) || (console.RX1FilterLow != 550))
+                            {
+                                console.UpdateRX1Filters(550, 650);   // sete cw filter
+                            }
 
                             console.VFOAFreq = (double)Beacon_Freq[beacon5 - 1] / 1e6; //  convert to MHZ
+
+                            console.UpdateDisplay();
+
                             beacon6 = 0; // reset noise pulse ignore
                             stopWatch1.Stop();
                             stopWatch1.Reset();
@@ -7530,6 +7584,9 @@ namespace PowerSDR
 
             } //  while ( beacon1 == true)
 
+            //--------------------------------------------------------------------
+
+
             Debug.WriteLine(">>>>>>>>BEACON:  thread STOPPED");
             beacon5 = 0;
 
@@ -7538,18 +7595,27 @@ namespace PowerSDR
 
             if (beacon10 == true)
             {
-                console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
-                console.RX1Filter = beacon89;
-                console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
-                console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
-                console.udCWPitch.Value = beacon77;     // restore cw pitch
-                console.BlockSize1 = beacon66;          // restore blocksize
-                console.VFOAFreq= beacon88;            // restore vfoa
+                console.udCWPitch.Value = beacon77;     // restore cw pitch value
 
+                console.UpdateRX1Filters(beacon9, beacon8); // restore filter
+                console.RX1Filter = beacon89;           // restore filter name
+                console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
+
+                console.VFOAFreq = beacon88;             // restore VfoA
+
+                if (oldSR == 192000)                      // 
+                {
+                    console.setupForm.comboAudioSampleRate1.Text = "192000"; // select 192000 again when done
+                    console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
+
+                }
+
+                console.UpdateDisplay();
             }
 
         } //  private void BeaconSlot()
 
+        //=============================================================================================================
         private void BoxBFScan_CheckedChanged(object sender, EventArgs e)
         {
             BoxBScan.Checked = false;
@@ -7605,14 +7671,14 @@ namespace PowerSDR
            
             //Create a IPAddress object and port, create an IPEndPoint node:  
             int port = 13;
-            string[] whost = { "time-nw.nist.gov", "time.windows.com", "time.nist.gov",  "time-a.nist.gov", "time-b.nist.gov", "tick.mit.edu",  "clock.sgi.com" };
+            string[] whost = { "time-nw.nist.gov", "time.nist.gov" , "time-a.nist.gov", "time-b.nist.gov","time.windows.com" };  //   ,  "time-a.nist.gov", "time-b.nist.gov", "tick.mit.edu",  "clock.sgi.com" };
 
             IPHostEntry iphostinfo;
             IPAddress ip;
             IPEndPoint ipe;
             Socket c = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//Create Socket  
 
-            c.ReceiveTimeout = 100 * 1000;    //Setting the timeout  
+            c.ReceiveTimeout = 100;    //Setting the timeout  
 
             byte[] RecvBuffer = new byte[1024];
 
@@ -7634,35 +7700,53 @@ namespace PowerSDR
 
             startDT = DateTime.Now; // record time you opened a connection to NIST
 
-            foreach (string strHost in whost)   // try all the time servers until you get a response
+            textBox1.Text = "Attempting Internet Connection to NIST Time Server!\r\n";
+
+
+            try
             {
-                try
+                foreach (string strHost in whost)   // try all the time servers until you get a response
                 {
-                    iphostinfo = Dns.GetHostEntry(strHost);
-                    ip = iphostinfo.AddressList[0];
-                    ipe = new IPEndPoint(ip, port);
+                
+                        iphostinfo = Dns.GetHostEntry(strHost);
+                        ip = iphostinfo.AddressList[0];
+                        ipe = new IPEndPoint(ip, port);
 
-                    c.Connect(ipe);     // Connect to server which starts clock (NIST will now send back the correct Time)
+                        c.Connect(ipe);     // Connect to server which starts clock (NIST will now send back the correct Time)
 
-                    if (c.Connected)
-                    {
-                      
-                        Debug.WriteLine("got connection to " + strHost);
-                        break;// If the connection to the server is out of 
+                        if (c.Connected)
+                        {
+
+                            textBox1.Text += "Connected to NIST Time Server!\r\n";
+
+                            Debug.WriteLine("got connection to " + strHost);
+                            break;// If the connection to the server is out of 
                        
-                    } 
-                }
-                catch (Exception ex)
-                {
-                    EX1 = ex.Message;
-                    Debug.WriteLine("SOCKET ERROR: "+strHost + " , " + ex);
+                        } 
 
-                }
-            } // for loop through time server addresses
+                } // for loop through time server addresses
+
+            }
+            catch (Exception ex)
+            {
+
+                textBox1.Text += "Error connecting to NIST Time Server!\r\n";
+
+                EX1 = ex.Message;
+               // Debug.WriteLine("SOCKET ERROR: " + strHost + " , " + ex);
+
+            }
+
 
             if (!c.Connected)
             {
-                MessageBox.Show("Time server connection failed! /r error: " + EX1, " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                textBox1.Text += "Failure NIST Time Server!\r\n";
+
+
+                MessageBox.Show("Time server connection failed! /r error: " + EX1, " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                WTime = false;   // turn dx spotting back on
+
+
                 return;
             }
 
@@ -7722,29 +7806,65 @@ namespace PowerSDR
 
                 Debug.WriteLine("DONE...Time delay from request to update:" + k + " milliseconds");
             }
-            catch (Exception e4)
+            catch (Exception)
             {
-                MessageBox.Show("Time server connection failed! Try Again.", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Time server connection failed! Try Again.", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }
-           
-        //    MessageBox.Show("Time synchronization, ", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            //    MessageBox.Show("Time synchronization, ", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            WTime = false;   // turn dx spotting back on
 
         } // SetInternetTime()
 
 
-      
+
         //====================================================================================================================
         //====================================================================================================================
         //====================================================================================================================
 
-       
+
         // ke9ns request to update this PC's time clock
         private void btnTime_Click(object sender, EventArgs e)
         {
 
-            if (checkBoxWWV.Checked == true)
+            if (checkBoxWWV.Checked == true) // Use WWV HF checkbox
             {
-                Thread t = new Thread(new ThreadStart(WWVTime));
+                if (WTime == false)
+                {
+
+                    textBox1.Text = "Will Attempt to read"; 
+
+                    Thread t = new Thread(new ThreadStart(WWVTime));
+
+                    t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+                    t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
+                    WTime = true;   // enabled (let display know to get a Floor dbm
+
+                    SP5_Active = 1;
+                    t.Name = "WWV Time Sync";
+                    t.IsBackground = true;
+                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Start();
+
+                    textBox1.Text += " Radio Station WWV !\r\n";
+                }
+                else
+                {
+                    checkBoxWWV.Checked = false;   // turn off WWV checking if you click on the Time sync button again
+                    WTime = false;
+                    WWVNewTime.Stop();
+                    indexP = 0;                  
+                    indexS = 0;
+                }
+
+
+            }
+            else
+            {
+              
+                Thread t = new Thread(new ThreadStart(SetInternetTime));  // get internet NIST time
 
                 t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
                 t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
@@ -7752,17 +7872,11 @@ namespace PowerSDR
                 WTime = true;   // enabled (let display know to get a Floor dbm
 
                 SP5_Active = 1;
-                t.Name = "WWV Time Sync";
+                t.Name = "NIST Time Sync";
                 t.IsBackground = true;
-                t.Priority = ThreadPriority.AboveNormal;
+                t.Priority = ThreadPriority.Normal;
                 t.Start();
 
-                textBox1.Text = "Will Attempt to read Radio Station WWV !\r\n";
-            }
-            else
-            {
-                SetInternetTime();
-                WTime = false;
             }
 
         } // btnTime_Click
@@ -7788,6 +7902,11 @@ namespace PowerSDR
 
         public int WWVThreshold = 0; // the trip point where the PCM BCD data stream from WWV determines a 1 or 0
 
+        int above_count = 0;
+        int below_count = 0; // counter for how many times you got new data and it was below the threshold
+
+        int[] storage = new int[200];
+
         public int indexP = 0;  // P frame index (with 10 seconds inside it)
         public int indexS = 0; // seconds index inside a P frame
 
@@ -7802,6 +7921,7 @@ namespace PowerSDR
         //====================================================================================================================
         // Thread
         // ke9ns Read WWV for Time Sync
+       
         unsafe private void WWVTime()
         {
          
@@ -7817,24 +7937,22 @@ namespace PowerSDR
 
             oldSR = console.SampleRate1;            // get SR
 
-            if (checkBoxTone.Checked == true)
+            if (checkBoxTone.Checked == true)    // this would allow you to select the signal strength based detection instead of Pitch(tone) based detection. For experimenting
             {
-                WWVPitch = false;
+          //      WWVPitch = false;
             }
             else
             {
-                WWVPitch = true;
+                WWVPitch = true;  // only allow Pitch (tone) detection
             }
 
-          //  if (WWVPitch == false)
-           // {
-                if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
-                {
-                    console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
+          
+            if (oldSR == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
+            {
+                console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
                 
-                }
-          //  }
-
+            }
+          
             textBox2.Text = "";
             checkBoxTone.Checked = false;   // turn off tone marker when done.
 
@@ -7857,7 +7975,7 @@ namespace PowerSDR
                 console.chkEnableMultiRX.Checked = true;  // enable sub receiver
                 console.VFOBFreq = WWV_Freq1[(int)udDisplayWWV.Value - 1];       // WWV in CWU mode will center on 5000 khz
 
-              
+         
             }
             else
             {
@@ -7866,8 +7984,8 @@ namespace PowerSDR
               //  console.CATPreamp = PreampMode.OFF;
 
                 console.RX1DSPMode = DSPMode.USB;
-
-                console.UpdateRX1Filters(60, 140);
+             
+                console.UpdateRX1Filters(60, 150);
 
                 textBox1.Text += "Tone detection. Waiting for Start of Minute!\r\n";
 
@@ -7916,7 +8034,11 @@ namespace PowerSDR
             int newMinutes = 0;
             int newHours = 0;
 
-         
+            int newDay1 = 0;  // P3
+            int newDay2 = 0;  // p4
+            int newDay = 0;  // p3 + p4
+
+
             int BCD1 = 0; // false BCD value detected as (0), true BCD value detected as (1)   [for this last second]
 
             bool WWVStart = false; // true = got start of minute frame
@@ -7936,6 +8058,7 @@ namespace PowerSDR
 
             ST.Restart();
 
+
             while (ST.ElapsedMilliseconds < 2000)    // wait for things to calm down after you make changes to the mode
             {
                 CarrierSignalINIT = 0;
@@ -7943,11 +8066,12 @@ namespace PowerSDR
 
             }
 
-           
-
             BCDSignalON = 0;         // RESET BCD data steam high dbm signal found while running
-
             BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+
+            BCDSignalOFF = 0;         // RESET BCD data steam high dbm signal found while running
+            BCDSignalOFF1 = 0;         // RESET BCD data steam high dbm signal found while running
+
             BCDCount = 0;
             BCDAdj = 0;
             
@@ -7969,7 +8093,6 @@ namespace PowerSDR
 
             while ( ST.ElapsedMilliseconds < 1300)                          // get floor for bcd stream
             {
-
 
                 if (WWVPitch == false)  // signal strength based detected
                 {
@@ -8000,8 +8123,7 @@ namespace PowerSDR
 
             } // for loop 1.3 seconds to test levels
 
-         
-
+  
             BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
             BCDCount = 0;
 
@@ -8032,7 +8154,7 @@ namespace PowerSDR
             while (WTime == true)
             {
 
-                if (WWVPitch == false)  // signal strength based detected
+                if (WWVPitch == false)  // signal strength based detected (need around S9 to work)
                 {
                     BCDSignal = console.ReadStrength(0);            // read wwv 100 hz OFF of carrier point (BCD data stream)            
                     CarrierSignal = console.ReadStrength(1);        // read WWV 0hz carrier point
@@ -8089,15 +8211,22 @@ namespace PowerSDR
                     }
 
                     WWVThreshold = BCDSignalOFF + (3 * (BCDSignalON - BCDSignalOFF) / 7); // adjust the threshold based on the last seconds ON/OFF dBm values
-
                     WWVThreshold = WWVThreshold + ((CarrierSignal - CarrierSignalINIT) / 3); // adjust the threshold based on the last seconds Carrier dBm values
 
 
                 } // if (WWVPitch == false)  // signal strength based detected
-                else
+                else // WWVPitch == true (need around S5 or better to work)
                 {
-                    BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
 
+                    if (console.WWVReady == true)
+                    {
+                        BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
+                        below_count++;   // counter for how many times you got new data and it was below the threshold
+                        console.WWVReady = false;
+
+                    }
+                //   storage[above_count++] = BCDSignal;
+                  //  if (above_count > 100) above_count = 0;
 
                     //------------------------------------------------------------------
                     // keep adjusting signal based on signal strength you are seeing
@@ -8124,12 +8253,12 @@ namespace PowerSDR
 
 
                     //-------------------------------------------------
-                    // check the carrier signal strength 
+                    // check the mag  strength 
 
 
                     if (BCDSignalON < 1000) // if you loose the carrier, then NO GOOD
                     {
-                        if (WWVCF > 1000) // FAIL if carrier stays LOW for too long
+                        if (WWVCF > 300) // FAIL if carrier stays LOW for too long
                         {
                             textBox1.Text += "\r\n";
                             textBox1.Text += "Radio Station WWV: Sub-Carrier signal too low, choose different Frequency\r\n";
@@ -8150,7 +8279,7 @@ namespace PowerSDR
                         WWVCF = 0;
                     }
 
-
+                    BCDAdj = 3.0;
                     WWVThreshold = (int)((double)BCDSignalON / BCDAdj);          // 33% of full scale adjust the threshold based on the last seconds ON/OFF dBm values
 
                 } // WWVPitch == true (pitch detection)
@@ -8183,10 +8312,18 @@ namespace PowerSDR
                             BCDSignalON1 = -150;         // RESET BCD data steam high dbm signal found while running
                             BCDSignalOFF1 = 0;           // RESET BCD data steam low dbm signal found while running
                         }
-                        else
+                        else // tone detection here
                         {
 
-                            BCDSignalON = BCDSignalON1;
+                        //    Debug.WriteLine("Elapsed time: " + WWVNewTime.ElapsedMilliseconds);
+                         //   for (int u = 0; u < above_count; u++)
+                         //   {
+                         //       Debug.WriteLine("signal before the start of this second: " + storage[u]);
+                          //  }
+                          //  Debug.WriteLine("start of second: "+ BCDSignal);
+                                   
+
+                            BCDSignalON = BCDSignalON1;  // tone should be on here always since its the start of every second (tick) (we just need to know how long it lasts)
                             BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
                         }
 
@@ -8197,7 +8334,7 @@ namespace PowerSDR
                             BCD1 = 0;  // reset value
 
                             indexP++;
-                            textBox1.Text += " P"+(indexP + 1)+">";
+                            textBox1.Text += " P"+(indexP)+">";
                             indexS = 1;
                         }
                         else // first 9 seconds of every P frame
@@ -8227,11 +8364,16 @@ namespace PowerSDR
 
                    } // if (WWVNewTime.ElapsedMilliseconds >= ( 230 + (indexS + (indexP*10))*1000 )   ) 
 
-                        //--------------------------------------------------------------
-                    if (indexP == 3)
+
+                    //--------------------------------------------------------------
+                    //--------------------------------------------------------------
+                    //--------------------------------------------------------------
+
+
+                    if (indexP == 5)
                     {
 
-                        if ((WWVFault[1] == true) || (WWVFault[2] == true))
+                        if ((WWVFault[1] == true) || (WWVFault[2] == true)||(WWVFault[3] == true) || (WWVFault[4] == true))
                         {
                             textBox1.Text += "\r\n";
                             textBox1.Text += "Radio Station WWV: Data No Good, will Try again.\r\n";
@@ -8251,8 +8393,20 @@ namespace PowerSDR
 
                         else // no faults detected in PCM BCD data stream
                         {
-                            newMinutes = (P[1, 0] * 1) + (P[1, 1] * 2) + (P[1, 2] * 4) + (P[1, 3] * 8) + (P[1, 5] * 10) + (P[1, 6] * 20) + (P[1, 7] * 40);
-                            newHours = (P[2, 0] * 1) + (P[2, 1] * 2) + (P[2, 2] * 4) + (P[2, 3] * 8) + (P[2, 5] * 10) + (P[2, 6] * 20);
+
+
+                            newMinutes = (P[1, 0] * 1) + (P[1, 1] * 2) + (P[1, 2] * 4) + (P[1, 3] * 8) + (P[1, 5] * 10) + (P[1, 6] * 20) + (P[1, 7] * 40);     // WWV reported UTC minutes
+                            newHours = (P[2, 0] * 1) + (P[2, 1] * 2) + (P[2, 2] * 4) + (P[2, 3] * 8) + (P[2, 5] * 10) + (P[2, 6] * 20);                        // WWV reported UTC hour
+
+                            newDay1 = (P[3, 0] * 1) + (P[3, 1] * 2) + (P[3, 2] * 4) + (P[3, 3] * 8) + (P[3, 5] * 10) + (P[3, 6] * 20) + (P[3, 7] * 40) + (P[3, 8] * 80);
+                            newDay2 = (P[4, 0] * 100) + (P[4, 1] * 200);
+
+                            newDay = newDay1 + newDay2;                                                                                                        // WWV reported UTC day of the year
+
+
+                            Debug.WriteLine("UTC Hours: " + newHours);
+                            Debug.WriteLine("UTC Min: " + newMinutes);
+                            Debug.WriteLine("UTC Day of year: " + newDay);
 
                             WWVStop = true;
                             WTime = false;  // DONE
@@ -8260,10 +8414,22 @@ namespace PowerSDR
 
                             string ww1 = newHours.ToString("D2") + ":" + newMinutes.ToString("D2") + ":00.000";
                             DateTime WWVUTC = new DateTime();
+                            DateTime theDate = new DateTime();
+                            DateTime theTime = new DateTime();
 
                             try
                             {
-                                WWVUTC = DateTime.ParseExact(ww1, "HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                                int year = DateTime.UtcNow.Year;                                      // current UTC year that your PC is reporting
+                                theDate = new DateTime(year, 1, 1).AddDays(newDay - 1);      // this is the current Date based on your PC year and WWV UTC day of the year.
+
+                              //  theDate = theDate.Date;
+                                theTime = DateTime.ParseExact(ww1, "HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+
+                              //  DateTime date = Convert.ToDateTime(txtTrainDate.Text);
+                              //  DateTime time = Convert.ToDateTime();
+
+                                WWVUTC = new DateTime(theDate.Year, theDate.Month, theDate.Day, theTime.Hour, theTime.Minute, theTime.Second);
+
                             }
                             catch(Exception)
                             {
@@ -8287,9 +8453,13 @@ namespace PowerSDR
                             // now computer real time and save it.
                             textBox1.Text += "IMPORTANT: Your PC Time will NOT update unless PowerSDR is launched in ADMIN mode!!!!" + "\r\n";
 
+                           
+                            DateTime startDT = DateTime.Now;   // get current PC time and date
+ 
 
-                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nDoes this UTC Time look Corrent?\r\nDo You Want to Update Your PC Clock?\r\n" +
-                                "This is the reported WWV UTC Time > " + ww1 + "\r\n An additional correction factor will be added if you select YES",
+                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nYour Current Date time: " + startDT.ToString("yy-MM-dd HH:mm:ss.fff") +
+                                "\r\nDoes this UTC Time look Correct?\r\nDo You Want to Update Your PC Clock?\r\n" +
+                                "This is the reported WWV UTC Time > " + WWVUTC.ToString("yy-MM-dd HH:mm:ss.fff") + "\r\n An additional correction factor will be added if you select YES",
                                 "WWV PC TIME UPDATE", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2, MessageBoxOptions.DefaultDesktopOnly);
 
                             if (temp0 == DialogResult.Yes)
@@ -8298,19 +8468,19 @@ namespace PowerSDR
 
                                 textBox1.Text += "Elapsed time since WWV Sync Pulse> " + WWVNewTime.Elapsed + "\r\n";
 
-                                k1 = TimeSpan.FromMilliseconds(Convert.ToInt32(300)); // convert o k1 timespan
+                                k1 = TimeSpan.FromMilliseconds(Convert.ToInt32(230)); // convert o k1 timespan
 
-                                WWVUTC = WWVUTC.Subtract(k1); // subtract the 300 millseconds from the HOLE
-                                WWVUTC = WWVUTC + WWVNewTime.Elapsed;
+                                WWVUTC = WWVUTC.Subtract(k1); // subtract the 230 millseconds from the HOLE
+                                WWVUTC = WWVUTC + WWVNewTime.Elapsed;                                            // WWVNewTime actually started at the end of the P0 pulse which is actually 230msec before 0
 
-                                textBox1.Text += "New Time updated to your PC clock> " + WWVUTC + "\r\n";
+                                textBox1.Text += "New UTC Time updated > " + WWVUTC + "\r\n";
 
                                 WWVUTC = WWVUTC.ToLocalTime(); // adjust UTC back to my time .NOW
 
                                 st.FromDateTime(WWVUTC); //Convert System.DateTime to SystemTime 
                                 Win32API.SetLocalTime(ref st);  //Call Win32 API to set the system time  
 
-                                textBox1.Text += "New Time updated to your PC clock1> " + WWVUTC + "\r\n";
+                                textBox1.Text += "New Local Time updated to your PC clock> " + WWVUTC + "\r\n";
                                 WWVNewTime.Stop();
 
                             } // user wants you to update PC time based on WWV radio results
@@ -8344,32 +8514,40 @@ namespace PowerSDR
                 {
                     if (BCDSignal >= WWVThreshold)             // this should be a 1 in the BCD data stream (or a P Frame signal)
                     {
+
                         // we already know the BCD tone is already ON
                         checkBoxTone.Checked = true;
                         BCDMax = BCDSignal;
+                        below_count = 0;
+
                     }
                     else
                     {
-                        BCDMin = BCDSignal;
+                        tickTimeON = (int)tickON.ElapsedMilliseconds;
 
-                        checkBoxTone.Checked = false;
-
-                        if ((int)tickON.ElapsedMilliseconds < 60)
+                        if (below_count > 2)
                         {
-                            // keep going because the min BCD length is 170msec, we must have the threshold too high or lost signal in the noise
-                           
-                        }
-                        else
-                        {
-                            BCDONTrig = true; // do just 1 time per tick (indicate that its time to check to see how long this tick was
-                            tickON.Stop();
-                            tickTimeON = (int)tickON.ElapsedMilliseconds;
+                            BCDMin = BCDSignal;
 
-                        }
+                            checkBoxTone.Checked = false;
+
+                            if ((int)tickON.ElapsedMilliseconds < 60)
+                            {
+                                // keep going because the min BCD length is 170msec, we must have the threshold too high or lost signal in the noise
+
+                            }
+                            else
+                            {
+                                BCDONTrig = true; // NOW WE ARE SURE WE GOT THE FULL TICK LENGTH 
+                                tickON.Stop();
+                                //  tickTimeON = (int)tickON.ElapsedMilliseconds;
+
+                            }
+                        } // below_count > 2
 
                     }
-
-                    if (BCDONTrig == true)
+                        //-----------------------------------------------------------
+                    if (BCDONTrig == true) // got the Tick ON time
                     {
                         BCDONTrig = false; // do just 1 time per tick
 
@@ -8395,9 +8573,7 @@ namespace PowerSDR
                         else // you have already found the Sync Hole, but this last tone too short
                         {
                             WWVPos = false;
-                            //  BCDAdj = BCDAdj + 0.2;  // try in decrease the threshold level to keep signal ON longer (increase this number)
-                            //  Debug.WriteLine("Tone dropped too soon, adj threshold "+ WWVThreshold);
-
+                        
                             if (WWVPitch == true)
                             {
                                 BCDSignalON = BCDSignalON1;
@@ -8430,7 +8606,7 @@ namespace PowerSDR
                     if (BCDSignal >= WWVThreshold)             // this should be a 1 in the BCD data stream (or a P Frame signal)
                     {
                         checkBoxTone.Checked = true;
-
+                        below_count = 0;
                         BCDMax = BCDSignal;
 
                         tickOFF.Stop();
@@ -8452,29 +8628,30 @@ namespace PowerSDR
                     }
                     else  // no TONE  this should be a 0 in the BCD data stream
                     {
-                        checkBoxTone.Checked = false;
-                        BCDMin = BCDSignal;
-
-                        tickON.Stop();
-
-                        if (BCD1timeFlag == true)
+                        
+                        if (below_count > 1)  // dont allow drop below threshold unless its for 3 times
                         {
-                            tickTimeON = (int)tickON.ElapsedMilliseconds;
-                            BCD1timeFlag = false;
+                            checkBoxTone.Checked = false;
+                            BCDMin = BCDSignal;
 
-                            textBox2.Text = tickTimeON.ToString();
+                            tickON.Stop();
 
-                            BCDOFFTrig = false;
-                            BCDONTrig = true;     // GOT A TICK TIMEON 
+                            if (BCD1timeFlag == true)
+                            {
+                                tickTimeON = (int)tickON.ElapsedMilliseconds;
+                                BCD1timeFlag = false;
 
-                            tickON.Reset();
-                            tickOFF.Start();
+                                textBox2.Text = tickTimeON.ToString();
 
-                           
+                                BCDOFFTrig = false;
+                                BCDONTrig = true;     // GOT A TICK TIMEON 
+
+                                tickON.Reset();
+                                tickOFF.Start();
+
+
                                 if (tickTimeON < 60)
                                 {
-                                //   BCDAdj = BCDAdj + 0.4;  // try in decrease the threshold level to keep signal ON longer (increase this number)
-                                //    Debug.WriteLine("Tone too short, adj threshold down " + WWVThreshold);
                                     if (WWVPitch == true)
                                     {
                                         BCDSignalON = BCDSignalON1;
@@ -8491,32 +8668,31 @@ namespace PowerSDR
                                 }
                                 else if (tickTimeON > 1000)
                                 {
-                                //   BCDAdj = BCDAdj - 0.4;  // try in increase the threshold level to keep signal ON longer (decrease this number)
-                                //  Debug.WriteLine("Tone on too long, adj threshold up " + WWVThreshold);
+                                  
+                                    if (WWVPitch == true)
+                                    {
+                                        BCDSignalON = BCDSignalON1;
+                                        BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
+                                    }
+                                    else
+                                    {
+                                        CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
+                                        BCDSignalON = BCDSignalON1;
+                                        BCDSignalOFF = BCDSignalOFF1;
+                                        BCDSignalON1 = -150;
+                                        BCDSignalOFF1 = 0;
+                                    }
+                                }
 
-                                if (WWVPitch == true)
-                                {
-                                    BCDSignalON = BCDSignalON1;
-                                    BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
-                                }
-                                else
-                                {
-                                    CarrierSignalINIT = CarrierSignal;  // set new ON/OFF and Carrier levels at the start of every second
-                                    BCDSignalON = BCDSignalON1;
-                                    BCDSignalOFF = BCDSignalOFF1;
-                                    BCDSignalON1 = -150;
-                                    BCDSignalOFF1 = 0;
-                                }
                             }
-                            
-                        }
+                        } // below_count > 2
 
                     } //if (BCDSignal >= WWVThreshold) NO
 
                     //-------------------------------------------------------------------------
                     if (BCDONTrig == true)
                     {
-                        BCDONTrig = false; // do just 1 time per tick
+                        BCDONTrig = false; // false = dont check anymore until the next second
 
                         if ((tickTimeON >= 660) && (tickTimeON < 900))       // .770 seconds duration: position identifier (P0-P5)  (i.e. every 10 seconds)
                         {
@@ -8524,6 +8700,7 @@ namespace PowerSDR
                             {
                                 WWVPos = true; // allow detected of HOLE
                                 WWVNewTime.Restart(); // zero and Start the stopwatch just in case this is actually the sync pulse (i.e. the HOLE is next)
+
                                 textBox1.Text += "Pframe,";
                             }
 
@@ -8544,9 +8721,9 @@ namespace PowerSDR
 
                             Debug.WriteLine("WWV TIME>> Position HOLE: Start of new MINUTE============");
 
-                            textBox1.Text += "\r\n";
-                            textBox1.Text += "WWV>> Got Start of new Minute Sync Pulse\r\n";
-                            textBox1.Text += "Frame (1-6)#: P1>";
+                        
+                            textBox1.Text += " Got Start of new Minute Sync Pulse\r\n";
+                            textBox1.Text += "Frame (1-6)#: P0>";
 
                             WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
 
@@ -8591,10 +8768,10 @@ namespace PowerSDR
 
             Debug.WriteLine("WWV Time Thread Ended ");
 
+
             checkBoxWWV.Checked = false; // turn off WWV checking
 
-          //  if (WWVPitch == false)
-          //  {
+         
                 if (oldSR == 192000)  // 192kSR will not work so reduce to 96k
                 {
                     console.setupForm.comboAudioSampleRate1.Text = "192000"; // select 192000 again when done
@@ -8603,20 +8780,21 @@ namespace PowerSDR
 
                 console.chkEnableMultiRX.Checked = false;  // enable sub receiver
 
-          //  }
+         
             textBox2.Text = "";
             checkBoxTone.Checked = false;   // turn off tone marker when done.
 
-
-            console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
+        
+            console.UpdateRX1Filters(beacon9,beacon8); // restore filter
             console.RX1Filter = beacon89;           // restore filter name
-            console.RX1FilterHigh = beacon8;        // restore high filter  when you turn off the beacon check
-            console.RX1FilterLow = beacon9;         // restore low filter  when you turn off the beacon check
+            console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
+
             console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
             console.VFOAFreq = beacon88;             // restore VfoA
 
-          //  console.CATPreamp = beacon55;
+            //  console.CATPreamp = beacon55;
 
+            console.UpdateDisplay();
 
             WWVNewTime.Stop();
 
@@ -8681,86 +8859,22 @@ namespace PowerSDR
             Coeff = 2 * Math.Cos(2 * Math.PI * normalizedfreq);
         }
 
+        private void checkBoxTone_CheckedChanged(object sender, EventArgs e)
+        {
 
-        } // Spotcontrol
+        }
+    } // Spotcontrol
 
-        //============================================================
-        // ke9ns used to set PC system time, but PowerSDR needs to be in ADMIn mode for it to take
-        public class Win32API
+    //============================================================
+    // ke9ns used to set PC system time, but PowerSDR needs to be in ADMIn mode for it to take
+    public class Win32API
     {
         [DllImport("Kernel32.dll")]
         public static extern bool SetLocalTime(ref SystemTime Time);
         [DllImport("Kernel32.dll")]
         public static extern void GetLocalTime(ref SystemTime Time);
     }
-/*
-    //--------------------------------------------------------------------------
-    // ke9ns ?? get OFFSET2 by PLL, adds to the OFFSET1 (found above)
-    public void PLL()
-    {
-        float a, b;
-             DttSP.GetSAMPLLvals(0, 0, &a, &b);     // ke9ns save original a and b values to put back after you getfreq
 
-
-            Debug.WriteLine("CalibrateFreq a, b " + a + " , " + b);
-            
-            float a1 = a * 0.1f;
-             float b1 = 0.25f * a1 * a1;
-
-                 DttSP.SetSAMPLLvals(0, 0, a1, b1);     // ke9ns a1 = 10% of original value, b1= 25% of a1^2
-
-            Thread.Sleep(200);
-
-          //  int counter = 0;
-         int samples = 200;
-         float sum1 = 0.0f;
-
-            for (int i = 0; i<samples; i++)                     // ke9ns loop 200 times
-            {
-                float temp;
-
-              DttSP.GetSAMFreq(0, 0, &temp);                   // ke9ns ?? returns a freq
-
-                Debug.WriteLine("CalibrateFreq temp " + temp);
-
-                sum1 += temp;
-                Thread.Sleep(50);
-              //  progress.SetPercent((float)((float)++counter / samples));
-            }
-
-
-
-            Debug.WriteLine("CalibrateFreq sum1 " + sum1 );
-
-            diff = -(float)((sum1 / samples) * sample_rate1 / (2 * Math.PI));
-
-            DttSP.SetSAMPLLvals(0, 0, a, b);                    // reset PLL values
-
-            // Calculate the DDS offset
-            offset = 0;
-            switch (current_model)
-            {
-                case Model.FLEX5000:
-                    offset = (int)(500.0 / freq* diff);
-                    break;
-                case Model.FLEX3000:
-                    offset = (int)(499.201 / freq* diff);
-                    break;
-                case Model.FLEX1500:
-                    if (flex_1500_xref)
-                        offset = (int)(400.0 / freq* diff);
-                    else offset = (int)(384.0 / freq* diff);
-                    break;
-                default:
-                    offset = (int)(200.0 / freq* diff);
-                    break;
-            }
-
-            Debug.WriteLine("  offset2: " + offset);
-
-    }
-
-    */
    
   
 

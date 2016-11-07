@@ -4273,16 +4273,12 @@ namespace PowerSDR
             { 
                 if (!localmox)
                 {
-
                     // ke9ns this produces scope screen data in Receive out_l_ptr1 = rx1_out_l  = OUT_L1
-
                     DoScope(out_l_ptr1, frameCount); // why on separate channels for RX/TX?
-
                 }
                 else
                 {
                     // ke9ns this produces scope screan data in Transmit, and yet MON audio in AM mode the audio has an envelope
-
                     DoScope(out_l_ptr2, frameCount);  // ke9ns out_L_ptr2 = tx_out_L = OUT_L2 (this shows AM signal just fine, but audio out is bad)
                 }
 
@@ -4299,8 +4295,7 @@ namespace PowerSDR
                 }
 
                 console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
-
-                // console.WWVReady = true;
+                console.WWVReady = true;
     
 
             } //   if (console.BeaconSigAvg == true)
