@@ -54,15 +54,15 @@ namespace PowerSDR
 		private System.Windows.Forms.TrackBarTS tbLineInDB9;
 		private System.Windows.Forms.CheckBoxTS chkOutputMuteAll;
 		private System.Windows.Forms.LabelTS lblExtSpkr;
-		private System.Windows.Forms.CheckBoxTS chkExtSpkrSel;
-		private System.Windows.Forms.TrackBarTS tbExtSpkr;
+        public CheckBoxTS chkExtSpkrSel;
+        private System.Windows.Forms.TrackBarTS tbExtSpkr;
 		private System.Windows.Forms.LabelTS lblHeadphone;
-		private System.Windows.Forms.CheckBoxTS chkHeadphoneSel;
-		private System.Windows.Forms.TrackBarTS tbHeadphone;
+        public CheckBoxTS chkHeadphoneSel;
+        private System.Windows.Forms.TrackBarTS tbHeadphone;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.LabelTS lblLineOutDB9;
-		private System.Windows.Forms.CheckBoxTS chkLineOutDB9Sel;
-		private System.Windows.Forms.TrackBarTS tbLineOutDB9;
+        public CheckBoxTS chkLineOutDB9Sel;
+        private System.Windows.Forms.TrackBarTS tbLineOutDB9;
 		private System.ComponentModel.IContainer components;
 
 		#endregion

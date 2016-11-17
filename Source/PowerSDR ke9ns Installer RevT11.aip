@@ -17,10 +17,10 @@
     <ROW Property="ARPURLUPDATEINFO" Value="ke9ns.com/flexpage.html"/>
     <ROW Property="CTRLS" Value="1"/>
     <ROW Property="Manufacturer" Value="ke9ns"/>
-    <ROW Property="ProductCode" Value="1033:{9A285251-6255-4909-AF27-3694958867EB} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{36446D7B-2928-4D03-9135-B3551B8EDE59} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="PowerSDR ke9ns Installer RevT11"/>
-    <ROW Property="ProductVersion" Value="12.47.16.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="12.76.16.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{A5226811-E4EA-414C-8491-CEFB1FC47B7C}"/>
     <ROW Property="VIEWREADME" Value="1" Type="4"/>
@@ -51,6 +51,7 @@
     <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="DESKTO~1|DesktopFolder" IsPseudoRoot="1"/>
     <ROW Directory="FlexRadioSystems_1_Dir" Directory_Parent="CommonAppDataFolder" DefaultDir="FLEXRA~1|FlexRadio Systems"/>
     <ROW Directory="FlexRadioSystems_Dir" Directory_Parent="AppDataFolder" DefaultDir="FLEXRA~1|FlexRadio Systems"/>
+    <ROW Directory="HamCAP_Dir" Directory_Parent="antennas_Dir" DefaultDir="HamCAP"/>
     <ROW Directory="KE9NS3_Spot_Dir" Directory_Parent="Skins_Dir" DefaultDir="KE9NS3~1|KE9NS3_Spot"/>
     <ROW Directory="KE9NS4_Plain_Dir" Directory_Parent="Skins_Dir" DefaultDir="KE9NS4~1|KE9NS4_Plain"/>
     <ROW Directory="KE9NS6_World_Dir" Directory_Parent="Skins_Dir" DefaultDir="KE9NS6~1|KE9NS6_World"/>
@@ -59,72 +60,374 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="Skins_Dir" Directory_Parent="PowerSDR_Dir" DefaultDir="Skins"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="VOAProp_Dir" Directory_Parent="areadata_Dir" DefaultDir="VOAProp"/>
+    <ROW Directory="antennas_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="antennas"/>
+    <ROW Directory="anttyp90_Dir" Directory_Parent="win32_Dir" DefaultDir="anttyp90"/>
+    <ROW Directory="area_inv_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="area_inv"/>
+    <ROW Directory="areadata_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="areadata"/>
+    <ROW Directory="bin_win_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="bin_win"/>
+    <ROW Directory="coeffs_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="coeffs"/>
+    <ROW Directory="database_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="database"/>
+    <ROW Directory="default_1_Dir" Directory_Parent="areadata_Dir" DefaultDir="default"/>
+    <ROW Directory="default_2_Dir" Directory_Parent="area_inv_Dir" DefaultDir="default"/>
+    <ROW Directory="default_3_Dir" Directory_Parent="saved_Dir" DefaultDir="default"/>
+    <ROW Directory="default_4_Dir" Directory_Parent="saved_si_Dir" DefaultDir="default"/>
+    <ROW Directory="default_Dir" Directory_Parent="antennas_Dir" DefaultDir="default"/>
+    <ROW Directory="geocity_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="geocity"/>
+    <ROW Directory="geonatio_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="geonatio"/>
+    <ROW Directory="geostate_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="geostate"/>
+    <ROW Directory="help_win_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="help_win"/>
+    <ROW Directory="icons_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="icons"/>
+    <ROW Directory="itshfbc_Dir" Directory_Parent="PowerSDRv2.7.2_Dir" DefaultDir="itshfbc"/>
+    <ROW Directory="news_win_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="news_win"/>
+    <ROW Directory="run_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="run"/>
+    <ROW Directory="samples_Dir" Directory_Parent="antennas_Dir" DefaultDir="samples"/>
+    <ROW Directory="saved_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="saved"/>
+    <ROW Directory="saved_si_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="saved_si"/>
+    <ROW Directory="userdb_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="userdb"/>
+    <ROW Directory="win32_Dir" Directory_Parent="itshfbc_Dir" DefaultDir="win32"/>
+    <ROW Directory="windows.dat_Dir" Directory_Parent="antennas_Dir" DefaultDir="windows.dat"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="ADODB.dll" ComponentId="{39D2C251-E975-4E9A-A684-058BA372CB03}" Directory_="APPDIR" Attributes="0" KeyPath="ADODB.dll"/>
+    <ROW Component="AFRICA.GEO" ComponentId="{096319F1-D3AB-49F9-BC5B-B2A3880DA111}" Directory_="geocity_Dir" Attributes="0" KeyPath="AFRICA.GEO" Type="0"/>
+    <ROW Component="AFRICA.GEO_1" ComponentId="{D52D5CD4-D591-42C1-A515-0464136417A1}" Directory_="geonatio_Dir" Attributes="0" KeyPath="AFRICA.GEO_1" Type="0"/>
+    <ROW Component="ALABAMA.GEO" ComponentId="{A3B7D922-BACA-4246-AEA7-A9ABB90C4A8A}" Directory_="geostate_Dir" Attributes="0" KeyPath="ALABAMA.GEO" Type="0"/>
+    <ROW Component="ANG_LONG" ComponentId="{83D3A207-71E4-4185-8E08-B2CA51B24953}" Directory_="windows.dat_Dir" Attributes="0" KeyPath="ANG_LONG" Type="0"/>
+    <ROW Component="Anttyp90.exe" ComponentId="{959CB9FF-FC1B-4A09-A2E4-7199CDC51AA9}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Anttyp90.exe"/>
+    <ROW Component="Areainv.exe" ComponentId="{50F8B9C2-1565-488C-8E6A-5A0158D47B67}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Areainv.exe"/>
+    <ROW Component="Areapltw.exe" ComponentId="{EE907D67-6E20-4AC7-94A8-69EDB7E8A14C}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Areapltw.exe"/>
+    <ROW Component="Areawin.exe" ComponentId="{F4E4D737-D984-42D0-9312-0C3220226E98}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Areawin.exe"/>
+    <ROW Component="Botlines.dat" ComponentId="{046D0CEC-5E7B-4285-BF06-0C12448F7B63}" Directory_="database_Dir" Attributes="0" KeyPath="Botlines.dat" Type="0"/>
+    <ROW Component="CCIR.000" ComponentId="{5CC46F6E-3FF1-486E-9CDF-C6A8389F43BB}" Directory_="default_Dir" Attributes="0" KeyPath="CCIR.000" Type="0"/>
+    <ROW Component="CGLALO.DAT" ComponentId="{02EDD0AF-2DC2-4F08-8B7E-C6F740993663}" Directory_="coeffs_Dir" Attributes="0" KeyPath="CGLALO.DAT" Type="0"/>
+    <ROW Component="Circuits.def" ComponentId="{5333A0AF-55F3-42BE-83A7-3C8C83E7B044}" Directory_="userdb_Dir" Attributes="0" KeyPath="Circuits.def" Type="0"/>
+    <ROW Component="Combinew.exe" ComponentId="{94EF9AB6-7575-419A-84A9-72E03EC50061}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Combinew.exe"/>
     <ROW Component="DXLOC.txt" ComponentId="{E4C5C8CF-B3A5-4669-89A6-CA979F8CF045}" Directory_="PowerSDRv2.7.2_Dir" Attributes="0" KeyPath="DXLOC.txt" Type="0"/>
+    <ROW Component="Default.ice" ComponentId="{1C55B1C9-B07B-446F-98D9-188723833370}" Directory_="default_1_Dir" Attributes="0" KeyPath="Default.ice" Type="0"/>
+    <ROW Component="Default.ice_1" ComponentId="{1A9E0A0E-B08A-4657-8F37-B634957E49E7}" Directory_="default_2_Dir" Attributes="0" KeyPath="Default.ice_1" Type="0"/>
+    <ROW Component="Default.ice_2" ComponentId="{B22A6BA0-42D9-4BDB-9688-64ECB7397DAA}" Directory_="default_3_Dir" Attributes="0" KeyPath="Default.ice_2" Type="0"/>
+    <ROW Component="Default.isi" ComponentId="{A7C9F5C2-5728-4D72-9EC0-FEAFCC97FD7F}" Directory_="default_4_Dir" Attributes="0" KeyPath="Default.isi" Type="0"/>
     <ROW Component="DttSP.dll" ComponentId="{DB3F0FE8-8BCD-4359-9644-57E8417A211B}" Directory_="APPDIR" Attributes="0" KeyPath="DttSP.dll"/>
     <ROW Component="Flex1500USB.dll" ComponentId="{73A9D69B-8AAA-4D1D-B50D-560890BD3F89}" Directory_="APPDIR" Attributes="0" KeyPath="Flex1500USB.dll"/>
     <ROW Component="FlexCW.dll" ComponentId="{BDCACA89-4234-4EC7-8F84-FE4E9410C4B8}" Directory_="APPDIR" Attributes="0" KeyPath="FlexCW.dll"/>
     <ROW Component="FlexControl.dll" ComponentId="{056A4771-3058-4F16-AB2C-21D8EF7DFE12}" Directory_="APPDIR" Attributes="0" KeyPath="FlexControl.dll"/>
+    <ROW Component="GP.N14" ComponentId="{55FFA8DA-6DCC-4981-B203-EE88A2C46970}" Directory_="HamCAP_Dir" Attributes="0" KeyPath="GP.N14" Type="0"/>
+    <ROW Component="HFANT.ICO" ComponentId="{DC21CA2F-5ABB-44BB-9666-F9061892C996}" Directory_="icons_Dir" Attributes="0" KeyPath="HFANT.ICO" Type="0"/>
+    <ROW Component="Hfantwin.exe" ComponentId="{5E9C704C-0608-4E72-988B-00E54D6B6AD2}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Hfantwin.exe"/>
+    <ROW Component="Icepacw.exe" ComponentId="{31ABED3C-3C61-4620-915A-3D6AF31C673D}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Icepacw.exe"/>
     <ROW Component="Interop.TDxInput.dll" ComponentId="{0DCB15FF-A505-4890-9DB0-BBE56BB57EE1}" Directory_="APPDIR" Attributes="0" KeyPath="Interop.TDxInput.dll"/>
     <ROW Component="LicenseAgreement.txt" ComponentId="{13157C6A-70E9-4D08-BE32-CFD3A4452A5A}" Directory_="KE9NS3_Spot_Dir" Attributes="0" KeyPath="LicenseAgreement.txt" Type="0"/>
     <ROW Component="LicenseAgreement.txt_1" ComponentId="{2E6B8DD1-E0F4-4835-958D-823CEEF62407}" Directory_="KE9NS4_Plain_Dir" Attributes="0" KeyPath="LicenseAgreement.txt_1" Type="0"/>
     <ROW Component="LicenseAgreement.txt_2" ComponentId="{EAE272B1-D06D-4913-9CDA-BA72BAD64CD1}" Directory_="KE9NS6_World_Dir" Attributes="0" KeyPath="LicenseAgreement.txt_2" Type="0"/>
     <ROW Component="NAudio.Lame.dll" ComponentId="{7BF366ED-A959-47F3-BB68-03982A09F4CF}" Directory_="APPDIR" Attributes="0" KeyPath="NAudio.Lame.dll"/>
     <ROW Component="NAudio.dll" ComponentId="{FD349854-6139-4343-B57E-B7044D0E7647}" Directory_="APPDIR" Attributes="0" KeyPath="NAudio.dll"/>
+    <ROW Component="Newswin.exe" ComponentId="{181EEDF2-6C8A-426B-8E0D-3A78F16BAFD4}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Newswin.exe"/>
+    <ROW Component="Pointwin.exe" ComponentId="{85A8ABDF-EF55-4807-BD2C-B76016412033}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Pointwin.exe"/>
     <ROW Component="PortTalk.dll" ComponentId="{6FEC83B1-C852-48AE-8F87-60F75FFCCED1}" Directory_="APPDIR" Attributes="0" KeyPath="PortTalk.dll"/>
     <ROW Component="PowerMate.dll" ComponentId="{F076F7E8-3A97-4E50-A837-F318DC9C0C1F}" Directory_="APPDIR" Attributes="0" KeyPath="PowerMate.dll"/>
     <ROW Component="PowerSDR_T9.exe" ComponentId="{F577D412-5FE1-46C2-9C77-8CE4C2F20301}" Directory_="APPDIR" Attributes="0" KeyPath="PowerSDR_T9.exe"/>
     <ROW Component="PowerSDR_T9.exe.config" ComponentId="{8C93A869-EB90-4675-9FD9-C97968097708}" Directory_="APPDIR" Attributes="0" KeyPath="PowerSDR_T9.exe.config" Type="0"/>
     <ROW Component="ProductInformation" ComponentId="{F5209323-BD08-49EE-B8F6-8FD862184649}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
+    <ROW Component="Rec533b.exe" ComponentId="{B5C8699E-2525-47E3-A490-6226A298A1FB}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Rec533b.exe"/>
+    <ROW Component="Rec533w.exe" ComponentId="{C80CB15F-9E64-4A2D-8142-A935DD8B8628}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Rec533w.exe"/>
+    <ROW Component="SALFLIBC.DLL" ComponentId="{B47980D2-B9CE-4BD0-8412-6B8681747811}" Directory_="bin_win_Dir" Attributes="0" KeyPath="SALFLIBC.DLL"/>
+    <ROW Component="SAMPLE.00" ComponentId="{8EE415F3-A2A3-413A-A808-A0DA9877E19F}" Directory_="samples_Dir" Attributes="0" KeyPath="SAMPLE.00" Type="0"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{CE4E8A80-B1F8-4B0A-9DA8-D530DC71F48E}" Directory_="SHORTCUTDIR" Attributes="0"/>
     <ROW Component="Sanford.Collections.dll" ComponentId="{20C7123C-DD4D-43B1-8F2D-B1567B2FB004}" Directory_="APPDIR" Attributes="0" KeyPath="Sanford.Collections.dll"/>
     <ROW Component="Sanford.Multimedia.Midi.dll" ComponentId="{57DD77A2-F502-4BC0-9E02-9C1E792D78E1}" Directory_="APPDIR" Attributes="0" KeyPath="Sanford.Multimedia.Midi.dll"/>
     <ROW Component="Sanford.Multimedia.Timers.dll" ComponentId="{047F66E6-6D2B-4E9F-946B-A12EC87148DA}" Directory_="APPDIR" Attributes="0" KeyPath="Sanford.Multimedia.Timers.dll"/>
     <ROW Component="Sanford.Multimedia.dll" ComponentId="{5270A155-ECEE-42CA-9DEC-9CE7D66869AF}" Directory_="APPDIR" Attributes="0" KeyPath="Sanford.Multimedia.dll"/>
     <ROW Component="Sanford.Threading.dll" ComponentId="{5FC2B9A0-A3D4-45EB-AF8B-6F968F73CE8D}" Directory_="APPDIR" Attributes="0" KeyPath="Sanford.Threading.dll"/>
+    <ROW Component="Si_win.exe" ComponentId="{227C7337-1B45-468E-BCD0-D6B5751B4E40}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Si_win.exe"/>
     <ROW Component="Skins" ComponentId="{D8BDA504-F231-4463-B534-37E763D5C0F0}" Directory_="Skins_Dir" Attributes="0"/>
     <ROW Component="TDxInput.dll" ComponentId="{3F81A6E8-6B3E-4E1F-AE38-8DB340FEB53A}" Directory_="APPDIR" Attributes="0" KeyPath="TDxInput.dll"/>
     <ROW Component="TNF.dll" ComponentId="{B6A6C8B9-524E-4A7A-B917-3FCE5262C7EE}" Directory_="APPDIR" Attributes="0" KeyPath="TNF.dll"/>
+    <ROW Component="Voacapw.exe" ComponentId="{1905C8A3-A42C-4797-BFE0-B46B7F4E7ABB}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Voacapw.exe"/>
+    <ROW Component="Worldwin.exe" ComponentId="{6285E927-6842-4C0A-96DB-8F51E12A2A08}" Directory_="bin_win_Dir" Attributes="0" KeyPath="Worldwin.exe"/>
     <ROW Component="X20bttn0.png" ComponentId="{1E15BAD2-7328-4644-B0BA-BCBB1DFF5EE5}" Directory_="Base_Dir" Attributes="0" KeyPath="X20bttn0.png" Type="0"/>
     <ROW Component="X20bttn0.png_1" ComponentId="{A8F9A4B7-1A37-4B94-A20F-C7C03C54A7A3}" Directory_="Base_1_Dir" Attributes="0" KeyPath="X20bttn0.png_3" Type="0"/>
     <ROW Component="X20bttn0.png_2" ComponentId="{3181E7D8-935C-455D-99B7-687AF2177351}" Directory_="Base_2_Dir" Attributes="0" KeyPath="X20bttn0.png_6" Type="0"/>
+    <ROW Component="_02_01.txt" ComponentId="{A361791A-A1C9-4C57-BF5D-85A841BB2F1A}" Directory_="news_win_Dir" Attributes="0" KeyPath="_02_01.txt" Type="0"/>
+    <ROW Component="_07_10.txt" ComponentId="{04B1E099-4AA5-471F-B3BE-29F2BD111270}" Directory_="saved_si_Dir" Attributes="0" KeyPath="_07_10.txt" Type="0"/>
+    <ROW Component="ant90.for" ComponentId="{33544FD3-66D7-427A-988D-88795580D624}" Directory_="anttyp90_Dir" Attributes="0" KeyPath="ant90.for" Type="0"/>
+    <ROW Component="area.hlp" ComponentId="{4E1AB522-44EB-4AB8-8E93-0E8F40FFC04C}" Directory_="help_win_Dir" Attributes="0" KeyPath="area.hlp" Type="2"/>
+    <ROW Component="areapltx.dat" ComponentId="{66124F8A-29DC-48B0-B710-0E7700709991}" Directory_="run_Dir" Attributes="0" KeyPath="areapltx.dat" Type="0"/>
     <ROW Component="atu.dll" ComponentId="{4FC1BC1E-84EE-4366-9E59-3D499C0D73D9}" Directory_="APPDIR" Attributes="0" KeyPath="atu.dll"/>
+    <ROW Component="batchit.exe" ComponentId="{21AC1BBD-85C6-4D61-A1C8-D224C878E3B9}" Directory_="bin_win_Dir" Attributes="0" KeyPath="batchit.exe"/>
     <ROW Component="btnBandHF0.png" ComponentId="{71CD9579-1250-4711-8387-16F2514E6294}" Directory_="Console_Dir" Attributes="0" KeyPath="btnBandHF0.png" Type="0"/>
     <ROW Component="btnBandHF0.png_1" ComponentId="{5A85B2D9-BB53-46F3-AD2C-5085780238B5}" Directory_="Console_1_Dir" Attributes="0" KeyPath="btnBandHF0.png_1" Type="0"/>
     <ROW Component="btnBandHF0.png_2" ComponentId="{93C9618A-04FB-4BB6-B915-30343ABF19D2}" Directory_="Console_2_Dir" Attributes="0" KeyPath="btnBandHF0.png_2" Type="0"/>
+    <ROW Component="dir_tmp.txt" ComponentId="{212D0A93-6530-47E8-8C4D-4E17A9491D16}" Directory_="bin_win_Dir" Attributes="0" KeyPath="sysinfo.bat" Type="0"/>
+    <ROW Component="hf_parse.exe" ComponentId="{34C20586-63CD-4B63-B377-8C64A86D1556}" Directory_="bin_win_Dir" Attributes="0" KeyPath="hf_parse.exe"/>
+    <ROW Component="hfinfo.exe" ComponentId="{CECA6C01-46E9-4A06-A2B1-74BC21B16ADA}" Directory_="bin_win_Dir" Attributes="0" KeyPath="hfinfo.exe"/>
     <ROW Component="libmp3lame.32.dll" ComponentId="{E9FAF64D-39B4-4CA6-86C4-D68BFDC34C47}" Directory_="APPDIR" Attributes="0" KeyPath="libmp3lame.32.dll"/>
     <ROW Component="libmp3lame.64.dll" ComponentId="{1D98117B-9ECF-4E81-B63B-7586247E1AC0}" Directory_="APPDIR" Attributes="256" KeyPath="libmp3lame.64.dll"/>
+    <ROW Component="overlayw.exe" ComponentId="{B544623B-D059-4A7E-91DC-193B22C4E790}" Directory_="bin_win_Dir" Attributes="0" KeyPath="overlayw.exe"/>
     <ROW Component="pal.dll" ComponentId="{743E6D97-F9C9-4BB8-8973-68223FAD1D9F}" Directory_="APPDIR" Attributes="0" KeyPath="pal.dll"/>
     <ROW Component="pthreadVC.dll" ComponentId="{799C0520-02AE-42BE-A29F-3251CE30D38B}" Directory_="APPDIR" Attributes="0" KeyPath="pthreadVC.dll"/>
+    <ROW Component="readme.txt" ComponentId="{0B8C60A7-D9A5-4F6D-BFB8-C83048E276B0}" Directory_="itshfbc_Dir" Attributes="0" KeyPath="readme.txt" Type="0"/>
     <ROW Component="vcruntime140.dll" ComponentId="{51D7AE27-12F8-4B98-8DAD-D751278FF8FB}" Directory_="APPDIR" Attributes="0" KeyPath="vcruntime140.dll"/>
+    <ROW Component="voaprop.vg1" ComponentId="{6DB6F3BA-DC77-434B-8F59-76EB3612AA39}" Directory_="VOAProp_Dir" Attributes="0" KeyPath="voaprop.vg1" Type="0"/>
     <ROW Component="wdapi_dotnet1040.dll" ComponentId="{F8B2A635-3C38-43F9-A81D-5983EBD1763E}" Directory_="APPDIR" Attributes="0" KeyPath="wdapi_dotnet1040.dll"/>
+    <ROW Component="woverlay.exe" ComponentId="{D1E6007D-79C7-4AB8-9253-F58C4E30E771}" Directory_="bin_win_Dir" Attributes="0" KeyPath="woverlay.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="ADODB.dll DXLOC.txt DttSP.dll Flex1500USB.dll FlexCW.dll FlexControl.dll Interop.TDxInput.dll LicenseAgreement.txt LicenseAgreement.txt_1 LicenseAgreement.txt_2 NAudio.Lame.dll NAudio.dll PortTalk.dll PowerMate.dll PowerSDR_T9.exe PowerSDR_T9.exe.config ProductInformation SHORTCUTDIR Sanford.Collections.dll Sanford.Multimedia.Midi.dll Sanford.Multimedia.Timers.dll Sanford.Multimedia.dll Sanford.Threading.dll Skins TDxInput.dll TNF.dll X20bttn0.png X20bttn0.png_1 X20bttn0.png_2 atu.dll btnBandHF0.png btnBandHF0.png_1 btnBandHF0.png_2 libmp3lame.32.dll libmp3lame.64.dll pal.dll pthreadVC.dll vcruntime140.dll wdapi_dotnet1040.dll"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="ADODB.dll AFRICA.GEO AFRICA.GEO_1 ALABAMA.GEO ANG_LONG Anttyp90.exe Areainv.exe Areapltw.exe Areawin.exe Botlines.dat CCIR.000 CGLALO.DAT Circuits.def Combinew.exe DXLOC.txt Default.ice Default.ice_1 Default.ice_2 Default.isi DttSP.dll Flex1500USB.dll FlexCW.dll FlexControl.dll GP.N14 HFANT.ICO Hfantwin.exe Icepacw.exe Interop.TDxInput.dll LicenseAgreement.txt LicenseAgreement.txt_1 LicenseAgreement.txt_2 NAudio.Lame.dll NAudio.dll Newswin.exe Pointwin.exe PortTalk.dll PowerMate.dll PowerSDR_T9.exe PowerSDR_T9.exe.config ProductInformation Rec533b.exe Rec533w.exe SALFLIBC.DLL SAMPLE.00 SHORTCUTDIR Sanford.Collections.dll Sanford.Multimedia.Midi.dll Sanford.Multimedia.Timers.dll Sanford.Multimedia.dll Sanford.Threading.dll Si_win.exe Skins TDxInput.dll TNF.dll Voacapw.exe Worldwin.exe X20bttn0.png X20bttn0.png_1 X20bttn0.png_2 _02_01.txt _07_10.txt ant90.for area.hlp areapltx.dat atu.dll batchit.exe btnBandHF0.png btnBandHF0.png_1 btnBandHF0.png_2 dir_tmp.txt hf_parse.exe hfinfo.exe libmp3lame.32.dll libmp3lame.64.dll overlayw.exe pal.dll pthreadVC.dll readme.txt vcruntime140.dll voaprop.vg1 wdapi_dotnet1040.dll woverlay.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="ADODB.dll" Component_="ADODB.dll" FileName="ADODB.dll" Attributes="0" SourcePath="..\..\..\..\..\..\..\Program Files (x86)\Microsoft.NET\Primary Interop Assemblies\ADODB.dll" SelfReg="false" NextFile="atu.dll"/>
+    <ROW File="AFRICA.GEO" Component_="AFRICA.GEO" FileName="AFRICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\AFRICA.GEO" SelfReg="false" NextFile="CARIBEAN.GEO"/>
+    <ROW File="AFRICA.GEO_1" Component_="AFRICA.GEO_1" FileName="AFRICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\AFRICA.GEO" SelfReg="false" NextFile="CARIBEAN.GEO_1"/>
+    <ROW File="ALABAMA.GEO" Component_="ALABAMA.GEO" FileName="ALABAMA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ALABAMA.GEO" SelfReg="false" NextFile="ALASKA.GEO"/>
+    <ROW File="ALASKA.GEO" Component_="ALABAMA.GEO" FileName="ALASKA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ALASKA.GEO" SelfReg="false" NextFile="ARIZONA.GEO"/>
+    <ROW File="ANG_LONG" Component_="ANG_LONG" FileName="ANG_LONG" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ANG_LONG" SelfReg="false" NextFile="ANG_MAJ"/>
+    <ROW File="ANG_MAJ" Component_="ANG_LONG" FileName="ANG_MAJ" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ANG_MAJ" SelfReg="false" NextFile="ANG_SHRT"/>
+    <ROW File="ANG_SHRT" Component_="ANG_LONG" FileName="ANG_SHRT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ANG_SHRT" SelfReg="false" NextFile="APEX"/>
+    <ROW File="APEX" Component_="ANG_LONG" FileName="APEX" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\APEX" SelfReg="false" NextFile="AXIS_ANG"/>
+    <ROW File="ARIZONA.GEO" Component_="ALABAMA.GEO" FileName="ARIZONA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ARIZONA.GEO" SelfReg="false" NextFile="ARKANSAS.GEO"/>
+    <ROW File="ARKANSAS.GEO" Component_="ALABAMA.GEO" FileName="ARKANSAS.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ARKANSAS.GEO" SelfReg="false" NextFile="CALI_AL.GEO"/>
+    <ROW File="AXIS_ANG" Component_="ANG_LONG" FileName="AXIS_ANG" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\AXIS_ANG" SelfReg="false" NextFile="BAYS"/>
+    <ROW File="Anttyp90.exe" Component_="Anttyp90.exe" FileName="Anttyp90.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Anttyp90.exe" SelfReg="false" NextFile="Areainv.exe" DigSign="true"/>
+    <ROW File="Areainv.exe" Component_="Areainv.exe" FileName="Areainv.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Areainv.exe" SelfReg="false" NextFile="Areapltw.exe" DigSign="true"/>
+    <ROW File="Areapltw.exe" Component_="Areapltw.exe" FileName="Areapltw.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Areapltw.exe" SelfReg="false" NextFile="Areawin.exe" DigSign="true"/>
+    <ROW File="Areawin.exe" Component_="Areawin.exe" FileName="Areawin.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Areawin.exe" SelfReg="false" NextFile="batchit.exe" DigSign="true"/>
+    <ROW File="BAYS" Component_="ANG_LONG" FileName="BAYS" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\BAYS" SelfReg="false" NextFile="CONDUCT"/>
+    <ROW File="Botlines.dat" Component_="Botlines.dat" FileName="Botlines.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Botlines.dat" SelfReg="false" NextFile="cirafp.911"/>
+    <ROW File="CALI_AL.GEO" Component_="ALABAMA.GEO" FileName="CALI_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\CALI_A-L.GEO" SelfReg="false" NextFile="CALI_MZ.GEO"/>
+    <ROW File="CALI_MZ.GEO" Component_="ALABAMA.GEO" FileName="CALI_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\CALI_M-Z.GEO" SelfReg="false" NextFile="COLORADO.GEO"/>
+    <ROW File="CARIBEAN.GEO" Component_="AFRICA.GEO" FileName="CARIBEAN.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\CARIBEAN.GEO" SelfReg="false" NextFile="Ciraf.geo"/>
+    <ROW File="CARIBEAN.GEO_1" Component_="AFRICA.GEO_1" FileName="CARIBEAN.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\CARIBEAN.GEO" SelfReg="false" NextFile="Europe.geo_1"/>
+    <ROW File="CCIR.000" Component_="CCIR.000" FileName="CCIR.000" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.000" SelfReg="false" NextFile="CCIR.001"/>
+    <ROW File="CCIR.001" Component_="CCIR.000" FileName="CCIR.001" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.001" SelfReg="false" NextFile="CCIR.002"/>
+    <ROW File="CCIR.002" Component_="CCIR.000" FileName="CCIR.002" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.002" SelfReg="false" NextFile="CCIR.003"/>
+    <ROW File="CCIR.003" Component_="CCIR.000" FileName="CCIR.003" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.003" SelfReg="false" NextFile="CCIR.004"/>
+    <ROW File="CCIR.004" Component_="CCIR.000" FileName="CCIR.004" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.004" SelfReg="false" NextFile="CCIR.005"/>
+    <ROW File="CCIR.005" Component_="CCIR.000" FileName="CCIR.005" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.005" SelfReg="false" NextFile="CCIR.006"/>
+    <ROW File="CCIR.006" Component_="CCIR.000" FileName="CCIR.006" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.006" SelfReg="false" NextFile="CCIR.007"/>
+    <ROW File="CCIR.007" Component_="CCIR.000" FileName="CCIR.007" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.007" SelfReg="false" NextFile="CCIR.008"/>
+    <ROW File="CCIR.008" Component_="CCIR.000" FileName="CCIR.008" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.008" SelfReg="false" NextFile="CCIR.009"/>
+    <ROW File="CCIR.009" Component_="CCIR.000" FileName="CCIR.009" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.009" SelfReg="false" NextFile="CCIR.010"/>
+    <ROW File="CCIR.010" Component_="CCIR.000" FileName="CCIR.010" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.010" SelfReg="false" NextFile="CCIR.011"/>
+    <ROW File="CCIR.011" Component_="CCIR.000" FileName="CCIR.011" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.011" SelfReg="false" NextFile="CCIR.012"/>
+    <ROW File="CCIR.012" Component_="CCIR.000" FileName="CCIR.012" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.012" SelfReg="false" NextFile="CCIR.013"/>
+    <ROW File="CCIR.013" Component_="CCIR.000" FileName="CCIR.013" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.013" SelfReg="false" NextFile="CCIR.014"/>
+    <ROW File="CCIR.014" Component_="CCIR.000" FileName="CCIR.014" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.014" SelfReg="false" NextFile="CCIR.015"/>
+    <ROW File="CCIR.015" Component_="CCIR.000" FileName="CCIR.015" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.015" SelfReg="false" NextFile="CCIR.016"/>
+    <ROW File="CCIR.016" Component_="CCIR.000" FileName="CCIR.016" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.016" SelfReg="false" NextFile="CCIR.017"/>
+    <ROW File="CCIR.017" Component_="CCIR.000" FileName="CCIR.017" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.017" SelfReg="false" NextFile="CCIR.018"/>
+    <ROW File="CCIR.018" Component_="CCIR.000" FileName="CCIR.018" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.018" SelfReg="false" NextFile="CCIR.019"/>
+    <ROW File="CCIR.019" Component_="CCIR.000" FileName="CCIR.019" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.019" SelfReg="false" NextFile="CCIR.020"/>
+    <ROW File="CCIR.020" Component_="CCIR.000" FileName="CCIR.020" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.020" SelfReg="false" NextFile="CCIR.021"/>
+    <ROW File="CCIR.021" Component_="CCIR.000" FileName="CCIR.021" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.021" SelfReg="false" NextFile="CCIR.022"/>
+    <ROW File="CCIR.022" Component_="CCIR.000" FileName="CCIR.022" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.022" SelfReg="false" NextFile="CCIR.023"/>
+    <ROW File="CCIR.023" Component_="CCIR.000" FileName="CCIR.023" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.023" SelfReg="false" NextFile="CCIR.024"/>
+    <ROW File="CCIR.024" Component_="CCIR.000" FileName="CCIR.024" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.024" SelfReg="false" NextFile="CCIR.025"/>
+    <ROW File="CCIR.025" Component_="CCIR.000" FileName="CCIR.025" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.025" SelfReg="false" NextFile="CCIR.026"/>
+    <ROW File="CCIR.026" Component_="CCIR.000" FileName="CCIR.026" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CCIR.026" SelfReg="false" NextFile="CONST17.VOA"/>
+    <ROW File="CGLALO.DAT" Component_="CGLALO.DAT" FileName="CGLALO.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\CGLALO.DAT" SelfReg="false" NextFile="COEFF01W.BIN"/>
+    <ROW File="COEFF01W.BIN" Component_="CGLALO.DAT" FileName="COEFF01W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF01W.BIN" SelfReg="false" NextFile="COEFF02W.BIN"/>
+    <ROW File="COEFF02W.BIN" Component_="CGLALO.DAT" FileName="COEFF02W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF02W.BIN" SelfReg="false" NextFile="COEFF03W.BIN"/>
+    <ROW File="COEFF03W.BIN" Component_="CGLALO.DAT" FileName="COEFF03W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF03W.BIN" SelfReg="false" NextFile="COEFF04W.BIN"/>
+    <ROW File="COEFF04W.BIN" Component_="CGLALO.DAT" FileName="COEFF04W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF04W.BIN" SelfReg="false" NextFile="COEFF05W.BIN"/>
+    <ROW File="COEFF05W.BIN" Component_="CGLALO.DAT" FileName="COEFF05W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF05W.BIN" SelfReg="false" NextFile="COEFF06W.BIN"/>
+    <ROW File="COEFF06W.BIN" Component_="CGLALO.DAT" FileName="COEFF06W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF06W.BIN" SelfReg="false" NextFile="COEFF07W.BIN"/>
+    <ROW File="COEFF07W.BIN" Component_="CGLALO.DAT" FileName="COEFF07W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF07W.BIN" SelfReg="false" NextFile="COEFF08W.BIN"/>
+    <ROW File="COEFF08W.BIN" Component_="CGLALO.DAT" FileName="COEFF08W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF08W.BIN" SelfReg="false" NextFile="COEFF09W.BIN"/>
+    <ROW File="COEFF09W.BIN" Component_="CGLALO.DAT" FileName="COEFF09W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF09W.BIN" SelfReg="false" NextFile="COEFF10W.BIN"/>
+    <ROW File="COEFF10W.BIN" Component_="CGLALO.DAT" FileName="COEFF10W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF10W.BIN" SelfReg="false" NextFile="COEFF11W.BIN"/>
+    <ROW File="COEFF11W.BIN" Component_="CGLALO.DAT" FileName="COEFF11W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF11W.BIN" SelfReg="false" NextFile="COEFF12W.BIN"/>
+    <ROW File="COEFF12W.BIN" Component_="CGLALO.DAT" FileName="COEFF12W.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\COEFF12W.BIN" SelfReg="false" NextFile="FOF2CCIR.DAW"/>
+    <ROW File="COLORADO.GEO" Component_="ALABAMA.GEO" FileName="COLORADO.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\COLORADO.GEO" SelfReg="false" NextFile="CONNECTI.GEO"/>
+    <ROW File="COMBINPX.vcb" Component_="areapltx.dat" FileName="COMBINPX.vcb" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\COMBINPX.vcb" SelfReg="false" NextFile="dummy.its"/>
+    <ROW File="CONDUCT" Component_="ANG_LONG" FileName="CONDUCT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\CONDUCT" SelfReg="false" NextFile="CURRATIO"/>
+    <ROW File="CONFIG.TXT" Component_="_02_01.txt" FileName="CONFIG.TXT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\CONFIG.TXT" SelfReg="false" NextFile="hf_parse.txt"/>
+    <ROW File="CONNECTI.GEO" Component_="ALABAMA.GEO" FileName="CONNECTI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\CONNECTI.GEO" SelfReg="false" NextFile="DC.GEO"/>
+    <ROW File="CONST17.VOA" Component_="CCIR.000" FileName="CONST17.VOA" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\CONST17.VOA" SelfReg="false" NextFile="Isotrope"/>
+    <ROW File="CURRATIO" Component_="ANG_LONG" FileName="CURRATIO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\CURRATIO" SelfReg="false" NextFile="DBI"/>
+    <ROW File="Ciraf.geo" Component_="AFRICA.GEO" FileName="Ciraf.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\Ciraf.geo" SelfReg="false" NextFile="dxcc1.geo"/>
+    <ROW File="Cirafz.sq" Component_="Botlines.dat" FileName="Cirafz.sq" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Cirafz.sq" SelfReg="false" NextFile="Colors.con"/>
+    <ROW File="Circuits.def" Component_="Circuits.def" FileName="Circuits.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Circuits.def" SelfReg="false" NextFile="Pcenter.def"/>
+    <ROW File="Colors.con" Component_="Botlines.dat" FileName="Colors.con" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Colors.con" SelfReg="false" NextFile="Colors.dat"/>
+    <ROW File="Colors.dat" Component_="Botlines.dat" FileName="Colors.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Colors.dat" SelfReg="false" NextFile="Colors.gph"/>
+    <ROW File="Colors.gph" Component_="Botlines.dat" FileName="Colors.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Colors.gph" SelfReg="false" NextFile="Colors.win"/>
+    <ROW File="Colors.win" Component_="Botlines.dat" FileName="Colors.win" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Colors.win" SelfReg="false" NextFile="contact.txt"/>
+    <ROW File="Combinew.exe" Component_="Combinew.exe" FileName="Combinew.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Combinew.exe" SelfReg="false" NextFile="Hfantwin.exe" DigSign="true"/>
     <ROW File="Console.png" Component_="X20bttn0.png" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\Console.png" SelfReg="false" NextFile="longledbttn0.png"/>
     <ROW File="Console.png_1" Component_="btnBandHF0.png" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Console.png" SelfReg="false" NextFile="panelBandHF.png"/>
     <ROW File="Console.png_2" Component_="X20bttn0.png_1" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\Console.png" SelfReg="false" NextFile="longledbttn0.png_1"/>
     <ROW File="Console.png_3" Component_="btnBandHF0.png_1" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Console.png" SelfReg="false" NextFile="panelBandHF.png_1"/>
     <ROW File="Console.png_4" Component_="X20bttn0.png_2" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\Console.png" SelfReg="false" NextFile="longledbttn0.png_2"/>
     <ROW File="Console.png_5" Component_="btnBandHF0.png_2" FileName="Console.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Console.png" SelfReg="false" NextFile="panelBandHF.png_2"/>
+    <ROW File="DBI" Component_="ANG_LONG" FileName="DBI" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\DBI" SelfReg="false" NextFile="DES_FREQ"/>
+    <ROW File="DC.GEO" Component_="ALABAMA.GEO" FileName="DC.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\DC.GEO" SelfReg="false" NextFile="DELAWARE.GEO"/>
+    <ROW File="DELAWARE.GEO" Component_="ALABAMA.GEO" FileName="DELAWARE.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\DELAWARE.GEO" SelfReg="false" NextFile="FLOR_AL.GEO"/>
+    <ROW File="DES_FREQ" Component_="ANG_LONG" FileName="DES_FREQ" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\DES_FREQ" SelfReg="false" NextFile="DIELECTR"/>
+    <ROW File="DIELECTR" Component_="ANG_LONG" FileName="DIELECTR" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\DIELECTR" SelfReg="false" NextFile="DIST_CEN"/>
+    <ROW File="DIST_CEN" Component_="ANG_LONG" FileName="DIST_CEN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\DIST_CEN" SelfReg="false" NextFile="DIST_SL"/>
+    <ROW File="DIST_SL" Component_="ANG_LONG" FileName="DIST_SL" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\DIST_SL" SelfReg="false" NextFile="EARTH_D"/>
     <ROW File="DXLOC.txt" Component_="DXLOC.txt" FileName="DXLOC.txt" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\DXLOC.txt" SelfReg="false" NextFile="SWL.csv"/>
+    <ROW File="Default.ice" Component_="Default.ice" FileName="Default.ice" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\Default.ice" SelfReg="false" NextFile="Default.rec"/>
+    <ROW File="Default.ice_1" Component_="Default.ice_1" FileName="Default.ice" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\area_inv\default\Default.ice" SelfReg="false" NextFile="Default.voa_1"/>
+    <ROW File="Default.ice_2" Component_="Default.ice_2" FileName="Default.ice" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved\default\Default.ice" SelfReg="false" NextFile="Default.rec_1"/>
+    <ROW File="Default.isi" Component_="Default.isi" FileName="Default.isi" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved_si\default\Default.isi" SelfReg="false" NextFile="Default.vsi"/>
+    <ROW File="Default.rec" Component_="Default.ice" FileName="Default.rec" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\Default.rec" SelfReg="false" NextFile="Default.voa"/>
+    <ROW File="Default.rec_1" Component_="Default.ice_2" FileName="Default.rec" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved\default\Default.rec" SelfReg="false" NextFile="Default.voa_2"/>
+    <ROW File="Default.voa" Component_="Default.ice" FileName="Default.voa" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\Default.voa" SelfReg="false" NextFile="icepac.ovl"/>
+    <ROW File="Default.voa_1" Component_="Default.ice_1" FileName="Default.voa" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\area_inv\default\Default.voa" SelfReg="false" NextFile="Anttyp90.exe"/>
+    <ROW File="Default.voa_2" Component_="Default.ice_2" FileName="Default.voa" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved\default\Default.voa" SelfReg="false" NextFile="_07_10.txt"/>
+    <ROW File="Default.vsi" Component_="Default.isi" FileName="Default.vsi" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved_si\default\Default.vsi" SelfReg="false" NextFile="Circuits.def"/>
+    <ROW File="Delay" Component_="Botlines.dat" FileName="Delay" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Delay" SelfReg="false" NextFile="Demo.dat"/>
+    <ROW File="Demo.dat" Component_="Botlines.dat" FileName="Demo.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Demo.dat" SelfReg="false" NextFile="Email_me.bak"/>
+    <ROW File="Dipole35.N14" Component_="GP.N14" FileName="Dipole35.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\Dipole35.N14" SelfReg="false" NextFile="Dipole55.N14"/>
+    <ROW File="Dipole55.N14" Component_="GP.N14" FileName="Dipole55.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\Dipole55.N14" SelfReg="false" NextFile="Dipole75.N14"/>
+    <ROW File="Dipole75.N14" Component_="GP.N14" FileName="Dipole75.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\Dipole75.N14" SelfReg="false" NextFile="HexBeam.n14"/>
     <ROW File="DttSP.dll" Component_="DttSP.dll" FileName="DttSP.dll" Attributes="0" SourcePath="..\bin\Release\DttSP.dll" SelfReg="false" NextFile="Flex1500USB.dll"/>
+    <ROW File="EARTH_D" Component_="ANG_LONG" FileName="EARTH_D" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\EARTH_D" SelfReg="false" NextFile="EARTH_N"/>
+    <ROW File="EARTH_N" Component_="ANG_LONG" FileName="EARTH_N" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\EARTH_N" SelfReg="false" NextFile="EARTH_R"/>
+    <ROW File="EARTH_R" Component_="ANG_LONG" FileName="EARTH_R" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\EARTH_R" SelfReg="false" NextFile="EFF"/>
+    <ROW File="EFF" Component_="ANG_LONG" FileName="EFF" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\EFF" SelfReg="false" NextFile="ELEM30"/>
+    <ROW File="ELEM30" Component_="ANG_LONG" FileName="ELEM30" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ELEM30" SelfReg="false" NextFile="EXCITE"/>
+    <ROW File="EXCITE" Component_="ANG_LONG" FileName="EXCITE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\EXCITE" SelfReg="false" NextFile="FEEDER"/>
+    <ROW File="Email_me.bak" Component_="Botlines.dat" FileName="Email_me.bak" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Email_me.bak" SelfReg="false" NextFile="fof2var.txt"/>
+    <ROW File="Europe.geo" Component_="AFRICA.GEO" FileName="Europe.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\Europe.geo" SelfReg="false" NextFile="FAREAST.GEO"/>
+    <ROW File="Europe.geo_1" Component_="AFRICA.GEO_1" FileName="Europe.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\Europe.geo" SelfReg="false" NextFile="FAREAST.GEO_1"/>
+    <ROW File="FAREAST.GEO" Component_="AFRICA.GEO" FileName="FAREAST.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\FAREAST.GEO" SelfReg="false" NextFile="MILITARY.GEO"/>
+    <ROW File="FAREAST.GEO_1" Component_="AFRICA.GEO_1" FileName="FAREAST.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\FAREAST.GEO" SelfReg="false" NextFile="HFlist.geo"/>
+    <ROW File="FEEDER" Component_="ANG_LONG" FileName="FEEDER" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\FEEDER" SelfReg="false" NextFile="FREQ_OP"/>
+    <ROW File="FLOR_AL.GEO" Component_="ALABAMA.GEO" FileName="FLOR_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\FLOR_A-L.GEO" SelfReg="false" NextFile="FLOR_MZ.GEO"/>
+    <ROW File="FLOR_MZ.GEO" Component_="ALABAMA.GEO" FileName="FLOR_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\FLOR_M-Z.GEO" SelfReg="false" NextFile="GEORGIA.GEO"/>
+    <ROW File="FOF2CCIR.DAW" Component_="CGLALO.DAT" FileName="FOF2CCIR.DAW" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\FOF2CCIR.DAW" SelfReg="false" NextFile="FOF2DALW.BIN"/>
+    <ROW File="FOF2DALW.BIN" Component_="CGLALO.DAT" FileName="FOF2DALW.BIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\FOF2DALW.BIN" SelfReg="false" NextFile="FOF2URSI.DAW"/>
+    <ROW File="FOF2URSI.DAW" Component_="CGLALO.DAT" FileName="FOF2URSI.DAW" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\coeffs\FOF2URSI.DAW" SelfReg="false" NextFile="Botlines.dat"/>
+    <ROW File="FREQ_OP" Component_="ANG_LONG" FileName="FREQ_OP" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\FREQ_OP" SelfReg="false" NextFile="GAIN_2"/>
     <ROW File="Flex1500USB.dll" Component_="Flex1500USB.dll" FileName="FLEX15~1.DLL|Flex1500USB.dll" Attributes="0" SourcePath="..\bin\Release\Flex1500USB.dll" SelfReg="false" NextFile="FlexControl.dll"/>
     <ROW File="FlexCW.dll" Component_="FlexCW.dll" FileName="FlexCW.dll" Attributes="0" SourcePath="..\bin\Release\FlexCW.dll" SelfReg="false" NextFile="Interop.TDxInput.dll"/>
     <ROW File="FlexControl.dll" Component_="FlexControl.dll" FileName="FLEXCO~1.DLL|FlexControl.dll" Attributes="0" SourcePath="..\bin\Release\FlexControl.dll" SelfReg="false" NextFile="FlexCW.dll"/>
+    <ROW File="GAIN01.DAT" Component_="areapltx.dat" FileName="GAIN01.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN01.DAT" SelfReg="false" NextFile="GAIN02.DAT"/>
+    <ROW File="GAIN02.DAT" Component_="areapltx.dat" FileName="GAIN02.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN02.DAT" SelfReg="false" NextFile="GAIN03.DAT"/>
+    <ROW File="GAIN03.DAT" Component_="areapltx.dat" FileName="GAIN03.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN03.DAT" SelfReg="false" NextFile="GAIN04.DAT"/>
+    <ROW File="GAIN04.DAT" Component_="areapltx.dat" FileName="GAIN04.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN04.DAT" SelfReg="false" NextFile="GAIN05.DAT"/>
+    <ROW File="GAIN05.DAT" Component_="areapltx.dat" FileName="GAIN05.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN05.DAT" SelfReg="false" NextFile="GAIN06.DAT"/>
+    <ROW File="GAIN06.DAT" Component_="areapltx.dat" FileName="GAIN06.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN06.DAT" SelfReg="false" NextFile="GAIN07.DAT"/>
+    <ROW File="GAIN07.DAT" Component_="areapltx.dat" FileName="GAIN07.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN07.DAT" SelfReg="false" NextFile="GAIN08.DAT"/>
+    <ROW File="GAIN08.DAT" Component_="areapltx.dat" FileName="GAIN08.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN08.DAT" SelfReg="false" NextFile="GAIN09.DAT"/>
+    <ROW File="GAIN09.DAT" Component_="areapltx.dat" FileName="GAIN09.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN09.DAT" SelfReg="false" NextFile="GAIN10.DAT"/>
+    <ROW File="GAIN10.DAT" Component_="areapltx.dat" FileName="GAIN10.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN10.DAT" SelfReg="false" NextFile="GAIN11.DAT"/>
+    <ROW File="GAIN11.DAT" Component_="areapltx.dat" FileName="GAIN11.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN11.DAT" SelfReg="false" NextFile="GAIN12.DAT"/>
+    <ROW File="GAIN12.DAT" Component_="areapltx.dat" FileName="GAIN12.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN12.DAT" SelfReg="false" NextFile="GAIN13.DAT"/>
+    <ROW File="GAIN13.DAT" Component_="areapltx.dat" FileName="GAIN13.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN13.DAT" SelfReg="false" NextFile="GAIN14.DAT"/>
+    <ROW File="GAIN14.DAT" Component_="areapltx.dat" FileName="GAIN14.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN14.DAT" SelfReg="false" NextFile="GAIN15.DAT"/>
+    <ROW File="GAIN15.DAT" Component_="areapltx.dat" FileName="GAIN15.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN15.DAT" SelfReg="false" NextFile="GAIN16.DAT"/>
+    <ROW File="GAIN16.DAT" Component_="areapltx.dat" FileName="GAIN16.DAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\GAIN16.DAT" SelfReg="false" NextFile="hfantw.bin"/>
+    <ROW File="GAIN_2" Component_="ANG_LONG" FileName="GAIN_2" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\GAIN_2" SelfReg="false" NextFile="GAIN_ADD"/>
+    <ROW File="GAIN_ADD" Component_="ANG_LONG" FileName="GAIN_ADD" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\GAIN_ADD" SelfReg="false" NextFile="HITE"/>
+    <ROW File="GEORGIA.GEO" Component_="ALABAMA.GEO" FileName="GEORGIA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\GEORGIA.GEO" SelfReg="false" NextFile="HAWAII.GEO"/>
+    <ROW File="GP.N14" Component_="GP.N14" FileName="01GP.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\01GP.N14" SelfReg="false" NextFile="GP.N14_1"/>
+    <ROW File="GP.N14_1" Component_="GP.N14" FileName="025GP.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\025GP.N14" SelfReg="false" NextFile="GP.N14_2"/>
+    <ROW File="GP.N14_2" Component_="GP.N14" FileName="063GP.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\063GP.N14" SelfReg="false" NextFile="Yagi35.N14"/>
+    <ROW File="HAWAII.GEO" Component_="ALABAMA.GEO" FileName="HAWAII.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\HAWAII.GEO" SelfReg="false" NextFile="IDAHO.GEO"/>
+    <ROW File="HFANT.ICO" Component_="HFANT.ICO" FileName="HFANT.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\HFANT.ICO" SelfReg="false" NextFile="ICEAREA.ICO"/>
+    <ROW File="HFlist.geo" Component_="AFRICA.GEO_1" FileName="HF-list.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\HF-list.geo" SelfReg="false" NextFile="NAMERICA.GEO_1"/>
+    <ROW File="HITE" Component_="ANG_LONG" FileName="HITE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE" SelfReg="false" NextFile="HITE705"/>
+    <ROW File="HITE705" Component_="ANG_LONG" FileName="HITE705" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE705" SelfReg="false" NextFile="HITE_07"/>
+    <ROW File="HITE_07" Component_="ANG_LONG" FileName="HITE_07" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_07" SelfReg="false" NextFile="HITE_1ST"/>
+    <ROW File="HITE_1ST" Component_="ANG_LONG" FileName="HITE_1ST" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_1ST" SelfReg="false" NextFile="HITE_F"/>
+    <ROW File="HITE_F" Component_="ANG_LONG" FileName="HITE_F" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_F" SelfReg="false" NextFile="HITE_L"/>
+    <ROW File="HITE_L" Component_="ANG_LONG" FileName="HITE_L" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_L" SelfReg="false" NextFile="HITE_LOW"/>
+    <ROW File="HITE_LOW" Component_="ANG_LONG" FileName="HITE_LOW" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_LOW" SelfReg="false" NextFile="HITE_S"/>
+    <ROW File="HITE_S" Component_="ANG_LONG" FileName="HITE_S" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_S" SelfReg="false" NextFile="HITE_T"/>
+    <ROW File="HITE_T" Component_="ANG_LONG" FileName="HITE_T" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HITE_T" SelfReg="false" NextFile="HORZ_DSP"/>
+    <ROW File="HORZ_DSP" Component_="ANG_LONG" FileName="HORZ_DSP" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\HORZ_DSP" SelfReg="false" NextFile="IMPEDE"/>
+    <ROW File="HexBeam.n14" Component_="GP.N14" FileName="HexBeam.n14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\HexBeam.n14" SelfReg="false" NextFile="ISOTROPE.ant"/>
+    <ROW File="Hfantwin.exe" Component_="Hfantwin.exe" FileName="Hfantwin.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Hfantwin.exe" SelfReg="false" NextFile="hfinfo.exe" DigSign="true"/>
+    <ROW File="ICEAREA.ICO" Component_="HFANT.ICO" FileName="ICEAREA.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\ICEAREA.ICO" SelfReg="false" NextFile="ICEPOINT.ICO"/>
+    <ROW File="ICEPOINT.ICO" Component_="HFANT.ICO" FileName="ICEPOINT.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\ICEPOINT.ICO" SelfReg="false" NextFile="ICE_SI.ICO"/>
+    <ROW File="ICE_SI.ICO" Component_="HFANT.ICO" FileName="ICE_SI.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\ICE_SI.ICO" SelfReg="false" NextFile="itshf.ico"/>
+    <ROW File="IDAHO.GEO" Component_="ALABAMA.GEO" FileName="IDAHO.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\IDAHO.GEO" SelfReg="false" NextFile="ILLI_AL.GEO"/>
+    <ROW File="ILLI_AL.GEO" Component_="ALABAMA.GEO" FileName="ILLI_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ILLI_A-L.GEO" SelfReg="false" NextFile="ILLI_MZ.GEO"/>
+    <ROW File="ILLI_MZ.GEO" Component_="ALABAMA.GEO" FileName="ILLI_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\ILLI_M-Z.GEO" SelfReg="false" NextFile="INDIANA.GEO"/>
+    <ROW File="IMPEDE" Component_="ANG_LONG" FileName="IMPEDE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\IMPEDE" SelfReg="false" NextFile="LEG_ANG"/>
+    <ROW File="INDIANA.GEO" Component_="ALABAMA.GEO" FileName="INDIANA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\INDIANA.GEO" SelfReg="false" NextFile="IOWA_AL.GEO"/>
+    <ROW File="IOWA_AL.GEO" Component_="ALABAMA.GEO" FileName="IOWA_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\IOWA_A-L.GEO" SelfReg="false" NextFile="IOWA_MZ.GEO"/>
+    <ROW File="IOWA_MZ.GEO" Component_="ALABAMA.GEO" FileName="IOWA_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\IOWA_M-Z.GEO" SelfReg="false" NextFile="KANSAS.GEO"/>
+    <ROW File="ISOTROPE.ant" Component_="GP.N14" FileName="ISOTROPE.ant" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\ISOTROPE.ant" SelfReg="false" NextFile="SAMPLE.00"/>
+    <ROW File="Icearea.gph" Component_="Botlines.dat" FileName="Icearea.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Icearea.gph" SelfReg="false" NextFile="Icedist.gph"/>
+    <ROW File="Icedist.gph" Component_="Botlines.dat" FileName="Icedist.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Icedist.gph" SelfReg="false" NextFile="Icepac.def"/>
+    <ROW File="Icepac.def" Component_="Botlines.dat" FileName="Icepac.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Icepac.def" SelfReg="false" NextFile="Icepac.gph"/>
+    <ROW File="Icepac.gph" Component_="Botlines.dat" FileName="Icepac.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Icepac.gph" SelfReg="false" NextFile="Icepacsi.gph"/>
+    <ROW File="Icepacsi.gph" Component_="Botlines.dat" FileName="Icepacsi.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Icepacsi.gph" SelfReg="false" NextFile="Iceplt.gph"/>
+    <ROW File="Icepacw.exe" Component_="Icepacw.exe" FileName="Icepacw.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Icepacw.exe" SelfReg="false" NextFile="Newswin.exe" DigSign="true"/>
+    <ROW File="Iceplt.gph" Component_="Botlines.dat" FileName="Iceplt.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Iceplt.gph" SelfReg="false" NextFile="Method.dat"/>
     <ROW File="Interop.TDxInput.dll" Component_="Interop.TDxInput.dll" FileName="INTERO~1.DLL|Interop.TDxInput.dll" Attributes="0" SourcePath="..\bin\Release\Interop.TDxInput.dll" SelfReg="false" NextFile="PowerMate.dll"/>
+    <ROW File="Isotrope" Component_="CCIR.000" FileName="Isotrope" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\Isotrope" SelfReg="false" NextFile="SWWHIP.VOA"/>
+    <ROW File="KANSAS.GEO" Component_="ALABAMA.GEO" FileName="KANSAS.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\KANSAS.GEO" SelfReg="false" NextFile="KENTUCKY.GEO"/>
+    <ROW File="KE9NS.VOA" Component_="Default.ice" FileName="KE9NS.VOA" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\KE9NS.VOA" SelfReg="false" NextFile="rec533.ovl"/>
+    <ROW File="KE9NSCopy.VOA" Component_="Default.ice" FileName="KE9NS-~1.VOA|KE9NS - Copy.VOA" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\KE9NS - Copy.VOA" SelfReg="false" NextFile="ke9ns.vg1"/>
+    <ROW File="KENTUCKY.GEO" Component_="ALABAMA.GEO" FileName="KENTUCKY.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\KENTUCKY.GEO" SelfReg="false" NextFile="LOUISIAN.GEO"/>
+    <ROW File="LEG_ANG" Component_="ANG_LONG" FileName="LEG_ANG" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEG_ANG" SelfReg="false" NextFile="LENGTH"/>
+    <ROW File="LENGTH" Component_="ANG_LONG" FileName="LENGTH" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LENGTH" SelfReg="false" NextFile="LEN_DIR"/>
+    <ROW File="LEN_DIR" Component_="ANG_LONG" FileName="LEN_DIR" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_DIR" SelfReg="false" NextFile="LEN_DRIV"/>
+    <ROW File="LEN_DRIV" Component_="ANG_LONG" FileName="LEN_DRIV" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_DRIV" SelfReg="false" NextFile="LEN_ELEM"/>
+    <ROW File="LEN_ELEM" Component_="ANG_LONG" FileName="LEN_ELEM" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_ELEM" SelfReg="false" NextFile="LEN_LONG"/>
+    <ROW File="LEN_LONG" Component_="ANG_LONG" FileName="LEN_LONG" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_LONG" SelfReg="false" NextFile="LEN_RAD"/>
+    <ROW File="LEN_RAD" Component_="ANG_LONG" FileName="LEN_RAD" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_RAD" SelfReg="false" NextFile="LEN_RAT"/>
+    <ROW File="LEN_RAT" Component_="ANG_LONG" FileName="LEN_RAT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_RAT" SelfReg="false" NextFile="LEN_REAR"/>
+    <ROW File="LEN_REAR" Component_="ANG_LONG" FileName="LEN_REAR" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_REAR" SelfReg="false" NextFile="LEN_REF"/>
+    <ROW File="LEN_REF" Component_="ANG_LONG" FileName="LEN_REF" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_REF" SelfReg="false" NextFile="LEN_SHRT"/>
+    <ROW File="LEN_SHRT" Component_="ANG_LONG" FileName="LEN_SHRT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_SHRT" SelfReg="false" NextFile="LEN_WIRE"/>
+    <ROW File="LEN_WIRE" Component_="ANG_LONG" FileName="LEN_WIRE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LEN_WIRE" SelfReg="false" NextFile="LONG_L"/>
+    <ROW File="LONG_L" Component_="ANG_LONG" FileName="LONG_L" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\LONG_L" SelfReg="false" NextFile="NOTE25"/>
+    <ROW File="LOUISIAN.GEO" Component_="ALABAMA.GEO" FileName="LOUISIAN.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\LOUISIAN.GEO" SelfReg="false" NextFile="MAINE.GEO"/>
     <ROW File="LicenseAgreement.txt" Component_="LicenseAgreement.txt" FileName="LICENS~1.TXT|License Agreement.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\License Agreement.txt" SelfReg="false" NextFile="X20bttn0.png_3"/>
     <ROW File="LicenseAgreement.txt_1" Component_="LicenseAgreement.txt_1" FileName="LICENS~1.TXT|License Agreement.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\License Agreement.txt" SelfReg="false" NextFile="X20bttn0.png_6"/>
     <ROW File="LicenseAgreement.txt_2" Component_="LicenseAgreement.txt_2" FileName="LICENS~1.TXT|License Agreement.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\License Agreement.txt" SelfReg="false" NextFile="ADODB.dll"/>
+    <ROW File="MAINE.GEO" Component_="ALABAMA.GEO" FileName="MAINE.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MAINE.GEO" SelfReg="false" NextFile="MARYLAND.GEO"/>
+    <ROW File="MAKEFILE" Component_="ant90.for" FileName="MAKEFILE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\MAKEFILE" SelfReg="false" NextFile="UCASE.FOR"/>
+    <ROW File="MARYLAND.GEO" Component_="ALABAMA.GEO" FileName="MARYLAND.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MARYLAND.GEO" SelfReg="false" NextFile="MASSACHU.GEO"/>
+    <ROW File="MASSACHU.GEO" Component_="ALABAMA.GEO" FileName="MASSACHU.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MASSACHU.GEO" SelfReg="false" NextFile="MICHIGAN.GEO"/>
+    <ROW File="MICHIGAN.GEO" Component_="ALABAMA.GEO" FileName="MICHIGAN.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MICHIGAN.GEO" SelfReg="false" NextFile="MINN_AL.GEO"/>
+    <ROW File="MILITARY.GEO" Component_="AFRICA.GEO" FileName="MILITARY.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\MILITARY.GEO" SelfReg="false" NextFile="NAMERICA.GEO"/>
+    <ROW File="MINN_AL.GEO" Component_="ALABAMA.GEO" FileName="MINN_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MINN_A-L.GEO" SelfReg="false" NextFile="MINN_MZ.GEO"/>
+    <ROW File="MINN_MZ.GEO" Component_="ALABAMA.GEO" FileName="MINN_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MINN_M-Z.GEO" SelfReg="false" NextFile="MISSISSI.GEO"/>
+    <ROW File="MISSISSI.GEO" Component_="ALABAMA.GEO" FileName="MISSISSI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MISSISSI.GEO" SelfReg="false" NextFile="MONTANA.GEO"/>
+    <ROW File="MONTANA.GEO" Component_="ALABAMA.GEO" FileName="MONTANA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MONTANA.GEO" SelfReg="false" NextFile="MO_AL.GEO"/>
+    <ROW File="MO_AL.GEO" Component_="ALABAMA.GEO" FileName="MO_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MO_A-L.GEO" SelfReg="false" NextFile="MO_MZ.GEO"/>
+    <ROW File="MO_MZ.GEO" Component_="ALABAMA.GEO" FileName="MO_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\MO_M-Z.GEO" SelfReg="false" NextFile="NEBRASKA.GEO"/>
+    <ROW File="Method.dat" Component_="Botlines.dat" FileName="Method.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Method.dat" SelfReg="false" NextFile="noise_card.txt"/>
+    <ROW File="NAMERICA.GEO" Component_="AFRICA.GEO" FileName="NAMERICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\NAMERICA.GEO" SelfReg="false" NextFile="ncdxf.geo"/>
+    <ROW File="NAMERICA.GEO_1" Component_="AFRICA.GEO_1" FileName="NAMERICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\NAMERICA.GEO" SelfReg="false" NextFile="SAMERICA.GEO_1"/>
     <ROW File="NAudio.Lame.dll" Component_="NAudio.Lame.dll" FileName="NAUDIO~1.DLL|NAudio.Lame.dll" Attributes="0" SourcePath="..\bin\Release\NAudio.Lame.dll" SelfReg="false" NextFile="libmp3lame.32.dll"/>
     <ROW File="NAudio.dll" Component_="NAudio.dll" FileName="NAudio.dll" Attributes="0" SourcePath="..\bin\Release\NAudio.dll" SelfReg="false" NextFile="NAudio.xml"/>
     <ROW File="NAudio.xml" Component_="PowerSDR_T9.exe.config" FileName="NAudio.xml" Attributes="0" SourcePath="..\bin\Release\NAudio.xml" SelfReg="false" NextFile="NAudio.Lame.dll"/>
+    <ROW File="NEBRASKA.GEO" Component_="ALABAMA.GEO" FileName="NEBRASKA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NEBRASKA.GEO" SelfReg="false" NextFile="NEVADA.GEO"/>
+    <ROW File="NEVADA.GEO" Component_="ALABAMA.GEO" FileName="NEVADA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NEVADA.GEO" SelfReg="false" NextFile="NEW_HAMP.GEO"/>
+    <ROW File="NEWS.ICO" Component_="HFANT.ICO" FileName="NEWS.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\NEWS.ICO" SelfReg="false" NextFile="RECAREA.ICO"/>
+    <ROW File="NEW_HAMP.GEO" Component_="ALABAMA.GEO" FileName="NEW_HAMP.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NEW_HAMP.GEO" SelfReg="false" NextFile="NEW_JERS.GEO"/>
+    <ROW File="NEW_JERS.GEO" Component_="ALABAMA.GEO" FileName="NEW_JERS.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NEW_JERS.GEO" SelfReg="false" NextFile="NEW_MEXI.GEO"/>
+    <ROW File="NEW_MEXI.GEO" Component_="ALABAMA.GEO" FileName="NEW_MEXI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NEW_MEXI.GEO" SelfReg="false" NextFile="NY_AL.GEO"/>
+    <ROW File="NOTE25" Component_="ANG_LONG" FileName="NOTE25" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\NOTE25" SelfReg="false" NextFile="PARMS.WIN"/>
+    <ROW File="NY_AL.GEO" Component_="ALABAMA.GEO" FileName="NY_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NY_A-L.GEO" SelfReg="false" NextFile="NY_MZ.GEO"/>
+    <ROW File="NY_MZ.GEO" Component_="ALABAMA.GEO" FileName="NY_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\NY_M-Z.GEO" SelfReg="false" NextFile="N_CAROLI.GEO"/>
+    <ROW File="N_CAROLI.GEO" Component_="ALABAMA.GEO" FileName="N_CAROLI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\N_CAROLI.GEO" SelfReg="false" NextFile="N_DAKOTA.GEO"/>
+    <ROW File="N_DAKOTA.GEO" Component_="ALABAMA.GEO" FileName="N_DAKOTA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\N_DAKOTA.GEO" SelfReg="false" NextFile="OHIO_AL.GEO"/>
+    <ROW File="Newswin.exe" Component_="Newswin.exe" FileName="Newswin.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Newswin.exe" SelfReg="false" NextFile="overlayw.exe" DigSign="true"/>
+    <ROW File="OCEANIC.GEO" Component_="AFRICA.GEO" FileName="OCEANIC.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\OCEANIC.GEO" SelfReg="false" NextFile="OTHER.GEO"/>
+    <ROW File="OHIO_AL.GEO" Component_="ALABAMA.GEO" FileName="OHIO_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\OHIO_A-L.GEO" SelfReg="false" NextFile="OHIO_MZ.GEO"/>
+    <ROW File="OHIO_MZ.GEO" Component_="ALABAMA.GEO" FileName="OHIO_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\OHIO_M-Z.GEO" SelfReg="false" NextFile="OKLAHOMA.GEO"/>
+    <ROW File="OKLAHOMA.GEO" Component_="ALABAMA.GEO" FileName="OKLAHOMA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\OKLAHOMA.GEO" SelfReg="false" NextFile="OREGON.GEO"/>
+    <ROW File="OREGON.GEO" Component_="ALABAMA.GEO" FileName="OREGON.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\OREGON.GEO" SelfReg="false" NextFile="PENN_AL.GEO"/>
+    <ROW File="OTHER.GEO" Component_="AFRICA.GEO" FileName="OTHER.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\OTHER.GEO" SelfReg="false" NextFile="Palau.Geo"/>
+    <ROW File="OVERLAYW.HLP" Component_="area.hlp" FileName="OVERLAYW.HLP" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\OVERLAYW.HLP" SelfReg="false" NextFile="perform.hlp"/>
+    <ROW File="PARMS.WIN" Component_="ANG_LONG" FileName="PARMS.WIN" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\PARMS.WIN" SelfReg="false" NextFile="RAD_RAD"/>
+    <ROW File="PENN_AL.GEO" Component_="ALABAMA.GEO" FileName="PENN_A-L.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\PENN_A-L.GEO" SelfReg="false" NextFile="PENN_MZ.GEO"/>
+    <ROW File="PENN_MZ.GEO" Component_="ALABAMA.GEO" FileName="PENN_M-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\PENN_M-Z.GEO" SelfReg="false" NextFile="RHODE_IS.GEO"/>
+    <ROW File="Palau.Geo" Component_="AFRICA.GEO" FileName="Palau.Geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\Palau.Geo" SelfReg="false" NextFile="SAMERICA.GEO"/>
+    <ROW File="Parms.fmt" Component_="Botlines.dat" FileName="Parms.fmt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Parms.fmt" SelfReg="false" NextFile="Rec533.gph"/>
+    <ROW File="Pcenter.def" Component_="Circuits.def" FileName="Pcenter.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Pcenter.def" SelfReg="false" NextFile="Plotarea.def"/>
+    <ROW File="Plotarea.def" Component_="Circuits.def" FileName="Plotarea.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Plotarea.def" SelfReg="false" NextFile="Receive.cty"/>
+    <ROW File="Pointwin.exe" Component_="Pointwin.exe" FileName="Pointwin.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Pointwin.exe" SelfReg="false" NextFile="Rec533b.exe" DigSign="true"/>
     <ROW File="PortTalk.dll" Component_="PortTalk.dll" FileName="PortTalk.dll" Attributes="0" SourcePath="..\bin\Release\PortTalk.dll" SelfReg="false" NextFile="pthreadVC.dll"/>
     <ROW File="PowerMate.dll" Component_="PowerMate.dll" FileName="POWERM~1.DLL|PowerMate.dll" Attributes="0" SourcePath="Release\PowerMate.dll" SelfReg="false" NextFile="PowerSDR_T9.exe"/>
     <ROW File="PowerSDRTXWaterfallID.docx" Component_="DXLOC.txt" FileName="POWERS~2.DOC|PowerSDR TX Waterfall ID.docx" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\PowerSDR TX Waterfall ID.docx" SelfReg="false" NextFile="test24.bmp"/>
@@ -132,15 +435,134 @@
     <ROW File="PowerSDR_T9.exe" Component_="PowerSDR_T9.exe" FileName="POWERS~1.EXE|PowerSDR_T11.exe" Attributes="0" SourcePath="..\bin\Release\PowerSDR_T11.exe" SelfReg="false" NextFile="PowerSDR_T9.exe.config" DigSign="true"/>
     <ROW File="PowerSDR_T9.exe.config" Component_="PowerSDR_T9.exe.config" FileName="POWERS~1.CON|PowerSDR_T11.exe.config" Attributes="0" SourcePath="..\bin\Release\PowerSDR_T11.exe.config" SelfReg="false" NextFile="Sanford.Collections.dll"/>
     <ROW File="PowerSDR_ke9ns_Feature_Add_List.docx" Component_="DXLOC.txt" FileName="POWERS~1.DOC|PowerSDR_ke9ns_Feature_Add_List.docx" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\PowerSDR_ke9ns_Feature_Add_List.docx" SelfReg="false" NextFile="PowerSDRTXWaterfallID.docx"/>
+    <ROW File="RAD_RAD" Component_="ANG_LONG" FileName="RAD_RAD" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\RAD_RAD" SelfReg="false" NextFile="ROW14"/>
+    <ROW File="RECAREA.ICO" Component_="HFANT.ICO" FileName="RECAREA.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\RECAREA.ICO" SelfReg="false" NextFile="RECPOINT.ICO"/>
+    <ROW File="RECPOINT.ICO" Component_="HFANT.ICO" FileName="RECPOINT.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\RECPOINT.ICO" SelfReg="false" NextFile="VOAAREA.ICO"/>
+    <ROW File="RHODE_IS.GEO" Component_="ALABAMA.GEO" FileName="RHODE_IS.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\RHODE_IS.GEO" SelfReg="false" NextFile="S_CAROLI.GEO"/>
+    <ROW File="RMSProp.dat" Component_="areapltx.dat" FileName="RMSProp.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\RMSProp.dat" SelfReg="false" NextFile="rmsprop.out"/>
+    <ROW File="ROW14" Component_="ANG_LONG" FileName="ROW14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ROW14" SelfReg="false" NextFile="ROW9"/>
+    <ROW File="ROW9" Component_="ANG_LONG" FileName="ROW9" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\ROW9" SelfReg="false" NextFile="R_DIST"/>
+    <ROW File="R_DIST" Component_="ANG_LONG" FileName="R_DIST" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\R_DIST" SelfReg="false" NextFile="R_WIRE_D"/>
+    <ROW File="R_WIRE_D" Component_="ANG_LONG" FileName="R_WIRE_D" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\R_WIRE_D" SelfReg="false" NextFile="R_WIRE_S"/>
+    <ROW File="R_WIRE_S" Component_="ANG_LONG" FileName="R_WIRE_S" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\R_WIRE_S" SelfReg="false" NextFile="SCREEN_D"/>
+    <ROW File="Rec533.gph" Component_="Botlines.dat" FileName="Rec533.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Rec533.gph" SelfReg="false" NextFile="Recarea.gph"/>
+    <ROW File="Rec533b.exe" Component_="Rec533b.exe" FileName="Rec533b.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Rec533b.exe" SelfReg="false" NextFile="Rec533w.exe" DigSign="true"/>
+    <ROW File="Rec533w.exe" Component_="Rec533w.exe" FileName="Rec533w.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Rec533w.exe" SelfReg="false" NextFile="SALFLIBC.DLL" DigSign="true"/>
+    <ROW File="Recarea.gph" Component_="Botlines.dat" FileName="Recarea.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Recarea.gph" SelfReg="false" NextFile="recdist.gph"/>
+    <ROW File="Receive.cty" Component_="Circuits.def" FileName="Receive.cty" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Receive.cty" SelfReg="false" NextFile="Receive.def"/>
+    <ROW File="Receive.def" Component_="Circuits.def" FileName="Receive.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Receive.def" SelfReg="false" NextFile="Transmit.def"/>
+    <ROW File="Recplt.gph" Component_="Botlines.dat" FileName="Recplt.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Recplt.gph" SelfReg="false" NextFile="Register.dat"/>
+    <ROW File="Register.dat" Component_="Botlines.dat" FileName="Register.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Register.dat" SelfReg="false" NextFile="setup.ini"/>
+    <ROW File="SALFLIBC.DLL" Component_="SALFLIBC.DLL" FileName="SALFLIBC.DLL" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\SALFLIBC.DLL" SelfReg="false" NextFile="Si_win.exe"/>
+    <ROW File="SAMERICA.GEO" Component_="AFRICA.GEO" FileName="SAMERICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\SAMERICA.GEO" SelfReg="false" NextFile="Westasia.geo"/>
+    <ROW File="SAMERICA.GEO_1" Component_="AFRICA.GEO_1" FileName="SAMERICA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\SAMERICA.GEO" SelfReg="false" NextFile="Westasia.geo_1"/>
+    <ROW File="SAMPLE.00" Component_="SAMPLE.00" FileName="SAMPLE.00" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.00" SelfReg="false" NextFile="SAMPLE.01"/>
+    <ROW File="SAMPLE.01" Component_="SAMPLE.00" FileName="SAMPLE.01" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.01" SelfReg="false" NextFile="SAMPLE.02"/>
+    <ROW File="SAMPLE.02" Component_="SAMPLE.00" FileName="SAMPLE.02" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.02" SelfReg="false" NextFile="SAMPLE.03"/>
+    <ROW File="SAMPLE.03" Component_="SAMPLE.00" FileName="SAMPLE.03" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.03" SelfReg="false" NextFile="SAMPLE.04"/>
+    <ROW File="SAMPLE.04" Component_="SAMPLE.00" FileName="SAMPLE.04" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.04" SelfReg="false" NextFile="SAMPLE.05"/>
+    <ROW File="SAMPLE.05" Component_="SAMPLE.00" FileName="SAMPLE.05" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.05" SelfReg="false" NextFile="SAMPLE.06"/>
+    <ROW File="SAMPLE.06" Component_="SAMPLE.00" FileName="SAMPLE.06" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.06" SelfReg="false" NextFile="SAMPLE.07"/>
+    <ROW File="SAMPLE.07" Component_="SAMPLE.00" FileName="SAMPLE.07" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.07" SelfReg="false" NextFile="SAMPLE.08"/>
+    <ROW File="SAMPLE.08" Component_="SAMPLE.00" FileName="SAMPLE.08" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.08" SelfReg="false" NextFile="SAMPLE.09"/>
+    <ROW File="SAMPLE.09" Component_="SAMPLE.00" FileName="SAMPLE.09" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.09" SelfReg="false" NextFile="SAMPLE.10"/>
+    <ROW File="SAMPLE.10" Component_="SAMPLE.00" FileName="SAMPLE.10" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.10" SelfReg="false" NextFile="SAMPLE.11"/>
+    <ROW File="SAMPLE.11" Component_="SAMPLE.00" FileName="SAMPLE.11" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.11" SelfReg="false" NextFile="SAMPLE.12"/>
+    <ROW File="SAMPLE.12" Component_="SAMPLE.00" FileName="SAMPLE.12" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.12" SelfReg="false" NextFile="SAMPLE.13"/>
+    <ROW File="SAMPLE.13" Component_="SAMPLE.00" FileName="SAMPLE.13" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.13" SelfReg="false" NextFile="SAMPLE.14"/>
+    <ROW File="SAMPLE.14" Component_="SAMPLE.00" FileName="SAMPLE.14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.14" SelfReg="false" NextFile="sample.14x"/>
+    <ROW File="SAMPLE.21" Component_="SAMPLE.00" FileName="SAMPLE.21" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.21" SelfReg="false" NextFile="SAMPLE.22"/>
+    <ROW File="SAMPLE.22" Component_="SAMPLE.00" FileName="SAMPLE.22" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.22" SelfReg="false" NextFile="SAMPLE.23"/>
+    <ROW File="SAMPLE.23" Component_="SAMPLE.00" FileName="SAMPLE.23" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.23" SelfReg="false" NextFile="SAMPLE.24"/>
+    <ROW File="SAMPLE.24" Component_="SAMPLE.00" FileName="SAMPLE.24" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.24" SelfReg="false" NextFile="SAMPLE.25"/>
+    <ROW File="SAMPLE.25" Component_="SAMPLE.00" FileName="SAMPLE.25" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.25" SelfReg="false" NextFile="SAMPLE.26"/>
+    <ROW File="SAMPLE.26" Component_="SAMPLE.00" FileName="SAMPLE.26" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.26" SelfReg="false" NextFile="SAMPLE.27"/>
+    <ROW File="SAMPLE.27" Component_="SAMPLE.00" FileName="SAMPLE.27" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.27" SelfReg="false" NextFile="SAMPLE.28"/>
+    <ROW File="SAMPLE.28" Component_="SAMPLE.00" FileName="SAMPLE.28" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.28" SelfReg="false" NextFile="SAMPLE.29"/>
+    <ROW File="SAMPLE.29" Component_="SAMPLE.00" FileName="SAMPLE.29" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.29" SelfReg="false" NextFile="SAMPLE.30"/>
+    <ROW File="SAMPLE.30" Component_="SAMPLE.00" FileName="SAMPLE.30" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.30" SelfReg="false" NextFile="SAMPLE.31"/>
+    <ROW File="SAMPLE.31" Component_="SAMPLE.00" FileName="SAMPLE.31" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.31" SelfReg="false" NextFile="SAMPLE.32"/>
+    <ROW File="SAMPLE.32" Component_="SAMPLE.00" FileName="SAMPLE.32" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.32" SelfReg="false" NextFile="SAMPLE.34"/>
+    <ROW File="SAMPLE.34" Component_="SAMPLE.00" FileName="SAMPLE.34" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.34" SelfReg="false" NextFile="SAMPLE.35"/>
+    <ROW File="SAMPLE.35" Component_="SAMPLE.00" FileName="SAMPLE.35" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.35" SelfReg="false" NextFile="SAMPLE.36"/>
+    <ROW File="SAMPLE.36" Component_="SAMPLE.00" FileName="SAMPLE.36" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.36" SelfReg="false" NextFile="SAMPLE.37"/>
+    <ROW File="SAMPLE.37" Component_="SAMPLE.00" FileName="SAMPLE.37" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.37" SelfReg="false" NextFile="SAMPLE.38"/>
+    <ROW File="SAMPLE.38" Component_="SAMPLE.00" FileName="SAMPLE.38" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.38" SelfReg="false" NextFile="SAMPLE.39"/>
+    <ROW File="SAMPLE.39" Component_="SAMPLE.00" FileName="SAMPLE.39" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.39" SelfReg="false" NextFile="SAMPLE.41"/>
+    <ROW File="SAMPLE.41" Component_="SAMPLE.00" FileName="SAMPLE.41" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.41" SelfReg="false" NextFile="SAMPLE.43"/>
+    <ROW File="SAMPLE.43" Component_="SAMPLE.00" FileName="SAMPLE.43" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.43" SelfReg="false" NextFile="SAMPLE.44"/>
+    <ROW File="SAMPLE.44" Component_="SAMPLE.00" FileName="SAMPLE.44" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.44" SelfReg="false" NextFile="SAMPLE.45"/>
+    <ROW File="SAMPLE.45" Component_="SAMPLE.00" FileName="SAMPLE.45" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.45" SelfReg="false" NextFile="SAMPLE.46"/>
+    <ROW File="SAMPLE.46" Component_="SAMPLE.00" FileName="SAMPLE.46" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.46" SelfReg="false" NextFile="SAMPLE.47"/>
+    <ROW File="SAMPLE.47" Component_="SAMPLE.00" FileName="SAMPLE.47" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.47" SelfReg="false" NextFile="SAMPLE.48"/>
+    <ROW File="SAMPLE.48" Component_="SAMPLE.00" FileName="SAMPLE.48" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\SAMPLE.48" SelfReg="false" NextFile="sample.90"/>
+    <ROW File="SCREEN_D" Component_="ANG_LONG" FileName="SCREEN_D" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SCREEN_D" SelfReg="false" NextFile="SHORT_L"/>
+    <ROW File="SHORT_L" Component_="ANG_LONG" FileName="SHORT_L" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SHORT_L" SelfReg="false" NextFile="SIDE_RH"/>
+    <ROW File="SIDE_RH" Component_="ANG_LONG" FileName="SIDE_RH" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SIDE_RH" SelfReg="false" NextFile="SLEW"/>
+    <ROW File="SLEW" Component_="ANG_LONG" FileName="SLEW" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SLEW" SelfReg="false" NextFile="SLOPE"/>
+    <ROW File="SLOPE" Component_="ANG_LONG" FileName="SLOPE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SLOPE" SelfReg="false" NextFile="SLOPE_43"/>
+    <ROW File="SLOPE_43" Component_="ANG_LONG" FileName="SLOPE_43" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SLOPE_43" SelfReg="false" NextFile="SPACE_D"/>
+    <ROW File="SPACE_D" Component_="ANG_LONG" FileName="SPACE_D" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SPACE_D" SelfReg="false" NextFile="SPACE_R"/>
+    <ROW File="SPACE_R" Component_="ANG_LONG" FileName="SPACE_R" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SPACE_R" SelfReg="false" NextFile="SPACE_V"/>
+    <ROW File="SPACE_V" Component_="ANG_LONG" FileName="SPACE_V" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\SPACE_V" SelfReg="false" NextFile="STACK8"/>
+    <ROW File="STACK8" Component_="ANG_LONG" FileName="STACK8" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\STACK8" SelfReg="false" NextFile="STACK9"/>
+    <ROW File="STACK9" Component_="ANG_LONG" FileName="STACK9" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\STACK9" SelfReg="false" NextFile="TILT"/>
     <ROW File="SWL.csv" Component_="DXLOC.txt" FileName="SWL.csv" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\SWL.csv" SelfReg="false" NextFile="PowerSDR_ke9ns_Feature_Add_List.docx"/>
     <ROW File="SWL2.csv" Component_="DXLOC.txt" FileName="SWL2.csv" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\SWL2.csv" SelfReg="false" NextFile="NAudio.dll"/>
+    <ROW File="SWWHIP.VOA" Component_="CCIR.000" FileName="SWWHIP.VOA" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\default\SWWHIP.VOA" SelfReg="false" NextFile="GP.N14"/>
+    <ROW File="S_CAROLI.GEO" Component_="ALABAMA.GEO" FileName="S_CAROLI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\S_CAROLI.GEO" SelfReg="false" NextFile="S_DAKOTA.GEO"/>
+    <ROW File="S_DAKOTA.GEO" Component_="ALABAMA.GEO" FileName="S_DAKOTA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\S_DAKOTA.GEO" SelfReg="false" NextFile="TENNESSE.GEO"/>
     <ROW File="Sanford.Collections.dll" Component_="Sanford.Collections.dll" FileName="SANFOR~1.DLL|Sanford.Collections.dll" Attributes="0" SourcePath="..\bin\Release\DJ\Sanford.Collections.dll" SelfReg="false" NextFile="Sanford.Multimedia.Midi.dll"/>
     <ROW File="Sanford.Multimedia.Midi.dll" Component_="Sanford.Multimedia.Midi.dll" FileName="SANFOR~2.DLL|Sanford.Multimedia.Midi.dll" Attributes="0" SourcePath="..\bin\Release\DJ\Sanford.Multimedia.Midi.dll" SelfReg="false" NextFile="Sanford.Multimedia.Timers.dll"/>
     <ROW File="Sanford.Multimedia.Timers.dll" Component_="Sanford.Multimedia.Timers.dll" FileName="SANFOR~3.DLL|Sanford.Multimedia.Timers.dll" Attributes="0" SourcePath="..\bin\Release\DJ\Sanford.Multimedia.Timers.dll" SelfReg="false" NextFile="Sanford.Threading.dll"/>
     <ROW File="Sanford.Multimedia.dll" Component_="Sanford.Multimedia.dll" FileName="SANFOR~5.DLL|Sanford.Multimedia.dll" Attributes="0" SourcePath="..\bin\Release\DJ\Sanford.Multimedia.dll" SelfReg="false" NextFile="PortTalk.dll"/>
     <ROW File="Sanford.Threading.dll" Component_="Sanford.Threading.dll" FileName="SANFOR~4.DLL|Sanford.Threading.dll" Attributes="0" SourcePath="..\bin\Release\DJ\Sanford.Threading.dll" SelfReg="false" NextFile="TNF.dll"/>
+    <ROW File="Si_win.exe" Component_="Si_win.exe" FileName="Si_win.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Si_win.exe" SelfReg="false" NextFile="sysinfo.bat" DigSign="true"/>
     <ROW File="TDxInput.dll" Component_="TDxInput.dll" FileName="TDxInput.dll" Attributes="0" SourcePath="..\bin\Release\TDxInput.dll" SelfReg="false" NextFile="powerSDRke9nsfeaturessummary.docx"/>
+    <ROW File="TEMP.VOA" Component_="Default.ice" FileName="TEMP.VOA" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\TEMP.VOA" SelfReg="false" NextFile="voacap.ovl"/>
+    <ROW File="TENNESSE.GEO" Component_="ALABAMA.GEO" FileName="TENNESSE.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\TENNESSE.GEO" SelfReg="false" NextFile="TX_AF.GEO"/>
+    <ROW File="TILT" Component_="ANG_LONG" FileName="TILT" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\TILT" SelfReg="false" NextFile="TILT.VEE"/>
+    <ROW File="TILT.VEE" Component_="ANG_LONG" FileName="TILT.VEE" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\TILT.VEE" SelfReg="false" NextFile="TILT2"/>
+    <ROW File="TILT2" Component_="ANG_LONG" FileName="TILT2" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\TILT2" SelfReg="false" NextFile="TILT705"/>
+    <ROW File="TILT705" Component_="ANG_LONG" FileName="TILT705" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\TILT705" SelfReg="false" NextFile="TILT_44"/>
+    <ROW File="TILT_44" Component_="ANG_LONG" FileName="TILT_44" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\TILT_44" SelfReg="false" NextFile="VERT_DSP"/>
     <ROW File="TNF.dll" Component_="TNF.dll" FileName="TNF.dll" Attributes="0" SourcePath="..\bin\Release\TNF.dll" SelfReg="false" NextFile="vcruntime140.dll"/>
+    <ROW File="TX_AF.GEO" Component_="ALABAMA.GEO" FileName="TX_A-F.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\TX_A-F.GEO" SelfReg="false" NextFile="TX_GO.GEO"/>
+    <ROW File="TX_GO.GEO" Component_="ALABAMA.GEO" FileName="TX_G-O.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\TX_G-O.GEO" SelfReg="false" NextFile="TX_PZ.GEO"/>
+    <ROW File="TX_PZ.GEO" Component_="ALABAMA.GEO" FileName="TX_P-Z.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\TX_P-Z.GEO" SelfReg="false" NextFile="UTAH.GEO"/>
+    <ROW File="Toplines.dat" Component_="Botlines.dat" FileName="Toplines.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Toplines.dat" SelfReg="false" NextFile="Validate.dat"/>
+    <ROW File="Transmit.def" Component_="Circuits.def" FileName="Transmit.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\userdb\Transmit.def" SelfReg="false" NextFile="ant90.for"/>
+    <ROW File="UCASE.FOR" Component_="ant90.for" FileName="UCASE.FOR" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\UCASE.FOR" SelfReg="false" NextFile="ucase.obj"/>
+    <ROW File="UTAH.GEO" Component_="ALABAMA.GEO" FileName="UTAH.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\UTAH.GEO" SelfReg="false" NextFile="VERMONT.GEO"/>
+    <ROW File="VERMONT.GEO" Component_="ALABAMA.GEO" FileName="VERMONT.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\VERMONT.GEO" SelfReg="false" NextFile="VIRGINIA.GEO"/>
+    <ROW File="VERT_DSP" Component_="ANG_LONG" FileName="VERT_DSP" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\windows.dat\VERT_DSP" SelfReg="false" NextFile="Default.ice"/>
+    <ROW File="VIRGINIA.GEO" Component_="ALABAMA.GEO" FileName="VIRGINIA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\VIRGINIA.GEO" SelfReg="false" NextFile="WASHINGT.GEO"/>
+    <ROW File="VOAAREA.ICO" Component_="HFANT.ICO" FileName="VOAAREA.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\VOAAREA.ICO" SelfReg="false" NextFile="VOAPOINT.ICO"/>
+    <ROW File="VOACAPw.asc" Component_="areapltx.dat" FileName="VOACAPw.asc" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\VOACAPw.asc" SelfReg="false" NextFile="VOACAPw.ini"/>
+    <ROW File="VOACAPw.ini" Component_="areapltx.dat" FileName="VOACAPw.ini" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\VOACAPw.ini" SelfReg="false" NextFile="VOACAPx.asc"/>
+    <ROW File="VOACAPx.asc" Component_="areapltx.dat" FileName="VOACAPx.asc" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\VOACAPx.asc" SelfReg="false" NextFile="voacapx.dat"/>
+    <ROW File="VOACAPx.ini" Component_="areapltx.dat" FileName="VOACAPx.ini" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\VOACAPx.ini" SelfReg="false" NextFile="voacapx.out"/>
+    <ROW File="VOAPOINT.ICO" Component_="HFANT.ICO" FileName="VOAPOINT.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\VOAPOINT.ICO" SelfReg="false" NextFile="VOA_SI.ICO"/>
+    <ROW File="VOA_SI.ICO" Component_="HFANT.ICO" FileName="VOA_SI.ICO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\VOA_SI.ICO" SelfReg="false" NextFile="_02_01.txt"/>
+    <ROW File="Validate.dat" Component_="Botlines.dat" FileName="Validate.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Validate.dat" SelfReg="false" NextFile="Version.w32"/>
+    <ROW File="Version.w32" Component_="Botlines.dat" FileName="Version.w32" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Version.w32" SelfReg="false" NextFile="Version.win"/>
+    <ROW File="Version.win" Component_="Botlines.dat" FileName="Version.win" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Version.win" SelfReg="false" NextFile="Voaarea.gph"/>
+    <ROW File="Voaarea.gph" Component_="Botlines.dat" FileName="Voaarea.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Voaarea.gph" SelfReg="false" NextFile="Voacap.def"/>
+    <ROW File="Voacap.def" Component_="Botlines.dat" FileName="Voacap.def" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Voacap.def" SelfReg="false" NextFile="Voacap.gph"/>
+    <ROW File="Voacap.gph" Component_="Botlines.dat" FileName="Voacap.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Voacap.gph" SelfReg="false" NextFile="Voacapsi.gph"/>
+    <ROW File="Voacapsi.gph" Component_="Botlines.dat" FileName="Voacapsi.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Voacapsi.gph" SelfReg="false" NextFile="voadist.gph"/>
+    <ROW File="Voacapw.exe" Component_="Voacapw.exe" FileName="Voacapw.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Voacapw.exe" SelfReg="false" NextFile="Worldwin.exe" DigSign="true"/>
+    <ROW File="Voaplt.gph" Component_="Botlines.dat" FileName="Voaplt.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\Voaplt.gph" SelfReg="false" NextFile="World.dat"/>
+    <ROW File="WASHINGT.GEO" Component_="ALABAMA.GEO" FileName="WASHINGT.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\WASHINGT.GEO" SelfReg="false" NextFile="WEST_VA.GEO"/>
+    <ROW File="WEST_VA.GEO" Component_="ALABAMA.GEO" FileName="WEST_VA.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\WEST_VA.GEO" SelfReg="false" NextFile="WISCONSI.GEO"/>
+    <ROW File="WISCONSI.GEO" Component_="ALABAMA.GEO" FileName="WISCONSI.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\WISCONSI.GEO" SelfReg="false" NextFile="WYOMING.GEO"/>
+    <ROW File="WYOMING.GEO" Component_="ALABAMA.GEO" FileName="WYOMING.GEO" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geostate\WYOMING.GEO" SelfReg="false" NextFile="area.hlp"/>
+    <ROW File="Westasia.geo" Component_="AFRICA.GEO" FileName="Westasia.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\Westasia.geo" SelfReg="false" NextFile="Wrldwide.geo"/>
+    <ROW File="Westasia.geo_1" Component_="AFRICA.GEO_1" FileName="Westasia.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geonatio\Westasia.geo" SelfReg="false" NextFile="ALABAMA.GEO"/>
+    <ROW File="World.dat" Component_="Botlines.dat" FileName="World.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\World.dat" SelfReg="false" NextFile="World.idx"/>
+    <ROW File="World.idx" Component_="Botlines.dat" FileName="World.idx" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\World.idx" SelfReg="false" NextFile="AFRICA.GEO"/>
+    <ROW File="Worldwin.exe" Component_="Worldwin.exe" FileName="Worldwin.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\Worldwin.exe" SelfReg="false" NextFile="woverlay.exe" DigSign="true"/>
+    <ROW File="Wrldwide.geo" Component_="AFRICA.GEO" FileName="Wrldwide.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\Wrldwide.geo" SelfReg="false" NextFile="AFRICA.GEO_1"/>
     <ROW File="X20bttn0.png" Component_="X20bttn0.png" FileName="16X20B~1.PNG|16X20bttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\16X20bttn-0.png" SelfReg="false" NextFile="X20bttn1.png"/>
     <ROW File="X20bttn0.png_1" Component_="X20bttn0.png" FileName="32X20B~1.PNG|32X20bttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\32X20bttn-0.png" SelfReg="false" NextFile="X20bttn1.png_1"/>
     <ROW File="X20bttn0.png_2" Component_="X20bttn0.png" FileName="40X20B~1.PNG|40X20bttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\40X20bttn-0.png" SelfReg="false" NextFile="X20bttn1.png_2"/>
@@ -171,7 +593,58 @@
     <ROW File="X23bttn_red1.png" Component_="X20bttn0.png" FileName="80X23B~3.PNG|80X23bttn_red-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\80X23bttn_red-1.png" SelfReg="false" NextFile="build.log"/>
     <ROW File="X23bttn_red1.png_1" Component_="X20bttn0.png_1" FileName="80X23B~3.PNG|80X23bttn_red-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\80X23bttn_red-1.png" SelfReg="false" NextFile="build.log_1"/>
     <ROW File="X23bttn_red1.png_2" Component_="X20bttn0.png_2" FileName="80X23B~3.PNG|80X23bttn_red-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\80X23bttn_red-1.png" SelfReg="false" NextFile="build.log_2"/>
+    <ROW File="Yagi35.N14" Component_="GP.N14" FileName="3Yagi35.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\3Yagi35.N14" SelfReg="false" NextFile="Yagi55.N14"/>
+    <ROW File="Yagi35.N14_1" Component_="GP.N14" FileName="5Yagi35.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\5Yagi35.N14" SelfReg="false" NextFile="Yagi55.N14_1"/>
+    <ROW File="Yagi55.N14" Component_="GP.N14" FileName="3Yagi55.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\3Yagi55.N14" SelfReg="false" NextFile="Yagi75.N14"/>
+    <ROW File="Yagi55.N14_1" Component_="GP.N14" FileName="5Yagi55.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\5Yagi55.N14" SelfReg="false" NextFile="Yagi75.N14_1"/>
+    <ROW File="Yagi75.N14" Component_="GP.N14" FileName="3Yagi75.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\3Yagi75.N14" SelfReg="false" NextFile="Yagi95.N14"/>
+    <ROW File="Yagi75.N14_1" Component_="GP.N14" FileName="5Yagi75.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\5Yagi75.N14" SelfReg="false" NextFile="Yagi95.N14_1"/>
+    <ROW File="Yagi95.N14" Component_="GP.N14" FileName="3Yagi95.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\3Yagi95.N14" SelfReg="false" NextFile="Yagi35.N14_1"/>
+    <ROW File="Yagi95.N14_1" Component_="GP.N14" FileName="5Yagi95.N14" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\HamCAP\5Yagi95.N14" SelfReg="false" NextFile="Dipole35.N14"/>
+    <ROW File="_01_23.txt" Component_="_02_01.txt" FileName="10_01_23.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\10_01_23.txt" SelfReg="false" NextFile="_07_14.txt"/>
+    <ROW File="_02_01.txt" Component_="_02_01.txt" FileName="09_02_01.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\09_02_01.txt" SelfReg="false" NextFile="_02_14.txt"/>
+    <ROW File="_02_14.txt" Component_="_02_01.txt" FileName="09_02_14.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\09_02_14.txt" SelfReg="false" NextFile="_03_04.txt"/>
+    <ROW File="_03_04.txt" Component_="_02_01.txt" FileName="09_03_04.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\09_03_04.txt" SelfReg="false" NextFile="_03_26.txt"/>
+    <ROW File="_03_26.txt" Component_="_02_01.txt" FileName="09_03_26.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\09_03_26.txt" SelfReg="false" NextFile="_12_08.txt"/>
+    <ROW File="_03_26.txt_1" Component_="_02_01.txt" FileName="12_03_26.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\12_03_26.txt" SelfReg="false" NextFile="_07_08.txt"/>
+    <ROW File="_05_06.txt" Component_="_02_01.txt" FileName="15_05_06.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\15_05_06.txt" SelfReg="false" NextFile="_10_21.txt"/>
+    <ROW File="_07_08.txt" Component_="_02_01.txt" FileName="12_07_08.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\12_07_08.txt" SelfReg="false" NextFile="_07_09.txt"/>
+    <ROW File="_07_09.txt" Component_="_02_01.txt" FileName="12_07_09.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\12_07_09.txt" SelfReg="false" NextFile="_07_22.txt"/>
+    <ROW File="_07_10.txt" Component_="_07_10.txt" FileName="12_07_10.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\saved_si\12_07_10.txt" SelfReg="false" NextFile="Default.isi"/>
+    <ROW File="_07_14.txt" Component_="_02_01.txt" FileName="11_07_14.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\11_07_14.txt" SelfReg="false" NextFile="_11_28.txt"/>
+    <ROW File="_07_22.txt" Component_="_02_01.txt" FileName="12_07_22.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\12_07_22.txt" SelfReg="false" NextFile="_09_05.txt"/>
+    <ROW File="_09_05.txt" Component_="_02_01.txt" FileName="14_09_05.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\14_09_05.txt" SelfReg="false" NextFile="_11_14.txt"/>
+    <ROW File="_10_21.txt" Component_="_02_01.txt" FileName="15_10_21.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\15_10_21.txt" SelfReg="false" NextFile="_all.txt"/>
+    <ROW File="_11_14.txt" Component_="_02_01.txt" FileName="14_11_14.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\14_11_14.txt" SelfReg="false" NextFile="_12_31.txt"/>
+    <ROW File="_11_28.txt" Component_="_02_01.txt" FileName="11_11_28.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\11_11_28.txt" SelfReg="false" NextFile="_03_26.txt_1"/>
+    <ROW File="_12_08.txt" Component_="_02_01.txt" FileName="09_12_08.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\09_12_08.txt" SelfReg="false" NextFile="_01_23.txt"/>
+    <ROW File="_12_31.txt" Component_="_02_01.txt" FileName="14_12_31.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\14_12_31.txt" SelfReg="false" NextFile="_05_06.txt"/>
+    <ROW File="_all.txt" Component_="_02_01.txt" FileName="1993_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1993_all.txt" SelfReg="false" NextFile="_all.txt_1"/>
+    <ROW File="_all.txt_1" Component_="_02_01.txt" FileName="1994_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1994_all.txt" SelfReg="false" NextFile="_all.txt_2"/>
+    <ROW File="_all.txt_10" Component_="_02_01.txt" FileName="2004_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2004_all.txt" SelfReg="false" NextFile="_all.txt_11"/>
+    <ROW File="_all.txt_11" Component_="_02_01.txt" FileName="2005_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2005_all.txt" SelfReg="false" NextFile="_all.txt_12"/>
+    <ROW File="_all.txt_12" Component_="_02_01.txt" FileName="2006_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2006_all.txt" SelfReg="false" NextFile="_all.txt_13"/>
+    <ROW File="_all.txt_13" Component_="_02_01.txt" FileName="2007_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2007_all.txt" SelfReg="false" NextFile="_all.txt_14"/>
+    <ROW File="_all.txt_14" Component_="_02_01.txt" FileName="2008_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2008_all.txt" SelfReg="false" NextFile="_all.txt_15"/>
+    <ROW File="_all.txt_15" Component_="_02_01.txt" FileName="2009_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2009_all.txt" SelfReg="false" NextFile="command.txt"/>
+    <ROW File="_all.txt_2" Component_="_02_01.txt" FileName="1995_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1995_all.txt" SelfReg="false" NextFile="_all.txt_3"/>
+    <ROW File="_all.txt_3" Component_="_02_01.txt" FileName="1996_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1996_all.txt" SelfReg="false" NextFile="_all.txt_4"/>
+    <ROW File="_all.txt_4" Component_="_02_01.txt" FileName="1997_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1997_all.txt" SelfReg="false" NextFile="_all.txt_5"/>
+    <ROW File="_all.txt_5" Component_="_02_01.txt" FileName="1998_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\1998_all.txt" SelfReg="false" NextFile="_all.txt_6"/>
+    <ROW File="_all.txt_6" Component_="_02_01.txt" FileName="2000_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2000_all.txt" SelfReg="false" NextFile="_all.txt_7"/>
+    <ROW File="_all.txt_7" Component_="_02_01.txt" FileName="2001_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2001_all.txt" SelfReg="false" NextFile="_all.txt_8"/>
+    <ROW File="_all.txt_8" Component_="_02_01.txt" FileName="2002_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2002_all.txt" SelfReg="false" NextFile="_all.txt_9"/>
+    <ROW File="_all.txt_9" Component_="_02_01.txt" FileName="2003_all.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\2003_all.txt" SelfReg="false" NextFile="_all.txt_10"/>
+    <ROW File="ant90.for" Component_="ant90.for" FileName="ant90.for" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\ant90.for" SelfReg="false" NextFile="ant90.obj"/>
+    <ROW File="ant90.obj" Component_="ant90.for" FileName="ant90.obj" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\ant90.obj" SelfReg="false" NextFile="anttyp90.for"/>
+    <ROW File="anttyp90.for" Component_="ant90.for" FileName="anttyp90.for" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\anttyp90.for" SelfReg="false" NextFile="anttyp90.obj"/>
+    <ROW File="anttyp90.obj" Component_="ant90.for" FileName="anttyp90.obj" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\anttyp90.obj" SelfReg="false" NextFile="lenchar.for"/>
+    <ROW File="area.hlp" Component_="area.hlp" FileName="area.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\area.hlp" SelfReg="false" NextFile="areainv.hlp"/>
+    <ROW File="areainv.hlp" Component_="area.hlp" FileName="areainv.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\areainv.hlp" SelfReg="false" NextFile="areaplt.hlp"/>
+    <ROW File="areaplt.hlp" Component_="area.hlp" FileName="areaplt.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\areaplt.hlp" SelfReg="false" NextFile="combine.hlp"/>
+    <ROW File="areapltx.dat" Component_="areapltx.dat" FileName="areapltx.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\areapltx.dat" SelfReg="false" NextFile="COMBINPX.vcb"/>
     <ROW File="atu.dll" Component_="atu.dll" FileName="atu.dll" Attributes="0" SourcePath="..\bin\Release\atu.dll" SelfReg="false" NextFile="DttSP.dll"/>
+    <ROW File="batchit.exe" Component_="batchit.exe" FileName="batchit.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\batchit.exe" SelfReg="false" NextFile="Combinew.exe" DigSign="true"/>
     <ROW File="btnBandHF0.png" Component_="btnBandHF0.png" FileName="BTNBAN~1.PNG|btnBandHF-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\btnBandHF-0.png" SelfReg="false" NextFile="btnBandHF1.png"/>
     <ROW File="btnBandHF0.png_1" Component_="btnBandHF0.png_1" FileName="BTNBAN~1.PNG|btnBandHF-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\btnBandHF-0.png" SelfReg="false" NextFile="btnBandHF1.png_1"/>
     <ROW File="btnBandHF0.png_2" Component_="btnBandHF0.png_2" FileName="BTNBAN~1.PNG|btnBandHF-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\btnBandHF-0.png" SelfReg="false" NextFile="btnBandHF1.png_2"/>
@@ -625,6 +1098,7 @@
     <ROW File="chkXIT1.png" Component_="btnBandHF0.png" FileName="chkXIT-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\chkXIT-1.png" SelfReg="false" NextFile="ckQuickPlay0.png"/>
     <ROW File="chkXIT1.png_1" Component_="btnBandHF0.png_1" FileName="chkXIT-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\chkXIT-1.png" SelfReg="false" NextFile="ckQuickPlay0.png_1"/>
     <ROW File="chkXIT1.png_2" Component_="btnBandHF0.png_2" FileName="chkXIT-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\chkXIT-1.png" SelfReg="false" NextFile="ckQuickPlay0.png_2"/>
+    <ROW File="cirafp.911" Component_="Botlines.dat" FileName="cirafp.911" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\cirafp.911" SelfReg="false" NextFile="Cirafz.sq"/>
     <ROW File="ckQuickPlay0.png" Component_="btnBandHF0.png" FileName="CKQUIC~1.PNG|ckQuickPlay-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\ckQuickPlay-0.png" SelfReg="false" NextFile="ckQuickPlay1.png"/>
     <ROW File="ckQuickPlay0.png_1" Component_="btnBandHF0.png_1" FileName="CKQUIC~1.PNG|ckQuickPlay-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\ckQuickPlay-0.png" SelfReg="false" NextFile="ckQuickPlay1.png_1"/>
     <ROW File="ckQuickPlay0.png_2" Component_="btnBandHF0.png_2" FileName="CKQUIC~1.PNG|ckQuickPlay-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\ckQuickPlay-0.png" SelfReg="false" NextFile="ckQuickPlay1.png_2"/>
@@ -637,8 +1111,26 @@
     <ROW File="ckQuickRec1.png" Component_="btnBandHF0.png" FileName="CKQUIC~4.PNG|ckQuickRec-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\ckQuickRec-1.png" SelfReg="false" NextFile="Console.png_1"/>
     <ROW File="ckQuickRec1.png_1" Component_="btnBandHF0.png_1" FileName="CKQUIC~4.PNG|ckQuickRec-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\ckQuickRec-1.png" SelfReg="false" NextFile="Console.png_3"/>
     <ROW File="ckQuickRec1.png_2" Component_="btnBandHF0.png_2" FileName="CKQUIC~4.PNG|ckQuickRec-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\ckQuickRec-1.png" SelfReg="false" NextFile="Console.png_5"/>
+    <ROW File="combine.hlp" Component_="area.hlp" FileName="combine.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\combine.hlp" SelfReg="false" NextFile="hfant.hlp"/>
+    <ROW File="command.txt" Component_="_02_01.txt" FileName="command.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\command.txt" SelfReg="false" NextFile="CONFIG.TXT"/>
+    <ROW File="contact.txt" Component_="Botlines.dat" FileName="contact.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\contact.txt" SelfReg="false" NextFile="debug.txt"/>
+    <ROW File="debug.txt" Component_="Botlines.dat" FileName="debug.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\debug.txt" SelfReg="false" NextFile="Delay"/>
+    <ROW File="dummy.its" Component_="areapltx.dat" FileName="dummy.its" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\dummy.its" SelfReg="false" NextFile="GAIN01.DAT"/>
+    <ROW File="dxcc1.geo" Component_="AFRICA.GEO" FileName="dxcc1.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\dxcc1.geo" SelfReg="false" NextFile="Europe.geo"/>
+    <ROW File="fof2var.txt" Component_="Botlines.dat" FileName="fof2var.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\fof2var.txt" SelfReg="false" NextFile="Icearea.gph"/>
+    <ROW File="hf_parse.exe" Component_="hf_parse.exe" FileName="hf_parse.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\hf_parse.exe" SelfReg="false" NextFile="Icepacw.exe" DigSign="true"/>
+    <ROW File="hf_parse.txt" Component_="_02_01.txt" FileName="hf_parse.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\hf_parse.txt" SelfReg="false" NextFile="problems.txt"/>
+    <ROW File="hfant.hlp" Component_="area.hlp" FileName="hfant.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\hfant.hlp" SelfReg="false" NextFile="itshf.hlp"/>
+    <ROW File="hfantw.bin" Component_="areapltx.dat" FileName="hfantw.bin" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\hfantw.bin" SelfReg="false" NextFile="mapdone"/>
+    <ROW File="hfinfo.exe" Component_="hfinfo.exe" FileName="hfinfo.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\hfinfo.exe" SelfReg="false" NextFile="hf_parse.exe" DigSign="true"/>
+    <ROW File="icepac.ovl" Component_="Default.ice" FileName="icepac.ovl" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\icepac.ovl" SelfReg="false" NextFile="KE9NSCopy.VOA"/>
+    <ROW File="itshf.hlp" Component_="area.hlp" FileName="itshf.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\itshf.hlp" SelfReg="false" NextFile="OVERLAYW.HLP"/>
+    <ROW File="itshf.ico" Component_="HFANT.ICO" FileName="itshf.ico" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\icons\itshf.ico" SelfReg="false" NextFile="NEWS.ICO"/>
+    <ROW File="ke9ns.vg1" Component_="Default.ice" FileName="ke9ns.vg1" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\ke9ns.vg1" SelfReg="false" NextFile="KE9NS.VOA"/>
+    <ROW File="lenchar.for" Component_="ant90.for" FileName="lenchar.for" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\lenchar.for" SelfReg="false" NextFile="lenchar.obj"/>
+    <ROW File="lenchar.obj" Component_="ant90.for" FileName="lenchar.obj" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\lenchar.obj" SelfReg="false" NextFile="MAKEFILE"/>
     <ROW File="libmp3lame.32.dll" Component_="libmp3lame.32.dll" FileName="LIBMP3~1.DLL|libmp3lame.32.dll" Attributes="0" SourcePath="..\bin\Release\libmp3lame.32.dll" SelfReg="false" NextFile="libmp3lame.64.dll"/>
-    <ROW File="libmp3lame.64.dll" Component_="libmp3lame.64.dll" FileName="LIBMP3~2.DLL|libmp3lame.64.dll" Attributes="0" SourcePath="..\bin\Release\libmp3lame.64.dll" SelfReg="false"/>
+    <ROW File="libmp3lame.64.dll" Component_="libmp3lame.64.dll" FileName="LIBMP3~2.DLL|libmp3lame.64.dll" Attributes="0" SourcePath="..\bin\Release\libmp3lame.64.dll" SelfReg="false" NextFile="CCIR.000"/>
     <ROW File="longledbttn0.png" Component_="X20bttn0.png" FileName="LONGLE~1.PNG|longledbttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\longledbttn-0.png" SelfReg="false" NextFile="longledbttn1.png"/>
     <ROW File="longledbttn0.png_1" Component_="X20bttn0.png_1" FileName="LONGLE~1.PNG|longledbttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\longledbttn-0.png" SelfReg="false" NextFile="longledbttn1.png_1"/>
     <ROW File="longledbttn0.png_2" Component_="X20bttn0.png_2" FileName="LONGLE~1.PNG|longledbttn-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\longledbttn-0.png" SelfReg="false" NextFile="longledbttn1.png_2"/>
@@ -663,6 +1155,13 @@
     <ROW File="longledbttnVERDE1.png" Component_="X20bttn0.png" FileName="LONGLE~8.PNG|longledbttnVERDE-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\longledbttnVERDE-1.png" SelfReg="false" NextFile="panelbackBand.png"/>
     <ROW File="longledbttnVERDE1.png_1" Component_="X20bttn0.png_1" FileName="LONGLE~8.PNG|longledbttnVERDE-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\longledbttnVERDE-1.png" SelfReg="false" NextFile="panelbackBand.png_1"/>
     <ROW File="longledbttnVERDE1.png_2" Component_="X20bttn0.png_2" FileName="LONGLE~8.PNG|longledbttnVERDE-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\longledbttnVERDE-1.png" SelfReg="false" NextFile="panelbackBand.png_2"/>
+    <ROW File="mapdone" Component_="areapltx.dat" FileName="mapdone" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\mapdone" SelfReg="false" NextFile="performw.ini"/>
+    <ROW File="ncdxf.geo" Component_="AFRICA.GEO" FileName="ncdxf.geo" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\geocity\ncdxf.geo" SelfReg="false" NextFile="OCEANIC.GEO"/>
+    <ROW File="noise_card.txt" Component_="Botlines.dat" FileName="NOISE_~1.TXT|noise_card.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\noise_card.txt" SelfReg="false" NextFile="north_pole.txt"/>
+    <ROW File="north_pole.txt" Component_="Botlines.dat" FileName="NORTH_~1.TXT|north_pole.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\north_pole.txt" SelfReg="false" NextFile="notepad.txt"/>
+    <ROW File="notepad.txt" Component_="Botlines.dat" FileName="notepad.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\notepad.txt" SelfReg="false" NextFile="p1240.dat"/>
+    <ROW File="overlayw.exe" Component_="overlayw.exe" FileName="overlayw.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\overlayw.exe" SelfReg="false" NextFile="Pointwin.exe" DigSign="true"/>
+    <ROW File="p1240.dat" Component_="Botlines.dat" FileName="p1240.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\p1240.dat" SelfReg="false" NextFile="Parms.fmt"/>
     <ROW File="pal.dll" Component_="pal.dll" FileName="pal.dll" Attributes="0" SourcePath="..\bin\Release\pal.dll" SelfReg="false" NextFile="SWL2.csv"/>
     <ROW File="panelBandHF.png" Component_="btnBandHF0.png" FileName="PANELB~1.PNG|panelBandHF.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\panelBandHF.png" SelfReg="false" NextFile="panelBandVHF.png"/>
     <ROW File="panelBandHF.png_1" Component_="btnBandHF0.png_1" FileName="PANELB~1.PNG|panelBandHF.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\panelBandHF.png" SelfReg="false" NextFile="panelBandVHF.png_1"/>
@@ -702,6 +1201,10 @@
     <ROW File="panelbackOptions.png" Component_="X20bttn0.png" FileName="PANELB~4.PNG|panelbackOptions.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\panelbackOptions.png" SelfReg="false" NextFile="picDisplay.png"/>
     <ROW File="panelbackOptions.png_1" Component_="X20bttn0.png_1" FileName="PANELB~4.PNG|panelbackOptions.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\panelbackOptions.png" SelfReg="false" NextFile="picDisplay.png_2"/>
     <ROW File="panelbackOptions.png_2" Component_="X20bttn0.png_2" FileName="PANELB~4.PNG|panelbackOptions.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\panelbackOptions.png" SelfReg="false" NextFile="picDisplay.png_4"/>
+    <ROW File="per_dist.hlp" Component_="area.hlp" FileName="per_dist.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\per_dist.hlp" SelfReg="false" NextFile="per_time.hlp"/>
+    <ROW File="per_time.hlp" Component_="area.hlp" FileName="per_time.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\per_time.hlp" SelfReg="false" NextFile="point.hlp"/>
+    <ROW File="perform.hlp" Component_="area.hlp" FileName="perform.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\perform.hlp" SelfReg="false" NextFile="per_dist.hlp"/>
+    <ROW File="performw.ini" Component_="areapltx.dat" FileName="performw.ini" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\performw.ini" SelfReg="false" NextFile="print_a.ini"/>
     <ROW File="picDisplay.png" Component_="X20bttn0.png" FileName="PICDIS~1.PNG|picDisplay.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\picDisplay.png" SelfReg="false" NextFile="play0.png"/>
     <ROW File="picDisplay.png_1" Component_="btnBandHF0.png" FileName="PICDIS~1.PNG|picDisplay.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\picDisplay.png" SelfReg="false" NextFile="ptbAFback.png"/>
     <ROW File="picDisplay.png_2" Component_="X20bttn0.png_1" FileName="PICDIS~1.PNG|picDisplay.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\picDisplay.png" SelfReg="false" NextFile="play0.png_1"/>
@@ -717,7 +1220,10 @@
     <ROW File="play1.png" Component_="X20bttn0.png" FileName="play-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\play-1.png" SelfReg="false" NextFile="play.png"/>
     <ROW File="play1.png_1" Component_="X20bttn0.png_1" FileName="play-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\play-1.png" SelfReg="false" NextFile="play.png_1"/>
     <ROW File="play1.png_2" Component_="X20bttn0.png_2" FileName="play-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\play-1.png" SelfReg="false" NextFile="play.png_2"/>
+    <ROW File="point.hlp" Component_="area.hlp" FileName="point.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\point.hlp" SelfReg="false" NextFile="si_point.hlp"/>
     <ROW File="powerSDRke9nsfeaturessummary.docx" Component_="PowerSDR_T9.exe.config" FileName="POWERS~1.DOC|powerSDR ke9ns features summary.docx" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\powerSDR ke9ns features summary.docx" SelfReg="false" NextFile="pal.dll"/>
+    <ROW File="print_a.ini" Component_="areapltx.dat" FileName="print_a.ini" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\print_a.ini" SelfReg="false" NextFile="RMSProp.dat"/>
+    <ROW File="problems.txt" Component_="_02_01.txt" FileName="problems.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\news_win\problems.txt" SelfReg="false" NextFile="readme.txt"/>
     <ROW File="ptbAFback.png" Component_="btnBandHF0.png" FileName="PTBAF-~1.PNG|ptbAF-back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\ptbAF-back.png" SelfReg="false" NextFile="ptbAFhead.png"/>
     <ROW File="ptbAFback.png_1" Component_="btnBandHF0.png_1" FileName="PTBAF-~1.PNG|ptbAF-back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\ptbAF-back.png" SelfReg="false" NextFile="ptbAFhead.png_1"/>
     <ROW File="ptbAFback.png_2" Component_="btnBandHF0.png_2" FileName="PTBAF-~1.PNG|ptbAF-back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\ptbAF-back.png" SelfReg="false" NextFile="ptbAFhead.png_2"/>
@@ -1343,18 +1849,27 @@
     <ROW File="radRX2ModeUSB1.png" Component_="btnBandHF0.png" FileName="RADRX~42.PNG|radRX2ModeUSB-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\radRX2ModeUSB-1.png" SelfReg="false" NextFile="LicenseAgreement.txt"/>
     <ROW File="radRX2ModeUSB1.png_1" Component_="btnBandHF0.png_1" FileName="RADRX~42.PNG|radRX2ModeUSB-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\radRX2ModeUSB-1.png" SelfReg="false" NextFile="LicenseAgreement.txt_1"/>
     <ROW File="radRX2ModeUSB1.png_2" Component_="btnBandHF0.png_2" FileName="RADRX~42.PNG|radRX2ModeUSB-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\radRX2ModeUSB-1.png" SelfReg="false" NextFile="LicenseAgreement.txt_2"/>
+    <ROW File="readme.txt" Component_="readme.txt" FileName="readme.txt" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\readme.txt" SelfReg="false" NextFile="areapltx.dat"/>
+    <ROW File="rec533.ovl" Component_="Default.ice" FileName="rec533.ovl" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\rec533.ovl" SelfReg="false" NextFile="temp.vg1"/>
+    <ROW File="recdist.gph" Component_="Botlines.dat" FileName="recdist.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\recdist.gph" SelfReg="false" NextFile="Recplt.gph"/>
     <ROW File="record0.png" Component_="X20bttn0.png" FileName="record-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\record-0.png" SelfReg="false" NextFile="record1.png"/>
     <ROW File="record0.png_1" Component_="X20bttn0.png_1" FileName="record-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\record-0.png" SelfReg="false" NextFile="record1.png_1"/>
     <ROW File="record0.png_2" Component_="X20bttn0.png_2" FileName="record-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\record-0.png" SelfReg="false" NextFile="record1.png_2"/>
     <ROW File="record1.png" Component_="X20bttn0.png" FileName="record-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\record-1.png" SelfReg="false" NextFile="rx20.png"/>
     <ROW File="record1.png_1" Component_="X20bttn0.png_1" FileName="record-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\record-1.png" SelfReg="false" NextFile="rx20.png_1"/>
     <ROW File="record1.png_2" Component_="X20bttn0.png_2" FileName="record-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\record-1.png" SelfReg="false" NextFile="rx20.png_2"/>
+    <ROW File="rmsprop.out" Component_="areapltx.dat" FileName="rmsprop.out" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\rmsprop.out" SelfReg="false" NextFile="type14.tmp"/>
     <ROW File="rx20.png" Component_="X20bttn0.png" FileName="rx2-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\rx2-0.png" SelfReg="false" NextFile="rx21.png"/>
     <ROW File="rx20.png_1" Component_="X20bttn0.png_1" FileName="rx2-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\rx2-0.png" SelfReg="false" NextFile="rx21.png_1"/>
     <ROW File="rx20.png_2" Component_="X20bttn0.png_2" FileName="rx2-0.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\rx2-0.png" SelfReg="false" NextFile="rx21.png_2"/>
     <ROW File="rx21.png" Component_="X20bttn0.png" FileName="rx2-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\rx2-1.png" SelfReg="false" NextFile="slider_back.png"/>
     <ROW File="rx21.png_1" Component_="X20bttn0.png_1" FileName="rx2-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\rx2-1.png" SelfReg="false" NextFile="slider_back.png_1"/>
     <ROW File="rx21.png_2" Component_="X20bttn0.png_2" FileName="rx2-1.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\rx2-1.png" SelfReg="false" NextFile="slider_back.png_2"/>
+    <ROW File="sample.14x" Component_="SAMPLE.00" FileName="sample.14x" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\sample.14x" SelfReg="false" NextFile="SAMPLE.21"/>
+    <ROW File="sample.90" Component_="SAMPLE.00" FileName="sample.90" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\sample.90" SelfReg="false" NextFile="sample.99"/>
+    <ROW File="sample.99" Component_="SAMPLE.00" FileName="sample.99" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\antennas\samples\sample.99" SelfReg="false" NextFile="ANG_LONG"/>
+    <ROW File="setup.ini" Component_="Botlines.dat" FileName="setup.ini" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\setup.ini" SelfReg="false" NextFile="Toplines.dat"/>
+    <ROW File="si_point.hlp" Component_="area.hlp" FileName="si_point.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\si_point.hlp" SelfReg="false" NextFile="worldwin.hlp"/>
     <ROW File="slider_back.png" Component_="X20bttn0.png" FileName="SLIDER~1.PNG|slider_back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\slider_back.png" SelfReg="false" NextFile="slider_back_v.png"/>
     <ROW File="slider_back.png_1" Component_="X20bttn0.png_1" FileName="SLIDER~1.PNG|slider_back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\slider_back.png" SelfReg="false" NextFile="slider_back_v.png_1"/>
     <ROW File="slider_back.png_2" Component_="X20bttn0.png_2" FileName="SLIDER~1.PNG|slider_back.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\slider_back.png" SelfReg="false" NextFile="slider_back_v.png_2"/>
@@ -1367,9 +1882,25 @@
     <ROW File="slider_head_v.png" Component_="X20bttn0.png" FileName="SLIDER~4.PNG|slider_head_v.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS3_Spot\Console\Base\slider_head_v.png" SelfReg="false" NextFile="btnBandHF0.png"/>
     <ROW File="slider_head_v.png_1" Component_="X20bttn0.png_1" FileName="SLIDER~4.PNG|slider_head_v.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS4_Plain\Console\Base\slider_head_v.png" SelfReg="false" NextFile="btnBandHF0.png_1"/>
     <ROW File="slider_head_v.png_2" Component_="X20bttn0.png_2" FileName="SLIDER~4.PNG|slider_head_v.png" Attributes="0" SourcePath="..\..\..\..\..\..\..\ProgramData\FlexRadio Systems\PowerSDR\Skins\KE9NS6_World\Console\Base\slider_head_v.png" SelfReg="false" NextFile="btnBandHF0.png_2"/>
+    <ROW File="sysinfo.bat" Component_="dir_tmp.txt" FileName="sysinfo.bat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\sysinfo.bat" SelfReg="false" NextFile="Voacapw.exe"/>
+    <ROW File="temp.vg1" Component_="Default.ice" FileName="temp.vg1" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\temp.vg1" SelfReg="false" NextFile="TEMP.VOA"/>
     <ROW File="test24.bmp" Component_="DXLOC.txt" FileName="test24.bmp" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\test24.bmp" SelfReg="false" NextFile="PowerSDR_Readme.txt"/>
+    <ROW File="type14.tmp" Component_="areapltx.dat" FileName="type14.tmp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\type14.tmp" SelfReg="false" NextFile="voaareax.da1"/>
+    <ROW File="ucase.obj" Component_="ant90.for" FileName="ucase.obj" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\win32\anttyp90\ucase.obj" SelfReg="false"/>
     <ROW File="vcruntime140.dll" Component_="vcruntime140.dll" FileName="VCRUNT~1.DLL|vcruntime140.dll" Attributes="0" SourcePath="..\..\..\..\My Webs\ke9ns2\vcruntime140.dll" SelfReg="false" NextFile="wdapi_dotnet1040.dll"/>
+    <ROW File="voaareax.da1" Component_="areapltx.dat" FileName="voaareax.da1" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\voaareax.da1" SelfReg="false" NextFile="voacapg.dat"/>
+    <ROW File="voacap.ovl" Component_="Default.ice" FileName="voacap.ovl" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\default\voacap.ovl" SelfReg="false" NextFile="voaprop.vg1"/>
+    <ROW File="voacapg.dat" Component_="areapltx.dat" FileName="voacapg.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\voacapg.dat" SelfReg="false" NextFile="voacapg.out"/>
+    <ROW File="voacapg.out" Component_="areapltx.dat" FileName="voacapg.out" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\voacapg.out" SelfReg="false" NextFile="VOACAPw.asc"/>
+    <ROW File="voacapx.dat" Component_="areapltx.dat" FileName="voacapx.dat" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\voacapx.dat" SelfReg="false" NextFile="VOACAPx.ini"/>
+    <ROW File="voacapx.out" Component_="areapltx.dat" FileName="voacapx.out" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\voacapx.out" SelfReg="false" NextFile="worldwin.con"/>
+    <ROW File="voadist.gph" Component_="Botlines.dat" FileName="voadist.gph" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\database\voadist.gph" SelfReg="false" NextFile="Voaplt.gph"/>
+    <ROW File="voaprop.vg1" Component_="voaprop.vg1" FileName="voaprop.vg1" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\VOAProp\voaprop.vg1" SelfReg="false" NextFile="voaprop.voa"/>
+    <ROW File="voaprop.voa" Component_="voaprop.vg1" FileName="voaprop.voa" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\areadata\VOAProp\voaprop.voa" SelfReg="false" NextFile="Default.ice_1"/>
     <ROW File="wdapi_dotnet1040.dll" Component_="wdapi_dotnet1040.dll" FileName="WDAPI_~1.DLL|wdapi_dotnet1040.dll" Attributes="0" SourcePath="..\bin\Release\wdapi_dotnet1040.dll" SelfReg="false" NextFile="Sanford.Multimedia.dll"/>
+    <ROW File="worldwin.con" Component_="areapltx.dat" FileName="worldwin.con" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\run\worldwin.con" SelfReg="false" NextFile="Default.ice_2"/>
+    <ROW File="worldwin.hlp" Component_="area.hlp" FileName="worldwin.hlp" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\help_win\worldwin.hlp" SelfReg="false" NextFile="HFANT.ICO"/>
+    <ROW File="woverlay.exe" Component_="woverlay.exe" FileName="woverlay.exe" Attributes="0" SourcePath="..\..\..\..\..\..\..\itshfbc\bin_win\woverlay.exe" SelfReg="false" NextFile="CGLALO.DAT" DigSign="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="AnyCPU_Release" BuildName="AnyCPU_Release" BuildOrder="1" BuildType="0" PackageFolder="..\..\..\..\Advanced Installer\Projects\PowerSDR ke9ns Installer RevT11\Setup Files" PackageFileName="PowerSDR_ke9ns_Installer_RevT11" Languages="en" InstallationType="4" UseLargeSchema="true"/>

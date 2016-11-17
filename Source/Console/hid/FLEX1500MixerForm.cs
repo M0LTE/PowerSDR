@@ -52,12 +52,12 @@ namespace PowerSDR
 		private System.Windows.Forms.TrackBarTS tbFlexWireIn;
 		private System.Windows.Forms.CheckBoxTS chkOutputMuteAll;
 		private System.Windows.Forms.LabelTS lblPhones;
-		private System.Windows.Forms.CheckBoxTS chkPhonesSel;
+        public CheckBoxTS chkPhonesSel;
         private System.Windows.Forms.TrackBarTS tbPhones;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.LabelTS lblFlexWireOut;
-		private System.Windows.Forms.CheckBoxTS chkFlexWireOutSel;
-		private System.Windows.Forms.TrackBarTS tbFlexWireOut;
+        public CheckBoxTS chkFlexWireOutSel;
+        private System.Windows.Forms.TrackBarTS tbFlexWireOut;
         private ButtonTS btnCodecDump;
 		private System.ComponentModel.IContainer components;
 
@@ -106,16 +106,11 @@ namespace PowerSDR
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FLEX1500MixerForm));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnCodecDump = new System.Windows.Forms.ButtonTS();
-            this.grpOutput = new System.Windows.Forms.GroupBoxTS();
-            this.lblFlexWireOut = new System.Windows.Forms.LabelTS();
             this.chkFlexWireOutSel = new System.Windows.Forms.CheckBoxTS();
             this.tbFlexWireOut = new System.Windows.Forms.TrackBarTS();
-            this.lblPhones = new System.Windows.Forms.LabelTS();
             this.chkPhonesSel = new System.Windows.Forms.CheckBoxTS();
             this.tbPhones = new System.Windows.Forms.TrackBarTS();
             this.chkOutputMuteAll = new System.Windows.Forms.CheckBoxTS();
-            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             this.chkInputMuteAll = new System.Windows.Forms.CheckBoxTS();
             this.lblFlexWireIn = new System.Windows.Forms.LabelTS();
             this.chkFlexWireInSel = new System.Windows.Forms.CheckBoxTS();
@@ -123,51 +118,18 @@ namespace PowerSDR
             this.lblMic = new System.Windows.Forms.LabelTS();
             this.chkMicSel = new System.Windows.Forms.CheckBoxTS();
             this.tbMic = new System.Windows.Forms.TrackBarTS();
-            this.grpOutput.SuspendLayout();
+            this.btnCodecDump = new System.Windows.Forms.ButtonTS();
+            this.grpOutput = new System.Windows.Forms.GroupBoxTS();
+            this.lblFlexWireOut = new System.Windows.Forms.LabelTS();
+            this.lblPhones = new System.Windows.Forms.LabelTS();
+            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPhones)).BeginInit();
-            this.grpInput.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).BeginInit();
+            this.grpOutput.SuspendLayout();
+            this.grpInput.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnCodecDump
-            // 
-            this.btnCodecDump.Image = null;
-            this.btnCodecDump.Location = new System.Drawing.Point(76, -4);
-            this.btnCodecDump.Name = "btnCodecDump";
-            this.btnCodecDump.Size = new System.Drawing.Size(75, 23);
-            this.btnCodecDump.TabIndex = 4;
-            this.btnCodecDump.Text = "Dump";
-            this.btnCodecDump.UseVisualStyleBackColor = true;
-            this.btnCodecDump.Visible = false;
-            this.btnCodecDump.Click += new System.EventHandler(this.btnCodecDump_Click);
-            // 
-            // grpOutput
-            // 
-            this.grpOutput.Controls.Add(this.lblFlexWireOut);
-            this.grpOutput.Controls.Add(this.chkFlexWireOutSel);
-            this.grpOutput.Controls.Add(this.tbFlexWireOut);
-            this.grpOutput.Controls.Add(this.lblPhones);
-            this.grpOutput.Controls.Add(this.chkPhonesSel);
-            this.grpOutput.Controls.Add(this.tbPhones);
-            this.grpOutput.Controls.Add(this.chkOutputMuteAll);
-            this.grpOutput.Location = new System.Drawing.Point(136, 8);
-            this.grpOutput.Name = "grpOutput";
-            this.grpOutput.Size = new System.Drawing.Size(137, 216);
-            this.grpOutput.TabIndex = 3;
-            this.grpOutput.TabStop = false;
-            this.grpOutput.Text = "Output";
-            // 
-            // lblFlexWireOut
-            // 
-            this.lblFlexWireOut.Image = null;
-            this.lblFlexWireOut.Location = new System.Drawing.Point(78, 24);
-            this.lblFlexWireOut.Name = "lblFlexWireOut";
-            this.lblFlexWireOut.Size = new System.Drawing.Size(49, 32);
-            this.lblFlexWireOut.TabIndex = 22;
-            this.lblFlexWireOut.Text = "FlexWire Out";
-            this.lblFlexWireOut.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // chkFlexWireOutSel
             // 
@@ -195,16 +157,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.tbFlexWireOut, "Adjusts the FlexWire Out Volume");
             this.tbFlexWireOut.Value = 95;
             this.tbFlexWireOut.Scroll += new System.EventHandler(this.tbFlexWireOut_Scroll);
-            // 
-            // lblPhones
-            // 
-            this.lblPhones.Image = null;
-            this.lblPhones.Location = new System.Drawing.Point(16, 24);
-            this.lblPhones.Name = "lblPhones";
-            this.lblPhones.Size = new System.Drawing.Size(56, 32);
-            this.lblPhones.TabIndex = 16;
-            this.lblPhones.Text = "Phones";
-            this.lblPhones.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // chkPhonesSel
             // 
@@ -245,22 +197,6 @@ namespace PowerSDR
             this.chkOutputMuteAll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.chkOutputMuteAll, "Mute All Output Lines");
             this.chkOutputMuteAll.CheckedChanged += new System.EventHandler(this.chkOutputMuteAll_CheckedChanged);
-            // 
-            // grpInput
-            // 
-            this.grpInput.Controls.Add(this.chkInputMuteAll);
-            this.grpInput.Controls.Add(this.lblFlexWireIn);
-            this.grpInput.Controls.Add(this.chkFlexWireInSel);
-            this.grpInput.Controls.Add(this.tbFlexWireIn);
-            this.grpInput.Controls.Add(this.lblMic);
-            this.grpInput.Controls.Add(this.chkMicSel);
-            this.grpInput.Controls.Add(this.tbMic);
-            this.grpInput.Location = new System.Drawing.Point(8, 8);
-            this.grpInput.Name = "grpInput";
-            this.grpInput.Size = new System.Drawing.Size(120, 216);
-            this.grpInput.TabIndex = 2;
-            this.grpInput.TabStop = false;
-            this.grpInput.Text = "Input";
             // 
             // chkInputMuteAll
             // 
@@ -349,6 +285,70 @@ namespace PowerSDR
             this.tbMic.Value = 60;
             this.tbMic.Scroll += new System.EventHandler(this.tbMic_Scroll);
             // 
+            // btnCodecDump
+            // 
+            this.btnCodecDump.Image = null;
+            this.btnCodecDump.Location = new System.Drawing.Point(76, -4);
+            this.btnCodecDump.Name = "btnCodecDump";
+            this.btnCodecDump.Size = new System.Drawing.Size(75, 23);
+            this.btnCodecDump.TabIndex = 4;
+            this.btnCodecDump.Text = "Dump";
+            this.btnCodecDump.UseVisualStyleBackColor = true;
+            this.btnCodecDump.Visible = false;
+            this.btnCodecDump.Click += new System.EventHandler(this.btnCodecDump_Click);
+            // 
+            // grpOutput
+            // 
+            this.grpOutput.Controls.Add(this.lblFlexWireOut);
+            this.grpOutput.Controls.Add(this.chkFlexWireOutSel);
+            this.grpOutput.Controls.Add(this.tbFlexWireOut);
+            this.grpOutput.Controls.Add(this.lblPhones);
+            this.grpOutput.Controls.Add(this.chkPhonesSel);
+            this.grpOutput.Controls.Add(this.tbPhones);
+            this.grpOutput.Controls.Add(this.chkOutputMuteAll);
+            this.grpOutput.Location = new System.Drawing.Point(136, 8);
+            this.grpOutput.Name = "grpOutput";
+            this.grpOutput.Size = new System.Drawing.Size(137, 216);
+            this.grpOutput.TabIndex = 3;
+            this.grpOutput.TabStop = false;
+            this.grpOutput.Text = "Output";
+            // 
+            // lblFlexWireOut
+            // 
+            this.lblFlexWireOut.Image = null;
+            this.lblFlexWireOut.Location = new System.Drawing.Point(78, 24);
+            this.lblFlexWireOut.Name = "lblFlexWireOut";
+            this.lblFlexWireOut.Size = new System.Drawing.Size(49, 32);
+            this.lblFlexWireOut.TabIndex = 22;
+            this.lblFlexWireOut.Text = "FlexWire Out";
+            this.lblFlexWireOut.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lblPhones
+            // 
+            this.lblPhones.Image = null;
+            this.lblPhones.Location = new System.Drawing.Point(16, 24);
+            this.lblPhones.Name = "lblPhones";
+            this.lblPhones.Size = new System.Drawing.Size(56, 32);
+            this.lblPhones.TabIndex = 16;
+            this.lblPhones.Text = "Phones";
+            this.lblPhones.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // grpInput
+            // 
+            this.grpInput.Controls.Add(this.chkInputMuteAll);
+            this.grpInput.Controls.Add(this.lblFlexWireIn);
+            this.grpInput.Controls.Add(this.chkFlexWireInSel);
+            this.grpInput.Controls.Add(this.tbFlexWireIn);
+            this.grpInput.Controls.Add(this.lblMic);
+            this.grpInput.Controls.Add(this.chkMicSel);
+            this.grpInput.Controls.Add(this.tbMic);
+            this.grpInput.Location = new System.Drawing.Point(8, 8);
+            this.grpInput.Name = "grpInput";
+            this.grpInput.Size = new System.Drawing.Size(120, 216);
+            this.grpInput.TabIndex = 2;
+            this.grpInput.TabStop = false;
+            this.grpInput.Text = "Input";
+            // 
             // FLEX1500MixerForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -362,14 +362,14 @@ namespace PowerSDR
             this.Text = "FLEX-1500 Audio Mixer";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.FLEX1500MixerForm_Closing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FLEX1500MixerForm_KeyDown);
-            this.grpOutput.ResumeLayout(false);
-            this.grpOutput.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPhones)).EndInit();
-            this.grpInput.ResumeLayout(false);
-            this.grpInput.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).EndInit();
+            this.grpOutput.ResumeLayout(false);
+            this.grpOutput.PerformLayout();
+            this.grpInput.ResumeLayout(false);
+            this.grpInput.PerformLayout();
             this.ResumeLayout(false);
 
 		}

@@ -406,9 +406,11 @@ namespace PowerSDR
 		unsafe private static void *resampPtrIn_l;
 		unsafe private static void *resampPtrIn_r;
 		unsafe private static void *resampPtrOut_l;
-		unsafe private static void *resampPtrOut_r;
+        unsafe private static void *resampPtrOut_r;
 
-		private static bool vac_resample = false;
+        unsafe private static void* resampPtrOut_T;  // ke9ns add
+
+        private static bool vac_resample = false;
 		private static bool vac_combine_input = false;
 		public static bool VACCombineInput
 		{
@@ -2212,6 +2214,25 @@ namespace PowerSDR
                         }
                     }
                 }
+
+                //--------------------------------------------------------------
+                // ke9ns add  comes here every 42msec @ 48kSR with 2048 Buffer size
+                if (console.BeaconSigAvg == true)
+                {
+
+
+                    fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame
+                    {
+                         Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
+                      
+                    }
+                  
+                        console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+                        console.WWVReady = true;
+                        console.WWV_Count = 0;
+         
+
+                } //   if (console.BeaconSigAvg == true)
 
 
                 //=========================================================================================
@@ -4289,14 +4310,49 @@ namespace PowerSDR
             // ke9ns add  comes here every 10msec @ 192kSR, 21msec @ 96kSR, 42msec @ 48kSR with 2048 Buffer size
             if (console.BeaconSigAvg == true)
             {
-                fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame
+
+         
+
+                fixed (float* WWVP = &console.WWV_data[console.WWVframeCount]) // 2048 readings per frame
                 {
-                    Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
+                      Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
+        
                 }
 
-                console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
-                console.WWVReady = true;
-    
+
+                if (console.SampleRate1 == 192000) 
+                {
+                   
+                    if (console.WWV_Count == 5) 
+                    {
+                      
+                        console.WWVTone = console.Goertzel(console.WWV_data, 0, console.WWVframeCount); // determine the magnitude of the 100hz TONE in the sample
+
+                        console.WWVframeCount = 0;
+                        console.WWVReady = true;
+                        console.WWV_Count = 0;
+                    
+                    }
+                   else
+                    {
+                        // console.WWV_Count = frameCount;  // double up the 192kSR so you get 20msec of data
+                        console.WWV_Count++;
+                        console.WWVframeCount = (frameCount * console.WWV_Count);  // double up the 192kSR so you get 20msec of data
+
+
+                    }
+                }
+                else // if SR !=192k
+                {
+               
+                
+                    console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+                    console.WWVReady = true;
+                    console.WWV_Count = 0;
+                    console.WWVframeCount = 0;
+
+               }
+
 
             } //   if (console.BeaconSigAvg == true)
             //-------------------------------------------------------------------------------------
@@ -4376,7 +4432,7 @@ namespace PowerSDR
 
             if ( (vac_enabled) && (!vac_output_iq)  && (rb_vacIN_l != null) && (rb_vacIN_r != null) && (rb_vacOUT_l != null) && (rb_vacOUT_r != null) )
 			{
-                Debug.WriteLine("VAC TESTING ENTER");
+              //  Debug.WriteLine("VAC TESTING ENTER");
 
                 if ((!localmox))
               	{
@@ -4389,9 +4445,10 @@ namespace PowerSDR
                    // }
                    // else
                    // {
-                        ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
+                        ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale); // ke9ns input is out1  output is out4
                         ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
-                    Debug.WriteLine("VAC TESTING1");
+
+                 //   Debug.WriteLine("VAC TESTING1");
                     // }
                 }
                 else if ( (console.MuteRX1OnVFOBTX == false))
@@ -4399,7 +4456,7 @@ namespace PowerSDR
                     ScaleBuffer(out_l1, out_l4, frameCount, (float)vac_rx_scale);
                     ScaleBuffer(out_r1, out_r4, frameCount, (float)vac_rx_scale);
 
-                    Debug.WriteLine("VAC TESTING2");
+                  //  Debug.WriteLine("VAC TESTING2");
                 }
                 else if(mon)
 				{
@@ -4437,7 +4494,7 @@ namespace PowerSDR
 						vac_rb_reset = true;
 					}
 				} 
-				else 
+				else   // ke9ns do below if the sample rates of internal and VAC1 dont match
 				{
 					if (vac_stereo)
 					{
@@ -4462,9 +4519,9 @@ namespace PowerSDR
 								}
 							}
 					}
-					else 
+					else  // ke9ns NOT VAC1 STEREO and need a sample rate conversion
 					{
-						fixed(float *res_outl_ptr = &(res_outl[0]))
+						fixed(float *res_outl_ptr = &(res_outl[0]))                                         // ke9ns dont allow garbage collection to move any of this around
 						{
 							int outsamps;
 							DttSP.DoResamplerF(out_l4, res_outl_ptr, frameCount, &outsamps, resampPtrOut_l);
@@ -5867,22 +5924,21 @@ namespace PowerSDR
 				if(res_inl == null) res_inl  = new float [4*65536];
 				if(res_inr == null) res_inr  = new float [4*65536];
 
-                if (resampPtrIn_l != null)
-                    DttSP.DelResamplerF(resampPtrIn_l);
+                if (resampPtrIn_l != null)  DttSP.DelResamplerF(resampPtrIn_l);
                 resampPtrIn_l = DttSP.NewResamplerF(sample_rate2, sample_rate1);
 
-                if (resampPtrIn_r != null)
-                    DttSP.DelResamplerF(resampPtrIn_r);
+                if (resampPtrIn_r != null)   DttSP.DelResamplerF(resampPtrIn_r);
                 resampPtrIn_r = DttSP.NewResamplerF(sample_rate2, sample_rate1);
 
-                if (resampPtrOut_l != null)
-                    DttSP.DelResamplerF(resampPtrOut_l);
+                if (resampPtrOut_l != null)  DttSP.DelResamplerF(resampPtrOut_l);
                 resampPtrOut_l = DttSP.NewResamplerF(sample_rate1, sample_rate2);
 
-                if (resampPtrOut_r != null)
-                    DttSP.DelResamplerF(resampPtrOut_r);
+                if (resampPtrOut_r != null) DttSP.DelResamplerF(resampPtrOut_r);
 				resampPtrOut_r = DttSP.NewResamplerF(sample_rate1,sample_rate2);
-			}
+
+                if (resampPtrOut_T != null) DttSP.DelResamplerF(resampPtrOut_T);  // ke9ns add
+                resampPtrOut_T = DttSP.NewResamplerF(sample_rate1, sample_rate2); // ke9ns add
+            }
 			else
 			{
 				vac_resample = false;
@@ -5998,7 +6054,13 @@ namespace PowerSDR
                 resampPtrOut_r = null;
             }
 
-			Win32.DestroyCriticalSection(cs_vac);
+            if (resampPtrOut_T != null)  // ke9ns add
+            {
+                DttSP.DelResamplerF(resampPtrOut_T);
+                resampPtrOut_T = null;
+            }
+
+            Win32.DestroyCriticalSection(cs_vac);
 		}
 
         unsafe private static void CleanUpVAC2()

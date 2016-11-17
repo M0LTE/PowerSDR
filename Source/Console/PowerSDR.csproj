@@ -620,6 +620,8 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="star.png" />
+    <None Include="star-256.png" />
     <EmbeddedResource Include="DJConsoleUI\DJConsoleSelect.resx">
       <DependentUpon>DJConsoleSelect.cs</DependentUpon>
     </EmbeddedResource>
@@ -632,7 +634,6 @@
     <EmbeddedResource Include="DJConsoleUI\Setup_MP3LE.resx">
       <DependentUpon>Setup_MP3LE.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\s-meter-collins3.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <Content Include="libmp3lame.32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -640,12 +641,12 @@
     <Content Include="libmp3lame.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Resources\star.png" />
+    <EmbeddedResource Include="Resources\met3.jpg" />
     <Content Include="Scripts\json-serialize.js" />
     <Content Include="Scripts\json-serialize.min.js" />
     <EmbeddedResource Include="Resources\picD1.png" />
     <EmbeddedResource Include="Resources\sun.png" />
-    <EmbeddedResource Include="Resources\met3.jpg" />
-    <EmbeddedResource Include="MET3.jpg" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
       <SubType>Designer</SubType>

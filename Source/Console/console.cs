@@ -606,7 +606,11 @@ namespace PowerSDR
 
         private TextBoxTS txtNOAA2;    // ke9ns add for space weather on main console screen
         private TextBoxTS txtNOAA;    // ke9ns add for space weather on main console screen
-
+        private LabelTS labelTS2;
+        private LabelTS labelTS1;
+        public NumericUpDownTS udTXFilterLow;
+        public NumericUpDownTS udTXFilterHigh;
+        public CheckBoxTS chkBoxMuteSpk;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -636,7 +640,7 @@ namespace PowerSDR
         public static Stream meter_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met3.jpg");
         // Stream myStream = myAssembly.GetManifestResourceStream("PowerSDR.Resources.met4.jpg");
 
-        public static Stream meter1_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.s-meter-collins3.png");
+     //   public static Stream meter1_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.s-meter-collins3.png");
 
         //==================================================================================================
 
@@ -2752,6 +2756,9 @@ namespace PowerSDR
             this.txtNOAA = new System.Windows.Forms.TextBoxTS();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
             this.lblDisplayPan = new System.Windows.Forms.LabelTS();
+            this.udTXFilterLow = new System.Windows.Forms.NumericUpDownTS();
+            this.udTXFilterHigh = new System.Windows.Forms.NumericUpDownTS();
+            this.chkBoxMuteSpk = new System.Windows.Forms.CheckBoxTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -2814,6 +2821,8 @@ namespace PowerSDR
             this.lblCWBreakInDelay = new System.Windows.Forms.LabelTS();
             this.lblCWPitchFreq = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
+            this.labelTS2 = new System.Windows.Forms.LabelTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.ptbMic = new PowerSDR.PrettyTrackBar();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
             this.lblNoiseGateVal = new System.Windows.Forms.LabelTS();
@@ -2961,6 +2970,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
@@ -3144,6 +3155,7 @@ namespace PowerSDR
             this.chkMUT.Name = "chkMUT";
             this.toolTip1.SetToolTip(this.chkMUT, resources.GetString("chkMUT.ToolTip"));
             this.chkMUT.CheckedChanged += new System.EventHandler(this.chkMUT_CheckedChanged);
+            this.chkMUT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkMUT_MouseDown);
             // 
             // chkMOX
             // 
@@ -4465,6 +4477,7 @@ namespace PowerSDR
             this.txtWheelTune.Name = "txtWheelTune";
             this.txtWheelTune.ReadOnly = true;
             this.toolTip1.SetToolTip(this.txtWheelTune, resources.GetString("txtWheelTune.ToolTip"));
+            this.txtWheelTune.TextChanged += new System.EventHandler(this.txtWheelTune_TextChanged);
             this.txtWheelTune.GotFocus += new System.EventHandler(this.HideFocus);
             this.txtWheelTune.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WheelTune_MouseDown);
             // 
@@ -5469,6 +5482,7 @@ namespace PowerSDR
             this.txtNOAA.Name = "txtNOAA";
             this.txtNOAA.ReadOnly = true;
             this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
+            this.txtNOAA.TextChanged += new System.EventHandler(this.txtNOAA_TextChanged);
             this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
             // 
             // lblDisplayZoom
@@ -5486,6 +5500,71 @@ namespace PowerSDR
             this.lblDisplayPan.Name = "lblDisplayPan";
             this.toolTip1.SetToolTip(this.lblDisplayPan, resources.GetString("lblDisplayPan.ToolTip"));
             this.lblDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayPan_MouseDown);
+            // 
+            // udTXFilterLow
+            // 
+            this.udTXFilterLow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udTXFilterLow, "udTXFilterLow");
+            this.udTXFilterLow.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.udTXFilterLow.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTXFilterLow.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXFilterLow.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXFilterLow.Name = "udTXFilterLow";
+            this.toolTip1.SetToolTip(this.udTXFilterLow, resources.GetString("udTXFilterLow.ToolTip"));
+            this.udTXFilterLow.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXFilterLow.ValueChanged += new System.EventHandler(this.udTXFilterLow_ValueChanged);
+            // 
+            // udTXFilterHigh
+            // 
+            this.udTXFilterHigh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            resources.ApplyResources(this.udTXFilterHigh, "udTXFilterHigh");
+            this.udTXFilterHigh.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.udTXFilterHigh.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTXFilterHigh.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udTXFilterHigh.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXFilterHigh.Name = "udTXFilterHigh";
+            this.toolTip1.SetToolTip(this.udTXFilterHigh, resources.GetString("udTXFilterHigh.ToolTip"));
+            this.udTXFilterHigh.Value = new decimal(new int[] {
+            6000,
+            0,
+            0,
+            0});
+            this.udTXFilterHigh.ValueChanged += new System.EventHandler(this.udTXFilterHigh_ValueChanged);
+            // 
+            // chkBoxMuteSpk
+            // 
+            resources.ApplyResources(this.chkBoxMuteSpk, "chkBoxMuteSpk");
+            this.chkBoxMuteSpk.Name = "chkBoxMuteSpk";
+            this.toolTip1.SetToolTip(this.chkBoxMuteSpk, resources.GetString("chkBoxMuteSpk.ToolTip"));
+            this.chkBoxMuteSpk.CheckedChanged += new System.EventHandler(this.chkBoxMuteSpk_CheckedChanged);
             // 
             // timer_clock
             // 
@@ -5848,6 +5927,7 @@ namespace PowerSDR
             this.panelOptions.Controls.Add(this.chkTUN);
             this.panelOptions.Controls.Add(this.chkX2TR);
             this.panelOptions.Controls.Add(this.comboTuneMode);
+            this.panelOptions.Controls.Add(this.chkBoxMuteSpk);
             this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelOptions.Name = "panelOptions";
             // 
@@ -6006,6 +6086,10 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.panelModeSpecificPhone, "panelModeSpecificPhone");
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
+            this.panelModeSpecificPhone.Controls.Add(this.labelTS2);
+            this.panelModeSpecificPhone.Controls.Add(this.labelTS1);
+            this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
+            this.panelModeSpecificPhone.Controls.Add(this.udTXFilterHigh);
             this.panelModeSpecificPhone.Controls.Add(this.ptbMic);
             this.panelModeSpecificPhone.Controls.Add(this.picNoiseGate);
             this.panelModeSpecificPhone.Controls.Add(this.lblNoiseGateVal);
@@ -6029,6 +6113,18 @@ namespace PowerSDR
             this.panelModeSpecificPhone.Controls.Add(this.chkVOX);
             this.panelModeSpecificPhone.Controls.Add(this.chkNoiseGate);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
+            // 
+            // labelTS2
+            // 
+            this.labelTS2.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.labelTS2, "labelTS2");
+            this.labelTS2.Name = "labelTS2";
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.labelTS1, "labelTS1");
+            this.labelTS1.Name = "labelTS1";
             // 
             // ptbMic
             // 
@@ -7332,6 +7428,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Meter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
@@ -7933,7 +8031,11 @@ namespace PowerSDR
 
             tune_step_index = 2;
 
-			meter_text_history = new float[multimeter_text_peak_samples];
+
+          //  setupForm.tune_step_index2 = 2; // ke9ns add
+             
+
+            meter_text_history = new float[multimeter_text_peak_samples];
 
 			current_meter_data = -200.0f;
 
@@ -8196,7 +8298,12 @@ namespace PowerSDR
 
 			tune_step_index--;					// Setup wheel tuning
 			ChangeTuneStepUp();
-			UpdateDisplayOffsets();
+
+            setupForm.tune_step_index2--;   // ke9ns add
+            setupForm.ChangeTuneStepUp2(); // ke9ns add
+
+
+            UpdateDisplayOffsets();
 
 			setupForm.initCATandPTTprops();   // wjt added -- get console props setup for cat and ptt 
 			if ( CmdLineArgs != null ) 
@@ -8384,6 +8491,8 @@ namespace PowerSDR
             // pages on this form of the following types: CheckBox, ComboBox,
             // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
 
+           
+
             string s;
 			chkPower.Checked = false;       // turn off the power first
 
@@ -8423,7 +8532,8 @@ namespace PowerSDR
             writer2.Write((byte)PAON);                           // temp/volts on/off console display
             writer2.Write((byte)noaaON);                          // space weather console display
 
-            
+            writer2.Write((byte)setupForm.tune_step_index2);      // save Powermate knob index
+
             writer2.Write("end");
 
             //  writer2.Write(callsign);                  // callsign test
@@ -8994,9 +9104,11 @@ namespace PowerSDR
 			/*for(int i=0; i<32; i++)
 				a.Add("fwc_att_offset["+i.ToString()+"]/"+fwc_att_offset[i].ToString());*/
 
-			a.Add("wheel_tune_index/"+tune_step_index.ToString());		// Save wheel tune value
+			a.Add("wheel_tune_index/"+tune_step_index.ToString());      // Save wheel tune value
 
-			a.Add("vfob_dsp_mode/"+((int)vfob_dsp_mode).ToString());	// Save VFO B values
+          
+
+            a.Add("vfob_dsp_mode/"+((int)vfob_dsp_mode).ToString());	// Save VFO B values
 			a.Add("vfob_filter/"+((int)vfob_filter).ToString());
 			
 			a.Add("console_top/"+this.Top.ToString());		            // save form positions
@@ -9082,6 +9194,8 @@ namespace PowerSDR
                 writer2.Write((byte)PAON);                           // temp/volts on/off console display
                 writer2.Write((byte)noaaON);                          // space weather console display
 
+                writer2.Write((byte)setupForm.tune_step_index2);      // save Powermate knob index
+
                 writer2.Write("end");
 
 
@@ -9117,6 +9231,19 @@ namespace PowerSDR
 
                 PAON = reader2.ReadByte();                                       // temp/volt on/off display
                 noaaON = reader2.ReadByte();                                // space weather console display
+
+                try
+                {
+                    setupForm.tune_step_index2 = reader2.ReadByte();            // Powermate knob index
+                }
+                catch(Exception)
+                {
+                    setupForm.tune_step_index2 = 2;
+                    setupForm.tune_step_index2--;   // ke9ns add
+                    setupForm.ChangeTuneStepUp2(); // ke9ns add
+
+
+                }
 
                 reader2.Close();    // close  file
                 stream2.Close();   // close stream
@@ -13060,11 +13187,29 @@ namespace PowerSDR
 
             
             tempVFOAFreq = VFOAFreq; // ke9ns add  CTUN operation changed freq so update temp value
-           
+
+            // ke9ns add for VOACAP
+            if ((SpotForm != null) && (SpotForm.checkBoxMUF.Checked == true))
+            {
+
+                if ((int)(Display.VFOA / 1e6) != last_MHZ)
+                {
+                    last_MHZ = (int)VFOAFreq;
+                    Debug.WriteLine("CONSOLE HERE=");
+
+                    SpotForm.VOACAP_CHECK();
+                }
+                else Debug.WriteLine("1 HERE= " + last_MHZ + " , " + (int)VFOAFreq);
+
+
+            } // ke9ns voacap
 
         } // setband
 
-		private void ChangeTuneStepUp()
+
+        int last_MHZ = 0; // ke9ns 
+
+        private void ChangeTuneStepUp()
 		{
 			tune_step_index = (tune_step_index+1) % tune_step_list.Count;
 			txtWheelTune.Text = tune_step_list[tune_step_index].Name;
@@ -18907,11 +19052,13 @@ namespace PowerSDR
             UpdateDisplay(); // force a redraw of the picDisplay since you have new freq edges based on new zoom level
 
 
+         
+
           //  CTUN3 = 0;
 
         } //CalcDisplayFreq()
 
-
+       
 
         private void UpdateRXDisplayVars(int l, int h)
 		{
@@ -19503,6 +19650,14 @@ namespace PowerSDR
         {
             get { return tune_step_list[tune_step_index].StepHz; }
         }
+
+        //==============================================================
+        // ke9ns add for PowerMate
+        public int CurrentTuneStepHz2
+        {
+            get { return tune_step_list[setupForm.tune_step_index2].StepHz; }
+        }
+
 
         public double CurrentTuneStepMHz
         {
@@ -21101,7 +21256,7 @@ namespace PowerSDR
             //RX1Filter = Filter.F5;						// set filter to 6600Hz
             RX1Filter = Filter.F10;							// set filter to 2400Hz
 
-            VFOAFreq = freq;								// set frequency to passed value
+            VFOAFreq = freq;								// set frequency to passed value (in mhz  10.000000)
 
             progress.SetPercent(0.0f);
             
@@ -25214,7 +25369,7 @@ namespace PowerSDR
             set { limit_slew = value; }
         }
 
-        private List<TuneStep> tune_step_list;				// A list of available tuning steps
+        public List<TuneStep> tune_step_list;				// A list of available tuning steps
         public List<TuneStep> TuneStepList
         {
             get { return tune_step_list; }
@@ -26360,7 +26515,8 @@ namespace PowerSDR
 		}
 
 		private FWCAnt[] tx_ant_by_band;
-		public void SetTXAnt(Band b, FWCAnt ant)
+
+		public void SetTXAnt(Band b, FWCAnt ant)   // b = comboband text from expertmode, ant is the TX ant
 		{
 			switch(current_ant_mode)
 			{
@@ -26369,8 +26525,12 @@ namespace PowerSDR
 					break;
 				case AntMode.Expert:
 					if(initializing) return;
-					tx_ant_by_band[(int)b] = ant;
-					if(tx_band == b) TXAnt = ant;
+
+					tx_ant_by_band[(int)b] = ant; // ke9ns set to ant selected in the antform
+
+			//ke9ns remove		if(tx_band == b)
+                        TXAnt = ant; // ke9ns causes problems for openned radio in expert mode.
+
 					break;
 			}
 		}
@@ -26856,7 +27016,8 @@ namespace PowerSDR
 				if(old != value || tx_ant_6m_reset || initializing || tx_cal)
 				{
 					if(tx_ant_6m_reset) tx_ant_6m_reset = false;
-					switch(tx_ant)
+
+                    switch (tx_ant)
 					{
 						case FWCAnt.ANT1:
 							lblAntTX.Text = "TX: ANT1";
@@ -31864,6 +32025,7 @@ namespace PowerSDR
                                 if (tx_xvtr_index >= 0)  band = (int)Band.VHF0 + tx_xvtr_index;
 
                                 TXAnt = tx_ant_by_band[band];
+
                                 FWCAmpTX1 = tx1_by_band[band];
                                 FWCAmpTX2 = tx2_by_band[band];
                                 FWCAmpTX3 = tx3_by_band[band];
@@ -32099,7 +32261,11 @@ namespace PowerSDR
        
         public Mutex WWV_mutex = new Mutex();                // ke9ns add 
 
-        public  float[] WWV_data = new float[2048];          // ke9ns add    used to get out_l_ptr1 audio stream in 2048 pieces at a time
+        public float[] WWV_data = new float[16384];          // ke9ns add    used to get out_l_ptr1 audio stream in 2048 pieces at a time
+
+        public int WWVframeCount = 0;
+
+        public int WWV_Count = 0;
 
         public int WWVTone = 0;                             // ke9ns add   Magnetude of the Tone received in audio.cs routine
 
@@ -46172,36 +46338,203 @@ namespace PowerSDR
         } // comboPreamp_SelectedIndexChanged
 
 
-        //=========================================================================================
+      
+         //=========================================================================================
         // ke9ns   MUTE button (original 2.7.2 not muting VAC on 1500 and 3000, but works on 5000)
         //=========================================================================================
         private void chkMUT_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(chkMUT.Checked)
-				chkMUT.BackColor = button_selected_color;
-			else
-				chkMUT.BackColor = SystemColors.Control;
-
-			if(num_channels == 2)
-			{
-				//if(current_model == Model.SDR1000)  Hdw.MuteRelay = chkMUT.Checked;
-			}
-
-            if (chkMUT.Checked)
+            if (chkBoxMuteSpk.Checked == true) //  ke9ns add s indicates muting just spk and not headphones
             {
-                Audio.MonitorVolume = 0.0;
-               
+                chkMUT.Text = "MUTs";
             }
             else
             {
-                ptbAF_Scroll(this, EventArgs.Empty);
+                chkMUT.Text = "MUT";
+            }
+
+            if (chkMUT.Checked)
+            {
+                chkMUT.BackColor = button_selected_color;
                 
             }
+            else
+            {
+                chkMUT.BackColor = SystemColors.Control;
+            }
+
+            //	if(num_channels == 2)
+            //		{
+            //if(current_model == Model.SDR1000)  Hdw.MuteRelay = chkMUT.Checked;
+            //	}
+
+       
+
+                if (fwc_init || hid_init)  //  ke9ns add
+               {
+                    switch (current_model)
+                    {
+                        case Model.FLEX5000:
+                            if (fwcMixForm == null || fwcMixForm.IsDisposed) fwcMixForm = new FWCMixForm(this);
+
+                     
+                            if (chkMUT.Checked)
+                            {
+                                if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                                {
+                                    Audio.MonitorVolume = 0.0;
+                                }
+                                else
+                                {
+                                fwcMixForm.chkExtSpkrSel.Checked = false;
+                                //   fwcMixForm.chkLineOutRCASel.Checked = false;
+                            }
+
+                            }
+                            else
+                            {
+                                if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                                {
+
+                                  ptbAF_Scroll(this, EventArgs.Empty);
+                                }
+                                else
+                                {
+                                 fwcMixForm.chkExtSpkrSel.Checked = true;
+                              
+                                //  fwcMixForm.chkLineOutRCASel.Checked = true;
+                            }
+
+                        }
+
+                            break;
+                        case Model.FLEX3000:
+                            if (flex3000MixerForm == null || flex3000MixerForm.IsDisposed) flex3000MixerForm = new FLEX3000MixerForm(this);
+
+                        if (chkMUT.Checked)
+                        {
+                            if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                            {
+                                Audio.MonitorVolume = 0.0;
+                            }
+                            else
+                            {
+                                flex3000MixerForm.chkExtSpkrSel.Checked = false;
+                              //  flex3000MixerForm.chkLineOutDB9Sel.Checked = false;
+
+                            }
+
+                        }
+                        else
+                        {
+                            if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                            {
+                                ptbAF_Scroll(this, EventArgs.Empty);
+                            }
+                            else
+                            {
+                                flex3000MixerForm.chkExtSpkrSel.Checked = true;
+                                // flex3000MixerForm.chkLineOutDB9Sel.Checked = true;
+                            }
+
+                        }
+
+                        break;
+                        case Model.FLEX1500:
+                            if (flex1500MixerForm == null || flex1500MixerForm.IsDisposed) flex1500MixerForm = new FLEX1500MixerForm(this);
+
+                        if (chkMUT.Checked)
+                        {
+                            if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                            {
+                                Audio.MonitorVolume = 0.0;
+                            }
+                            else
+                            {
+                                flex1500MixerForm.chkFlexWireOutSel.Checked = false;
+
+                            }
+
+                        }
+                        else
+                        {
+                            if (chkBoxMuteSpk.Checked == false) // standard MUTE
+                            {
+                                ptbAF_Scroll(this, EventArgs.Empty);
+                            }
+                            else
+                            {
+                                flex1500MixerForm.chkFlexWireOutSel.Checked = true;
+
+                            }
+
+                        }
+
+
+                        break;
+                    }
+                }
+           
+
+
 
         } //chkMUT_CheckedChanged
 
+        //===============================================================
+        // ke9ns add to allow a right click on the MUT button to toggle between full MUTE and mute just spker
+        private void chkMUT_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(this);
+
+                //  setupForm.Show();
+                // setupForm.Focus();
+                //  setupForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                //  setupForm.tcSetup.SelectedIndex = 1; // select audio tab;
+                //  setupForm.tcAudio.SelectedIndex = 1; // select vac1 tab
+                //  setupForm.chkAudioIQtoVAC.Focus();
+
+                if (chkMUT.Checked == false)   // only toggle the special mute if MUT is OFF
+                {
+                    if (chkBoxMuteSpk.Checked == false) chkBoxMuteSpk.Checked = true;
+                    else chkBoxMuteSpk.Checked = false;
+                }
+
+            } // right click
+
+            if (chkBoxMuteSpk.Checked == true) //  ke9ns add s indicates muting just spk and not headphones
+            {
+                chkMUT.Text = "MUTs";
+            }
+            else
+            {
+                chkMUT.Text = "MUT";
+            }
+
+        } // chkMUT_MouseDown
 
 
+        //===============================================================
+        // ke9ns add to allow a right click on the MUT button to toggle between full MUTE and mute just spker
+        private void chkBoxMuteSpk_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkBoxMuteSpk.Checked == true) //  ke9ns add s indicates muting just spk and not headphones
+            {
+                chkMUT.Text = "MUTs";
+            }
+            else
+            {
+                chkMUT.Text = "MUT";
+            }
+
+        }
+
+        //===================================================================
 
         const float MAX_VU_POWER = 60.0f;
         static float[] vhf_power_map = { 0, 0.2f, 2.9f, 10.8f, 22.8f, 36.6f, 48.2f, 52.5f, 58.3f, 60.8f, 62.4f, 64.2f };
@@ -46462,12 +46795,25 @@ namespace PowerSDR
             {
                 if (chkMUT.Checked) // check if in MUTE mode
                 {
-                    Audio.MonitorVolume = 0.0;
+                    if (chkBoxMuteSpk.Checked == false) // ke9ns add chkMUT routine now check sor chkBoxMuteSpk option
+                    {
+                        Audio.MonitorVolume = 0.0;
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else if ((num_channels > 2) && (mox) && !chkMON.Checked)  // if TX and no MON enabled
                 {
-                    // monitor is muted
-                    Audio.MonitorVolume = 0.0;
+                    if (chkBoxMuteSpk.Checked == false) // ke9ns add chkMUT routine now check sor chkBoxMuteSpk option
+                    {
+                        Audio.MonitorVolume = 0.0;
+                    }
+                    else
+                    {
+
+                    }
                 }
                 else
                 {
@@ -46750,8 +47096,9 @@ namespace PowerSDR
                     chkMON.Checked = false;
                 }
                 moninit = 0; // only do 1 time
-            }
-       
+
+            } //  if (moninit == 1)
+
 
             if (Audio.MON_PRE == 0)  // ke9ns mod MON_PRE was 0 
             {
@@ -46827,8 +47174,6 @@ namespace PowerSDR
                   //      Hdw.MuteRelay = !chkMON.Checked;
                   //  }
 			    }
-
-
 
 
 
@@ -49000,7 +49345,7 @@ namespace PowerSDR
 
             FREQA = freq; // ke9ns used in S9 determining routine (in meters)
 
-            Display.VFOA = (long)(freq * 1e6);
+            Display.VFOA = (long)(freq * 1e6); // ke9ns in hz
 
             if (chkTUN.Checked && chkVFOATX.Checked && !chkVFOSplit.Checked)
             {
@@ -63082,15 +63427,31 @@ namespace PowerSDR
                         }
                         else
                         {
-                            if (tune_step_index >= 6)
+                            if (setupForm.chkBoxIND.Checked == true)
                             {
-                                tune_step_index = 3 % tune_step_list.Count;
-                                txtWheelTune.Text = tune_step_list[tune_step_index].Name;
+                                if (setupForm.tune_step_index2 >= 6)
+                                {
+                                    setupForm.tune_step_index2 = 3 % tune_step_list.Count;
+                                    setupForm.txtWheelTune2.Text = tune_step_list[setupForm.tune_step_index2].Name;
 
+                                }
+                                else
+                                {
+                                    setupForm.ChangeTuneStepUp2();
+                                }
                             }
-                            else 
+                            else
                             {
-                                ChangeTuneStepUp();
+                                if (tune_step_index >= 6)
+                                {
+                                    tune_step_index = 3 % tune_step_list.Count;
+                                    txtWheelTune.Text = tune_step_list[tune_step_index].Name;
+
+                                }
+                                else
+                                {
+                                    ChangeTuneStepUp();
+                                }
                             }
                         }
                     }
@@ -63178,7 +63539,7 @@ namespace PowerSDR
         } // CTUN1
 
         //================================================================================================
-        // PowerMate Griffin Knob rotation value event handler
+        // ke9ns add  PowerMate Griffin Knob rotation value event handler
         //================================================================================================
         public void OnRotateEvent(int value1)
         {
@@ -63214,7 +63575,26 @@ namespace PowerSDR
                     }
                     else
                     {
-                        Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+                        if (setupForm.chkBoxIND.Checked == true)
+                        {
+
+
+                            int num_steps = -1;
+
+                            if (vfo_char_width == 0) GetVFOCharWidth();
+
+                          
+                            int step = CurrentTuneStepHz2;  // ke9ns add
+
+                             
+                            VFOAFreq = SnapTune(VFOAFreq, step, num_steps);
+                      
+
+                        }
+                        else
+                        {
+                            Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, -120));
+                        }
                     }
                 }
                 else // value >= 0
@@ -63225,7 +63605,21 @@ namespace PowerSDR
                     }
                     else
                     {
-                        Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
+                        if (setupForm.chkBoxIND.Checked == true)
+                        {
+                            int num_steps = 1;
+
+                            if (vfo_char_width == 0) GetVFOCharWidth();
+                            
+                            int step = CurrentTuneStepHz2;  // ke9ns add
+                                              
+                            VFOAFreq = SnapTune(VFOAFreq, step, num_steps);
+                            
+                        }
+                        else
+                        {
+                            Console_MouseWheel(this, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 120));
+                        }
                     }
                 }
             } // CTUN false
@@ -63561,6 +63955,30 @@ namespace PowerSDR
             } 
 
         } //HttpServer
+
+        private void txtWheelTune_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtNOAA_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void udTXFilterHigh_ValueChanged(object sender, EventArgs e)
+        {
+            if (setupForm != null) setupForm.udTXFilterHigh.Value = udTXFilterHigh.Value;
+
+        }
+
+        private void udTXFilterLow_ValueChanged(object sender, EventArgs e)
+        {
+            if (setupForm != null) setupForm.udTXFilterLow.Value = udTXFilterLow.Value;
+        }
+
+       
+
 
         //=========================================================================================
         //=========================================================================================

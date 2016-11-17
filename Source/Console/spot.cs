@@ -108,6 +108,8 @@ namespace PowerSDR
         private static System.Reflection.Assembly myAssembly1 = System.Reflection.Assembly.GetExecutingAssembly();
         public static Stream sun_image = myAssembly1.GetManifestResourceStream("PowerSDR.Resources.sun.png");       // SUN
 
+        private static System.Reflection.Assembly myAssembly3 = System.Reflection.Assembly.GetExecutingAssembly();
+        public static Stream star_image = myAssembly3.GetManifestResourceStream("PowerSDR.Resources.star.png");      // star to indicate your transmitter based on your lat and long
 
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
@@ -173,6 +175,9 @@ namespace PowerSDR
         private IContainer components;
         private RadioButton checkBoxTone;
         private TextBox textBox2;
+        public CheckBoxTS checkBoxMUF;
+        public CheckBoxTS chkBoxAnt;
+        public TrackBarTS tbPanPower;
         public DSP dsp;
 
         #region Constructor and Destructor
@@ -184,7 +189,7 @@ namespace PowerSDR
 
           
 
-        Display.SpotForm = this;  // allows Display to see public data (not public static data)
+            Display.SpotForm = this;  // allows Display to see public data (not public static data)
             StackControl.SpotForm = this; // allows Stack to see public data from spot
                                           //  SwlControl.SpotForm = this; // allows swl to see public data from spot
 
@@ -286,6 +291,10 @@ namespace PowerSDR
             this.btnTime = new System.Windows.Forms.Button();
             this.checkBoxTone = new System.Windows.Forms.RadioButton();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbPanPower = new System.Windows.Forms.TrackBarTS();
+            this.chkBoxAnt = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxMUF = new System.Windows.Forms.CheckBoxTS();
             this.udDisplayWWV = new System.Windows.Forms.NumericUpDownTS();
             this.checkBoxWWV = new System.Windows.Forms.CheckBoxTS();
             this.numericUpDownTS1 = new System.Windows.Forms.NumericUpDownTS();
@@ -296,7 +305,6 @@ namespace PowerSDR
             this.udDisplayLat = new System.Windows.Forms.NumericUpDownTS();
             this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
-            this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxCW = new System.Windows.Forms.CheckBoxTS();
             this.chkMapBand = new System.Windows.Forms.CheckBoxTS();
@@ -314,6 +322,7 @@ namespace PowerSDR
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWWV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).BeginInit();
@@ -482,7 +491,7 @@ namespace PowerSDR
             // btnTrack
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTrack.Location = new System.Drawing.Point(273, 490);
+            this.btnTrack.Location = new System.Drawing.Point(249, 490);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
@@ -650,6 +659,63 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.textBox2, "Length of Tone in mSec\r\n");
             this.textBox2.Visible = false;
             // 
+            // tbPanPower
+            // 
+            this.tbPanPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbPanPower.AutoSize = false;
+            this.tbPanPower.Location = new System.Drawing.Point(343, 495);
+            this.tbPanPower.Maximum = 1500;
+            this.tbPanPower.Minimum = 1;
+            this.tbPanPower.Name = "tbPanPower";
+            this.tbPanPower.Size = new System.Drawing.Size(66, 18);
+            this.tbPanPower.TabIndex = 97;
+            this.tbPanPower.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbPanPower, "VOACAP: 400 Watts");
+            this.tbPanPower.Value = 400;
+            this.tbPanPower.Scroll += new System.EventHandler(this.tbPanPower_Scroll);
+            this.tbPanPower.MouseEnter += new System.EventHandler(this.tbPanPower_MouseEnter);
+            this.tbPanPower.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbPanPower_MouseUp);
+            // 
+            // chkBoxAnt
+            // 
+            this.chkBoxAnt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxAnt.Image = null;
+            this.chkBoxAnt.Location = new System.Drawing.Point(354, 468);
+            this.chkBoxAnt.Name = "chkBoxAnt";
+            this.chkBoxAnt.Size = new System.Drawing.Size(55, 24);
+            this.chkBoxAnt.TabIndex = 96;
+            this.chkBoxAnt.Text = "Beam";
+            this.toolTip1.SetToolTip(this.chkBoxAnt, "Check this box if your using a Beam Antenna instead of a Dipole\r\n\r\nUse VOACAP to " +
+        "map Signal Strength from your station, \r\nbased on your Lat & Long\r\n\r\nView using " +
+        "TRACK button\r\n\r\n");
+            this.chkBoxAnt.CheckedChanged += new System.EventHandler(this.chkBoxAnt_CheckedChanged);
+            // 
+            // chkBoxDIG
+            // 
+            this.chkBoxDIG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxDIG.Checked = true;
+            this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBoxDIG.Image = null;
+            this.chkBoxDIG.Location = new System.Drawing.Point(182, 472);
+            this.chkBoxDIG.Name = "chkBoxDIG";
+            this.chkBoxDIG.Size = new System.Drawing.Size(85, 24);
+            this.chkBoxDIG.TabIndex = 70;
+            this.chkBoxDIG.Text = "Spot Digital";
+            this.toolTip1.SetToolTip(this.chkBoxDIG, "Show Digital spots when checked (like RTTY, PSK, etc)\r\n");
+            // 
+            // checkBoxMUF
+            // 
+            this.checkBoxMUF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxMUF.Image = null;
+            this.checkBoxMUF.Location = new System.Drawing.Point(273, 468);
+            this.checkBoxMUF.Name = "checkBoxMUF";
+            this.checkBoxMUF.Size = new System.Drawing.Size(75, 24);
+            this.checkBoxMUF.TabIndex = 95;
+            this.checkBoxMUF.Text = "VOACAP";
+            this.toolTip1.SetToolTip(this.checkBoxMUF, "Use VOACAP to map Signal Strength from your station, \r\nbased on your Lat & Long\r\n" +
+        "\r\nView using TRACK button\r\n\r\n");
+            this.checkBoxMUF.CheckedChanged += new System.EventHandler(this.checkBoxMUF_CheckedChanged);
+            // 
             // udDisplayWWV
             // 
             this.udDisplayWWV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -672,9 +738,9 @@ namespace PowerSDR
             this.udDisplayWWV.Name = "udDisplayWWV";
             this.udDisplayWWV.Size = new System.Drawing.Size(39, 20);
             this.udDisplayWWV.TabIndex = 91;
-            this.toolTip1.SetToolTip(this.udDisplayWWV, "Check you Check the WWV Sync Box\r\nSelect at WWV station with an S9 signal.\r\nUsual" +
-        "ly 10mhz and 15mhz are the cleanest signals\r\n1=2.5mhz \r\n2=5.0mhz\r\n3=10.0mhz\r\n4=1" +
-        "5.0mhz\r\n\r\n");
+            this.toolTip1.SetToolTip(this.udDisplayWWV, "If you check the \"use WWV HF\" Box:\r\nSelect a WWV station with a stron non-fading " +
+        "signal.\r\nUsually 10mhz and 15mhz are the cleanest signals\r\n1=2.5mhz \r\n2=5.0mhz\r\n" +
+        "3=10.0mhz\r\n4=15.0mhz\r\n\r\n");
             this.udDisplayWWV.Value = new decimal(new int[] {
             3,
             0,
@@ -765,13 +831,13 @@ namespace PowerSDR
             // udDisplayLong
             // 
             this.udDisplayLong.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udDisplayLong.DecimalPlaces = 4;
+            this.udDisplayLong.DecimalPlaces = 2;
             this.udDisplayLong.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udDisplayLong.Location = new System.Drawing.Point(602, 547);
+            this.udDisplayLong.Location = new System.Drawing.Point(614, 547);
             this.udDisplayLong.Maximum = new decimal(new int[] {
             180,
             0,
@@ -783,7 +849,7 @@ namespace PowerSDR
             0,
             -2147483648});
             this.udDisplayLong.Name = "udDisplayLong";
-            this.udDisplayLong.Size = new System.Drawing.Size(74, 20);
+            this.udDisplayLong.Size = new System.Drawing.Size(62, 20);
             this.udDisplayLong.TabIndex = 80;
             this.toolTip1.SetToolTip(this.udDisplayLong, "Enter Longitude in deg (-180 to 180) for Beam Heading\r\n- for West of 0 GMT line\r\n" +
         "+ for East of 0 GMT line\r\n\r\nLeft Click on PowerSDR Display and Hit SHIFT key to " +
@@ -798,13 +864,13 @@ namespace PowerSDR
             // udDisplayLat
             // 
             this.udDisplayLat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.udDisplayLat.DecimalPlaces = 4;
+            this.udDisplayLat.DecimalPlaces = 2;
             this.udDisplayLat.Increment = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.udDisplayLat.Location = new System.Drawing.Point(525, 547);
+            this.udDisplayLat.Location = new System.Drawing.Point(538, 547);
             this.udDisplayLat.Maximum = new decimal(new int[] {
             90,
             0,
@@ -816,7 +882,7 @@ namespace PowerSDR
             0,
             -2147483648});
             this.udDisplayLat.Name = "udDisplayLat";
-            this.udDisplayLat.Size = new System.Drawing.Size(71, 20);
+            this.udDisplayLat.Size = new System.Drawing.Size(58, 20);
             this.udDisplayLat.TabIndex = 79;
             this.toolTip1.SetToolTip(this.udDisplayLat, "Enter Latitude in deg (90 to -90) for Beam Heading\r\n+ for Northern Hemisphere\r\n- " +
         "for Southern Hemisphere\r\n\r\nLeft Click on PowerSDR Display and Hit SHIFT key to \r" +
@@ -852,19 +918,6 @@ namespace PowerSDR
             this.chkBoxPan.Text = "Map just Pan";
             this.toolTip1.SetToolTip(this.chkBoxPan, "Show Country or Calls on Map for just the Panadapter freq you are viewing.\r\n");
             this.chkBoxPan.CheckedChanged += new System.EventHandler(this.chkBoxPan_CheckedChanged);
-            // 
-            // chkBoxDIG
-            // 
-            this.chkBoxDIG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxDIG.Checked = true;
-            this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkBoxDIG.Image = null;
-            this.chkBoxDIG.Location = new System.Drawing.Point(182, 472);
-            this.chkBoxDIG.Name = "chkBoxDIG";
-            this.chkBoxDIG.Size = new System.Drawing.Size(85, 24);
-            this.chkBoxDIG.TabIndex = 70;
-            this.chkBoxDIG.Text = "Spot Digital";
-            this.toolTip1.SetToolTip(this.chkBoxDIG, "Show Digital spots when checked (like RTTY, PSK, etc)\r\n");
             // 
             // chkBoxSSB
             // 
@@ -938,7 +991,7 @@ namespace PowerSDR
             this.chkPanMode.Checked = true;
             this.chkPanMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPanMode.Image = null;
-            this.chkPanMode.Location = new System.Drawing.Point(273, 461);
+            this.chkPanMode.Location = new System.Drawing.Point(273, 445);
             this.chkPanMode.Name = "chkPanMode";
             this.chkPanMode.Size = new System.Drawing.Size(148, 23);
             this.chkPanMode.TabIndex = 63;
@@ -953,7 +1006,7 @@ namespace PowerSDR
             this.chkGrayLine.Checked = true;
             this.chkGrayLine.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGrayLine.Image = null;
-            this.chkGrayLine.Location = new System.Drawing.Point(273, 438);
+            this.chkGrayLine.Location = new System.Drawing.Point(273, 426);
             this.chkGrayLine.Name = "chkGrayLine";
             this.chkGrayLine.Size = new System.Drawing.Size(105, 17);
             this.chkGrayLine.TabIndex = 61;
@@ -968,7 +1021,7 @@ namespace PowerSDR
             this.chkSUN.Checked = true;
             this.chkSUN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSUN.Image = null;
-            this.chkSUN.Location = new System.Drawing.Point(273, 410);
+            this.chkSUN.Location = new System.Drawing.Point(273, 401);
             this.chkSUN.Name = "chkSUN";
             this.chkSUN.Size = new System.Drawing.Size(92, 24);
             this.chkSUN.TabIndex = 60;
@@ -981,7 +1034,7 @@ namespace PowerSDR
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(522, 525);
+            this.label3.Location = new System.Drawing.Point(537, 525);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(139, 13);
             this.label3.TabIndex = 81;
@@ -1022,9 +1075,9 @@ namespace PowerSDR
             // 
             this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(11, 461);
+            this.chkBoxNA.Location = new System.Drawing.Point(12, 468);
             this.chkBoxNA.Name = "chkBoxNA";
-            this.chkBoxNA.Size = new System.Drawing.Size(165, 35);
+            this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
             this.chkBoxNA.TabIndex = 77;
             this.chkBoxNA.Text = "North American Spotters only";
             this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
@@ -1058,6 +1111,11 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(783, 578);
+            this.Controls.Add(this.btnTrack);
+            this.Controls.Add(this.tbPanPower);
+            this.Controls.Add(this.chkBoxAnt);
+            this.Controls.Add(this.chkBoxDIG);
+            this.Controls.Add(this.checkBoxMUF);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.checkBoxTone);
             this.Controls.Add(this.udDisplayWWV);
@@ -1081,7 +1139,6 @@ namespace PowerSDR
             this.Controls.Add(this.chkBoxMem);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chkBoxPan);
-            this.Controls.Add(this.chkBoxDIG);
             this.Controls.Add(this.chkBoxSSB);
             this.Controls.Add(this.chkBoxCW);
             this.Controls.Add(this.chkMapBand);
@@ -1089,7 +1146,6 @@ namespace PowerSDR
             this.Controls.Add(this.chkMapCall);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.chkPanMode);
-            this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.chkGrayLine);
             this.Controls.Add(this.chkSUN);
             this.Controls.Add(this.chkAlwaysOnTop);
@@ -1115,6 +1171,7 @@ namespace PowerSDR
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayWWV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLong)).EndInit();
@@ -1315,6 +1372,7 @@ namespace PowerSDR
 
 
         } // SWLbutton_Click
+
 
 
         // these are pulled from SWL2.csv file
@@ -4719,6 +4777,7 @@ namespace PowerSDR
 
         public static bool SUN = false; // true = on
         public static bool GRAYLINE = false; // true = on
+        public static bool MUF = false;  // true = on
 
         public static int suncounter = 0; // for space weather
         public static int SFI = 0;       // for Space weather
@@ -4879,6 +4938,10 @@ namespace PowerSDR
                     else GRAYLINE = false;
 
 
+                    if (checkBoxMUF.Checked == true) MUF = true; // activate display
+                    else MUF = false;
+
+
                     // Do a SUN, GRAYLINE, or DX country/callsign update
 
                     // Check for TIME CHANGE
@@ -4904,6 +4967,7 @@ namespace PowerSDR
                       
                         RX1Band_Last = console.RX1Band;
 
+                      
                         if ( (UTCNEW != UTCLAST2) || (Setup.DisplayGrayLineColor != GrayLine_Last) || (Map_Last == 1))
                         {
                             Debug.WriteLine("Update GrayLine=================");
@@ -4964,6 +5028,18 @@ namespace PowerSDR
                             int Sun_Width = Sun_Right - Sun_Left; //used by sun track routine
 
                             Sun_X = (int)(Sun_Left + (float)(Sun_Width * (1.0 - UTC100))); // position of SUN on equator based on time of day
+
+
+                            //-------------------------------------------------------------
+                            if ((MUF == true))
+                            {
+                                Debug.WriteLine("check voacap from sun tracker");
+
+                                VOACAP_CHECK(); // see if VOACAP map needs an update
+
+                            } // update MUF map
+
+                            //-------------------------------------------------------------
 
                             if ((GRAYLINE == true))
                             {
@@ -5387,6 +5463,60 @@ namespace PowerSDR
                         } // sun tracker enabled
 
 
+
+                        //---------------------------------------------------------------------------
+                        // MUF plot
+
+                        if (checkBoxMUF.Checked == true)
+                        {
+
+                            VOA_Color[0] = 70;
+
+                            Pen p5 = new Pen(Color.FromArgb(70, Color.Yellow), 1.0f); // dusk
+                            Font font7 = new Font("Ariel", 10.5f, FontStyle.Regular, GraphicsUnit.Pixel);  // ke9ns 
+
+                            //      g.DrawString("SDBW: " + VOA_S[y].ToString("D"), font7, grid_text_brush,VOA_X[x] , VOA_Y[y]);
+                           
+                            Image src1 = new Bitmap(star_image); // load up SUN image ( use PNG to allow transparent background)
+
+                            g.DrawImage(src1,VOA_MyX-6 , VOA_MyY-6, 12, 12); // draw star  of your station transmitter location based on input lat and long
+
+                            g.DrawString("VOACAP Propagation map", font7, grid_text_brush, Sun_Left , Sun_Top1 );
+
+                            for (int z = 1; z < 9; z++)  // go through each S unit S1 through S9
+                            {
+                                int q = 0;
+
+                               
+                                while (VOA_Y[z,q] != 0)
+                                {
+
+                                    if ((z == 1) || (z == 2)) g.FillEllipse(graybrush, VOA_X[z, q], VOA_Y[z, q], 1+z, 1+z);
+                                    else if ((z == 3) || (z == 4)) g.FillEllipse(orangebrush, VOA_X[z, q]-2, VOA_Y[z, q]-2, 1+z, 1+z);
+                                    else if ((z == 5) || (z == 6)) g.FillEllipse(yellowbrush, VOA_X[z, q]-2, VOA_Y[z, q]-2,  1+z, 1+ z);
+                                    else if ((z == 7) || (z == 8)) g.FillEllipse(greenbrush, VOA_X[z, q]-4, VOA_Y[z, q]-4,  8,  8);
+                                    else g.FillEllipse(graybrush, VOA_X[z, q]-4, VOA_Y[z, q]-4,  8,  8);
+
+
+                                //   g.DrawString(z.ToString("D"), font7, grid_text_brush, VOA_X[z, q], VOA_Y[z, q]);
+
+                                    q++;
+
+                                    //  g.DrawLine(p5, VOA_X[x-1], VOA_Y[y], VOA_X[x], VOA_Y[y]); // draw line between last 2 points
+
+                                } 
+
+                                //   Debug.WriteLine("VOAX: " + VOA_X[x] + ", VOALNG: " + VOA_LNG[x + (y * VOA_Ysize)] + "   VOAY: " + VOA_Y[y] + ", VOALat: " + VOA_LAT[y*VOA_Ysize]);
+
+
+                            } // for z (S readings)
+
+
+
+                        } // MUF PLOT
+
+
+
                         //---------------------------------------------------------------------------
                         if (GRAYLINE == true)
                         {
@@ -5402,8 +5532,16 @@ namespace PowerSDR
                                 // ke9ns dusk
                                 if (GrayLine_Pos3[ee] == 0) // not dusk on edges on screen
                                 {
-                                    if ((GrayLine_Pos1[ee, 0]) == 0 && (GrayLine_Pos1[ee, 1]== 0)) g.DrawLine(p4, Sun_Left, ee, Sun_Right, ee);
-                                    else  g.DrawLine(p4, GrayLine_Pos1[ee, 0], ee, GrayLine_Pos1[ee, 1], ee);
+                                    if ( (GrayLine_Pos1[ee, 0]) == 0 && (GrayLine_Pos1[ee, 1] == 0) &&
+                                        ( (ee < (Sun_Top1 + 100)) && (DateTime.UtcNow.DayOfYear > 270 ) || (ee > (Sun_Bot1 - 100)) && (DateTime.UtcNow.DayOfYear < 150))  
+                                       ) // if the line is empty but your on top in the winter then draw a line anyway
+                                    {
+                                        g.DrawLine(p4, Sun_Left, ee, Sun_Right, ee);
+                                    }
+                                    else
+                                    {
+                                        g.DrawLine(p4, GrayLine_Pos1[ee, 0], ee, GrayLine_Pos1[ee, 1], ee);    // draw line between the left and right sides (starting from the middle)
+                                    }
                                 
                                 }
                                 else if (GrayLine_Pos3[ee] == 1)
@@ -5424,8 +5562,16 @@ namespace PowerSDR
                                 // ke9ns dark
                                 if (GrayLine_Pos2[ee] == 0)  // not dark on edges on screen
                                 {
-                                   if ((GrayLine_Pos[ee, 0]) == 0 && (GrayLine_Pos[ee, 1] == 0)) g.DrawLine(p3, Sun_Left, ee, Sun_Right, ee);
-                                   else g.DrawLine(p3, GrayLine_Pos[ee, 0], ee, GrayLine_Pos[ee, 1], ee);
+                                    if ((GrayLine_Pos[ee, 0]) == 0 && (GrayLine_Pos[ee, 1] == 0) &&
+                                        ((ee < (Sun_Top1 + 100)) && (DateTime.UtcNow.DayOfYear > 270) || (ee > (Sun_Bot1 - 100)) && (DateTime.UtcNow.DayOfYear < 150))
+                                        )
+                                    {
+                                        g.DrawLine(p3, Sun_Left, ee, Sun_Right, ee);
+                                    }
+                                    else
+                                    {
+                                        g.DrawLine(p3, GrayLine_Pos[ee, 0], ee, GrayLine_Pos[ee, 1], ee);       // draw line between the left and right sides (starting from the middle)
+                                    }
                                  
                                 }
                                 else if (GrayLine_Pos2[ee] == 1)
@@ -6676,6 +6822,8 @@ namespace PowerSDR
         public int beacon8 = 0;       // to store prior high filter before running beacon scan
         public int beacon9= 0;        //to store prior low filter before running beacon scan
         public Filter beacon89;       // to store filter name before running beacon scan
+        public Filter beacon89a;       // to store filter name before running beacon scan
+
         public int beacon77 = 0;      // to store cw pitch before running beacon scan
         public double beacon88 = 0;   // to store vfoa
         public int beacon66 = 0;      //  to store blocksize
@@ -7666,8 +7814,9 @@ namespace PowerSDR
         //====================================================================================================================
         public void SetInternetTime()
         {
-           
-           DateTime startDT = DateTime.Now; 
+            textBox1.Text = "Attempting Internet Connection to NIST Time Server!\r\n";
+
+            DateTime startDT = DateTime.Now; 
            
             //Create a IPAddress object and port, create an IPEndPoint node:  
             int port = 13;
@@ -7678,7 +7827,7 @@ namespace PowerSDR
             IPEndPoint ipe;
             Socket c = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//Create Socket  
 
-            c.ReceiveTimeout = 100;    //Setting the timeout  
+            c.ReceiveTimeout = 900;    //Setting the timeout  
 
             byte[] RecvBuffer = new byte[1024];
 
@@ -7700,8 +7849,7 @@ namespace PowerSDR
 
             startDT = DateTime.Now; // record time you opened a connection to NIST
 
-            textBox1.Text = "Attempting Internet Connection to NIST Time Server!\r\n";
-
+           
 
             try
             {
@@ -7709,7 +7857,9 @@ namespace PowerSDR
                 {
                 
                         iphostinfo = Dns.GetHostEntry(strHost);
+
                         ip = iphostinfo.AddressList[0];
+
                         ipe = new IPEndPoint(ip, port);
 
                         c.Connect(ipe);     // Connect to server which starts clock (NIST will now send back the correct Time)
@@ -7731,10 +7881,14 @@ namespace PowerSDR
             {
 
                 textBox1.Text += "Error connecting to NIST Time Server!\r\n";
+                if (c.Connected) c.Close(); // close the socket
 
                 EX1 = ex.Message;
-               // Debug.WriteLine("SOCKET ERROR: " + strHost + " , " + ex);
+                // Debug.WriteLine("SOCKET ERROR: " + strHost + " , " + ex);
+                WTime = false;   // turn dx spotting back on
+                MessageBox.Show("Time server connection failed! /r error: " + EX1, " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
 
+                return;
             }
 
 
@@ -7742,23 +7896,36 @@ namespace PowerSDR
             {
                 textBox1.Text += "Failure NIST Time Server!\r\n";
 
+                if (c.Connected) c.Close(); // close the socket
 
                 MessageBox.Show("Time server connection failed! /r error: " + EX1, " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                 WTime = false;   // turn dx spotting back on
 
+                return;
+            }
+
+            try
+            {
+                //----------------------------------------------------------------
+                // get NIST formated time
+                while ((nBytes = c.Receive(RecvBuffer, 0, 1024, SocketFlags.None)) > 0)
+                {
+                    nTotalBytes += nBytes;
+                    sb.Append(myE.GetString(RecvBuffer, 0, nBytes));
+                }
+
+            }
+            catch(Exception)
+            {
+
+                if (c.Connected) c.Close(); // close the socket
+                MessageBox.Show("Time server connection failed! /r error: " + EX1, " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                WTime = false;   // turn dx spotting back on
 
                 return;
             }
 
-           //----------------------------------------------------------------
-           // get NIST formated time
-            while ((nBytes = c.Receive(RecvBuffer, 0, 1024, SocketFlags.None)) > 0)
-            {
-                nTotalBytes += nBytes;
-                sb.Append(myE.GetString(RecvBuffer, 0, nBytes));
-            }
-
-            c.Close(); // close the socket
+            if (c.Connected)  c.Close(); // close the socket
 
             // example of downloaded time sync from NIST
             // <cr>57682 16-10-21 14:42:46 17 0 0 159.1 UTC(NIST) * 
@@ -7797,18 +7964,22 @@ namespace PowerSDR
                 Win32API.SetLocalTime(ref st);  //Call Win32 API to set the system time  
 
                 textBox1.Text = "IMPORTANT: Your PC Time will NOT update unless PowerSDR is launched in ADMIN mode!!!!" + "\r\n" + 
-                                "PC TIME when Request sent to NIST: " + startDT.ToString("yy-MM-dd HH:mm:ss.fff") + "\r\n" +
-                                "UTC TIME reported back from NIST : " + temp1 + "\r\n" +
+                                "PC LOC TIME when Request sent to NIST: " + startDT.ToString("yy-MM-dd HH:mm:ss.fff") + "\r\n" +
+                                "TIME UTC reported back from NIST : " + temp1 + "\r\n" +
                                 "NIST reported this time: " + temp2 + " milliseconds Early" + "\r\n" +
                                 "Time Delay: From request to Update is:" + k + " milliseconds" + "\r\n" +
-                                "DONE: PC new time: " + SetDT.ToString("yy-MM-dd HH:mm:ss.fff");
+                                "DONE: PC new LOC time: " + SetDT.ToString("yy-MM-dd HH:mm:ss.fff");
 
 
                 Debug.WriteLine("DONE...Time delay from request to update:" + k + " milliseconds");
             }
             catch (Exception)
             {
-                MessageBox.Show("Time server connection failed! Try Again.", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                MessageBox.Show("Time server busy! Try Again.", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                WTime = false;   // turn dx spotting back on
+
+                return;
+
             }
 
             //    MessageBox.Show("Time synchronization, ", " the system prompts", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -7928,7 +8099,9 @@ namespace PowerSDR
             beacon7 = console.RX1DSPMode;           // get mode so you can restore it when you turn off the beacon check
             beacon8 = console.RX1FilterHigh;        // get high filter so you can restore it when you turn off the beacon check
             beacon9 = console.RX1FilterLow;         // get low filter so you can restore it when you turn off the beacon check
+
             beacon89 = console.RX1Filter;           // get filter name so you can restore
+
             beacon88 = console.VFOAFreq;            // get freq you were on before 
             beacon66 = console.BlockSize1;          // get blocksize (must be 2048 during wwv bcd read)
 
@@ -7946,7 +8119,7 @@ namespace PowerSDR
                 WWVPitch = true;  // only allow Pitch (tone) detection
             }
 
-          
+          // REDUCE SAMPLERATE (until I can figure out why I cant make it work at 192k)
             if (oldSR == 192000)  // need to reduce the 192SR because the Tone detection needs a longer sample time to detect weak signals at 192k and 2048 buffer size limit
             {
                 console.setupForm.comboAudioSampleRate1.Text = "96000"; // select 96000
@@ -7956,15 +8129,23 @@ namespace PowerSDR
             textBox2.Text = "";
             checkBoxTone.Checked = false;   // turn off tone marker when done.
 
+            // MAX OUT AUDIO BUFFER SIZE
             if (console.BlockSize1 != 2048) console.BlockSize1 = 2048;  // need the largest buffer size for the Tone detection to work.
 
-            console.RX1Filter = Filter.VAR1;
+
             Debug.WriteLine("WWV>>0");
 
+            // SETUP UP TONE DETECTION TO CATCH SUB-CARRIER
+            GoertzelCoef(100.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
 
+
+            // SET MODE, THEN 
             if (WWVPitch == false)
             {
                 console.RX1DSPMode = DSPMode.DIGU;
+                beacon89a = console.RX1Filter;           // get filter name so you can restore
+
+                console.RX1Filter = Filter.VAR1;
 
                 console.UpdateRX1Filters(-30, 30);
 
@@ -7984,8 +8165,11 @@ namespace PowerSDR
               //  console.CATPreamp = PreampMode.OFF;
 
                 console.RX1DSPMode = DSPMode.USB;
-             
-                console.UpdateRX1Filters(60, 150);
+                beacon89a = console.RX1Filter;           // get filter name so you can restore
+
+                console.RX1Filter = Filter.VAR1;
+
+                console.UpdateRX1Filters(70, 170);
 
                 textBox1.Text += "Tone detection. Waiting for Start of Minute!\r\n";
 
@@ -7994,6 +8178,8 @@ namespace PowerSDR
               
             }
 
+
+          
             console.UpdateDisplay();
 
             int BCDSignal= 0;              // measured BCD data stream dBm signal
@@ -8054,7 +8240,10 @@ namespace PowerSDR
             Stopwatch ST = new Stopwatch();   // internal 1 second time keeper
             Stopwatch ST1 = new Stopwatch();
 
-            Debug.WriteLine("WWV>>1");
+            Stopwatch ST2 = new Stopwatch();
+
+            Debug.WriteLine("WWV>>1"); 
+
 
             ST.Restart();
 
@@ -8078,8 +8267,7 @@ namespace PowerSDR
             Debug.WriteLine("WWV>>2");
 
             //------------------------------------------------------------------
-            GoertzelCoef(100.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
-
+          
             ST.Restart();
 
             if (WWVPitch == false)  // signal strength based detected
@@ -8146,7 +8334,8 @@ namespace PowerSDR
 
             ST.Restart();
 
-           
+         //  ST2.Restart();
+
             //---------------------------------------------------------------
             //---------------------------------------------------------------
             //---------------------------------------------------------------
@@ -8221,13 +8410,16 @@ namespace PowerSDR
                     if (console.WWVReady == true)
                     {
                         BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
+
+                      //  Debug.WriteLine("WWVTONE: " + ST2.ElapsedMilliseconds + " , "+BCDSignal);
+
+                      //  ST2.Restart();
+
                         below_count++;   // counter for how many times you got new data and it was below the threshold
                         console.WWVReady = false;
 
                     }
-                //   storage[above_count++] = BCDSignal;
-                  //  if (above_count > 100) above_count = 0;
-
+               
                     //------------------------------------------------------------------
                     // keep adjusting signal based on signal strength you are seeing
 
@@ -8314,14 +8506,6 @@ namespace PowerSDR
                         }
                         else // tone detection here
                         {
-
-                        //    Debug.WriteLine("Elapsed time: " + WWVNewTime.ElapsedMilliseconds);
-                         //   for (int u = 0; u < above_count; u++)
-                         //   {
-                         //       Debug.WriteLine("signal before the start of this second: " + storage[u]);
-                          //  }
-                          //  Debug.WriteLine("start of second: "+ BCDSignal);
-                                   
 
                             BCDSignalON = BCDSignalON1;  // tone should be on here always since its the start of every second (tick) (we just need to know how long it lasts)
                             BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
@@ -8457,9 +8641,9 @@ namespace PowerSDR
                             DateTime startDT = DateTime.Now;   // get current PC time and date
  
 
-                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nYour Current Date time: " + startDT.ToString("yy-MM-dd HH:mm:ss.fff") +
-                                "\r\nDoes this UTC Time look Correct?\r\nDo You Want to Update Your PC Clock?\r\n" +
-                                "This is the reported WWV UTC Time > " + WWVUTC.ToString("yy-MM-dd HH:mm:ss.fff") + "\r\n An additional correction factor will be added if you select YES",
+                            DialogResult temp0 = MessageBox.Show("You must be running in ADMIN mode to set your PC Clock.\r\nYour Current LOCAL Date time: " + startDT.ToString("yy-MM-dd HH:mm:ss.fff") +
+                                "\r\nDoes this UTC Time (below) look Correct?\r\nDo You Want to Update Your PC Clock?\r\n" +
+                                "This is the Decoded WWV UTC Time > " + WWVUTC.ToString("yy-MM-dd HH:mm:ss.fff") + "\r\n An additional correction factor will be added if you select YES",
                                 "WWV PC TIME UPDATE", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2, MessageBoxOptions.DefaultDesktopOnly);
 
                             if (temp0 == DialogResult.Yes)
@@ -8784,10 +8968,13 @@ namespace PowerSDR
             textBox2.Text = "";
             checkBoxTone.Checked = false;   // turn off tone marker when done.
 
-        
+            //---------------------------------------------------------------
+            console.RX1Filter = beacon89a;           // restore filter back to original for this mode
+
             console.UpdateRX1Filters(beacon9,beacon8); // restore filter
-            console.RX1Filter = beacon89;           // restore filter name
+          
             console.RX1DSPMode = beacon7;           //  restore  mode  when you turn off the beacon check
+            console.RX1Filter = beacon89;           // restore filter name
 
             console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
             console.VFOAFreq = beacon88;             // restore VfoA
@@ -8863,6 +9050,862 @@ namespace PowerSDR
         {
 
         }
+
+
+        //=======================================================================================
+        //=======================================================================================
+        //=======================================================================================
+        //=======================================================================================
+        public int VOA_Index = 0;
+        public int SP33_Active = 0;
+        public int SP11_Active = 1;
+        public int SP00_Active = 0;
+
+        public static double[] VOA_LAT = new double[10000]; // ke9ns storage for VOACAP VG1 MUF data
+        public static double[] VOA_LNG = new double[10000];
+        public static double[] VOA_MUF = new double[10000];
+        public static string[] VOA_MODE = new string[10000];
+        public static double[] VOA_DBU = new double[10000];
+        public static double[] VOA_SDBW = new double[10000];
+        public static double[] VOA_SNR = new double[10000];
+        public static int[] VOA_Color = new int[10000];
+        public static int[] VOA_S = new int[10000];
+
+
+        public static int[,] VOA_X = new int[10,1000];    // conversion of MUF LAT & LONG to X Y points
+        public static int[,] VOA_Y = new int[10,1000];     // [][] = S unit S0 to S9 then list of x,y points that fall under that S reading
+
+        public static int[,] VOA_X1 = new int[10, 1000];    // conversion of MUF LAT & LONG to X Y points
+        public static int[,] VOA_Y1 = new int[10, 1000];     // [][] = S unit S0 to S9 then list of x,y points that fall under that S reading
+
+        public int VOA_MyY = 0; // x y location of your station transmitter based on input lat and long
+        public int VOA_MyX = 0; 
+
+        public static int VOA_Xsize = 31;
+        public static int VOA_Ysize = 31;
+
+        string VOALAT = "42.00";        // 5 digits (Right justified) your own location
+        string VOALNG = "180.00";       // 6 digits     "             your own location
+        string MHZ = "14";              // 2 digits     "             current band your on
+        string MONTH = "11";            // 2 digits     "             current date
+        string DAY = "00";
+        string HOUR = "00";             // 2 digits     "              static
+        string SSN = " 36";             // 3 digits     "             current sun spot #
+        string WATTS = "0.5000";        // 6 digits     "              static
+
+
+        string Last_VOALAT;  // used to see if you need to update the voacap map or not
+        string Last_VOALNG;
+        string Last_MHZ;
+        string Last_SSN;
+        string Last_MONTH;
+        string Last_DAY;
+        string Last_HOUR;
+        string Last_WATTS;
+        bool Last_Ant;
+
+        //=======================================================================================
+        //=======================================================================================
+        //ke9ns start voacap propagation spotting THREAD 1 and done
+        private void VOACAP()
+        {
+            VOARUN = true; // dont allow this to trigger until its finished
+
+            string file_name = " ";
+            string file_name1 = " ";
+           
+         
+            //-------------------------------------- create a ke9ns.voa file from your lat,long,callsign, date,time, ssn and band your on
+
+
+            Thread.Sleep(10);
+
+            Last_MHZ = MHZ;
+            Last_VOALAT = VOALAT;
+            Last_VOALNG = VOALNG;
+            Last_MONTH = MONTH;
+            Last_DAY = DAY;
+            Last_HOUR = HOUR;
+            Last_Ant = chkBoxAnt.Checked;
+            Last_WATTS = WATTS;
+
+            string[] VOA = new string[20];
+
+            string VOA1 = "";
+
+
+            //------------------------------------------------
+            // ke9ns.voa file
+             VOA[0] = "Model    :VOACAP\r\n";
+             VOA[1] = "Colors   :Black    :Blue     :Ignore   :Ignore   :Red      :Black with shading\r\n";
+             VOA[2] = "Cities   :Receive.cty\r\n";
+             VOA[3] = "Nparms   :    1\r\n";
+             VOA[4] = "Parameter:SDBW     0\r\n";
+             VOA[5] = "Transmit : " + VOALAT + "   " + VOALNG + "   ME                   Short\r\n";          // VOALAT = -00.00N  VOALNG = -000.00W
+             VOA[6] = "Pcenter  :  0.00N     0.00E   center\r\n";
+             VOA[7] = "Area     :    -180.0     180.0     -90.0      90.0\r\n";
+             VOA[8] = "Gridsize :   31    1\r\n";
+             VOA[9] = "Method   :   30\r\n";
+            VOA[10] = "Coeffs   :URSI\r\n";
+            VOA[11] = "Months   :  " + MONTH + "." + DAY + "   0.00   0.00   0.00   0.00   0.00   0.00   0.00   0.00\r\n";   // MONTH = 00  HOUR = 00
+            VOA[12] = "Ssns     :    " + SSN + "      0      0      0      0      0      0      0      0\r\n";               // SSN = 000
+            VOA[13] = "Hours    :     "+ HOUR + "      0      0      0      0      0      0      0      0\r\n";
+            VOA[14] = "Freqs    : " + MHZ + ".000  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000\r\n";            // MHZ = 00
+
+            VOA[15] = "System   :  145     0.100   90   73     3.000     0.100\r\n"; // this is the standard VOA settings
+          //  VOA[15] = "System   :  140     3.000   60   70     3.000     0.100\r\n";  // this is supposed to be the prefered amateur settings
+
+            //  VOA[15] = Noise dbm, Takeoff Angle, Circuit Reliability, SNR dbm, Multipath Power Tol dbm, Time Delay msec
+
+            VOA[16] = "Fprob    : 1.00 1.00 1.00 0.00\r\n";
+            VOA[17] = "Rec Ants :[hamcap  \\Dipole35.N14]  gain=   0.0   0.0\r\n";
+
+            if (Last_Ant == false)
+            {
+                VOA[18] = "Tx Ants  :[hamcap  \\Dipole35.N14]  0.000  57.0     " + WATTS + "\r\n";                               // WATTS = 0.0000
+            }
+            else
+            {
+                VOA[18] = "Tx Ants  :[hamcap  \\3Yagi35.N14 ]  0.000  57.0      " + WATTS + "\r\n";                               // WATTS = 0.0000
+            }
+
+            VOA1 = VOA[0] + VOA[1] + VOA[2] + VOA[3] + VOA[4] + VOA[5] + VOA[6] + VOA[7] + VOA[8] + VOA[9] + VOA[10] +
+                VOA[11] + VOA[12] + VOA[13] + VOA[14] + VOA[15] + VOA[16] + VOA[17] + VOA[18]; 
+
+
+                //  file_name1 = console.AppDataPath + "ke9ns.voa"; //   
+
+               file_name1 = console.AppDataPath + @"itshfbc\areadata\default\ke9ns.voa"; // voacap data to create table
+            Debug.WriteLine("file1: " + file_name1 + " , watts: " + WATTS);
+
+            try
+            {
+                File.WriteAllText(file_name1, VOA1);
+                Debug.WriteLine("NEW VOA FILE CREATED");
+            }
+            catch(Exception q)
+            {
+                Debug.WriteLine("NEW VOA FILE NOT CREATED "+q);
+                VOARUN = false; // dont allow this to trigger until its finished
+
+                return;
+            }
+     
+
+            //-------------------------------------- create a voacap data table from ke9ns.voa
+        
+            Debug.WriteLine(" Create a voacap data table from ke9ns.voa");
+
+            string s1 = Environment.CurrentDirectory;
+            Debug.WriteLine("s1: " + s1);
+            Environment.CurrentDirectory = console.AppDataPath + "itshfbc\\bin_win\\";
+
+            try
+            {
+             
+                string file_name2 = "voacapw.exe";        // c:\itshfbc AREA CALC default\ke9ns.voa"; // voacap data to create table
+                Debug.WriteLine("file2: " + file_name2);
+
+                string argument = "SILENT c:.. AREA CALC default\\ke9ns.voa"; // voacap data to create table
+                Debug.WriteLine("argument: " + argument);
+
+              var proc1 =  System.Diagnostics.Process.Start(file_name2, argument);
+
+               proc1.WaitForExit(5000);
+            }
+            catch (Exception w)
+            {
+                Debug.WriteLine("could not run VOACAPW: " + w);
+                Environment.CurrentDirectory = s1;
+                VOARUN = false; // dont allow this to trigger until its finished
+
+                return;
+            }
+
+            file_name = console.AppDataPath + @"itshfbc\areadata\default\ke9ns.vg1"; // voacap table  data
+
+            int Flt1 = 0;
+
+        //    Stopwatch T1 = new Stopwatch();
+
+            
+RT1:     //   T1.Restart();
+           
+         //   while (T1.ElapsedMilliseconds < 200)
+         //   {
+               
+         //   }
+
+         //   T1.Stop();
+            Environment.CurrentDirectory = s1;
+
+            //-------------------------------------- ke9ns.vg1 is a voa muf table for your lat/long location
+
+           // file_name = console.AppDataPath + @"itshfbc\areadata\default\ke9ns.vg1"; // voacap table  data
+           
+            Debug.WriteLine("read ke9ns.vg1 is a voa muf table for your lat/long location");
+
+            if ((File.Exists(file_name)) )
+            {
+               
+                try
+                {
+
+                    stream2 = new FileStream(file_name, FileMode.Open); // open file
+                    reader2 = new BinaryReader(stream2, Encoding.ASCII);
+
+                    Debug.WriteLine("Read voacap data file ke9ns.vg1");
+
+                }
+                catch (Exception s)
+                {
+                    Debug.WriteLine("fault: "+s);
+
+                    if (Flt1++ > 10)
+                    {
+                        VOARUN = false;
+                        return;
+                    }
+                    else
+                    goto RT1; // 
+
+                }
+
+                var result = new StringBuilder();
+
+               
+                VOA_Index = 0; // how big is the ke9ns.vg1 data file in lines
+                int Flag24 = 0;
+              
+                //------------------------------------------------------------------
+                Debug.WriteLine("reading VOACAP VG1 file");
+
+                for (;;)
+                {
+                 
+                    try
+                    {
+                        var newChar = (char)reader2.ReadChar();
+
+                        if (newChar == '\r')
+                        {
+                            newChar = (char)reader2.ReadChar(); // read \n char to finishline
+
+                            if (Flag24 == 3)
+                            {
+
+                                //0        8        17
+                                //  31 31  Latitude Longitude   MUF  MODE ANGLE DELAY VHITE MUFda  LOSS   DBU  SDBW  NDBW   SNR RPWRG   REL MPROB SPROB TGAIN RGAIN SNRxx    DU    DL SIGLW SIGUP PWRCTANGLER
+                                //   1  1  -90.0000    0.0000 13.73  F2 E  8.00 50.34 176.7 0.992 188.3 -40.9-168.3-159.9  -8.4  96.7 0.000 0.000 0.000 17.00 -3.20 -23.7  9.66  5.89 11.87  5.06 0.000  6.00
+
+
+
+                                try
+                                {
+                                
+                                    VOA_LAT[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(8, 8)));    // get lat reading
+                                
+                                    VOA_LNG[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(17, 9)));   // get lat reading
+                                  
+                                    VOA_MUF[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(27, 5)));   // get MUF reading
+                                 
+                                    VOA_MODE[VOA_Index] = result.ToString().Substring(34, 4);                      // get MODE reading
+                                
+                                    VOA_DBU[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(68, 6)));   // get DBU reading
+                                   
+                                    VOA_SDBW[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(74, 6)));  // get SDBW reading
+                                  
+                                    VOA_SNR[VOA_Index] = (Convert.ToDouble(result.ToString().Substring(86, 6)));  // get SNR reading
+                                  
+
+                                    if (VOA_SDBW[VOA_Index] >= -73) VOA_S[VOA_Index] = 9;
+                                    else if (VOA_SDBW[VOA_Index] >= -79) VOA_S[VOA_Index] = 8;
+                                    else if (VOA_SDBW[VOA_Index] >= -85) VOA_S[VOA_Index] = 7;
+                                    else if (VOA_SDBW[VOA_Index] >= -91) VOA_S[VOA_Index] = 6;
+                                    else if (VOA_SDBW[VOA_Index] >= -97) VOA_S[VOA_Index] = 5;
+                                    else if (VOA_SDBW[VOA_Index] >= -103) VOA_S[VOA_Index] = 4;
+                                    else if (VOA_SDBW[VOA_Index] >= -109) VOA_S[VOA_Index] = 3;
+                                    else if (VOA_SDBW[VOA_Index] >= -115) VOA_S[VOA_Index] = 2;
+                                    else if (VOA_SDBW[VOA_Index] >= -121) VOA_S[VOA_Index] = 1;
+                                    else VOA_S[VOA_Index] = 0;
+
+                               //     Debug.WriteLine("LAT:" + VOA_LAT[VOA_Index] + "  LNG:" + VOA_LNG[VOA_Index] + "  S:" + VOA_S[VOA_Index] + "  MUF:" + VOA_MUF[VOA_Index] + "  SNR:" + VOA_SNR[VOA_Index] + "  Mode:" + VOA_MODE[VOA_Index] + "  DBU:" + VOA_DBU[VOA_Index]+ "  SDBW:" + VOA_SDBW[VOA_Index]);
+
+                                    VOA_Index++;
+
+                                }
+                                catch(Exception a)
+                                {
+                                    Debug.WriteLine("fault> "+ result.ToString());
+
+                                }
+
+                            } // SWL Spots
+                            else Flag24++;
+
+                            result = new StringBuilder(); // clean up for next line
+
+                        }
+                        else
+                        {
+                            result.Append(newChar);  // save char
+                        }
+
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        VOA_Index--;
+                        // textBox1.Text = "End of SWL FILE at "+ SWL_Index1.ToString();
+                        // Debug.WriteLine(" SWL2_Freq[SWL2_Index1] " + SWL2_Freq[SWL2_Index1]);
+                        break; // done with file
+                    }
+                    catch (Exception e)
+                    {
+                         Debug.WriteLine("excpt======== " + e);
+                        //     textBox1.Text = e.ToString();
+
+                        break; // done with file
+                    }
+
+
+                } // for loop until end of file is reached
+
+
+                // Debug.WriteLine("reached SWL end of file");
+
+
+                reader2.Close();    // close  file
+                stream2.Close();   // close stream
+
+                Debug.WriteLine("Done Reading .VG1 FILE");
+
+
+                Debug.WriteLine("convert LAT LONG data to X and Y Contour data base on S readings");
+
+                //-------------------------------------------------------------------
+
+              
+            
+                int Sun_WidthY1 = Sun_Bot1 - Sun_Top1;             // # of Y pixels from top to bottom of map
+                int Sun_Width = Sun_Right - Sun_Left;              //used by sun track routine
+
+                //S9+10dB 160.0 -63 44 
+                //S9 50.2 -73 34 
+                //S8 25.1 -79 28 
+                //S7 12.6 -85 22 
+                //S6 6.3 -91 16 
+                //S5 3.2 -97 10 
+                //S4 1.6 -103 4 
+                //S3 0.8 -109 -2 
+                //S2 0.4 -115 -8 
+                //S1 0.2 -121 -14 
+
+                int[,] VOA_Z = new int[1000, 1000];     // 
+
+
+                for (int z = 9; z > 0; z--)  // go through each S unit S1 through S9
+                {
+                    int q = 0;
+                  //  Debug.WriteLine("S reading: " + z + " , value: " + (-127 + (z * 6))+" ,Z: "+VOA_Z[10,10] );
+
+                    VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out first just in case there is no case of that S reading found in the data
+
+                    for (int y = 0; y < VOA_Ysize; y++) // latitude (up /down)
+                    {
+                       
+                        for (int x = 0; x < VOA_Xsize; x++) // long (left / right)
+                        {
+
+                            if ((VOA_Z[x, y] == 0))
+                            {
+
+                                if ((VOA_SDBW[x + y * VOA_Ysize] > (-127 + (z * 6))))
+                                {
+                                    VOA_Y[z, q] = (int)(((180 - (VOA_LAT[y * 31] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
+                                    VOA_X[z, q] = (int)(((VOA_LNG[x + (y * 31)] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+
+                                    VOA_Z[x, y] = 1; // this value is now used, dont use it again
+                                    q++;
+
+                                  //  Debug.WriteLine("Found: " + z + " , " + q);
+
+                                }
+                                else VOA_Z[x, y] = 0; // still unused
+
+                            }
+                       
+
+
+                               //   Debug.WriteLine("VOAX: " + VOA_X[x] + ", VOALNG: " + VOA_LNG[x + (y * VOA_Ysize)] + "   VOAY: " + VOA_Y[y] + ", VOALat: " + VOA_LAT[y*VOA_Ysize]);
+
+                        } // for x
+
+
+                    } // for y
+
+                    VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out last to indicate end of this S reading curve
+
+                } // for z (S readings)
+
+                VOA_MyY = (int)(((180 - ((double)udDisplayLat.Value + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
+                VOA_MyX = (int)((((double)udDisplayLong.Value + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+
+
+                Map_Last = Map_Last | 2;    // force update of world map
+              
+
+            } // if file exists VOA ke9ns.vg1
+
+            VOARUN = false; // dont allow this to trigger until its finished
+
+        } // VOACAP thread
+
+        // F10.7 = 63.74 + 0.727*SSNf + 0.000895*SSNf**2 
+        // SSNf = ((93918.4 + 1117.3 * SFI) ^ .5) - 416.37    this is the true SSN value since the optical SSN# wont have an effect on earth for up to 3 days (the time it takes for the suns matter to reach earth)
+
+        // https://spawx.nwra.com/spawx/env_latest.html
+        // ftp://ftp.ngdc.noaa.gov/STP/GEOMAGNETIC_DATA/INDICES/KP_AP/2016
+        // Values of Kp Indices, Ap Indices, Cp Indices, C9 Indices, Sunspot Number, and 10.7 cm Flux 
+        // 1610302499254033302337333020247 27 18 15  9 22 18 15  7 160.94---075.10
+        // 16103124992627302323132017 7160 12 15  9  9  5  7  6  3  80.42---075.50
+
+        //==========================================================================
+        // ke9ns check if VOACAP map needs an update (i.e. you changed location, or band, etc)
+
+      bool VOARUN = false;
+      int SSNf = 0;   // effective SSN
+
+      public void VOACAP_CHECK()
+      {
+            Debug.WriteLine("Update VOACAP=================");
+            if (VOARUN == true) return;
+
+            int MHZ1 = (int) (Display.VFOA / 1e6); // value in hz
+            
+            if (MHZ1 > 29)
+            {
+                checkBoxMUF.Checked = false; // turn off voacap if you try to used it above 29mhz
+
+                Map_Last = Map_Last | 2;    // force update of world map
+
+                return; // dont do a propagation map unless less than 30mhz
+            }
+                        
+         
+
+            if (Console.SFI == 0)
+            {
+                //  SSN = Console.EISN.ToString().PadLeft(3);   // "{0,2}"
+                if (Console.EISN > 0)
+                {
+                    SSNf = Console.EISN;
+                    statusBoxSWL.Text = "Using SSN = " + SSNf;
+
+                }
+                else
+                {
+                    SSNf = 0;
+                }
+            }
+            else
+            {
+                SSNf = (int)(Math.Pow((93918.4 + 1117.3 * (double)Console.SFI), 0.5) - 416.37); // convert SFI to SSN
+
+               statusBoxSWL.Text = "Using SSNf = " + SSNf;
+
+            }
+
+            if (SSNf < 0) SSNf = 0;
+            if (SSNf > 250) SSNf = 0;
+
+
+            SSN = SSNf.ToString().PadLeft(3);   // "{0,2}"
+
+            VOALAT = udDisplayLat.Value.ToString("##0.00").PadLeft(6);   // -90.00
+            VOALNG = udDisplayLong.Value.ToString("###0.00").PadLeft(7);  // -180.00 
+            MONTH = DateTime.UtcNow.Month.ToString().PadLeft(2);  // 00
+            DAY = DateTime.UtcNow.Day.ToString("00");  // 00
+            HOUR = DateTime.UtcNow.Hour.ToString().PadLeft(2);  // 00
+       
+            MHZ = (MHZ1).ToString().PadLeft(2);   // 00
+
+            double wattage = (double)tbPanPower.Value / 1000.0;  // get slider wattage info
+
+            if ((Console.Kindex > 4) || (Console.RadioBlackout.Contains("R") == true) || (Console.GeoBlackout.Contains("G") == true))               // power reduction based on Kindex rise or radio blackouts
+            {
+                wattage = wattage * .6;  // 60% of the full power
+
+                statusBoxSWL.Text += " L";
+            }
+            else if (Console.Kindex > 2)
+            {
+                wattage = wattage * .8;  // 80% of the full power
+                statusBoxSWL.Text += " M";
+            }
+            else
+            {
+             // 100% wattage   
+                statusBoxSWL.Text += " H";
+            }
+
+
+            WATTS = wattage.ToString("0.0000").PadLeft(6); // 0.0000
+
+
+            if (
+                (!console.MOX) && ( (chkBoxAnt.Checked != Last_Ant) ||   (Last_SSN != SSN) || (Last_VOALAT != VOALAT) || (Last_VOALNG != VOALNG) ||
+                (Last_MHZ != MHZ) || (Last_MONTH != MONTH) || (Last_DAY != DAY) || (Last_HOUR != HOUR) || (Last_WATTS != WATTS)) 
+                )
+            {
+
+                VOARUN = true; // dont allow this to trigger until its finished
+
+                Thread t = new Thread(new ThreadStart(VOACAP));
+
+                t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+                t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+
+                t.Name = "VOACAP Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
+
+
+        } // update MUF map
+
+
+      
+
+        //================================================================================
+        private void checkBoxMUF_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxMUF.Checked == false)
+            {
+                MUF = false;
+                Map_Last = Map_Last | 2;    // force update of world map
+
+            }
+            else
+            {
+                VOACAP_CHECK();
+
+            }
+        } // checkBoxMUF_CheckedChanged
+
+        private void chkBoxAnt_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxMUF.Checked == true)
+            {
+          
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+
+            }
+        }
+
+        // select the power level used by voacap
+        private void tbPanPower_Scroll(object sender, EventArgs e)
+        {
+            this.toolTip1.SetToolTip(this.tbPanPower, "VOACAP: "+ ((int)tbPanPower.Value).ToString() +" watts" );
+
+
+            if (checkBoxMUF.Checked == true)
+            {
+
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+
+            }
+        }
+
+        private void tbPanPower_MouseEnter(object sender, EventArgs e)
+        {
+            this.toolTip1.SetToolTip(this.tbPanPower, "VOACAP: " + ((int)tbPanPower.Value).ToString() + " watts");
+
+        }
+
+
+        private void tbPanPower_MouseUp(object sender, MouseEventArgs e)
+        {
+            this.toolTip1.SetToolTip(this.tbPanPower, "VOACAP: " + ((int)tbPanPower.Value).ToString() + " watts");
+
+            if (checkBoxMUF.Checked == true)
+            {
+
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+
+            }
+        }
+
+
+
+        //====================================================================================================
+        //====================================================================================================
+        //====================================================================================================
+        public void VOAPLOT()
+        {
+
+            double size = 0.0;
+            double chx = 0.0;
+            double chxx = 0.0;
+            double nchar = 0.0;
+            double nchlab = 0.0;
+            double sizelab = 0.0;
+            int len = 0;
+            double xlen = 0.0;
+            int nps = 0;
+            double hlen = 0.0;
+            int S = 0;
+            double frac = 0.0;
+           
+            double dl = 0.0;
+           
+            int ndex = 0;
+            double ysave = 0.0;
+            double xsave = 0.0;
+
+            int i = 0;
+            double xc1 = 0.0;
+            double yc1 = 0.0;
+
+            double xc = 0.0;
+            double yc = 0.0;
+
+            //  common / xyval / x[900],y[900]
+
+            //  character labl*[*]
+
+
+            //  call charget(chxx, chyy)
+            //  call charworl(chx, chy);       //get character size in world units
+
+            size = chx * 1.1;
+
+            nchar = nchlab;
+
+         //    call rblankc(labl, nchar)
+             // locate label at center of line
+         //   len = getgtextextent(labl[1:nchar]);
+
+
+
+            sizelab = (double)len * chx / chxx + size;           // convert len from int to float
+
+
+            // find line length
+
+            xlen = 0.0;
+
+            //=================================================================
+
+            for ( i = 2; i <= nps; i++)
+            {
+                xlen = xlen + Math.Sqrt(Math.Pow((VOA_X[S,i] - VOA_X[S,i - 1]), 2) + Math.Pow((VOA_Y[S, i] - VOA_Y[S, i - 1]), 2));
+            } // for i loop
+
+            //=================================================================
+
+
+
+            //******************************************************************
+            //          eliminate short lines(short = width of 1 character)
+            if (xlen < size)
+            {
+                return;
+            }
+
+            //******************************************************************
+            hlen = xlen / 2.0;
+
+            if (sizelab >= (hlen / 2.0))
+            {
+                return;
+            }
+
+PLOT15:     //call dashit(x, y, nps, on, dlen)
+
+            return;
+
+
+PLOT40:     hlen = hlen - sizelab / 2.0;
+
+            xlen = 0.0;
+
+            //=================================================================
+           
+            for ( i = 2; i <= nps; i++)
+            {
+
+                dl = Math.Sqrt(Math.Pow((VOA_X[S, i] - VOA_X[S, i - 1]), 2) + Math.Pow((VOA_Y[S, i] - VOA_Y[S, i - 1]), 2));
+
+                xlen = xlen + dl;
+
+                if (xlen > hlen) break;
+
+
+            } // for i loop
+             //=================================================================
+
+
+
+            xlen = xlen - dl;
+
+            frac = (hlen - xlen) / dl;
+
+            xc = VOA_X[S,i - 1] + (VOA_X[S,i] - VOA_X[S,i - 1]) * frac;
+            yc = VOA_Y[S,i - 1] + (VOA_Y[S,i] - VOA_Y[S,i - 1]) * frac;
+
+            ndex = i;
+
+            xsave = VOA_X[S,i];
+            ysave = VOA_Y[S,i];
+
+            VOA_X[S,i] = (int) xc;
+            VOA_Y[S,i] = (int) yc;
+
+            xc1 = xc;
+
+            yc1 = yc;
+
+     //   call dashit(x, y, ndex, on, dlen)
+
+         VOA_X[S,i] = (int) xsave;
+         VOA_Y[S,i] = (int) ysave;
+
+
+
+        //=================================================================
+        // find(xp, yp) such that dist(xc, yc) - (xp, yp) = sizelab
+
+          for ( i = ndex; i <= nps; i++)
+          {
+                dl = Math.Sqrt(Math.Pow((VOA_X[S,i] - xc), 2) + Math.Pow((VOA_Y[S,i] - yc), 2));
+
+               if (dl > sizelab) goto PLOT60;
+
+            }// for i loop
+
+            //=================================================================
+
+            return; // was plot15
+
+            //         (xp, yp) is between(x(nn),y(nn)) &(x(nn + 1),y(nn + 1))
+
+            int nn = 0;
+            int xp = 0;
+            int yp = 0;
+            int x1 = 0;
+            int y1 = 0;
+            int x2 = 0;
+            int y2 = 0;
+            double d = 0.0;
+            double dx = 0.0;
+            double dy = 0.0;
+            double ang = 0.0;
+            double fact = 0.0;
+            double a = 0.0;
+
+
+
+PLOT60:     nn = i;
+
+            x1 = VOA_X[S,nn - 1];
+            y1 = VOA_Y[S,nn - 1];
+
+            x2 = VOA_X[S,nn];
+            y2 = VOA_Y[S,nn];
+
+//=================================================================
+
+
+            for ( i = 1; i <= 15; i++)
+            {
+
+                xp = (int)((double)(x1 + x2) / 2.0);
+                yp = (int)((double)(y1 + y2) / 2.0);
+
+                d = Math.Sqrt(Math.Pow((xp - xc), 2) + Math.Pow((yp - yc), 2));
+
+                if (d < sizelab)
+                {
+                    x1 = xp;
+                    y1 = yp;
+                }
+                else
+                {
+                    x2 = xp;
+                    y2 = yp;
+
+                }
+     
+
+           } // for i loop
+
+            //=================================================================
+
+        dx = xp - xc;
+        dy = yp - yc;
+
+        ang = Math.Atan2(dy, dx) / .0174533;       // takes real for floating values y,x
+
+        fact = (nchar + 1) * 2;
+
+        dx = dx / fact;
+        dy = dy / fact;
+
+        if ((ang > 90.0) || (ang < -90.0)) goto PLOT80;
+
+        a = (ang - 90.0) * .0174533;
+
+        xc = xc + dx + Math.Cos(a) * size / 2.0;
+        yc = yc + dy + Math.Sin(a) * size / 2.0;
+
+        goto PLOT90;
+
+PLOT80: ang = ang + 180.0;
+
+        a = (ang - 90.0) * .0174533;
+
+        xc = xp - dx + Math.Cos(a) * size / 2.0;
+        yc = yp - dy + Math.Sin(a) * size / 2.0;
+
+
+//==========================================================
+// call symbol(xc, yc, chx, chy, labl, ang, nchar)
+
+PLOT90:    VOA_X[S,nn - 1] = xp;
+           VOA_Y[S,nn - 1] = yp;
+
+        // draw the rest of the line
+        //           draw dashed lines thru array(x, y)
+        // n =
+        //          on = fraction of interval pen down(0 < on <= 1.)
+        // dlen = interval length
+        // call dashit(x[nn - 1], y[nn - 1], (nps - nn + 2), on, dlen)
+
+
+            xc = (xc1 + xp) / 2.0;
+            yc = (yc1 + yp) / 2.0;
+
+
+    //  convert to screenunits: input = xc,yc  output = u, v
+   // call plotxy(xc, yc, u, v)
+
+
+//======================================================================
+// Plot to(IX, IY) with pen up(IPEN = 3), or pen down(IPEN = 2)
+// (IX, IY) in screen coordinates
+
+   //  call plotabs((u - float(len) / 2.), (v + chyy / 2.), 3)    //  this is a PEN UP condition
+
+
+   // call textc(nchar, labl)  // print text
+
+     
+
+
+        } // VOAPLOT()
+
+       
     } // Spotcontrol
 
     //============================================================
@@ -8875,8 +9918,5 @@ namespace PowerSDR
         public static extern void GetLocalTime(ref SystemTime Time);
     }
 
-   
-  
-
-   
-} // powersdr
+       
+    } // powersdr

@@ -1,0 +1,65 @@
+﻿Build started 4/29/2016 10:02:28 PM.
+     1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\DttSP\DttSP.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Creating "../../temp/Debug/DttSP\DttSP.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\win /I..\FFTW /I..\pthread /I. /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D DttSP_EXPORTS /D __CLEANUP_C /D _CRT_SECURE_NO_WARNINGS /D _VC80_UPGRADE=0x0710 /D _WINDLL /D _MBCS /Gm- /EHsc /RTC1 /MTd /GS /arch:SSE /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"../../temp/Debug/DttSP\\" /Fd"../../temp/Debug/DttSP\vc140.pdb" /FR"../../temp/Debug/DttSP\\" /Gd /TC /analyze- /errorReport:prompt /D_WIN32_WINNT=0x0500 update.c winmain.c
+         update.c
+         winmain.c
+         Generating Code...
+         All outputs are up-to-date.
+       ResourceCompile:
+         All outputs are up-to-date.
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(1189,5): warning MSB8012: TargetPath(C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\DttSP\../../temp/Debug/DttSP\DttSP.dll) does not match the Linker's OutputFile property value (C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\bin\Debug\DttSP.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"../../bin/Debug/DttSP.dll" /INCREMENTAL:NO /NOLOGO winMM.lib "libfftw3f-3.lib" pthreadVC.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:"./DttSP.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"../../temp/Debug/DttSP\DttSP.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"../../temp/Debug/DttSP\DttSP.lib" /SAFESEH /DLL ../../temp/Debug/DttSP\DttSP.res
+         ../../temp/Debug/DttSP\am_demod.obj
+         ../../temp/Debug/DttSP\banal.obj
+         ../../temp/Debug/DttSP\bufvec.obj
+         ../../temp/Debug/DttSP\correctIQ.obj
+         ../../temp/Debug/DttSP\cwtones.obj
+         ../../temp/Debug/DttSP\cxops.obj
+         ../../temp/Debug/DttSP\dcblock.obj
+         ../../temp/Debug/DttSP\dttspagc.obj
+         ../../temp/Debug/DttSP\filt2p2z.obj
+         ../../temp/Debug/DttSP\filter.obj
+         ../../temp/Debug/DttSP\filterbank.obj
+         ../../temp/Debug/DttSP\fm_demod.obj
+         ../../temp/Debug/DttSP\graphiceq.obj
+         ../../temp/Debug/DttSP\hilbert.obj
+         ../../temp/Debug/DttSP\isoband.obj
+         ../../temp/Debug/DttSP\keyd.obj
+         ../../temp/Debug/DttSP\keyer.obj
+         ../../temp/Debug/DttSP\keyerio.obj
+         ../../temp/Debug/DttSP\lmadf.obj
+         ../../temp/Debug/DttSP\malloc16.obj
+         ../../temp/Debug/DttSP\meter.obj
+         ../../temp/Debug/DttSP\noiseblanker.obj
+         ../../temp/Debug/DttSP\oscillator.obj
+         ../../temp/Debug/DttSP\ovsv.obj
+         ../../temp/Debug/DttSP\resample.obj
+         ../../temp/Debug/DttSP\resampleF.obj
+         ../../temp/Debug/DttSP\ringb.obj
+         ../../temp/Debug/DttSP\sdr.obj
+         ../../temp/Debug/DttSP\sdrexport.obj
+         ../../temp/Debug/DttSP\spectrum.obj
+         ../../temp/Debug/DttSP\speechproc.obj
+         ../../temp/Debug/DttSP\splitfields.obj
+         ../../temp/Debug/DttSP\spottone.obj
+         ../../temp/Debug/DttSP\update.obj
+         ../../temp/Debug/DttSP\window.obj
+         ../../temp/Debug/DttSP\winmain.obj
+         ../../temp/Debug/DttSP\wscompand.obj
+         ../../temp/Debug/DttSP\fastrig1.obj
+            Creating library ../../temp/Debug/DttSP\DttSP.lib and object ../../temp/Debug/DttSP\DttSP.exp
+         DttSP.vcxproj -> C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\DttSP\../../temp/Debug/DttSP\DttSP.dll
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\bscmake.exe /nologo /o"../../temp/Debug/DttSP\DttSP.bsc" ../../temp/Debug/DttSP\am_demod.sbr ../../temp/Debug/DttSP\banal.sbr ../../temp/Debug/DttSP\bufvec.sbr ../../temp/Debug/DttSP\correctIQ.sbr ../../temp/Debug/DttSP\cwtones.sbr ../../temp/Debug/DttSP\cxops.sbr ../../temp/Debug/DttSP\dcblock.sbr ../../temp/Debug/DttSP\dttspagc.sbr ../../temp/Debug/DttSP\fastrig.sbr ../../temp/Debug/DttSP\filt2p2z.sbr ../../temp/Debug/DttSP\filter.sbr ../../temp/Debug/DttSP\filterbank.sbr ../../temp/Debug/DttSP\fm_demod.sbr ../../temp/Debug/DttSP\graphiceq.sbr ../../temp/Debug/DttSP\hilbert.sbr ../../temp/Debug/DttSP\isoband.sbr ../../temp/Debug/DttSP\keyd.sbr ../../temp/Debug/DttSP\keyer.sbr ../../temp/Debug/DttSP\keyerio.sbr ../../temp/Debug/DttSP\lmadf.sbr ../../temp/Debug/DttSP\malloc16.sbr ../../temp/Debug/DttSP\meter.sbr ../../temp/Debug/DttSP\noiseblanker.sbr ../../temp/Debug/DttSP\oscillator.sbr ../../temp/Debug/DttSP\ovsv.sbr ../../temp/Debug/DttSP\resample.sbr ../../temp/Debug/DttSP\resampleF.sbr ../../temp/Debug/DttSP\ringb.sbr ../../temp/Debug/DttSP\sdr.sbr ../../temp/Debug/DttSP\sdrexport.sbr ../../temp/Debug/DttSP\spectrum.sbr ../../temp/Debug/DttSP\speechproc.sbr ../../temp/Debug/DttSP\splitfields.sbr ../../temp/Debug/DttSP\spottone.sbr ../../temp/Debug/DttSP\update.sbr ../../temp/Debug/DttSP\window.sbr ../../temp/Debug/DttSP\winmain.sbr ../../temp/Debug/DttSP\wscompand.sbr
+       FinalizeBuildStatus:
+         Deleting file "../../temp/Debug/DttSP\DttSP.tlog\unsuccessfulbuild".
+         Touching "../../temp/Debug/DttSP\DttSP.tlog\DttSP.lastbuildstate".
+     1>Done Building Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\DttSP\DttSP.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:08.76

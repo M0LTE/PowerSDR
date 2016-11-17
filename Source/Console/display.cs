@@ -840,7 +840,7 @@ namespace PowerSDR
 
 
 
-        private static int spectrum_grid_max1 = 0; // ke9ns add to adjust grid during transmit
+        private static int spectrum_grid_max1 = 0; // ke9ns add to adjust grid during transmit (this is just a holder of the original value to put back when done transmitting)
         private static int spectrum_grid_max = 0;
 		public static int SpectrumGridMax
 		{
@@ -1098,9 +1098,9 @@ namespace PowerSDR
         //      request comes from console.
         private static byte autobright = 0; //  ke9ns ADD from console rx1 waterfall bright adjust
         private static byte autobright2 = 0; //  ke9ns ADD from console rx2 waterfall bright adjust
-        private static byte autobright3 = 0; //  ke9ns ADD from console TX waterfall bright adjust
-        private static byte autobright6 = 0; //  ke9ns ADD from console rx1 panadapter bright adjust
-        private static byte autobright7 = 0; //  ke9ns ADD from console rx1 panadapter scale adjust (for small signal or standard signal)
+        private static byte autobright3 = 0; //  ke9ns ADD from console TX waterfall bright adjust 1=adjust tx waterfall brightness
+        private static byte autobright6 = 0; //  ke9ns ADD from console rx1 panadapter bright adjust 2=rx1 adjust
+        private static byte autobright7 = 0; //  ke9ns ADD from console rx1 panadapter ZOOM scale adjust (for small signal or standard signal)
 
 
         public static byte AutoBright       // this is called or set in console 1=adjust waterfall, 2=adjust Pan level, 3=adjust Pan scale (small signal), 4=adjust Pan scale (standard)
@@ -1126,12 +1126,12 @@ namespace PowerSDR
                             autobright6 = value; // RX1 adjust 
                             return;
                         }
-                        else if (value == 3)
+                        else if (value == 3) // ZOOM
                         {
                             autobright7 = value; // RX1 adjust small signal scale
                             return;
                         }
-                        else if (value == 4)
+                        else if (value == 4) // UNZOOM
                         {
                             AB_Peak = -200;
                             AB_Count = 0;
@@ -5979,7 +5979,7 @@ namespace PowerSDR
             else
             {
                 spectrum_grid_max = spectrum_grid_max1;  //ke9ns put back normal RX grids 
-                spectrum_grid_min = spectrum_grid_min1;
+              //  spectrum_grid_min = spectrum_grid_min1;
 
             }
 
@@ -6224,7 +6224,7 @@ namespace PowerSDR
 
                 //=========================================================================
                 // ke9ns add auto
-                if (autobright6 == 2) // RX1
+                if (autobright6 == 2) // RX1 waterfall adjust
                 {
                     if ((!mox) && (rx == 1))
                     {
@@ -6232,9 +6232,9 @@ namespace PowerSDR
                         AB = AB + (long)max; // ke9ns add autobright feature (detect floor)
                     }
 
-                } // autobright == 2
+                } // autobright6 == 2
 
-                else if (autobright7 == 3)
+                else if (autobright7 == 3) // rx1 pan scale adjust
                 {
                     if ((!mox) && (rx == 1)) // rx only on rx1
                     {
@@ -6244,8 +6244,7 @@ namespace PowerSDR
                             AB_Peak = (int)max;    // ke9ns add detect peak
                           
                         }
-            
-                      
+                    
                     } // !mox
 
                 } // autobright == 3 or == 4
@@ -6253,7 +6252,7 @@ namespace PowerSDR
 
             }  // for loop from 0 to W wide
 
-            if (console.BeaconSigAvg == true)
+            if (console.BeaconSigAvg == true) // ke9ns for beacon scanner floor
             {
                 SpotControl.BX_dBm2 = (int)(max1 / W); // avg db value of the freq your on now
              
@@ -6261,6 +6260,7 @@ namespace PowerSDR
             } //  if (console.BeaconSigAvg == true)
 
             //=========================================================================
+            // ke9ns waterfall adjust
             //=========================================================================
             // ke9ns add auto
             if (autobright6 == 2) // rx1 adjust
@@ -6279,20 +6279,21 @@ namespace PowerSDR
                 {
                     console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
                     SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
-
+                    Debug.WriteLine("min = "+ SpectrumGridMin);
                 }
                
 
-            } // autobright = 2
+            } // autobright6 = 2
 
 
             //=========================================================================
-            // ke9ns Panadapter SMALL SIGNAL SCALER (increase size of signals on panadapter)
+            // ke9ns Panadapter SMALL SIGNAL SCALER (increase size of signals on panadapter)  (ZOOM)
             //=========================================================================
             // ke9ns add auto scale pan
-           else if (autobright7 == 3) // rx1 adjust
+            else if (autobright7 == 3) // rx1 adjust
             {
 
+              //  Debug.WriteLine("==========AUTOBRIGHT7=================");
 
                 if (AB_Count < 3)
                 {
@@ -6308,6 +6309,7 @@ namespace PowerSDR
 
                     autobright7 = autobright3 = autobright = 0; // turn off feature
 
+                  //  Debug.WriteLine("==========AUTOBRIGHT7 ready to adjust=================");
 
                     if ((AB_Total > -170) && (AB_Total < -20))
                     {
@@ -6325,6 +6327,7 @@ namespace PowerSDR
                         SpectrumGridMin = console.AutoPanScaleMin;
                         SpectrumGridMax = console.AutoPanScaleMax;
                         SpectrumGridStep = console.AutoPanScaleStep;
+                     //   Debug.WriteLine("==========AUTOBRIGHT7 out of bounds=================");
 
                     }
 
@@ -6337,11 +6340,12 @@ namespace PowerSDR
             } // autobright = 3
 
             //=========================================================================
-            // ke9ns put back original Panadapter scales Min Max (STANDARD)
+            // ke9ns put back original Panadapter scales Min Max (STANDARD)  (UNZOOM)
             //=========================================================================
             else if (autobright7 == 4) // 
             {
-                         
+             //   Debug.WriteLine("==========AUTOBRIGHT7 put back=================");
+
                 autobright7 = autobright3 = autobright = 0; // turn off feature
 
                 SpectrumGridMin = console.AutoPanScaleMin;
@@ -7472,7 +7476,7 @@ namespace PowerSDR
                 // ke9ns add autobright (auto water level) feature
                 //=========================================================================
 
-                if (mox)
+                if (mox) // transmit here
                 {
                     if (autobright3 == 1) // tx adjust
                     {
@@ -7494,7 +7498,7 @@ namespace PowerSDR
                     } // autobright3 = 1
 
                 }
-                else if (rx == 1)
+                else if (rx == 1) // RX1 receive here
                 {
                     if (autobright == 1) // rx1 adjust
                     {
