@@ -252,8 +252,10 @@ namespace PowerSDR
 			{
 				timeKillEvent(timerID);
 			}
-			timerID = timeSetEvent(tel, 1, timeProcPeriodic, 0, (int)TimerMode.Periodic);
-			if (timerID == 0)
+
+            timerID = timeSetEvent(tel, 1, timeProcPeriodic, 0, (int)TimerMode.Periodic);
+
+            if (timerID == 0)
 			{
 				Debug.Fail("Timer creation failed.");
 			}
@@ -295,6 +297,9 @@ namespace PowerSDR
                 setkey_memory = state;
             }
 		}
+
+
+
 		private void quitshut()
 		{
             Debug.WriteLine("quitshut 1");
@@ -2070,12 +2075,14 @@ namespace PowerSDR
 				}
 				return;		// ignore all others
 			}
+
 			// X on flow
 			if (ttx > 0) ttx--;			// time out timer down one element
 			if (ttx > 0) return;		// not yet timed out
 			setptt(false);			// cw timer timed out
 			setkey(false);
-		}
+
+		} // process_element()
 
 
         //===============================================================================================

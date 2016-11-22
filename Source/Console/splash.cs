@@ -141,7 +141,7 @@ namespace PowerSDR
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(114, 20);
             this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "Rev: 111616T11";
+            this.textBox1.Text = "Rev: 112216T11";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblTimeRemaining

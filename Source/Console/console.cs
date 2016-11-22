@@ -1,7 +1,7 @@
 ﻿//=================================================================
 // console.cs
 //=================================================================
-// PowerSDR is a C# implementation of a Software Defined Radio. 
+// PowerSDR is a C# implementation of a Software Defined Radio. spo
 // Copyright (C) 2003-2013  FlexRadio Systems.  
 // 
 // This program is free software; you can redistribute it and/or
@@ -595,6 +595,101 @@ namespace PowerSDR
     unsafe public class Console : System.Windows.Forms.Form
 	{
 
+
+        // ke9ns add (copied from cwx precision multimedia msec timer)
+        #region Win32 Multimedia Timer Functions
+
+        private int tel;            // time of one element in ms
+
+        // Represents the method that is called by Windows when a timer event occurs.
+        private delegate void TimeProc(int id, int msg, int user, int param1, int param2);
+
+        // Specifies constants for multimedia timer event types.
+
+        public enum TimerMode
+        {
+            OneShot,    // Timer event occurs once.
+            Periodic    // Timer event occurs periodically.
+        };
+
+        // Represents information about the timer's capabilities.
+        [StructLayout(LayoutKind.Sequential)]
+        public struct TimerCaps
+        {
+            public int periodMin;   // Minimum supported period in milliseconds.
+            public int periodMax;   // Maximum supported period in milliseconds.
+        }
+
+
+        // Gets timer capabilities.
+        [DllImport("winmm.dll")]
+        private static extern int timeGetDevCaps(ref TimerCaps caps,
+            int sizeOfTimerCaps);
+
+        // Creates and starts the timer.
+        [DllImport("winmm.dll")]
+        private static extern int timeSetEvent(int delay, int resolution,
+            TimeProc proc, int user, int mode);
+
+        // Stops and destroys the timer.
+        [DllImport("winmm.dll")]
+        private static extern int timeKillEvent(int id);
+
+        // Indicates that the operation was successful.
+        private const int TIMERR_NOERROR = 0;
+
+        // Timer identifier.
+        private int timerID;
+
+
+        private TimeProc timeProcPeriodic;
+
+        // ke9ns run this to kill the prior timer and start a new timer 
+        private void setup_timer(int cwxwpm)
+        {
+          
+            if (timerID != 0)
+            {
+                timeKillEvent(timerID);
+            }
+
+            // (delay, resolution, proc, user, mode)
+            timerID = timeSetEvent(cwxwpm, 1, timeProcPeriodic, 0, (int)TimerMode.Periodic);
+
+            if (timerID == 0)
+            {
+                Debug.Fail("1Timer creation failed.");
+            }
+        }
+
+
+        private int timerID1;
+
+        private TimeProc timeProcPeriodic1;
+
+        // ke9ns run this to kill the prior timer and start a new timer 
+        private void setup_timer1(int cwxwpm)
+        {
+          
+            if (timerID1 != 0)
+            {
+                timeKillEvent(timerID1);
+            }
+
+            // (delay, resolution, proc, user, mode)
+            timerID1 = timeSetEvent(cwxwpm, 1, timeProcPeriodic1, 0, (int)TimerMode.OneShot);
+
+            if (timerID1 == 0)
+            {
+                Debug.Fail("2Timer creation failed.");
+            }
+        }
+
+
+
+        #endregion
+
+
         HidDevice.PowerMate powerMate = new HidDevice.PowerMate();  // ke9ns add link back to PowerMate.cpp and PowerMate.h
         public int KBON = 0; // ke9ns add 1=knob present 0=knob not present
         public int speed = 0; // ke9ns add speed of knob freq change
@@ -1138,7 +1233,7 @@ namespace PowerSDR
 #region Windows Form Generated Code
 
         private System.Windows.Forms.ButtonTS btnHidden;
-		private System.Windows.Forms.TextBoxTS txtVFOAFreq;
+		public System.Windows.Forms.TextBoxTS txtVFOAFreq;
 		private System.Windows.Forms.TextBoxTS txtVFOABand;
 		private System.Windows.Forms.TextBoxTS txtVFOBFreq;
         public PictureBox picDisplay;
@@ -3305,6 +3400,7 @@ namespace PowerSDR
             this.radBand17.TabStop = true;
             this.toolTip1.SetToolTip(this.radBand17, resources.GetString("radBand17.ToolTip"));
             this.radBand17.UseVisualStyleBackColor = true;
+            this.radBand17.CheckedChanged += new System.EventHandler(this.radBand17_CheckedChanged);
             this.radBand17.Click += new System.EventHandler(this.radBand17_Click);
             this.radBand17.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand17_MouseDown);
             // 
@@ -3317,6 +3413,7 @@ namespace PowerSDR
             this.radBand20.TabStop = true;
             this.toolTip1.SetToolTip(this.radBand20, resources.GetString("radBand20.ToolTip"));
             this.radBand20.UseVisualStyleBackColor = true;
+            this.radBand20.CheckedChanged += new System.EventHandler(this.radBand20_CheckedChanged);
             this.radBand20.Click += new System.EventHandler(this.radBand20_Click);
             this.radBand20.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand20_MouseDown);
             // 
@@ -13184,30 +13281,16 @@ namespace PowerSDR
 			}
 
 			VFOAFreq = freq;
-
             
             tempVFOAFreq = VFOAFreq; // ke9ns add  CTUN operation changed freq so update temp value
 
-            // ke9ns add for VOACAP
-            if ((SpotForm != null) && (SpotForm.checkBoxMUF.Checked == true))
-            {
-
-                if ((int)(Display.VFOA / 1e6) != last_MHZ)
-                {
-                    last_MHZ = (int)VFOAFreq;
-                    Debug.WriteLine("CONSOLE HERE=");
-
-                    SpotForm.VOACAP_CHECK();
-                }
-                else Debug.WriteLine("1 HERE= " + last_MHZ + " , " + (int)VFOAFreq);
-
-
-            } // ke9ns voacap
+    // voacap
 
         } // setband
 
 
-        int last_MHZ = 0; // ke9ns 
+        public int last_MHZ = 0; // ke9ns 
+       public DSPMode last_MODE = DSPMode.LAST;
 
         private void ChangeTuneStepUp()
 		{
@@ -19446,6 +19529,8 @@ namespace PowerSDR
   
                 setupForm.UpdateWaterfallBandInfo();
             } // !initializing
+
+
 
         } // UpdateWaterfallLevelValues()
 
@@ -32996,6 +33081,8 @@ namespace PowerSDR
 			set { histogram_hang_time = value; }
 		}
 
+
+
 		public double VFOAFreq
 		{
 			get 
@@ -33012,6 +33099,9 @@ namespace PowerSDR
 			set
 			{
 				if(vfo_lock || setupForm == null) return;
+
+              
+
                 if (!this.InvokeRequired)
                 {
                     txtVFOAFreq.Text = value.ToString("f6");
@@ -33022,8 +33112,14 @@ namespace PowerSDR
                     VFOUpdateDel del = new VFOUpdateDel(VFOAUpdate);
                     Invoke(del, new object[] { value });
                 }
-			}
-		}
+
+               // voacap
+            }
+
+
+        } // VFOAFreq
+
+
 
         private delegate void VFOUpdateDel(double freq);
         private void VFOAUpdate(double freq)
@@ -33089,13 +33185,17 @@ namespace PowerSDR
 			}
 		}
 
+        
 		public int AF
 		{
-			get { return ptbAF.Value; }
+			get {
+              
+                return ptbAF.Value; }
 			set
 			{
 				value = Math.Max(0, value);			// lower bound
 				value = Math.Min(100, value);		// upper bound
+               
 
 				ptbAF.Value = value;
 				ptbAF_Scroll(this, EventArgs.Empty);
@@ -33103,9 +33203,8 @@ namespace PowerSDR
 		}
 
 
-
 		private int rxaf = 50;
-		public int RXAF
+		public int RXAF                  // ke9ns used to keep the last value of the AF to put back after unkeying the flex radio
 		{
 			get { return rxaf; }
 			set { rxaf = value; }
@@ -33124,7 +33223,9 @@ namespace PowerSDR
 					setupForm.TXAF = txaf;
 
                     if ((mox) && (chkMON.Checked == true))// && ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true)))  // ke9ns add    (dont go into MON if in full duplex mode, leave as AF)
+                    {
                         ptbAF.Value = txaf;
+                    }
 				}
 			}
 		}
@@ -33326,7 +33427,11 @@ namespace PowerSDR
         public bool MUT
 		{
 			get { return chkMUT.Checked; }
-			set	{ chkMUT.Checked = value; }
+            
+            set	{
+               
+                chkMUT.Checked = value;
+            }
 		}
 
         public bool MUT2
@@ -46156,10 +46261,27 @@ namespace PowerSDR
 		{
 			Audio.callback_return = 2;
 
+            if (timerID != 0) // ke9ns add
+            {
+                timeKillEvent(timerID);     // kill the mmtimer
+            }
+
+            if (timerID1 != 0)  // ke9ns add
+            {
+                timeKillEvent(timerID1);
+            }
+
+
+            
+            SpotForm.VOARUN = true;                 // ke9ns add
+            SpotForm.checkBoxMUF.Checked = false;   // ke9ns add
+
+          
             CATEnabled = false;
             ROTOREnabled = false; // ke9ns add
 
             if (setupForm != null) setupForm.Hide();
+
 			if (cwxForm != null) cwxForm.Hide();
 			if (eqForm != null) eqForm.Hide();
 			if (ucbForm != null) ucbForm.Hide();
@@ -46177,6 +46299,8 @@ namespace PowerSDR
             if (flexControlAdvancedForm != null) flexControlAdvancedForm.Hide();
             if (memoryForm != null) memoryForm.Hide();
             if (preSelForm != null) preSelForm.Hide();
+
+            if (SpotForm != null) SpotForm.Hide(); // ke9ns add
 
             if (fwcAtuForm != null)
             {
@@ -46344,6 +46468,8 @@ namespace PowerSDR
         //=========================================================================================
         private void chkMUT_CheckedChanged(object sender, System.EventArgs e)
 		{
+
+         
             if (chkBoxMuteSpk.Checked == true) //  ke9ns add s indicates muting just spk and not headphones
             {
                 chkMUT.Text = "MUTs";
@@ -46356,11 +46482,10 @@ namespace PowerSDR
             if (chkMUT.Checked)
             {
                 chkMUT.BackColor = button_selected_color;
-                
             }
             else
             {
-                chkMUT.BackColor = SystemColors.Control;
+               chkMUT.BackColor = SystemColors.Control;
             }
 
             //	if(num_channels == 2)
@@ -46370,7 +46495,7 @@ namespace PowerSDR
 
        
 
-                if (fwc_init || hid_init)  //  ke9ns add
+               if (fwc_init || hid_init)  //  ke9ns add
                {
                     switch (current_model)
                     {
@@ -46386,11 +46511,14 @@ namespace PowerSDR
                                 }
                                 else
                                 {
+
                                 fwcMixForm.chkExtSpkrSel.Checked = false;
                                 //   fwcMixForm.chkLineOutRCASel.Checked = false;
+
+                             
                             }
 
-                            }
+                        }
                             else
                             {
                                 if (chkBoxMuteSpk.Checked == false) // standard MUTE
@@ -46783,7 +46911,7 @@ namespace PowerSDR
             }
 
 
-            if (hid_init && current_model == Model.FLEX1500 && mox && chkMON.Checked)
+            if ((hid_init) && (current_model == Model.FLEX1500) && (mox) && (chkMON.Checked))
             {
                 double percent = (double)(ptbAF.Value - ptbAF.Minimum) / (double)ptbAF.Maximum;
 
@@ -46801,6 +46929,16 @@ namespace PowerSDR
                     }
                     else
                     {
+                        switch (current_model) // ke9ns add (to allow slider to adjust output of headphones
+                        {
+                            case Model.FLEX1500:
+                                Audio.MonitorVolume = ptbAF.Value / 100.0 * 0.8; // cap at 80% of Full Scale to prevent popping
+                                break;
+                            default:
+                                // if ((mox) && (chkVFOBTX.Checked == false || chkRX2.Checked == false))
+                                Audio.MonitorVolume = ptbAF.Value / 100.0;
+                                break;
+                        }
 
                     }
                 }
@@ -46833,14 +46971,23 @@ namespace PowerSDR
             }
 
             if ((mox) && (chkMON.Checked == true))// && ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == true && setupForm.chkRX2AutoMuteRX1OnVFOBTX.Checked == true) ) )  // ke9ns MOD to prevent MON function when in full duplex (RX2 ON the VFOB TX)
+            {
                 TXAF = ptbAF.Value;   // if transmit
-            else  RXAF = ptbAF.Value; // ke9ns if Receive  was !MOX
+            }
+            else
+            {
+               RXAF = ptbAF.Value; // ke9ns if Receive  was !MOX
+                Debug.WriteLine("RXAF: "+ RXAF);
+            }
 
             
 
 			if(ptbAF.Focused) btnHidden.Focus();
 
 		} // ptbAF_Scroll
+
+
+        //======================================================================================================
 
 		private void ptbRF_Scroll(object sender, System.EventArgs e)
 		{
@@ -48299,42 +48446,52 @@ namespace PowerSDR
 					comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
 				}
 
-				switch(Audio.TXDSPMode)
-				{
-					case DSPMode.USB:
-					case DSPMode.CWU:
-					case DSPMode.DIGU:
-						Audio.SineFreq1 = cw_pitch;
-						DttSP.SetTXFilter(1, cw_pitch-100, cw_pitch+100);
-						Audio.TXInputSignal = Audio.SignalSource.SINE;
-						Audio.SourceScale = 1.0;
-						break;
-					case DSPMode.LSB:
-					case DSPMode.CWL:
-					case DSPMode.DIGL:
-						Audio.SineFreq1 = cw_pitch;
-						DttSP.SetTXFilter(1, -cw_pitch-100, -cw_pitch+100);
-						Audio.TXInputSignal = Audio.SignalSource.SINE;
-						Audio.SourceScale = 1.0;
-						break;
-					case DSPMode.DSB:
-						Audio.SineFreq1 = cw_pitch;
-						DttSP.SetTXFilter(1, cw_pitch-100, cw_pitch+100);
-						Audio.TXInputSignal = Audio.SignalSource.SINE;
-						Audio.SourceScale = 1.0;
-						break;
-					case DSPMode.AM:
-					case DSPMode.SAM:
-					case DSPMode.FM:
-						Audio.SineFreq1 = cw_pitch;
-						DttSP.SetTXFilter(1, cw_pitch-100, cw_pitch+100);
-						Audio.TXInputSignal = Audio.SignalSource.SINE;
-						Audio.SourceScale = 1.0;
-						break;
-				}
+              //  if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == false)) // ke9ns add
+              //  {
 
-				DttSP.SetMode(1, 0, DSPMode.DIGU);
-                
+                    switch (Audio.TXDSPMode)
+                    {
+                        case DSPMode.USB:
+                        case DSPMode.CWU:
+                        case DSPMode.DIGU:
+                            Audio.SineFreq1 = cw_pitch;
+                            DttSP.SetTXFilter(1, cw_pitch - 100, cw_pitch + 100);
+                            Audio.TXInputSignal = Audio.SignalSource.SINE;
+                            Audio.SourceScale = 1.0;
+                            break;
+                        case DSPMode.LSB:
+                        case DSPMode.CWL:
+                        case DSPMode.DIGL:
+                            Audio.SineFreq1 = cw_pitch;
+                            DttSP.SetTXFilter(1, -cw_pitch - 100, -cw_pitch + 100);
+                            Audio.TXInputSignal = Audio.SignalSource.SINE;
+                            Audio.SourceScale = 1.0;
+                            break;
+                        case DSPMode.DSB:
+                            Audio.SineFreq1 = cw_pitch;
+                            DttSP.SetTXFilter(1, cw_pitch - 100, cw_pitch + 100);
+                            Audio.TXInputSignal = Audio.SignalSource.SINE;
+                            Audio.SourceScale = 1.0;
+                            break;
+                        case DSPMode.AM:
+                        case DSPMode.SAM:
+                        case DSPMode.FM:
+                            Audio.SineFreq1 = cw_pitch;
+                            DttSP.SetTXFilter(1, cw_pitch - 100, cw_pitch + 100);
+                            Audio.TXInputSignal = Audio.SignalSource.SINE;
+                            Audio.SourceScale = 1.0;
+                            break;
+                    }
+                    DttSP.SetMode(1, 0, DSPMode.DIGU);
+
+              //  }
+
+                if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) ) // ke9ns add
+                {
+                    Audio.SourceScale = 0.0;
+                }
+
+                 
                 // ensure radio believes we are in CW for tx freq limits
                 if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
                 {
@@ -48352,6 +48509,7 @@ namespace PowerSDR
                 }
 
 				PreviousPWR = ptbPWR.Value;
+
                 if (!xvtr_tune_power || tx_xvtr_index < 0)
                     PWR = tune_power;
 
@@ -48373,6 +48531,7 @@ namespace PowerSDR
 				}
 
 				chkMOX.Checked = true;
+
 				if(!mox)
 				{
 					chkTUN.Checked = false;
@@ -48388,7 +48547,7 @@ namespace PowerSDR
 						break;
 				}
 
-				if(atu_present && tx_band != Band.B2M && (ATUTuneMode)comboTuneMode.SelectedIndex != ATUTuneMode.BYPASS)
+				if((atu_present) && (tx_band != Band.B2M) && ((ATUTuneMode)comboTuneMode.SelectedIndex != ATUTuneMode.BYPASS))
 				{
 					chkTUN.Enabled = false;
 					comboTuneMode.Enabled = false;
@@ -48403,21 +48562,67 @@ namespace PowerSDR
                 if (chkMUT.Checked == false) // ke9ns add prevent MUT from malfunctioning
                 {
                     Audio.MonitorVolume = (ptbAF.Value / 100.0) / 10;  // ke9ns add cut volume during a tune
-                    Debug.WriteLine("tune1===");
+                  //  Debug.WriteLine("tune1===");
                 }
                 else
                 {
-                    Audio.MonitorVolume = 0.0; // if muted
-                    Debug.WriteLine("tune0===");
+                    if (chkBoxMuteSpk.Checked == false) // ke9ns add
+                    {
+                        Audio.MonitorVolume = 0.0; // if muted
+                      //  Debug.WriteLine("tune0===");
+                    }
+                    else
+                    {
+                      //  Debug.WriteLine("check...");
+
+                    }
                 }
+
+                //---------------------------------
+                // ke9ns add pulser code
+
+                if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) && (PulseON== false))
+                {
+
+                    PulseON = true;   // set 1 time
                   
-              
+                    Last_PR = 0.0;
+                  //  Last_DCOFF = 0.0;
+
+                    PR = (1000.0 / (double)setupForm.tbPulseRate.Value);  // valuse from 25 to 50 mSec
+                    DC = ((double)setupForm.tbDutyCycle.Value / 100.0);   // value from .1 to .9
+                    DCOFF = (PR * DC); // so if PR = 25msec, then at 20%  DCOFF = 30msec , so on every 25msec and stay on for 5msec more each time
+
+                    timeProcPeriodic1 = new TimeProc(TimerPeriodicEventCallback1); // one shot
+
+
+                    timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);
+                    setup_timer((int)PR);
+
+                   
+
+                } // turn pulser ON
+
+
+                //---------------------------------
+
                 return;
 
 			} // chkTUN = true
 			else
 			{
-              
+                if (timerID != 0)  // ke9ns add
+                {
+                    timeKillEvent(timerID);     // turn pulser OFF
+                }
+
+                if (timerID1 != 0)  // ke9ns add
+                {
+                    timeKillEvent(timerID1);
+                }
+
+                PulseON = false; // ke9ns add
+
                 Audio.TXInputSignal = Audio.SignalSource.RADIO;
                 //Audio.RampDown = true;
                 Thread.Sleep(50);
@@ -48483,15 +48688,69 @@ namespace PowerSDR
                 }
 
 
-
             } //
-
-
 
 
         } // chkTUN_checkchanged
 
-		private void comboTuneMode_SelectedIndexChanged(object sender, System.EventArgs e)
+      
+
+        //==================================================================================================================
+        // ke9ns Tone Pulser routine for timing (setup tbDutyCycle 10 to 90% , and tbPulseRate = 20 to 40 pulses/second )
+        //
+
+        public bool PulseON = false; // Tone ON = true, Tone OFF = false
+           
+        double PR = 0.0;
+        double DC = 0.0;
+        double DCOFF = 0.0;
+
+        double Last_PR = 0.0;
+      
+
+        //==========================================================================================
+        // ke9ns add  precision msec multimedia timers
+        // Pulser timer
+        private void TimerPeriodicEventCallback(int id, int msg, int user, int param1, int param2)
+        {
+            setup_timer1((int)DCOFF); // set duty cycle timer now
+
+           Audio.SourceScale = 1.0;  // turn on audio during this portion
+           
+        //   CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, true);
+        //    CWKeyer.SensorEnqueue(item);
+
+
+        } // TimerPeriodicEventCallback
+
+        //==========================================================================================
+        // ke9ns add precision msec multimedia timers  (ONE SHOT)
+        // DUTY timers
+        private void TimerPeriodicEventCallback1(int id, int msg, int user, int param1, int param2)
+        {
+            Audio.SourceScale = 0.0; // turn off audio during this portion
+
+         //   CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, false);
+         //   CWKeyer.SensorEnqueue(item);
+
+            // look for changes in the sliders for Pulses/second and duty
+            PR = (1000.0 / (double)setupForm.tbPulseRate.Value);  // valuse from 25 to 50 mSec
+            DC = ((double)setupForm.tbDutyCycle.Value / 100.0);   // value from .1 to .9
+            DCOFF = (PR * DC); // so if PR = 25msec, then at 20%  DCOFF = 30msec , so on every 25msec and stay on for 5msec more each time
+
+            if (Last_PR != PR)
+            {
+                setup_timer((int)PR);
+                Last_PR = PR;
+            }
+
+           
+        } // TimerPeriodicEventCallback1
+
+     
+
+        //==================================================================================================================
+        private void comboTuneMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(atu_present)
 			{
@@ -49295,7 +49554,9 @@ namespace PowerSDR
 			}
 
          
-            double freq = double.Parse(txtVFOAFreq.Text);
+           double freq = double.Parse(txtVFOAFreq.Text);  // ke9ns original
+
+          //  double freq = double.Parse(txtVFOAFreq.Text.Replace(",",".")); // ke9ns mod
 
          
 
@@ -50051,13 +50312,15 @@ namespace PowerSDR
             last_tx_xvtr_index = tx_xvtr_index;
 
             UpdateRX1Notches();
-		} // RX1 lost focus
+
+          // voacap
+        } // RX1 lost focus
 
         //================================================================
 
 
-        
-		private static double tuned_freq;
+
+        private static double tuned_freq;
 		private void txtVFOAFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
 
@@ -53167,7 +53430,9 @@ namespace PowerSDR
 
 		private void SetRX1Mode(DSPMode new_mode)
 		{
-			if(new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
+
+
+            if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
 
             DSPMode old_mode = rx1_dsp_mode;
 
@@ -53422,6 +53687,9 @@ namespace PowerSDR
                     chkTNF.Enabled = true;
                     btnTNFAdd.Enabled = true;
 					break;
+
+
+
 			} // SetRX1mode
 
             switch(new_mode)
@@ -53832,7 +54100,10 @@ namespace PowerSDR
 				if(flex5000RelayForm != null)
 					flex5000RelayForm.UpdateRelayState(out tx1, out tx2, out tx3);
 			}
-		}
+
+            // voacap
+
+        } // SetRX1Mode()
 
 		private void radModeLSB_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -63977,7 +64248,17 @@ namespace PowerSDR
             if (setupForm != null) setupForm.udTXFilterLow.Value = udTXFilterLow.Value;
         }
 
-       
+        private void radBand17_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radBand20_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
 
 
         //=========================================================================================
@@ -64069,7 +64350,7 @@ namespace PowerSDR
         }
 
 
-
+     
 
 
     } // class console

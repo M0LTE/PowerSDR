@@ -225,10 +225,13 @@ namespace PowerSDR
 		private static double monitor_volume = 0.0;
 		public static double MonitorVolume
 		{
-			get { return monitor_volume; }
+			get {
+              //  Debug.WriteLine("monitor_volume: "+monitor_volume);
+
+                return monitor_volume; }
 			set
 			{
-				//Debug.WriteLine("monitor_volume: "+value.ToString("f3"));
+				Debug.WriteLine("monitor_volume: "+value.ToString("f3"));
 				
               
                     monitor_volume = value;
