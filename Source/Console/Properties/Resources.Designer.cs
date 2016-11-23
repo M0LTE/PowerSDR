@@ -159,5 +159,38 @@ namespace PowerSDR.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;html&gt;
+        /// &lt;head&gt;
+        ///  &lt;meta charset=&quot;utf-8&quot;&gt;
+        ///  &lt;title&gt;PowerSDR 2.7.2 remote console&lt;/title&gt;
+        /// &lt;style type=&quot;text/css&quot;&gt;
+        ///   .body {
+        ///     background: #363636;
+        ///   }
+        ///   .freqTextBig {
+        ///     font-size: 40px;
+        ///     font-family: Arial;
+        ///     color: #FFFF00;
+        ///     text-align: right;
+        ///     width: 200px;
+        ///     margin-right: 8px;
+        ///     float: left;
+        ///   }
+        ///   .freqTextSmall {
+        ///     font-size: 30px;
+        ///     font-family: Arial;
+        ///     color: #FF4500;
+        ///     float: left;
+        ///     padding-top: 10px;
+        ///     margin-right: 10px;
+        ///    [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string template {
+            get {
+                return ResourceManager.GetString("template", resourceCulture);
+            }
+        }
     }
 }

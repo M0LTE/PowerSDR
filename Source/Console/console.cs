@@ -114,6 +114,9 @@ using System.Management;
 using System.Threading;
 using System.Text;
 using System.Windows.Forms;
+
+using HttpServer; // rn3kk
+
 //using System.Threading.Tasks; // ke9ns add net 4.5
 
 using System.Speech.Synthesis; // ke9ns add
@@ -775,7 +778,8 @@ namespace PowerSDR
 		public Mutex calibration_mutex = new Mutex();
 
       
-        public Http httpFile;
+        public Http httpFile;                           // ke9ns add
+        public HttpServer httpServer = null;           // rn3kk add
    
         public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
       
@@ -7767,7 +7771,7 @@ namespace PowerSDR
             FWC.console = this;
 			Display.console = this;  //
 
-            Http.console = this;
+            Http.console = this;                   // ke9ns add
 
            
             Setup.console = this;                 // ke9ns add  setup.cs to this console so setup can talk to console
@@ -8196,9 +8200,11 @@ namespace PowerSDR
 			InitFilterPresets();                // Initialize filter values
 
            
-            StackForm = new StackControl(this); // ke9ns add communicate with bandstack controls
-            SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
-            httpFile = new Http(this);
+            StackForm = new StackControl(this);     // ke9ns add communicate with bandstack controls
+            SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
+            httpFile = new Http(this);              // ke9ns add
+
+            httpServer = new HttpServer(this);      // rn3kk add
            
             setupForm = new Setup(this);        // ke9ns  create Setup form (needed so you can send data to setup form) Repeat for any form you want to send data too
           
@@ -46272,17 +46278,19 @@ namespace PowerSDR
             }
 
 
-            
-            SpotForm.VOARUN = true;                 // ke9ns add
-            SpotForm.checkBoxMUF.Checked = false;   // ke9ns add
+            if (SpotForm != null)
+            {
+                SpotForm.VOARUN = true;                 // ke9ns add
+                SpotForm.checkBoxMUF.Checked = false;   // ke9ns add
+            }
 
           
             CATEnabled = false;
             ROTOREnabled = false; // ke9ns add
 
-            if (setupForm != null) setupForm.Hide();
 
-			if (cwxForm != null) cwxForm.Hide();
+            if (setupForm != null) setupForm.Hide();
+            if (cwxForm != null) cwxForm.Hide();
 			if (eqForm != null) eqForm.Hide();
 			if (ucbForm != null) ucbForm.Hide();
 			if (xvtrForm != null) xvtrForm.Hide();
@@ -46312,8 +46320,9 @@ namespace PowerSDR
 
             DXMemList.Save1(); // ke9ns add
 
+            
 
-			chkPower.Checked = false;
+            chkPower.Checked = false;
 			Thread.Sleep(100);
 			this.Hide();
 
@@ -64350,7 +64359,69 @@ namespace PowerSDR
         }
 
 
-     
+        //=========================================================================================
+        //=========================================================================================
+        // rn3kk 
+        public void startHttpServer(int port)
+        {
+            httpServer.start(port);
+        }
+        //=========================================================================================
+        //=========================================================================================
+        // rn3kk 
+        public void stopHttpServer()
+        {
+            httpServer.stop();
+        }
+
+        //=========================================================================================
+        //=========================================================================================
+        // rn3kk add method for set VFOAFreq
+        public void setVFOAFreqByPixel(int pixel)
+        {
+            Debug.WriteLine("Receive pixel: " + pixel.ToString());
+            Debug.WriteLine("Panoram width: " + picDisplay.Width.ToString());
+            float x = PixelToHz(pixel);
+            Debug.WriteLine("Offset x:=" + x.ToString());
+
+            double rf_freq = VFOAFreq + (double)x * 0.0000010;
+
+            if (rx1_dsp_mode == DSPMode.CWL)
+                rf_freq += (double)cw_pitch * 0.0000010;
+            else if (rx1_dsp_mode == DSPMode.CWU)
+                rf_freq -= (double)cw_pitch * 0.0000010;
+
+            long f = (long)(rf_freq * 1e6);
+            int mult = CurrentTuneStepHz;
+            if (f % mult > mult / 2) f += (mult - f % mult);
+            else f -= f % mult;
+            rf_freq = (double)f * 1e-6;
+            VFOAFreq = rf_freq;
+        }
+        //=========================================================================================
+        //=========================================================================================
+        // rn3kk add method for change if mousewheell on web
+        public void wheelEventOnWeb(bool direction)
+        {
+            if (direction)
+            {
+                VFOAFreq += CurrentTuneStepMHz;
+            }
+            else
+            {
+                VFOAFreq -= CurrentTuneStepMHz;
+            }
+        }
+
+        public string getVFOAFreqString()
+        {
+            return txtVFOAFreq.Text;
+        }
+
+        public string getVFOBFreqString()
+        {
+            return txtVFOBFreq.Text;
+        }
 
 
     } // class console

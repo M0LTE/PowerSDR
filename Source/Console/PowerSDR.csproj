@@ -60,7 +60,7 @@
     <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -433,6 +433,9 @@
     <Compile Include="hardware_v2.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="hiperftimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="hid\CodecDebug.cs" />
     <Compile Include="hid\flex1500.cs" />
     <Compile Include="hid\FLEX1500DebugForm.cs">
@@ -449,9 +452,14 @@
     </Compile>
     <Compile Include="hid\hid_eeprom.cs" />
     <Compile Include="hid\usbhid.cs" />
-    <Compile Include="hiperftimer.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="HttpServer\GetTRXParamHandler.cs" />
+    <Compile Include="HttpServer\HandlerFactory.cs" />
+    <Compile Include="HttpServer\HttpServer.cs" />
+    <Compile Include="HttpServer\IHandler.cs" />
+    <Compile Include="HttpServer\ImageRequestHandler.cs" />
+    <Compile Include="HttpServer\SetParamRequestHandler.cs" />
+    <Compile Include="HttpServer\UnknownRequestHandler.cs" />
+    <Compile Include="HttpServer\WebPageRequestHandler.cs" />
     <Compile Include="hw_register.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -635,7 +643,20 @@
     <EmbeddedResource Include="DJConsoleUI\Setup_MP3LE.resx">
       <DependentUpon>Setup_MP3LE.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="hid\FLEX1500DebugForm.resx">
+      <DependentUpon>FLEX1500DebugForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="hid\FLEX1500MixerForm.resx">
+      <DependentUpon>FLEX1500MixerForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="hid\hidAntForm.resx">
+      <DependentUpon>hidAntForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\picD2.png" />
+    <EmbeddedResource Include="HttpServer\template.html" />
     <Content Include="libmp3lame.32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -776,18 +797,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FWC\VUForm.resx">
       <DependentUpon>VUForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="hid\FLEX1500DebugForm.resx">
-      <DependentUpon>FLEX1500DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="hid\FLEX1500MixerForm.resx">
-      <DependentUpon>FLEX1500MixerForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="hid\hidAntForm.resx">
-      <DependentUpon>hidAntForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="images\clock.jpg" />

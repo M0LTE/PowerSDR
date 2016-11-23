@@ -5039,7 +5039,6 @@ namespace PowerSDR
                     }
                     else if ((VOARUN == false) && (console.RX1DSPMode != console.last_MODE))
                     {
-               
                         console.last_MODE = console.RX1DSPMode;
                         VOACAP_CHECK();
                     }
@@ -6681,11 +6680,19 @@ namespace PowerSDR
         private void udDisplayLat_ValueChanged(object sender, EventArgs e)
         {
             Map_Last = 1;
+            if (checkBoxMUF.Checked == true)
+            {
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+            }
         }
 
         private void udDisplayLong_ValueChanged(object sender, EventArgs e)
         {
             Map_Last = 1;
+            if (checkBoxMUF.Checked == true)
+            {
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+            }
         }
 
         // ke9ns put beam heading on map
@@ -9878,9 +9885,7 @@ VOACAP_FINISH:      // jumps here if there was a problem
         {
             if (checkBoxMUF.Checked == true)
             {
-          
                 VOACAP_CHECK(); // rescan a new map since your changing your antenna type
-
             }
         }
 
@@ -9901,14 +9906,11 @@ VOACAP_FINISH:      // jumps here if there was a problem
 
                 if (checkBoxMUF.Checked == false)
                 {
-                   
                     Map_Last = Map_Last | 2;    // force update of world map
-
                 }
                 else
                 {
                     VOACAP_CHECK();
-
                 }
 
             }
@@ -9922,13 +9924,6 @@ VOACAP_FINISH:      // jumps here if there was a problem
         {
             this.toolTip1.SetToolTip(this.tbPanPower, "VOACAP: "+ ((int)tbPanPower.Value).ToString() +" watts" );
 
-
-            if (checkBoxMUF.Checked == true)
-            {
-
-             //   VOACAP_CHECK(); // rescan a new map since your changing your antenna type
-
-            }
         }
 
         private void tbPanPower_MouseEnter(object sender, EventArgs e)

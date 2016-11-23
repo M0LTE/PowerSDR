@@ -1084,6 +1084,8 @@ namespace PowerSDR
         public TrackBarTS tbDutyCycle;
         private LabelTS labelTS22;
         private LabelTS labelTS21;
+        public CheckBoxTS chkBoxHttp2;
+        private LabelTS labelTS23;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1467,6 +1469,7 @@ namespace PowerSDR
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkBoxHttp2 = new System.Windows.Forms.CheckBoxTS();
             this.labelTS19 = new System.Windows.Forms.LabelTS();
             this.udHttpRefresh = new System.Windows.Forms.NumericUpDownTS();
             this.txtHttpPass = new System.Windows.Forms.TextBoxTS();
@@ -2348,6 +2351,7 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.labelTS23 = new System.Windows.Forms.LabelTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -4555,6 +4559,8 @@ namespace PowerSDR
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelTS23);
+            this.groupBox2.Controls.Add(this.chkBoxHttp2);
             this.groupBox2.Controls.Add(this.labelTS19);
             this.groupBox2.Controls.Add(this.udHttpRefresh);
             this.groupBox2.Controls.Add(this.txtHttpPass);
@@ -4572,10 +4578,22 @@ namespace PowerSDR
             this.groupBox2.Text = "HttpServer";
             this.toolTip1.SetToolTip(this.groupBox2, resources.GetString("groupBox2.ToolTip"));
             // 
+            // chkBoxHttp2
+            // 
+            this.chkBoxHttp2.Image = null;
+            this.chkBoxHttp2.Location = new System.Drawing.Point(9, 56);
+            this.chkBoxHttp2.Name = "chkBoxHttp2";
+            this.chkBoxHttp2.Size = new System.Drawing.Size(105, 28);
+            this.chkBoxHttp2.TabIndex = 14;
+            this.chkBoxHttp2.Text = "On: Advanced";
+            this.toolTip1.SetToolTip(this.chkBoxHttp2, "Check to turn ON/OFF Http Server.\r\n\r\nAdvanced: View Display and control Frequency" +
+        ", Mode and Filter\r\n");
+            this.chkBoxHttp2.CheckedChanged += new System.EventHandler(this.chkBoxHttp2_CheckedChanged);
+            // 
             // labelTS19
             // 
             this.labelTS19.Image = null;
-            this.labelTS19.Location = new System.Drawing.Point(158, 19);
+            this.labelTS19.Location = new System.Drawing.Point(192, 19);
             this.labelTS19.Name = "labelTS19";
             this.labelTS19.Size = new System.Drawing.Size(112, 16);
             this.labelTS19.TabIndex = 13;
@@ -4588,7 +4606,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udHttpRefresh.Location = new System.Drawing.Point(166, 36);
+            this.udHttpRefresh.Location = new System.Drawing.Point(195, 37);
             this.udHttpRefresh.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -4611,7 +4629,7 @@ namespace PowerSDR
             // 
             // txtHttpPass
             // 
-            this.txtHttpPass.Location = new System.Drawing.Point(366, 35);
+            this.txtHttpPass.Location = new System.Drawing.Point(396, 35);
             this.txtHttpPass.MaxLength = 50;
             this.txtHttpPass.Name = "txtHttpPass";
             this.txtHttpPass.Size = new System.Drawing.Size(90, 20);
@@ -4623,7 +4641,7 @@ namespace PowerSDR
             // 
             // txtHttpUser
             // 
-            this.txtHttpUser.Location = new System.Drawing.Point(259, 35);
+            this.txtHttpUser.Location = new System.Drawing.Point(298, 36);
             this.txtHttpUser.MaxLength = 50;
             this.txtHttpUser.Name = "txtHttpUser";
             this.txtHttpUser.Size = new System.Drawing.Size(90, 20);
@@ -4636,7 +4654,7 @@ namespace PowerSDR
             // labelTS18
             // 
             this.labelTS18.Image = null;
-            this.labelTS18.Location = new System.Drawing.Point(383, 19);
+            this.labelTS18.Location = new System.Drawing.Point(396, 19);
             this.labelTS18.Name = "labelTS18";
             this.labelTS18.Size = new System.Drawing.Size(73, 16);
             this.labelTS18.TabIndex = 9;
@@ -4645,7 +4663,7 @@ namespace PowerSDR
             // labelTS17
             // 
             this.labelTS17.Image = null;
-            this.labelTS17.Location = new System.Drawing.Point(276, 19);
+            this.labelTS17.Location = new System.Drawing.Point(295, 19);
             this.labelTS17.Name = "labelTS17";
             this.labelTS17.Size = new System.Drawing.Size(73, 16);
             this.labelTS17.TabIndex = 8;
@@ -4654,7 +4672,7 @@ namespace PowerSDR
             // labelTS16
             // 
             this.labelTS16.Image = null;
-            this.labelTS16.Location = new System.Drawing.Point(83, 19);
+            this.labelTS16.Location = new System.Drawing.Point(120, 19);
             this.labelTS16.Name = "labelTS16";
             this.labelTS16.Size = new System.Drawing.Size(34, 16);
             this.labelTS16.TabIndex = 7;
@@ -4667,7 +4685,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udHttpPort.Location = new System.Drawing.Point(83, 35);
+            this.udHttpPort.Location = new System.Drawing.Point(123, 35);
             this.udHttpPort.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -4695,10 +4713,10 @@ namespace PowerSDR
             this.chkBoxHTTP.Image = null;
             this.chkBoxHTTP.Location = new System.Drawing.Point(9, 19);
             this.chkBoxHTTP.Name = "chkBoxHTTP";
-            this.chkBoxHTTP.Size = new System.Drawing.Size(68, 31);
+            this.chkBoxHTTP.Size = new System.Drawing.Size(88, 31);
             this.chkBoxHTTP.TabIndex = 7;
-            this.chkBoxHTTP.Text = "Active";
-            this.toolTip1.SetToolTip(this.chkBoxHTTP, "Check to turn ON Http Server.\r\n");
+            this.chkBoxHTTP.Text = "On: Basic";
+            this.toolTip1.SetToolTip(this.chkBoxHTTP, "Check to turn ON Http Server.\r\n\r\nBasic: view Display only\r\n");
             this.chkBoxHTTP.CheckedChanged += new System.EventHandler(this.chkBoxHTTP_CheckedChanged);
             // 
             // groupBox1
@@ -16489,6 +16507,16 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
+            // labelTS23
+            // 
+            this.labelTS23.Image = null;
+            this.labelTS23.Location = new System.Drawing.Point(6, 41);
+            this.labelTS23.Name = "labelTS23";
+            this.labelTS23.Size = new System.Drawing.Size(32, 23);
+            this.labelTS23.TabIndex = 80;
+            this.labelTS23.Text = "OR";
+            this.labelTS23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -27442,28 +27470,24 @@ namespace PowerSDR
         // ke9ns add
         private void chkBoxHTTP_CheckedChanged(object sender, EventArgs e)
         {
-              if (chkBoxHTTP.Checked == true)
+           
+            if (chkBoxHTTP.Checked == true)
                {
+
+                chkBoxHttp2.Checked = false;
 
                 if (Console.m_terminated == true)
                 {
-                  
                     Debug.WriteLine("CALL HTTPSERVER1");
 
                     try
                     {
-                       
-                        //  console.HttpServer2();
-                      //  httpFile.HttpServer1();
-
-                        console.HttpServer = true;
-
+                       console.HttpServer = true;
                     }
                     catch (Exception e1)
                     {
                         Debug.WriteLine("bad call "+ e1);
                     }
-
 
                 }
 
@@ -27473,14 +27497,37 @@ namespace PowerSDR
                 Http.terminate();
                        
               }
+        
 
-        }
+        } //chkBoxHTTP_CheckedChanged
 
+        //===============================================================================================
+        // ke9ns add
+        private void chkBoxHttp2_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkBoxHttp2.Checked == true)
+            {
+                chkBoxHTTP.Checked = false;
+                Http.terminate();
+
+                console.startHttpServer((int)udHttpPort.Value);
+
+            }
+            else
+            {
+                console.stopHttpServer();
+            }
+
+
+        }// chkBoxHttp2_CheckedChanged
+
+        //===============================================================================================
 
         // ke9ns add
         private void txtHttpUser_MouseDown(object sender, MouseEventArgs e)
         {
-            Http.terminate();
+           Http.terminate();
             chkBoxHTTP.Checked = false;
       
         }
@@ -27683,6 +27730,8 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.tbPulseRate, "Pulse Rate: " + ((int)tbPulseRate.Value).ToString() + " / second");
 
         }
+
+
 
 
 
