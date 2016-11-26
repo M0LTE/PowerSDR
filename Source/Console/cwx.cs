@@ -272,7 +272,9 @@ namespace PowerSDR
             {
                 CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
                 CWKeyer.PTTEnqueue(item);
-            
+
+                Debug.WriteLine("setptt = setptt_memory> "+ state);
+
 			    ptt = state;
 			    if (state) pttLed.BackColor = System.Drawing.Color.Red;
 			    else pttLed.BackColor = System.Drawing.Color.Black;
@@ -283,13 +285,23 @@ namespace PowerSDR
 		}
 
         private bool setkey_memory = false;
-		private void setkey(bool state)
+		private void setkey(bool state)                 // ke9ns   This is the CW key signal back to the flex radio itself (letter E set repeatedly at 60wpm = 20msec per element = 20msec ON, and 54msec OFF)
 		{
 			//console.Keyer.MemoryKey = state;
-            if (setkey_memory != state)
+            if (setkey_memory != state)                                          // only allow this to happen 1 time if state stays the same (once to turn ON, once to turn OFF)
             {
+
+
+             //   if  (state == true) Debug.WriteLine("ON: " + T1.ElapsedMilliseconds);
+             //   else Debug.WriteLine("OFF: " + T1.ElapsedMilliseconds);
+
+             //   T1.Restart();
+
                 CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, state);
+
                 CWKeyer.SensorEnqueue(item);
+
+                Debug.WriteLine("setkey = setkey_memory> " + state);
 
                 if (state) keyLed.BackColor = System.Drawing.Color.Yellow;
                 else keyLed.BackColor = System.Drawing.Color.Black;
@@ -405,7 +417,7 @@ namespace PowerSDR
 		#region Morse definition, table builders, and help display
 		private int wpmrate()	// Tel in ms from wpm (based on PARIS method
 		{
-			return	(1200/cwxwpm);
+			return	(1200/cwxwpm);   // 20mSec = 60wpm
 		}
 		private void help()
 		{
@@ -786,7 +798,8 @@ namespace PowerSDR
 			Debug.WriteLine("dispose cwx");
 #endif
 			timeKillEvent(timerID);
-			if( disposing )
+
+            if ( disposing )
 			{
 				if(components != null)
 				{
@@ -1557,6 +1570,7 @@ namespace PowerSDR
 			process_key(e.KeyChar);	
 		}
 
+        //==============================================================================================
 		// process the 'Key' button which start transmitter with key down
 		private void keyButton_Click(object sender, System.EventArgs e)	// the 'Key' button
 		{
@@ -1566,7 +1580,7 @@ namespace PowerSDR
 				return;
 			}
 
-			if(console.RX1DSPMode != DSPMode.CWL && 	console.RX1DSPMode != DSPMode.CWU)
+			if(console.RX1DSPMode != DSPMode.CWL && console.RX1DSPMode != DSPMode.CWU)
 			{
 				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
 					"CWX Error: Wrong Mode",
@@ -1580,14 +1594,18 @@ namespace PowerSDR
 			while (quit) Thread.Sleep(10);
 
 			pause = 60000/tel;
-			tqq = " . ";
-			setptt(true);
+
+            tqq = " . ";
+
+            setptt(true);
+
 			setkey(true);
-			keying = true;
 
-		} //keybutton
+            keying = true;
 
-		private void CWX_Load(object sender, System.EventArgs e)
+        } // keyButton_Click
+
+        private void CWX_Load(object sender, System.EventArgs e)
 		{		
 #if(CWX_DEBUG)
 			Debug.WriteLine("load cwx, queue is " + elfifo.Length);
@@ -1620,10 +1638,14 @@ namespace PowerSDR
 		//	this.Hide();
 		//	e.Cancel = true;
 		}
-		// Callback method called by the Win32 multimedia timer when a timer
-		// periodic event occurs.
+        // Callback method called by the Win32 multimedia timer when a timer
+        // periodic event occurs.
+
+        Stopwatch T1 = new Stopwatch();
+
 		private void TimerPeriodicEventCallback(int id, int msg, int user, int param1, int param2)
 		{
+          
 			process_element();
 		}
 		
@@ -2001,27 +2023,33 @@ namespace PowerSDR
 		// to determine the state of the key during the next element time.
 		// The timeout pause is also processed here.
 
-		private void process_element()		// called at the element rate
+		private void process_element()		// called at the element rate  (uses windows multimedia event timer) this is always called even when not transmitting
 		{
 			byte data;
 
-         
-
-            if (quit)		// shut 'er all down
+          
+            if (quit)		// if true shut 'er all down
 			{
 				quitshut();
 				quit = false;
 				return;
 			}
+
 			if (newptt > 0)
 			{
 				newptt--;
+
 				ttx = ttdel/tel;
+
 				if (newptt > 0) return;
-//				Debug.WriteLine("newppt delay over");
-				setkey(true);				// this was the defered key down
-				return;
+
+                				Debug.WriteLine("newppt delay over");
+
+                setkey(true);               // this was the defered key down
+
+                return;
 			}
+
 			if (pause > 0)	// time out the pause
 			{
 				pause--;
@@ -2031,16 +2059,23 @@ namespace PowerSDR
 				push_fifo(EL_END);			// end
 				return;
 			}
-			while (true)		// used while for control; only once ever thru
+
+			while (true)		// ke9ns    endless for loop
 			{
 				if (infifo < 1) break;
-				data = pop_fifo();
+
+                Debug.WriteLine("process_element");
+
+                data = pop_fifo();
+
 				if (data == EL_UNDERFLOW) return;	// underflow
+
 				if (data == EL_END)		// end command
 				{
 					quitshut();
 					return;
 				}
+
 				if (data == EL_PAUSE)		// pause command
 				{
 					ttx = 0;
@@ -2048,6 +2083,7 @@ namespace PowerSDR
 					if (pause < 1) pause = tel;
 					break;
 				}
+
 				if (data == EL_PTT)		// ptt only command
 				{
 					setptt(true);
@@ -2055,31 +2091,41 @@ namespace PowerSDR
 				}
 				if ((data == EL_KEYDOWN) || (data == EL_KEYUP))		// key command
 				{
-					if (data == EL_KEYDOWN)	// key down?
+                    Debug.WriteLine("KEYDOWN???");
+
+                    if (data == EL_KEYDOWN)	// key down?
 					{
 						if (!ptt)	// we're gonna need a ptt->key delay setup
 						{
 							newptt = pttdelay / tel;
-//							Debug.WriteLine("start newptt");
+							Debug.WriteLine("start newptt");
 						}
 						setptt(true);
 						ttx = ttdel/tel;
+
 						if (newptt > 0) return;		// the key will get pressed after newptt
+
 						setkey(true);
 					}
 					else
-					{
-						setkey(false);
+                    {
+                        Debug.WriteLine("KEYUP??");
+
+                        setkey(false);
 						break;
 					}
 				}
-				return;		// ignore all others
-			}
+				return;		// ignore all others  (ke9ns only allow 1 time through)
+
+			} // while (true) endless loop
 
 			// X on flow
 			if (ttx > 0) ttx--;			// time out timer down one element
+
 			if (ttx > 0) return;		// not yet timed out
+
 			setptt(false);			// cw timer timed out
+
 			setkey(false);
 
 		} // process_element()
@@ -2463,7 +2509,7 @@ namespace PowerSDR
 
             while ((!stopThreads) && (chkKeyPoll.Checked) )
             {
-                  if (FWC.ReadPTT(out dot, out dash, out rca_ptt, out mic_ptt) == 0)
+                  if (FWC.ReadPTT(out dot, out dash, out rca_ptt, out mic_ptt) == 0)   // ke9ns read Flex radio TRS plug and PTT circuits
                   {
                      MessageBox.Show("Error in ReadKey");
                      break;

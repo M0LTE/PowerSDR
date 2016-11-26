@@ -279,8 +279,8 @@ namespace PowerSDR
 		private System.Windows.Forms.NumericUpDownTS udPAADC30;
 		private System.Windows.Forms.CheckBoxTS chkGeneralUSBPresent;
 		private System.Windows.Forms.GroupBoxTS grpPATune;
-		private System.Windows.Forms.LabelTS lblTransmitTunePower;
-		private System.Windows.Forms.NumericUpDownTS udTXTunePower;
+        public LabelTS lblTransmitTunePower;
+        public NumericUpDownTS udTXTunePower;
         public GroupBoxTS grpDisplayMultimeter;
         private System.Windows.Forms.LabelTS lblDisplayMultiPeakHoldTime;
 		private System.Windows.Forms.NumericUpDownTS udDisplayMultiPeakHoldTime;
@@ -1080,7 +1080,7 @@ namespace PowerSDR
         private ButtonTS btnTuneStepChangeSmaller2;
         private ButtonTS btnTuneStepChangeLarger2;
         public CheckBoxTS chkBoxPulser;
-        public TrackBarTS tbPulseRate;
+        public TrackBarTS tbPulseRate1;
         public TrackBarTS tbDutyCycle;
         private LabelTS labelTS22;
         private LabelTS labelTS21;
@@ -1469,6 +1469,7 @@ namespace PowerSDR
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelTS23 = new System.Windows.Forms.LabelTS();
             this.chkBoxHttp2 = new System.Windows.Forms.CheckBoxTS();
             this.labelTS19 = new System.Windows.Forms.LabelTS();
             this.udHttpRefresh = new System.Windows.Forms.NumericUpDownTS();
@@ -1824,7 +1825,7 @@ namespace PowerSDR
             this.grpPATune = new System.Windows.Forms.GroupBoxTS();
             this.labelTS22 = new System.Windows.Forms.LabelTS();
             this.labelTS21 = new System.Windows.Forms.LabelTS();
-            this.tbPulseRate = new System.Windows.Forms.TrackBarTS();
+            this.tbPulseRate1 = new System.Windows.Forms.TrackBarTS();
             this.tbDutyCycle = new System.Windows.Forms.TrackBarTS();
             this.chkBoxPulser = new System.Windows.Forms.CheckBoxTS();
             this.comboTXTUNMeter = new System.Windows.Forms.ComboBoxTS();
@@ -2351,7 +2352,6 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labelTS23 = new System.Windows.Forms.LabelTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2550,7 +2550,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTXNoiseGate)).BeginInit();
             this.grpTXProfile.SuspendLayout();
             this.grpPATune.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbPulseRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPulseRate1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDutyCycle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).BeginInit();
             this.grpTXFilter.SuspendLayout();
@@ -4577,6 +4577,16 @@ namespace PowerSDR
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "HttpServer";
             this.toolTip1.SetToolTip(this.groupBox2, resources.GetString("groupBox2.ToolTip"));
+            // 
+            // labelTS23
+            // 
+            this.labelTS23.Image = null;
+            this.labelTS23.Location = new System.Drawing.Point(6, 41);
+            this.labelTS23.Name = "labelTS23";
+            this.labelTS23.Size = new System.Drawing.Size(32, 23);
+            this.labelTS23.TabIndex = 80;
+            this.labelTS23.Text = "OR";
+            this.labelTS23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // chkBoxHttp2
             // 
@@ -10018,7 +10028,7 @@ namespace PowerSDR
             // 
             this.grpPATune.Controls.Add(this.labelTS22);
             this.grpPATune.Controls.Add(this.labelTS21);
-            this.grpPATune.Controls.Add(this.tbPulseRate);
+            this.grpPATune.Controls.Add(this.tbPulseRate1);
             this.grpPATune.Controls.Add(this.tbDutyCycle);
             this.grpPATune.Controls.Add(this.chkBoxPulser);
             this.grpPATune.Controls.Add(this.comboTXTUNMeter);
@@ -10050,37 +10060,36 @@ namespace PowerSDR
             this.labelTS21.TabIndex = 94;
             this.labelTS21.Text = "Duty %";
             // 
-            // tbPulseRate
+            // tbPulseRate1
             // 
-            this.tbPulseRate.AutoSize = false;
-            this.tbPulseRate.LargeChange = 1;
-            this.tbPulseRate.Location = new System.Drawing.Point(56, 48);
-            this.tbPulseRate.Maximum = 60;
-            this.tbPulseRate.Minimum = 10;
-            this.tbPulseRate.Name = "tbPulseRate";
-            this.tbPulseRate.Size = new System.Drawing.Size(66, 18);
-            this.tbPulseRate.TabIndex = 93;
-            this.tbPulseRate.TickFrequency = 3;
-            this.toolTip1.SetToolTip(this.tbPulseRate, "Pulse Rate of 10 to 40 Pulses / Second");
-            this.tbPulseRate.Value = 40;
-            this.tbPulseRate.Visible = false;
-            this.tbPulseRate.Scroll += new System.EventHandler(this.tbPulseRate_Scroll);
-            this.tbPulseRate.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tbPulseRate_MouseDown);
-            this.tbPulseRate.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbPulseRate_MouseUp);
+            this.tbPulseRate1.AutoSize = false;
+            this.tbPulseRate1.LargeChange = 1;
+            this.tbPulseRate1.Location = new System.Drawing.Point(56, 48);
+            this.tbPulseRate1.Maximum = 20;
+            this.tbPulseRate1.Minimum = 10;
+            this.tbPulseRate1.Name = "tbPulseRate1";
+            this.tbPulseRate1.Size = new System.Drawing.Size(66, 18);
+            this.tbPulseRate1.TabIndex = 93;
+            this.tbPulseRate1.TickFrequency = 3;
+            this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate of 10 to 20 Pulses / Second");
+            this.tbPulseRate1.Value = 15;
+            this.tbPulseRate1.Scroll += new System.EventHandler(this.tbPulseRate_Scroll);
+            this.tbPulseRate1.ValueChanged += new System.EventHandler(this.tbPulseRate_ValueChanged);
+            this.tbPulseRate1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tbPulseRate_MouseDown);
+            this.tbPulseRate1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbPulseRate_MouseUp);
             // 
             // tbDutyCycle
             // 
             this.tbDutyCycle.AutoSize = false;
             this.tbDutyCycle.Location = new System.Drawing.Point(56, 77);
-            this.tbDutyCycle.Maximum = 90;
+            this.tbDutyCycle.Maximum = 80;
             this.tbDutyCycle.Minimum = 10;
             this.tbDutyCycle.Name = "tbDutyCycle";
             this.tbDutyCycle.Size = new System.Drawing.Size(66, 18);
             this.tbDutyCycle.TabIndex = 92;
             this.tbDutyCycle.TickFrequency = 10;
-            this.toolTip1.SetToolTip(this.tbDutyCycle, "Transparency of Grayline dark area over the map");
-            this.tbDutyCycle.Value = 50;
-            this.tbDutyCycle.Visible = false;
+            this.toolTip1.SetToolTip(this.tbDutyCycle, "Duty Cycle of 10% to 80% ON to OFF time");
+            this.tbDutyCycle.Value = 40;
             this.tbDutyCycle.Scroll += new System.EventHandler(this.tbDutyCycle_Scroll);
             this.tbDutyCycle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tbDutyCycle_MouseDown);
             this.tbDutyCycle.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbDutyCycle_MouseUp);
@@ -10094,7 +10103,7 @@ namespace PowerSDR
             this.chkBoxPulser.TabIndex = 53;
             this.chkBoxPulser.Text = "Pulser";
             this.toolTip1.SetToolTip(this.chkBoxPulser, "For Tuning Amplifiers with a pulse train");
-            this.chkBoxPulser.Visible = false;
+            this.chkBoxPulser.CheckedChanged += new System.EventHandler(this.chkBoxPulser_CheckedChanged);
             // 
             // comboTXTUNMeter
             // 
@@ -16507,16 +16516,6 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
-            // labelTS23
-            // 
-            this.labelTS23.Image = null;
-            this.labelTS23.Location = new System.Drawing.Point(6, 41);
-            this.labelTS23.Name = "labelTS23";
-            this.labelTS23.Size = new System.Drawing.Size(32, 23);
-            this.labelTS23.TabIndex = 80;
-            this.labelTS23.Text = "OR";
-            this.labelTS23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -16741,7 +16740,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udTXNoiseGate)).EndInit();
             this.grpTXProfile.ResumeLayout(false);
             this.grpPATune.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tbPulseRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPulseRate1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDutyCycle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).EndInit();
             this.grpTXFilter.ResumeLayout(false);
@@ -17322,8 +17321,10 @@ namespace PowerSDR
 					radiobutton_list.Add(c);
 				else if(c.GetType() == typeof(TextBoxTS))		// the control is a TextBox
 					textbox_list.Add(c);
-				else if(c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
+
+                else if(c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
 					trackbar_list.Add(c);
+
 				else if(c.GetType() == typeof(ColorButton))
 					colorbutton_list.Add(c);
 			}
@@ -17361,7 +17362,7 @@ namespace PowerSDR
 
 				if(s.StartsWith("chk"))			// control is a CheckBoxTS
 				{
-					for(int i=0; i<checkbox_list.Count; i++)
+					for(int i=0; i < checkbox_list.Count; i++)
 					{	// look through each control to find the matching name
 						CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
 						if(c.Name.Equals(name))		// name found
@@ -23158,7 +23159,7 @@ namespace PowerSDR
 
 		private void udTransmitTunePower_ValueChanged(object sender, System.EventArgs e)
 		{
-			console.TunePower = (int)udTXTunePower.Value;
+            if (console.chkBoxDrive.Checked == false)  console.TunePower = (int)udTXTunePower.Value;
 		}
 
 		private string current_profile = "";
@@ -27697,13 +27698,13 @@ namespace PowerSDR
 
         private void tbPulseRate_MouseUp(object sender, MouseEventArgs e)
         {
-            this.toolTip1.SetToolTip(this.tbPulseRate, "Pulse Rate: " + ((int)tbPulseRate.Value).ToString() + " / second");
+            this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate: " + ((int)tbPulseRate1.Value).ToString() + " / second");
 
         }
 
         private void tbPulseRate_MouseDown(object sender, MouseEventArgs e)
         {
-            this.toolTip1.SetToolTip(this.tbPulseRate, "Pulse Rate: " + ((int)tbPulseRate.Value).ToString() + " / second");
+            this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate: " + ((int)tbPulseRate1.Value).ToString() + " / second");
 
         }
 
@@ -27727,7 +27728,31 @@ namespace PowerSDR
 
         private void tbPulseRate_Scroll(object sender, EventArgs e)
         {
-            this.toolTip1.SetToolTip(this.tbPulseRate, "Pulse Rate: " + ((int)tbPulseRate.Value).ToString() + " / second");
+            if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
+
+            this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate: " + ((int)tbPulseRate1.Value).ToString() + " / second");
+
+        }
+
+        private void chkBoxPulser_CheckedChanged(object sender, EventArgs e)
+        {
+            if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
+
+            if (chkBoxPulser.Checked == false)
+            {
+                console.chkTUN.Text = "TUN";
+
+            }
+            else
+            {
+                console.chkTUN.Text = "TUNp";
+            }
+
+        }
+
+        private void tbPulseRate_ValueChanged(object sender, EventArgs e)
+        {
+            if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
 
         }
 

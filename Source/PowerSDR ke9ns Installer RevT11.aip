@@ -17,10 +17,10 @@
     <ROW Property="ARPURLUPDATEINFO" Value="ke9ns.com/flexpage.html"/>
     <ROW Property="CTRLS" Value="1"/>
     <ROW Property="Manufacturer" Value="ke9ns"/>
-    <ROW Property="ProductCode" Value="1033:{6FD4CD79-DB52-4D5C-99E9-5FF323404752} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{B0E4A3A7-5EE4-4CBB-8311-454CA55746BD} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="PowerSDR ke9ns Installer RevT11"/>
-    <ROW Property="ProductVersion" Value="12.90.16.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="12.92.16.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{A5226811-E4EA-414C-8491-CEFB1FC47B7C}"/>
     <ROW Property="VIEWREADME" Value="1" Type="4"/>

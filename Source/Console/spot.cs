@@ -5758,8 +5758,7 @@ namespace PowerSDR
 
                             if(beacon1 == true) // show time slot for beacons
                             {
-                               
-
+                     
                                 for (int x = 0; x < 18; x++)
                                 {
                                     g.DrawString(Beacon_Call[x].ToString() + " " + Beacon_Country[x].ToString(), font2, grid_text_brush, 55, 20+(x*10)); // use Pandapdater holder[] data
@@ -5770,24 +5769,18 @@ namespace PowerSDR
                                     int y1 = BX_Index[x] % 5; // get remainder
 
                                     g.DrawString((Beacon_Freq[y1]/1e6).ToString("f2"), font2, grid_text_brush, 27, 20 + (y * 10)); // use Pandapdater holder[] data
-
                                 }
       
-
                             } // if beacon scan turned on show list of staations and which ones are on right now
-
-
 
                             if (beacon1 == false)
                             {
                                 for (int ii = 0; ii < DX_Index; ii++) // red dot always all bands
                                 {
-
-                                   
+     
                                     if ((DX_X[ii] != 0) && (DX_Y[ii] != 0))
                                     {
-
-                                       
+       
                                         g.FillRectangle(redbrush, DX_X[ii], DX_Y[ii], 3, 3);  // place red dot on map (all bands)
                                        
 
@@ -9872,11 +9865,12 @@ VOACAP_FINISH:      // jumps here if there was a problem
             {
            
                 Map_Last = Map_Last | 2;    // force update of world map
+                console.last_MHZ = 0;
 
             }
             else
             {
-           //     VOACAP_CHECK();
+              //  VOACAP_CHECK();
 
             }
         } // checkBoxMUF_CheckedChanged

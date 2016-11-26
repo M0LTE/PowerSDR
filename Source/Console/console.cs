@@ -115,7 +115,9 @@ using System.Threading;
 using System.Text;
 using System.Windows.Forms;
 
-using HttpServer; // rn3kk
+
+
+using HttpServer; // rn3kk add
 
 //using System.Threading.Tasks; // ke9ns add net 4.5
 
@@ -128,6 +130,7 @@ using PortTalk;
 using System.Windows.Media.Imaging;
 
 using FlexCW;
+
 #if(!NO_TNF)
 using Flex.TNF;
 #endif
@@ -599,10 +602,14 @@ namespace PowerSDR
 	{
 
 
+        //==================================================================================
+        //==================================================================================
         // ke9ns add (copied from cwx precision multimedia msec timer)
+        //       everything below
+
         #region Win32 Multimedia Timer Functions
 
-        private int tel;            // time of one element in ms
+      //  private int tel;            // time of one element in ms
 
         // Represents the method that is called by Windows when a timer event occurs.
         private delegate void TimeProc(int id, int msg, int user, int param1, int param2);
@@ -644,50 +651,10 @@ namespace PowerSDR
         // Timer identifier.
         private int timerID;
 
+        private TimeProc timeProcPeriodic;   // ke9ns add to use windows based multimedia timer
 
-        private TimeProc timeProcPeriodic;
-
-        // ke9ns run this to kill the prior timer and start a new timer 
-        private void setup_timer(int cwxwpm)
-        {
-          
-            if (timerID != 0)
-            {
-                timeKillEvent(timerID);
-            }
-
-            // (delay, resolution, proc, user, mode)
-            timerID = timeSetEvent(cwxwpm, 1, timeProcPeriodic, 0, (int)TimerMode.Periodic);
-
-            if (timerID == 0)
-            {
-                Debug.Fail("1Timer creation failed.");
-            }
-        }
-
-
-        private int timerID1;
-
-        private TimeProc timeProcPeriodic1;
-
-        // ke9ns run this to kill the prior timer and start a new timer 
-        private void setup_timer1(int cwxwpm)
-        {
-          
-            if (timerID1 != 0)
-            {
-                timeKillEvent(timerID1);
-            }
-
-            // (delay, resolution, proc, user, mode)
-            timerID1 = timeSetEvent(cwxwpm, 1, timeProcPeriodic1, 0, (int)TimerMode.OneShot);
-
-            if (timerID1 == 0)
-            {
-                Debug.Fail("2Timer creation failed.");
-            }
-        }
-
+    //   Stopwatch WATCH1 = new Stopwatch();
+    //    Stopwatch WATCH2 = new Stopwatch();
 
 
         #endregion
@@ -709,6 +676,7 @@ namespace PowerSDR
         public NumericUpDownTS udTXFilterLow;
         public NumericUpDownTS udTXFilterHigh;
         public CheckBoxTS chkBoxMuteSpk;
+        public CheckBoxTS chkBoxDrive;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -1024,7 +992,7 @@ namespace PowerSDR
 
 		public int pa_fwd_power;							// forward power as read by the ADC on the PA
 		public int pa_rev_power;							// reverse power as read by the ADC on the PA
-		public bool tuning;								// true when the TUN button is active
+		public bool tuning;							    	// true when the TUN button is active
 		public bool atu_tuning;		    					// true while the atu is tuning
 		private Band tuned_band;							// last band that the atu was tuned on
 
@@ -2858,6 +2826,8 @@ namespace PowerSDR
             this.udTXFilterLow = new System.Windows.Forms.NumericUpDownTS();
             this.udTXFilterHigh = new System.Windows.Forms.NumericUpDownTS();
             this.chkBoxMuteSpk = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxDrive = new System.Windows.Forms.CheckBoxTS();
+            this.lblPWR = new System.Windows.Forms.LabelTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -2965,7 +2935,6 @@ namespace PowerSDR
             this.panelSoundControls = new System.Windows.Forms.PanelTS();
             this.lblAF = new System.Windows.Forms.LabelTS();
             this.lblPreamp = new System.Windows.Forms.LabelTS();
-            this.lblPWR = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificDigital = new System.Windows.Forms.PanelTS();
             this.lblVACTXIndicator = new System.Windows.Forms.LabelTS();
             this.lblVACRXIndicator = new System.Windows.Forms.LabelTS();
@@ -3404,7 +3373,6 @@ namespace PowerSDR
             this.radBand17.TabStop = true;
             this.toolTip1.SetToolTip(this.radBand17, resources.GetString("radBand17.ToolTip"));
             this.radBand17.UseVisualStyleBackColor = true;
-            this.radBand17.CheckedChanged += new System.EventHandler(this.radBand17_CheckedChanged);
             this.radBand17.Click += new System.EventHandler(this.radBand17_Click);
             this.radBand17.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand17_MouseDown);
             // 
@@ -3417,7 +3385,6 @@ namespace PowerSDR
             this.radBand20.TabStop = true;
             this.toolTip1.SetToolTip(this.radBand20, resources.GetString("radBand20.ToolTip"));
             this.radBand20.UseVisualStyleBackColor = true;
-            this.radBand20.CheckedChanged += new System.EventHandler(this.radBand20_CheckedChanged);
             this.radBand20.Click += new System.EventHandler(this.radBand20_Click);
             this.radBand20.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand20_MouseDown);
             // 
@@ -4578,7 +4545,6 @@ namespace PowerSDR
             this.txtWheelTune.Name = "txtWheelTune";
             this.txtWheelTune.ReadOnly = true;
             this.toolTip1.SetToolTip(this.txtWheelTune, resources.GetString("txtWheelTune.ToolTip"));
-            this.txtWheelTune.TextChanged += new System.EventHandler(this.txtWheelTune_TextChanged);
             this.txtWheelTune.GotFocus += new System.EventHandler(this.HideFocus);
             this.txtWheelTune.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WheelTune_MouseDown);
             // 
@@ -5296,7 +5262,6 @@ namespace PowerSDR
             this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label2.Name = "label2";
             this.toolTip1.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // chkRX1MUTE
             // 
@@ -5423,6 +5388,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.ptbPWR, resources.GetString("ptbPWR.ToolTip"));
             this.ptbPWR.Value = 50;
             this.ptbPWR.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbPWR_Scroll);
+            this.ptbPWR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbPWR_MouseDown);
             // 
             // ptbRF
             // 
@@ -5583,7 +5549,6 @@ namespace PowerSDR
             this.txtNOAA.Name = "txtNOAA";
             this.txtNOAA.ReadOnly = true;
             this.toolTip1.SetToolTip(this.txtNOAA, resources.GetString("txtNOAA.ToolTip"));
-            this.txtNOAA.TextChanged += new System.EventHandler(this.txtNOAA_TextChanged);
             this.txtNOAA.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtNOAA_MouseDown);
             // 
             // lblDisplayZoom
@@ -5666,6 +5631,21 @@ namespace PowerSDR
             this.chkBoxMuteSpk.Name = "chkBoxMuteSpk";
             this.toolTip1.SetToolTip(this.chkBoxMuteSpk, resources.GetString("chkBoxMuteSpk.ToolTip"));
             this.chkBoxMuteSpk.CheckedChanged += new System.EventHandler(this.chkBoxMuteSpk_CheckedChanged);
+            // 
+            // chkBoxDrive
+            // 
+            resources.ApplyResources(this.chkBoxDrive, "chkBoxDrive");
+            this.chkBoxDrive.Name = "chkBoxDrive";
+            this.toolTip1.SetToolTip(this.chkBoxDrive, resources.GetString("chkBoxDrive.ToolTip"));
+            this.chkBoxDrive.CheckedChanged += new System.EventHandler(this.chkBoxDrive_CheckedChanged);
+            // 
+            // lblPWR
+            // 
+            this.lblPWR.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.lblPWR, "lblPWR");
+            this.lblPWR.Name = "lblPWR";
+            this.toolTip1.SetToolTip(this.lblPWR, resources.GetString("lblPWR.ToolTip"));
+            this.lblPWR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPWR_MouseDown);
             // 
             // timer_clock
             // 
@@ -6619,6 +6599,7 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.panelSoundControls, "panelSoundControls");
             this.panelSoundControls.BackColor = System.Drawing.Color.Transparent;
+            this.panelSoundControls.Controls.Add(this.chkBoxDrive);
             this.panelSoundControls.Controls.Add(this.label2);
             this.panelSoundControls.Controls.Add(this.chkRX1MUTE);
             this.panelSoundControls.Controls.Add(this.comboAGC);
@@ -6648,12 +6629,6 @@ namespace PowerSDR
             this.lblPreamp.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblPreamp, "lblPreamp");
             this.lblPreamp.Name = "lblPreamp";
-            // 
-            // lblPWR
-            // 
-            this.lblPWR.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.lblPWR, "lblPWR");
-            this.lblPWR.Name = "lblPWR";
             // 
             // panelModeSpecificDigital
             // 
@@ -45791,7 +45766,7 @@ namespace PowerSDR
                 chkMOX.Checked = false;
                 chkMOX.Enabled = false;
 
-                if (tuning && current_model == Model.FLEX3000)
+                if (tuning && (current_model == Model.FLEX3000))
                 {
                     flex3000ATUForm.AbortTune();
                 }
@@ -46671,6 +46646,86 @@ namespace PowerSDR
 
         }
 
+
+        //=======================================================================
+        // ke9ns add to LOCK DRIVE power SLIDER from moving
+        private void ptbPWR_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (chkBoxDrive.Checked == false)
+                {
+                    chkBoxDrive.Checked = true;
+                }
+                else
+                {
+                    chkBoxDrive.Checked = false;
+                }
+
+
+            } // right click
+
+        } // ptbPWR_MouseDown
+
+        // ke9ns add
+        private void lblPWR_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (chkBoxDrive.Checked == false)
+                {
+                    chkBoxDrive.Checked = true;
+                }
+                else
+                {
+                    chkBoxDrive.Checked = false;
+                }
+
+
+            } // right click
+        } // lblPWR_MouseDown
+
+
+        // ke9ns add
+        private void chkBoxDrive_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkBoxDrive.Checked == true)
+            {
+                lblPWR.ForeColor = Color.Red;
+                ptbPWR.Enabled = false;
+
+                if (setupForm != null)
+                {
+                    setupForm.udTXTunePower.Enabled = false;
+                    setupForm.lblTransmitTunePower.ForeColor = Color.Red;
+                }
+            }
+            else
+            {
+               lblPWR.ForeColor = Color.White;
+                ptbPWR.Enabled = true;
+
+                if (setupForm != null)
+                {
+                    setupForm.udTXTunePower.Enabled = true;
+                    setupForm.lblTransmitTunePower.ForeColor = SystemColors.ControlText;
+                }
+
+            }
+
+        } // chkBoxDrive_CheckedChanged
+
+       
+
         //===================================================================
 
         const float MAX_VU_POWER = 60.0f;
@@ -46680,6 +46735,8 @@ namespace PowerSDR
 
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
+
+           
             lblPWR.Text = "Drive:  " + ptbPWR.Value.ToString();
 
             if (setupForm == null)
@@ -46701,8 +46758,9 @@ namespace PowerSDR
             if ((!tuning || xvtr_tune_power) && tx_xvtr_index >= 0)
             {
                 int power = ptbPWR.Value;
-                if (ptbPWR.Focused)
-                    xvtrForm.SetPower(tx_xvtr_index, power);
+
+                if (ptbPWR.Focused)   xvtrForm.SetPower(tx_xvtr_index, power);
+
                 b = BandByFreq(xvtrForm.TranslateFreq(TXFreq), tx_xvtr_index, true, current_region);
             }
 
@@ -48426,7 +48484,10 @@ namespace PowerSDR
 
         //======================================================================================================
         // ke9ns mod   tune function too loud in MON (turn down when in tune) BUT 6/12/16 observe MUT button when on
-		private MeterTXMode old_tune_meter_tx_mode;
+
+        private MeterTXMode old_tune_meter_tx_mode;
+        private DSPMode old_Mode;  // ke9ns add
+
 		private void chkTUN_CheckedChanged(object sender, System.EventArgs e)
 		{
 
@@ -48442,13 +48503,18 @@ namespace PowerSDR
 					return;
 				}
 
-                if (chkNoiseGate.Checked)
-                    dsp.GetDSPTX(0).TXSquelchOn = false;
+                if (chkNoiseGate.Checked)  dsp.GetDSPTX(0).TXSquelchOn = false;
 
-				tuning = true;
-				chkTUN.BackColor = button_selected_color;
+                
+                 tuning = true;
 
-				if(current_meter_tx_mode != tune_meter_tx_mode)
+                 setupForm.chkBoxPulser.Enabled = false; // ke9ns add dont allow changing pulser while in tune mode
+
+               
+
+                chkTUN.BackColor = button_selected_color;
+
+				if(current_meter_tx_mode != tune_meter_tx_mode) // ke9ns switch meters if needed when keyed up
 				{
 					old_tune_meter_tx_mode = current_meter_tx_mode;
 					CurrentMeterTXMode = tune_meter_tx_mode;
@@ -48456,7 +48522,7 @@ namespace PowerSDR
 				}
 
               //  if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == false)) // ke9ns add
-              //  {
+             //   {
 
                     switch (Audio.TXDSPMode)
                     {
@@ -48491,36 +48557,50 @@ namespace PowerSDR
                             Audio.SourceScale = 1.0;
                             break;
                     }
+
                     DttSP.SetMode(1, 0, DSPMode.DIGU);
 
-              //  }
-
-                if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) ) // ke9ns add
-                {
-                    Audio.SourceScale = 0.0;
-                }
-
-                 
-                // ensure radio believes we are in CW for tx freq limits
-                if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
-                {
-                    switch (Audio.TXDSPMode)
+                    // ensure radio believes we are in CW for tx freq limits
+                    if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
                     {
-                        case DSPMode.CWL:
-                        case DSPMode.LSB:
-                        case DSPMode.DIGL:
-                            FWC.SetTXDSPMode(DSPMode.CWL);
-                            break;
-                        default:
-                            FWC.SetTXDSPMode(DSPMode.CWU);
-                            break;
+                        switch (Audio.TXDSPMode)
+                        {
+                            case DSPMode.CWL:
+                            case DSPMode.LSB:
+                            case DSPMode.DIGL:
+                                FWC.SetTXDSPMode(DSPMode.CWL);
+
+                                break;
+                            default:
+                                FWC.SetTXDSPMode(DSPMode.CWU);
+                                break;
+                        }
                     }
-                }
+                /*    }  // standard TUNE mode
+                   else  // ke9ns add do below if Pulser mode enabled
+                    {
+                        old_Mode = rx1_dsp_mode; // keep original mode to go back into when tun is done
 
-				PreviousPWR = ptbPWR.Value;
+                        if (rx1_dsp_mode == DSPMode.LSB) RX1DSPMode = DSPMode.CWL;
+                        else if (rx1_dsp_mode == DSPMode.USB) RX1DSPMode = DSPMode.CWU;
 
-                if (!xvtr_tune_power || tx_xvtr_index < 0)
-                    PWR = tune_power;
+                        if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
+                        {
+                            MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
+                                "CWX Control Form.",
+                                "CWX Error: Wrong Mode",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                            return;
+                        }
+                    } // Pulser TUNE mode
+
+                  */
+
+
+                PreviousPWR = ptbPWR.Value;
+
+                if (!xvtr_tune_power || tx_xvtr_index < 0)  PWR = tune_power;
 
 				if(!chkVFOSplit.Checked && !chkVFOBTX.Checked)
 				{
@@ -48528,8 +48608,7 @@ namespace PowerSDR
 				}
 				else
 				{
-					if(chkVFOBTX.Checked)
-						txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+					if(chkVFOBTX.Checked)	txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 					else // split is on
 					{
 						if(!chkRX2.Checked)
@@ -48539,26 +48618,37 @@ namespace PowerSDR
 					}
 				}
 
-				chkMOX.Checked = true;
+             //   if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == false)) // ke9ns add
+             //   {
+                    chkMOX.Checked = true;
 
-				if(!mox)
-				{
-					chkTUN.Checked = false;
-					return;
-				}
-				current_ptt_mode = PTTMode.MANUAL;
+                    if (!mox)
+                    {
+                        chkTUN.Checked = false;
+                        return;
+                    }
+                    current_ptt_mode = PTTMode.MANUAL;
 
-				switch(Audio.TXDSPMode)
-				{
-					case DSPMode.CWL:
-					case DSPMode.CWU:
-						Audio.TXDSPMode = DSPMode.DIGU;
-						break;
-				}
+                    switch (Audio.TXDSPMode)
+                    {
+                        case DSPMode.CWL:
+                        case DSPMode.CWU:
+                            Audio.TXDSPMode = DSPMode.DIGU;
+                            break;
+                    }
+            //    }
+             //   else
+            //    {
+               //     setptt(true); // ke9ns key radio in CW mode
 
+              //  }
+
+		
 				if((atu_present) && (tx_band != Band.B2M) && ((ATUTuneMode)comboTuneMode.SelectedIndex != ATUTuneMode.BYPASS))
 				{
-					chkTUN.Enabled = false;
+                    Debug.WriteLine("TUNNING in TUN mode");
+
+                    chkTUN.Enabled = false;
 					comboTuneMode.Enabled = false;
 
 					Thread t = new Thread(new ThreadStart(Tune));
@@ -48594,21 +48684,21 @@ namespace PowerSDR
                 {
 
                     PulseON = true;   // set 1 time
-                  
-                    Last_PR = 0.0;
-                  //  Last_DCOFF = 0.0;
+                 //   setptt(true);
 
-                    PR = (1000.0 / (double)setupForm.tbPulseRate.Value);  // valuse from 25 to 50 mSec
+                    Last_PR = 0.0;
+                 
+                    PR = (1000.0 / (double)setupForm.tbPulseRate1.Value);  // valuse from 25 to 50 mSec
                     DC = ((double)setupForm.tbDutyCycle.Value / 100.0);   // value from .1 to .9
                     DCOFF = (PR * DC); // so if PR = 25msec, then at 20%  DCOFF = 30msec , so on every 25msec and stay on for 5msec more each time
 
-                    timeProcPeriodic1 = new TimeProc(TimerPeriodicEventCallback1); // one shot
+                    timeProcPeriodic1 = new TimeProc(TimerPeriodicEventCallback1); // one shot (width of pulse)
+                    timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);  // repeating  (start of every pulse)
 
+                    
+                    setup_timer((int)PR);  // jump to bottom of console.cs code to start precision timer
 
-                    timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);
-                    setup_timer((int)PR);
-
-                   
+                
 
                 } // turn pulser ON
 
@@ -48620,8 +48710,18 @@ namespace PowerSDR
 			} // chkTUN = true
 			else
 			{
+                setupForm.chkBoxPulser.Enabled = true; // ke9ns add 
+
+             //   if (setupForm.chkBoxPulser.Checked == true)
+              //  {
+                  //  setkey(false);
+                  //  setptt(false);
+                  //  RX1DSPMode = old_Mode; // keep original mode to go back into when tun is done
+              //  }
+
                 if (timerID != 0)  // ke9ns add
                 {
+                   
                     timeKillEvent(timerID);     // turn pulser OFF
                 }
 
@@ -48715,20 +48815,50 @@ namespace PowerSDR
         double DCOFF = 0.0;
 
         double Last_PR = 0.0;
-      
+
+        private bool setkey_memory = false;
+        private bool setptt_memory = false;
+
+        //==========================================================================================
+        // ke9ns add  PTT radio on/off
+        private void setptt(bool state)
+        {
+            if (setptt_memory != state)
+            {
+                CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
+                CWKeyer.PTTEnqueue(item);
+
+                 setptt_memory = state;
+            }
+            //			if (newptt) Thread.Sleep(200);
+        } //  setptt
+
+        //==========================================================================================
+        // ke9ns add  key radio on/off
+        private void setkey(bool state)                 // ke9ns   This is the CW key signal back to the flex radio itself
+        {
+           if (setkey_memory != state)                                          // only allow this to happen 1 time if state stays the same (once to turn ON, once to turn OFF)
+            {
+                CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, state);
+                CWKeyer.SensorEnqueue(item);
+ 
+                setkey_memory = state;
+            }
+        }  // setkey
+
 
         //==========================================================================================
         // ke9ns add  precision msec multimedia timers
         // Pulser timer
         private void TimerPeriodicEventCallback(int id, int msg, int user, int param1, int param2)
         {
+    
             setup_timer1((int)DCOFF); // set duty cycle timer now
 
-           Audio.SourceScale = 1.0;  // turn on audio during this portion
-           
-        //   CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, true);
-        //    CWKeyer.SensorEnqueue(item);
-
+             Audio.SourceScale = 1.0;  // turn on audio during this portion
+         
+          //  setkey(true);
+     
 
         } // TimerPeriodicEventCallback
 
@@ -48737,13 +48867,13 @@ namespace PowerSDR
         // DUTY timers
         private void TimerPeriodicEventCallback1(int id, int msg, int user, int param1, int param2)
         {
-            Audio.SourceScale = 0.0; // turn off audio during this portion
+              Audio.SourceScale = 0.0; // turn off audio during this portion
+      
+         //   setkey(false);
 
-         //   CWSensorItem item = new CWSensorItem(CWSensorItem.InputType.StraightKey, false);
-         //   CWKeyer.SensorEnqueue(item);
-
+         
             // look for changes in the sliders for Pulses/second and duty
-            PR = (1000.0 / (double)setupForm.tbPulseRate.Value);  // valuse from 25 to 50 mSec
+            PR = (1000.0 / (double)setupForm.tbPulseRate1.Value);  // value from 25 to 50 mSec
             DC = ((double)setupForm.tbDutyCycle.Value / 100.0);   // value from .1 to .9
             DCOFF = (PR * DC); // so if PR = 25msec, then at 20%  DCOFF = 30msec , so on every 25msec and stay on for 5msec more each time
 
@@ -60480,13 +60610,10 @@ namespace PowerSDR
 
         private void cWXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (rx1_dsp_mode == DSPMode.LSB)
-                RX1DSPMode = DSPMode.CWL;
-            else if (rx1_dsp_mode == DSPMode.USB)
-                RX1DSPMode = DSPMode.CWU;
+            if (rx1_dsp_mode == DSPMode.LSB)  RX1DSPMode = DSPMode.CWL;
+            else if (rx1_dsp_mode == DSPMode.USB)  RX1DSPMode = DSPMode.CWU;
 
-            if (rx1_dsp_mode != DSPMode.CWL &&
-                rx1_dsp_mode != DSPMode.CWU)
+            if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
             {
                 MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
                     "CWX Control Form.",
@@ -60505,7 +60632,8 @@ namespace PowerSDR
             cwxForm.Show();
             cwxForm.Focus();
             cwxForm.WindowState = FormWindowState.Normal; // ke9ns add
-        }
+
+        } // cWXToolStripMenuItem_Click
 
         private void uCBToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -62926,15 +63054,16 @@ namespace PowerSDR
                 if (setupForm == null || setupForm.IsDisposed)
                     setupForm = new Setup(this);
 
-                setupForm.Show();
+                if (setupForm.chkBoxPulser.Checked == false) setupForm.chkBoxPulser.Checked = true;
+                else setupForm.chkBoxPulser.Checked = false;
+
+            /*  setupForm.Show();
                 setupForm.Focus();
                 setupForm.WindowState = FormWindowState.Normal; // ke9ns add
 
-                setupForm.tcSetup.SelectedIndex = 4; // select audio tab;
-
-                //   setupForm.tcAudio.SelectedIndex = 1; // select vac1 tab
-                //    setupForm.chkAudioIQtoVAC.Focus();
-
+                setupForm.tcSetup.SelectedIndex = 4; // select transmit tab;
+            */
+               
             } // right click
         }
 
@@ -63843,7 +63972,6 @@ namespace PowerSDR
             else speed = 0; // you turned knob far enough so reset speed counter
 
 
-
             if (CTUN == false)
             {
                 //---------------------------------------------
@@ -63858,7 +63986,6 @@ namespace PowerSDR
                         if (setupForm.chkBoxIND.Checked == true)
                         {
 
-
                             int num_steps = -1;
 
                             if (vfo_char_width == 0) GetVFOCharWidth();
@@ -63869,7 +63996,6 @@ namespace PowerSDR
                              
                             VFOAFreq = SnapTune(VFOAFreq, step, num_steps);
                       
-
                         }
                         else
                         {
@@ -63905,25 +64031,7 @@ namespace PowerSDR
             } // CTUN false
             else
             {
-                /*
-                double test =  dsp.GetDSPRX(0, 0).RXOsc; // ke9ns dsp
-
-                Debug.WriteLine("getDSPRX " + test);
-
-                if (value1 < 0)
-                {
-                 dsp.GetDSPRX(0, 0).RXOsc = test - 1000;
-                }
-                else
-                {
-                    dsp.GetDSPRX(0, 0).RXOsc = test + 1000;
-
-                }
-
-               return;
-               */
-
-
+               
                 if ((Display.CurrentDisplayMode == DisplayMode.PANADAPTER) || (Display.CurrentDisplayMode == DisplayMode.PANAFALL) || (Display.CurrentDisplayMode == DisplayMode.PANASCOPE) || (Display.CurrentDisplayMode == DisplayMode.WATERFALL))
                 {
                     UPDATEOFF = 2; // ke9ns let system know not to update screen for a little while pan
@@ -63944,8 +64052,6 @@ namespace PowerSDR
                     CalcDisplayFreq(); // ke9ns keep display from moving
 
                 }
-
-
 
              //   Debug.WriteLine("CTUN="+ CTUN1_HZ);
 
@@ -63969,263 +64075,18 @@ namespace PowerSDR
 
         void SetSENDLabel()
         {
-
-         
-
+      
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        public static int m_port = 0;   // ke9ns add port# 
-        public static bool m_terminated = true;
-
-
-
-        /*
-              // netsh http add urlacl url=http://*:8081/ user=\Everyone
-
-               public static HttpListener m_listener;
-               public static Bitmap bitmap;
-               public static HttpListenerContext context;
-
-                //==================================================================================================
-                // ke9ns add  HTTP Server (with help from Nickolas  Николай   RN3KK)
-                //==================================================================================================
-                public void HttpServer2()
-                {
-                     m_listener = new HttpListener();
-
-                    //    m_listener.Prefixes.Add("http://localhost:8081/");
-                    //     m_listener.Prefixes.Add("http://127.0.0.1:8081/");
-
-
-                    Debug.WriteLine("HTTPLISTENER==================");
-
-
-                    try
-                    {
-                        Debug.WriteLine("PORT======" + setupForm.HTTP_PORT);
-                        Debug.WriteLine("USER======" + setupForm.HTTP_USER);
-                        Debug.WriteLine("PASS======" + setupForm.HTTP_PASS);
-                    }
-                    catch(Exception e)
-                    {
-
-                        Debug.WriteLine("exception" + e);
-                        return;
-
-                    }
-
-                    try
-                    {
-                        m_listener.Prefixes.Add("http://*:" + setupForm.HTTP_PORT + "/"); // ke9ns setup port# to use for server
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("PORT exception" + e);
-                        return;
-                    }
-
-
-                    m_terminated = false; // start the thread up
-
-                    m_listener.AuthenticationSchemes = AuthenticationSchemes.Basic; // ke9ns add user and password
-
-                    //  thread = new Thread(loop);
-                    //   thread.Start();
-                    Debug.WriteLine("START THREAD LISTENER");
-
-                    Thread t = new Thread(new ThreadStart(HTTPSERVER3));
-                    t.Name = "HTTP SERVER THREAD";
-                    t.IsBackground = true;
-                    t.Priority = ThreadPriority.Normal;
-                    t.Start();
-
-                } // HttpServer(int port)
-
-                //==================================================================
-                // ke9ns add Thread start
-                public void HTTPSERVER3()
-                {
-                    Debug.WriteLine("START LISTENER");
-
-                    try
-                    {
-                        m_listener.Start();
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("Cannot start thread "+ e);
-
-                        terminate(); 
-                    }
-
-                    Debug.WriteLine("LISTENER STARTED");
-
-                    while (!m_terminated)
-                    {
-
-                        Thread.Sleep(50);
-
-                        try
-                        {
-                            context = m_listener.GetContext(); //Block until a connection comes in
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine("getcontext fault " + e);
-
-                            break;
-                        }
-
-                        context.Response.StatusCode = 200; // this is what we will send back to person who opened the connection
-                        context.Response.SendChunked = true;
-
-                        HttpListenerRequest request = context.Request;
-                        Debug.WriteLine("HttpListenerRequest=" + request);
-
-
-                        HttpListenerBasicIdentity Ident = (HttpListenerBasicIdentity)context.User.Identity;
-
-                        if((Ident.Name != setupForm.HTTP_USER) || (Ident.Password != setupForm.HTTP_PASS))
-                        {
-                            Debug.WriteLine("User and Pass dont match, fail");
-                            //  m_terminated = true;
-                            continue;
-                        }
-
-                        // Obtain a response object.
-                        HttpListenerResponse response = context.Response;
-                        Debug.WriteLine(" HttpListenerResponse=" + response);
-
-
-                        //-----------------------------------------------------
-                        // ke9ns generage a JPG of the display aread (picDisplay)
-
-
-
-       
-                        bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-                        picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-                        bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
-
-
-                        if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
-                        {
-
-                            Debug.WriteLine("SAVED JPG FILE");
-
-                            FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");     
-                            FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
-                            BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
-
-                            byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
-
-                            picDisplayReader.Close();
-                            picDisplayStream.Close();
-
-                            response.ContentType = "image/jpg"; // let listener know what type of data it is
-                            response.ContentLength64 = picDisplayOutput.Length;
-
-                            Stream OutputStream = response.OutputStream;
-
-                            OutputStream.Write(picDisplayOutput, 0, picDisplayOutput.Length); // transmit picDisplay image
-
-                            OutputStream.Close(); // dont transmitting image of picDisplay
-
-                        } // if picDisplay.JPG image created do above
-
-                    } // while (!m_terminated) 
-
-                    Debug.WriteLine("ENDING THREAD");
-
-                    m_terminated = true;
-
-                    setupForm.chkBoxHTTP.Checked = false;
-
-                    try
-                    {
-                        m_listener.Close();
-
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("1close THREAD " + e);
-                    }
-
-                   // if (m_listener != null && m_listener.IsListening)
-                 //   {
-                   //     Debug.WriteLine("STOPPING THREAD");
-
-                   //     m_listener.Stop();
-                  //  }
-
-                } // HTTPSERVER thread
-
-
-
-
-                //-------------------------------------------------------
-                // ke9ns add
-                public static void terminate()
-                {
-
-                    m_terminated = true;
-
-                    try
-                    {
-                        m_listener.Close(); // try and close the getcontext thread
-
-                    }
-                    catch(Exception e)
-                    {
-                        Debug.WriteLine("close THREAD " + e);
-                    }
-                }
-
-        
-                //=======================================================================================
-                public byte[] getImage()
-                {
-                    Debug.WriteLine("GET IMAGE=7=================");
-
-                    bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-                    picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-                    bitmap.Save(AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
-
-
-                 //   if (File.Exists(AppDataPath + "picDisplay.jpg")) // dont try to send image unless you have an image to send
-                 //   {
-
-                        Debug.WriteLine("SAVED JPG FILE===================");
-
-                        FileInfo picDisplayFile = new FileInfo(AppDataPath + "picDisplay.jpg");
-                        FileStream picDisplayStream = new FileStream(AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
-                        BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
-
-                    byte[] picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
-
-                        picDisplayReader.Close();
-                        picDisplayStream.Close();
-
-
-                  //  } // if picDisplay.JPG image created do above
-                 //   else picDisplayOutput = null;
-
-                    Debug.WriteLine("GET IMAGE DONE======================");
-
-                    return picDisplayOutput;
-
-                } // getImage()
-
-                */
 
         //=========================================================================================
         //=========================================================================================
         // ke9ns add allows Http server to talk with Setup through Console
+
+
+        public static int m_port = 0;   // ke9ns add port# 
+        public static bool m_terminated = true;
+
         public bool HttpServer
         {
          
@@ -64236,35 +64097,20 @@ namespace PowerSDR
 
         } //HttpServer
 
-        private void txtWheelTune_TextChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void txtNOAA_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add to allow TX filter on main console SSB panel
         private void udTXFilterHigh_ValueChanged(object sender, EventArgs e)
         {
             if (setupForm != null) setupForm.udTXFilterHigh.Value = udTXFilterHigh.Value;
 
         }
 
+        // ke9ns add
         private void udTXFilterLow_ValueChanged(object sender, EventArgs e)
         {
             if (setupForm != null) setupForm.udTXFilterLow.Value = udTXFilterLow.Value;
-        }
-
-        private void radBand17_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radBand20_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
 
@@ -64293,6 +64139,7 @@ namespace PowerSDR
             }
 
         } // HTTP_REFRESH
+
         //=========================================================================================
         //=========================================================================================
         // ke9ns add allows Http server to talk with Setup through Console
@@ -64304,9 +64151,11 @@ namespace PowerSDR
             }
 
         } // HTTP_PORT
-          //=========================================================================================
-          //=========================================================================================
-          // ke9ns add allows Http server to talk with Setup through Console
+
+
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns add allows Http server to talk with Setup through Console
         public string HTTP_PASS
         {
             get
@@ -64338,7 +64187,8 @@ namespace PowerSDR
         double sPrev = 0.0;
         double sPrev2 = 0.0;
 
-     
+
+        //================================================================================================
         //================================================================================================
         // ke9ns add to detect single Frequecy tones in a data stream  (audio.cs routine uses for wwv)
         public int Goertzel(float[] samples, int start, int end)
@@ -64356,7 +64206,61 @@ namespace PowerSDR
             double power = (sPrev2 * sPrev2) + (sPrev * sPrev) - ((SpotForm.Coeff * sPrev) * sPrev2);  // feedforward
 
             return (int)power; // magnitude of frequency in question within the stream
-        }
+        } //  Goertzel
+
+
+        //==================================================================================
+        //==================================================================================
+        // ke9ns for precision mSec timer for TUNE Pulser
+        // ke9ns add  This timer runs at the periodic rate, repeatedly and  jmps to "TimerPeriodicEventCallback" when the timer is reached
+        private void setup_timer(int cwxwpm)
+        {
+
+            if (timerID != 0) // if timer is running, kill it to start over
+            {
+                timeKillEvent(timerID);
+            }
+
+            // (delay, resolution, proc, user, mode)
+            timerID = timeSetEvent(cwxwpm, 1, timeProcPeriodic, 0, (int)TimerMode.Periodic); //  jmps to "TimerPeriodicEventCallback" when the timer is reached
+
+       
+            if (timerID == 0)
+            {
+                Debug.Fail("1Timer creation failed.");
+            }
+
+        } // setup_timer
+
+        //==================================================================================
+        //==================================================================================
+        private int timerID1;
+
+        
+
+        private TimeProc timeProcPeriodic1;
+
+        // ke9ns for precision mSec timer for TUNE Pulser
+        // ke9ns add  This timer is a one shot timer for the duty cycle of the tone jmps to "TimerPeriodicEventCallback1" when the timer is reached 
+        private void setup_timer1(int cwxwpm)
+        {
+
+            if (timerID1 != 0)
+            {
+                timeKillEvent(timerID1);
+            }
+
+            // (delay, resolution, proc, user, mode)
+            timerID1 = timeSetEvent(cwxwpm, 1, timeProcPeriodic1, 0, (int)TimerMode.OneShot); //  jmps to "TimerPeriodicEventCallback1" when the timer is reached
+
+         
+            if (timerID1 == 0)
+            {
+
+                Debug.Fail("2Timer creation failed.");
+            }
+
+        } // setup_timer1
 
 
         //=========================================================================================
@@ -64398,6 +64302,7 @@ namespace PowerSDR
             rf_freq = (double)f * 1e-6;
             VFOAFreq = rf_freq;
         }
+
         //=========================================================================================
         //=========================================================================================
         // rn3kk add method for change if mousewheell on web
@@ -64413,11 +64318,13 @@ namespace PowerSDR
             }
         }
 
+        // rn3kk add
         public string getVFOAFreqString()
         {
             return txtVFOAFreq.Text;
         }
 
+        // rn3kk add
         public string getVFOBFreqString()
         {
             return txtVFOBFreq.Text;

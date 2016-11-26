@@ -61,6 +61,7 @@ namespace PowerSDR
 
         #region Public Functions
 
+        //======================================================================
         // returns the power of 2 that is equal/larger than n
         public int npoof2(int n)
         {
@@ -74,6 +75,7 @@ namespace PowerSDR
             return i;
         }
 
+        //======================================================================
         // returns the next power of 2 larger/equal to n
         public int nblock2(int n)
         {
