@@ -113,7 +113,11 @@ using System.Runtime.InteropServices;
 using System.Management;
 using System.Threading;
 using System.Text;
+
+
 using System.Windows.Forms;
+using System.Windows.Forms.Design; // ke9ns add
+
 
 
 
@@ -600,8 +604,8 @@ namespace PowerSDR
   
     unsafe public class Console : System.Windows.Forms.Form
 	{
-
-
+      
+       
         //==================================================================================
         //==================================================================================
         // ke9ns add (copied from cwx precision multimedia msec timer)
@@ -629,6 +633,7 @@ namespace PowerSDR
             public int periodMin;   // Minimum supported period in milliseconds.
             public int periodMax;   // Maximum supported period in milliseconds.
         }
+
 
 
         // Gets timer capabilities.
@@ -1209,8 +1214,8 @@ namespace PowerSDR
 		private System.Windows.Forms.TextBoxTS txtVFOABand;
 		private System.Windows.Forms.TextBoxTS txtVFOBFreq;
         public PictureBox picDisplay;
-        private System.Windows.Forms.GroupBoxTS grpVFOA;
-		private System.Windows.Forms.GroupBoxTS grpVFOB;
+        private System.Windows.Forms.PanelTS grpVFOA;
+     	private System.Windows.Forms.PanelTS grpVFOB;
         private System.Windows.Forms.TextBoxTS txtVFOBBand;
         public CheckBoxTS chkPower;
         private System.Windows.Forms.LabelTS lblCPUMeter;
@@ -1247,7 +1252,7 @@ namespace PowerSDR
         private System.Windows.Forms.LabelTS lblMIC;
 		private System.Windows.Forms.TextBoxTS txtWheelTune;
 		private System.Windows.Forms.CheckBoxTS chkBIN;
-		private System.Windows.Forms.GroupBoxTS grpMultimeter;
+		private System.Windows.Forms.PanelTS grpMultimeter;
 		private System.Windows.Forms.ButtonTS btnVFOSwap;
 		private System.Windows.Forms.ButtonTS btnVFOBtoA;
         private System.Windows.Forms.ButtonTS btnVFOAtoB;
@@ -1388,7 +1393,7 @@ namespace PowerSDR
 		private System.Windows.Forms.RadioButtonTS radRX2Filter7;
 		private System.Windows.Forms.RadioButtonTS radRX2FilterVar1;
 		private System.Windows.Forms.RadioButtonTS radRX2FilterVar2;
-		private System.Windows.Forms.GroupBoxTS grpRX2Meter;
+		private System.Windows.Forms.PanelTS grpRX2Meter;
 		private System.Windows.Forms.ComboBoxTS comboRX2MeterMode;
 		private System.Windows.Forms.NumericUpDownTS udRX2FilterLow;
 		private System.Windows.Forms.NumericUpDownTS udRX2FilterHigh;
@@ -1615,14 +1620,6 @@ namespace PowerSDR
         {
 
           
-
-
-
-
-            //  this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            //   this.AutoScaleMode = AutoScaleMode.Dpi;  // ke9ns test
-
-
 
             //====================================================================================
             //====================================================================================
@@ -2198,6 +2195,7 @@ namespace PowerSDR
             //endmod
 #endif
 
+     
             InitConsole();										// Initialize all forms and main variables            
 
             Splash.SetStatus("Finished");                       // Set progress point
@@ -2964,21 +2962,21 @@ namespace PowerSDR
             this.radFilter5 = new System.Windows.Forms.RadioButtonTS();
             this.panelMode = new System.Windows.Forms.PanelTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
-            this.grpVFOA = new System.Windows.Forms.GroupBoxTS();
+            this.grpVFOA = new System.Windows.Forms.PanelTS();
             this.panelVFOASubHover = new System.Windows.Forms.Panel();
             this.panelVFOAHover = new System.Windows.Forms.Panel();
             this.txtVFOALSD = new System.Windows.Forms.TextBoxTS();
             this.txtVFOAMSD = new System.Windows.Forms.TextBoxTS();
             this.txtVFOABand = new System.Windows.Forms.TextBoxTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
-            this.grpVFOB = new System.Windows.Forms.GroupBoxTS();
+            this.grpVFOB = new System.Windows.Forms.PanelTS();
             this.txtVFOBLSD = new System.Windows.Forms.TextBoxTS();
             this.panelVFOBHover = new System.Windows.Forms.Panel();
             this.txtVFOBMSD = new System.Windows.Forms.TextBoxTS();
             this.txtVFOBBand = new System.Windows.Forms.TextBoxTS();
             this.txtVFOBFreq = new System.Windows.Forms.TextBoxTS();
             this.btnBandHF = new System.Windows.Forms.ButtonTS();
-            this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
+            this.grpMultimeter = new System.Windows.Forms.PanelTS();
             this.lblMultiSMeter = new System.Windows.Forms.LabelTS();
             this.txtMultiText = new System.Windows.Forms.TextBoxTS();
             this.lblTuneStep = new System.Windows.Forms.LabelTS();
@@ -2987,7 +2985,7 @@ namespace PowerSDR
             this.lblDisplayModeBottom = new System.Windows.Forms.LabelTS();
             this.grpDisplaySplit = new System.Windows.Forms.GroupBoxTS();
             this.chkRX2 = new System.Windows.Forms.CheckBoxTS();
-            this.grpRX2Meter = new System.Windows.Forms.GroupBoxTS();
+            this.grpRX2Meter = new System.Windows.Forms.PanelTS();
             this.lblRX2Meter = new System.Windows.Forms.LabelTS();
             this.txtRX2Meter = new System.Windows.Forms.TextBoxTS();
             this.lblRX2Band = new System.Windows.Forms.LabelTS();
@@ -6917,6 +6915,7 @@ namespace PowerSDR
             // 
             // grpVFOA
             // 
+            resources.ApplyResources(this.grpVFOA, "grpVFOA");
             this.grpVFOA.BackColor = System.Drawing.Color.Transparent;
             this.grpVFOA.Controls.Add(this.chkVFOATX);
             this.grpVFOA.Controls.Add(this.panelVFOASubHover);
@@ -6926,10 +6925,8 @@ namespace PowerSDR
             this.grpVFOA.Controls.Add(this.txtVFOABand);
             this.grpVFOA.Controls.Add(this.txtVFOAFreq);
             this.grpVFOA.Controls.Add(this.btnHidden);
-            resources.ApplyResources(this.grpVFOA, "grpVFOA");
             this.grpVFOA.ForeColor = System.Drawing.Color.White;
             this.grpVFOA.Name = "grpVFOA";
-            this.grpVFOA.TabStop = false;
             this.grpVFOA.Paint += new System.Windows.Forms.PaintEventHandler(this.grpVFOA_Paint);
             this.grpVFOA.MouseHover += new System.EventHandler(this.grpVFOA_MouseHover);
             // 
@@ -6993,6 +6990,7 @@ namespace PowerSDR
             // 
             // grpVFOB
             // 
+            resources.ApplyResources(this.grpVFOB, "grpVFOB");
             this.grpVFOB.BackColor = System.Drawing.Color.Transparent;
             this.grpVFOB.Controls.Add(this.chkVFOBTX);
             this.grpVFOB.Controls.Add(this.txtVFOBLSD);
@@ -7000,10 +6998,8 @@ namespace PowerSDR
             this.grpVFOB.Controls.Add(this.txtVFOBMSD);
             this.grpVFOB.Controls.Add(this.txtVFOBBand);
             this.grpVFOB.Controls.Add(this.txtVFOBFreq);
-            resources.ApplyResources(this.grpVFOB, "grpVFOB");
             this.grpVFOB.ForeColor = System.Drawing.Color.White;
             this.grpVFOB.Name = "grpVFOB";
-            this.grpVFOB.TabStop = false;
             this.grpVFOB.Paint += new System.Windows.Forms.PaintEventHandler(this.grpVFOB_Paint);
             this.grpVFOB.MouseHover += new System.EventHandler(this.grpVFOB_MouseHover);
             // 
@@ -7081,6 +7077,7 @@ namespace PowerSDR
             this.grpMultimeter.ForeColor = System.Drawing.Color.White;
             this.grpMultimeter.Name = "grpMultimeter";
             this.grpMultimeter.TabStop = false;
+            this.grpMultimeter.Paint += new System.Windows.Forms.PaintEventHandler(this.grpMultimeter_Paint);
             // 
             // lblMultiSMeter
             // 
@@ -7164,6 +7161,7 @@ namespace PowerSDR
             this.grpRX2Meter.ForeColor = System.Drawing.Color.White;
             this.grpRX2Meter.Name = "grpRX2Meter";
             this.grpRX2Meter.TabStop = false;
+            this.grpRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.grpRX2Meter_Paint);
             // 
             // lblRX2Meter
             // 
@@ -7565,11 +7563,11 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
             this.ResumeLayout(false);
 
-        }
+        } // InitializeComponent()
 
-#endregion
+        #endregion
 
-#region Main
+        #region Main
         // ======================================================
         // Main
         // ======================================================
@@ -7700,12 +7698,10 @@ namespace PowerSDR
 		private void InitConsole()
 		{
 
-
-         
-
+             
 
 #if (DEBUG)
-			uCBToolStripMenuItem.Visible = true;
+            uCBToolStripMenuItem.Visible = true;
 			//button1.Visible = true;
 #endif
 
@@ -41219,13 +41215,14 @@ namespace PowerSDR
 		{
 			if(vfoa_hover_digit < 0) return;
 
-			int x = 0;
+			int x = -5; // ke9ns mod  was 0
 			int width = 0;
 
 			if(small_lsd && txtVFOALSD.Visible)
 			{
-				x += (vfo_char_width + vfo_char_space) * vfoa_hover_digit;
-				if(vfoa_hover_digit > 3) x += (vfo_decimal_space - vfo_char_space);
+				x += (vfo_char_width + vfo_char_space ) * vfoa_hover_digit; 
+
+                if (vfoa_hover_digit > 3) x += (vfo_decimal_space - vfo_char_space);
 				
 				if(vfoa_hover_digit > 6)
 				{
@@ -41237,13 +41234,15 @@ namespace PowerSDR
 			}
 			else
 			{
-				x += (vfo_char_width+vfo_char_space)*vfoa_hover_digit;
-				if(vfoa_hover_digit > 3)
-					x += (vfo_decimal_space-vfo_char_space);
+				x += (vfo_char_width + vfo_char_space) * vfoa_hover_digit;
+
+                if (vfoa_hover_digit > 3) x += (vfo_decimal_space - vfo_char_space);
+
 				width = x+vfo_char_width;
 			}
 
 			e.Graphics.DrawLine(new Pen(txtVFOAFreq.ForeColor, 2.0f), x, 1, width, 1);
+
         } //panelVFOAHover_Paint
 
         private void panelVFOBHover_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
@@ -41251,8 +41250,8 @@ namespace PowerSDR
 			if(vfob_hover_digit < 0)
 				return;
 
-			int x = 0;
-			int width = 0;
+            int x = -5; // ke9ns mod  was 0
+            int width = 0;
 
 			if(small_lsd && txtVFOBLSD.Visible)
 			{
@@ -49441,9 +49440,9 @@ namespace PowerSDR
 
             int left, right, top, bottom;
 
-            left = grpVFOA.Left+txtVFOAFreq.Left;
+            left = grpVFOA.Left + txtVFOAFreq.Left;
 			right = left + txtVFOAFreq.Width;
-			top = grpVFOA.Top+txtVFOAFreq.Top;
+			top = grpVFOA.Top + txtVFOAFreq.Top;
 			bottom = top + txtVFOAFreq.Height;
 
             if (x > left && x < right && y > top && y < bottom)	return TuneLocation.VFOA;
@@ -49537,7 +49536,7 @@ namespace PowerSDR
 				case TuneLocation.VFOA:
 					double freq = double.Parse(txtVFOAFreq.Text);
 					double mult = 1000.0;
-					int right = grpVFOA.Left+txtVFOAFreq.Left+txtVFOAFreq.Width;
+					int right = grpVFOA.Left + txtVFOAFreq.Left + txtVFOAFreq.Width;
 					if(vfoa_hover_digit < 0)
 					{
 						int x = right + 2 - (vfo_pixel_offset - 5); //ke9ns was    right + 2 - (vfo_pixel_offset - 5);
@@ -50499,7 +50498,7 @@ namespace PowerSDR
 
 
         
-
+//=============================================================================================================
         private void txtVFOAFreq_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			if(this.ContainsFocus)
@@ -50510,9 +50509,9 @@ namespace PowerSDR
 
 				if(vfo_char_width == 0)	GetVFOCharWidth();
 
-				int x = txtVFOAFreq.Width - (vfo_pixel_offset - 5);
+				int x = txtVFOAFreq.Width - (vfo_pixel_offset - 10); // ke9ns mod int x = txtVFOAFreq.Width - (vfo_pixel_offset - 5);
 
-               
+
 
                 while (x < e.X)
 				{
@@ -50520,24 +50519,22 @@ namespace PowerSDR
 					
 					if(small_lsd && txtVFOALSD.Visible)
 					{
-						if(digit_index < 6)
-							x += (vfo_char_width+vfo_char_space);
-						else 
-							x += (vfo_small_char_width+vfo_small_char_space);
+						if(digit_index < 6) x += (vfo_char_width + vfo_char_space);
+						else x += (vfo_small_char_width+vfo_small_char_space);
 
-						if(digit_index == 3) x += (vfo_decimal_space-vfo_char_space);
+						if(digit_index == 3) x += (vfo_decimal_space - vfo_char_space);
 
                         if (digit_index == 6) x += vfo_small_char_width;
 					}
 					else
 					{
 						x += vfo_char_width;
-						if(digit_index == 3)
-							x += vfo_decimal_space;
-						else
-							x += vfo_char_space;
+
+						if(digit_index == 3) x += vfo_decimal_space;
+						else x += vfo_char_space;
 					}
-				}
+
+				} // while
 
 				if(digit_index < 3) digit_index = -1;
 				if(digit_index > 9) digit_index = 9;
@@ -50545,7 +50542,9 @@ namespace PowerSDR
 				vfoa_hover_digit = digit_index;
 
 				if(vfoa_hover_digit != old_digit)	panelVFOAHover.Invalidate();
-			}
+
+            } // if(this.ContainsFocus)
+
         } // txtVFOAFreq_MouseMove
 
         private void txtVFOAFreq_MouseLeave(object sender, System.EventArgs e)
@@ -50953,13 +50952,15 @@ namespace PowerSDR
                 db_freq -= ModeFreqOffset(rx1_dsp_mode);
 
             bool transmit = DB.BandText(db_freq, out bandInfo);
-			if(transmit == false)
-			{
-				txtVFOBBand.BackColor = Color.DimGray;
-				//if(chkVFOSplit.Checked && mox)
-				//	chkMOX.Checked = false;
-			}
-			else txtVFOBBand.BackColor = band_background_color;
+
+            if (transmit == false)
+            {
+                txtVFOBBand.BackColor = Color.DimGray;
+                //if(chkVFOSplit.Checked && mox)
+                //	chkMOX.Checked = false;
+            }
+            else txtVFOBBand.BackColor = band_background_color;
+
 			txtVFOBBand.Text = bandInfo;
 
 			saved_vfob_freq = freq;
@@ -51378,10 +51379,10 @@ namespace PowerSDR
 			{
 				int old_digit = vfob_hover_digit;
 				int digit_index = 0;
-				if(vfo_char_width == 0)
-					GetVFOCharWidth();
+				if(vfo_char_width == 0)	GetVFOCharWidth();
 
-				int x = txtVFOBFreq.Width - (vfo_pixel_offset - 5);
+				int x = txtVFOBFreq.Width - (vfo_pixel_offset - 10); // ke9ns mod
+
 				while(x < e.X)
 				{
 					digit_index++;
@@ -51410,10 +51411,11 @@ namespace PowerSDR
 
 				if(digit_index < 3) digit_index = -1;
 				if(digit_index > 9) digit_index = 9;
+
 				vfob_hover_digit = digit_index;
-				if(vfob_hover_digit != old_digit)
-					panelVFOBHover.Invalidate();
+				if(vfob_hover_digit != old_digit) panelVFOBHover.Invalidate();
 			}
+
         } //  txtVFOBFreq_MouseMove
 
         private void txtVFOBFreq_MouseLeave(object sender, System.EventArgs e)
@@ -60910,11 +60912,10 @@ namespace PowerSDR
 
         private void Console_Load(object sender, EventArgs e)
         {
-         //   using System.Runtime.InteropServices;
-          //  using System.Drawing.Text;
+            //   using System.Runtime.InteropServices;
+            //  using System.Drawing.Text;
 
-
-
+       
         }
 
         private void panelFilter_Paint(object sender, PaintEventArgs e)
@@ -61229,64 +61230,37 @@ namespace PowerSDR
         } // TXIDMenuItem_CheckedChanged
 
 
-        //===================================================================================
-        // ke9ns Add  not used at this time but could be used to draw a new VFOA and VFOB windows to make them look better
-        //===================================================================================
-        private void grpVFOA_Paint(object sender, PaintEventArgs e)  // ke9ns ADD
+        // ke9ns add
+        public Color Border = Color.DarkGreen;  // color of line around box
+        public float BorderThk = 2.2f;   // line thickness around box
+        public float BorderOff = (2.2f / 2.0f); // ke9ns offset from edge of box
+
+
+        //=================================================================================
+        // ke9ns add to draw curved colored line around groupbox
+        private void grpVFOA_Paint(object sender, PaintEventArgs p)  // ke9ns ADD
         {
+         
+            PanelTS box = (PanelTS)sender;
+            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-         /*  
-            Graphics g = e.Graphics;
+            GraphicsPath gPath = CreatePath(1, 1, box.Width  - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            Brush textBrush = new SolidBrush(Color.SlateGray);
-            Brush borderBrush = new SolidBrush(Color.SlateGray);
+          //  grpVFOA.BackColor = Color.Transparent;
 
-            Brush bg = new SolidBrush(Color.Transparent);
-
-            borderPen = new Pen(borderBrush,3.0f);
-
-            SizeF strSize = g.MeasureString(grpVFOA.Text, grpVFOA.Font);
+          //  p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
 
            
-            Rectangle rect = new Rectangle(grpVFOA.ClientRectangle.X,   grpVFOA.ClientRectangle.Y + (int)(strSize.Height / 2),
-                                          grpVFOA.ClientRectangle.Width ,    grpVFOA.ClientRectangle.Width - (int)(strSize.Height / 2) );
+            p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
+            p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
+
+            p.Graphics.DrawString("VFO A", box.Font, Brushes.White, 8, 0);
 
 
+        } // grpVFOA_Paint
 
 
-            g.DrawLine(borderPen, rect.Location, rect.Location);
-
-           
-                        // Clear text and border
-                        g.Clear(this.TransparencyKey);
-
-
-
-                        // Draw text
-                        g.DrawString(grpVFOA.Text, grpVFOA.Font, textBrush, grpVFOA.Padding.Left + grpVFOA.Margin.Left+1, 0);
-
-                        // Drawing Border
-                        //Left
-
-                        g.DrawLine(borderPen, rect.Location, new Point(rect.X, rect.Y + rect.Height));
-
-
-                        //Bottom
-                        //  g.DrawLine(borderPen, new Point(rect.X, rect.Y + rect.Height+2), new Point(rect.X + rect.Width, rect.Y + rect.Height+2));
-                        g.DrawLine(borderPen, grpVFOA.ClientRectangle.X , grpVFOA.ClientRectangle.Y + grpVFOA.ClientRectangle.Height,
-                            grpVFOA.ClientRectangle.X + grpVFOA.ClientRectangle.Width, grpVFOA.ClientRectangle.Y + grpVFOA.ClientRectangle.Height);
-
-                        //Top1
-                        g.DrawLine(borderPen, new Point(rect.X, rect.Y), new Point(rect.X + grpVFOA.Padding.Left + grpVFOA.Margin.Left + 1, rect.Y));
-                        //Top2
-                        g.DrawLine(borderPen, new Point(rect.X + grpVFOA.Padding.Left + (int)(strSize.Width), rect.Y), new Point(rect.X + rect.Width, rect.Y));
-
-                        //Right
-                        g.DrawLine(borderPen, new Point(rect.X + rect.Width-2, rect.Y),
-                            new Point(rect.X + rect.Width-2, rect.Y + rect.Height));
-            */
-
-        }
 
         private void grpVFOA_MouseHover(object sender, EventArgs e)
         {
@@ -61294,46 +61268,25 @@ namespace PowerSDR
 
         }
 
-        private void grpVFOB_Paint(object sender, PaintEventArgs e)
+        //=================================================================================
+        // ke9ns add to draw curved colored line around groupbox
+        private void grpVFOB_Paint(object sender, PaintEventArgs p)
         {
-            //   Debug.WriteLine("paint  ");
-/*
+            PanelTS box = (PanelTS)sender;
+            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-            Graphics g = e.Graphics;
+            GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            Brush textBrush = new SolidBrush(Color.Red);
-            Brush borderBrush = new SolidBrush(Color.Blue);
+         //   p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
 
+          
+            p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
+            p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
 
-            Pen borderPen = new Pen(borderBrush);
-            SizeF strSize = g.MeasureString(grpVFOB.Text, grpVFOA.Font);
-            Rectangle rect = new Rectangle(grpVFOB.ClientRectangle.X,
-                                           grpVFOB.ClientRectangle.Y + (int)(strSize.Height / 2),
-                                          grpVFOB.ClientRectangle.Width - 1,
-                                           grpVFOB.ClientRectangle.Height - (int)(strSize.Height / 2) - 1);
+            p.Graphics.DrawString("VFO B", box.Font, Brushes.White, 8, 0);
 
-
-
-            // Clear text and border
-            g.Clear(this.BackColor);
-
-            // Draw text
-            g.DrawString(grpVFOB.Text, grpVFOB.Font, textBrush, grpVFOB.Padding.Left, 0);
-
-            // Drawing Border
-            //Left
-            g.DrawLine(borderPen, rect.Location, new Point(rect.X, rect.Y + rect.Height));
-            //Right
-            g.DrawLine(borderPen, new Point(rect.X + rect.Width, rect.Y), new Point(rect.X + rect.Width, rect.Y + rect.Height));
-            //Bottom
-            g.DrawLine(borderPen, new Point(rect.X, rect.Y + rect.Height), new Point(rect.X + rect.Width, rect.Y + rect.Height));
-            //Top1
-            g.DrawLine(borderPen, new Point(rect.X, rect.Y), new Point(rect.X + grpVFOB.Padding.Left, rect.Y));
-            //Top2
-            g.DrawLine(borderPen, new Point(rect.X + grpVFOB.Padding.Left + (int)(strSize.Width), rect.Y), new Point(rect.X + rect.Width, rect.Y));
-
-    */
-        }
+        } //grpVFOB_Paint
 
         private void grpVFOB_MouseHover(object sender, EventArgs e)
         {
@@ -61341,10 +61294,50 @@ namespace PowerSDR
         }
 
 
+        Color Border1 = Color.DarkGreen;
+
+        //=================================================================================
+        // ke9ns add to draw curved colored line around groupbox
+        private void grpMultimeter_Paint(object sender, PaintEventArgs p)
+        {
+            PanelTS box = (PanelTS)sender;
+            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
+
+         //   p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
+
+          
+            p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
+            p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+
+            p.Graphics.DrawString("RX1 Meter        TX Meter", box.Font, Brushes.White, 8, 0);
 
 
+        } // grpMultimeter_Paint
 
-     //  ToolTip tt = new ToolTip();
+        //=================================================================================
+        // ke9ns add to draw curved colored line around groupbox
+        private void grpRX2Meter_Paint(object sender, PaintEventArgs p)
+        {
+            PanelTS box = (PanelTS)sender;
+            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
+
+          //  p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
+
+          
+            p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
+            p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+
+            p.Graphics.DrawString("RX2 Meter        TX Meter(2nd)", box.Font, Brushes.White, 8, 0);
+
+        }
+
+        //  ToolTip tt = new ToolTip();
         private void TXIDMenuItem_MouseHover(object sender, EventArgs e)
         {
            //  tt.Show("Click 'LIVE ...", this.menuStrip1, 10000);
@@ -64262,6 +64255,10 @@ namespace PowerSDR
 
         } // setup_timer1
 
+      
+
+
+
 
         //=========================================================================================
         //=========================================================================================
@@ -64330,7 +64327,127 @@ namespace PowerSDR
             return txtVFOBFreq.Text;
         }
 
+      
+
+      
+
+        //============================================================================
+        //============================================================================
+        //============================================================================
+        // ke9ns add to allow extra control of group panels (ie rounded edges)
+        public static GraphicsPath CreatePath(float x, float y, float width, float height,
+                                      float radius, bool RoundTopLeft, bool RoundTopRight, bool RoundBottomRight, bool RoundBottomLeft)
+        {
+            float xw = x + width;
+            float yh = y + height;
+            float xwr = xw - radius;
+            float yhr = yh - radius;
+            float xr = x + radius;
+            float yr = y + radius;
+            float r2 = radius * 2;
+            float xwr2 = xw - r2;
+            float yhr2 = yh - r2;
+
+            GraphicsPath p = new GraphicsPath();
+            p.StartFigure();
+
+            //Top Left Corner
+
+            if (RoundTopLeft)
+            {
+                p.AddArc(x, y, r2, r2, 180, 90);
+            }
+            else
+            {
+                p.AddLine(x, yr, x, y);
+                p.AddLine(x, y, xr, y);
+
+            }
+
+            //Top Edge
+            p.AddLine(xr, y, xwr, y);
+
+            //Top Right Corner
+
+            if (RoundTopRight)
+            {
+                p.AddArc(xwr2, y, r2, r2, 270, 90);
+            }
+            else
+            {
+                p.AddLine(xwr, y, xw, y);
+                p.AddLine(xw, y, xw, yr);
+            }
+
+
+            //Right Edge
+            p.AddLine(xw, yr, xw, yhr);
+
+            //Bottom Right Corner
+
+            if (RoundBottomRight)
+            {
+                p.AddArc(xwr2, yhr2, r2, r2, 0, 90);
+            }
+            else
+            {
+                p.AddLine(xw, yhr, xw, yh);
+                p.AddLine(xw, yh, xwr, yh);
+            }
+
+
+            //Bottom Edge
+            p.AddLine(xwr, yh, xr, yh);
+
+            //Bottom Left Corner           
+
+            if (RoundBottomLeft)
+            {
+                p.AddArc(x, yhr2, r2, r2, 90, 90);
+            }
+            else
+            {
+                p.AddLine(xr, yh, x, yh);
+                p.AddLine(x, yh, x, yhr);
+            }
+
+            //Left Edge
+            p.AddLine(x, yhr, x, yr);
+
+            p.CloseFigure();
+
+            return p;
+
+        } // CreatePath(float x, float y, float width, float height,  float radius, bool RoundTopLeft, bool RoundTopRight, bool RoundBottomRight, bool RoundBottomLeft)
+
+
+
+        //=======================================================================================================
+        //=======================================================================================================
+        //  grpVFOA.Paint += PaintBorderlessGroupBox;
+        // ke9ns add draw rounded box around groupbox (but prefer to use the grpVFOA_PAINT event instead of this)
+        private void PaintBorderlessGroupBox(object sender, PaintEventArgs p)
+        {
+            GroupBoxTS box = (GroupBoxTS)sender;
+
+            GraphicsPath gPath = CreatePath(0, 0, box.Width - 1, box.Height - 1, 4, true, true, true, true); //
+
+            p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
+
+            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+
+            p.Graphics.FillPath(new SolidBrush(Color.Transparent), gPath);
+            p.Graphics.DrawPath(new Pen(Color.Green, 2.2f), gPath);
+        
+            p.Graphics.DrawString(box.Text, box.Font, Brushes.White, 8, 0);
+
+        } // PaintBorderlessGroupBox
+
 
     } // class console
+
+
+
 
 } // powerSDR

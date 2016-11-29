@@ -10134,11 +10134,11 @@ namespace PowerSDR
             // lblTransmitTunePower
             // 
             this.lblTransmitTunePower.Image = null;
-            this.lblTransmitTunePower.Location = new System.Drawing.Point(8, 19);
+            this.lblTransmitTunePower.Location = new System.Drawing.Point(25, 17);
             this.lblTransmitTunePower.Name = "lblTransmitTunePower";
-            this.lblTransmitTunePower.Size = new System.Drawing.Size(64, 16);
+            this.lblTransmitTunePower.Size = new System.Drawing.Size(47, 16);
             this.lblTransmitTunePower.TabIndex = 5;
-            this.lblTransmitTunePower.Text = "Drive";
+            this.lblTransmitTunePower.Text = "Drive:";
             // 
             // udTXTunePower
             // 
