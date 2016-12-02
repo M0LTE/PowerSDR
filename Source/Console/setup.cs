@@ -10091,6 +10091,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.tbDutyCycle, "Duty Cycle of 10% to 80% ON to OFF time");
             this.tbDutyCycle.Value = 40;
             this.tbDutyCycle.Scroll += new System.EventHandler(this.tbDutyCycle_Scroll);
+            this.tbDutyCycle.ValueChanged += new System.EventHandler(this.tbDutyCycle_ValueChanged);
             this.tbDutyCycle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tbDutyCycle_MouseDown);
             this.tbDutyCycle.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tbDutyCycle_MouseUp);
             // 
@@ -15751,7 +15752,7 @@ namespace PowerSDR
             this.udPulsePeriod.Name = "udPulsePeriod";
             this.udPulsePeriod.Size = new System.Drawing.Size(43, 20);
             this.udPulsePeriod.TabIndex = 105;
-            this.toolTip1.SetToolTip(this.udPulsePeriod, "Sets the amplitude of the signal (typically between 0 and 1.0)");
+            this.toolTip1.SetToolTip(this.udPulsePeriod, "Pulses per second");
             this.udPulsePeriod.Value = new decimal(new int[] {
             10,
             0,
@@ -15791,7 +15792,7 @@ namespace PowerSDR
             this.udPulseDuty.Name = "udPulseDuty";
             this.udPulseDuty.Size = new System.Drawing.Size(40, 20);
             this.udPulseDuty.TabIndex = 103;
-            this.toolTip1.SetToolTip(this.udPulseDuty, "Sets the amplitude of the signal (typically between 0 and 1.0)");
+            this.toolTip1.SetToolTip(this.udPulseDuty, "Duty cycle of ON to OFF ratio (1% to 100%)");
             this.udPulseDuty.Value = new decimal(new int[] {
             10,
             0,
@@ -27738,6 +27739,8 @@ namespace PowerSDR
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
 
+
+
             if (chkBoxPulser.Checked == false)
             {
                 console.chkTUN.Text = "TUN";
@@ -27750,9 +27753,21 @@ namespace PowerSDR
 
         }
 
+        // ke9ns add for pulser tune function
         private void tbPulseRate_ValueChanged(object sender, EventArgs e)
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
+
+            Audio.PulsePeriod1 = (double)tbPulseRate1.Value;
+            Audio.PulseDuty1 = (double)tbDutyCycle.Value;
+
+        }
+
+        // ke9ns add for pulser tune function
+        private void tbDutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            Audio.PulsePeriod1 = (double)tbPulseRate1.Value;
+            Audio.PulseDuty1 = (double)tbDutyCycle.Value;
 
         }
 

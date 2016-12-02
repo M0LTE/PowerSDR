@@ -41,10 +41,12 @@ namespace PowerSDR
 {
     public class StackControl : System.Windows.Forms.Form
     {
-        
+
+       
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs 
         public ScanControl ScanForm;                            // ke9ns add freq Scanner function
-
+        
+       
         public static Console console;   // ke9ns mod  to allow console to pass back values to stack screen
         public Setup setupForm;   // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
@@ -58,7 +60,7 @@ namespace PowerSDR
         private TextBox textBox3;
         private CheckBoxTS chkAlwaysOnTop;
         public TextBox textBox1;
-        private Button button1;
+        private Button buttonSort;
         private IContainer components;
 
      //   public DXMemList dxmemlist;
@@ -103,7 +105,7 @@ namespace PowerSDR
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StackControl));
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonSort = new System.Windows.Forms.Button();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
@@ -113,11 +115,12 @@ namespace PowerSDR
             this.textBox3.Location = new System.Drawing.Point(12, 12);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(228, 79);
+            this.textBox3.Size = new System.Drawing.Size(228, 94);
             this.textBox3.TabIndex = 9;
             this.textBox3.TabStop = false;
-            this.textBox3.Text = "Left Click on line to change frequency.\r\nRight Click on line to LOCK/UNLOCK.\r\nCTR" +
-    "L + Right Click on BAND button ADD to BandStack";
+            this.textBox3.Text = "Left Click on line to change frequency.\r\nRight Click on line to LOCK/UNLOCK.\r\nWhe" +
+    "el Click to Delete a Bandstack Entry.\r\nCTRL + Right Click on BAND button to ADD " +
+    "to BandStack";
             // 
             // textBox1
             // 
@@ -127,27 +130,27 @@ namespace PowerSDR
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.HideSelection = false;
-            this.textBox1.Location = new System.Drawing.Point(12, 97);
+            this.textBox1.Location = new System.Drawing.Point(12, 112);
             this.textBox1.MaximumSize = new System.Drawing.Size(254, 222);
             this.textBox1.MaxLength = 1000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(228, 177);
+            this.textBox1.Size = new System.Drawing.Size(228, 162);
             this.textBox1.TabIndex = 60;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
             this.textBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseUp);
             // 
-            // button1
+            // buttonSort
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(165, 280);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 61;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
+            this.buttonSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSort.Location = new System.Drawing.Point(165, 280);
+            this.buttonSort.Name = "buttonSort";
+            this.buttonSort.Size = new System.Drawing.Size(75, 23);
+            this.buttonSort.TabIndex = 61;
+            this.buttonSort.Text = "Sort";
+            this.buttonSort.UseVisualStyleBackColor = true;
+            this.buttonSort.Click += new System.EventHandler(this.buttonSort_Click);
             // 
             // chkAlwaysOnTop
             // 
@@ -164,7 +167,7 @@ namespace PowerSDR
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(255, 313);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonSort);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.textBox3);
@@ -547,10 +550,10 @@ namespace PowerSDR
             {
                 try
                 {
-                   int ii = textBox1.GetCharIndexFromPosition(e.Location);
+                    int ii = textBox1.GetCharIndexFromPosition(e.Location);
 
                     xxx = (ii / 31); //find row 
-                                    
+
                     if (xxx >= console.band_stacks[iii]) return; // if you click past the last index freq, then do nothing.
 
 
@@ -567,7 +570,7 @@ namespace PowerSDR
                     }
                     else
                     {
-                        Debug.WriteLine("LOCKED SO DONT SAVE "+console.iii +" says "+ console.filter2[console.iii]);
+                        Debug.WriteLine("LOCKED SO DONT SAVE " + console.iii + " says " + console.filter2[console.iii]);
                     }
 
                     console.iii = xxx; // update new position in bandstack for checking if its locked
@@ -661,7 +664,7 @@ namespace PowerSDR
                 // This toggles the LOCK / UNLOCK and saves it
                 try
                 {
-                 
+
                     int ii = textBox1.GetCharIndexFromPosition(e.Location);
 
                     Debug.WriteLine("BOX POS " + ii);
@@ -692,20 +695,16 @@ namespace PowerSDR
 
                     }
 
-            
-                   
 
-                    DB.SaveBandStack(console.last_band, xxx, mode1[xxx], filter1[xxx], freq1[xxx] );
+                    DB.SaveBandStack(console.last_band, xxx, mode1[xxx], filter1[xxx], freq1[xxx]);
 
                     Debug.WriteLine("band== " + console.last_band);
                     Debug.WriteLine("xxx== " + xxx);
-                    Debug.WriteLine("bandstack== "+filter);
+                    Debug.WriteLine("bandstack== " + filter);
                     Debug.WriteLine("freq== " + freq1[xxx]);
 
                     bandstackupdate(); // update bandstack screen
 
-
-                
 
                 }
                 catch
@@ -715,12 +714,114 @@ namespace PowerSDR
                 }
 
             } // RIGHT CLICK MOUSE
+            else if (e.Button == MouseButtons.Middle) // ke9ns Middle erases bandstack
+            {
+
+                try
+                {
+                    if (console.band_stacks[iii] < 3) return;    // dont allow removing all the bandstacks
+
+                    int ii = textBox1.GetCharIndexFromPosition(e.Location);
+
+                    xxx = (ii / 31);                                // find row 
+
+                    if (xxx >= console.band_stacks[iii]) return;    // if you click past the last index freq, then do nothing.
+
+                   
+                    textBox1.SelectionStart = (xxx * 31);
+                    textBox1.SelectionLength = 31;
+                 
+                    console.iii = xxx;                            // update new position in bandstack for checking if its locked
 
 
+                    if (filter1[xxx].Contains("@") == false)      // can only delete an unlocked entry in the bandstack
+                    {
 
-            button1.Focus();
+                        console.PurgeBandStack(xxx, mode1[xxx], filter1[xxx], freq1[xxx].ToString());
+
+                        console.BandStackUpdate();
+                        bandstackupdate();
+                    }
+                }
+                catch(Exception)
+                {
+                    Debug.WriteLine("Bad location2");
+
+                }
+
+
+            } // MIDDLE CLICK MOUSE
+
+
+            buttonSort.Focus();  // put focus back on button
 
         } //textBox1_MouseUp
+
+
+        bool bubble = false;
+        //====================================================================================
+        // ke9ns SORT the bandstack for just the band your on
+        private void buttonSort_Click(object sender, EventArgs e)
+        {
+            int index = console.band_stacks[iii];
+
+
+            try
+            {
+               if (index < 2) return; // nothing to sort
+
+
+                // bubble sort
+                for (int d = 0; d < index;)
+                {
+
+                    for (int f = index - 1; f > d; f--)  // check end of list first and work back to front
+                    {
+                        if (freq1[d] > freq1[f])
+                        {
+  
+                            string tempmode = mode1[d];
+                            string tempfilter = filter1[d];
+                            double tempfreq = freq1[d];
+
+
+                            freq1[d] = freq1[f];
+                            mode1[d] = mode1[f];
+                            filter1[d] = filter1[f];
+
+                            freq1[f] = tempfreq;
+                            mode1[f] = tempmode;
+                            filter1[f] = tempfilter;
+
+                            bubble = true;
+                        }
+
+
+                    } // for f
+
+                    if (bubble == false) d++;
+                    else  bubble = false;  // reset
+
+                } // for d
+            
+                for (int g = 0; g < index; g++)  // update database with new sorted bandstack
+                {
+
+                     console.SortBandStack(g, mode1[g], filter1[g], freq1[g]);     //  DB.SaveBandStack(console.last_band, g, mode1[g], filter1[g], freq1[g]);
+
+                }
+
+                console.BandStackUpdate();  // update the console with the new database sorted bandstack
+
+                bandstackupdate();
+
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Bad location3");
+
+            }
+        }
 
         public static int RIndex1 = 0;
 

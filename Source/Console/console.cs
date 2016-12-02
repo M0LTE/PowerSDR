@@ -638,14 +638,13 @@ namespace PowerSDR
 
         // Gets timer capabilities.
         [DllImport("winmm.dll")]
-        private static extern int timeGetDevCaps(ref TimerCaps caps,
-            int sizeOfTimerCaps);
+        private static extern int timeGetDevCaps(ref TimerCaps caps, int sizeOfTimerCaps);
 
         // Creates and starts the timer.
         [DllImport("winmm.dll")]
-        private static extern int timeSetEvent(int delay, int resolution,
-            TimeProc proc, int user, int mode);
+        private static extern int timeSetEvent(int delay, int resolution, TimeProc proc, int user, int mode);
 
+  
         // Stops and destroys the timer.
         [DllImport("winmm.dll")]
         private static extern int timeKillEvent(int id);
@@ -1140,6 +1139,7 @@ namespace PowerSDR
 		private Point txt_display_peak_freq_basis = new Point (100,100);		//k6jca
 		private Point txt_display_peak_power_basis = new Point (100,100);		//k6jca
 		private Point txt_display_peak_offset_basis = new Point (100,100);		//k6jca
+        private Point autobrightbox_basis = new Point(100, 100);               // ke9ns add
 		private Point lbl_display_zoom_basis = new Point (100,100);		//k6jca
 		private Size gr_display_size_basis = new Size (100,100);		//k6jca
 		private Size pic_display_size_basis = new Size (100,100);		//k6jca
@@ -1311,7 +1311,7 @@ namespace PowerSDR
         private System.Windows.Forms.PictureBox picVOX;
         private System.Windows.Forms.CheckBoxTS chkNoiseGate;
 		private System.Windows.Forms.PictureBox picNoiseGate;
-        public TextBox autoBrightBox;
+        public  System.Windows.Forms.TextBoxTS autoBrightBox;
         private System.Windows.Forms.TextBoxTS txtDisplayCursorOffset;
 		private System.Windows.Forms.TextBoxTS txtDisplayCursorPower;
 		private System.Windows.Forms.TextBoxTS txtDisplayCursorFreq;
@@ -1335,7 +1335,7 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkCWIambic;
 		private System.Windows.Forms.LabelTS lblCWPitchFreq;
         public System.Windows.Forms.NumericUpDownTS udCWPitch;
-        public LabelTS lblDisplayPan;
+        public System.Windows.Forms.ButtonTS lblDisplayPan;
         private System.Windows.Forms.ButtonTS btnDisplayPanCenter;
         private System.Windows.Forms.LabelTS lblDisplayZoom;
 		private System.Windows.Forms.LabelTS lblTransmitProfile;
@@ -2774,7 +2774,7 @@ namespace PowerSDR
             this.txtDisplayCursorFreq = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayPeakPower = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayPeakFreq = new System.Windows.Forms.TextBoxTS();
-            this.autoBrightBox = new System.Windows.Forms.TextBox();
+            this.autoBrightBox = new System.Windows.Forms.TextBoxTS();
             this.radBandGN13 = new System.Windows.Forms.RadioButtonTS();
             this.radBandGN12 = new System.Windows.Forms.RadioButtonTS();
             this.radBandGN11 = new System.Windows.Forms.RadioButtonTS();
@@ -2820,7 +2820,7 @@ namespace PowerSDR
             this.txtNOAA2 = new System.Windows.Forms.TextBoxTS();
             this.txtNOAA = new System.Windows.Forms.TextBoxTS();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
-            this.lblDisplayPan = new System.Windows.Forms.LabelTS();
+            this.lblDisplayPan = new System.Windows.Forms.ButtonTS();
             this.udTXFilterLow = new System.Windows.Forms.NumericUpDownTS();
             this.udTXFilterHigh = new System.Windows.Forms.NumericUpDownTS();
             this.chkBoxMuteSpk = new System.Windows.Forms.CheckBoxTS();
@@ -4998,9 +4998,9 @@ namespace PowerSDR
             // autoBrightBox
             // 
             this.autoBrightBox.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.autoBrightBox, "autoBrightBox");
             this.autoBrightBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.autoBrightBox.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.autoBrightBox, "autoBrightBox");
             this.autoBrightBox.ForeColor = System.Drawing.SystemColors.Info;
             this.autoBrightBox.Name = "autoBrightBox";
             this.autoBrightBox.ReadOnly = true;
@@ -5559,10 +5559,12 @@ namespace PowerSDR
             // 
             // lblDisplayPan
             // 
+            this.lblDisplayPan.BackColor = System.Drawing.Color.Black;
             this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
             resources.ApplyResources(this.lblDisplayPan, "lblDisplayPan");
             this.lblDisplayPan.Name = "lblDisplayPan";
             this.toolTip1.SetToolTip(this.lblDisplayPan, resources.GetString("lblDisplayPan.ToolTip"));
+            this.lblDisplayPan.UseVisualStyleBackColor = false;
             this.lblDisplayPan.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblDisplayPan_MouseDown);
             // 
             // udTXFilterLow
@@ -7067,16 +7069,15 @@ namespace PowerSDR
             // 
             // grpMultimeter
             // 
+            resources.ApplyResources(this.grpMultimeter, "grpMultimeter");
             this.grpMultimeter.BackColor = System.Drawing.Color.Transparent;
             this.grpMultimeter.Controls.Add(this.comboMeterTXMode);
             this.grpMultimeter.Controls.Add(this.picMultiMeterDigital);
             this.grpMultimeter.Controls.Add(this.lblMultiSMeter);
             this.grpMultimeter.Controls.Add(this.comboMeterRXMode);
             this.grpMultimeter.Controls.Add(this.txtMultiText);
-            resources.ApplyResources(this.grpMultimeter, "grpMultimeter");
             this.grpMultimeter.ForeColor = System.Drawing.Color.White;
             this.grpMultimeter.Name = "grpMultimeter";
-            this.grpMultimeter.TabStop = false;
             this.grpMultimeter.Paint += new System.Windows.Forms.PaintEventHandler(this.grpMultimeter_Paint);
             // 
             // lblMultiSMeter
@@ -7151,16 +7152,15 @@ namespace PowerSDR
             // 
             // grpRX2Meter
             // 
+            resources.ApplyResources(this.grpRX2Meter, "grpRX2Meter");
             this.grpRX2Meter.BackColor = System.Drawing.Color.Transparent;
             this.grpRX2Meter.Controls.Add(this.comboMeterTX1Mode);
             this.grpRX2Meter.Controls.Add(this.picRX2Meter);
             this.grpRX2Meter.Controls.Add(this.lblRX2Meter);
             this.grpRX2Meter.Controls.Add(this.comboRX2MeterMode);
             this.grpRX2Meter.Controls.Add(this.txtRX2Meter);
-            resources.ApplyResources(this.grpRX2Meter, "grpRX2Meter");
             this.grpRX2Meter.ForeColor = System.Drawing.Color.White;
             this.grpRX2Meter.Name = "grpRX2Meter";
-            this.grpRX2Meter.TabStop = false;
             this.grpRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.grpRX2Meter_Paint);
             // 
             // lblRX2Meter
@@ -12988,7 +12988,6 @@ namespace PowerSDR
 
                 iii = iii - 1;
 
-
                  Debug.WriteLine("index status = " + iii);
 
             }
@@ -13018,6 +13017,7 @@ namespace PowerSDR
         public void SaveBand()
 		{
 
+           
             SaveBand1(); // get bandstack Locking info
      
            
@@ -13039,9 +13039,9 @@ namespace PowerSDR
 						DB.SaveBandStack("160M", band_160m_index, mode, filter, freq);
 					break;
 				case Band.B80M:
-					if(freq >= 3.5 && freq < 4.0)
-						DB.SaveBandStack("80M", band_80m_index, mode, filter, freq);
-					break;
+                    if (freq >= 3.5 && freq < 4.0)
+                        DB.SaveBandStack("80M", band_80m_index, mode, filter, freq);
+                    break;
 				case Band.B60M:
 					if(extended || (current_region != FRSRegion.US))
 					{
@@ -13241,8 +13241,13 @@ namespace PowerSDR
         } // saveband
 
 
- 
-		public void SetBand(string mode, string filter, double freq)
+
+      
+
+
+
+
+        public void SetBand(string mode, string filter, double freq)
 		{
             if (filter.Contains("@"))
             {
@@ -18642,7 +18647,8 @@ namespace PowerSDR
 
         //=============================================================================
         // ke9ns mod add GEN SWL bands
-        public int[] band_stacks; // ke9ns add
+        public int[] band_stacks; // ke9ns add each entry contains the # of bandstack entries for each band listed below 
+        public int[] band_sort; // ke9ns add lowest to highest sorted freq list of the current bandstack  
 
 		public void UpdateBandStackRegisters()
 		{
@@ -48652,7 +48658,7 @@ namespace PowerSDR
 
 					Thread t = new Thread(new ThreadStart(Tune));
 					t.IsBackground = true;
-					t.Priority = ThreadPriority.Normal;
+                    t.Priority = ThreadPriority.Normal;
 					t.Name = "TUN Thread";
 					t.Start();
 				}
@@ -48679,7 +48685,7 @@ namespace PowerSDR
                 //---------------------------------
                 // ke9ns add pulser code
 
-                if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) && (PulseON== false))
+              if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) && (PulseON == false))
                 {
 
                     PulseON = true;   // set 1 time
@@ -48691,11 +48697,11 @@ namespace PowerSDR
                     DC = ((double)setupForm.tbDutyCycle.Value / 100.0);   // value from .1 to .9
                     DCOFF = (PR * DC); // so if PR = 25msec, then at 20%  DCOFF = 30msec , so on every 25msec and stay on for 5msec more each time
 
-                    timeProcPeriodic1 = new TimeProc(TimerPeriodicEventCallback1); // one shot (width of pulse)
-                    timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);  // repeating  (start of every pulse)
+                 //   timeProcPeriodic1 = new TimeProc(TimerPeriodicEventCallback1); // one shot (width of pulse)
+                 //   timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);  // repeating  (start of every pulse)
 
                     
-                    setup_timer((int)PR);  // jump to bottom of console.cs code to start precision timer
+                 //   setup_timer((int)PR);  // jump to bottom of console.cs code to start precision timer
 
                 
 
@@ -53187,6 +53193,7 @@ namespace PowerSDR
         private void radBand40_Click(object sender, EventArgs e)
         {
             SaveBand();
+
             if (last_band.Equals("40M"))
             {
                 if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift)
@@ -56959,25 +56966,32 @@ namespace PowerSDR
 				radDisplayZoom1x.Location = new Point(btn_display_zoom_1x_basis.X+h_delta,btn_display_zoom_1x_basis.Y+v_delta);
 				radDisplayZoom05.Location = new Point(btn_display_zoom_05_basis.X+h_delta,btn_display_zoom_05_basis.Y+v_delta);
 				ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X+h_delta,tb_display_zoom_basis.Y+v_delta);
-				txtDisplayPeakFreq.Location = new Point(txt_display_peak_freq_basis.X+h_delta,txt_display_peak_freq_basis.Y+v_delta);
+
+                txtDisplayPeakFreq.Location = new Point(txt_display_peak_freq_basis.X+h_delta,txt_display_peak_freq_basis.Y+v_delta);
 				txtDisplayPeakPower.Location = new Point(txt_display_peak_power_basis.X+h_delta,txt_display_peak_power_basis.Y+v_delta);
-				txtDisplayPeakOffset.Location = new Point(txt_display_peak_offset_basis.X+h_delta,txt_display_peak_offset_basis.Y+v_delta);
-				lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X+h_delta,lbl_display_zoom_basis.Y+v_delta);
+         		txtDisplayPeakOffset.Location = new Point(txt_display_peak_offset_basis.X+h_delta,txt_display_peak_offset_basis.Y+v_delta);
+
+                lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X+h_delta,lbl_display_zoom_basis.Y+v_delta);
 
                 panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
 				picDisplay.Size = new Size(pic_display_size_basis.Width+h_delta,pic_display_size_basis.Height+v_delta);
-				autoBrightBox.Size = new Size(textbox1_size_basis.Width+h_delta,textbox1_size_basis.Height);
+
+             
+         autoBrightBox.Size = new Size(textbox1_size_basis.Width+h_delta,textbox1_size_basis.Height);
 				autoBrightBox.Location = new Point(textbox1_basis.X,textbox1_basis.Y+v_delta);
-				panelDisplay2.Location = new Point(gr_display2_basis.X+(h_delta/2),gr_display2_basis.Y+v_delta);
+
+                panelDisplay2.Location = new Point(gr_display2_basis.X+(h_delta/2),gr_display2_basis.Y+v_delta);
 				panelDSP.Location = new Point(gr_dsp_basis.X+(h_delta/2),gr_dsp_basis.Y+v_delta);
 
 				panelMultiRX.Location = new Point(gr_multirx_basis.X+(h_delta/2),gr_multirx_basis.Y+v_delta);
 				ptbDisplayPan.Location = new Point(tb_displaypan_basis.X,tb_displaypan_basis.Y+v_delta);
 				lblDisplayPan.Location = new Point(lbl_displaypan_basis.X,lbl_displaypan_basis.Y+v_delta);
-				txtDisplayCursorFreq.Location = new Point(txt_display_cursor_freq_basis.X,txt_display_cursor_freq_basis.Y+v_delta);
+
+                txtDisplayCursorFreq.Location = new Point(txt_display_cursor_freq_basis.X,txt_display_cursor_freq_basis.Y+v_delta);
 				txtDisplayCursorPower.Location = new Point(txt_display_cursor_power_basis.X,txt_display_cursor_power_basis.Y+v_delta);
 				txtDisplayCursorOffset.Location = new Point(txt_display_cursor_offset_basis.X,txt_display_cursor_offset_basis.Y+v_delta);
-				chkPower.Location = new Point(chk_power_basis.X,chk_power_basis.Y+(v_delta/8));
+
+                chkPower.Location = new Point(chk_power_basis.X,chk_power_basis.Y+(v_delta/8));
 				panelOptions.Location = new Point(gr_options_basis.X,gr_options_basis.Y+(v_delta/4));
 				panelSoundControls.Location = new Point(gr_sound_controls_basis.X,gr_sound_controls_basis.Y+(v_delta/8)+(v_delta/4));
 				chkSquelch.Location = new Point(chk_squelch_basis.X,chk_squelch_basis.Y+(v_delta/2));
@@ -57072,6 +57086,8 @@ namespace PowerSDR
 			txt_display_peak_power_basis =this.txtDisplayPeakPower.Location;
 			txt_display_peak_offset_basis = this.txtDisplayPeakOffset.Location;
 			lbl_display_zoom_basis = this.lblDisplayZoom.Location;
+
+            autobrightbox_basis = this.autoBrightBox.Location; // ke9ns add
 
             gr_display_size_basis = this.panelDisplay.Size;
 			pic_display_size_basis = this.picDisplay.Size;
@@ -61246,11 +61262,6 @@ namespace PowerSDR
             p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width  - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
-
-          //  grpVFOA.BackColor = Color.Transparent;
-
-          //  p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
-
            
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
             p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
@@ -61278,9 +61289,7 @@ namespace PowerSDR
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-         //   p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
-
-          
+                   
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
             p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
 
@@ -61306,9 +61315,7 @@ namespace PowerSDR
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
 
-         //   p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
-
-          
+         
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
             p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
 
@@ -61327,9 +61334,7 @@ namespace PowerSDR
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
 
-          //  p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
-
-          
+           
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
             p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
 
@@ -61832,8 +61837,10 @@ namespace PowerSDR
 
                 if (band_40m_register < 10)
                     DB.AddBandStack("40M", rx1_dsp_mode.ToString(), rx1_filter.ToString(), Math.Round(VFOAFreq, 6)); // take current band, DSP mode, filter, and freq
+
                 UpdateBandStackRegisters();
                 UpdateBandButtonColors();
+
             } // right click
 
         }
@@ -64267,6 +64274,7 @@ namespace PowerSDR
         {
             httpServer.start(port);
         }
+
         //=========================================================================================
         //=========================================================================================
         // rn3kk 
@@ -64321,15 +64329,45 @@ namespace PowerSDR
             return txtVFOAFreq.Text;
         }
 
+     
+
         // rn3kk add
         public string getVFOBFreqString()
         {
             return txtVFOBFreq.Text;
         }
 
-      
 
-      
+        //=============================================================================
+        // ke9ns add call DB routine and delete the current freq listed in the current bandstack
+        public void PurgeBandStack( int xxx, string mode, string filter, string freq)
+        {
+        
+            DB.PurgeBandStack(xxx, last_band, mode, filter, freq); // call database and delete 1 bandstack entry for the current freq
+
+           
+        } //  PurgeBandStack (this routine is called from stack.cs)
+
+        //=============================================================================
+        // ke9ns add call DB routine and SORT the current freq listed in the current bandstack
+        public void SortBandStack(int g, string mode, string filter, double freq)
+        {
+
+            DB.SortBandStack(last_band, g, mode, filter, freq);  // call database and sort bandstack entries 
+
+        }
+
+        //=============================================================================
+        // ke9ns add call DB routine and SORT the current freq listed in the current bandstack
+        public void BandStackUpdate()
+        {
+            UpdateBandStackRegisters();  // recheck the remaining bandstack entries 
+
+            SetRX1BandButton(RX1Band);   // update the remaining bandstack entries
+
+            UpdateWaterfallLevelValues();
+
+        } // 
 
         //============================================================================
         //============================================================================

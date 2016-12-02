@@ -41,8 +41,8 @@ namespace PowerSDR
 	{
         #region Variable Declaration
 
-        public static Console console;   // ke9ns mod  to allow console to pass back values to stack screen
 
+      
         public static DataSet ds;
 
         /// <summary>
@@ -5814,18 +5814,105 @@ namespace PowerSDR
         } //GetBandStack
 
 
+        /*
+<BandStack>
+    <BandName>160M</BandName>
+    <Mode>CWL</Mode>
+    <Filter>F5</Filter>
+    <Freq>1.81</Freq>
+</BandStack>
+
+            //  console.MemoryList.List.Remove(console.MemoryList.List[dataGridView1.CurrentCell.RowIndex]);
+
+*/
+
+        public static void GetBandStack1(string band)
+        {
+            DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
+
+            if (rows.Length == 0)
+            {
+                MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+               
+            }
+
+        }
+
+
+        //==================================================================================================
+        // ke9ns add to delete the current bandstack entry (passed from stack.cs to console.cs)
+        public static void PurgeBandStack(int index, string band, string mode, string filter, string freq2)
+        {
+         
+            if (!ds.Tables.Contains("BandStack")) return;  // dont run in no bandstack data
+
+            string temp = "Freq = '" + freq2 + "'";
+
+            try
+            {
+                DataRow[] rows = ds.Tables["BandStack"].Select(temp);   // find the identical freq in the bandstack
+
+                foreach (var row in rows)
+                {
+                    row.Delete();
+                     break;               // if there is a dup thenjust delete the first occurance
+                }
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("No Entries found to Delete for Band: " + band, "No Entry Found",
+                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+
+        } // PurgeBandStack()
+
+
+        //====================================================================================================
+        // ke9ns add  allows bubble sort routine in stack.cs to update bandstack without checking for dups
+        public static void SortBandStack(string band, int index, string mode, string filter, double freq)
+        {
+            try
+            {
+
+                DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
+
+                filter3 = Console.BandStackLock;
+
+                index = index % rows.Length;
+
+                DataRow d = (DataRow)rows[index];
+                d["Mode"] = mode;
+                d["Filter"] = filter;
+                d["Freq"] = freq;
+
+              //  Debug.WriteLine("=====BANDSTACK SORT====");
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("problem found sorting entry for Band: " + band, "No Entry Found",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+        } //Sortbandstack
+
+
 
 
         //==================================================================================================
         public static void AddBandStack(string band, string mode, string filter, double freq)
 		{
 			DataRow dr = ds.Tables["BandStack"].NewRow();
-			dr["BandName"] = band;
+           
+
+            dr["BandName"] = band;
 			dr["Mode"] = mode;
 			dr["Filter"] = filter;
 			dr["Freq"] = freq;
 			ds.Tables["BandStack"].Rows.Add(dr);
-		}
+
+        } // AddBandStack
 
 
         //==================================================================================================
@@ -5865,7 +5952,7 @@ namespace PowerSDR
         public static int filter3 = 0;
 
       
-
+        //====================================================================================================
         public static void SaveBandStack(string band, int index, string mode, string filter, double freq)
 		{
 			DataRow[] rows = ds.Tables["BandStack"].Select("'"+band+"' = BandName");
@@ -5906,9 +5993,9 @@ namespace PowerSDR
 
         } //savebandstack
 
-    
 
 
+        //===============================================================================================================
         // This removes the notches from the state database so we can rewrite all of them without
         // having one that was previously deleted staying in the database
         public static void PurgeNotches()

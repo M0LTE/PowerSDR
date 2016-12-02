@@ -370,6 +370,9 @@ namespace PowerSDR
         }
 
 		public static Console console = null;
+        public static Setup setupForm = null; // ke9ns add
+
+
 		unsafe private static void *stream1;
 		unsafe private static void *stream2;
         unsafe private static void *stream3;
@@ -1099,9 +1102,13 @@ namespace PowerSDR
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
-						SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
+
+
+                        SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
+
+
+                        ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
 						ScaleBuffer(in_r, in_r, frameCount, (float)source_scale);
 						break;
 					case SignalSource.SINE_TWO_TONE:
@@ -1144,9 +1151,13 @@ namespace PowerSDR
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
-						SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
+
+
+                        SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
+
+
+                        ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
 						ScaleBuffer(in_r, in_r, frameCount, (float)source_scale);
 						break;
 					case SignalSource.SINE_TWO_TONE:
@@ -1341,9 +1352,13 @@ namespace PowerSDR
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
-						SineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
+
+
+                        SineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(out_l_ptr1, out_l_ptr1, frameCount, (float)source_scale);
+
+
+                        ScaleBuffer(out_l_ptr1, out_l_ptr1, frameCount, (float)source_scale);
 						ScaleBuffer(out_r_ptr1, out_r_ptr1, frameCount, (float)source_scale);
 						break;
 					case SignalSource.SINE_TWO_TONE:
@@ -1902,8 +1917,19 @@ namespace PowerSDR
                         case SignalSource.RADIO:
                             break;
                         case SignalSource.SINE:
-                            SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
-                            phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
+
+                            if ((console.PulseON == true))  // ke9ns add
+                            {
+                                Pulser(in_l, frameCount, sine_freq1);  // ke9ns add pulser function    
+                                CopyBuffer(in_l, in_r, frameCount);
+                            }
+                            else
+                            {
+                                SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
+                                phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
+                            }
+
+
                             ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
                             ScaleBuffer(in_r, in_r, frameCount, (float)source_scale);
                             break;
@@ -2147,8 +2173,11 @@ namespace PowerSDR
 
                             break;
                         case SignalSource.SINE:
+
+                           
                             SineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
                             phase_accumulator1 = CosineWave(out_l_ptr1, frameCount, phase_accumulator1, sine_freq1);
+
                             ScaleBuffer(out_l_ptr1, out_l_ptr1, frameCount, (float)source_scale);
                             ScaleBuffer(out_r_ptr1, out_r_ptr1, frameCount, (float)source_scale);
                             break;
@@ -2801,9 +2830,11 @@ namespace PowerSDR
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
+                       
 						SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
+
+                        ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
 						ScaleBuffer(in_r, in_r, frameCount, (float)source_scale);
 						break;
 					case SignalSource.SINE_TWO_TONE:
@@ -2931,9 +2962,11 @@ namespace PowerSDR
 					case SignalSource.RADIO:
 						break;
 					case SignalSource.SINE:
-						SineWave(out_l_ptr2, frameCount, phase_accumulator1, sine_freq1);
+
+                        SineWave(out_l_ptr2, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(out_r_ptr2, frameCount, phase_accumulator1, sine_freq1);
-						ScaleBuffer(out_l_ptr2, out_l_ptr2, frameCount, (float)source_scale);
+
+                        ScaleBuffer(out_l_ptr2, out_l_ptr2, frameCount, (float)source_scale);
 						ScaleBuffer(out_r_ptr2, out_r_ptr2, frameCount, (float)source_scale);
 						break;
 					case SignalSource.SINE_TWO_TONE:
@@ -3896,8 +3929,20 @@ namespace PowerSDR
                 case SignalSource.RADIO:
                     break;
                 case SignalSource.SINE:
-                    SineWave(tx_in_l, frameCount, phase_accumulator1, sine_freq1);
-                    phase_accumulator1 = CosineWave(tx_in_r, frameCount, phase_accumulator1, sine_freq1);
+
+                   
+                    if ((console.PulseON == true))  // ke9ns add
+                    {
+                        Pulser(tx_in_l, frameCount, sine_freq1);  // ke9ns add pulser function    
+                        CopyBuffer(tx_in_l, tx_in_r, frameCount);
+                    }
+                    else
+                    {
+                        SineWave(tx_in_l, frameCount, phase_accumulator1, sine_freq1);
+                        phase_accumulator1 = CosineWave(tx_in_r, frameCount, phase_accumulator1, sine_freq1);
+                    }
+
+                
                     /*if (!ramp_down)
                     {*/
                     ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
@@ -3940,6 +3985,7 @@ namespace PowerSDR
                     CopyBuffer(tx_in_l, tx_in_r, frameCount);
                     ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)source_scale);
                     ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)source_scale);
+
                     break;
                 case SignalSource.SILENCE:
                     ClearBuffer(tx_in_l, frameCount);
@@ -4223,8 +4269,12 @@ namespace PowerSDR
                 case SignalSource.RADIO:
                     break;
                 case SignalSource.SINE:
+
+
                     SineWave(tx_out_l, frameCount, phase_accumulator1, sine_freq1);
                     phase_accumulator1 = CosineWave(tx_out_r, frameCount, phase_accumulator1, sine_freq1);
+
+
                     ScaleBuffer(tx_out_l, tx_out_l, frameCount, (float)source_scale);
                     ScaleBuffer(tx_out_r, tx_out_r, frameCount, (float)source_scale);
                     break;
@@ -5784,10 +5834,104 @@ namespace PowerSDR
             set { pulse_period = value; }
         }
 
+
+        //==============================================================================================
+        // ke9ns add
+        private static double pulse_duty1 = 0.01; // percent of total
+        public static double PulseDuty1
+        {
+            set { pulse_duty1 = value / 100.0; }
+        }
+
+        //==============================================================================================
+        // ke9ns add
+        private static double pulse_period1 = 15.0; // in sec
+        public static double PulsePeriod1
+        {
+            set { pulse_period1 = 1.0 / value; }
+        }
+
+
         private static double pulse_sine_phase = 0.0f;
         private static int pulse_on_count = 0;
         private static int pulse_off_count = 0;
         private static int pulse_state = 0; // for pulse state machine
+
+
+
+        static Stopwatch F1 = new Stopwatch();
+        static Stopwatch F2 = new Stopwatch();
+
+
+        //=========================================================================================
+        // ke9ns add pulser function
+        // this routine is on a timer based on the SR and buffer size.
+        // 192k SR and 2048 buffer = 10msec  (96k and 2048buffer = 20msec)
+
+        unsafe private static void Pulser(float* buf, int samples, double freq)
+        {
+            double phase_step = freq / sample_rate1 * 2 * Math.PI;
+       
+            double cosval = Math.Cos(pulse_sine_phase);
+            double sinval = Math.Sin(pulse_sine_phase);
+
+            double cosdelta = Math.Cos(phase_step);
+            double sindelta = Math.Sin(phase_step);
+            double tmpval;
+
+
+            //   double temp = pulse_period1 / ((double)samples / (double)sample_rate1) * (double)samples;
+
+            double temp = pulse_period1 * (double)sample_rate1; // 20 pulse/second = .05 seconds per pulse  .05 / 192000 = 9600
+
+            int pulse_samples = (int)(temp * pulse_duty1);   // ON Time
+            int off_samples = (int)(temp * (1 - pulse_duty1));   // OFF TIME  (the sum of ON + OFF) equals the full period rate 
+
+        
+         
+            for (int i = 0; i < samples; i++)
+            {
+                switch (pulse_state)
+                {
+                    case 0: // pulse on state                       
+                        tmpval = cosval * cosdelta - sinval * sindelta;
+                        sinval = cosval * sindelta + sinval * cosdelta;
+                        cosval = tmpval;
+
+                        buf[i] = (float)(sinval);
+
+                        pulse_sine_phase += phase_step;
+
+                        if (pulse_on_count++ > pulse_samples)
+                        {
+                           Debug.WriteLine("ON F2: " + F2.ElapsedMilliseconds);
+                          //  F1.Restart();
+                            // go to off state
+                            pulse_state = 1;
+                            pulse_off_count = 0;
+                        }
+                        break;
+                    case 1: // pulse off state
+                        buf[i] = 0.0f;
+
+                        if (pulse_off_count++ > off_samples)
+                        {
+                            Debug.WriteLine("OFF F2: " + F2.ElapsedMilliseconds);
+                            F2.Restart();
+
+                            // goto on state
+                            pulse_state = 0;
+                            pulse_on_count = 0;
+
+                            pulse_sine_phase = 0.0; // reset phase for max front end pulse
+                        }
+                        break;
+                }
+            }
+        } // pulser function
+
+
+        // this is from the setup->test screen
         unsafe private static void Pulse(float* buf, int samples)
         {
             double phase_step = sine_freq1 / sample_rate1 * 2 * Math.PI;
