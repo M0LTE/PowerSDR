@@ -144,12 +144,13 @@ namespace PowerSDR
             // buttonSort
             // 
             this.buttonSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSort.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.buttonSort.Location = new System.Drawing.Point(165, 280);
             this.buttonSort.Name = "buttonSort";
             this.buttonSort.Size = new System.Drawing.Size(75, 23);
             this.buttonSort.TabIndex = 61;
             this.buttonSort.Text = "Sort";
-            this.buttonSort.UseVisualStyleBackColor = true;
+            this.buttonSort.UseVisualStyleBackColor = false;
             this.buttonSort.Click += new System.EventHandler(this.buttonSort_Click);
             // 
             // chkAlwaysOnTop
@@ -714,7 +715,7 @@ namespace PowerSDR
                 }
 
             } // RIGHT CLICK MOUSE
-            else if (e.Button == MouseButtons.Middle) // ke9ns Middle erases bandstack
+            else if (e.Button == MouseButtons.Middle) // ke9ns Middle erases bandstack entries 1 at a time
             {
 
                 try
@@ -758,8 +759,9 @@ namespace PowerSDR
         } //textBox1_MouseUp
 
 
-        bool bubble = false;
+
         //====================================================================================
+        bool bubble = false;
         // ke9ns SORT the bandstack for just the band your on
         private void buttonSort_Click(object sender, EventArgs e)
         {
@@ -807,7 +809,7 @@ namespace PowerSDR
                 for (int g = 0; g < index; g++)  // update database with new sorted bandstack
                 {
 
-                     console.SortBandStack(g, mode1[g], filter1[g], freq1[g]);     //  DB.SaveBandStack(console.last_band, g, mode1[g], filter1[g], freq1[g]);
+                     console.SortBandStack(g, mode1[g], filter1[g], freq1[g]);     //   DB.SaveBandStack(console.last_band, g, mode1[g], filter1[g], freq1[g]);
 
                 }
 

@@ -4,7 +4,7 @@
   <description asmv2:iconFile="PowerSDR.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="PowerSDR_T11" version="2.7.2.41168" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="PowerSDR_T11" version="2.7.2.40994" language="neutral" processorArchitecture="x86" />
     <commandLine file="PowerSDR_T11.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -169,13 +169,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PowerSDR_T11.exe" size="9458408">
-      <assemblyIdentity name="PowerSDR_T11" version="2.7.2.41168" language="neutral" processorArchitecture="x86" />
+      <assemblyIdentity name="PowerSDR_T11" version="2.7.2.40994" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>q8fzx3dQ1bK4ZKrUPmjbeH9ZjQFKX/zkR5bda0fmYg4=</dsig:DigestValue>
+        <dsig:DigestValue>QErFkkf5zEplya85vVbPXca7ifG0oUV4e3HyM+TF2Ic=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

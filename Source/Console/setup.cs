@@ -1086,6 +1086,8 @@ namespace PowerSDR
         private LabelTS labelTS21;
         public CheckBoxTS chkBoxHttp2;
         private LabelTS labelTS23;
+        private LabelTS labelTS24;
+        private ColorButton clrbtnVFORing;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1927,6 +1929,8 @@ namespace PowerSDR
             this.clrbtnOutOfBand = new PowerSDR.ColorButton();
             this.lblOutOfBand = new System.Windows.Forms.LabelTS();
             this.grpAppearanceVFO = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS24 = new System.Windows.Forms.LabelTS();
+            this.clrbtnVFORing = new PowerSDR.ColorButton();
             this.clrbtnVFOBackground = new PowerSDR.ColorButton();
             this.lblVFOBackground = new System.Windows.Forms.LabelTS();
             this.clrbtnVFOSmallColor = new PowerSDR.ColorButton();
@@ -4752,12 +4756,13 @@ namespace PowerSDR
             // 
             // btnConfigure
             // 
+            this.btnConfigure.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.btnConfigure.Location = new System.Drawing.Point(23, 86);
             this.btnConfigure.Name = "btnConfigure";
             this.btnConfigure.Size = new System.Drawing.Size(272, 30);
             this.btnConfigure.TabIndex = 5;
             this.btnConfigure.Text = "Configure ";
-            this.btnConfigure.UseVisualStyleBackColor = true;
+            this.btnConfigure.UseVisualStyleBackColor = false;
             this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
             // 
             // cbConsoleSelect
@@ -4841,6 +4846,8 @@ namespace PowerSDR
             this.chkBoxIND.Size = new System.Drawing.Size(111, 31);
             this.chkBoxIND.TabIndex = 7;
             this.chkBoxIND.Text = "Independent";
+            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the PowerMate Tune Step \r\n\r\nUncheck to use the main PowerSDR Tune St" +
+        "ep");
             this.chkBoxIND.CheckedChanged += new System.EventHandler(this.chkBoxIND_CheckedChanged);
             // 
             // labelTS15
@@ -11682,6 +11689,8 @@ namespace PowerSDR
             // 
             // grpAppearanceVFO
             // 
+            this.grpAppearanceVFO.Controls.Add(this.labelTS24);
+            this.grpAppearanceVFO.Controls.Add(this.clrbtnVFORing);
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFOBackground);
             this.grpAppearanceVFO.Controls.Add(this.lblVFOBackground);
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFOSmallColor);
@@ -11693,10 +11702,33 @@ namespace PowerSDR
             this.grpAppearanceVFO.Controls.Add(this.lblVFOPowerOff);
             this.grpAppearanceVFO.Location = new System.Drawing.Point(144, 8);
             this.grpAppearanceVFO.Name = "grpAppearanceVFO";
-            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 184);
+            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 236);
             this.grpAppearanceVFO.TabIndex = 39;
             this.grpAppearanceVFO.TabStop = false;
             this.grpAppearanceVFO.Text = "VFO";
+            // 
+            // labelTS24
+            // 
+            this.labelTS24.Image = null;
+            this.labelTS24.Location = new System.Drawing.Point(10, 195);
+            this.labelTS24.Name = "labelTS24";
+            this.labelTS24.Size = new System.Drawing.Size(72, 24);
+            this.labelTS24.TabIndex = 77;
+            this.labelTS24.Text = "Ring Color:";
+            this.toolTip1.SetToolTip(this.labelTS24, "Color Around VFOA/B and Meters");
+            // 
+            // clrbtnVFORing
+            // 
+            this.clrbtnVFORing.Automatic = "Automatic";
+            this.clrbtnVFORing.Color = System.Drawing.Color.DarkGreen;
+            this.clrbtnVFORing.Image = null;
+            this.clrbtnVFORing.Location = new System.Drawing.Point(88, 196);
+            this.clrbtnVFORing.MoreColors = "More Colors...";
+            this.clrbtnVFORing.Name = "clrbtnVFORing";
+            this.clrbtnVFORing.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnVFORing.TabIndex = 76;
+            this.toolTip1.SetToolTip(this.clrbtnVFORing, "Color Around VFOA/B and Meters");
+            this.clrbtnVFORing.Changed += new System.EventHandler(this.clrbtnVFORing_Changed);
             // 
             // clrbtnVFOBackground
             // 
@@ -27735,6 +27767,7 @@ namespace PowerSDR
 
         }
 
+        // ke9ns add
         private void chkBoxPulser_CheckedChanged(object sender, EventArgs e)
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
@@ -27744,11 +27777,13 @@ namespace PowerSDR
             if (chkBoxPulser.Checked == false)
             {
                 console.chkTUN.Text = "TUN";
+                console.chkFWCATU.Enabled = true;
 
             }
             else
             {
                 console.chkTUN.Text = "TUNp";
+                console.chkFWCATU.Enabled = false;
             }
 
         }
@@ -27768,6 +27803,14 @@ namespace PowerSDR
         {
             Audio.PulsePeriod1 = (double)tbPulseRate1.Value;
             Audio.PulseDuty1 = (double)tbDutyCycle.Value;
+
+        }
+
+        //==================================================================
+        // ke9ns add color around the VFOA and B and Meters
+        private void clrbtnVFORing_Changed(object sender, EventArgs e)
+        {
+            console.RingVFOColor = clrbtnVFORing.Color;
 
         }
 

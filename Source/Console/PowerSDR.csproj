@@ -259,6 +259,7 @@
     <Compile Include="checksum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="conrec.cs" />
     <Compile Include="Http.cs" />
     <Compile Include="ColorButton.cs">
       <SubType>Component</SubType>

@@ -148,6 +148,7 @@ namespace PowerSDR
         private int timerID;
         private MainMenu mainMenu1;
         public MenuItem mnuSpotOptions;
+        public CheckBoxTS chkBoxContour;
         private TimeProc timeProcPeriodic;
 
         // ke9ns run this to kill the prior timer and start a new timer 
@@ -190,6 +191,8 @@ namespace PowerSDR
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
         public static SpotOptions SpotOptions;
+        public static Conrec conrec;
+
 
         public Setup setupForm;                             // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
         public StackControl StackForm;                      // ke9ns add  communications with spot.cs and stack
@@ -369,11 +372,7 @@ namespace PowerSDR
             this.btnTime = new System.Windows.Forms.Button();
             this.checkBoxTone = new System.Windows.Forms.RadioButton();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
-            this.mnuSpotOptions = new System.Windows.Forms.MenuItem();
+            this.chkBoxContour = new System.Windows.Forms.CheckBoxTS();
             this.tbPanPower = new System.Windows.Forms.TrackBarTS();
             this.chkBoxAnt = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDIG = new System.Windows.Forms.CheckBoxTS();
@@ -386,8 +385,6 @@ namespace PowerSDR
             this.chkBoxBeam = new System.Windows.Forms.CheckBoxTS();
             this.udDisplayLong = new System.Windows.Forms.NumericUpDownTS();
             this.udDisplayLat = new System.Windows.Forms.NumericUpDownTS();
-            this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
-            this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxMem = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxPan = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxSSB = new System.Windows.Forms.CheckBoxTS();
@@ -398,6 +395,13 @@ namespace PowerSDR
             this.chkPanMode = new System.Windows.Forms.CheckBoxTS();
             this.chkGrayLine = new System.Windows.Forms.CheckBoxTS();
             this.chkSUN = new System.Windows.Forms.CheckBoxTS();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.mnuSpotOptions = new System.Windows.Forms.MenuItem();
+            this.chkBoxWrld = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxNA = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkDXMode = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -412,26 +416,28 @@ namespace PowerSDR
             // SWLbutton
             // 
             this.SWLbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton.Location = new System.Drawing.Point(615, 199);
+            this.SWLbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.SWLbutton.Location = new System.Drawing.Point(615, 346);
             this.SWLbutton.Name = "SWLbutton";
             this.SWLbutton.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton.TabIndex = 2;
             this.SWLbutton.Text = "Spot SWL";
             this.toolTip1.SetToolTip(this.SWLbutton, resources.GetString("SWLbutton.ToolTip"));
-            this.SWLbutton.UseVisualStyleBackColor = true;
+            this.SWLbutton.UseVisualStyleBackColor = false;
             this.SWLbutton.Click += new System.EventHandler(this.SWLbutton_Click);
             // 
             // SSBbutton
             // 
             this.SSBbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SSBbutton.Location = new System.Drawing.Point(12, 298);
+            this.SSBbutton.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.SSBbutton.Location = new System.Drawing.Point(12, 445);
             this.SSBbutton.Name = "SSBbutton";
             this.SSBbutton.Size = new System.Drawing.Size(75, 23);
             this.SSBbutton.TabIndex = 1;
             this.SSBbutton.Text = "Spot DX";
             this.toolTip1.SetToolTip(this.SSBbutton, "Click to Turn On/Off Dx Cluster Spotting (on both this DX Spotting window and Pan" +
         "adapter)\r\nRequires Internet to work.\r\n");
-            this.SSBbutton.UseVisualStyleBackColor = true;
+            this.SSBbutton.UseVisualStyleBackColor = false;
             this.SSBbutton.Click += new System.EventHandler(this.spotSSB_Click);
             // 
             // textBox1
@@ -441,13 +447,14 @@ namespace PowerSDR
             this.textBox1.BackColor = System.Drawing.Color.LightYellow;
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.HideSelection = false;
             this.textBox1.Location = new System.Drawing.Point(12, 126);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.textBox1.MaxLength = 10000000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(759, 16);
+            this.textBox1.Size = new System.Drawing.Size(759, 163);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -457,7 +464,7 @@ namespace PowerSDR
             // 
             this.nodeBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nodeBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nodeBox1.Location = new System.Drawing.Point(658, 197);
+            this.nodeBox1.Location = new System.Drawing.Point(658, 344);
             this.nodeBox1.MaxLength = 50;
             this.nodeBox1.Name = "nodeBox1";
             this.nodeBox1.Size = new System.Drawing.Size(84, 22);
@@ -484,7 +491,7 @@ namespace PowerSDR
             // 
             this.callBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.callBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.callBox.Location = new System.Drawing.Point(682, 301);
+            this.callBox.Location = new System.Drawing.Point(682, 448);
             this.callBox.MaxLength = 20;
             this.callBox.Name = "callBox";
             this.callBox.Size = new System.Drawing.Size(87, 22);
@@ -499,7 +506,7 @@ namespace PowerSDR
             // 
             this.portBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.portBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.portBox2.Location = new System.Drawing.Point(696, 199);
+            this.portBox2.Location = new System.Drawing.Point(696, 346);
             this.portBox2.MaxLength = 7;
             this.portBox2.Name = "portBox2";
             this.portBox2.Size = new System.Drawing.Size(56, 22);
@@ -515,7 +522,7 @@ namespace PowerSDR
             // 
             this.statusBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBox.Location = new System.Drawing.Point(13, 169);
+            this.statusBox.Location = new System.Drawing.Point(13, 316);
             this.statusBox.Name = "statusBox";
             this.statusBox.Size = new System.Drawing.Size(156, 22);
             this.statusBox.TabIndex = 11;
@@ -527,32 +534,34 @@ namespace PowerSDR
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(100, 298);
+            this.button1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.button1.Location = new System.Drawing.Point(101, 447);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(68, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "Pause";
             this.toolTip1.SetToolTip(this.button1, "Click to Pause the DX Text window (if spots are coming through too fast)\r\nUpdates" +
         " to the Panadapter will still occur");
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // statusBoxSWL
             // 
             this.statusBoxSWL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusBoxSWL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusBoxSWL.Location = new System.Drawing.Point(614, 171);
+            this.statusBoxSWL.Location = new System.Drawing.Point(614, 318);
             this.statusBoxSWL.Name = "statusBoxSWL";
             this.statusBoxSWL.Size = new System.Drawing.Size(156, 22);
             this.statusBoxSWL.TabIndex = 16;
             this.statusBoxSWL.Text = "Off";
             this.toolTip1.SetToolTip(this.statusBoxSWL, "Status of ShortWave spotter list transfer to PowerSDR memory\r\n");
+            this.statusBoxSWL.Click += new System.EventHandler(this.statusBoxSWL_Click);
             // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 152);
+            this.label1.Location = new System.Drawing.Point(13, 299);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 17;
@@ -562,7 +571,7 @@ namespace PowerSDR
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(612, 155);
+            this.label2.Location = new System.Drawing.Point(612, 302);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 13);
             this.label2.TabIndex = 18;
@@ -571,20 +580,21 @@ namespace PowerSDR
             // btnTrack
             // 
             this.btnTrack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTrack.Location = new System.Drawing.Point(249, 245);
+            this.btnTrack.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnTrack.Location = new System.Drawing.Point(258, 400);
             this.btnTrack.Name = "btnTrack";
             this.btnTrack.Size = new System.Drawing.Size(75, 23);
             this.btnTrack.TabIndex = 62;
             this.btnTrack.Text = "Track";
             this.toolTip1.SetToolTip(this.btnTrack, resources.GetString("btnTrack.ToolTip"));
-            this.btnTrack.UseVisualStyleBackColor = true;
+            this.btnTrack.UseVisualStyleBackColor = false;
             this.btnTrack.Click += new System.EventHandler(this.btnTrack_Click);
             // 
             // nameBox
             // 
             this.nameBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nameBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.nameBox.Location = new System.Drawing.Point(687, 199);
+            this.nameBox.Location = new System.Drawing.Point(687, 346);
             this.nameBox.MaxLength = 20;
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(46, 22);
@@ -679,44 +689,47 @@ namespace PowerSDR
             // SWLbutton2
             // 
             this.SWLbutton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SWLbutton2.Location = new System.Drawing.Point(696, 199);
+            this.SWLbutton2.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.SWLbutton2.Location = new System.Drawing.Point(696, 346);
             this.SWLbutton2.Name = "SWLbutton2";
             this.SWLbutton2.Size = new System.Drawing.Size(75, 23);
             this.SWLbutton2.TabIndex = 76;
             this.SWLbutton2.Text = "SWL list";
             this.toolTip1.SetToolTip(this.SWLbutton2, resources.GetString("SWLbutton2.ToolTip"));
-            this.SWLbutton2.UseVisualStyleBackColor = true;
+            this.SWLbutton2.UseVisualStyleBackColor = false;
             this.SWLbutton2.Click += new System.EventHandler(this.SWLbutton2_Click);
             // 
             // btnBeacon
             // 
             this.btnBeacon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBeacon.Location = new System.Drawing.Point(223, 298);
+            this.btnBeacon.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnBeacon.Location = new System.Drawing.Point(192, 445);
             this.btnBeacon.Name = "btnBeacon";
             this.btnBeacon.Size = new System.Drawing.Size(75, 23);
             this.btnBeacon.TabIndex = 85;
             this.btnBeacon.Text = "Beacon Chk";
             this.toolTip1.SetToolTip(this.btnBeacon, resources.GetString("btnBeacon.ToolTip"));
-            this.btnBeacon.UseVisualStyleBackColor = true;
+            this.btnBeacon.UseVisualStyleBackColor = false;
             this.btnBeacon.Click += new System.EventHandler(this.btnBeacon_Click);
             // 
             // btnTime
             // 
             this.btnTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnTime.Location = new System.Drawing.Point(511, 157);
+            this.btnTime.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnTime.Location = new System.Drawing.Point(511, 304);
             this.btnTime.Name = "btnTime";
             this.btnTime.Size = new System.Drawing.Size(75, 23);
             this.btnTime.TabIndex = 89;
             this.btnTime.Text = "Time Sync";
             this.toolTip1.SetToolTip(this.btnTime, resources.GetString("btnTime.ToolTip"));
-            this.btnTime.UseVisualStyleBackColor = true;
+            this.btnTime.UseVisualStyleBackColor = false;
             this.btnTime.Click += new System.EventHandler(this.btnTime_Click);
             // 
             // checkBoxTone
             // 
             this.checkBoxTone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxTone.AutoSize = true;
-            this.checkBoxTone.Location = new System.Drawing.Point(559, 210);
+            this.checkBoxTone.Location = new System.Drawing.Point(559, 357);
             this.checkBoxTone.Name = "checkBoxTone";
             this.checkBoxTone.Size = new System.Drawing.Size(46, 17);
             this.checkBoxTone.TabIndex = 93;
@@ -731,7 +744,7 @@ namespace PowerSDR
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox2.Enabled = false;
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(559, 230);
+            this.textBox2.Location = new System.Drawing.Point(559, 377);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(37, 20);
             this.textBox2.TabIndex = 94;
@@ -739,53 +752,23 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.textBox2, "Length of Tone in mSec\r\n");
             this.textBox2.Visible = false;
             // 
-            // label3
+            // chkBoxContour
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(537, 280);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(139, 13);
-            this.label3.TabIndex = 81;
-            this.label3.Text = "Your Lat and Long (+/- deg)\r\n";
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(693, 280);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(71, 13);
-            this.label4.TabIndex = 82;
-            this.label4.Text = "Your Call sign";
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(541, 261);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(227, 13);
-            this.label5.TabIndex = 84;
-            this.label5.Text = "Setup->CAT Control->DDUtil , for Rotor Control";
-            // 
-            // mainMenu1
-            // 
-            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.mnuSpotOptions});
-            // 
-            // mnuSpotOptions
-            // 
-            this.mnuSpotOptions.Index = 0;
-            this.mnuSpotOptions.Text = "VOACAP Override";
-            this.mnuSpotOptions.Visible = false;
-            this.mnuSpotOptions.Click += new System.EventHandler(this.mnuSpotOptions_Click);
+            this.chkBoxContour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxContour.Image = null;
+            this.chkBoxContour.Location = new System.Drawing.Point(343, 373);
+            this.chkBoxContour.Name = "chkBoxContour";
+            this.chkBoxContour.Size = new System.Drawing.Size(70, 24);
+            this.chkBoxContour.TabIndex = 98;
+            this.chkBoxContour.Text = "Contour";
+            this.toolTip1.SetToolTip(this.chkBoxContour, "VOACAP: Check for Contour instead of dots\r\n\r\n");
+            this.chkBoxContour.CheckedChanged += new System.EventHandler(this.chkBoxContour_CheckedChanged);
             // 
             // tbPanPower
             // 
             this.tbPanPower.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbPanPower.AutoSize = false;
-            this.tbPanPower.Location = new System.Drawing.Point(343, 250);
+            this.tbPanPower.Location = new System.Drawing.Point(339, 421);
             this.tbPanPower.Maximum = 1500;
             this.tbPanPower.Minimum = 1;
             this.tbPanPower.Name = "tbPanPower";
@@ -802,7 +785,7 @@ namespace PowerSDR
             // 
             this.chkBoxAnt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxAnt.Image = null;
-            this.chkBoxAnt.Location = new System.Drawing.Point(354, 223);
+            this.chkBoxAnt.Location = new System.Drawing.Point(343, 397);
             this.chkBoxAnt.Name = "chkBoxAnt";
             this.chkBoxAnt.Size = new System.Drawing.Size(55, 24);
             this.chkBoxAnt.TabIndex = 96;
@@ -818,7 +801,7 @@ namespace PowerSDR
             this.chkBoxDIG.Checked = true;
             this.chkBoxDIG.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxDIG.Image = null;
-            this.chkBoxDIG.Location = new System.Drawing.Point(182, 227);
+            this.chkBoxDIG.Location = new System.Drawing.Point(182, 374);
             this.chkBoxDIG.Name = "chkBoxDIG";
             this.chkBoxDIG.Size = new System.Drawing.Size(85, 24);
             this.chkBoxDIG.TabIndex = 70;
@@ -829,7 +812,7 @@ namespace PowerSDR
             // 
             this.checkBoxMUF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxMUF.Image = null;
-            this.checkBoxMUF.Location = new System.Drawing.Point(273, 223);
+            this.checkBoxMUF.Location = new System.Drawing.Point(273, 370);
             this.checkBoxMUF.Name = "checkBoxMUF";
             this.checkBoxMUF.Size = new System.Drawing.Size(75, 24);
             this.checkBoxMUF.TabIndex = 95;
@@ -847,7 +830,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayWWV.Location = new System.Drawing.Point(511, 207);
+            this.udDisplayWWV.Location = new System.Drawing.Point(511, 354);
             this.udDisplayWWV.Maximum = new decimal(new int[] {
             4,
             0,
@@ -874,7 +857,7 @@ namespace PowerSDR
             // 
             this.checkBoxWWV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxWWV.Image = null;
-            this.checkBoxWWV.Location = new System.Drawing.Point(511, 186);
+            this.checkBoxWWV.Location = new System.Drawing.Point(511, 333);
             this.checkBoxWWV.Name = "checkBoxWWV";
             this.checkBoxWWV.Size = new System.Drawing.Size(98, 24);
             this.checkBoxWWV.TabIndex = 90;
@@ -890,7 +873,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.numericUpDownTS1.Location = new System.Drawing.Point(382, 304);
+            this.numericUpDownTS1.Location = new System.Drawing.Point(417, 448);
             this.numericUpDownTS1.Maximum = new decimal(new int[] {
             5,
             0,
@@ -917,7 +900,7 @@ namespace PowerSDR
             // 
             this.BoxBFScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBFScan.Image = null;
-            this.BoxBFScan.Location = new System.Drawing.Point(304, 301);
+            this.BoxBFScan.Location = new System.Drawing.Point(343, 445);
             this.BoxBFScan.Name = "BoxBFScan";
             this.BoxBFScan.Size = new System.Drawing.Size(87, 24);
             this.BoxBFScan.TabIndex = 87;
@@ -929,9 +912,9 @@ namespace PowerSDR
             // 
             this.BoxBScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.BoxBScan.Image = null;
-            this.BoxBScan.Location = new System.Drawing.Point(304, 280);
+            this.BoxBScan.Location = new System.Drawing.Point(273, 446);
             this.BoxBScan.Name = "BoxBScan";
-            this.BoxBScan.Size = new System.Drawing.Size(107, 24);
+            this.BoxBScan.Size = new System.Drawing.Size(81, 24);
             this.BoxBScan.TabIndex = 86;
             this.BoxBScan.Text = "Fast Scan";
             this.toolTip1.SetToolTip(this.BoxBScan, "Check to Scan all 18 Beacon Stations 5 Frequecies at each 10 second Interval\r\nPow" +
@@ -943,11 +926,11 @@ namespace PowerSDR
             // 
             this.chkBoxBeam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxBeam.Image = null;
-            this.chkBoxBeam.Location = new System.Drawing.Point(417, 275);
+            this.chkBoxBeam.Location = new System.Drawing.Point(417, 397);
             this.chkBoxBeam.Name = "chkBoxBeam";
             this.chkBoxBeam.Size = new System.Drawing.Size(88, 24);
             this.chkBoxBeam.TabIndex = 83;
-            this.chkBoxBeam.Text = "Map Beam";
+            this.chkBoxBeam.Text = "Map Beam°";
             this.toolTip1.SetToolTip(this.chkBoxBeam, "Check To Show Beam heading on map in (deg)\r\n");
             this.chkBoxBeam.CheckedChanged += new System.EventHandler(this.chkBoxBeam_CheckedChanged);
             // 
@@ -960,7 +943,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayLong.Location = new System.Drawing.Point(614, 302);
+            this.udDisplayLong.Location = new System.Drawing.Point(614, 449);
             this.udDisplayLong.Maximum = new decimal(new int[] {
             180,
             0,
@@ -993,7 +976,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udDisplayLat.Location = new System.Drawing.Point(538, 302);
+            this.udDisplayLat.Location = new System.Drawing.Point(538, 449);
             this.udDisplayLat.Maximum = new decimal(new int[] {
             90,
             0,
@@ -1017,33 +1000,11 @@ namespace PowerSDR
             0});
             this.udDisplayLat.ValueChanged += new System.EventHandler(this.udDisplayLat_ValueChanged);
             // 
-            // chkBoxWrld
-            // 
-            this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxWrld.Image = null;
-            this.chkBoxWrld.Location = new System.Drawing.Point(11, 250);
-            this.chkBoxWrld.Name = "chkBoxWrld";
-            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
-            this.chkBoxWrld.TabIndex = 78;
-            this.chkBoxWrld.Text = "Exclude North American Spotters";
-            this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
-            // 
-            // chkBoxNA
-            // 
-            this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkBoxNA.Image = null;
-            this.chkBoxNA.Location = new System.Drawing.Point(12, 223);
-            this.chkBoxNA.Name = "chkBoxNA";
-            this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
-            this.chkBoxNA.TabIndex = 77;
-            this.chkBoxNA.Text = "North American Spotters only";
-            this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
-            // 
             // chkBoxMem
             // 
             this.chkBoxMem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxMem.Image = null;
-            this.chkBoxMem.Location = new System.Drawing.Point(417, 250);
+            this.chkBoxMem.Location = new System.Drawing.Point(417, 419);
             this.chkBoxMem.Name = "chkBoxMem";
             this.chkBoxMem.Size = new System.Drawing.Size(123, 24);
             this.chkBoxMem.TabIndex = 74;
@@ -1056,7 +1017,7 @@ namespace PowerSDR
             // 
             this.chkBoxPan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxPan.Image = null;
-            this.chkBoxPan.Location = new System.Drawing.Point(417, 227);
+            this.chkBoxPan.Location = new System.Drawing.Point(417, 374);
             this.chkBoxPan.Name = "chkBoxPan";
             this.chkBoxPan.Size = new System.Drawing.Size(100, 24);
             this.chkBoxPan.TabIndex = 71;
@@ -1070,7 +1031,7 @@ namespace PowerSDR
             this.chkBoxSSB.Checked = true;
             this.chkBoxSSB.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxSSB.Image = null;
-            this.chkBoxSSB.Location = new System.Drawing.Point(182, 197);
+            this.chkBoxSSB.Location = new System.Drawing.Point(182, 344);
             this.chkBoxSSB.Name = "chkBoxSSB";
             this.chkBoxSSB.Size = new System.Drawing.Size(85, 24);
             this.chkBoxSSB.TabIndex = 69;
@@ -1083,7 +1044,7 @@ namespace PowerSDR
             this.chkBoxCW.Checked = true;
             this.chkBoxCW.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxCW.Image = null;
-            this.chkBoxCW.Location = new System.Drawing.Point(182, 169);
+            this.chkBoxCW.Location = new System.Drawing.Point(182, 316);
             this.chkBoxCW.Name = "chkBoxCW";
             this.chkBoxCW.Size = new System.Drawing.Size(85, 24);
             this.chkBoxCW.TabIndex = 68;
@@ -1096,7 +1057,7 @@ namespace PowerSDR
             this.chkMapBand.Checked = true;
             this.chkMapBand.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapBand.Image = null;
-            this.chkMapBand.Location = new System.Drawing.Point(417, 204);
+            this.chkMapBand.Location = new System.Drawing.Point(417, 351);
             this.chkMapBand.Name = "chkMapBand";
             this.chkMapBand.Size = new System.Drawing.Size(113, 24);
             this.chkMapBand.TabIndex = 67;
@@ -1108,7 +1069,7 @@ namespace PowerSDR
             // 
             this.chkMapCountry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkMapCountry.Image = null;
-            this.chkMapCountry.Location = new System.Drawing.Point(417, 158);
+            this.chkMapCountry.Location = new System.Drawing.Point(417, 305);
             this.chkMapCountry.Name = "chkMapCountry";
             this.chkMapCountry.Size = new System.Drawing.Size(88, 22);
             this.chkMapCountry.TabIndex = 66;
@@ -1122,7 +1083,7 @@ namespace PowerSDR
             this.chkMapCall.Checked = true;
             this.chkMapCall.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMapCall.Image = null;
-            this.chkMapCall.Location = new System.Drawing.Point(417, 181);
+            this.chkMapCall.Location = new System.Drawing.Point(417, 328);
             this.chkMapCall.Name = "chkMapCall";
             this.chkMapCall.Size = new System.Drawing.Size(88, 24);
             this.chkMapCall.TabIndex = 65;
@@ -1136,7 +1097,7 @@ namespace PowerSDR
             this.chkPanMode.Checked = true;
             this.chkPanMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkPanMode.Image = null;
-            this.chkPanMode.Location = new System.Drawing.Point(273, 200);
+            this.chkPanMode.Location = new System.Drawing.Point(273, 347);
             this.chkPanMode.Name = "chkPanMode";
             this.chkPanMode.Size = new System.Drawing.Size(148, 23);
             this.chkPanMode.TabIndex = 63;
@@ -1151,7 +1112,7 @@ namespace PowerSDR
             this.chkGrayLine.Checked = true;
             this.chkGrayLine.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGrayLine.Image = null;
-            this.chkGrayLine.Location = new System.Drawing.Point(273, 181);
+            this.chkGrayLine.Location = new System.Drawing.Point(273, 328);
             this.chkGrayLine.Name = "chkGrayLine";
             this.chkGrayLine.Size = new System.Drawing.Size(105, 17);
             this.chkGrayLine.TabIndex = 61;
@@ -1166,7 +1127,7 @@ namespace PowerSDR
             this.chkSUN.Checked = true;
             this.chkSUN.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSUN.Image = null;
-            this.chkSUN.Location = new System.Drawing.Point(273, 156);
+            this.chkSUN.Location = new System.Drawing.Point(273, 303);
             this.chkSUN.Name = "chkSUN";
             this.chkSUN.Size = new System.Drawing.Size(92, 24);
             this.chkSUN.TabIndex = 60;
@@ -1175,11 +1136,74 @@ namespace PowerSDR
         " only when RX1 is in Panadapter Mode with RX2 Display OFF");
             this.chkSUN.CheckedChanged += new System.EventHandler(this.chkSUN_CheckedChanged);
             // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(537, 427);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 13);
+            this.label3.TabIndex = 81;
+            this.label3.Text = "Your Lat and Long (+/- deg)\r\n";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(693, 427);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(71, 13);
+            this.label4.TabIndex = 82;
+            this.label4.Text = "Your Call sign";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(541, 408);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(227, 13);
+            this.label5.TabIndex = 84;
+            this.label5.Text = "Setup->CAT Control->DDUtil , for Rotor Control";
+            // 
+            // mainMenu1
+            // 
+            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.mnuSpotOptions});
+            // 
+            // mnuSpotOptions
+            // 
+            this.mnuSpotOptions.Index = 0;
+            this.mnuSpotOptions.Text = "VOACAP Override";
+            this.mnuSpotOptions.Click += new System.EventHandler(this.mnuSpotOptions_Click);
+            // 
+            // chkBoxWrld
+            // 
+            this.chkBoxWrld.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxWrld.Image = null;
+            this.chkBoxWrld.Location = new System.Drawing.Point(11, 397);
+            this.chkBoxWrld.Name = "chkBoxWrld";
+            this.chkBoxWrld.Size = new System.Drawing.Size(194, 24);
+            this.chkBoxWrld.TabIndex = 78;
+            this.chkBoxWrld.Text = "Exclude North American Spotters";
+            this.chkBoxWrld.CheckedChanged += new System.EventHandler(this.chkBoxWrld_CheckedChanged);
+            // 
+            // chkBoxNA
+            // 
+            this.chkBoxNA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkBoxNA.Image = null;
+            this.chkBoxNA.Location = new System.Drawing.Point(12, 370);
+            this.chkBoxNA.Name = "chkBoxNA";
+            this.chkBoxNA.Size = new System.Drawing.Size(175, 35);
+            this.chkBoxNA.TabIndex = 77;
+            this.chkBoxNA.Text = "North American Spotters only";
+            this.chkBoxNA.CheckedChanged += new System.EventHandler(this.chkBoxNA_CheckedChanged);
+            // 
             // chkAlwaysOnTop
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 228);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(668, 375);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(103, 24);
             this.chkAlwaysOnTop.TabIndex = 58;
@@ -1192,7 +1216,7 @@ namespace PowerSDR
             this.chkDXMode.Checked = true;
             this.chkDXMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDXMode.Image = null;
-            this.chkDXMode.Location = new System.Drawing.Point(682, 301);
+            this.chkDXMode.Location = new System.Drawing.Point(682, 448);
             this.chkDXMode.Name = "chkDXMode";
             this.chkDXMode.Size = new System.Drawing.Size(91, 24);
             this.chkDXMode.TabIndex = 59;
@@ -1203,7 +1227,8 @@ namespace PowerSDR
             // SpotControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(783, 333);
+            this.ClientSize = new System.Drawing.Size(784, 480);
+            this.Controls.Add(this.chkBoxContour);
             this.Controls.Add(this.btnTrack);
             this.Controls.Add(this.tbPanPower);
             this.Controls.Add(this.chkBoxAnt);
@@ -1255,9 +1280,9 @@ namespace PowerSDR
             this.Controls.Add(this.chkDXMode);
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(1000, 1000);
+            this.MaximumSize = new System.Drawing.Size(800, 1000);
             this.Menu = this.mainMenu1;
-            this.MinimumSize = new System.Drawing.Size(799, 370);
+            this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "SpotControl";
             this.Text = "DX / SWL Spotter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpotControl_FormClosing);
@@ -3665,6 +3690,7 @@ namespace PowerSDR
                                 }
 
                             } // for ii check for dup in list
+
                             DX_Index = (DX_Index - xx);  // readjust the length of the spot list after taking out the duplicates
 
 
@@ -3674,6 +3700,7 @@ namespace PowerSDR
                            
                             DX_Index++; // jump to PASS2 if it passed the valid call spotter test
 
+                           
                             if (DX_Index > 90)
                             {
                                  Debug.WriteLine("DX SPOT REACH 90 ");
@@ -3999,7 +4026,7 @@ namespace PowerSDR
 
         //===================================================================================
         // ke9ns add process message for spot.cs window by right clicking
-        private void processTCPMessage()
+        public void processTCPMessage()
         {
 
             string bigmessage = null;
@@ -4038,9 +4065,31 @@ namespace PowerSDR
 
             } // for loop to update dx spot window
 
-            if ((pause == false) && (beacon == false) && (WTime == false))  textBox1.Text = bigmessage; // update screen
+            if ((pause == false) && (beacon == false) && (WTime == false))
+            {
+                textBox1.Text = bigmessage; // update screen
 
+                Debug.WriteLine("DX_TEXT " + DX_TEXT + " , " + DX_SELECTED);
 
+                for (int ii = 0; ii < DX_Index; ii++)
+                {
+                    if (  DX_TEXT == textBox1.Text.Substring((ii * LineLength) +16, 40) ) // just check freq and dx call sign for match
+                    {
+                        DX_SELECTED = ii;
+                    
+                        textBox1.SelectionStart = DX_SELECTED * LineLength;      // start of each dx spot line
+                        textBox1.SelectionLength = LineLength;                    // length of each dx spot  line
+
+                       // textBox1.ScrollToCaret();
+
+                        break; //get out of for loop ii
+                    }
+                    
+                } // for loop ii
+
+              
+
+            }
         } //processTCPMessage
 
 
@@ -4343,6 +4392,7 @@ namespace PowerSDR
 
         private void statusBox_Click(object sender, EventArgs e)
         {
+            statusBox.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up on a right click
 
             if ((SP_Active == 3 )) // if DX cluster active then test it by sending a CR
             {
@@ -4366,18 +4416,19 @@ namespace PowerSDR
 
         } // statusBox_Click
 
+        public int DX_SELECTED = 0; // line on the dx spot window that was click on last
+        public int LineLength = 106; // was 105
+        public string DX_TEXT;
 
-        public int LineLength = 105; // was 99
 
         //===============================================================================
         public bool beam_selected = false; // ke9ns if you clicked on the beam angle
 
         private void textBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            textBox1.ShortcutsEnabled = false;
+            textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up on a right click
 
-          
-            chkDXMode.Checked = true;
+            chkDXMode.Checked = true;  // the callsign box
 
             if (e.Button == MouseButtons.Left)
             {
@@ -4386,6 +4437,15 @@ namespace PowerSDR
 
                 byte iii = (byte)(ii / LineLength); // get line  /82  or /86 if AGE turned on or 91 if mode is also on /99 if country added but now /105 with DX_Beam heading
 
+                DX_SELECTED = (int)iii;  // store the last line you clicked on to keep highlighted
+
+              
+                textBox1.SelectionStart = DX_SELECTED * LineLength;      // start of each dx spot line
+                textBox1.SelectionLength = LineLength;                    // length of each dx spot  line
+
+                DX_TEXT = textBox1.Text.Substring((DX_SELECTED * LineLength)+16, 40); // just check freq and callsign of dx station
+
+             //   Debug.WriteLine("1DX_SELECTED " + DX_SELECTED + " , "+ DX_TEXT);
 
                 int gg = ii % LineLength;  // get remainder for checking beam heading
 
@@ -4394,9 +4454,7 @@ namespace PowerSDR
                 if (gg > (LineLength - 10)) beam_selected = true; // did user Left click over the beam heading on the dx spot list ?
                 else beam_selected = false;
 
-
-
-                 
+       
                 if ((DX_Index > iii) && (beacon1 == false))
                 {
                     int freq1 = DX_Freq[iii];
@@ -4598,9 +4656,6 @@ namespace PowerSDR
                     else beacon4 = true; // redraw beacon map spots
 
                 } // make sure index you clicked on is within range (BEACON)
-
-
-
 
 
 
@@ -5677,72 +5732,96 @@ namespace PowerSDR
                             g.DrawString("VOACAP Propagation map", font7, grid_text_brush, Sun_Left, Sun_Top1);
 
 
-
                             Debug.WriteLine("SSS");
 
 
-                            for (int z = 1; z <= 9; z++)  // go through each S unit S1 through S9
+                            if (chkBoxContour.Checked == false)
                             {
-                                int q = 0;
-
-
-                                while (VOA_Y[z, q] != 0)
+                                for (int z = 1; z <= 9; z++)  // go through each S unit S1 through S9
                                 {
-                                    //  if (( (z == 3)) ) g.FillEllipse(graybrush, VOA_X[z, q] - 1, VOA_Y[z, q] - 1, 2, 2);
+                                    int q = 0;
 
-                                    if (((z == 1) || (z == 2)) && (CR < 70)) g.FillEllipse(graybrush, VOA_X[z, q] - 1, VOA_Y[z, q] - 1, 2, 2);
-                                    //  else if((z == 2)) g.FillEllipse(graybrush, VOA_X[z, q], VOA_Y[z, q], 1+z, 1+z);
-                                    else if ((z == 3) || (z == 4)) g.FillEllipse(orangebrush, VOA_X[z, q] - 1, VOA_Y[z, q] - 1, 3, 3);
-                                    else if ((z == 5) || (z == 6)) g.FillEllipse(yellowbrush, VOA_X[z, q] - 2, VOA_Y[z, q] - 2, 4, 4);
-                                    else if ((z == 7) || (z == 8)) g.FillEllipse(greenbrush, VOA_X[z, q] - 3, VOA_Y[z, q] - 3, 5, 5);
-                                    else if (z == 9) g.FillEllipse(bluebrush, VOA_X[z, q] - 3, VOA_Y[z, q] - 3, 5, 5);
+                                    while (VOA_Y[z, q] != 0)
+                                    {
+                                       
+                                        if (((z == 1) || (z == 2)) && (CR < 70)) g.FillEllipse(graybrush, VOA_X[z, q] - 1, VOA_Y[z, q] - 1, 2, 2);
+                                        else if ((z == 3) || (z == 4)) g.FillEllipse(orangebrush, VOA_X[z, q] - 1, VOA_Y[z, q] - 1, 3, 3);
+                                        else if ((z == 5) || (z == 6)) g.FillEllipse(yellowbrush, VOA_X[z, q] - 2, VOA_Y[z, q] - 2, 4, 4);
+                                        else if ((z == 7) || (z == 8)) g.FillEllipse(greenbrush, VOA_X[z, q] - 3, VOA_Y[z, q] - 3, 5, 5);
+                                        else if (z == 9) g.FillEllipse(bluebrush, VOA_X[z, q] - 3, VOA_Y[z, q] - 3, 5, 5);
 
-                                    q++;
+                                        q++;
+
+                                    }
+
+
+                                } // for z (S readings S1 to S9)
+
+                            }
+                            else   // Draw only contours of signal strength on the map (insted of the dots)
+                            {
+                                try
+                                {
+                                   
+
+
+                                    for (int a = 900; a < cnt; a++) // the first 900 lines 3D contours, so skip them
+                                    {
+
+                                        if (S[a] == 9)
+                                        {
+                                            g.DrawLine(BluPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 8)
+                                        {
+                                            g.DrawLine(BluPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 7)
+                                        {
+                                            g.DrawLine(GrnPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 6)
+                                        {
+                                            g.DrawLine(GrnPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 5)
+                                        {
+                                            g.DrawLine(YelPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 4)
+                                        {
+                                            g.DrawLine(YelPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if (S[a] == 3)
+                                        {
+                                            g.DrawLine(OrgPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+
+                                        else if ((S[a] == 2) && (CR < 70))
+                                        {
+                                            g.DrawLine(GryPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+                                        else if ((S[a] == 1) && (CR < 70))
+                                        {
+                                            g.DrawLine(GryPen, x3[a], y3[a], x4[a], y4[a]);
+                                        }
+
+
+                                    } // for a loop
+
+                                } 
+                                catch(Exception)
+                                {
+                                    textBox1.Text = "problem with Contour map";
 
                                 }
 
-
-                            } // for z (S readings S1 to S9)
-
-                            Debug.WriteLine("SSS1");
+                            } // end of else (draw contour insted of dots)
 
 
 
-                         /*   
-                               int a = 0;
-                               for (int y = 1; y < VOA_Ysize-1; y++) // latitude (down to up) (-90 to +90)
-                               {
 
-                                   for (int x = 0; x < VOA_Xsize; x++) // long (left to right) -180 to +180
-                                   {
-                                     //  g.FillEllipse(redbrush,SSS[x,y].X , SSS[x, y].Y, 5, 5);
-
-                                       //  g.DrawString("SDBW: " + VOA_S[y].ToString("D"), font7, grid_text_brush, VOA_X[x], VOA_Y[y]);
-                                     //  g.DrawString(a.ToString("D"), font7, grid_text_brush, SSS[x, y].X, SSS[x, y].Y);
-                                   //    g.DrawString(((int)SSS[x,y].S).ToString(), font7, grid_text_brush, SSS[x, y].X, SSS[x, y].Y);
-
-                                       a++;
-                                   }
-                               }
-                            
-
-
-                           
-                                                        int b = 0;
-
-                                                        if (max1 > -151)
-                                                        {
-                                                            b = (int)((max1 - (-151)) / 6);
-
-                                                            Debug.WriteLine("SSS2B " + b);
-
-                                                             if (b > 5) b = 5;
-
-                                                            DrawContour(g, SSS, -151, max1, b);
-                                                        }
-
-                                        */
-                        } // MUF PLOT
+                        } // MUF PLOT (actually signal strength)
 
 
 
@@ -6601,13 +6680,13 @@ namespace PowerSDR
         private void textBox1_MouseDown(object sender, MouseEventArgs e)
         {
 
-            textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up
+            textBox1.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up on a right click
 
         }
 
-      
 
-       
+
+
 
         private void dataGridView1_DoubleClick(object sender, EventArgs e)
         {
@@ -6921,7 +7000,7 @@ namespace PowerSDR
         public string[] Beacon_Call = new string[]               
           { "4U1UN", "VE8AT", "W6WX", "KH6RS", "ZL6B", "VK6RBP",   //  "4U1UN", "VE8AT", "W6WX", "KH6RS", "ZL6B", "VK6RBP",
            "JA2IGY", "RR9O", "VR2B", "-4S7B", "ZS6DN", "5Z4B", //  "JA2IGY", "RR9O", "VR2B", "4S7B", "ZS6DN", "5Z4B",
-              "4X6TU", "OH2B", "-CS3B", "-LU4AA", "0A4B", "YV5B" };    //  "4X6TU", "OH2B", "CS3B", "LU4AA", "0A4B", "YV5B"               // BEACON CALL SIGN
+              "4X6TU", "OH2B", "-CS3B", "LU4AA", "0A4B", "YV5B" };    //  "4X6TU", "OH2B", "CS3B", "LU4AA", "0A4B", "YV5B"               // BEACON CALL SIGN
 
         public string[] Beacon_Country = new string[]
         { "USA1", "CANADA", "USA6", "HAWAII", "NEW ZEALAND", "AUSTRALIA", //  "USA1", "CANADA", "USA6", "HAWAII", "NEW ZEALAND", "Australia",
@@ -9437,8 +9516,24 @@ VOACHECK_TOP:
         string Last_WATTS;
         bool Last_Ant;
         DSPMode Last_MODE;
-        int CR = 73;
+        int CR = 73;     // CR is the signal to noise level needed for contact
 
+
+        // INPUT VOACAP variable to conrec.cs contour mapping
+        private double[,] d1 = new double[31, 31]; // for use with conrec.cs program
+        private double[] x1 = new double[31];  // each x axis location 
+        private double[] y1 = new double[31];  // each y axis location 
+        private double[] z1 = new double[10];  // number of contours for the map
+
+        // OUTPUT VOACAP variable from conrec.cs contour mapping
+        public static float[] x3 = new float[10000]; // storage for contour.cs map
+        public static float[] x4 = new float[10000];
+        public static float[] y3 = new float[10000];
+        public static float[] y4 = new float[10000];
+        public static float[] S = new float[10000];
+
+        public static int cnt = 0;  // counter for the conrec.cs routine (how many lines to draw for the contour map)
+       
         //=======================================================================================
         //=======================================================================================
         //ke9ns start voacap propagation spotting THREAD 1 and done
@@ -9833,7 +9928,11 @@ RT1:
                 //S2 0.4 -115 -8 
                 //S1 0.2 -121 -14  -151 for dbW
 
-               for (int y = 1; y < VOA_Ysize - 1; y++) // latitude (down to up) (-90 to +90)
+
+                //========================================================================
+                // ke9ns data for voacap conrec.cs contour map
+
+                for (int y = 2; y < VOA_Ysize - 2; y++) // latitude (down to up) (-90 to +90)
                {
                     for (int x = 0; x < VOA_Xsize; x++) // long (left to right) -180 to +180
                     {
@@ -9841,128 +9940,105 @@ RT1:
                         int yy = y * VOA_Ysize;
 
                         yy = ((VOA_Ysize-1) * VOA_Xsize) - yy; // -1 because 0 is the first index 960 to 0
+   
+                       y1[y-2]=  (int)(((180 - (VOA_LAT[yy] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude -90S to +90N
+                       x1[x] =    (int)(((VOA_LNG[x + (yy)] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+                       d1[x,y-2] = (float)VOA_SDBW[x + (yy)];
+      
 
-              
-                        SSS[x, y-1].Y = (int)(((180 - (VOA_LAT[yy] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude -90S to +90N
-                        SSS[x, y-1].X = (int)(((VOA_LNG[x + (yy)] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
-                        SSS[x, y-1].Z = (float)VOA_SDBW[x + (yy)];
+                    } // for x
 
-
-                        if (VOA_SDBW[x + (yy)] >= -103) SSS[x, y - 1].S = 9;
-                        else if (VOA_SDBW[x + (yy)] >= -109) SSS[x, y - 1].S = 8;
-                        else if (VOA_SDBW[x + (yy)] >= -115) SSS[x, y - 1].S = 7;
-                        else if (VOA_SDBW[x + (yy)] >= -121) SSS[x, y - 1].S = 6;
-                        else if (VOA_SDBW[x + (yy)] >= -127) SSS[x, y - 1].S = 5;
-                        else if (VOA_SDBW[x + (yy)] >= -133) SSS[x, y - 1].S = 4;
-                        else if (VOA_SDBW[x + (yy)] >= -139) SSS[x, y - 1].S = 3;
-                        else if (VOA_SDBW[x + (yy)] >= -145) SSS[x, y - 1].S = 2;     // S2 meter reading
-                        else if (VOA_SDBW[x + (yy)] >= -151) SSS[x, y - 1].S = 1;    // S1
-                        else SSS[x, y - 1].S = 0;                                    // dead signal
+              } // for y
 
 
-                        //   Debug.WriteLine("VOA 0 value: " + x + " , " + yy + " ,Z: " + SSS[x, y - 1].Z);
+                z1[0] = -161; // setup contour levels for conrec.cs
+                z1[1] = -151;
+                z1[2] = -145;
+                z1[3] = -139;
+                z1[4] = -133;
+                z1[5] = -127;
+                z1[6] = -121;
+                z1[7] = -115;
+                z1[8] = -109;
+                z1[9] = -103;
+
+                
+
+                //========================================================================
+                // ke9ns data for voacap Signal DOTS map
+
+                            int[,] VOA_Z = new int[1000, 1000];     // 
 
 
-
-                        if (SSS[x, y-1].Z > max1)
-                        {
-
-                         //   Debug.WriteLine("max1 " + max1);
-                          //  Debug.WriteLine("Z "+ SSS[x, y-1].Z);
-                           
-                            max1 = SSS[x, y-1].Z;
-                        }
-
-                        if (SSS[x, y - 1].Z < min1)
-                        {
-                          //  Debug.WriteLine("min1 " + min1);
-                          //  Debug.WriteLine("Z " + SSS[x, y - 1].Z);
-
-                            min1 = SSS[x, y - 1].Z;
-                        }
-                        
-             
-                    }
-                }
-
-                Debug.WriteLine("VOA MAX value: " + max1);
-                Debug.WriteLine("VOA MIN value: " + min1);
-
-
-                int[,] VOA_Z = new int[1000, 1000];     // 
-
-
-                for (int z = 9; z > 0; z--)  // go through each S unit S1 through S9
-                {
-                    int q = 0;
-                  //  Debug.WriteLine("S reading: " + z + " , value: " + (-127 + (z * 6))+" ,Z: "+VOA_Z[10,10] );
-
-                    VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out first just in case there is no case of that S reading found in the data
-
-                    for (int y = 0; y < VOA_Ysize; y++) // latitude (down to up) (-90 to +90)
-                    {
-                       
-                        for (int x = 0; x < VOA_Xsize; x++) // long (left to right) -180 to +180
-                        {
-                          
-
-                            if ((VOA_Z[x, y] == 0))
+                            for (int z = 9; z > 0; z--)  // go through each S unit S1 through S9
                             {
-                               
-                                if (VOA_SDBW[x + y * VOA_Ysize] >= (-157 + (z * 6)))  // was -127
+                                int q = 0;
+                                //  Debug.WriteLine("S reading: " + z + " , value: " + (-127 + (z * 6))+" ,Z: "+VOA_Z[10,10] );
+
+                                VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out first just in case there is no case of that S reading found in the data
+
+                                for (int y = 0; y < VOA_Ysize; y++) // latitude (down to up) (-90 to +90)
                                 {
-                                     VOA_Y[z, q] = (int)(((180 - (VOA_LAT[y * VOA_Ysize] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude -90S to +90N
-                                     VOA_X[z, q] = (int)(((VOA_LNG[x + (y * VOA_Ysize)] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
-       
 
-                                    VOA_Z[x, y] = 1; // this value is now used, dont use it again
-                                    q++;
+                                    for (int x = 0; x < VOA_Xsize; x++) // long (left to right) -180 to +180
+                                    {
 
-                                 //     Debug.WriteLine("Found: " + z + " , " + q);
+                                        if ((VOA_Z[x, y] == 0))
+                                        {
 
-                                }
-                                else
-                                {
-                                      VOA_Z[x, y] = 0; // still unused
-                                }
-
-                            }
-
-                          //  Debug.WriteLine("S,  X,Y,Z " + z + " , " + SSS[x, y].X + " , " + SSS[x, y].Y + " , " + SSS[x, y].Z + " , ");
+                                            if (VOA_SDBW[x + y * VOA_Ysize] >= (-157 + (z * 6)))  // was -127
+                                            {
+                                                VOA_Y[z, q] = (int)(((180 - (VOA_LAT[y * VOA_Ysize] + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude -90S to +90N
+                                                VOA_X[z, q] = (int)(((VOA_LNG[x + (y * VOA_Ysize)] + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
 
 
-                        } // for x
+                                                VOA_Z[x, y] = 1; // this value is now used, dont use it again
+                                                q++;
+
+                                                //     Debug.WriteLine("Found: " + z + " , " + q);
+
+                                            }
+                                            else
+                                            {
+                                                VOA_Z[x, y] = 0; // still unused
+                                            }
+
+                                        }
 
 
-                    } // for y
-
-                    VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out last to indicate end of this S reading curve
-
-                } // for z (S readings)
-
-                VOA_MyY = (int)(((180 - ((double)udDisplayLat.Value + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
-                VOA_MyX = (int)((((double)udDisplayLong.Value + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
+                                    } // for x
 
 
-                Map_Last = Map_Last | 2;    // force update of world map
-              
+                                } // for y
 
-            } // if file exists VOA ke9ns.vg1
+                                VOA_Y[z, q] = VOA_X[z, q] = 0;  // clear out last to indicate end of this S reading curve
 
-            VOARUN = false; // dont allow this to trigger until its finished
+                            } // for z (S readings)
 
-            // VOAPLOT(VOA_S1[3], 3);  // get contour for S2 plot
-            Debug.WriteLine("SSS8 ");
-
-            return;  // finished GOOD
+                            VOA_MyY = (int)(((180 - ((double)udDisplayLat.Value + 90)) / 180.0) * Sun_WidthY1) + Sun_Top1;  //latitude 90N to -90S
+                            VOA_MyX = (int)((((double)udDisplayLong.Value + 180.0) / 360.0) * Sun_Width) + Sun_Left;  // longitude -180W to +180E
 
 
-VOACAP_FINISH:      // jumps here if there was a problem      
-         
-            VOARUN = false; // dont allow this to trigger until its finished
-            
+                            Map_Last = Map_Last | 2;    // force update of world map
 
-        } // VOACAP thread
+
+                        } // if file exists VOA ke9ns.vg1
+
+                        Conrec.Contour(d1, x1, y1, z1); // create contours for map
+
+                        VOARUN = false; // dont allow this to trigger until its finished
+
+                        Debug.WriteLine("SSS8 ");
+
+                        return;  // finished GOOD
+
+
+     VOACAP_FINISH:      // jumps here if there was a problem      
+
+                        VOARUN = false; // dont allow this to trigger until its finished
+
+
+         } // VOACAP thread
 
  
 
@@ -9973,9 +10049,7 @@ VOACAP_FINISH:      // jumps here if there was a problem
             {
            
                 Map_Last = Map_Last | 2;    // force update of world map
-               
               
-
             }
             else
             {
@@ -10050,331 +10124,11 @@ VOACAP_FINISH:      // jumps here if there was a problem
 
             }
         }
-        //====================================================================================================
-        //====================================================================================================
-        //====================================================================================================
-       
-        //           draw dashed lines thru array(x, y)
-        //           n =
-        //          on = fraction of interval pen down(0 < on <= 1.)
-        //          dlen = interval length
-
-        public void DASHIT(int xx,int nps, int S)
-        {
-            for (int j = 2 ; j <= nps; j++)   //call dashit(x, y, nps, on, dlen)
-            {
-                VOA_X1[S, j] = VOA_X[S, j];
-                VOA_Y1[S, j] = VOA_Y[S, j];
-
-
-            }
-        }
-
-        //====================================================================================================
-        //====================================================================================================
-        //====================================================================================================
-        public void VOAPLOT(int nps, int S)
-        {
-            // S = which S unit plot we are doing (1 through 9)
-            // nps = number of points found on map for this particular S unit conture plot
-
-            // outputs plot into VOA_X1[S,nps] and VOA_Y1[S,nps] 
-
-            //***********************************************************************
-            //          draw and label contour lines
-            //
-            //        (x, y) = arrays of(x, y) points of line
-            //          nps = # of points in (x,y)
-            //          labl = array containing label characters(2 per word)
-            //      nchlab = # chars in label
-            //          on = parameter to dashit describing line style
-            //          dlen = parameter to dashit
-
-            double size = 0.0;
-            double chx = 0.0;
-            double chxx = 0.0;
-            double nchar = 0.0;
-            double nchlab = 0.0;
-            double sizelab = 0.0;
-
-            int len = 0;
-            double xlen = 0.0;
-
-           
-            double hlen = 0.0;
-           
-            double frac = 0.0;
-
-            double dl = 0.0;
-
-            int ndex = 0;
-            double ysave = 0.0;
-            double xsave = 0.0;
-
-            int i = 0;
-            double xc1 = 0.0;
-            double yc1 = 0.0;
-
-            double xc = 0.0;
-            double yc = 0.0;
-
-            int nn = 0;
-            int xp = 0;
-            int yp = 0;
-            int x1 = 0;
-            int y1 = 0;
-            int x2 = 0;
-            int y2 = 0;
-            double d = 0.0;
-            double dx = 0.0;
-            double dy = 0.0;
-            double ang = 0.0;
-            double fact = 0.0;
-            double a = 0.0;
-
-            //  common / xyval / x[900],y[900]
-
-            //  character labl*[*]
-
-
-            //  call charget(chxx, chyy)
-            //  call charworl(chx, chy);       //get character size in world units
-
-            chx = 10;
-            chxx = 10;
-          
-            size = chx * 1.1;
-            nchlab = 1;
-
-            nchar = nchlab;
-
-            //    call rblankc(labl, nchar)
-            // locate label at center of line
-            //   len = getgtextextent(labl[1:nchar]);
-
-            len = 5;
-
-
-            sizelab = (double)len * chx / chxx + size;           // convert len from int to float
-
-         
-            // find line length
-
-            xlen = 0.0;
-
-            //=================================================================
-
-            for (i = 2; i <= nps; i++)
-            {
-                xlen = xlen + Math.Sqrt(Math.Pow((VOA_X[S, i] - VOA_X[S, i - 1]), 2) + Math.Pow((VOA_Y[S, i] - VOA_Y[S, i - 1]), 2));
-             
-
-            } // for i loop
-
-            //=================================================================
-
-            Debug.WriteLine("xlen: " + i + " , " + xlen);
-
-
-            //******************************************************************
-            //          eliminate short lines(short = width of 1 character)
-            if (xlen < size)
-            {
-         //       return;
-            }
-
-           
-            //******************************************************************
-            hlen = xlen / 2.0;
-
-            if (sizelab < (hlen / 2.0))
-            {
-                goto PLOT40;
-        
-            }
-
-            Debug.WriteLine("sizelab < hlen ");
-
-
-PLOT15:     DASHIT(0,nps, S);  // draw line
-            
-
-            return;
-
-
-PLOT40:     hlen = hlen - sizelab / 2.0;
-
-            Debug.WriteLine("HLEN: " + hlen);
-
-            xlen = 0.0;
-
-            //=================================================================
-
-            for (i = 2; i <= nps; i++)
-            {
-
-                dl = Math.Sqrt(Math.Pow((VOA_X[S, i] - VOA_X[S, i - 1]), 2) + Math.Pow((VOA_Y[S, i] - VOA_Y[S, i - 1]), 2));
-                xlen = xlen + dl;
-
-                Debug.WriteLine("dl: " + dl);
-                Debug.WriteLine("xlen: " + xlen);
-
-                if (xlen > hlen) break;
-
-
-            } // for i loop
-          
-            
-            //=================================================================
-
-
-            xlen = xlen - dl;
-            frac = (hlen - xlen) / dl;
-
-            xc = VOA_X[S, i - 1] + (VOA_X[S, i] - VOA_X[S, i - 1]) * frac;
-            yc = VOA_Y[S, i - 1] + (VOA_Y[S, i] - VOA_Y[S, i - 1]) * frac;
-
-            ndex = i;
-
-            xsave = VOA_X[S, i];
-            ysave = VOA_Y[S, i];
-
-            VOA_X1[S, i] = (int)xc;
-            VOA_Y1[S, i] = (int)yc;
-
-            xc1 = xc;
-            yc1 = yc;
-
-         //   DASHIT(0,ndex, S);  // draw line
-
-
-            VOA_X1[S, i] = (int)xsave;
-            VOA_Y1[S, i] = (int)ysave;
-
-
-
-            //=================================================================
-            // find(xp, yp) such that dist(xc, yc) - (xp, yp) = sizelab
-
-            for (i = ndex; i <= nps; i++)
-            {
-                dl = Math.Sqrt(Math.Pow((VOA_X[S, i] - xc), 2) + Math.Pow((VOA_Y[S, i] - yc), 2));
-                if (dl > sizelab) goto PLOT60;
-
-            }// for i loop
-
-            //=================================================================
-
-            Debug.WriteLine("PLOT15");
-
-            goto PLOT15; 
-
-
-            //         (xp, yp) is between(x(nn),y(nn)) &(x(nn + 1),y(nn + 1))
-PLOT60:     nn = i;
-
-            Debug.WriteLine("PLOT60");
-
-            x1 = VOA_X[S, nn - 1];
-            y1 = VOA_Y[S, nn - 1];
-
-            x2 = VOA_X[S, nn];
-            y2 = VOA_Y[S, nn];
-
-            //=================================================================
-
-
-            for (i = 1; i <= 15; i++)
-            {
-
-                xp = (int)((double)(x1 + x2) / 2.0);
-                yp = (int)((double)(y1 + y2) / 2.0);
-
-                d = Math.Sqrt(Math.Pow((xp - xc), 2) + Math.Pow((yp - yc), 2));
-
-                if (d < sizelab)
-                {
-                    x1 = xp;
-                    y1 = yp;
-                }
-                else
-                {
-                    x2 = xp;
-                    y2 = yp;
-
-                }
-
-
-            } // for i loop
-
-        
-            
-            
-            
-            //=================================================================
-
-            dx = xp - xc;
-            dy = yp - yc;
-
-            ang = Math.Atan2(dy, dx) / .0174533;       // takes real for floating values y,x
-
-            fact = (nchar + 1) * 2;  // nchar # of chars in label
-
-            dx = dx / fact;
-            dy = dy / fact;
-
-            if ((ang > 90.0) || (ang < -90.0)) goto PLOT80;
-
-            a = (ang - 90.0) * .0174533;
-
-            xc = xc + dx + Math.Cos(a) * size / 2.0;
-            yc = yc + dy + Math.Sin(a) * size / 2.0;
-
-            goto PLOT90;
-
-PLOT80:     ang = ang + 180.0;
-
-            a = (ang - 90.0) * .0174533;
-
-            xc = xp - dx + Math.Cos(a) * size / 2.0;
-            yc = yp - dy + Math.Sin(a) * size / 2.0;
-
-
-            //==========================================================
-            // call symbol(xc, yc, chx, chy, labl, ang, nchar)
-
-PLOT90:     VOA_X1[S, nn - 1] = xp;
-            VOA_Y1[S, nn - 1] = yp;
-
-            // draw the rest of the line
-            // call dashit(x[nn - 1], y[nn - 1], (nps - nn + 2), on, dlen)
-
-            DASHIT(nn-1,nps-nn+2, S);  // draw line
-
-
-            xc = (xc1 + xp) / 2.0;
-            yc = (yc1 + yp) / 2.0;
-
-            Debug.WriteLine("x,y,u,v" + xc + " , " + yc + " , ");
-
-
-
-            //======================================================================
-            // Plot to(IX, IY) with pen up(IPEN = 3), or pen down(IPEN = 2)
-            // (IX, IY) in screen coordinates
-
-            //  call plotabs((u - float(len) / 2.), (v + chyy / 2.), 3)    //  this is a PEN UP condition
-
-
-            
-
-
-        } // VOAPLOT()
 
 
         //======================================================================
 
-        private struct Point3F  // x, y, Z=s
+       public struct Point3F  // x, y, Z=s
         {
             public float X { get; set; }
             public float Y { get; set; }
@@ -10392,8 +10146,8 @@ PLOT90:     VOA_X1[S, nn - 1] = xp;
 
         }
 
-     
-        Point3F[,] SSS = new Point3F[1000,1000];
+    
+       public Point3F[,] SSS = new Point3F[1000,1000];
 
         //======================================================================
         //======================================================================
@@ -10405,222 +10159,7 @@ PLOT90:     VOA_X1[S, nn - 1] = xp;
         static Pen GrnPen = new Pen(Color.FromArgb(255, Color.Green), 1.0f); // S7-8
         static Pen BluPen = new Pen(Color.FromArgb(255, Color.Blue), 1.0f); // S9+
 
-        // ncount = how many contour's
-        private static void DrawContour(Graphics g, Point3F[,] pts, float zmin, float zmax, int ncount)
-        {
-            using (var aPen = new Pen(Color.Red) { Width = 1.0f })
-            {
-                var pta = new PointF[2];
-
-                var zlevels = new float[ncount];
-
-                for (int i = 0; i < ncount; i++)
-                {
-                    zlevels[i] = zmin + i * (zmax - zmin) / (ncount - 1);
-                }
-
-                int i0, i1, i2, j0, j1, j2;
-
-                float zratio = 1; // Draw contour on the XY plane:
-
-                for (int i = 0; i < pts.GetLength(0) - 1; i++) // normally 31
-                {
-                    for (int j = 0; j < pts.GetLength(1) - 1; j++)  // normally 31
-                    {
-                        for (int k = 0; k < ncount; k++)
-                        {
-                            // Left triangle:
-                            i0 = i;
-                            j0 = j;
-                            i1 = i;
-                            j1 = j + 1;
-                            i2 = i + 1;
-                            j2 = j + 1;
-
-                            if (
-                                (zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i1, j1].Z || zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i1, j1].Z) &&
-
-                                (zlevels[k] >= pts[i1, j1].Z && zlevels[k] < pts[i2, j2].Z ||  zlevels[k] < pts[i1, j1].Z && zlevels[k] >= pts[i2, j2].Z)
-                               )
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i1, j1].Z - pts[i0, j0].Z);
-                                pta[0] =   new PointF(pts[i0, j0].X, (1 - zratio) * pts[i0, j0].Y + zratio * pts[i1, j1].Y);
-
-                                zratio = (zlevels[k] - pts[i1, j1].Z) / (pts[i2, j2].Z - pts[i1, j1].Z);
-                                pta[1] =  new PointF((1 - zratio) * pts[i1, j1].X + zratio * pts[i2, j2].X, pts[i1, j1].Y);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else  g.DrawLine(BluPen, pta[0], pta[1]);
-
-                                // g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-                            else if ((zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i2, j2].Z) &&
-                                     (zlevels[k] >= pts[i1, j1].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i1, j1].Z && zlevels[k] >= pts[i2, j2].Z))
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i2, j2].Z - pts[i0, j0].Z);
-
-                                pta[0] =  new PointF((1 - zratio) * pts[i0, j0].X + zratio * pts[i2, j2].X,
-                                    (1 - zratio) * pts[i0, j0].Y + zratio * pts[i2, j2].Y);
-
-                                zratio = (zlevels[k] - pts[i1, j1].Z) / (pts[i2, j2].Z - pts[i1, j1].Z);
-                                pta[1] =  new PointF((1 - zratio) * pts[i1, j1].X + zratio * pts[i2, j2].X, pts[i1, j1].Y);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else g.DrawLine(BluPen, pta[0], pta[1]);
-
-                               // g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-                            else if ((zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i1, j1].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i1, j1].Z) &&
-                                     (zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i2, j2].Z))
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i1, j1].Z - pts[i0, j0].Z);
-                                pta[0] =  new PointF(pts[i0, j0].X, (1 - zratio) * pts[i0, j0].Y + zratio * pts[i1, j1].Y);
-
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i2, j2].Z - pts[i0, j0].Z);
-                                pta[1] =  new PointF(pts[i0, j0].X * (1 - zratio) + pts[i2, j2].X * zratio,
-                                               pts[i0, j0].Y * (1 - zratio) + pts[i2, j2].Y * zratio);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else g.DrawLine(BluPen, pta[0], pta[1]);
-
-                                // g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-
-                            // right triangle:
-
-                            i0 = i;
-                            j0 = j;
-                            i1 = i + 1;
-                            j1 = j;
-                            i2 = i + 1;
-                            j2 = j + 1;
-
-                            if ((zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i1, j1].Z ||
-                                 zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i1, j1].Z) &&
-                                (zlevels[k] >= pts[i1, j1].Z && zlevels[k] < pts[i2, j2].Z ||
-                                 zlevels[k] < pts[i1, j1].Z && zlevels[k] >= pts[i2, j2].Z))
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i1, j1].Z - pts[i0, j0].Z);
-                                pta[0] =
-                                    new PointF(pts[i0, j0].X * (1 - zratio) + pts[i1, j1].X * zratio, pts[i0, j0].Y);
-                                zratio = (zlevels[k] - pts[i1, j1].Z) / (pts[i2, j2].Z - pts[i1, j1].Z);
-                                pta[1] =
-                                    new PointF(pts[i1, j1].X, pts[i1, j1].Y * (1 - zratio) + pts[i2, j2].Y * zratio);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else g.DrawLine(BluPen, pta[0], pta[1]);
-
-                               // g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-                            else if ((zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i2, j2].Z) &&
-                                     (zlevels[k] >= pts[i1, j1].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i1, j1].Z && zlevels[k] >= pts[i2, j2].Z))
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i2, j2].Z - pts[i0, j0].Z);
-                                pta[0] = new PointF(pts[i0, j0].X * (1 - zratio) + pts[i2, j2].X * zratio,
-                                               pts[i0, j0].Y * (1 - zratio) + pts[i2, j2].Y * zratio);
-
-                                zratio = (zlevels[k] - pts[i1, j1].Z) / (pts[i2, j2].Z - pts[i1, j1].Z);
-
-                                pta[1] =  new PointF(pts[i1, j1].X, pts[i1, j1].Y * (1 - zratio) + pts[i2, j2].Y * zratio);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else g.DrawLine(BluPen, pta[0], pta[1]);
-
-                              //  g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-                            else if ((zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i1, j1].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i1, j1].Z) &&
-                                     (zlevels[k] >= pts[i0, j0].Z && zlevels[k] < pts[i2, j2].Z ||
-                                      zlevels[k] < pts[i0, j0].Z && zlevels[k] >= pts[i2, j2].Z))
-                            {
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i1, j1].Z - pts[i0, j0].Z);
-                                pta[0] = new PointF(pts[i0, j0].X * (1 - zratio) + pts[i1, j1].X * zratio, pts[i0, j0].Y);
-
-                                zratio = (zlevels[k] - pts[i0, j0].Z) / (pts[i2, j2].Z - pts[i0, j0].Z);
-
-                                pta[1] =  new PointF(pts[i0, j0].X * (1 - zratio) + pts[i2, j2].X * zratio,
-                                               pts[i0, j0].Y * (1 - zratio) + pts[i2, j2].Y * zratio);
-
-                                if ((k == 0)) g.DrawLine(GryPen, pta[0], pta[1]);
-                                else if ((k == 1)) g.DrawLine(OrgPen, pta[0], pta[1]);
-                                else if ((k == 2)) g.DrawLine(YelPen, pta[0], pta[1]);
-                                else if ((k == 3)) g.DrawLine(GrnPen, pta[0], pta[1]);
-                                else g.DrawLine(BluPen, pta[0], pta[1]);
-
-                               // g.DrawLine(aPen, pta[0], pta[1]);
-                            }
-
-            
-                        }
-                    }
-                }
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-        /*
-                IntPtr M_Pointer_Contour;
-
-                // Filled by another function from grid data
-                public double[] CoordX = new double[1000000];
-                public double[] CoordY = new double[1000000];
-
-
-                public void GetPolyLines()
-                {
-                    var polyLineCount = Contour.ContourGetPolylinesCount(M_Pointer_Contour); // Returns Polygon Count
-
-                    for (int i = 0; i < polyLineCount; i++)
-                    {
-                        int PolyLineVerticesCount;
-                        double DistanceValue;
-
-                        // returns Polygon vertices
-                        Contour.ContourGetPolylineParameters(M_Pointer_Contour, i, out PolyLineVerticesCount, out DistanceValue);
-
-                        // As per software documentation
-                        for (int v = 0; v < PolyLineVerticesCount; v++)
-                        {
-                            var x = CoordX[i];
-                            var y = CoordY[i];
-
-                            // Adding x, y in list for each line
-                        }
-                    }
-                }
-
-        */
+    
 
         //======================================================================
         private void mnuSpotOptions_Click(object sender, EventArgs e)
@@ -10632,7 +10171,22 @@ PLOT90:     VOA_X1[S, nn - 1] = xp;
             SpotOptions.Focus();
         }
 
+        private void chkBoxContour_CheckedChanged(object sender, EventArgs e)
+        {
+            console.last_MHZ = 0;
 
+            Last_WATTS = "0";
+            if (checkBoxMUF.Checked == true)
+            {
+                VOACAP_CHECK(); // rescan a new map since your changing your antenna type
+            }
+        } // chkBoxContour_CheckedChanged
+
+        private void statusBoxSWL_Click(object sender, EventArgs e)
+        {
+            statusBoxSWL.ShortcutsEnabled = false; // added to eliminate the contextmenu from popping up on a right click
+
+        }
     } // Spotcontrol
 
     //============================================================

@@ -120,7 +120,6 @@ using System.Windows.Forms.Design; // ke9ns add
 
 
 
-
 using HttpServer; // rn3kk add
 
 //using System.Threading.Tasks; // ke9ns add net 4.5
@@ -681,6 +680,7 @@ namespace PowerSDR
         public NumericUpDownTS udTXFilterHigh;
         public CheckBoxTS chkBoxMuteSpk;
         public CheckBoxTS chkBoxDrive;
+        private LabelTS labelTS5;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -1535,7 +1535,7 @@ namespace PowerSDR
         private RadioButtonTS radDisplayZoom2x;
         private RadioButtonTS radDisplayZoom1x;
         private CheckBoxTS chkFWCATUBypass;
-        private CheckBoxTS chkFWCATU;
+        public CheckBoxTS chkFWCATU;
         private System.Windows.Forms.Timer timer2;
         private ContextMenuStrip contextMenuStripNotch;
         private ToolStripMenuItem toolStripNotchDelete;
@@ -2826,6 +2826,7 @@ namespace PowerSDR
             this.chkBoxMuteSpk = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDrive = new System.Windows.Forms.CheckBoxTS();
             this.lblPWR = new System.Windows.Forms.LabelTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -3172,6 +3173,7 @@ namespace PowerSDR
             this.chkFWCATU.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkFWCATU.Name = "chkFWCATU";
             this.toolTip1.SetToolTip(this.chkFWCATU, resources.GetString("chkFWCATU.ToolTip"));
+            this.chkFWCATU.CheckedChanged += new System.EventHandler(this.chkFWCATU_CheckedChanged);
             this.chkFWCATU.Click += new System.EventHandler(this.chkFWCATU_Click);
             // 
             // chkFWCATUBypass
@@ -5647,6 +5649,13 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.lblPWR, resources.GetString("lblPWR.ToolTip"));
             this.lblPWR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPWR_MouseDown);
             // 
+            // labelTS5
+            // 
+            this.labelTS5.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.labelTS5, "labelTS5");
+            this.labelTS5.Name = "labelTS5";
+            this.toolTip1.SetToolTip(this.labelTS5, resources.GetString("labelTS5.ToolTip"));
+            // 
             // timer_clock
             // 
             this.timer_clock.Enabled = true;
@@ -7106,6 +7115,7 @@ namespace PowerSDR
             // grpVFOBetween
             // 
             this.grpVFOBetween.BackColor = System.Drawing.Color.Transparent;
+            this.grpVFOBetween.Controls.Add(this.labelTS5);
             this.grpVFOBetween.Controls.Add(this.regBox1);
             this.grpVFOBetween.Controls.Add(this.regBox);
             this.grpVFOBetween.Controls.Add(this.lblTuneStep);
@@ -27738,7 +27748,27 @@ namespace PowerSDR
 			}
 		}
 
-		private int default_low_cut = 150;
+
+        //============================================================
+        // ke9ns add
+        private Color ring_vfo_color = Color.DarkGreen;
+        public Color RingVFOColor
+        {
+            get { return ring_vfo_color; }
+            set
+            {
+                ring_vfo_color = value;
+                grpVFOA.Invalidate();
+                grpVFOB.Invalidate();
+                grpMultimeter.Invalidate();
+                grpRX2Meter.Invalidate();
+
+            }
+
+        } //RingVFOColor
+
+
+        private int default_low_cut = 150;
 		public int DefaultLowCut
 		{
 			get { return default_low_cut; }
@@ -28894,7 +28924,12 @@ namespace PowerSDR
                             {
                                 aTUToolStripMenuItem.Visible = true;
                                 if (fwcAtuForm == null) fwcAtuForm = new FWCATUForm(this);
-                                chkFWCATU.Enabled = true;
+
+                                if ((chkTUN.Text != "TUN")) chkFWCATU.Enabled = false;  // ke9ns add
+                                else chkFWCATU.Enabled = true;   // ke9ns mod
+
+                                //  chkFWCATU.Enabled = true; // original code
+
                                 chkFWCATU.Text = "ATU";
                                 chkFWCATUBypass.Enabled = true;
                                 chkFWCATUBypass.Text = "BYP";
@@ -28924,8 +28959,10 @@ namespace PowerSDR
                         }
                         
                         DttSP.SetSwchFlag(0, true);
-                        DttSP.SetSwchRiseThresh(0, 3e-4f);                        
+                        DttSP.SetSwchRiseThresh(0, 3e-4f);
+
                         break;
+
                     case Model.FLEX3000:
                         MinFreq = Math.Max(if_freq, 0.000001);
                         MaxFreq = 65.0;
@@ -29004,7 +29041,13 @@ namespace PowerSDR
 
 
                             if (flex3000ATUForm == null) flex3000ATUForm = new FLEX3000ATUForm(this);
-                            chkFWCATU.Enabled = true;
+
+                           
+                              if ((chkTUN.Text != "TUN")) chkFWCATU.Enabled = false;  // ke9ns add
+                              else chkFWCATU.Enabled = true;   // ke9ns mod
+                           
+                            //  chkFWCATU.Enabled = true; // original code
+
                             chkFWCATU.Text = "ATU";
                             chkFWCATUBypass.Enabled = true;
                             chkFWCATUBypass.Text = "BYP";		
@@ -29016,6 +29059,9 @@ namespace PowerSDR
 
                             //chkFullDuplex.Visible = true;
                             panelAntenna.Visible = false;
+
+                          //   chkVAC2.Enabled = true; // ke9ns add chkVAC2
+
 
                             /*if(fwcTestForm == null || fwcTestForm.IsDisposed)
                                 fwcTestForm = new FWCTestForm(this);
@@ -33891,7 +33937,7 @@ namespace PowerSDR
             get { return vac2_enabled; }
             set
             {
-                  if (current_model == Model.FLEX5000 && FWCEEPROM.RX2OK)
+              if ((current_model == Model.FLEX5000 && FWCEEPROM.RX2OK) )   //|| (current_model == Model.FLEX3000))  // ke9ns mod 
               {
                     vac2_enabled = value;
                     Audio.VAC2Enabled = value;
@@ -43853,7 +43899,7 @@ namespace PowerSDR
 
                     int iii = 500;
 
-                        for (int ii = 0; ii < SpotControl.DX_Index; ii++) // check all dots on Panadapter
+                        for (int ii = 0; ii < SpotControl.DX_Index; ii++) // check all red dots on Panadapter
                         {
 
                             if ((SpotControl.DX_X[ii] > 5) && (SpotControl.DX_Y[ii] > 5) &&  (XX <= (SpotControl.DX_X[ii] +5)) && (XX >= (SpotControl.DX_X[ii] -5))
@@ -43861,6 +43907,10 @@ namespace PowerSDR
                             {
                                  Debug.WriteLine("Good trace ii " + ii);
 
+                                  SpotForm.DX_SELECTED = ii;    // ke9ns add to keep the dx spotter window always highlighted
+                                  SpotForm.DX_TEXT = SpotForm.textBox1.Text.Substring((SpotForm.DX_SELECTED * SpotForm.LineLength) + 16, 40);  // ke9ns add
+                                  SpotControl.Map_Last = 2;
+                                  SpotForm.processTCPMessage();
                                   iii = ii;
                                   break;
                             }
@@ -43960,7 +44010,7 @@ namespace PowerSDR
 
                                 } // chkdxmode checked
 
-/*
+/*   decided not to do it here, since you dont always want to be moving your antenna on everything you click on.
                         if (setupForm.ROTOREnabled == true)   // ke9ns add send hygain rotor command to DDUtil via the CAT port setup in PowerSDR
                         {
                             Debug.WriteLine("Red DOT BEAM HEADING TRANSMIT");
@@ -47772,6 +47822,9 @@ namespace PowerSDR
               
             }
 
+            grpVFOA.Invalidate(); // ke9ns add to check for ring color during MOX
+            grpVFOB.Invalidate();
+
 
             //Debug.WriteLine("MOX: "+chkMOX.Checked);	
 
@@ -49287,7 +49340,9 @@ namespace PowerSDR
         {
             if (setupForm != null) setupForm.VAC2Enable = chkVAC2.Checked;  // ke9ns if you check vac2 from setup form then update here as well
 
-          if (!fwc_init || current_model != Model.FLEX5000 || !FWCEEPROM.RX2OK || !chkRX2.Checked)
+            //  if (!fwc_init || current_model != Model.FLEX5000 || !FWCEEPROM.RX2OK || !chkRX2.Checked)
+
+           if (!fwc_init || current_model != Model.FLEX5000 || !FWCEEPROM.RX2OK || !chkRX2.Checked)
             {
                if (chkVOX.Checked)
                {
@@ -49340,6 +49395,7 @@ namespace PowerSDR
                     Audio.VOXActive = false;
                     chkVOX.BackColor = SystemColors.Control;
                 }
+                
             }
             else chkVAC2.BackColor = SystemColors.Control;
 
@@ -56542,7 +56598,22 @@ namespace PowerSDR
             toolTip1.SetToolTip(chkFWCATU, s);
         }
 
-		private void chkFWCATU_Click(object sender, System.EventArgs e)
+        // ke9ns add  if in pulser and just checked tun, then 
+        private void chkFWCATU_CheckedChanged(object sender, EventArgs e)
+        {
+          //  if (chkFWCATU.Checked == false)
+          //  {
+           //     if (setupForm.chkBoxPulser.Checked == true)
+            //    {
+             //       chkFWCATU.Checked = false; // ke9ns keep ATU off until you set TUNp back to TUN
+
+              //  }
+         //   }
+
+
+        } // chkFWCATU_CheckedChanged
+
+        private void chkFWCATU_Click(object sender, System.EventArgs e)
 		{
 			if(fwc_init && current_model == Model.FLEX5000 && 
 				fwcAtuForm != null && !fwcAtuForm.IsDisposed)
@@ -61264,7 +61335,16 @@ namespace PowerSDR
             GraphicsPath gPath = CreatePath(1, 1, box.Width  - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
            
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
-            p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
+
+            if ((MOX) && (chkVFOATX.Checked == true))
+            {
+                p.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+
+            }
+            else
+            {
+                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            }
 
             p.Graphics.DrawString("VFO A", box.Font, Brushes.White, 8, 0);
 
@@ -61291,7 +61371,16 @@ namespace PowerSDR
 
                    
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
-            p.Graphics.DrawPath(new Pen(Border, BorderThk), gPath);
+
+            if ((MOX) && (chkVFOBTX.Checked == true))
+            {
+                p.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+
+            }
+            else
+            {
+                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            }
 
             p.Graphics.DrawString("VFO B", box.Font, Brushes.White, 8, 0);
 
@@ -61317,7 +61406,8 @@ namespace PowerSDR
 
          
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
-            p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+          //  p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             p.Graphics.DrawString("RX1 Meter        TX Meter", box.Font, Brushes.White, 8, 0);
 
@@ -61336,7 +61426,8 @@ namespace PowerSDR
 
            
             p.Graphics.FillPath(new SolidBrush(Color.Black), gPath);
-            p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+          //  p.Graphics.DrawPath(new Pen(Border1, BorderThk), gPath);
+            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             p.Graphics.DrawString("RX2 Meter        TX Meter(2nd)", box.Font, Brushes.White, 8, 0);
 
@@ -63054,8 +63145,17 @@ namespace PowerSDR
                 if (setupForm == null || setupForm.IsDisposed)
                     setupForm = new Setup(this);
 
-                if (setupForm.chkBoxPulser.Checked == false) setupForm.chkBoxPulser.Checked = true;
-                else setupForm.chkBoxPulser.Checked = false;
+                if (setupForm.chkBoxPulser.Checked == false)
+                {
+                    setupForm.chkBoxPulser.Checked = true;
+                    chkFWCATU.Enabled = false;
+
+                }
+                else
+                {
+                    setupForm.chkBoxPulser.Checked = false;
+                    chkFWCATU.Enabled = true;
+                }
 
             /*  setupForm.Show();
                 setupForm.Focus();
@@ -64211,7 +64311,7 @@ namespace PowerSDR
 
         //==================================================================================
         //==================================================================================
-        // ke9ns for precision mSec timer for TUNE Pulser
+        // ke9ns for precision mSec timer (not used at this time)
         // ke9ns add  This timer runs at the periodic rate, repeatedly and  jmps to "TimerPeriodicEventCallback" when the timer is reached
         private void setup_timer(int cwxwpm)
         {
@@ -64307,6 +64407,8 @@ namespace PowerSDR
             rf_freq = (double)f * 1e-6;
             VFOAFreq = rf_freq;
         }
+
+       
 
         //=========================================================================================
         //=========================================================================================

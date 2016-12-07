@@ -1,4 +1,4 @@
-﻿Build started 9/29/2016 9:23:01 AM.
+﻿Build started 11/23/2016 12:52:06 PM.
      1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\DttSP\DttSP.vcxproj" on node 2 (Rebuild target(s)).
      1>_PrepareForClean:
          Deleting file "../../temp/Release/DttSP\DttSP.tlog\DttSP.lastbuildstate".
@@ -101,4 +101,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:33.42
+Time Elapsed 00:00:29.50
