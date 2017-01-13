@@ -864,14 +864,14 @@ namespace PowerSDR
 				DrawBackground();
 			}
 		}
-
-		private static int spectrum_grid_step = 10;
+        private static int spectrum_grid_step1 = 10;
+        private static int spectrum_grid_step = 10;
 		public static int SpectrumGridStep
 		{
 			get{ return spectrum_grid_step;}
 			set
 			{
-				spectrum_grid_step = value;
+                spectrum_grid_step1=  spectrum_grid_step = value;
 				DrawBackground();
 			}
 		}
@@ -1367,6 +1367,12 @@ namespace PowerSDR
                     channels_60m.Add(new Channel(5.4050, 2800));
                     */
                     break;
+                //  5.351500, 5.335999, "60M 200hz Narrow Band Modes",    true,
+                //          5.354000, 5.356999, "60M USB Voice",            true,
+                //          5.357000, 5.359999, "60M USB Voice (US CH 3)",  true,
+                //         5.360000, 5.362999, "60M USB Voice",            true,
+                //          5.363000, 5.365999, "60M USB Voice",            true,
+                //         5.366000, 5.366500, "60M 20hz Narrow Band Modes",    true,
 
                 case FRSRegion.US:
                     channels_60m.Add(new Channel(5.3320, 2800));
@@ -2140,8 +2146,7 @@ namespace PowerSDR
                     if (i != 1) // avoid intersecting vertical and horizontal labels
                     {
                         string label = num.ToString();
-                        if (label.Length == 3)
-                            xOffset = (int)g.MeasureString("-", font).Width - 2;
+                        if (label.Length == 3)   xOffset = (int)g.MeasureString("-", font).Width - 2;
                         int offset = (int)(label.Length * 4.1);
                         SizeF size = g.MeasureString(label, font);
 
@@ -2158,6 +2163,9 @@ namespace PowerSDR
                                 x = (int)(W - size.Width - 3);
                                 break;
                             case DisplayLabelAlignment.AUTO:
+                                x = xOffset + 3;
+                                break;
+                            case DisplayLabelAlignment.Sunit: // ke9ns add
                                 x = xOffset + 3;
                                 break;
                             case DisplayLabelAlignment.OFF:
@@ -2255,6 +2263,9 @@ namespace PowerSDR
                             case DisplayLabelAlignment.AUTO:
                                 x = xOffset + 3;
                                 break;
+                            case DisplayLabelAlignment.Sunit: // ke9ns add
+                                x = xOffset + 3;
+                                break;
                             case DisplayLabelAlignment.OFF:
                                 x = W;
                                 break;
@@ -2347,8 +2358,7 @@ namespace PowerSDR
                     if (i != 1) // avoid intersecting vertical and horizontal labels
                     {
                         string label = num.ToString();
-                        if (label.Length == 3)
-                            xOffset = (int)g.MeasureString("-", font).Width - 2;
+                        if (label.Length == 3)  xOffset = (int)g.MeasureString("-", font).Width - 2;
                         int offset = (int)(label.Length * 4.1);
                         SizeF size = g.MeasureString(label, font);
 
@@ -2365,6 +2375,9 @@ namespace PowerSDR
                                 x = (int)(W - size.Width - 3);
                                 break;
                             case DisplayLabelAlignment.AUTO:
+                                x = xOffset + 3;
+                                break;
+                            case DisplayLabelAlignment.Sunit: // ke9ns add
                                 x = xOffset + 3;
                                 break;
                             case DisplayLabelAlignment.OFF:
@@ -2432,6 +2445,8 @@ namespace PowerSDR
         static Color c1;
         static Color c2;
 
+        static bool SUNIT = false;                                          // ke9ns add true= S-Unit scale was activated
+       
 
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
         {
@@ -2447,8 +2462,10 @@ namespace PowerSDR
 			else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);*/
 
             bool local_mox = false;
+
             if (mox && rx == 1 && !tx_on_vfob) local_mox = true;
             if (mox && rx == 2 && tx_on_vfob) local_mox = true;
+
             int Low = rx_display_low;           // ke9ns low= -96000 at 192k SR and zoom = .5
             int High = rx_display_high;         // ke9ns high= +96000 at 192k SR and zoom = .5
             int mid_w = W / 2;
@@ -2458,17 +2475,86 @@ namespace PowerSDR
             int freq_step_size = 50;
             int inbetweenies = 5;
 
-            int grid_step = spectrum_grid_step;  // 5
+            int grid_step = 0;  // 
 
 
-            if (split_display) grid_step = grid_step * 2; // increase grid_step since you have less space on screen
+            //------------------------------------------------------------------------------
+            // ke9ns add   this S-Unit scale is designed to display a Grid based on the the S unit dBm
+            if ((display_label_align == DisplayLabelAlignment.Sunit) && (!local_mox)) // if in S unit mode then draw lines only on the S unit point
+            {
+
+                if (SUNIT == false)  SUNIT = true; // let code know we are now in special S-Unit mode
+               
+
+               
+
+                if ((K9 == 5)) // if rx2 is enabled cut the number of grids down in half
+                {
+                    if (VFOA < 30000000) // HF     dBm num = spectrum_grid_max - (i * grid_step);
+                    {
+                        spectrum_grid_max = -49;
+                        spectrum_grid_min = -139; // S0 is -133 to -122
+                    }
+                    else // VHF
+                    {
+                        spectrum_grid_max = -69;
+                        spectrum_grid_min = -159; // S0 is -153 to -142
+                    }
+
+                    if (bottom)
+                    {
+                        spectrum_grid_step = 6; // 6
+                        grid_step = 6;  // 6
+                    }
+                    else
+                    {
+                        spectrum_grid_step = 6;  // 6
+                        grid_step = 12;  // 12
+                    }
+
+                }
+                else // just RX1
+                {
+                    if (VFOA < 30000000) // HF     dBm num = spectrum_grid_max - (i * grid_step);
+                    {
+                        spectrum_grid_max = -43;   // -43
+                        spectrum_grid_min = -139; // S0 is -133 to -122
+                    }
+                    else // VHF
+                    {
+                        spectrum_grid_max = -63;  // -63
+                        spectrum_grid_min = -159; // S0 is -153 to -142
+                    }
+
+                    spectrum_grid_step = 6;
+                    grid_step = 6;
+
+                } // just rx1
+               
+
+            } // special dBm and S-Unit display
+            else // use normal setup->display setpoints
+            {
+                if ((SUNIT == true) && (!local_mox)) // if you were in S-Unit mode, then put back normal values but only in RX mode
+                {
+                    spectrum_grid_max = spectrum_grid_max1; // use setupform orignal values over again
+                    spectrum_grid_min = spectrum_grid_min1;
+                    spectrum_grid_step = spectrum_grid_step1;
+                    SUNIT = false;
+                }
+                
+                grid_step = spectrum_grid_step; // you maybe in TX mode here
+
+                if (split_display) grid_step = grid_step * 2; // increase grid_step since you have less space on screen
+
+                if ((K9 == 5) && (K10 != 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
+                if ((K9 == 5) && (K10 == 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
 
 
-            if ((K9 == 5) && (K10 != 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
+            } // standard dBm display
 
-            if ((K9 == 5) && (K10 == 5) && (bottom)) grid_step = spectrum_grid_step; // 1.5 ke9ns ADDED THIS CODE increase grid_step again since you have even less space on screen
-
-
+            //----------------------------------------------------------------------------------------
+           
             //  if (bottom) Debug.WriteLine("bottom...top " + top + " H " + H);
             //  else Debug.WriteLine("top...top " + top + " H " + H);
 
@@ -2495,8 +2581,7 @@ namespace PowerSDR
           
             int center_line_x = (int)(-(double)Low / (High - Low) * W); // center of display window
 
-          
-
+      
             if (local_mox) // get filter limits
             {
                 filter_low = tx_filter_low;
@@ -2541,23 +2626,50 @@ namespace PowerSDR
             //===========================================================
             // calculate vertical step size
             //===========================================================
+
+
             int h_steps = (spectrum_grid_max - spectrum_grid_min) / grid_step; // if display area shrinks, grid step goes up, so h_steps goes down.
 
+
+            if ((SUNIT) && (!local_mox)) // if in S unit mode then draw lines only on the S unit point
+            {
+                if ((K9 == 5)) // if RX2 is enabled
+                {
+                   if (bottom) h_steps = 23; // 23 if RX2 enabled
+                    else h_steps = 11; // 11 if RX2 enabled
+                }
+                else  h_steps = 18; // 18 show all S units all the time in Sunit mode
+
+            }
+
+          
             double h_pixel_step = (double)H / h_steps; // ke9ns ?
 
-            if ((K9 == 5) && (K10 != 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2); // ke9ns ADDED CODE area are in thirds so hstep for RX1 and RX2 should be the same
+          //  Debug.WriteLine("spectrum_grid_max, min, stp, hstp =" + spectrum_grid_max + " ," + spectrum_grid_min + " , " + spectrum_grid_step + " , " + grid_step + " , " + h_steps);
 
-            if ((K9 == 5) && (K10 == 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2); // ke9ns ADDED CODE area are in 1/4rs so hstep for RX1 and RX2 should be the same
+
+            if ((SUNIT) && (!local_mox))
+            {
+
+                if ((K9 == 5))
+                {
+                    if (bottom) h_steps = 11; // 11 if RX2 enabled
+                    else h_steps = 11; // 11 if RX2 enabled
+                }
+                else h_steps = 18; // 18 show all S units all the time in Sunit mode
+
+            }
+            else // if in special dBm S-Unit mode
+            {
+                if ((K9 == 5) && (K10 != 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2); // ke9ns ADDED CODE area are in thirds so hstep for RX1 and RX2 should be the same
+                if ((K9 == 5) && (K10 == 5) && (bottom)) h_steps = (spectrum_grid_max - spectrum_grid_min) / (spectrum_grid_step * 2); // ke9ns ADDED CODE area are in 1/4rs so hstep for RX1 and RX2 should be the same
+
+            }
+
 
             int top = (int)((double)grid_step * H / y_range); // find top of each window for the panadapter
 
-
-            //  if (bottom) Debug.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top);
-            //   else Debug.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top);
-
-
-
-
+          
 
 
             //===========================================================
@@ -2605,141 +2717,270 @@ namespace PowerSDR
 
             } // draw sub filter
 
-
-
             //============================================================================================
-            // ke9ns draw main filter bandpass display
-            if (!(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
+            //============================================================================================
+            //============================================================================================
+
+            if (rx == 1)
             {
-                // get filter screen coordinates
+                //============================================================================================
+                // ke9ns RX1 draw main filter bandpass display
+                //============================================================================================
+               
+                if (!(local_mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))  // draw bandpass for RX or bandpass for TX (but not in cW mode)) 
+                {
+                    // get filter screen coordinates
 
-                int filter_left_x;
-                int filter_right_x;
+                    int filter_left_x;
+                    int filter_right_x;
 
-              
+
                     filter_left_x = (int)((float)(filter_low - Low) / (High - Low) * W); // original
                     filter_right_x = (int)((float)(filter_high - Low) / (High - Low) * W);
-             
 
-                // make the filter display at least one pixel wide.
-                if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
 
-                // draw rx filter
-                if (bottom)
+                    // make the filter display at least one pixel wide.
+                    if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+                 
+                    // draw rx filter
+                 //   if (bottom)
+                 //   {
+                  //      g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                   //         filter_left_x, H + top, filter_right_x - filter_left_x, H + H - top );
+                   // }
+                   // else // top half
+                   // {
+                        g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                            filter_left_x, top, filter_right_x - filter_left_x, H - top  );
+                   // }
+                } // main RX1 filter
+                else if ((local_mox) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU) && (!split_enabled)) // draw CW rx box when you tx.
                 {
-                    g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
-                        filter_left_x, H + top, filter_right_x - filter_left_x, H + H - top);
-                }
-                else
-                {
+
+                    int filter_left_x;
+                    int filter_right_x;
+
+
+                    filter_left_x = (int)((float)(rx1_filter_low - Low) / (High - Low) * W); // original
+                    filter_right_x = (int)((float)(rx1_filter_high - Low) / (High - Low) * W);
+
+
+                    // make the filter display at least one pixel wide.
+                    if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+
+                  
                     g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
                         filter_left_x, top, filter_right_x - filter_left_x, H - top);
+                   
                 }
-            } // filter
 
-
-            //============================================================================================
-            // ke9ns  receive & draw tx filter on display & not in CW mode & TX on VFOB
-            if (!local_mox && draw_tx_filter && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
-            {
-                // get tx filter limits
-                int filter_left_x;
-                int filter_right_x;
-
-                if (tx_on_vfob)
+                //============================================================================================
+                // ke9ns  RX1 draw tx line for everything but cw
+                //============================================================================================
+                if (!local_mox && draw_tx_filter && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU) )
                 {
+                    // get tx filter limits
+                    int filter_left_x;
+                    int filter_right_x;
+
+                   if (tx_on_vfob)
+                    {
+                        if (!split_enabled)
+                        {
+                           filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W); //original
+                           filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz) / (High - Low) * W); // 
+                        }
+                        else
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
+                        }
+                    }
+                    else // TX on VFOA
+                    {
+                        if (!split_enabled)
+                        {
+                            //Transmit profile high=4000, low = 70  results in:
+                            // tx_filter_low = -4000 lsb or +70 usb hz
+                            // tx_filter_high = -70 lsb or +4000 usb hz
+                            // filter_left_x = 658 lsb or 732 usb pixel
+                            // filter_right_x = 740 lsb or 804 usb  pixel
+                            // W = 1463 based on size of console and resolution, HIGH = 40000, Low = - 40000  at Zoom=1 and 192k SR
+
+
+                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz) / (High - Low) * W);
+
+                            //  Debug.Write(" txfilterlow=" + tx_filter_low); // 
+                            //  Debug.Write(" txfilterhigh=" + tx_filter_high);
+                            //  Debug.Write(" filter_left_x=" + filter_left_x);
+                            //   Debug.Write(" filter_right_x=" + filter_right_x);
+                            //   Debug.Write(" High" + High);
+                            //   Debug.Write(" Low" + Low);
+                            //  Debug.Write(" W" + W);
+                        }
+                        else // split on vfoa
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
+                        }
+                   }
+
+                    if (bottom) // && tx_on_vfob)  // if transmitting on RX2 then draw lines on bottom
+                    {
+                        // draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_left_x, H + top, filter_left_x, H + H);
+                        g.DrawLine(tx_filter_pen, filter_right_x, H + top, filter_right_x, H + H);  // draw tx filter overlay
+
+                    }
+                    else if ((!tx_on_vfob) && (!bottom)) // ke9ns if transmitting on normal RX1 draw lines // KE9NS ADD  fix mistake made by flex  makes the line thicker
+                    {
+                        // ke9ns pgrid ORANGE LEFT and RIGHT TX WIDTH LINES for TRANSMITTER ONLY
+                        g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);        // LEFT draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_right_x, top, filter_right_x, H);      // RIGHT draw tx filter ovelay
+                    }
+
+                } // draw ssb TX1 filter width lines
+
+
+                //============================================================================================
+                // ke9ns  RX1 draw tx line for cw
+                //============================================================================================
+                if ((!local_mox) && (draw_tx_cw_freq) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU) )
+                {
+                    int pitch = cw_pitch;
+
+                    if (rx1_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
+                    else if (rx2_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
+
+                    int cw_line_x;
+
                     if (!split_enabled)
-                    {
-
-                        filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W); //original
-                        filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz) / (High - Low) * W); // 
-
-                    }
-                    else
-                    {
-                        filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
-                        filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
-                    }
-                }
-                else // TX on VFOA
-                {
-                    if (!split_enabled)
-                    {
-                        //Transmit profile high=4000, low = 70  results in:
-                        // tx_filter_low = -4000 lsb or +70 usb hz
-                        // tx_filter_high = -70 lsb or +4000 usb hz
-                        // filter_left_x = 658 lsb or 732 usb pixel
-                        // filter_right_x = 740 lsb or 804 usb  pixel
-                        // W = 1463 based on size of console and resolution, HIGH = 40000, Low = - 40000  at Zoom=1 and 192k SR
-
-
-                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W); 
-                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz) / (High - Low) * W); 
-                     
-                        //  Debug.Write(" txfilterlow=" + tx_filter_low); // 
-                        //  Debug.Write(" txfilterhigh=" + tx_filter_high);
-                        //  Debug.Write(" filter_left_x=" + filter_left_x);
-                        //   Debug.Write(" filter_right_x=" + filter_right_x);
-                        //   Debug.Write(" High" + High);
-                        //   Debug.Write(" Low" + Low);
-                        //  Debug.Write(" W" + W);
-                    }
-                    else // split on vfoa
-                    {
-                        filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
-                        filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
-                    }
-                }
-
-                if (bottom && tx_on_vfob)  // if transmitting on RX2 then draw lines on bottom
-                {
-
-                    // draw tx filter overlay
-                    g.DrawLine(tx_filter_pen, filter_left_x, H + top, filter_left_x, H + H);
-
-                    g.DrawLine(tx_filter_pen, filter_right_x, H + top, filter_right_x, H + H);  // draw tx filter overlay
-
-
-                }
-                else if ((!tx_on_vfob) && (!bottom)) // ke9ns if transmitting on normal RX1 draw lines // KE9NS ADD  fix mistake made by flex  makes the line thicker
-                {
-
-                    // ke9ns pgrid ORANGE LEFT and RIGHT TX WIDTH LINES for TRANSMITTER ONLY
-
-                    g.DrawLine(tx_filter_pen, filter_left_x, top, filter_left_x, H);        // LEFT draw tx filter overlay
-
-                    g.DrawLine(tx_filter_pen, filter_right_x, top, filter_right_x, H);      // RIGHT draw tx filter ovelay
-                }
-            } // draw filter width lines
-
-            if (!local_mox && draw_tx_cw_freq && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
-            {
-                int pitch = cw_pitch;
-
-                if (rx1_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
-                else if (rx2_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
-
-                int cw_line_x;
-
-                if (!split_enabled)
 
                         cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz) / (High - Low) * W);
+
+                    else
+                        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
+
+                    if ((bottom) && tx_on_vfob) // KE9NS ADD  fix mistake made by flex
+                    {
+                        g.DrawLine(tx_filter_pen, cw_line_x, H + top, cw_line_x, H + H);
+                        g.DrawLine(tx_filter_pen, cw_line_x + 1, H + top, cw_line_x + 1, H + H);
+                    }
+                    else if ((!tx_on_vfob) && (!bottom))
+                    {
+                        g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x, H);
+                        g.DrawLine(tx_filter_pen, cw_line_x + 1, top, cw_line_x + 1, H);
+                    }
+
+                } // cw filter lines
+
+            } // rx == 1
+            else // rx == 2
+            {
+                //============================================================================================
+                // ke9ns RX2 draw main filter bandpass display
+                //============================================================================================
+                if (!(local_mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)))  // draw bandpass for RX or bandpass for TX (but not in cW mode)) 
+                {
+                    // get filter screen coordinates
+
+                    int filter_left_x;
+                    int filter_right_x;
+
+                    filter_left_x = (int)((float)(filter_low - Low) / (High - Low) * W); // original
+                    filter_right_x = (int)((float)(filter_high - Low) / (High - Low) * W);
+
+                    // make the filter display at least one pixel wide.
+                    if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+                 
+                  // rx2 always on the bottom
+                        g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                            filter_left_x, H + top, filter_right_x - filter_left_x, H + H - top);
                   
-                else
-                    cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
-
-                if ((bottom) && tx_on_vfob) // KE9NS ADD  fix mistake made by flex
+                } // filter
+                else if ((local_mox) && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)) // draw CW rx box
                 {
-                    g.DrawLine(tx_filter_pen, cw_line_x, H + top, cw_line_x, H + H);
-                    g.DrawLine(tx_filter_pen, cw_line_x + 1, H + top, cw_line_x + 1, H + H);
-                }
-                else if ((!tx_on_vfob) && (!bottom))
-                {
-                    g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x, H);
-                    g.DrawLine(tx_filter_pen, cw_line_x + 1, top, cw_line_x + 1, H);
+
+                    int filter_left_x;
+                    int filter_right_x;
+
+
+                    filter_left_x = (int)((float)(rx2_filter_low - Low) / (High - Low) * W); // original
+                    filter_right_x = (int)((float)(rx2_filter_high - Low) / (High - Low) * W);
+
+
+                    // make the filter display at least one pixel wide.
+                    if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+
+
+                    g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                        filter_left_x, top, filter_right_x - filter_left_x, H - top);
+
                 }
 
-            } // cw filter lines
+                //============================================================================================
+                // ke9ns  RX2 draw tx line for everything but cw
+                //============================================================================================
+                if (!local_mox && draw_tx_filter && (rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU) && (tx_on_vfob))
+                {
+                    // get tx filter limits
+                    int filter_left_x;
+                    int filter_right_x;
+
+                    
+                        if (!split_enabled)
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W); //original
+                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz) / (High - Low) * W); // 
+                        }
+                        else
+                        {
+                            filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfob_sub_hz - vfoa_hz)) / (High - Low) * W);
+                        }
+                    
+                
+                        // draw tx filter overlay
+                        g.DrawLine(tx_filter_pen, filter_left_x, H + top, filter_left_x, H + H);
+                        g.DrawLine(tx_filter_pen, filter_right_x, H + top, filter_right_x, H + H);  // draw tx filter overlay
+
+                
+                } // draw filter width lines
+
+
+                //============================================================================================
+                // ke9ns  RX2 draw tx line for cw
+                //============================================================================================
+                if (!local_mox && draw_tx_cw_freq && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU)  && (tx_on_vfob))
+                {
+                    int pitch = cw_pitch;
+
+                    if (rx2_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
+
+                    int cw_line_x;
+
+                    if (!split_enabled)
+
+                        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz) / (High - Low) * W);
+
+                    else
+                        cw_line_x = (int)((float)(pitch - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
+
+                 
+                        g.DrawLine(tx_filter_pen, cw_line_x, H + top, cw_line_x, H + H);
+                        g.DrawLine(tx_filter_pen, cw_line_x + 1, H + top, cw_line_x + 1, H + H);
+                  
+
+                } // cw filter line
+
+            } // rx == 2
+
+
 
             //===============================================================
             // draw 60m channels if in view
@@ -3054,8 +3295,7 @@ namespace PowerSDR
             }
             else //if(rx==2)
             {
-                if (local_mox && tx_on_vfob)
-                    vfo = vfob_hz + xit_hz;
+                if (local_mox && tx_on_vfob)  vfo = vfob_hz + xit_hz;
                 else vfo = vfob_hz + rit_hz;
             }
 
@@ -3232,11 +3472,12 @@ namespace PowerSDR
                             if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H + top, temp_vline, H + H);//wa6ahl
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
+
                     } // for loop
 
-                break; // USA band edges
+                break; // case FRSRegion.US:
 
-            //===============================================
+                //===============================================
                 case FRSRegion.UK_Plus:
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -3404,13 +3645,14 @@ namespace PowerSDR
                                 g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
                                 is_first = true;
                             }
-                        }             
-                     }
-                break; // europe band edges
-               
-                
+                        }
+                    } //  for (int i = 0; i < band_edge_list_r4.Length; i++)
+
+                    break; //   case FRSRegion.UK_Plus:
+
+
                 //===============================================
-            
+
                 case FRSRegion.Sweden:
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -3537,7 +3779,7 @@ namespace PowerSDR
                         }
                     }
                     // draw 60m band segment rectangles - Sweden
-                    int[] band_edge_list_r6 = { 5310000, 5313000, 5320000, 5323000, 5380000, 5383000, 5390000, 5393000, };
+                    int[] band_edge_list_r6 = { 5310000, 5313000, 5320000, 5323000, 5380000, 5383000, 5390000, 5393000 };
 
                     for (int i = 0; i < band_edge_list_r6.Length; i++)
                     {
@@ -3574,22 +3816,22 @@ namespace PowerSDR
                                 is_first = true;
                             }
                         }
-                    }
-                    break;  // sweden band edges
+                    } // for loop for 60m
+                    break;  //  case FRSRegion.Sweden:
 
 
                 //===============================================
-                case FRSRegion.Spain_UK:
-                case FRSRegion.Europe:
+                case FRSRegion.Spain_UK: // 5.3515 to 5.3665
+                case FRSRegion.Europe: //5.351.5 to 5.366.5  (Germany, Belgium, Spain, Switzerland, Finland, Luxembourg)
                 case FRSRegion.Italy:
-                case FRSRegion.Norway:
-                case FRSRegion.Denmark:
+                case FRSRegion.Norway: // 5.25 to 5.45 (also includes Czech rep)
+                case FRSRegion.Denmark: // 5.25 to 5.45
                 case FRSRegion.Latvia:
                 case FRSRegion.Slovakia:
                 case FRSRegion.Bulgaria:
                 case FRSRegion.Greece:
                 case FRSRegion.Hungary:
-                case FRSRegion.Netherlands:
+                case FRSRegion.Netherlands: // 5.35 to 5.45
                 case FRSRegion.France:
                 case FRSRegion.Russia:
 
@@ -3717,8 +3959,98 @@ namespace PowerSDR
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
                     }
-                    break;
 
+                    if (console.CurrentRegion == FRSRegion.Europe)
+                    {
+                      //          5.351500, 5.335999, "60M 200hz Narrow Band Modes",    true,
+                      //          5.354000, 5.356999, "60M USB Voice",            true,
+                      //          5.357000, 5.359999, "60M USB Voice (US CH 3)",  true,
+                       //         5.360000, 5.362999, "60M USB Voice",            true,
+                      //          5.363000, 5.365999, "60M USB Voice",            true,
+                       //         5.366000, 5.366500, "60M 20hz Narrow Band Modes",    true,
+
+
+                        // draw 60m band segment rectangles - European ( Germany, Belgium, Spain, Switzerland, Finland, Luxembourg)
+                        int[] band_edge_list_r7 = { 5351500, 5335999, 5354000, 5366000, 5366500 };
+
+                        for (int i = 0; i < band_edge_list_r7.Length; i++)
+                        {
+                            double band_edge_offset = band_edge_list_r7[i] - vfo;
+                            if (bottom)
+                            {
+                                if (is_first)
+                                {
+                                    _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                    _y = H + top;
+                                    is_first = false;
+                                }
+                                else
+                                {
+                                    _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                    _height = (H + H) - _y;
+                                    g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                    is_first = true;
+                                }
+                            }
+                            else
+                            {
+                                if (is_first)
+                                {
+                                    _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                    _y = top;
+                                    is_first = false;
+                                }
+                                else
+                                {
+                                    _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                    _height = H - _y;
+                                    g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                    is_first = true;
+                                }
+                            }
+                        } // for loop for 60m
+
+                    } // Europe region
+                    else if (console.CurrentRegion == FRSRegion.Netherlands)
+                    {
+                        int[] band_edge_list_r10 = { 5350000, 5450000 };
+
+                        for (int i = 0; i < band_edge_list_r10.Length; i++)
+                        {
+                            double band_edge_offset = band_edge_list_r10[i] - vfo;
+                            if (band_edge_offset >= Low && band_edge_offset <= High)
+                            {
+                                int temp_vline = (int)((double)(band_edge_offset - Low) / (High - Low) * W);//wa6ahl
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H + top, temp_vline, H + H);//wa6ahl
+                                else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
+                            }
+                        } // for loop
+
+
+                    } //   if (console.CurrentRegion == FRSRegion.Netherlands)
+                    else if (console.CurrentRegion == FRSRegion.Norway || console.CurrentRegion == FRSRegion.Denmark  )
+                    {
+                        int[] band_edge_list_r11 = { 5250000, 5450000 };
+
+                        for (int i = 0; i < band_edge_list_r11.Length; i++)
+                        {
+                            double band_edge_offset = band_edge_list_r11[i] - vfo;
+                            if (band_edge_offset >= Low && band_edge_offset <= High)
+                            {
+                                int temp_vline = (int)((double)(band_edge_offset - Low) / (High - Low) * W);//wa6ahl
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H + top, temp_vline, H + H);//wa6ahl
+                                else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
+                            }
+                        } // for loop
+
+
+                    } //  if (console.CurrentRegion == FRSRegion.Norway || console.CurrentRegion == FRSRegion.Denmark  )
+
+
+
+                    break; // FRSRegion.Europe: (including russia)
+
+                //----------------------------------------------------------------------------------------------------------
                 case FRSRegion.Italy_Plus:
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -3843,7 +4175,7 @@ namespace PowerSDR
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
                     }
-                    break; // russia band edges
+                break; //FRSRegion.Italy_Plus:
 
 
                 //===============================================
@@ -3973,10 +4305,10 @@ namespace PowerSDR
                             else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
                         }
                     }
-                    break;  // Japan Region 3 band edges
+                    break;  // FRSRegion.Region_3: Japan 
 
 
-                //===============================================
+                    //===============================================
 
             } // Band edges (all regions)
 
@@ -3985,19 +4317,20 @@ namespace PowerSDR
             //===============================================================
             // Draw horizontal lines  ke9ns hstep
             //===============================================================
-          
-			for(int i=1; i< h_steps; i++)  // h_steps number of times
+
+            for (int i=1; i < h_steps; i++)  // h_steps number of times
      		{
 				int xOffset = 0;
 
                 int num;
 
-                if ((K9 == 5) & (K10 != 5) && (bottom))  num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  //ke9ns mod we want RX2 step to be the same as RX1 while in panafall
-                else if ((K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  // ke9ns mod we want RX2 step to be the same as RX1 while in panafall 
+
+                if ( (K9 == 5) & (K10 != 5) && (bottom))  num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  //ke9ns mod we want RX2 step to be the same as RX1 while in panafall
+                else if ( (K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2));  // ke9ns mod we want RX2 step to be the same as RX1 while in panafall 
                 else  num = spectrum_grid_max - (i * grid_step);                // generate the proper db number
 
                 int y;
-                if ((K9 == 5) & (K10 != 5) && (bottom)) y = (int)((double)(spectrum_grid_max - num) * H1 / y_range);   // ke9ns mod
+                if ( (K9 == 5) & (K10 != 5) && (bottom)) y = (int)((double)(spectrum_grid_max - num) * H1 / y_range);   // ke9ns mod
                 else if ((K9 == 5) & (K10 == 5) && (bottom)) y = (int)((double)(spectrum_grid_max - num) * H1 / y_range); // ke9ns mod
 			    else y = (int)((double)(spectrum_grid_max - num) * H / y_range);
 
@@ -4032,8 +4365,8 @@ namespace PowerSDR
 				if(i != 1) // avoid intersecting vertical and horizontal labels
 				{
 
-                    if ((K9 == 5) & (K10 != 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod (lines based on area of panadapter and waterfall etc)
-                    else if ((K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod
+                    if ( (K9 == 5) & (K10 != 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod (lines based on area of panadapter and waterfall etc)
+                    else if ( (K9 == 5) & (K10 == 5) && (bottom)) num = spectrum_grid_max - (i * (spectrum_grid_step * 2)); // ke9ns mod
                     else  num = spectrum_grid_max - (i * grid_step);
 
 					string label = num.ToString();
@@ -4057,26 +4390,81 @@ namespace PowerSDR
 						case DisplayLabelAlignment.AUTO:
 							x = xOffset + 3;
 							break;
-						case DisplayLabelAlignment.OFF:
+                        case DisplayLabelAlignment.Sunit: // ke9ns add
+                            x = xOffset + 3;
+                            break;
+                        case DisplayLabelAlignment.OFF:
 							x = W;
 							break;
 					}
 
 					y -= 8;
-					if(y+9 < H)
+
+					if( (y+9) < H)
 					{
-						if(bottom) g.DrawString(label, font, grid_text_brush, x, H+y);
+
+                        if (bottom) g.DrawString(label, font, grid_text_brush, x, H+y);  // draw dBm readings
 						else g.DrawString(label, font, grid_text_brush, x, y);
 
-                        if (grid_off == 1) // ke9ns add  (when grid off then draw db number on right side for sure)
+                      
+                        //-----------------------------------------------------------------------------
+                        // ke9ns add to show S units for both HF and VHF
+                       //  was if (grid_off == 1) // ke9ns add  (when grid off then draw dBm number on right side )
+                        if ((!local_mox) && ((display_label_align == DisplayLabelAlignment.LEFT) || (display_label_align == DisplayLabelAlignment.AUTO) || (display_label_align == DisplayLabelAlignment.Sunit))) // ke9ns add 
                         {
-                            x = (int)(W - size.Width - 3);
+                         
+                            string SS;
 
-                            if (bottom) g.DrawString(label, font, grid_text_brush, x, H + y);
-                            else g.DrawString(label, font, grid_text_brush, x, y);
-                        }
+                            if (VFOA < 30000000)
+                            {
+                                if (num >= -68) // wait until your 5dbm over s9
+                                {
+                                    SS = "+" + (num + 73).ToString();
+                                }
+                            
+                                else if (num >= -73) SS = "S9"; // S9 is -73 to -64
+                                else if (num >= -79) SS = "S8"; // S8 is -79 to -74
+                                else if (num >= -85) SS = "S7"; // S7 is -85 to -80
+                                else if (num >= -91) SS = "S6"; // S6 is -91 to -86
+                                else if (num >= -97) SS = "S5"; // S5 is -97 to -92
+                                else if (num >= -103) SS = "S4"; // S4 is -103 to -98
+                                else if (num >= -109) SS = "S3"; // S3 is -109 to -104 
+                                else if (num >= -115) SS = "S2"; // S2 is -115 to -110
+                                else if (num >= -121) SS = "S1"; // S1 is -121 to -114 
+                                else SS = "S0";                  // S0 is -133 to -122
+                            }
+                            else // VHF S readings
+                            {
 
-                    }
+                                if (num >= -88) // wait until your 5dbm over s9
+                                {
+                                    SS = "+" + (num + 93).ToString();
+                                }
+
+                                else if (num >= -93) SS = "S9";  // S9 is -93 to -82
+                                else if (num >= -99) SS = "S8";  // S8 is -99 to -94
+                                else if (num >= -105) SS = "S7"; // S7 is -105 to -100
+                                else if (num >= -111) SS = "S6"; // S6 is -111 to -106
+                                else if (num >= -117) SS = "S5"; // S5 is -117 to -112
+                                else if (num >= -123) SS = "S4"; // S4 is -123 to -118
+                                else if (num >= -129) SS = "S3"; // S3 is -129 to -124 
+                                else if (num >= -135) SS = "S2"; // S2 is -135 to -130
+                                else if (num >= -141) SS = "S1"; // S1 is -141 to -134 
+                                else SS = "S0";                  // S0 is -153 to -142
+                            }
+
+                          
+                            size = g.MeasureString(SS, font);
+
+                            x = (int)(W - size.Width - 3); //draw on right side
+
+                            if (bottom) g.DrawString(SS, font, grid_text_brush, x, H + y); // draw S meter readings on Right side of screen only
+                            else g.DrawString(SS, font, grid_text_brush, x, y);
+
+                        } //  display dbm on left
+
+
+                    } // if( (y+9) < H)
 
 
 
@@ -4864,11 +5252,15 @@ namespace PowerSDR
 
             //   Debug.WriteLine("KE9NS top................. " + top);
 
-            if ((continuum == 0) || (rx == 2))
+            if ((continuum == 0)) // || (rx == 2))
             {
-                if (!bottom)
+                if (rx == 1) // was !bottom
                 {
-                    if (!mox && sub_rx1_enabled)
+
+                    //===========================================================================================
+                    // ke9ns RX1 draw sub rec bandpass area
+                    //===========================================================================================
+                    if (!mox && sub_rx1_enabled && (!bottom))
                     {
                         // draw Sub RX 0Hz line
                         int x = (int)((float)(vfoa_sub_hz - vfoa_hz - low) / (high - low) * W);
@@ -4887,29 +5279,46 @@ namespace PowerSDR
                         // draw rx filter
                         g.FillRectangle(new SolidBrush(sub_rx_filter_color),    // draw filter overlay
                             filter_left_x, 0, filter_right_x - filter_left_x, top);
+
                     } // sub rx1 on
 
-                    if (!(mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))
+
+                    //===========================================================================================
+                    // ke9ns RX1 draw main bandpass area
+                    //===========================================================================================
+                    if (!(mox && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)))  // draw bandpass for RX or bandpass for TX (but not in cW mode)
                     {
+                     
                         // get filter screen coordinates
                         int filter_left_x;
                         int filter_right_x;
-
-
                    
-                             filter_left_x = (int)((float)(filter_low - low) / (high - low) * W);
-                             filter_right_x = (int)((float)(filter_high - low) / (high - low) * W);
-                      
-
+                        filter_left_x = (int)((float)(filter_low - low) / (high - low) * W);
+                        filter_right_x = (int)((float)(filter_high - low) / (high - low) * W);
+                     
                         // make the filter display at least one pixel wide.
                         if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
 
-                        // draw rx filter
-                        g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
-                            filter_left_x, 0, filter_right_x - filter_left_x, top);
-                    } // cw
+                        if (bottom) // bottom half K9==3 or K9==5 if rx2 enabled
+                        {
 
-                    if (!mox && draw_tx_filter && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
+                         //   if (K9 == 3 )
+                          //  {
+                          //      g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                          //          filter_left_x, H, filter_right_x - filter_left_x, H + top); 
+                          //  }
+                        }
+                        else // top half this would be water only K9 == 1
+                        {
+                                g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                                filter_left_x, 0, filter_right_x - filter_left_x,  top);
+                        }
+                    } // main RX1 waterfall bandpass
+
+                    //===========================================================================================
+                    // ke9ns RX1 draw tx anything but cw lines
+                    //===========================================================================================
+                    if ((!mox) && (draw_tx_filter) && (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU))
                     {
                         // get tx filter limits
                         int filter_left_x;
@@ -4917,11 +5326,8 @@ namespace PowerSDR
 
                         if (!split_enabled)
                         {
-
-                        
-                                filter_left_x = (int)((float)(tx_filter_low - low + xit_hz) / (high - low) * W);
-                                filter_right_x = (int)((float)(tx_filter_high - low + xit_hz) / (high - low) * W);
-                          
+                            filter_left_x = (int)((float)(tx_filter_low - low + xit_hz) / (high - low) * W);
+                            filter_right_x = (int)((float)(tx_filter_high - low + xit_hz) / (high - low) * W);
                         }
                         else
                         {
@@ -4929,39 +5335,142 @@ namespace PowerSDR
                             filter_right_x = (int)((float)(tx_filter_high - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
                         }
 
-                        g.DrawLine(tx_filter_pen, filter_left_x , H, filter_left_x , H + top);        // draw tx filter overlay
-                        g.DrawLine(tx_filter_pen, filter_left_x + 1 , H, filter_left_x + 1, H + top);    // draw tx filter overlay
+                        if (!bottom) // top half 
+                        {
+                            g.DrawLine(tx_filter_pen, filter_left_x, 0, filter_left_x,  top);        // draw tx filter overlay  0. H + top
+                            g.DrawLine(tx_filter_pen, filter_right_x, 0, filter_right_x,top);      // draw tx filter overlay
+                        }
+                        else // bottom half  K9 ==3 or K9==5 if rX2 on
+                        {
 
-                        g.DrawLine(tx_filter_pen, filter_right_x, H , filter_right_x , H + top);      // draw tx filter overlay
-                        g.DrawLine(tx_filter_pen, filter_right_x + 1 , H, filter_right_x + 1 , H + top);  // draw tx filter overlay
+                            if (K9 == 3)
+                            {
+                                g.DrawLine(tx_filter_pen, filter_left_x, H, filter_left_x, H + top);        // draw tx filter overlay  0. H + top
+                                g.DrawLine(tx_filter_pen, filter_right_x, H, filter_right_x, H + top);      // draw tx filter overlay
+                            }
+                
+                        }
 
                     } // 
 
+                    //===========================================================================================
+                    // ke9ns RX1 draw tx cw line
+                    //===========================================================================================
                     if (!mox && draw_tx_cw_freq && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU))
                     {
                         int pitch = cw_pitch;
-                        if (rx1_dsp_mode == DSPMode.CWL)
-                            pitch = -cw_pitch;
+                        if (rx1_dsp_mode == DSPMode.CWL)   pitch = -cw_pitch;
 
                         int cw_line_x;
                         if (!split_enabled)
                          
-                                cw_line_x = (int)((float)(pitch - low + xit_hz) / (high - low) * W);
-                          
-
+                             cw_line_x = (int)((float)(pitch - low + xit_hz) / (high - low) * W);
+                   
                         else
-                            cw_line_x = (int)((float)(pitch - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+                             cw_line_x = (int)((float)(pitch - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
 
-                        g.DrawLine(tx_filter_pen, cw_line_x, top, cw_line_x , H);
-                        g.DrawLine(tx_filter_pen, cw_line_x + 1 , top, cw_line_x + 1 , H);
+                        if (!bottom) // top
+                        {
+                            g.DrawLine(tx_filter_pen, cw_line_x, 0, cw_line_x, top);
+                            g.DrawLine(tx_filter_pen, cw_line_x + 1, 0, cw_line_x + 1, top);
+                        }
+                        else // bottom half  K9 ==3 or K9==5 if rX2 on
+                        {
+                            if (K9 == 3)
+                            {
+                                g.DrawLine(tx_filter_pen, cw_line_x, H, cw_line_x, H + top);
+                                g.DrawLine(tx_filter_pen, cw_line_x + 1, H, cw_line_x + 1, H + top);
+                            }
+
+                        }
                     }
 
-                } // TOP of screen (full screen )
+                } // rx == 1
+                else // rx == 2
+                {
 
-            } // no continuum mode
+                    if (K10 == 1) // if RX2 only on water mode
+                    {
+                        //===========================================================================================
+                        // ke9ns RX2 draw main  bandpass area
+                        //===========================================================================================
+                        if (!(mox && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU) ))  // draw bandpass for RX or bandpass for TX (but not in cW mode)) 
+                        {
+                            // get filter screen coordinates
+                            int filter_left_x;
+                            int filter_right_x;
+
+                            filter_left_x = (int)((float)(filter_low - low) / (high - low) * W);
+                            filter_right_x = (int)((float)(filter_high - low) / (high - low) * W);
+
+                            // make the filter display at least one pixel wide.
+                            if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
+
+                            // draw rx filter
+                            g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                                filter_left_x, H, filter_right_x - filter_left_x, H + top);
+
+                        } // RX2 main rx2 bandpass in the waterfall
+
+
+                        //===========================================================================================
+                        // ke9ns RX2 draw tx anything but cw lines
+                        //===========================================================================================
+                        if (!mox && draw_tx_filter && (rx2_dsp_mode != DSPMode.CWL && rx2_dsp_mode != DSPMode.CWU) && (tx_on_vfob))
+                        {
+                            // get tx filter limits
+                            int filter_left_x;
+                            int filter_right_x;
+
+                            if (!split_enabled)
+                            {
+                                filter_left_x = (int)((float)(tx_filter_low - low + xit_hz) / (high - low) * W);
+                                filter_right_x = (int)((float)(tx_filter_high - low + xit_hz) / (high - low) * W);
+                            }
+                            else
+                            {
+                                filter_left_x = (int)((float)(tx_filter_low - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+                                filter_right_x = (int)((float)(tx_filter_high - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+                            }
+
+                            g.DrawLine(tx_filter_pen, filter_left_x, H, filter_left_x, H + top);        // draw tx filter overlay
+                            g.DrawLine(tx_filter_pen, filter_right_x, H, filter_right_x, H + top);      // draw tx filter overlay
+
+                        } // TX2 transmit lines
+
+                        //===========================================================================================
+                        // ke9ns RX2 draw tx cw line
+                        //===========================================================================================
+                        if ((!mox) && (draw_tx_cw_freq) && (rx2_dsp_mode == DSPMode.CWL || rx2_dsp_mode == DSPMode.CWU) && (tx_on_vfob))
+                        {
+                            int pitch = cw_pitch;
+                            if (rx2_dsp_mode == DSPMode.CWL) pitch = -cw_pitch;
+
+                            int cw_line_x;
+                            if (!split_enabled)
+
+                                cw_line_x = (int)((float)(pitch - low + xit_hz) / (high - low) * W);
+
+                            else
+                                cw_line_x = (int)((float)(pitch - low + xit_hz + (vfoa_sub_hz - vfoa_hz)) / (high - low) * W);
+
+                            g.DrawLine(tx_filter_pen, cw_line_x, H, cw_line_x, H + top);
+                            g.DrawLine(tx_filter_pen, cw_line_x + 1, H, cw_line_x + 1, H + top);
+
+                        } // cw transmit line
+
+                    }
+            } // rx==2
+
+
+
+        } // no continuum mode
 
 			double vfo;
 			
+
+            //===========================================================================================
+
 			if(mox)
 			{
                 if (split_enabled) vfo = vfoa_sub_hz;
@@ -4973,24 +5482,35 @@ namespace PowerSDR
 			else if(rx==1)
 			{
 				vfo = vfoa_hz + rit_hz;
-                                                            
+                switch (rx1_dsp_mode)
+                {
+                    case DSPMode.CWL:
+                        vfo += cw_pitch;
+                        break;
+                    case DSPMode.CWU:
+                        vfo -= cw_pitch;
+                        break;
+                    default:
+                        break;
+                }
             }
             else //if(rx==2)
 			{
 				vfo = vfob_hz + rit_hz;
-			}
+                switch (rx2_dsp_mode)
+                {
+                    case DSPMode.CWL:
+                        vfo += cw_pitch;
+                        break;
+                    case DSPMode.CWU:
+                        vfo -= cw_pitch;
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-			switch(rx1_dsp_mode)
-			{
-				case DSPMode.CWL:
-					vfo += cw_pitch;
-					break;
-				case DSPMode.CWU:
-					vfo -= cw_pitch;
-					break;
-				default:
-					break;
-			}
+			
 
 			long vfo_round = ((long)(vfo/freq_step_size))*freq_step_size;  // round freq you are currently on
 			long vfo_delta = (long)(vfo - vfo_round); // difference between real and rounded
@@ -5437,6 +5957,10 @@ namespace PowerSDR
                             }
                             if (i == 1 && !show_freq_offset) break;
                         }
+
+
+
+
 
                         break; // Europe Region for drawing waterfall freq number
 
@@ -5963,13 +6487,13 @@ namespace PowerSDR
                 {
 
                         spectrum_grid_max = 0;// TX high level db
-                      //  spectrum_grid_min = -140; // TX low level db
+                        spectrum_grid_min = spectrum_grid_min1; // TX low level db
 
                 }
                 else if ((!tx_on_vfob) && (rx == 1))
                 {
                        spectrum_grid_max = 0;// TX high level db
-                      //  spectrum_grid_min = -140; // TX low level db
+                        spectrum_grid_min = spectrum_grid_min1; // TX low level db
                 }
                 else
                 {
@@ -5978,12 +6502,12 @@ namespace PowerSDR
             }
             else
             {
-                spectrum_grid_max = spectrum_grid_max1;  //ke9ns put back normal RX grids 
-              //  spectrum_grid_min = spectrum_grid_min1;
+                 spectrum_grid_max = spectrum_grid_max1;  //ke9ns put back normal RX grids 
+                 spectrum_grid_min = spectrum_grid_min1;
 
             }
 
-                DrawPanadapterGrid(ref g, W, H, rx, bottom);
+            DrawPanadapterGrid(ref g, W, H, rx, bottom);
 
             if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // for display in 1/3 area instead of 1/2
 
@@ -5992,8 +6516,7 @@ namespace PowerSDR
            
             if (pan_fill)
             {
-                if (points == null || points.Length < W + 2)
-                    points = new Point[W + 2];
+                if (points == null || points.Length < W + 2)  points = new Point[W + 2];
             }
             else
             {
@@ -6216,7 +6739,7 @@ namespace PowerSDR
 
                 //=========================================================================
                 // ke9ns add
-                if ((console.BeaconSigAvg == true) &&( rx == 1)) // ke9ns add for beacon scanning
+                if ( (console.BeaconSigAvg == true)  && ( rx == 1)) // ke9ns add for beacon scanning
                 {
                     max1 = max1 + max; // sum up entire panadapter line (left to right)
 
@@ -6258,6 +6781,8 @@ namespace PowerSDR
              
 
             } //  if (console.BeaconSigAvg == true)
+
+        
 
             //=========================================================================
             // ke9ns waterfall adjust

@@ -133,9 +133,9 @@ namespace PowerSDR.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] swissbi {
+        public static byte[] swisscki {
             get {
-                object obj = ResourceManager.GetObject("swissbi", resourceCulture);
+                object obj = ResourceManager.GetObject("swisscki", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -146,16 +146,6 @@ namespace PowerSDR.Properties {
         public static byte[] swissek {
             get {
                 object obj = ResourceManager.GetObject("swissek", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] swisski {
-            get {
-                object obj = ResourceManager.GetObject("swisski", resourceCulture);
                 return ((byte[])(obj));
             }
         }

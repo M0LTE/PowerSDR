@@ -1,11 +1,9 @@
-﻿Build started 11/23/2016 12:58:38 PM.
+﻿Build started 12/10/2016 3:26:56 PM.
      1>Project "C:\Users\RADIO\Documents\Visual Studio 2015\Projects\PowerSDR_v2.7.2\Source\PowerMate\PowerMate.vcxproj" on node 2 (Rebuild target(s)).
      1>_PrepareForClean:
          Deleting file "Release\PowerMate.tlog\PowerMate.lastbuildstate".
        InitializeBuildStatus:
          Creating "Release\PowerMate.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
-       GenerateTargetFrameworkMonikerAttribute:
-       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I.\win /I..\pthread /I. /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /AI"C:\Program Files (x86)\Windows Kits\8.1\References\CommonConfiguration\Neutral" /Zi /clr /nologo /W3 /WX- /O2 /Oy- /GL /D WIN32 /D NDEBUG /D _WINDLL /D _MBCS /Gm- /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"Release\PowerMate.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt /clr:nostdlib Stdafx.cpp
          Stdafx.cpp
@@ -33,4 +31,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.62
+Time Elapsed 00:00:08.81

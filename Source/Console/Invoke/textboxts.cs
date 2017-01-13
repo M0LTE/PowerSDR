@@ -49,7 +49,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public new bool AcceptsTab
+
+       
+
+        public new bool AcceptsTab
 		{
 			get { return base.AcceptsTab; }
 			set

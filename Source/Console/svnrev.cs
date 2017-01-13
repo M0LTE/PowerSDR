@@ -32,6 +32,6 @@ namespace PowerSDR
 {
     class SVNRev
     {
-        public const string LATEST_REV = "5123";
+        public const string LATEST_REV = "2"; // 5123 was last 2.7.2 version
     }
 }

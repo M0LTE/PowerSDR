@@ -123,6 +123,25 @@
   <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>147, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>264, 17</value>
+  </metadata>
+  <data name="checkBoxTS2.ToolTip" xml:space="preserve">
+    <value>Click the REPLY button to record your Voice or CW,
+Speak, or CW your Callsign as you would when trying to contact a DX station.
+Then click REPLY button again, to end the recording.
+
+Use the REPLY button, found on the main console screen.</value>
+  </data>
+  <data name="checkBoxCQ.ToolTip" xml:space="preserve">
+    <value>Click the CQCQ button to record your Voice or CW,
+Speak, or CW a "CQ DE &lt;your callsign&gt;" as you would when trying to make a CQ contact.
+Then click CQCQ button again, to end the recording.
+
+Use the CQCQ button, found on the main console screen.
+
+</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

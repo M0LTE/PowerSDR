@@ -293,19 +293,21 @@ NO WARRANTY
 12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</value>
   </data>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>PowerSDR 2.7.2 ke9ns Rev T11:
+    <value>PowerSDR 2.8.0 ke9ns Rev T12:
 
 For Revision history visit: http://ke9ns.com/flexpage.html/#GPLREV
 
-Features add DOC file:
-"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PoweRSDR_ke9ns_Feature_Add_List.docx"
+Features add PDF file:
+"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PoweRSDR_ke9ns_Feature_Add_List.pdf"
 
 
-TX Waterfall ID DOC file:
-"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PowerSDR%20TX%20Waterfall%20ID.docx"
+TX Waterfall ID PDF file:
+"file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.7.2\PowerSDR%20TX%20Waterfall%20ID.pdf"
 
 Each Video covers additional features not covered in earlier videos:
-
+YouTube Video Describing RevT11 (ID Timer): https://www.youtube.com/embed/-KSlMNyN8U0
+YouTube Video Describing RevT11 (BandStack): https://www.youtube.com/embed/CQFvdhAtMaE
+YouTube Video Describing RevT11 (Pulser): https://www.youtube.com/embed/uruyOtyLRvM
 YouTube Video Describing RevT11 (VOACAP): https://www.youtube.com/embed/nBkeqs9No2E
 YouTube Video Describing RevT11 (NIST Time Sync): https://www.youtube.com/embed/p-5wKRw2xdY
 YouTube Video Describing RevT11 (NCDXF Beacon): https://www.youtube.com/embed/tJBvmF5t9zc

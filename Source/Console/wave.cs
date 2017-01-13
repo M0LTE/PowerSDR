@@ -93,6 +93,14 @@ namespace PowerSDR
         public CheckBoxTS chkQuickAudioFolder; // ke9ns add
         private TextBox textBox1;
         public CheckBoxTS chkBoxMP3;
+        public CheckBoxTS checkBoxVoice;
+        public CheckBoxTS checkBoxCW;
+        public CheckBoxTS checkBoxCQ;
+        private ToolTip toolTip1;
+        private GroupBoxTS groupBoxTS2;
+        public CheckBoxTS checkBoxTS1;
+        public CheckBoxTS checkBoxTS2;
+        private CheckBoxTS chkAlwaysOnTop;
         private IContainer components;
 
 		#region Constructor and Destructor
@@ -151,7 +159,15 @@ namespace PowerSDR
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.mnuWaveOptions = new System.Windows.Forms.MenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxTS2 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxVoice = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxCQ = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxCW = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickAudioFolder = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxTS2 = new System.Windows.Forms.GroupBoxTS();
+            this.chkBoxMP3 = new System.Windows.Forms.CheckBoxTS();
             this.createBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.TXIDBoxTS = new System.Windows.Forms.CheckBoxTS();
             this.chkQuickPlay = new System.Windows.Forms.CheckBoxTS();
@@ -169,8 +185,9 @@ namespace PowerSDR
             this.checkBoxPause = new System.Windows.Forms.CheckBoxTS();
             this.btnStop = new System.Windows.Forms.ButtonTS();
             this.checkBoxPlay = new System.Windows.Forms.CheckBoxTS();
-            this.chkBoxMP3 = new System.Windows.Forms.CheckBoxTS();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.grpPlaylist.SuspendLayout();
+            this.groupBoxTS2.SuspendLayout();
             this.groupBoxTS1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbPreamp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPreamp)).BeginInit();
@@ -276,15 +293,114 @@ namespace PowerSDR
             this.textBox1.Size = new System.Drawing.Size(392, 62);
             this.textBox1.TabIndex = 59;
             // 
+            // checkBoxTS1
+            // 
+            this.checkBoxTS1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxTS1.Image = null;
+            this.checkBoxTS1.Location = new System.Drawing.Point(318, 431);
+            this.checkBoxTS1.Name = "checkBoxTS1";
+            this.checkBoxTS1.Size = new System.Drawing.Size(72, 24);
+            this.checkBoxTS1.TabIndex = 64;
+            this.checkBoxTS1.Text = "MP3 Folder";
+            this.checkBoxTS1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.checkBoxTS1, "Opens QuickAudio folder containing MP3 files");
+            this.checkBoxTS1.CheckedChanged += new System.EventHandler(this.checkBoxTS1_CheckedChanged);
+            // 
+            // checkBoxTS2
+            // 
+            this.checkBoxTS2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxTS2.Image = null;
+            this.checkBoxTS2.Location = new System.Drawing.Point(204, 25);
+            this.checkBoxTS2.Name = "checkBoxTS2";
+            this.checkBoxTS2.Size = new System.Drawing.Size(72, 24);
+            this.checkBoxTS2.TabIndex = 64;
+            this.checkBoxTS2.Text = "Reply";
+            this.checkBoxTS2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.checkBoxTS2, resources.GetString("checkBoxTS2.ToolTip"));
+            this.checkBoxTS2.CheckedChanged += new System.EventHandler(this.checkBoxTS2_CheckedChanged);
+            // 
+            // checkBoxVoice
+            // 
+            this.checkBoxVoice.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxVoice.Image = null;
+            this.checkBoxVoice.Location = new System.Drawing.Point(21, 25);
+            this.checkBoxVoice.Name = "checkBoxVoice";
+            this.checkBoxVoice.Size = new System.Drawing.Size(72, 24);
+            this.checkBoxVoice.TabIndex = 61;
+            this.checkBoxVoice.Text = "Voice ID";
+            this.checkBoxVoice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.checkBoxVoice, "Record a Voice ID of your callsign.\r\nUsed by the voID Timer feature on the main c" +
+        "onsole.\r\n\r\nClick to Start/Stop record a CW ID File: IDTIMER.wav\r\n");
+            this.checkBoxVoice.CheckedChanged += new System.EventHandler(this.checkBoxVoice_CheckedChanged);
+            // 
+            // checkBoxCQ
+            // 
+            this.checkBoxCQ.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxCQ.Image = null;
+            this.checkBoxCQ.Location = new System.Drawing.Point(292, 25);
+            this.checkBoxCQ.Name = "checkBoxCQ";
+            this.checkBoxCQ.Size = new System.Drawing.Size(72, 24);
+            this.checkBoxCQ.TabIndex = 63;
+            this.checkBoxCQ.Text = "CQ CQ";
+            this.checkBoxCQ.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.checkBoxCQ, resources.GetString("checkBoxCQ.ToolTip"));
+            this.checkBoxCQ.CheckedChanged += new System.EventHandler(this.checkBoxCQ_CheckedChanged);
+            // 
+            // checkBoxCW
+            // 
+            this.checkBoxCW.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxCW.Image = null;
+            this.checkBoxCW.Location = new System.Drawing.Point(110, 25);
+            this.checkBoxCW.Name = "checkBoxCW";
+            this.checkBoxCW.Size = new System.Drawing.Size(72, 24);
+            this.checkBoxCW.TabIndex = 62;
+            this.checkBoxCW.Text = "CW ID";
+            this.checkBoxCW.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.checkBoxCW, "Record a CW ID of your callsign.\r\nUsed by the cwID Timer feature on the main coso" +
+        "le.\r\n\r\nClick to Start/Stop record a CW ID File: IDTIMERCW.wav\r\n\r\nMake sure to be" +
+        " in CW mode and open CWX panel.");
+            this.checkBoxCW.CheckedChanged += new System.EventHandler(this.checkBoxCW_CheckedChanged);
+            // 
             // chkQuickAudioFolder
             // 
+            this.chkQuickAudioFolder.Checked = true;
+            this.chkQuickAudioFolder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkQuickAudioFolder.Image = null;
-            this.chkQuickAudioFolder.Location = new System.Drawing.Point(8, 362);
+            this.chkQuickAudioFolder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.chkQuickAudioFolder.Location = new System.Drawing.Point(8, 431);
             this.chkQuickAudioFolder.Name = "chkQuickAudioFolder";
-            this.chkQuickAudioFolder.Size = new System.Drawing.Size(172, 26);
+            this.chkQuickAudioFolder.Size = new System.Drawing.Size(148, 26);
             this.chkQuickAudioFolder.TabIndex = 58;
             this.chkQuickAudioFolder.Text = "QuickAudio Save Folder";
+            this.chkQuickAudioFolder.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.chkQuickAudioFolder, "This box should remain Check.\r\nThis allows multiple QuickAudio files to be stored" +
+        "\r\nand puts them into a folder called \"QuickAudio\"");
             this.chkQuickAudioFolder.CheckedChanged += new System.EventHandler(this.chkQuickAudioFolder_CheckedChanged);
+            // 
+            // groupBoxTS2
+            // 
+            this.groupBoxTS2.Controls.Add(this.checkBoxTS2);
+            this.groupBoxTS2.Controls.Add(this.checkBoxVoice);
+            this.groupBoxTS2.Controls.Add(this.checkBoxCQ);
+            this.groupBoxTS2.Controls.Add(this.checkBoxCW);
+            this.groupBoxTS2.Location = new System.Drawing.Point(12, 362);
+            this.groupBoxTS2.Name = "groupBoxTS2";
+            this.groupBoxTS2.Size = new System.Drawing.Size(388, 59);
+            this.groupBoxTS2.TabIndex = 11;
+            this.groupBoxTS2.TabStop = false;
+            this.groupBoxTS2.Text = "Create Special QuickAudio Files";
+            // 
+            // chkBoxMP3
+            // 
+            this.chkBoxMP3.Checked = true;
+            this.chkBoxMP3.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBoxMP3.Image = null;
+            this.chkBoxMP3.Location = new System.Drawing.Point(162, 431);
+            this.chkBoxMP3.Name = "chkBoxMP3";
+            this.chkBoxMP3.Size = new System.Drawing.Size(150, 26);
+            this.chkBoxMP3.TabIndex = 60;
+            this.chkBoxMP3.Text = "QuickAudio Create MP3\r\n";
+            this.chkBoxMP3.CheckedChanged += new System.EventHandler(this.chkBoxMP3_CheckedChanged);
             // 
             // createBoxTS
             // 
@@ -511,20 +627,23 @@ namespace PowerSDR
             this.checkBoxPlay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxPlay.CheckedChanged += new System.EventHandler(this.checkBoxPlay_CheckedChanged);
             // 
-            // chkBoxMP3
+            // chkAlwaysOnTop
             // 
-            this.chkBoxMP3.Image = null;
-            this.chkBoxMP3.Location = new System.Drawing.Point(182, 362);
-            this.chkBoxMP3.Name = "chkBoxMP3";
-            this.chkBoxMP3.Size = new System.Drawing.Size(165, 26);
-            this.chkBoxMP3.TabIndex = 60;
-            this.chkBoxMP3.Text = "QuickAudio Create MP3\r\n";
-            this.chkBoxMP3.CheckedChanged += new System.EventHandler(this.chkBoxMP3_CheckedChanged);
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(301, 469);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(99, 19);
+            this.chkAlwaysOnTop.TabIndex = 65;
+            this.chkAlwaysOnTop.Text = "Always On Top";
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
             // WaveControl
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(416, 405);
+            this.ClientSize = new System.Drawing.Size(416, 500);
+            this.Controls.Add(this.chkAlwaysOnTop);
+            this.Controls.Add(this.checkBoxTS1);
+            this.Controls.Add(this.groupBoxTS2);
             this.Controls.Add(this.chkBoxMP3);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.chkQuickAudioFolder);
@@ -543,6 +662,7 @@ namespace PowerSDR
             this.Text = "Wave File Controls";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.WaveControl_Closing);
             this.grpPlaylist.ResumeLayout(false);
+            this.groupBoxTS2.ResumeLayout(false);
             this.groupBoxTS1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbPreamp)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPreamp)).EndInit();
@@ -655,13 +775,27 @@ namespace PowerSDR
 
 			if(!File.Exists(filename))                                      // ke9ns check if file name works
 			{
-				MessageBox.Show("Filename doesn't exist. ("+filename+")",
-					"Bad Filename",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
-				file_list.RemoveAt(currently_playing);
-				return false;
-			}
+                if (chkQuickAudioFolder.Checked == true)
+                {
+                    MessageBox.Show("QuickAudio Save Folder Filename doesn't exist. (" + filename + ")\n" +
+                    "Close this message, and Right Click on the Play button, then select a file and Click Open,\n" +
+                    "You most likely renamed a Quickaudio file which caused this. " , "Bad Filename",
+                      MessageBoxButtons.OK,
+                      MessageBoxIcon.Error);
+
+                  
+                }
+                else
+                {
+                    MessageBox.Show("Filename doesn't exist. (" + filename + ")",
+                        "Bad Filename",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    file_list.RemoveAt(currently_playing);
+                    
+                }
+                return false;
+            }
 
 			BinaryReader reader = null;
 			try
@@ -1219,7 +1353,35 @@ namespace PowerSDR
                 System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
 
 
-                if (QPFile != null)
+                if (console.TIMETOID == true) // ke9ns add
+                {
+                    console.TIMETOID = false; // reset ID 
+
+                    file_name = console.AppDataPath + "QuickAudio" + "\\IDTIMER.wav";            // ke9ns 
+
+                }
+                else if (console.TIMETOID1 == true) // ke9ns add
+                {
+                    console.TIMETOID1 = false; // reset ID 
+
+                    file_name = console.AppDataPath + "QuickAudio" + "\\IDTIMERCW.wav";            // ke9ns 
+
+                }
+                else if (console.CQCQCALL == true) // ke9ns add
+                {
+                    console.CQCQCALL = false; // reset ID 
+
+                    file_name = console.AppDataPath + "QuickAudio" + "\\CQCQ.wav";            // ke9ns 
+
+                }
+                else if (console.CALLCALL == true) // ke9ns add
+                {
+                    console.CALLCALL = false; // reset ID 
+
+                    file_name = console.AppDataPath + "QuickAudio" + "\\CALL.wav";            // ke9ns 
+
+                }
+                else if (QPFile != null)
                 {
                     file_name = QPFile; // ke9ns check file name passed from console play button
                     
@@ -1254,7 +1416,7 @@ namespace PowerSDR
 
              //   temp_pre = Audio.MON_PRE; // ke9ns add
 
-                temp_mon = console.MON;
+                temp_mon = console.MON; // record original MON setting
 
 #if NO_MON
                 if (console.RX1DSPMode == DSPMode.AM || console.RX1DSPMode == DSPMode.FM || console.RX1DSPMode == DSPMode.SAM)
@@ -1266,10 +1428,12 @@ namespace PowerSDR
                     console.MON = true;
                 }
 #else
-                if (temp_mon == false)
+                if (temp_mon == false) // if original MON was OFF
                 {
                     Audio.MON_PRE = 0;
-                    console.MONINIT = 1;
+
+                    console.MONINIT = 1; // ke9ns add
+
                     console.MON = true; // turn post MON on
                  //   Debug.WriteLine("1mon == false");
                 }
@@ -2133,10 +2297,154 @@ namespace PowerSDR
 
         } // chkQuickAudioFolder_CheckedChanged
 
+
+        // ke9ns add
         private void chkBoxMP3_CheckedChanged(object sender, EventArgs e)
         {
 
         }
+
+
+        //===========================================================================
+        // ke9ns add
+        private void checkBoxVoice_CheckedChanged(object sender, EventArgs e)
+        {
+            chkQuickAudioFolder.Checked = true;
+            console.checkBoxID.Checked = true;
+
+           
+            if (console.ckQuickRec.Checked == true) // recorder already running
+            {
+                console.ckQuickRec.Checked = false;
+                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMER.wav";
+
+                MessageBox.Show("Done Recording.\nIDTIMER.wav file will be created." + file_name);
+
+                System.IO.File.Copy(file_name, file_name1,true);
+
+            }
+            else
+            {
+                console.ckQuickRec.Checked = true; // start recording
+            }
+
+
+        } // checkBoxVoice_CheckedChanged
+
+
+        // ke9ns add
+        private void checkBoxCW_CheckedChanged(object sender, EventArgs e)
+        {
+            chkQuickAudioFolder.Checked = true;
+            console.checkBoxID.Checked = true;
+
+            if (console.ckQuickRec.Checked == true) // recorder already running
+            {
+                console.ckQuickRec.Checked = false;
+                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMERCW.wav";
+
+                MessageBox.Show("Done Recording.\nIDTIMERCW.wav file will be created." + file_name);
+
+                System.IO.File.Copy(file_name, file_name1, true);
+
+            }
+            else
+            {
+                console.ckQuickRec.Checked = true; // start recording
+            }
+
+
+        } // checkBoxCW_CheckedChanged
+
+
+        // ke9ns add
+        private void checkBoxCQ_CheckedChanged(object sender, EventArgs e)
+        {
+            chkQuickAudioFolder.Checked = true;
+            console.checkBoxID.Checked = true;
+
+            if (console.ckQuickRec.Checked == true) // recorder already running
+            {
+                console.ckQuickRec.Checked = false;
+                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                string file_name1 = console.AppDataPath + "QuickAudio" + "\\CQCQ.wav";
+
+                MessageBox.Show("Done Recording.\nCQCQ.wav file will be created." + file_name);
+
+                System.IO.File.Copy(file_name, file_name1, true);
+
+            }
+            else
+            {
+                console.ckQuickRec.Checked = true; // start recording
+            }
+
+        } //checkBoxCQ_CheckedChanged
+
+
+        //=================================================================================
+        // ke9ns add  open MP3 folder
+        private void checkBoxTS1_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((chkQuickAudioFolder.Checked == true)&& (chkBoxMP3.Checked == true))
+            {
+
+                string filePath = console.AppDataPath + "QuickAudioMP3";
+
+                Debug.WriteLine("mp3 path: " + filePath);
+
+                if (!Directory.Exists(filePath))
+                {
+                  
+                    Debug.WriteLine("no mp3 folder found");
+                    return;
+
+                }
+
+                string argument = @filePath;                     //@"/select, " + filePath;
+
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+                
+
+            } // 
+
+
+        } // checkBoxTS1_CheckedChanged
+
+        //==================================================================================
+        // ke9ns add REPLY
+        private void checkBoxTS2_CheckedChanged(object sender, EventArgs e)
+        {
+            chkQuickAudioFolder.Checked = true;
+            console.checkBoxID.Checked = true;
+
+            if (console.ckQuickRec.Checked == true) // recorder already running
+            {
+                console.ckQuickRec.Checked = false;
+
+                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+                string file_name1 = console.AppDataPath + "QuickAudio" + "\\CALL.wav";
+
+                MessageBox.Show("Done Recording.\nCALL.wav file will be created." + file_name);
+
+                System.IO.File.Copy(file_name, file_name1, true);
+
+            }
+            else
+            {
+                console.ckQuickRec.Checked = true; // start recording
+            }
+
+        } // checkBoxTS2_CheckedChanged
+
+        private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = chkAlwaysOnTop.Checked;
+        }
+
+
 
 
         //================================================================================================================

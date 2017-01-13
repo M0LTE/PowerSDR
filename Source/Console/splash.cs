@@ -35,6 +35,7 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Reflection;
 
 namespace PowerSDR
 {
@@ -75,7 +76,7 @@ namespace PowerSDR
 		private System.Windows.Forms.LabelTS lblStatus;
 		private System.Windows.Forms.Panel pnlStatus;
         private System.Windows.Forms.Timer timer1;
-        private TextBox textBox1;
+        public TextBox textBox1;
         private System.ComponentModel.IContainer components = null;
 
 		#endregion
@@ -86,7 +87,10 @@ namespace PowerSDR
 		{
 			InitializeComponent();
 
-           
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+             
+            textBox1.Text = "v" + fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf(".")) + "."+SVNRev.LATEST_REV;
 
             this.Opacity = .00;
 			timer1.Interval = TIMER_INTERVAL;
@@ -135,14 +139,19 @@ namespace PowerSDR
             // 
             // textBox1
             // 
-            this.textBox1.BackColor = System.Drawing.Color.Silver;
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(164, 160);
+            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.ForeColor = System.Drawing.Color.Yellow;
+            this.textBox1.Location = new System.Drawing.Point(140, 154);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(114, 20);
+            this.textBox1.Size = new System.Drawing.Size(115, 24);
             this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "Rev: 120616T11";
+            this.textBox1.TabStop = false;
+            this.textBox1.Text = "v2.8.0.0";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.VisibleChanged += new System.EventHandler(this.textBox1_VisibleChanged);
             // 
             // lblTimeRemaining
             // 
@@ -452,10 +461,22 @@ namespace PowerSDR
 			CloseForm();
 		}
 
+
         #endregion
 
-        
-    }
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_VisibleChanged(object sender, EventArgs e)
+        {
+          
+
+        }
+
+
+    } // class Splash 
 
     #region Registry Access Class
 
@@ -473,9 +494,9 @@ namespace PowerSDR
 			RegistryKey rkCompany;
 			RegistryKey rkApplication;
 
-			rkCompany = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY, 
-				false).OpenSubKey(COMPANY_NAME, false);
-			if( rkCompany != null )
+			rkCompany = Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY,false).OpenSubKey(COMPANY_NAME, false);
+
+            if ( rkCompany != null )
 			{
 				rkApplication = rkCompany.OpenSubKey(APPLICATION_NAME, true);
 				if( rkApplication != null )

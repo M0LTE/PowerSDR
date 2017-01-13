@@ -42,7 +42,8 @@ namespace PowerSDR
         #region Variable Declaration
 
 
-      
+        public static Console console;   // ke9ns mod  to allow console to pass back values to stack screen
+
         public static DataSet ds;
 
         /// <summary>
@@ -330,12 +331,29 @@ namespace PowerSDR
             }
         }
 
-        private static void AddRegion1BandText60m()
+
+      //  channels_60m.Add(new Channel(5.3320, 2800));
+       //             channels_60m.Add(new Channel(5.3480, 2800));
+       //             channels_60m.Add(new Channel(5.3585, 2800));
+       //             channels_60m.Add(new Channel(5.3730, 2800));
+       //             channels_60m.Add(new Channel(5.4050, 2800));
+
+        // ke9ns modified
+        private static void AddRegion1ABandText60m() // Germany, Luxembourg, Belgium, spain, switzerland, Finland
         {
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                5.250000, 5.449999, "60M RX Only",            false,
+                                5.250000, 5.351499, "60M RX Only",              false,
+
+                                5.351500, 5.335999, "60M 200hz Narrow Band Modes",    true,
+                                5.354000, 5.358499, "60M USB Voice",            true,
+                                5.358500, 5.361300, "60M USB Voice (US CH 3)",  true,
+                                5.361301, 5.362999, "60M USB Voice",            true,
+                                5.363000, 5.365999, "60M USB Voice",            true,
+                                5.366000, 5.366500, "60M 20hz Narrow Band Modes",    true,
+
+                                5.366501, 5.450000, "60M RX Only",              false,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -348,6 +366,54 @@ namespace PowerSDR
                 t.Rows.Add(dr);
             }
         }
+
+        // ke9ns parts of region 1 that dont get the new 60m plan
+        private static void AddRegion1BBandText60m() // Netherlands
+        {
+            DataTable t = ds.Tables["BandText"];
+
+            object[] data = {
+                                5.250000, 5.349999, "60M RX Only",              false,
+                                5.350000, 5.450000, "60M Amateur Service",             true,
+
+                              
+                           };
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = t.NewRow();
+                dr["Low"] = (double)data[i * 4 + 0];
+                dr["High"] = (double)data[i * 4 + 1];
+                dr["Name"] = (string)data[i * 4 + 2];
+                dr["TX"] = (bool)data[i * 4 + 3];
+                t.Rows.Add(dr);
+            }
+        }
+
+      
+
+        // ke9ns parts of region 1 that dont get the new 60m plan
+        private static void AddRegion1BandText60m()
+        {
+            DataTable t = ds.Tables["BandText"];
+
+            object[] data = {
+                                5.250000, 5.450000, "60M RX Only",              false,
+
+                           };
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = t.NewRow();
+                dr["Low"] = (double)data[i * 4 + 0];
+                dr["High"] = (double)data[i * 4 + 1];
+                dr["Name"] = (string)data[i * 4 + 2];
+                dr["TX"] = (bool)data[i * 4 + 3];
+                t.Rows.Add(dr);
+            }
+        }
+
+      
 
         private static void AddRegion1BandText40m()
         {
@@ -841,7 +907,7 @@ namespace PowerSDR
                 dr["TX"] = (bool)data[i * 4 + 3];
                 t.Rows.Add(dr);
             }
-        }
+        } // AddRegion1BandTextVHFplus()
 
         // Region 1 specific Band Text below
 
@@ -917,33 +983,45 @@ namespace PowerSDR
             }
         }
 
-        private static void AddUK_PlusBandText60m()
+        private static void AddUK_PlusBandText60m() // ke9ns same
         {
+
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
                                 5.250000, 5.258499, "60M Band",                 false,
 								5.258500, 5.264000, "60M Band Segment 1",		true,
+
                                 5.264001, 5.275999, "60M Band",                 false,
 								5.276000, 5.284000, "60M Band Segment 2",		true,
+
                                 5.284001, 5.288499, "60M Band",                 false,
 								5.288500, 5.292000, "60M Band Segment 3",		true,
+
                                 5.292001, 5.297999, "60M Band",                 false,
-								5.298000, 5.307000, "60M Band Segment 4",		true,
+                                5.298000, 5.307000, "60M Band Segment 4",		true,
+
                                 5.307001, 5.312999, "60M Band",                 false,
 								5.313000, 5.323000, "60M Band Segment 5",		true,
+
                                 5.323001, 5.332999, "60M Band",                 false,
 								5.333000, 5.338000, "60M Band Segment 6",		true,
+
                                 5.338001, 5.353999, "60M Band",                 false,
 								5.354000, 5.358000, "60M Band Segment 7",		true,
+
                                 5.358001, 5.361999, "60M Band",                 false,
                                 5.362000, 5.374500, "60M Band Segment 8",		true,
+
                                 5.374501, 5.377999, "60M Band",                 false,                                
                                 5.378000, 5.382000, "60M Band Segment 9",		true,
+
                                 5.382001, 5.394999, "60M Band",                 false,
                                 5.395000, 5.401500, "60M Band Segment 10",		true,
+
                                 5.401501, 5.403499, "60M Band",                 false,
                                 5.403500, 5.406500, "60M Band Segment 11",		true,
+
                                 5.406501, 5.449999, "60M Band",                 false,
 			};
 
@@ -958,12 +1036,15 @@ namespace PowerSDR
             }
         }
 
-        private static void AddNorwayBandText60m()
+
+        // 	{ FLOAT_TO_VITA_MHZ(5.250), FLOAT_TO_VITA_MHZ(5.450) },
+
+        private static void AddNorwayBandText60m() // ke9ns same  (and Denmark)
         {
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                5.250000, 5.449999, "60M Amateur Service",      true,
+                                5.250000, 5.450000, "60M Amateur Service",      true,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -977,19 +1058,25 @@ namespace PowerSDR
             }
         }
 
-        private static void AddSwedenBandText60m()
+
+   
+        private static void AddSwedenBandText60m() // ke9ns same
         {
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
                                 5.250000, 5.309999, "60M Band",                 false,
 								5.310000, 5.313000, "60M Band Segment 1",		true,
+
                                 5.313001, 5.319999, "60M Band",                 false,
 								5.320000, 5.323000, "60M Band Segment 2",		true,
+
                                 5.323001, 5.379999, "60M Band",                 false,
 								5.380000, 5.383000, "60M Band Segment 3",		true,
+
                                 5.383001, 5.389999, "60M Band",                 false,
-                                5.390000, 5.393000, "60M Band Segment 4",		true,                                
+                                5.390000, 5.393000, "60M Band Segment 4",		true, 
+                                                               
                                 5.393001, 5.449999, "60M Band",                 false,
 			};
 
@@ -1004,7 +1091,7 @@ namespace PowerSDR
             }
         }
 
-        private static void AddHungaryBandText40m()
+        private static void AddHungaryBandText40m() // ke9ns same
         {
             DataTable t = ds.Tables["BandText"];
             object[] data = {
@@ -1031,7 +1118,7 @@ namespace PowerSDR
             }
         }
 
-        private static void AddItalyPlusBandText40m()
+        private static void AddItalyPlusBandText40m() // ke9ns same
         {
             DataTable t = ds.Tables["BandText"];
             object[] data = {
@@ -1546,12 +1633,13 @@ namespace PowerSDR
                 t.Rows.Add(dr);
             }
             AddBandTextSWB();
-        }
+
+        } // AddBandTextTable() Region2
 
         #endregion
 
         #region IARU Region 3 BandText
-     
+
         private static void AddRegion3BandText160m()
         {
             DataTable t = ds.Tables["BandText"];
@@ -2162,7 +2250,7 @@ namespace PowerSDR
 			}
 		} //addbandstacktable
 
-        private static void AddRegion1BandStack()
+        private static void AddRegion1BandStack() // Europe
         {
             ds.Tables["BandStack"].Clear();
             DataTable t = ds.Tables["BandStack"];
@@ -2232,9 +2320,99 @@ namespace PowerSDR
                 dr["Freq"] = ((double)data[i * 4 + 3]).ToString("f6");
                 ds.Tables["BandStack"].Rows.Add(dr);
             }
-        }
 
-        private static void AddRegion3BandStack()
+
+        } // AddRegion1BandStack()
+
+            //   5.250000, 5.351499, "60M RX Only",              false,
+        //    5.351500, 5.335999, "60M 200hz Narrow Band Modes",    true,
+        //    5.354000, 5.358499, "60M USB Voice",            true,
+            //   5.358500, 5.361300, "60M USB Voice (US CH 3)",  true,
+            //   5.361301, 5.362999, "60M USB Voice",            true,
+            //  5.363000, 5.365999, "60M USB Voice",            true,
+            //  5.366000, 5.366500, "60M 20hz Narrow Band Modes",    true,
+        //  5.366501, 5.450000, "60M RX Only",              false,
+
+        private static void AddRegion1ABandStack() // germany, spain, swits, fin, lux, belg
+        {
+            ds.Tables["BandStack"].Clear();
+            DataTable t = ds.Tables["BandStack"];
+
+            object[] data = {
+                                "160M", "CWL", "F1", 1.820000,
+                                "160M", "DIGU", "F1", 1.838000,
+                                "160M", "LSB", "F6", 1.843000,
+                                "80M", "CWL", "F1", 3.510000,
+                                "80M", "DIGU", "F1", 3.590000,
+                                "80M", "LSB", "F6", 3.750000,
+
+                                "60M", "CWU", "F1", 5.351500,
+                                "60M", "USB", "F6", 5.35400,
+                                "60M", "USB", "F6", 5.35850, // us channel 3
+
+                                "40M", "CWL", "F1", 7.010000,
+                                "40M", "DIGU", "F1", 7.045000,
+                                "40M", "LSB", "F6", 7.10000,
+                                "30M", "CWU", "F1", 10.110000,
+                                "30M", "CWU", "F1", 10.120000,
+                                "30M", "DIGU", "F1", 10.140000,
+                                "20M", "CWU", "F1", 14.010000,
+                                "20M", "DIGU", "F1", 14.085000,
+                                "20M", "USB", "F6", 14.225000,
+                                "17M", "CWU", "F1", 18.078000,
+                                "17M", "DIGU", "F1", 18.100000,
+                                "17M", "USB", "F6", 18.140000,
+                                "15M", "CWU", "F1", 21.010000,
+                                "15M", "DIGU", "F1", 21.090000,
+                                "15M", "USB", "F6", 21.300000,
+                                "12M", "CWU", "F1", 24.900000,
+                                "12M", "DIGU", "F1", 24.920000,
+                                "12M", "USB", "F6", 24.940000,
+                                "10M", "CWU", "F1", 28.010000,
+                                "10M", "DIGU", "F1", 28.120000,
+                                "10M", "USB", "F6", 28.400000,
+                                "6M", "CWU", "F1", 50.090000,
+                                "6M", "USB", "F6", 50.150000,
+                                "6M", "DIGU", "F1", 50.250000,
+                                "2M", "CWU", "F1", 144.050000,
+                                "2M", "DIGU", "F1", 144.138000,
+                                "2M", "USB", "F6", 144.300000,
+                                "WWV", "SAM", "F5", 2.500000,
+                                "WWV", "SAM", "F5", 5.000000,
+                                "WWV", "SAM", "F5", 10.000000,
+                                "WWV", "SAM", "F5", 15.000000,
+                                "WWV", "SAM", "F5", 20.000000,
+                                "WWV", "SAM", "F5", 25.000000, // ke9ns add
+                                "WWV", "USB", "F6", 3.330000,
+                                "WWV", "USB", "F6", 7.850000,
+                                "WWV", "USB", "F6", 14.670000,
+                                "GEN", "SAM", "F6", 13.845000,
+                                "GEN", "SAM", "F7", 5.975000,
+                                "GEN", "SAM", "F7", 9.550000,
+                                "GEN", "SAM", "F7", 3.850000,
+                                "GEN", "SAM", "F8", 0.590000,
+
+
+
+            };
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = ds.Tables["BandStack"].NewRow();
+                dr["BandName"] = (string)data[i * 4 + 0];
+                dr["Mode"] = (string)data[i * 4 + 1];
+                dr["Filter"] = (string)data[i * 4 + 2];
+                dr["Freq"] = ((double)data[i * 4 + 3]).ToString("f6");
+                ds.Tables["BandStack"].Rows.Add(dr);
+            }
+
+
+        } // AddRegion1ABandStack()
+
+
+
+
+        private static void AddRegion3BandStack()  // Asia
         {
             ds.Tables["BandStack"].Clear();
             DataTable t = ds.Tables["BandStack"];
@@ -5793,15 +5971,28 @@ namespace PowerSDR
 
 			if(rows.Length == 0)
 			{
-				MessageBox.Show("No Entries found for Band: "+band, "No Entry Found",
-					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				mode = "";
-				filter = "";
-				freq = 0.0f;
-				return false;
-			}
+				//MessageBox.Show("No Entries found for Band: "+ band, "No Entry Found",
+				//	MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-			index = index % rows.Length;
+                MessageBox.Show("No Entries found for Band: " + band + " Adding this Freq to new list", "No Entry Found",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+              
+                mode = console.RX1DSPMode.ToString();
+                filter = console.RX1Filter.ToString();
+                freq = Math.Round(console.VFOAFreq, 6);
+
+                AddBandStack(band, mode, filter, freq); // take current band, DSP mode, filter, and freq
+
+                return true;
+
+                //  mode = "";
+                //	filter = "";
+                //freq = 0.0f;
+                //return false;
+               
+            }
+
+            index = index % rows.Length;
 			
 			mode = (string)((DataRow)rows[index])["Mode"];
 			filter = (string)((DataRow)rows[index])["Filter"];
@@ -5825,16 +6016,21 @@ namespace PowerSDR
             //  console.MemoryList.List.Remove(console.MemoryList.List[dataGridView1.CurrentCell.RowIndex]);
 
 */
-
+// not used at this time
         public static void GetBandStack1(string band)
         {
             DataRow[] rows = ds.Tables["BandStack"].Select("'" + band + "' = BandName");
 
             if (rows.Length == 0)
             {
-                MessageBox.Show("No Entries found for Band: " + band, "No Entry Found",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               
+                //   MessageBox.Show("NO Entries found for Band: " + band, "No Entry Found",
+                //    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                MessageBox.Show("NO Entries found for Band: " + band + " Adding this Freq to new list", "No Entry Found",
+                                       MessageBoxButtons.OK, MessageBoxIcon.Warning);
+           
+                AddBandStack(band, console.RX1DSPMode.ToString(), console.RX1Filter.ToString(), Math.Round(console.VFOAFreq, 6)); // take current band, DSP mode, filter, and freq
+
             }
 
         }
@@ -6085,6 +6281,11 @@ namespace PowerSDR
 			return true;
 		}
 
+
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+
         public static void UpdateRegion(FRSRegion current_region)
         {
             //harmonize BandText and BandStack with radio region
@@ -6093,12 +6294,16 @@ namespace PowerSDR
                 case FRSRegion.Spain_UK:
                 case FRSRegion.Slovakia:
                 case FRSRegion.France:
-                    AddRegion1BandStack();
+
+                    if (current_region == FRSRegion.Spain_UK) AddRegion1ABandStack(); // ke9ns mod
+                    else AddRegion1BandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    if (current_region == FRSRegion.Spain_UK) AddRegion1ABandText60m();
+                    else AddRegion1BandText60m();
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6113,12 +6318,13 @@ namespace PowerSDR
                     break;
 
                 case FRSRegion.Europe:
-                    AddRegion1BandStack();
+                    AddRegion1ABandStack(); // ke9ns mod
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1ABandText60m();
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6279,7 +6485,7 @@ namespace PowerSDR
                     ClearBandText();
                     AddNetherlandsBandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BBandText60m(); // ke9ns add
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();

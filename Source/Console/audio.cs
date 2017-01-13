@@ -1915,6 +1915,16 @@ namespace PowerSDR
                     switch (tx_input_signal)
                     {
                         case SignalSource.RADIO:
+
+                           
+                                if (console.keydot == true)// ke9ns add allow cw while talking
+                                {
+                                    SineWave(in_l, frameCount, phase_accumulator1, (double) console.udCWPitch.Value);
+                                    phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, (double)console.udCWPitch.Value);
+                                }
+                           
+
+
                             break;
                         case SignalSource.SINE:
 
@@ -3927,6 +3937,13 @@ namespace PowerSDR
             switch (tx_input_signal)
             {
                 case SignalSource.RADIO:
+
+                 
+                        if (console.keydot == true) // ke9ns add allow cw while talking
+                        {
+                            SineWave(tx_in_l, frameCount, phase_accumulator1, (double)console.udCWPitch.Value);
+                            phase_accumulator1 = CosineWave(tx_in_r, frameCount, phase_accumulator1, (double)console.udCWPitch.Value);
+                        }
                     break;
                 case SignalSource.SINE:
 

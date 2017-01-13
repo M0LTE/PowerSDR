@@ -128,7 +128,7 @@ namespace PowerSDR
 
             Debug.WriteLine("LISTENER STARTED");
 
-
+          
             while (!Console.m_terminated)
             {
     
@@ -136,14 +136,15 @@ namespace PowerSDR
                 {
                       TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
 
-                 //   TcpClient client = m_listener.AcceptTcpClient();
-                 //   string ip = ((IPEndPoint)m_listener.Server.LocalEndPoint).Address.ToString();
-                //    TcpClient tempClient = getHandler(client);
+                    //   TcpClient client = m_listener.AcceptTcpClient();
+                    //   string ip = ((IPEndPoint)m_listener.Server.LocalEndPoint).Address.ToString();
+                    //    TcpClient tempClient = getHandler(client);
 
                     if ( TcpType != 0)
                     {
                         if (TcpType == 1)
                         {
+                         
                             ImageRequest(tempClient);
                         }
                         else if (TcpType == 2)
@@ -179,6 +180,7 @@ namespace PowerSDR
 
             } //while (!m_terminated)
 
+            console.URLPRESENT = false;
 
         } // TCPSERVER() THREAD
 
@@ -192,7 +194,7 @@ namespace PowerSDR
         public static void terminate()
         {
             Console.m_terminated = true;
-
+            console.URLPRESENT = false;
             try
             {
                 m_listener.Stop(); // try and close the getcontext thread
@@ -290,13 +292,15 @@ namespace PowerSDR
 
         } // private static RequestType getType(TcpClient tcpClient)
 
-      
+
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
+
+        int URLP_counter = 1000;
          
         public void ImageRequest(TcpClient m_tcpClient)
         {
@@ -304,6 +308,9 @@ namespace PowerSDR
             if (m_tcpClient == null) return;
 
             Debug.WriteLine("IMAGEREQUEST1");
+
+            if (console.URLPRESENT == false) console.URLPRESENT = true;
+
 
             byte[] imageArray = getImage();
                      
@@ -438,21 +445,28 @@ namespace PowerSDR
         byte[] picDisplayOutput;
         MemoryStream memstream;
 
+      
         private byte[] getImage()
         {
 
             bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
             console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-            
+           
+
             using (memstream = new MemoryStream())
             {
                 bitmap.Save(memstream, ImageFormat.Jpeg);
                 picDisplayOutput = memstream.ToArray();
             }
       
+
+
+
+
             return picDisplayOutput;
           
         } // getImage()
+
 
 
 /*     // ke9ns if you want to save image as a file and then read file
@@ -483,7 +497,7 @@ namespace PowerSDR
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
-        private static void SendError(TcpClient Client, int Code)
+    private static void SendError(TcpClient Client, int Code)
     {
         string CodeStr = Code.ToString() + " " + ((HttpStatusCode)Code).ToString();
         string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";

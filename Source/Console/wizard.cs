@@ -152,10 +152,10 @@ namespace PowerSDR
 			switch(model)
 			{
 				case Model.SDR1000:
-					radGenModelSDR1000.Checked = true;
+				//	radGenModelSDR1000.Checked = true;
 					break;
 				case Model.SOFTROCK40:
-					radGenModelSoftRock40.Checked = true;
+				//	radGenModelSoftRock40.Checked = true;
 					break;
 				case Model.DEMO:
 					radGenModelDemoNone.Checked = true;
@@ -166,8 +166,7 @@ namespace PowerSDR
 					break;
 			}
 
-            if (console.hid_init && !console.fwc_init)
-                radGenModelFLEX1500.Checked = true;
+            if (console.hid_init && !console.fwc_init)   radGenModelFLEX1500.Checked = true;
 
 			CurPage = Page.WELCOME;
 			btnNext_Click(this, EventArgs.Empty);

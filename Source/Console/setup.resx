@@ -117,9 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="tbWaterOffset.ToolTip" xml:space="preserve">
+    <value>Use this to Lighten or Darken the Waterfall by 20db UP or DOWN from the "Automatic" avg found
+If you find the "AutoWater Level" is too dark, increase this slider
+if you find it too light, decrease this slider.</value>
+  </data>
+  <data name="tbGridOffset.ToolTip" xml:space="preserve">
+    <value>Use this to shift the Panadapter Signal up to 20db UP or DOWN the Pandapater from the "Automatic" avg finding
+If you find the Panadapter signal too high up in the window, decrease the slider.
+If you find the Panadapter signal too low in the window, increase the slider.</value>
+  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of PowerSDR remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
+  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
@@ -138,25 +161,22 @@ or http://localhost:8081
 But you must also add this port# to your Routers "Port Forward" options
 If Windows Firewall Pops up on the screen, Click on the Allow access.</value>
   </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of PowerSDR remotely
+  <data name="chkBoxHTTP.ToolTip" xml:space="preserve">
+    <value>Check to turn ON Http Server.
 
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+Basic: view Display only
 
+Below is what you can insert on your own web page for others to see your Flex Pan:
+ 
+&lt;style&gt;
+#wrap { width: 1400px; height: 600px; padding: 0; overflow: hidden; }
+#frame { width: 1400px; height: 600px; border: 1px solid black; }
+#frame { zoom: 1.00; -moz-transform: scale(1.00); -moz-transform-origin: 0 0; }
+&lt;/style&gt;
 
-</value>
-  </data>
-  <data name="tbWaterOffset.ToolTip" xml:space="preserve">
-    <value>Use this to Lighten or Darken the Waterfall by 20db UP or DOWN from the "Automatic" avg found
-If you find the "AutoWater Level" is too dark, increase this slider
-if you find it too light, decrease this slider.</value>
-  </data>
-  <data name="tbGridOffset.ToolTip" xml:space="preserve">
-    <value>Use this to shift the Panadapter Signal up to 20db UP or DOWN the Pandapater from the "Automatic" avg finding
-If you find the Panadapter signal too high up in the window, decrease the slider.
-If you find the Panadapter signal too low in the window, increase the slider.</value>
+ &lt;div id="wrap"&gt;
+    &lt;iframe id="frame" src="http://YOUR_IP_ADDRESS_HERE.net:8081"&gt;&lt;/iframe&gt;  
+ &lt;/div&gt;</value>
   </data>
   <data name="chkROTOREnable.ToolTip" xml:space="preserve">
     <value>Enable DDUtil to control your antenna rotor control.

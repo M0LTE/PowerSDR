@@ -144,6 +144,7 @@ RIGHT CLICK mouse on the Memory (Row)
   <data name="textBox1.Text" xml:space="preserve">
     <value>Highlight a memory by a single Left Click on a Row.
 You can Drag a file or URL directy onto the highlighted Row to save a Hyperlink.
+NOTE: Drag/Drop will not work if you run PowerSDR in ADMIN mode.
 Right Click on a highlighted Row to go to the Hyperlink or open the File.
 Double Left Click to change the Flex to that Memory Frequency/mode
 From the Panadapter use ALT + M keys to save new Memory Directly from the Pan.

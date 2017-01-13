@@ -1744,7 +1744,20 @@ namespace PowerSDR
 		{
 			int n = -1;
 
-			if(s.Length == parser.nSet)
+        
+      //  PANADAPTER,
+      //  PANAFALL,        
+     //   WATERFALL,
+     //   PANASCOPE,
+      //  SPECTRUM,
+		//SCOPE,
+		//PHASE,
+		//PHASE2,
+	//	HISTOGRAM,
+ 	//	OFF,
+      //  CONTINUUM,
+      
+			if (s.Length == parser.nSet)
 			{
 				n = Convert.ToInt32(s);
 				switch(n)
@@ -1779,8 +1792,10 @@ namespace PowerSDR
 					case 9:
 						console.DisplayModeText = "Off";
 						break;
-
-				}
+                    case 10:
+                        console.DisplayModeText = "Continuum";
+                        break;
+                }
 
 //				if(n > (int) DisplayMode.FIRST && n < (int) DisplayMode.LAST)
 //					Display.CurrentDisplayMode = (DisplayMode) n;
@@ -1798,7 +1813,7 @@ namespace PowerSDR
 				return parser.Error1;
 			}
 
-		}
+		} // ZZDM
 
         //Reads or sets the setup form Waterfall Low value
         public string ZZDN(string s)
@@ -9601,8 +9616,9 @@ namespace PowerSDR
 		//otherwise, set it to B6M.
 		{
 			int ndx = 0;
-			BandList = new Band[(int)Band.LAST+2];
-			foreach(Band b in Enum.GetValues(typeof(Band)))
+			BandList = new Band[(int)Band.LAST + 2];
+
+            foreach (Band b in Enum.GetValues(typeof(Band)))
 			{
 				BandList.SetValue(b, ndx);
 				ndx++;
@@ -9618,9 +9634,9 @@ namespace PowerSDR
 			int oldval = parser.nSet;
 			parser.nSet = 1;
 			if(band == 0)
-				ZZBG("0");
+				ZZBG("0"); //HF
 			else
-				ZZBG("1");
+				ZZBG("1"); // VHF
 
 			parser.nSet = oldval;
 		}
@@ -9657,11 +9673,11 @@ namespace PowerSDR
 			Band nextband;
 			Band current = console.RX1Band;
 			int currndx = Array.IndexOf(BandList,current);
-			if(currndx == LastBandIndex)
-				nextband = BandList[0];
-			else
-				nextband = BandList[currndx+1];
-			console.SetCATBand(nextband);
+
+			if(currndx == LastBandIndex) nextband = BandList[0];
+			else	nextband = BandList[currndx+1];
+
+            console.SetCATBand(nextband);
 		}
 
 		private void BandDown()
@@ -9669,10 +9685,10 @@ namespace PowerSDR
 			Band nextband;
 			Band current = console.RX1Band;
 			int currndx = Array.IndexOf(BandList,current);
-			if(currndx > 0)
-				nextband = BandList[currndx-1];
-			else
-				nextband = BandList[LastBandIndex];
+
+			if(currndx > 0)	nextband = BandList[currndx-1];
+			else	nextband = BandList[LastBandIndex];
+
 			console.SetCATBand(nextband);
 
 		}

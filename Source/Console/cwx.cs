@@ -76,9 +76,9 @@ namespace PowerSDR
 
 		private Console console;
 
+      
 
-
-		public static Mutex keydisplay = new Mutex();	// around the key display
+        public static Mutex keydisplay = new Mutex();	// around the key display
 
 		private int cwxwpm;						// engine speed
 		private uint[] mbits = new uint[64];	// the Morse element maps
@@ -113,7 +113,9 @@ namespace PowerSDR
 		private int newptt;			// have a new setting of ptt active timing it down
 		private int pttdelay;		// delay from PTT to key down
 		private bool pause_checked;	// pause chekbox is checked
-		private bool stopThreads;	// tell threads to shut down
+		private bool stopThreads;   // tell threads to shut down
+
+        public bool stopPoll = true;      // ke9ns add  false = stop poll cw key
 		
 		// define the position and size of the keyboard area
 		private int kylx = 12, kyty = 180;				// ulc of key area
@@ -276,24 +278,49 @@ namespace PowerSDR
                 Debug.WriteLine("setptt = setptt_memory> "+ state);
 
 			    ptt = state;
-			    if (state) pttLed.BackColor = System.Drawing.Color.Red;
-			    else pttLed.BackColor = System.Drawing.Color.Black;
+                if (state)
+                {
+                    if ((console.CWP == true) && (console.RX1DSPMode != DSPMode.CWL) && (console.RX1DSPMode != DSPMode.CWU))
+                    {
+                        Debug.WriteLine("KEY RADIO");
+  
+                          console.MOX = true;
+                    }
+                    pttLed.BackColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    if ((console.CWP == true) && (console.RX1DSPMode != DSPMode.CWL) && (console.RX1DSPMode != DSPMode.CWU))
+                    {
+                        Debug.WriteLine("KEY RADIO");
+                        console.MOX = false;
+                    }
+                    pttLed.BackColor = System.Drawing.Color.Black;
+                }
 
                 setptt_memory = state;
             }
-//			if (newptt) Thread.Sleep(200);
-		}
+            //			if (newptt) Thread.Sleep(200);
+        } // setptt
 
         private bool setkey_memory = false;
 		private void setkey(bool state)                 // ke9ns   This is the CW key signal back to the flex radio itself (letter E set repeatedly at 60wpm = 20msec per element = 20msec ON, and 54msec OFF)
 		{
-			//console.Keyer.MemoryKey = state;
+            //console.Keyer.MemoryKey = state;
+
             if (setkey_memory != state)                                          // only allow this to happen 1 time if state stays the same (once to turn ON, once to turn OFF)
             {
 
+                Debug.WriteLine("KEYDOT1 "+ console.CWP);
+
+                if ((console.CWP == true) && (console.RX1DSPMode != DSPMode.CWL) && (console.RX1DSPMode != DSPMode.CWU))
+                {
+                    Debug.WriteLine("KEYDOT");
+                    console.keydot = state;
+                }
 
              //   if  (state == true) Debug.WriteLine("ON: " + T1.ElapsedMilliseconds);
-             //   else Debug.WriteLine("OFF: " + T1.ElapsedMilliseconds);
+              //  else Debug.WriteLine("OFF: " + T1.ElapsedMilliseconds);
 
              //   T1.Restart();
 
@@ -786,8 +813,14 @@ namespace PowerSDR
 			CATReadThread.Priority = ThreadPriority.Highest;
 			CATReadThread.Start();
 
-//			ttdel = 50;
-		} // CWX
+            Thread pollcw = new Thread(new ThreadStart(PollKey));
+            pollcw.Name = "Poll Key Thread";
+            pollcw.Priority = ThreadPriority.Normal;
+            pollcw.IsBackground = true;
+            pollcw.Start();
+
+            //			ttdel = 50;
+        } // CWX
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -823,12 +856,16 @@ namespace PowerSDR
             this.keyLed = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.keyboardLed = new System.Windows.Forms.Panel();
+            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkKeyPoll = new System.Windows.Forms.CheckBoxTS();
+            this.udWPM = new System.Windows.Forms.NumericUpDownTS();
             this.pttdelaylabel = new System.Windows.Forms.LabelTS();
+            this.udPtt = new System.Windows.Forms.NumericUpDownTS();
             this.expandButton = new System.Windows.Forms.ButtonTS();
             this.keyboardButton = new System.Windows.Forms.ButtonTS();
             this.clearButton = new System.Windows.Forms.ButtonTS();
             this.chkPause = new System.Windows.Forms.CheckBoxTS();
+            this.txtdummy1 = new System.Windows.Forms.TextBoxTS();
             this.txt9 = new System.Windows.Forms.TextBoxTS();
             this.txt8 = new System.Windows.Forms.TextBoxTS();
             this.txt7 = new System.Windows.Forms.TextBoxTS();
@@ -838,13 +875,19 @@ namespace PowerSDR
             this.txt3 = new System.Windows.Forms.TextBoxTS();
             this.txt2 = new System.Windows.Forms.TextBoxTS();
             this.txt1 = new System.Windows.Forms.TextBoxTS();
+            this.label7 = new System.Windows.Forms.LabelTS();
             this.keyButton = new System.Windows.Forms.ButtonTS();
             this.dropdelaylabel = new System.Windows.Forms.LabelTS();
+            this.udDrop = new System.Windows.Forms.NumericUpDownTS();
             this.s9 = new System.Windows.Forms.ButtonTS();
             this.s8 = new System.Windows.Forms.ButtonTS();
             this.s7 = new System.Windows.Forms.ButtonTS();
+            this.label6 = new System.Windows.Forms.LabelTS();
+            this.label5 = new System.Windows.Forms.LabelTS();
             this.stopButton = new System.Windows.Forms.ButtonTS();
+            this.label4 = new System.Windows.Forms.LabelTS();
             this.repeatdelayLabel = new System.Windows.Forms.LabelTS();
+            this.udDelay = new System.Windows.Forms.NumericUpDownTS();
             this.cbMorse = new System.Windows.Forms.ComboBoxTS();
             this.notesButton = new System.Windows.Forms.ButtonTS();
             this.speedLabel = new System.Windows.Forms.LabelTS();
@@ -854,16 +897,6 @@ namespace PowerSDR
             this.s3 = new System.Windows.Forms.ButtonTS();
             this.s2 = new System.Windows.Forms.ButtonTS();
             this.s1 = new System.Windows.Forms.ButtonTS();
-            this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
-            this.udWPM = new System.Windows.Forms.NumericUpDownTS();
-            this.udPtt = new System.Windows.Forms.NumericUpDownTS();
-            this.txtdummy1 = new System.Windows.Forms.TextBoxTS();
-            this.label7 = new System.Windows.Forms.LabelTS();
-            this.udDrop = new System.Windows.Forms.NumericUpDownTS();
-            this.label6 = new System.Windows.Forms.LabelTS();
-            this.label5 = new System.Windows.Forms.LabelTS();
-            this.label4 = new System.Windows.Forms.LabelTS();
-            this.udDelay = new System.Windows.Forms.NumericUpDownTS();
             ((System.ComponentModel.ISupportInitialize)(this.udWPM)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPtt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDrop)).BeginInit();
@@ -897,6 +930,16 @@ namespace PowerSDR
             this.keyboardLed.TabIndex = 52;
             this.toolTip1.SetToolTip(this.keyboardLed, " Keyboard active indicator.");
             // 
+            // chkAlwaysOnTop
+            // 
+            this.chkAlwaysOnTop.Image = null;
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(565, 32);
+            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
+            this.chkAlwaysOnTop.Size = new System.Drawing.Size(99, 19);
+            this.chkAlwaysOnTop.TabIndex = 57;
+            this.chkAlwaysOnTop.Text = "Always On Top";
+            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
+            // 
             // chkKeyPoll
             // 
             this.chkKeyPoll.Image = null;
@@ -908,6 +951,36 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkKeyPoll, "Check to Poll the CW Key and Stop a CWX transmission if you use your Key");
             this.chkKeyPoll.CheckedChanged += new System.EventHandler(this.ckKeyPoll_CheckedChanged);
             // 
+            // udWPM
+            // 
+            this.udWPM.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.udWPM.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udWPM.Location = new System.Drawing.Point(240, 8);
+            this.udWPM.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.udWPM.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udWPM.Name = "udWPM";
+            this.udWPM.Size = new System.Drawing.Size(56, 20);
+            this.udWPM.TabIndex = 56;
+            this.udWPM.Value = new decimal(new int[] {
+            22,
+            0,
+            0,
+            0});
+            this.udWPM.ValueChanged += new System.EventHandler(this.udWPM_ValueChanged);
+            this.udWPM.LostFocus += new System.EventHandler(this.udWPM_LostFocus);
+            // 
             // pttdelaylabel
             // 
             this.pttdelaylabel.Image = null;
@@ -917,6 +990,35 @@ namespace PowerSDR
             this.pttdelaylabel.TabIndex = 55;
             this.pttdelaylabel.Text = "PTT Delay";
             this.toolTip1.SetToolTip(this.pttdelaylabel, "Set delay from PTT to key down in milliseconds.");
+            // 
+            // udPtt
+            // 
+            this.udPtt.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udPtt.Location = new System.Drawing.Point(456, 8);
+            this.udPtt.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.udPtt.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udPtt.Name = "udPtt";
+            this.udPtt.Size = new System.Drawing.Size(56, 20);
+            this.udPtt.TabIndex = 54;
+            this.udPtt.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udPtt.ValueChanged += new System.EventHandler(this.udPtt_ValueChanged);
+            this.udPtt.LostFocus += new System.EventHandler(this.udPtt_LostFocus);
             // 
             // expandButton
             // 
@@ -967,84 +1069,105 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkPause, " Pause keyboard transmission.");
             this.chkPause.CheckedChanged += new System.EventHandler(this.chkPause_CheckedChanged);
             // 
+            // txtdummy1
+            // 
+            this.txtdummy1.Location = new System.Drawing.Point(16, 181);
+            this.txtdummy1.Multiline = true;
+            this.txtdummy1.Name = "txtdummy1";
+            this.txtdummy1.Size = new System.Drawing.Size(672, 82);
+            this.txtdummy1.TabIndex = 42;
+            this.txtdummy1.Text = "the actual text box will be a graphic here and this one disabled";
+            // 
             // txt9
             // 
-            this.txt9.Location = new System.Drawing.Point(488, 120);
+            this.txt9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt9.Location = new System.Drawing.Point(504, 120);
             this.txt9.Name = "txt9";
-            this.txt9.Size = new System.Drawing.Size(176, 20);
+            this.txt9.Size = new System.Drawing.Size(184, 21);
             this.txt9.TabIndex = 34;
             this.toolTip1.SetToolTip(this.txt9, "Message edit box.");
             // 
             // txt8
             // 
-            this.txt8.Location = new System.Drawing.Point(488, 88);
+            this.txt8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt8.Location = new System.Drawing.Point(504, 88);
             this.txt8.Name = "txt8";
-            this.txt8.Size = new System.Drawing.Size(176, 20);
+            this.txt8.Size = new System.Drawing.Size(184, 21);
             this.txt8.TabIndex = 32;
             this.toolTip1.SetToolTip(this.txt8, "Message edit box.");
             // 
             // txt7
             // 
-            this.txt7.Location = new System.Drawing.Point(488, 56);
+            this.txt7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt7.Location = new System.Drawing.Point(504, 56);
             this.txt7.Name = "txt7";
-            this.txt7.Size = new System.Drawing.Size(176, 20);
+            this.txt7.Size = new System.Drawing.Size(184, 21);
             this.txt7.TabIndex = 29;
             this.toolTip1.SetToolTip(this.txt7, "Message edit box.");
             // 
             // txt6
             // 
-            this.txt6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt6.Location = new System.Drawing.Point(264, 120);
+            this.txt6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt6.Location = new System.Drawing.Point(272, 120);
             this.txt6.Name = "txt6";
-            this.txt6.Size = new System.Drawing.Size(160, 20);
+            this.txt6.Size = new System.Drawing.Size(194, 21);
             this.txt6.TabIndex = 13;
             this.toolTip1.SetToolTip(this.txt6, "Message edit box.");
             // 
             // txt5
             // 
-            this.txt5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt5.Location = new System.Drawing.Point(264, 88);
+            this.txt5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt5.Location = new System.Drawing.Point(272, 88);
             this.txt5.Name = "txt5";
-            this.txt5.Size = new System.Drawing.Size(176, 20);
+            this.txt5.Size = new System.Drawing.Size(194, 21);
             this.txt5.TabIndex = 11;
             this.toolTip1.SetToolTip(this.txt5, "Message edit box.");
             // 
             // txt4
             // 
-            this.txt4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt4.Location = new System.Drawing.Point(264, 56);
+            this.txt4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt4.Location = new System.Drawing.Point(272, 56);
             this.txt4.Name = "txt4";
-            this.txt4.Size = new System.Drawing.Size(176, 20);
+            this.txt4.Size = new System.Drawing.Size(194, 21);
             this.txt4.TabIndex = 9;
             this.toolTip1.SetToolTip(this.txt4, "Message edit box.");
             // 
             // txt3
             // 
-            this.txt3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt3.Location = new System.Drawing.Point(40, 120);
             this.txt3.Name = "txt3";
-            this.txt3.Size = new System.Drawing.Size(172, 20);
+            this.txt3.Size = new System.Drawing.Size(194, 21);
             this.txt3.TabIndex = 7;
             this.toolTip1.SetToolTip(this.txt3, "Message edit box.");
             // 
             // txt2
             // 
-            this.txt2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt2.Location = new System.Drawing.Point(40, 88);
             this.txt2.Name = "txt2";
-            this.txt2.Size = new System.Drawing.Size(172, 20);
+            this.txt2.Size = new System.Drawing.Size(194, 21);
             this.txt2.TabIndex = 5;
             this.toolTip1.SetToolTip(this.txt2, "Message edit box.");
             // 
             // txt1
             // 
-            this.txt1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt1.Location = new System.Drawing.Point(40, 56);
             this.txt1.Name = "txt1";
-            this.txt1.Size = new System.Drawing.Size(172, 20);
+            this.txt1.Size = new System.Drawing.Size(194, 21);
             this.txt1.TabIndex = 3;
             this.txt1.Text = "cq cq test w5sxd test";
             this.toolTip1.SetToolTip(this.txt1, "Message edit box.");
+            // 
+            // label7
+            // 
+            this.label7.Image = null;
+            this.label7.Location = new System.Drawing.Point(376, 352);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(256, 32);
+            this.label7.TabIndex = 47;
+            this.label7.Text = "label7";
             // 
             // keyButton
             // 
@@ -1067,10 +1190,39 @@ namespace PowerSDR
             this.dropdelaylabel.Text = "Drop Delay";
             this.toolTip1.SetToolTip(this.dropdelaylabel, " Set break in drop out in milliseconds. Minimum allowed is PTT Delay * 1.5 .");
             // 
+            // udDrop
+            // 
+            this.udDrop.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDrop.Location = new System.Drawing.Point(384, 8);
+            this.udDrop.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.udDrop.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udDrop.Name = "udDrop";
+            this.udDrop.Size = new System.Drawing.Size(56, 20);
+            this.udDrop.TabIndex = 35;
+            this.udDrop.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.udDrop.ValueChanged += new System.EventHandler(this.udDrop_ValueChanged);
+            this.udDrop.LostFocus += new System.EventHandler(this.udDrop_LostFocus);
+            // 
             // s9
             // 
             this.s9.Image = null;
-            this.s9.Location = new System.Drawing.Point(456, 120);
+            this.s9.Location = new System.Drawing.Point(472, 120);
             this.s9.Name = "s9";
             this.s9.Size = new System.Drawing.Size(24, 20);
             this.s9.TabIndex = 33;
@@ -1082,7 +1234,7 @@ namespace PowerSDR
             // s8
             // 
             this.s8.Image = null;
-            this.s8.Location = new System.Drawing.Point(456, 88);
+            this.s8.Location = new System.Drawing.Point(472, 88);
             this.s8.Name = "s8";
             this.s8.Size = new System.Drawing.Size(24, 20);
             this.s8.TabIndex = 31;
@@ -1094,7 +1246,7 @@ namespace PowerSDR
             // s7
             // 
             this.s7.Image = null;
-            this.s7.Location = new System.Drawing.Point(456, 56);
+            this.s7.Location = new System.Drawing.Point(472, 56);
             this.s7.Name = "s7";
             this.s7.Size = new System.Drawing.Size(24, 20);
             this.s7.TabIndex = 30;
@@ -1102,6 +1254,24 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.s7, "Start message 7.");
             this.s7.Click += new System.EventHandler(this.s7_Click);
             this.s7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s7_MouseDown);
+            // 
+            // label6
+            // 
+            this.label6.Image = null;
+            this.label6.Location = new System.Drawing.Point(56, 352);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(256, 32);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "label6";
+            // 
+            // label5
+            // 
+            this.label5.Image = null;
+            this.label5.Location = new System.Drawing.Point(376, 304);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(256, 32);
+            this.label5.TabIndex = 27;
+            this.label5.Text = "label5";
             // 
             // stopButton
             // 
@@ -1114,6 +1284,15 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.stopButton, "Stop all keying.");
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
+            // label4
+            // 
+            this.label4.Image = null;
+            this.label4.Location = new System.Drawing.Point(56, 304);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(256, 32);
+            this.label4.TabIndex = 25;
+            this.label4.Text = "label4";
+            // 
             // repeatdelayLabel
             // 
             this.repeatdelayLabel.Image = null;
@@ -1124,13 +1303,42 @@ namespace PowerSDR
             this.repeatdelayLabel.Text = "Repeat Delay";
             this.toolTip1.SetToolTip(this.repeatdelayLabel, " Set repeat message delay in seconds.");
             // 
+            // udDelay
+            // 
+            this.udDelay.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udDelay.Location = new System.Drawing.Point(312, 8);
+            this.udDelay.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+            this.udDelay.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udDelay.Name = "udDelay";
+            this.udDelay.Size = new System.Drawing.Size(56, 20);
+            this.udDelay.TabIndex = 20;
+            this.udDelay.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.udDelay.ValueChanged += new System.EventHandler(this.udDelay_ValueChanged);
+            this.udDelay.LostFocus += new System.EventHandler(this.udDelay_LostFocus);
+            // 
             // cbMorse
             // 
             this.cbMorse.Cursor = System.Windows.Forms.Cursors.Default;
             this.cbMorse.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMorse.DropDownWidth = 208;
             this.cbMorse.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbMorse.Location = new System.Drawing.Point(472, 152);
+            this.cbMorse.Location = new System.Drawing.Point(480, 153);
             this.cbMorse.Name = "cbMorse";
             this.cbMorse.Size = new System.Drawing.Size(208, 23);
             this.cbMorse.TabIndex = 19;
@@ -1161,7 +1369,7 @@ namespace PowerSDR
             // s6
             // 
             this.s6.Image = null;
-            this.s6.Location = new System.Drawing.Point(232, 120);
+            this.s6.Location = new System.Drawing.Point(240, 120);
             this.s6.Name = "s6";
             this.s6.Size = new System.Drawing.Size(24, 20);
             this.s6.TabIndex = 14;
@@ -1173,7 +1381,7 @@ namespace PowerSDR
             // s5
             // 
             this.s5.Image = null;
-            this.s5.Location = new System.Drawing.Point(232, 88);
+            this.s5.Location = new System.Drawing.Point(240, 88);
             this.s5.Name = "s5";
             this.s5.Size = new System.Drawing.Size(24, 20);
             this.s5.TabIndex = 12;
@@ -1185,7 +1393,7 @@ namespace PowerSDR
             // s4
             // 
             this.s4.Image = null;
-            this.s4.Location = new System.Drawing.Point(232, 56);
+            this.s4.Location = new System.Drawing.Point(240, 56);
             this.s4.Name = "s4";
             this.s4.Size = new System.Drawing.Size(24, 20);
             this.s4.TabIndex = 10;
@@ -1230,182 +1438,10 @@ namespace PowerSDR
             this.s1.Click += new System.EventHandler(this.s1_Click);
             this.s1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.s1_MouseDown);
             // 
-            // chkAlwaysOnTop
-            // 
-            this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(565, 32);
-            this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
-            this.chkAlwaysOnTop.Size = new System.Drawing.Size(99, 19);
-            this.chkAlwaysOnTop.TabIndex = 57;
-            this.chkAlwaysOnTop.Text = "Always On Top";
-            this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
-            // 
-            // udWPM
-            // 
-            this.udWPM.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.udWPM.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udWPM.Location = new System.Drawing.Point(240, 8);
-            this.udWPM.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-            this.udWPM.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udWPM.Name = "udWPM";
-            this.udWPM.Size = new System.Drawing.Size(56, 20);
-            this.udWPM.TabIndex = 56;
-            this.udWPM.Value = new decimal(new int[] {
-            22,
-            0,
-            0,
-            0});
-            this.udWPM.ValueChanged += new System.EventHandler(this.udWPM_ValueChanged);
-            this.udWPM.LostFocus += new System.EventHandler(this.udWPM_LostFocus);
-            // 
-            // udPtt
-            // 
-            this.udPtt.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udPtt.Location = new System.Drawing.Point(456, 8);
-            this.udPtt.Maximum = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.udPtt.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.udPtt.Name = "udPtt";
-            this.udPtt.Size = new System.Drawing.Size(56, 20);
-            this.udPtt.TabIndex = 54;
-            this.udPtt.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.udPtt.ValueChanged += new System.EventHandler(this.udPtt_ValueChanged);
-            this.udPtt.LostFocus += new System.EventHandler(this.udPtt_LostFocus);
-            // 
-            // txtdummy1
-            // 
-            this.txtdummy1.Location = new System.Drawing.Point(12, 180);
-            this.txtdummy1.Multiline = true;
-            this.txtdummy1.Name = "txtdummy1";
-            this.txtdummy1.Size = new System.Drawing.Size(665, 82);
-            this.txtdummy1.TabIndex = 42;
-            this.txtdummy1.Text = "the actual text box will be a graphic here and this one disabled";
-            // 
-            // label7
-            // 
-            this.label7.Image = null;
-            this.label7.Location = new System.Drawing.Point(376, 352);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(256, 32);
-            this.label7.TabIndex = 47;
-            this.label7.Text = "label7";
-            // 
-            // udDrop
-            // 
-            this.udDrop.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDrop.Location = new System.Drawing.Point(384, 8);
-            this.udDrop.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.udDrop.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDrop.Name = "udDrop";
-            this.udDrop.Size = new System.Drawing.Size(56, 20);
-            this.udDrop.TabIndex = 35;
-            this.udDrop.Value = new decimal(new int[] {
-            300,
-            0,
-            0,
-            0});
-            this.udDrop.ValueChanged += new System.EventHandler(this.udDrop_ValueChanged);
-            this.udDrop.LostFocus += new System.EventHandler(this.udDrop_LostFocus);
-            // 
-            // label6
-            // 
-            this.label6.Image = null;
-            this.label6.Location = new System.Drawing.Point(56, 352);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(256, 32);
-            this.label6.TabIndex = 28;
-            this.label6.Text = "label6";
-            // 
-            // label5
-            // 
-            this.label5.Image = null;
-            this.label5.Location = new System.Drawing.Point(376, 304);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(256, 32);
-            this.label5.TabIndex = 27;
-            this.label5.Text = "label5";
-            // 
-            // label4
-            // 
-            this.label4.Image = null;
-            this.label4.Location = new System.Drawing.Point(56, 304);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(256, 32);
-            this.label4.TabIndex = 25;
-            this.label4.Text = "label4";
-            // 
-            // udDelay
-            // 
-            this.udDelay.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDelay.Location = new System.Drawing.Point(312, 8);
-            this.udDelay.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-            this.udDelay.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDelay.Name = "udDelay";
-            this.udDelay.Size = new System.Drawing.Size(56, 20);
-            this.udDelay.TabIndex = 20;
-            this.udDelay.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.udDelay.ValueChanged += new System.EventHandler(this.udDelay_ValueChanged);
-            this.udDelay.LostFocus += new System.EventHandler(this.udDelay_LostFocus);
-            // 
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(694, 285);
+            this.ClientSize = new System.Drawing.Size(725, 287);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.chkKeyPoll);
             this.Controls.Add(this.udWPM);
@@ -1457,6 +1493,7 @@ namespace PowerSDR
             this.Name = "CWX";
             this.Text = "   CW Memories and Keyboard ...";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.CWX_Closing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CWX_FormClosing);
             this.Load += new System.EventHandler(this.CWX_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.CWX_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CWX_KeyDown_1);
@@ -1576,18 +1613,22 @@ namespace PowerSDR
 		{
 			if (keying)
 			{
-				quitshut();
+                Debug.WriteLine("Quit0");
+                quitshut();
 				return;
 			}
 
-			if(console.RX1DSPMode != DSPMode.CWL && console.RX1DSPMode != DSPMode.CWU)
-			{
-				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
-					"CWX Error: Wrong Mode",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
-				return;
-			}
+            if ((console.CWP == false)) // ke9ns add
+            {
+                if ((console.RX1DSPMode != DSPMode.CWL) && (console.RX1DSPMode != DSPMode.CWU))
+                {
+                    MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
+                        "CWX Error: Wrong Mode",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+            }
 
 			quit = true;
 			kquit = true;
@@ -1615,6 +1656,8 @@ namespace PowerSDR
 		}
 		private void CWX_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+            stopPoll = false; // ke9ns kill cw poll thread
+
 			quitshut();
      		Thread.Sleep(100);
 			
@@ -1933,7 +1976,8 @@ namespace PowerSDR
 		private void editit()
 		{
 			clear_show();
-			quitshut();
+            Debug.WriteLine("Quit4");
+            quitshut();
 			
 			editline = cbMorse.Text;
 #if(CWX_DEBUG)
@@ -2030,7 +2074,8 @@ namespace PowerSDR
           
             if (quit)		// if true shut 'er all down
 			{
-				quitshut();
+                Debug.WriteLine("Quit1");
+                quitshut();
 				quit = false;
 				return;
 			}
@@ -2072,7 +2117,8 @@ namespace PowerSDR
 
 				if (data == EL_END)		// end command
 				{
-					quitshut();
+                    Debug.WriteLine("Quit2");
+                    quitshut();
 					return;
 				}
 
@@ -2219,15 +2265,17 @@ namespace PowerSDR
 		{
             Debug.WriteLine("start of queue===================");
 
-            if ((console.RX1DSPMode != DSPMode.CWL) &&	(console.RX1DSPMode != DSPMode.CWU))
-			{
-				MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
-					"CWX Error: Wrong Mode",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
-				return;
-			}
-
+            if ((console.CWP == false)) // ke9ns add
+            {
+                if ((console.RX1DSPMode != DSPMode.CWL) && (console.RX1DSPMode != DSPMode.CWU))
+                {
+                    MessageBox.Show("Console is not in CW mode.  Please switch to either CWL or CWU and try again.",
+                        "CWX Error: Wrong Mode",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
+                }
+            }
 			//kquit = true;
 			//quit = true;
 
@@ -2434,15 +2482,12 @@ namespace PowerSDR
         // ke9ns add
         private void ckKeyPoll_CheckedChanged(object sender, EventArgs e)
         {
-            if ((chkKeyPoll.Checked) && (!stopThreads))
-            {
-                
-                Thread t = new Thread(new ThreadStart(PollKey));
-                t.Name = "Poll Key Thread";
-                t.Priority = ThreadPriority.Normal;
-                t.IsBackground = true;
-                t.Start();
-            }
+           
+        }
+
+        private void CWX_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            stopPoll = false; // shut down cw polling
         }
 
         //================================================================================================
@@ -2507,28 +2552,31 @@ namespace PowerSDR
             bool dot, dash, rca_ptt, mic_ptt;
             Debug.WriteLine("POLLKEY BEGIN===========");
 
-            while ((!stopThreads) && (chkKeyPoll.Checked) )
+            while (!stopThreads)
             {
-                  if (FWC.ReadPTT(out dot, out dash, out rca_ptt, out mic_ptt) == 0)   // ke9ns read Flex radio TRS plug and PTT circuits
-                  {
-                     MessageBox.Show("Error in ReadKey");
-                     break;
-                  }
-               //   chkDot.Checked = dot;  // CW KEY
-               //   chkDash.Checked = dash;
+                Thread.Sleep(10);
 
-                 if ((dot == true) || (dash == true))
-                 {
-                    clear_show();
-                    quit = true;
-                    kquit = true;
-            }
+                if ((stopPoll == true) && (chkKeyPoll.Checked == true))
+                {
+                    if (FWC.ReadPTT(out dot, out dash, out rca_ptt, out mic_ptt) != 0)   // ke9ns read Flex radio TRS plug and PTT circuits
+                    {
 
-            //  chkRCAPTT.Checked = rca_ptt;
-            //  chkMicPTT.Checked = mic_ptt;
+                        if ((dot == true) || (dash == true))
+                        {
+                            clear_show();
+                            quit = true;
+                            kquit = true;
 
+                        }
+                    }
+                    else break;
+
+                    //  chkRCAPTT.Checked = rca_ptt;
+                    //  chkMicPTT.Checked = mic_ptt;
+                }
+               // else break;
         
-                Thread.Sleep(20);
+               
             } // while
 
             Debug.WriteLine("POLLKEY END===========");

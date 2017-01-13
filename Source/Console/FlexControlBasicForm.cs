@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,14 +16,17 @@ namespace PowerSDR
     {
         private FlexControlInterface2 fc_interface = null;
         private Console console = null;
+        public Setup setupForm;                             // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+
+      //  HidDevice.PowerMate powerMate = new HidDevice.PowerMate();  // link back to PowerMate.cpp and PowerMate.h
 
         public FlexControlBasicForm(Console c)
         {
             InitializeComponent();
             console = c;
-
-            // setup the actual FlexControl Interface
-            fc_interface = new FlexControlInterface2(c);
+           
+        // setup the actual FlexControl Interface
+        fc_interface = new FlexControlInterface2(c);
 
             // populate knob combobox controls
             foreach (FlexControlKnobFunction function in Enum.GetValues(typeof(FlexControlKnobFunction)))
@@ -38,10 +42,10 @@ namespace PowerSDR
             comboButtonLeft.Text = "Tune RIT";
             comboButtonMid.Text = "Audio Gain";
             comboButtonRight.Text = "Tune VFO B";
-            comboButtonKnob.Text = "Tune VFO A";            
+            comboButtonKnob.Text = "Tune VFO A";
 
             // restore any saved configuration
-            Common.RestoreForm(this, "FlexControlBasicForm", false);            
+            Common.RestoreForm(this, "FlexControlBasicForm", false);
         }
 
         private FlexControl flexControl;
@@ -51,11 +55,11 @@ namespace PowerSDR
             set
             {
                 flexControl = value;
-                
-                if (flex_control_mode == FlexControlMode.Basic) 
+
+                if (flex_control_mode == FlexControlMode.Basic)
                     fc_interface.FlexControl = value;
-                
-                if(flexControl != null)
+
+                if (flexControl != null)
                 {
                     flexControl.Disconnected += new FlexControl.DisconnectHandler(FlexControl_Disconnected);
 
@@ -169,7 +173,7 @@ namespace PowerSDR
         {
             if (radModeBasic.Checked)
             {
-                if(fc_interface.FlexControl != flexControl)
+                if (fc_interface.FlexControl != flexControl)
                     fc_interface.FlexControl = flexControl;
 
                 object obj = null;
@@ -177,14 +181,14 @@ namespace PowerSDR
                     obj = this;
                 console.SetCurrentFlexControlMode(obj, FlexControlMode.Basic);
             }
-        }    
+        }
 
         private void radModeAdvanced_CheckedChanged(object sender, EventArgs e)
         {
             if (radModeAdvanced.Checked)
             {
-                if(fc_interface != null)
-                fc_interface.FlexControl = null;
+                if (fc_interface != null)
+                    fc_interface.FlexControl = null;
 
                 object obj = null;
                 if (radModeAdvanced.Focused)
@@ -214,8 +218,96 @@ namespace PowerSDR
 
             if (console == null) return;
 
-            if(console.FlexControlAutoDetect != auto_detect)
+            if (console.FlexControlAutoDetect != auto_detect)
                 console.FlexControlAutoDetect = chkAutoDetect.Checked;
-        }                
-    }
+        }
+
+
+
+        //======================================================================================
+        //======================================================================================
+        // ke9ns add all below
+        private void udSpeedPM_ValueChanged(object sender, EventArgs e)
+        {
+        //    if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+        //    setupForm.udSpeedPM.Value = udSpeedPM.Value;
+        }
+
+        private void txtWheelTune2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+            //    if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+            //    setupForm.ChangeTuneStepUp2();
+            }
+        }
+
+        private void btnTuneStepChangeSmaller2_Click(object sender, EventArgs e)
+        {
+          //  if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+          //  setupForm.ChangeTuneStepDown2();
+        }
+
+        private void btnTuneStepChangeLarger2_Click(object sender, EventArgs e)
+        {
+
+          //  if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+          //  setupForm.ChangeTuneStepUp2();
+        }
+
+        private void chkBoxPM_CheckedChanged(object sender, EventArgs e)
+        {
+
+            /*
+            if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+
+            if (chkBoxPM.Checked == true) setupForm.chkBoxPM.Checked = true;
+                else setupForm.chkBoxPM.Checked = false;
+
+
+
+            if (chkBoxPM.Checked == true)
+            {
+                if (console.KBON == 0) // only do if not already done
+                {
+                    if (!powerMate.Initialize())   // on load of form find Knob
+                    {
+                        console.KBON = 0;
+                        Debug.WriteLine("COULD NOT FIND KNOB2==============");
+                    }
+                    else
+                    {
+                        console.KBON = 1;
+                        Debug.WriteLine("FOUND KNOB2==============" + console.KBON);
+                        powerMate.ButtonEvent += new HidDevice.PowerMate.ButtonHandler(console.OnButtonEvent);      // create button event
+                        powerMate.RotateEvent += new HidDevice.PowerMate.RotationHandler(console.OnRotateEvent);    // create rotation event
+
+                        //  this.powerMate.LedBrightness = 60;              // turns on LED light at startup
+
+
+                    }
+                }
+            }
+            else
+            {
+
+                if (console.KBON == 1) powerMate.Shutdown();
+                console.KBON = 0;
+
+            }
+
+    */
+
+        } // chkBoxPM_CheckedChanged
+
+
+
+
+        private void txtWheelTune2_TextChanged(object sender, EventArgs e)
+        {
+          //  if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(console);
+         //   setupForm.txtWheelTune2.Text = txtWheelTune2.Text;
+        }
+    } // FlexControl
+
 }

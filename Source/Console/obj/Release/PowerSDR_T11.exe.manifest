@@ -4,7 +4,7 @@
   <description asmv2:iconFile="PowerSDR.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="PowerSDR_T11" version="2.7.2.40994" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="PowerSDR_T11" version="2.7.2.35114" language="neutral" processorArchitecture="x86" />
     <commandLine file="PowerSDR_T11.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -157,25 +157,25 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PowerMate.dll" size="40960">
-      <assemblyIdentity name="PowerMate" version="1.0.6171.23360" language="neutral" processorArchitecture="x86" />
+      <assemblyIdentity name="PowerMate" version="1.0.6188.27812" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ZCDWCt8UsHgMZG62bu9MdLh5lUw1Kog5y3t3hkqK/Dg=</dsig:DigestValue>
+        <dsig:DigestValue>grDdakMFlh68tfDfXkfz7BaFGiQU5opFCnQdENQX5TA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PowerSDR_T11.exe" size="9458408">
-      <assemblyIdentity name="PowerSDR_T11" version="2.7.2.40994" language="neutral" processorArchitecture="x86" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="PowerSDR_T11.exe" size="9450216">
+      <assemblyIdentity name="PowerSDR_T11" version="2.7.2.35114" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QErFkkf5zEplya85vVbPXca7ifG0oUV4e3HyM+TF2Ic=</dsig:DigestValue>
+        <dsig:DigestValue>0rwE+9Dkg1d+4BoibPP/SKkqhTmkCC80fkgATZmIcho=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -54,6 +54,8 @@ namespace PowerSDR
 
         public static SpotControl SpotForm;                       // ke9ns add DX spotter function
         public static ScanControl ScanForm;                       // ke9ns add freq Scanner function
+        public static FlexControlBasicForm FCBasicForm;
+
      //   public static Http httpFile;
 
 
@@ -68,7 +70,7 @@ namespace PowerSDR
         private bool dax_audio_setup_enum = false;
         public TabPage tpDSP;
         private System.Windows.Forms.TabPage tpDisplay;
-		private System.Windows.Forms.NumericUpDownTS udDisplayGridStep;
+        public NumericUpDownTS udDisplayGridStep;
         public NumericUpDownTS udDisplayGridMin;
         public NumericUpDownTS udDisplayGridMax;
         private System.Windows.Forms.LabelTS lblDisplayGridStep;
@@ -1063,7 +1065,7 @@ namespace PowerSDR
         private LabelTS labelTS15;
         public NumericUpDownTS udSpeedPM;
         public CheckBoxTS chkBoxHTTP;
-        private GroupBox groupBox2;
+        public GroupBox groupBox2;
         private LabelTS labelTS16;
         public NumericUpDownTS udHttpPort;
         public TextBoxTS txtHttpPass;
@@ -1088,6 +1090,10 @@ namespace PowerSDR
         private LabelTS labelTS23;
         private LabelTS labelTS24;
         private ColorButton clrbtnVFORing;
+        public CheckBoxTS chkVFOBoldFont;
+        public CheckBoxTS chkKeyPoll;
+        public LabelTS labelTS25;
+        private LabelTS labelTS26;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1487,6 +1493,7 @@ namespace PowerSDR
             this.btnConfigure = new System.Windows.Forms.Button();
             this.cbConsoleSelect = new System.Windows.Forms.ComboBox();
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS26 = new System.Windows.Forms.LabelTS();
             this.btnTuneStepChangeLarger2 = new System.Windows.Forms.ButtonTS();
             this.btnTuneStepChangeSmaller2 = new System.Windows.Forms.ButtonTS();
             this.txtWheelTune2 = new System.Windows.Forms.TextBoxTS();
@@ -1723,6 +1730,8 @@ namespace PowerSDR
             this.lblDSPImagePhaseTX = new System.Windows.Forms.LabelTS();
             this.tbDSPImageGainTX = new System.Windows.Forms.TrackBarTS();
             this.tpDSPKeyer = new System.Windows.Forms.TabPage();
+            this.labelTS25 = new System.Windows.Forms.LabelTS();
+            this.chkKeyPoll = new System.Windows.Forms.CheckBoxTS();
             this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.grpKeyerConnections = new System.Windows.Forms.GroupBoxTS();
             this.comboKeyerConnKeyLine = new System.Windows.Forms.ComboBoxTS();
@@ -1929,6 +1938,7 @@ namespace PowerSDR
             this.clrbtnOutOfBand = new PowerSDR.ColorButton();
             this.lblOutOfBand = new System.Windows.Forms.LabelTS();
             this.grpAppearanceVFO = new System.Windows.Forms.GroupBoxTS();
+            this.chkVFOBoldFont = new System.Windows.Forms.CheckBoxTS();
             this.labelTS24 = new System.Windows.Forms.LabelTS();
             this.clrbtnVFORing = new PowerSDR.ColorButton();
             this.clrbtnVFOBackground = new PowerSDR.ColorButton();
@@ -4609,7 +4619,7 @@ namespace PowerSDR
             this.labelTS19.Image = null;
             this.labelTS19.Location = new System.Drawing.Point(192, 19);
             this.labelTS19.Name = "labelTS19";
-            this.labelTS19.Size = new System.Drawing.Size(112, 16);
+            this.labelTS19.Size = new System.Drawing.Size(103, 16);
             this.labelTS19.TabIndex = 13;
             this.labelTS19.Text = "Refresh Rate (ms):";
             // 
@@ -4636,7 +4646,7 @@ namespace PowerSDR
             this.udHttpRefresh.TabIndex = 12;
             this.toolTip1.SetToolTip(this.udHttpRefresh, resources.GetString("udHttpRefresh.ToolTip"));
             this.udHttpRefresh.Value = new decimal(new int[] {
-            300,
+            400,
             0,
             0,
             0});
@@ -4677,7 +4687,7 @@ namespace PowerSDR
             // labelTS17
             // 
             this.labelTS17.Image = null;
-            this.labelTS17.Location = new System.Drawing.Point(295, 19);
+            this.labelTS17.Location = new System.Drawing.Point(301, 19);
             this.labelTS17.Name = "labelTS17";
             this.labelTS17.Size = new System.Drawing.Size(73, 16);
             this.labelTS17.TabIndex = 8;
@@ -4730,7 +4740,7 @@ namespace PowerSDR
             this.chkBoxHTTP.Size = new System.Drawing.Size(88, 31);
             this.chkBoxHTTP.TabIndex = 7;
             this.chkBoxHTTP.Text = "On: Basic";
-            this.toolTip1.SetToolTip(this.chkBoxHTTP, "Check to turn ON Http Server.\r\n\r\nBasic: view Display only\r\n");
+            this.toolTip1.SetToolTip(this.chkBoxHTTP, resources.GetString("chkBoxHTTP.ToolTip"));
             this.chkBoxHTTP.CheckedChanged += new System.EventHandler(this.chkBoxHTTP_CheckedChanged);
             // 
             // groupBox1
@@ -4743,7 +4753,7 @@ namespace PowerSDR
             this.groupBox1.Size = new System.Drawing.Size(307, 155);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "User Interface Controller";
+            this.groupBox1.Text = "DJ Console DH1TW 0.997 User Interface Controller";
             // 
             // label1
             // 
@@ -4776,6 +4786,7 @@ namespace PowerSDR
             // 
             // groupBoxTS1
             // 
+            this.groupBoxTS1.Controls.Add(this.labelTS26);
             this.groupBoxTS1.Controls.Add(this.btnTuneStepChangeLarger2);
             this.groupBoxTS1.Controls.Add(this.btnTuneStepChangeSmaller2);
             this.groupBoxTS1.Controls.Add(this.txtWheelTune2);
@@ -4788,7 +4799,16 @@ namespace PowerSDR
             this.groupBoxTS1.Size = new System.Drawing.Size(184, 155);
             this.groupBoxTS1.TabIndex = 53;
             this.groupBoxTS1.TabStop = false;
-            this.groupBoxTS1.Text = "PowerMate";
+            this.groupBoxTS1.Text = "PowerMate and FlexControl";
+            // 
+            // labelTS26
+            // 
+            this.labelTS26.Image = null;
+            this.labelTS26.Location = new System.Drawing.Point(43, 76);
+            this.labelTS26.Name = "labelTS26";
+            this.labelTS26.Size = new System.Drawing.Size(115, 16);
+            this.labelTS26.TabIndex = 80;
+            this.labelTS26.Text = "Alt Tune Step Rate:";
             // 
             // btnTuneStepChangeLarger2
             // 
@@ -4798,7 +4818,7 @@ namespace PowerSDR
             this.btnTuneStepChangeLarger2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnTuneStepChangeLarger2.Image = null;
             this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(112, 60);
+            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(118, 96);
             this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
             this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeLarger2.TabIndex = 79;
@@ -4814,7 +4834,7 @@ namespace PowerSDR
             this.btnTuneStepChangeSmaller2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnTuneStepChangeSmaller2.Image = null;
             this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(50, 59);
+            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(43, 96);
             this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
             this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeSmaller2.TabIndex = 78;
@@ -4829,44 +4849,45 @@ namespace PowerSDR
             this.txtWheelTune2.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtWheelTune2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.txtWheelTune2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtWheelTune2.Location = new System.Drawing.Point(66, 59);
+            this.txtWheelTune2.Location = new System.Drawing.Point(64, 95);
             this.txtWheelTune2.Name = "txtWheelTune2";
             this.txtWheelTune2.ReadOnly = true;
             this.txtWheelTune2.Size = new System.Drawing.Size(48, 20);
             this.txtWheelTune2.TabIndex = 16;
             this.txtWheelTune2.Text = "1kHz";
-            this.toolTip1.SetToolTip(this.txtWheelTune2, "Amount to tune when rotating the mouse wheel.");
+            this.toolTip1.SetToolTip(this.txtWheelTune2, "Alternative Tune Step Rate \r\nWorks with both PowerMate and FlexControl when ON\r\n");
+            this.txtWheelTune2.TextChanged += new System.EventHandler(this.txtWheelTune2_TextChanged);
             this.txtWheelTune2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtWheelTune2_MouseDown);
             // 
             // chkBoxIND
             // 
             this.chkBoxIND.Image = null;
-            this.chkBoxIND.Location = new System.Drawing.Point(38, 84);
+            this.chkBoxIND.Location = new System.Drawing.Point(26, 118);
             this.chkBoxIND.Name = "chkBoxIND";
-            this.chkBoxIND.Size = new System.Drawing.Size(111, 31);
+            this.chkBoxIND.Size = new System.Drawing.Size(132, 31);
             this.chkBoxIND.TabIndex = 7;
-            this.chkBoxIND.Text = "Independent";
-            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the PowerMate Tune Step \r\n\r\nUncheck to use the main PowerSDR Tune St" +
-        "ep");
+            this.chkBoxIND.Text = "Alt Tune Step ON";
+            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the this Alternative Tune Step \r\nWorks with both PowerMate and FlexC" +
+        "ontrol\r\n\r\nUncheck to use the main cosnsole PowerSDR Tune Step");
             this.chkBoxIND.CheckedChanged += new System.EventHandler(this.chkBoxIND_CheckedChanged);
             // 
             // labelTS15
             // 
             this.labelTS15.Image = null;
-            this.labelTS15.Location = new System.Drawing.Point(47, 23);
+            this.labelTS15.Location = new System.Drawing.Point(6, 25);
             this.labelTS15.Name = "labelTS15";
-            this.labelTS15.Size = new System.Drawing.Size(54, 16);
+            this.labelTS15.Size = new System.Drawing.Size(108, 16);
             this.labelTS15.TabIndex = 5;
-            this.labelTS15.Text = "Speed:";
+            this.labelTS15.Text = "PowerMate Speed:";
             // 
             // chkBoxPM
             // 
             this.chkBoxPM.Image = null;
-            this.chkBoxPM.Location = new System.Drawing.Point(6, 121);
+            this.chkBoxPM.Location = new System.Drawing.Point(26, 42);
             this.chkBoxPM.Name = "chkBoxPM";
-            this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
+            this.chkBoxPM.Size = new System.Drawing.Size(130, 31);
             this.chkBoxPM.TabIndex = 6;
-            this.chkBoxPM.Text = "Active";
+            this.chkBoxPM.Text = "PowerMate Active";
             this.chkBoxPM.CheckedChanged += new System.EventHandler(this.chkBoxPM_CheckedChanged);
             // 
             // udSpeedPM
@@ -4877,7 +4898,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udSpeedPM.Location = new System.Drawing.Point(107, 21);
+            this.udSpeedPM.Location = new System.Drawing.Point(120, 21);
             this.udSpeedPM.Maximum = new decimal(new int[] {
             8,
             0,
@@ -4889,7 +4910,7 @@ namespace PowerSDR
             0,
             0});
             this.udSpeedPM.Name = "udSpeedPM";
-            this.udSpeedPM.Size = new System.Drawing.Size(54, 20);
+            this.udSpeedPM.Size = new System.Drawing.Size(49, 20);
             this.udSpeedPM.TabIndex = 4;
             this.toolTip1.SetToolTip(this.udSpeedPM, "Speed of Freq Change");
             this.udSpeedPM.Value = new decimal(new int[] {
@@ -7264,6 +7285,7 @@ namespace PowerSDR
             "Cntr",
             "Right",
             "Auto",
+            "S-Unit",
             "Off"});
             this.comboDisplayLabelAlign.Location = new System.Drawing.Point(48, 96);
             this.comboDisplayLabelAlign.Name = "comboDisplayLabelAlign";
@@ -7305,7 +7327,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.udDisplayGridStep, "Horizontal Grid Step Size in dBm for the full screen Panadapter.  Split screen mo" +
         "des will display a grid step size 2x greater.");
             this.udDisplayGridStep.Value = new decimal(new int[] {
-            10,
+            6,
             0,
             0,
             0});
@@ -7365,10 +7387,10 @@ namespace PowerSDR
             this.udDisplayGridMax.TabIndex = 23;
             this.toolTip1.SetToolTip(this.udDisplayGridMax, "Signal level at top of display in dB.");
             this.udDisplayGridMax.Value = new decimal(new int[] {
+            1,
             0,
             0,
-            0,
-            0});
+            -2147483648});
             this.udDisplayGridMax.ValueChanged += new System.EventHandler(this.udDisplayGridMax_ValueChanged);
             this.udDisplayGridMax.LostFocus += new System.EventHandler(this.udDisplayGridMax_LostFocus);
             // 
@@ -8388,6 +8410,8 @@ namespace PowerSDR
             // 
             // tpDSPKeyer
             // 
+            this.tpDSPKeyer.Controls.Add(this.labelTS25);
+            this.tpDSPKeyer.Controls.Add(this.chkKeyPoll);
             this.tpDSPKeyer.Controls.Add(this.chkCWDisableUI);
             this.tpDSPKeyer.Controls.Add(this.grpKeyerConnections);
             this.tpDSPKeyer.Controls.Add(this.grpDSPCWPitch);
@@ -8399,6 +8423,33 @@ namespace PowerSDR
             this.tpDSPKeyer.Size = new System.Drawing.Size(592, 318);
             this.tpDSPKeyer.TabIndex = 0;
             this.tpDSPKeyer.Text = "Keyer";
+            // 
+            // labelTS25
+            // 
+            this.labelTS25.ForeColor = System.Drawing.Color.Black;
+            this.labelTS25.Image = null;
+            this.labelTS25.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.labelTS25.Location = new System.Drawing.Point(193, 226);
+            this.labelTS25.Name = "labelTS25";
+            this.labelTS25.Size = new System.Drawing.Size(34, 15);
+            this.labelTS25.TabIndex = 117;
+            this.labelTS25.Text = "CWP";
+            this.labelTS25.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.labelTS25, "Allows you to use the CWX panel without going into CW mode");
+            // 
+            // chkKeyPoll
+            // 
+            this.chkKeyPoll.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.chkKeyPoll.Image = null;
+            this.chkKeyPoll.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.chkKeyPoll.Location = new System.Drawing.Point(161, 226);
+            this.chkKeyPoll.Name = "chkKeyPoll";
+            this.chkKeyPoll.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkKeyPoll.Size = new System.Drawing.Size(16, 15);
+            this.chkKeyPoll.TabIndex = 115;
+            this.chkKeyPoll.Text = "Drive Lock";
+            this.toolTip1.SetToolTip(this.chkKeyPoll, "Allows you to use the CWX panel without going into CW mode.");
+            this.chkKeyPoll.CheckedChanged += new System.EventHandler(this.chkKeyPoll_CheckedChanged);
             // 
             // chkCWDisableUI
             // 
@@ -11689,6 +11740,7 @@ namespace PowerSDR
             // 
             // grpAppearanceVFO
             // 
+            this.grpAppearanceVFO.Controls.Add(this.chkVFOBoldFont);
             this.grpAppearanceVFO.Controls.Add(this.labelTS24);
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFORing);
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFOBackground);
@@ -11702,15 +11754,28 @@ namespace PowerSDR
             this.grpAppearanceVFO.Controls.Add(this.lblVFOPowerOff);
             this.grpAppearanceVFO.Location = new System.Drawing.Point(144, 8);
             this.grpAppearanceVFO.Name = "grpAppearanceVFO";
-            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 236);
+            this.grpAppearanceVFO.Size = new System.Drawing.Size(144, 272);
             this.grpAppearanceVFO.TabIndex = 39;
             this.grpAppearanceVFO.TabStop = false;
             this.grpAppearanceVFO.Text = "VFO";
             // 
+            // chkVFOBoldFont
+            // 
+            this.chkVFOBoldFont.Checked = true;
+            this.chkVFOBoldFont.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkVFOBoldFont.Image = null;
+            this.chkVFOBoldFont.Location = new System.Drawing.Point(16, 88);
+            this.chkVFOBoldFont.Name = "chkVFOBoldFont";
+            this.chkVFOBoldFont.Size = new System.Drawing.Size(104, 24);
+            this.chkVFOBoldFont.TabIndex = 78;
+            this.chkVFOBoldFont.Text = "Bold Font VFO\r\n";
+            this.toolTip1.SetToolTip(this.chkVFOBoldFont, "Check box to use Bold/Italic Font for VFO");
+            this.chkVFOBoldFont.CheckedChanged += new System.EventHandler(this.chkVFOBoldFont_CheckedChanged);
+            // 
             // labelTS24
             // 
             this.labelTS24.Image = null;
-            this.labelTS24.Location = new System.Drawing.Point(10, 195);
+            this.labelTS24.Location = new System.Drawing.Point(10, 232);
             this.labelTS24.Name = "labelTS24";
             this.labelTS24.Size = new System.Drawing.Size(72, 24);
             this.labelTS24.TabIndex = 77;
@@ -11722,7 +11787,7 @@ namespace PowerSDR
             this.clrbtnVFORing.Automatic = "Automatic";
             this.clrbtnVFORing.Color = System.Drawing.Color.DarkGreen;
             this.clrbtnVFORing.Image = null;
-            this.clrbtnVFORing.Location = new System.Drawing.Point(88, 196);
+            this.clrbtnVFORing.Location = new System.Drawing.Point(88, 233);
             this.clrbtnVFORing.MoreColors = "More Colors...";
             this.clrbtnVFORing.Name = "clrbtnVFORing";
             this.clrbtnVFORing.Size = new System.Drawing.Size(40, 23);
@@ -11735,7 +11800,7 @@ namespace PowerSDR
             this.clrbtnVFOBackground.Automatic = "Automatic";
             this.clrbtnVFOBackground.Color = System.Drawing.Color.Black;
             this.clrbtnVFOBackground.Image = null;
-            this.clrbtnVFOBackground.Location = new System.Drawing.Point(88, 88);
+            this.clrbtnVFOBackground.Location = new System.Drawing.Point(88, 121);
             this.clrbtnVFOBackground.MoreColors = "More Colors...";
             this.clrbtnVFOBackground.Name = "clrbtnVFOBackground";
             this.clrbtnVFOBackground.Size = new System.Drawing.Size(40, 23);
@@ -11745,7 +11810,7 @@ namespace PowerSDR
             // lblVFOBackground
             // 
             this.lblVFOBackground.Image = null;
-            this.lblVFOBackground.Location = new System.Drawing.Point(16, 88);
+            this.lblVFOBackground.Location = new System.Drawing.Point(16, 121);
             this.lblVFOBackground.Name = "lblVFOBackground";
             this.lblVFOBackground.Size = new System.Drawing.Size(72, 24);
             this.lblVFOBackground.TabIndex = 72;
@@ -11756,7 +11821,7 @@ namespace PowerSDR
             this.clrbtnVFOSmallColor.Automatic = "Automatic";
             this.clrbtnVFOSmallColor.Color = System.Drawing.Color.OrangeRed;
             this.clrbtnVFOSmallColor.Image = null;
-            this.clrbtnVFOSmallColor.Location = new System.Drawing.Point(88, 152);
+            this.clrbtnVFOSmallColor.Location = new System.Drawing.Point(88, 185);
             this.clrbtnVFOSmallColor.MoreColors = "More Colors...";
             this.clrbtnVFOSmallColor.Name = "clrbtnVFOSmallColor";
             this.clrbtnVFOSmallColor.Size = new System.Drawing.Size(40, 23);
@@ -11766,7 +11831,7 @@ namespace PowerSDR
             // lblVFOSmallColor
             // 
             this.lblVFOSmallColor.Image = null;
-            this.lblVFOSmallColor.Location = new System.Drawing.Point(16, 152);
+            this.lblVFOSmallColor.Location = new System.Drawing.Point(16, 185);
             this.lblVFOSmallColor.Name = "lblVFOSmallColor";
             this.lblVFOSmallColor.Size = new System.Drawing.Size(72, 24);
             this.lblVFOSmallColor.TabIndex = 70;
@@ -11777,7 +11842,7 @@ namespace PowerSDR
             this.chkVFOSmallLSD.Checked = true;
             this.chkVFOSmallLSD.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVFOSmallLSD.Image = null;
-            this.chkVFOSmallLSD.Location = new System.Drawing.Point(16, 120);
+            this.chkVFOSmallLSD.Location = new System.Drawing.Point(16, 153);
             this.chkVFOSmallLSD.Name = "chkVFOSmallLSD";
             this.chkVFOSmallLSD.Size = new System.Drawing.Size(104, 24);
             this.chkVFOSmallLSD.TabIndex = 69;
@@ -20935,10 +21000,10 @@ namespace PowerSDR
         //=======================================================================================
         private void comboAudioInput2_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
-            Debug.WriteLine("test1===============");
+          //  Debug.WriteLine("test1===============");
 
 			if(comboAudioInput2.SelectedIndex < 0) return;
-            Debug.WriteLine("test2===============");
+         //   Debug.WriteLine("test2===============");
 
             int old_input = Audio.Input2;
 			int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
@@ -20950,7 +21015,7 @@ namespace PowerSDR
 				Thread.Sleep(100);
 			}
 
-            Debug.WriteLine("test3===============");
+          //  Debug.WriteLine("test3===============");
 
             console.AudioInputIndex2 = new_input;
 			Audio.Input2 = new_input;
@@ -22436,6 +22501,7 @@ namespace PowerSDR
 			if(udDisplayGridMax.Value <= udDisplayGridMin.Value)
 				udDisplayGridMax.Value = udDisplayGridMin.Value + 10;
 			Display.SpectrumGridMax = (int)udDisplayGridMax.Value;
+            
           //  console.AutoPanScaleMax = (int)udDisplayGridMax.Value; // ke9ns add storage of original  value
         }
 
@@ -22468,7 +22534,10 @@ namespace PowerSDR
 				case "Auto":
 					Display.DisplayLabelAlign = DisplayLabelAlignment.AUTO;
 					break;
-				case "Off":
+                case "S-Unit":
+                    Display.DisplayLabelAlign = DisplayLabelAlignment.Sunit;
+                    break;
+                case "Off":
 					Display.DisplayLabelAlign = DisplayLabelAlignment.OFF;
 					break;
 				default:
@@ -23179,11 +23248,10 @@ namespace PowerSDR
 				return;
 			}
 
-			if(udTXFilterLow.Focused &&
-				(udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
-				(console.TXFilterHigh - console.TXFilterLow) <= 3000)
+			if( udTXFilterLow.Focused &&	(udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
+				(console.TXFilterHigh - console.TXFilterLow) <= 3000 )
 			{
-				(new Thread(new ThreadStart(TXBW))).Start();
+				(new Thread(new ThreadStart(TXBW))).Start(); // just a warning message
 			}
 
 			console.TXFilterLow = (int)udTXFilterLow.Value;
@@ -23825,6 +23893,7 @@ namespace PowerSDR
         private void clrbtnMeterBackground_Changed(object sender, System.EventArgs e)
         {
             console.AnalogMeterBackgroundColor = clrbtnMeterBackground.Color;
+            console.RingVFOColor = clrbtnVFORing.Color; // ke9ns add
         }
 
         //==========================================================================================
@@ -23884,12 +23953,15 @@ namespace PowerSDR
 		private void clrbtnBandBackground_Changed(object sender, System.EventArgs e)
 		{
 			console.BandBackgroundColor = clrbtnBandBackground.Color;
-		}
+            console.RingVFOColor = clrbtnVFORing.Color; // ke9ns add
 
-		private void clrbtnVFOBackground_Changed(object sender, System.EventArgs e)
+        }
+
+        private void clrbtnVFOBackground_Changed(object sender, System.EventArgs e)
 		{
 			console.VFOBackgroundColor = clrbtnVFOBackground.Color;
-		}
+            console.RingVFOColor = clrbtnVFORing.Color; // ke9ns add
+        }
 
 		#endregion
 
@@ -25125,14 +25197,16 @@ namespace PowerSDR
 		private void btnImportDB_Click(object sender, System.EventArgs e)
 		{
             openFileDialog1.InitialDirectory = String.Empty;
+
             string path = console.AppDataPath;
 
             path = path.Substring(0, path.LastIndexOf("\\"));
 
             openFileDialog1.InitialDirectory = path;
+
 			// openFileDialog1.ShowDialog();
-            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
-                db_import_success = false;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)   db_import_success = false;
 
             if (db_import_success == true)
             {
@@ -25142,9 +25216,10 @@ namespace PowerSDR
                     "PowerSDR Shutting Down", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 console.Close();
-            }   
-		}
-        
+            }
+
+        } // btnImportDB_Click
+
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
 		{
             CompleteImport();
@@ -25221,8 +25296,10 @@ namespace PowerSDR
 
             string current_ver_num = TitleBar.GetVerNum();
 
-            if (current_ver_num != db_ver_num)
+            if ((current_ver_num != db_ver_num) )
             {
+                Debug.WriteLine("current , old " + current_ver_num + " , "+ db_ver_num);
+
                 if (chkImportDBRestrict.Checked)
                 {
                     MessageBox.Show("Database Import Restricted.\r\n\r\nThe database selected for import was " +
@@ -25978,7 +26055,8 @@ namespace PowerSDR
 		private void clrbtnMeterEdgeBackground_Changed(object sender, System.EventArgs e)
 		{
 			console.EdgeMeterBackgroundColor = clrbtnMeterEdgeBackground.Color;
-		}
+            console.RingVFOColor = clrbtnVFORing.Color; // ke9ns add
+        }
 
 		private void clrbtnEdgeIndicator_Changed(object sender, System.EventArgs e)
 		{
@@ -26920,6 +26998,8 @@ namespace PowerSDR
             saveFileDialog1.ShowDialog();
         }
 
+
+        //====================================================================================
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {            
             try
@@ -26933,7 +27013,9 @@ namespace PowerSDR
                     "ERROR: Database Write Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
+        } // saveFileDialog1_FileOk
+
+
 
         private void udTX1500Blanking_ValueChanged(object sender, EventArgs e)
         {
@@ -27449,12 +27531,17 @@ namespace PowerSDR
 
         }  
 
+
+
+
+
         //==========================================================================
         // ke9ns add PowerMate
-        private void chkBoxPM_CheckedChanged(object sender, EventArgs e)
+        public void chkBoxPM_CheckedChanged(object sender, EventArgs e)
         {
+          //  if (FCBasicForm == null || FCBasicForm.IsDisposed) FCBasicForm = new FlexControlBasicForm(console);
+         //   FCBasicForm.chkBoxPM.Checked = chkBoxPM.Checked;
 
-           
             if (chkBoxPM.Checked == true)
             {
                 if (console.KBON == 0) // only do if not already done
@@ -27467,10 +27554,10 @@ namespace PowerSDR
                     else
                     {
                         console.KBON = 1;
-                        Debug.WriteLine("FOUND KNOB2=============="+console.KBON);
-                         powerMate.ButtonEvent += new HidDevice.PowerMate.ButtonHandler(console.OnButtonEvent);      // create button event
-                         powerMate.RotateEvent += new HidDevice.PowerMate.RotationHandler(console.OnRotateEvent);    // create rotation event
-                        
+                        Debug.WriteLine("FOUND KNOB2==============" + console.KBON);
+                        powerMate.ButtonEvent += new HidDevice.PowerMate.ButtonHandler(console.OnButtonEvent);      // create button event
+                        powerMate.RotateEvent += new HidDevice.PowerMate.RotationHandler(console.OnRotateEvent);    // create rotation event
+
                         //  this.powerMate.LedBrightness = 60;              // turns on LED light at startup
 
 
@@ -27479,11 +27566,12 @@ namespace PowerSDR
             }
             else
             {
-               
-               if (console.KBON == 1) powerMate.Shutdown();
+
+                if (console.KBON == 1) powerMate.Shutdown();
                 console.KBON = 0;
 
             }
+
 
 
         } //chkBoxPM_CheckedChanged
@@ -27494,11 +27582,16 @@ namespace PowerSDR
         {
             udSpeedPM.Value = udSpeedPM.Value + 0;// in console.cs  public void OnRotateEvent(int value1)
 
+          //  if (FCBasicForm == null || FCBasicForm.IsDisposed) FCBasicForm = new FlexControlBasicForm(console);
+          //  FCBasicForm.udSpeedPM.Value = udSpeedPM.Value;
+
             // in console.cs  public void OnButtonEvent(HidDevice.PowerMate.ButtonState bs, int value, int value1, int value2)
             // in console.cs but not used right public void OnSliderBrightness(object sender, EventArgs e)
 
 
         }
+
+
 
         //===========================================================================================
         // ke9ns add
@@ -27506,7 +27599,7 @@ namespace PowerSDR
         {
            
             if (chkBoxHTTP.Checked == true)
-               {
+            {
 
                 chkBoxHttp2.Checked = false;
 
@@ -27554,7 +27647,68 @@ namespace PowerSDR
             }
 
 
-        }// chkBoxHttp2_CheckedChanged
+        } // chkBoxHttp2_CheckedChanged
+
+
+
+        private void txtWheelTune2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left) ChangeTuneStepUp2();
+        }
+
+        private void btnTuneStepChangeLarger2_Click(object sender, EventArgs e)
+        {
+            ChangeTuneStepUp2();
+        }
+
+        private void btnTuneStepChangeSmaller2_Click(object sender, EventArgs e)
+        {
+            ChangeTuneStepDown2();
+        }
+
+
+
+        public void ChangeTuneStepUp2()
+        {
+            tune_step_index2 = (tune_step_index2 + 1) % console.tune_step_list.Count;
+            txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
+
+        }
+
+        public void ChangeTuneStepDown2()
+        {
+            tune_step_index2 = (tune_step_index2 - 1 + console.tune_step_list.Count) % console.tune_step_list.Count;
+            txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
+
+        }
+
+        public int tune_step_index2;						// An index into the above array
+        public int TuneStepIndex2
+        {
+            get { return tune_step_index2; }
+            set
+            {
+                if (value < 0 || value > console.tune_step_list.Count - 1)
+                    return;
+
+                tune_step_index2 = value;
+                txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
+            }
+        }
+
+        private void chkBoxIND_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+
+
+
+
+
+
 
         //===============================================================================================
 
@@ -27679,86 +27833,49 @@ namespace PowerSDR
 
         } // comboROTORPort_SelectedIndexChanged
 
-        private void txtWheelTune2_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) ChangeTuneStepUp2();
-        }
 
-        private void btnTuneStepChangeLarger2_Click(object sender, EventArgs e)
-        {
-            ChangeTuneStepUp2();
-        }
-
-        private void btnTuneStepChangeSmaller2_Click(object sender, EventArgs e)
-        {
-            ChangeTuneStepDown2();
-        }
-
-
-
-        public void ChangeTuneStepUp2()
-        {
-            tune_step_index2 = (tune_step_index2 + 1) % console.tune_step_list.Count;
-            txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
-           
-        }
-
-        public void ChangeTuneStepDown2()
-        {
-            tune_step_index2 = (tune_step_index2 - 1 + console.tune_step_list.Count) % console.tune_step_list.Count;
-            txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
-          
-        }
-
-        public int tune_step_index2;						// An index into the above array
-        public int TuneStepIndex2
-        {
-            get { return tune_step_index2; }
-            set
-            {
-                if (value < 0 || value > console.tune_step_list.Count - 1)
-                    return;
-
-                tune_step_index2 = value;
-                txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
-            }
-        }
-
-        private void chkBoxIND_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        //================================================================================================
+        // ke9ns add pulser
         private void tbPulseRate_MouseUp(object sender, MouseEventArgs e)
         {
             this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate: " + ((int)tbPulseRate1.Value).ToString() + " / second");
 
         }
 
+        //================================================================================================
+        // ke9ns add pulser
         private void tbPulseRate_MouseDown(object sender, MouseEventArgs e)
         {
             this.toolTip1.SetToolTip(this.tbPulseRate1, "Pulse Rate: " + ((int)tbPulseRate1.Value).ToString() + " / second");
 
         }
 
+        //================================================================================================
+        // ke9ns add pulser
         private void tbDutyCycle_MouseUp(object sender, MouseEventArgs e)
         {
             this.toolTip1.SetToolTip(this.tbDutyCycle, "Duty Cycle: " + ((int)tbDutyCycle.Value).ToString() + " % on time");
 
         }
 
+        //================================================================================================
+        // ke9ns add pulser
         private void tbDutyCycle_MouseDown(object sender, MouseEventArgs e)
         {
             this.toolTip1.SetToolTip(this.tbDutyCycle, "Duty Cycle: " + ((int)tbDutyCycle.Value).ToString() + " % on time");
 
         }
 
+        //================================================================================================
+        // ke9ns add pulser
         private void tbDutyCycle_Scroll(object sender, EventArgs e)
         {
             this.toolTip1.SetToolTip(this.tbDutyCycle, "Duty Cycle: " + ((int)tbDutyCycle.Value).ToString() + " % on time");
 
         }
 
+        //================================================================================================
+        // ke9ns add pulser
         private void tbPulseRate_Scroll(object sender, EventArgs e)
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
@@ -27767,7 +27884,8 @@ namespace PowerSDR
 
         }
 
-        // ke9ns add
+        //================================================================================================
+        // ke9ns add pulser
         private void chkBoxPulser_CheckedChanged(object sender, EventArgs e)
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
@@ -27788,7 +27906,8 @@ namespace PowerSDR
 
         }
 
-        // ke9ns add for pulser tune function
+        //================================================================================================
+        // ke9ns add pulser
         private void tbPulseRate_ValueChanged(object sender, EventArgs e)
         {
             if (tbPulseRate1.Value > 20) tbPulseRate1.Value = 20;
@@ -27798,13 +27917,16 @@ namespace PowerSDR
 
         }
 
-        // ke9ns add for pulser tune function
+        //================================================================================================
+        // ke9ns add pulser
         private void tbDutyCycle_ValueChanged(object sender, EventArgs e)
         {
             Audio.PulsePeriod1 = (double)tbPulseRate1.Value;
             Audio.PulseDuty1 = (double)tbDutyCycle.Value;
 
         }
+
+
 
         //==================================================================
         // ke9ns add color around the VFOA and B and Meters
@@ -27813,6 +27935,42 @@ namespace PowerSDR
             console.RingVFOColor = clrbtnVFORing.Color;
 
         }
+
+        //==================================================================
+        // ke9ns add chose the font for the VFO
+        private void chkVFOBoldFont_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkVFOBoldFont.Checked == true)
+            {
+                console.VFOBoldFont = true;
+            }
+            else console.VFOBoldFont = false;
+
+          
+        } // chkVFOBoldFont_CheckedChanged
+
+
+        //==================================================================
+        // ke9ns add
+        private void txtWheelTune2_TextChanged(object sender, EventArgs e)
+        {
+         //   if (FCBasicForm == null || FCBasicForm.IsDisposed) FCBasicForm = new FlexControlBasicForm(console);
+         //   FCBasicForm.txtWheelTune2.Text = txtWheelTune2.Text;
+
+        }
+
+
+        //===============================================================================
+        // ke9ns add
+        private void chkKeyPoll_CheckedChanged(object sender, EventArgs e)
+        {
+
+            console.CWP = chkKeyPoll.Checked;
+
+
+
+        } // chkKeyPoll_CheckedChanged
 
 
 

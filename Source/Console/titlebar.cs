@@ -35,27 +35,37 @@ namespace PowerSDR
     class TitleBar
     {
 
+        public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
+
 #if (NO_DJ)
-      //  public const string BUILT_BY = "Mods Compiled by [KE9NS]";
-        public const string BUILT_BY = "dh1tw DJ-CONSOLE 0.997 & Mods by KE9NS"; //PowerSDR-UI 0.997
+        //  public const string BUILT_BY = "Mods Compiled by [KE9NS]";
+        public const string BUILT_BY = "[Mods by KE9NS]"; //
 #else
         
+
          public const string BUILT_BY = "Mods Compiled by [KE9NS]";
 #endif    
-        public const string VERSION_SUFFIX = " 120616T11"; // Make this "" for production
+        public const string VERSION_SUFFIX = ""; // Make this "" for production
 
         public const string ALPHABETA = ""; // change to "Alpha" or "" as appropriate
 
-        public const string SVN = "SVN: " + SVNRev.LATEST_REV + "+"; // change to "" for production, remove + for CCNET
+        public const string SVN = "SVN: " + SVNRev.LATEST_REV; // + "+"; // change to "" for production, remove + for CCNET
 
         public static string GetString()
         {
             string version = GetVerNum();
+
             string s = "FlexRadio Systems™  PowerSDR™";
-            if(ALPHABETA != "") s += "  "+ALPHABETA;
+
+            
+            if (ALPHABETA != "") s += "  "+ALPHABETA;
+
             s += "  v" + version;
+
             if (VERSION_SUFFIX != "") s += " " + VERSION_SUFFIX;
-            if (SVN != "") s += "   " + SVN;
+
+            if (SVN != "") s += "   " + SVN; 
+
             if (BUILT_BY != "") s += "   " + BUILT_BY;
 
             return s;

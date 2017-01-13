@@ -89,8 +89,10 @@ namespace PowerSDR
             
             writer.WriteStartElement("Controls");
 
-            foreach (Control c in f.Controls)
+            foreach (Control c in f.Controls) //  for loop from 0 to length of f.Controls[]
+            {
                 Save(c, writer);
+            }
 
             writer.WriteEndElement();
             writer.WriteEndElement();
@@ -165,7 +167,9 @@ namespace PowerSDR
             RestoreForm(f, doc);
 
             foreach (Control c in f.Controls)
-                Restore(c, doc);
+            {
+                 Restore(c, doc);
+            }
 
             return true;
         } // restore(skin)
@@ -266,7 +270,9 @@ namespace PowerSDR
                 writer.WriteEndElement(); // panel
                 return;
             }
-        }
+
+
+        } // SAVE
 
         private static void Restore(Control c, XmlDocument doc)
         {
@@ -285,6 +291,7 @@ namespace PowerSDR
             temp = c as Panel;
             if (temp != null)
             {
+            
                 Panel pnl = (Panel)c;
                 RestorePanel(pnl, doc);
                 foreach (Control c2 in pnl.Controls)
@@ -357,7 +364,9 @@ namespace PowerSDR
                 RestoreTextBox((TextBox)c, doc);
                 return;
             }
-        }
+        } // RESTORE
+
+
 
         private static void ReadImages(Control c)
         {
@@ -373,13 +382,20 @@ namespace PowerSDR
                 return;
             }
 
-            temp = c as Panel;
+         temp = c as Panel;
             if (temp != null)
             {
-                Panel pnl = (Panel)c;
-                SetBackgroundImage(c);
+              //  Debug.WriteLine("C.NMAE " + c.Name);
+
+                    Panel pnl = (Panel)c;
+                    SetBackgroundImage(c);
+              
                 foreach (Control c2 in pnl.Controls)
+                {
+                  
                     ReadImages(c2);
+                }
+                
                 return;
             }
 
@@ -1604,16 +1620,36 @@ namespace PowerSDR
             return c;
         }
 
-       public static void SetBackgroundImage(Control c)
+        public static void SetBackgroundImage(Control c)
         {
+            if (c.Name == "panelOptions") return; // ke9ns add
+            if (c.Name == "panelModeSpecificPhone") return; // ke9ns add
+            if (c.Name == "panelModeSpecificFM") return; // ke9ns add
+            if (c.Name == "panelModeSpecificCW") return; // ke9ns add
+            if (c.Name == "panelModeSpecificDigital") return; // ke9ns add
+            if (c.Name == "panelBandHF") return; // ke9ns add
+            if (c.Name == "panelBandGN") return; // ke9ns add
+            if (c.Name == "panelBandVHF") return; // ke9ns add
+            if (c.Name == "panelMode") return; // ke9ns add
+            if (c.Name == "panelFilter") return; // ke9ns add
+            if (c.Name == "panelRX2Filter") return; // ke9ns add
+            if (c.Name == "panelRX2Mode") return; // ke9ns add
+
+
 
             c.Name = c.Name.Replace("GN", "VHF"); // ke9ns add
 
             if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
+            {
                 c.BackgroundImage = Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
-            else c.BackgroundImage = null;
+            }
+            else
+            {
+                c.BackgroundImage = null;
+            }
         }
 
         #endregion
-    }
-}
+    } // skin
+
+} // powerSDR

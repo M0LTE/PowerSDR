@@ -322,6 +322,7 @@ namespace PowerSDR
             this.chkMemoryFormClose.TabIndex = 12;
             this.chkMemoryFormClose.Text = "Close after selection";
             this.toolTip1.SetToolTip(this.chkMemoryFormClose, "Check to close the Memory window after an entry has been selected");
+            this.chkMemoryFormClose.CheckedChanged += new System.EventHandler(this.chkMemoryFormClose_CheckedChanged);
             // 
             // btnSelect
             // 
@@ -509,7 +510,7 @@ namespace PowerSDR
             this.Controls.Add(this.MemoryRecordAdd);
             this.Controls.Add(this.dataGridView1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(526, 367);
+            this.MinimumSize = new System.Drawing.Size(120, 367);
             this.Name = "MemoryForm";
             this.Text = "Memory Interface";
             this.toolTip1.SetToolTip(this, resources.GetString("$this.ToolTip"));

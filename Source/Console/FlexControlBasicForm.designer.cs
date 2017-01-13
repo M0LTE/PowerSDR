@@ -37,6 +37,16 @@
             this.lblAUX3 = new System.Windows.Forms.Label();
             this.lblAUX2 = new System.Windows.Forms.Label();
             this.lblKnob = new System.Windows.Forms.Label();
+            this.chkBoxIND = new System.Windows.Forms.CheckBoxTS();
+            this.btnTuneStepChangeLarger2 = new System.Windows.Forms.ButtonTS();
+            this.btnTuneStepChangeSmaller2 = new System.Windows.Forms.ButtonTS();
+            this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS2 = new System.Windows.Forms.LabelTS();
+            this.labelTS1 = new System.Windows.Forms.LabelTS();
+            this.chkBoxPM = new System.Windows.Forms.CheckBoxTS();
+            this.udSpeedPM = new System.Windows.Forms.NumericUpDownTS();
+            this.txtWheelTune2 = new System.Windows.Forms.TextBoxTS();
+            this.labelTS15 = new System.Windows.Forms.LabelTS();
             this.chkAutoDetect = new System.Windows.Forms.CheckBoxTS();
             this.radModeAdvanced = new System.Windows.Forms.RadioButtonTS();
             this.radModeBasic = new System.Windows.Forms.RadioButtonTS();
@@ -45,6 +55,8 @@
             this.comboButtonMid = new System.Windows.Forms.ComboBoxTS();
             this.comboButtonLeft = new System.Windows.Forms.ComboBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.picFlexControl)).BeginInit();
+            this.groupBoxTS1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).BeginInit();
             this.SuspendLayout();
             // 
             // picFlexControl
@@ -91,6 +103,146 @@
             this.lblKnob.Size = new System.Drawing.Size(94, 13);
             this.lblKnob.TabIndex = 12;
             this.lblKnob.Text = "Knob Press Action";
+            // 
+            // chkBoxIND
+            // 
+            this.chkBoxIND.Image = null;
+            this.chkBoxIND.Location = new System.Drawing.Point(548, 409);
+            this.chkBoxIND.Name = "chkBoxIND";
+            this.chkBoxIND.Size = new System.Drawing.Size(58, 31);
+            this.chkBoxIND.TabIndex = 7;
+            this.chkBoxIND.Text = "ON";
+            this.chkBoxIND.Visible = false;
+            // 
+            // btnTuneStepChangeLarger2
+            // 
+            this.btnTuneStepChangeLarger2.FlatAppearance.BorderSize = 0;
+            this.btnTuneStepChangeLarger2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTuneStepChangeLarger2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnTuneStepChangeLarger2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnTuneStepChangeLarger2.Image = null;
+            this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(595, 374);
+            this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
+            this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
+            this.btnTuneStepChangeLarger2.TabIndex = 79;
+            this.btnTuneStepChangeLarger2.Text = "+";
+            this.btnTuneStepChangeLarger2.Visible = false;
+            this.btnTuneStepChangeLarger2.Click += new System.EventHandler(this.btnTuneStepChangeLarger2_Click);
+            // 
+            // btnTuneStepChangeSmaller2
+            // 
+            this.btnTuneStepChangeSmaller2.FlatAppearance.BorderSize = 0;
+            this.btnTuneStepChangeSmaller2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTuneStepChangeSmaller2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.btnTuneStepChangeSmaller2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btnTuneStepChangeSmaller2.Image = null;
+            this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
+            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(533, 373);
+            this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
+            this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
+            this.btnTuneStepChangeSmaller2.TabIndex = 78;
+            this.btnTuneStepChangeSmaller2.Text = "-";
+            this.btnTuneStepChangeSmaller2.Visible = false;
+            this.btnTuneStepChangeSmaller2.Click += new System.EventHandler(this.btnTuneStepChangeSmaller2_Click);
+            // 
+            // groupBoxTS1
+            // 
+            this.groupBoxTS1.Controls.Add(this.labelTS1);
+            this.groupBoxTS1.Controls.Add(this.chkBoxPM);
+            this.groupBoxTS1.Controls.Add(this.udSpeedPM);
+            this.groupBoxTS1.Location = new System.Drawing.Point(518, 198);
+            this.groupBoxTS1.Name = "groupBoxTS1";
+            this.groupBoxTS1.Size = new System.Drawing.Size(117, 105);
+            this.groupBoxTS1.TabIndex = 54;
+            this.groupBoxTS1.TabStop = false;
+            this.groupBoxTS1.Text = "PowerMate";
+            this.groupBoxTS1.Visible = false;
+            // 
+            // labelTS2
+            // 
+            this.labelTS2.Image = null;
+            this.labelTS2.Location = new System.Drawing.Point(515, 31);
+            this.labelTS2.Name = "labelTS2";
+            this.labelTS2.Size = new System.Drawing.Size(126, 82);
+            this.labelTS2.TabIndex = 80;
+            this.labelTS2.Text = "For Alternate Tune Step Rate for FlexControl:\r\nSetup->General->User Interface->Po" +
+    "werMate and FlexControl";
+            // 
+            // labelTS1
+            // 
+            this.labelTS1.Image = null;
+            this.labelTS1.Location = new System.Drawing.Point(6, 25);
+            this.labelTS1.Name = "labelTS1";
+            this.labelTS1.Size = new System.Drawing.Size(48, 16);
+            this.labelTS1.TabIndex = 5;
+            this.labelTS1.Text = "Speed:";
+            // 
+            // chkBoxPM
+            // 
+            this.chkBoxPM.Image = null;
+            this.chkBoxPM.Location = new System.Drawing.Point(11, 60);
+            this.chkBoxPM.Name = "chkBoxPM";
+            this.chkBoxPM.Size = new System.Drawing.Size(62, 31);
+            this.chkBoxPM.TabIndex = 6;
+            this.chkBoxPM.Text = "Active";
+            this.chkBoxPM.CheckedChanged += new System.EventHandler(this.chkBoxPM_CheckedChanged);
+            // 
+            // udSpeedPM
+            // 
+            this.udSpeedPM.DecimalPlaces = 1;
+            this.udSpeedPM.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udSpeedPM.Location = new System.Drawing.Point(60, 23);
+            this.udSpeedPM.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udSpeedPM.Name = "udSpeedPM";
+            this.udSpeedPM.Size = new System.Drawing.Size(41, 20);
+            this.udSpeedPM.TabIndex = 4;
+            this.udSpeedPM.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.udSpeedPM.ValueChanged += new System.EventHandler(this.udSpeedPM_ValueChanged);
+            // 
+            // txtWheelTune2
+            // 
+            this.txtWheelTune2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtWheelTune2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtWheelTune2.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtWheelTune2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.txtWheelTune2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtWheelTune2.Location = new System.Drawing.Point(549, 373);
+            this.txtWheelTune2.Name = "txtWheelTune2";
+            this.txtWheelTune2.ReadOnly = true;
+            this.txtWheelTune2.Size = new System.Drawing.Size(48, 20);
+            this.txtWheelTune2.TabIndex = 16;
+            this.txtWheelTune2.Text = "1kHz";
+            this.txtWheelTune2.Visible = false;
+            this.txtWheelTune2.TextChanged += new System.EventHandler(this.txtWheelTune2_TextChanged);
+            this.txtWheelTune2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtWheelTune2_MouseDown);
+            // 
+            // labelTS15
+            // 
+            this.labelTS15.Image = null;
+            this.labelTS15.Location = new System.Drawing.Point(545, 320);
+            this.labelTS15.Name = "labelTS15";
+            this.labelTS15.Size = new System.Drawing.Size(89, 51);
+            this.labelTS15.TabIndex = 13;
+            this.labelTS15.Text = "Tune Step for FlexControl and PowerMate";
+            this.labelTS15.Visible = false;
             // 
             // chkAutoDetect
             // 
@@ -177,7 +329,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(618, 515);
+            this.ClientSize = new System.Drawing.Size(646, 515);
+            this.Controls.Add(this.labelTS2);
+            this.Controls.Add(this.chkBoxIND);
+            this.Controls.Add(this.btnTuneStepChangeLarger2);
+            this.Controls.Add(this.btnTuneStepChangeSmaller2);
+            this.Controls.Add(this.groupBoxTS1);
+            this.Controls.Add(this.txtWheelTune2);
+            this.Controls.Add(this.labelTS15);
             this.Controls.Add(this.lblKnob);
             this.Controls.Add(this.lblAUX2);
             this.Controls.Add(this.lblAUX3);
@@ -195,6 +354,8 @@
             this.Text = "FlexControl - Basic";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FlexControlSimpleForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picFlexControl)).EndInit();
+            this.groupBoxTS1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udSpeedPM)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -214,5 +375,15 @@
         private System.Windows.Forms.Label lblAUX3;
         private System.Windows.Forms.Label lblAUX2;
         private System.Windows.Forms.Label lblKnob;
+        private System.Windows.Forms.LabelTS labelTS15;
+        public System.Windows.Forms.GroupBoxTS groupBoxTS1;
+        private System.Windows.Forms.LabelTS labelTS1;
+        public System.Windows.Forms.CheckBoxTS chkBoxPM;
+        public System.Windows.Forms.NumericUpDownTS udSpeedPM;
+        private System.Windows.Forms.ButtonTS btnTuneStepChangeLarger2;
+        private System.Windows.Forms.ButtonTS btnTuneStepChangeSmaller2;
+        public System.Windows.Forms.TextBoxTS txtWheelTune2;
+        public System.Windows.Forms.CheckBoxTS chkBoxIND;
+        private System.Windows.Forms.LabelTS labelTS2;
     }
 }

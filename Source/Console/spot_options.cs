@@ -59,6 +59,7 @@ namespace PowerSDR
         public Label label8;
         private Button btnTrack;
         private TextBox textBox1;
+
         public static SpotControl SpotForm;                       // ke9ns add DX spotter function
 
         #endregion

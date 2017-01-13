@@ -156,22 +156,38 @@ namespace PowerSDR
             if (tuning_acceleration && steps > 1)
             {
                 int index = console.TuneStepIndex; // get current step index
-                int var_index = index + (steps = 1); // increment the step index based on accerated input
+
+                if (console.setupForm.chkBoxIND.Checked == true)
+                {
+                     index = console.TuneStepIndex2; // get current step index
+                }
+                    int var_index = index + (steps = 1); // increment the step index based on accerated input
+
                 if (var_index > console.TuneStepList.Count - 1) // cap at the top index
                     var_index = console.TuneStepList.Count - 1;
 
                 return console.TuneStepList[var_index].StepHz;
             }
-            else return console.CurrentTuneStepHz;
-        }
+            else
+            {
+                if (console.setupForm.chkBoxIND.Checked == true)
+                {
+                    return console.CurrentTuneStepHz2;
+                }
+                return console.CurrentTuneStepHz;
+            }
+
+        } // GetTuneStep(int steps)
+
+
 
         public void FlexControl_KnobRotated(FlexControl.RotateDirection dir, int num_steps)
         {
             if (console == null) return;                       
 
             int step = GetTuneStep(num_steps);
-            if (num_steps > 1 && tuning_acceleration)
-                num_steps = 1;
+
+            if (num_steps > 1 && tuning_acceleration)  num_steps = 1;
 
             switch (current_knob_function)
             {
