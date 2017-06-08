@@ -90,7 +90,7 @@ extern struct _uni
 		TRXMODE trx;
 	} mode;
 
-	METERBlock meter;
+	METERBlock meter; // ke9ns this is the RX and TX meter struct
 
 	SpecBlock spec;
 

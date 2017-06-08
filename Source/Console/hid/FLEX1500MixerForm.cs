@@ -118,17 +118,17 @@ namespace PowerSDR
             this.lblMic = new System.Windows.Forms.LabelTS();
             this.chkMicSel = new System.Windows.Forms.CheckBoxTS();
             this.tbMic = new System.Windows.Forms.TrackBarTS();
+            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             this.btnCodecDump = new System.Windows.Forms.ButtonTS();
             this.grpOutput = new System.Windows.Forms.GroupBoxTS();
             this.lblFlexWireOut = new System.Windows.Forms.LabelTS();
             this.lblPhones = new System.Windows.Forms.LabelTS();
-            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPhones)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).BeginInit();
-            this.grpOutput.SuspendLayout();
             this.grpInput.SuspendLayout();
+            this.grpOutput.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkFlexWireOutSel
@@ -243,7 +243,7 @@ namespace PowerSDR
             this.tbFlexWireIn.TabIndex = 9;
             this.tbFlexWireIn.TickFrequency = 20;
             this.tbFlexWireIn.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.toolTip1.SetToolTip(this.tbFlexWireIn, "Adjusts the FlexWire Line Input Gain");
+            this.toolTip1.SetToolTip(this.tbFlexWireIn, resources.GetString("tbFlexWireIn.ToolTip"));
             this.tbFlexWireIn.Value = 60;
             this.tbFlexWireIn.Scroll += new System.EventHandler(this.tbFlexWireIn_Scroll);
             // 
@@ -281,9 +281,26 @@ namespace PowerSDR
             this.tbMic.TabIndex = 0;
             this.tbMic.TickFrequency = 20;
             this.tbMic.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.toolTip1.SetToolTip(this.tbMic, "Adjusts the Mic Input Gain");
+            this.toolTip1.SetToolTip(this.tbMic, resources.GetString("tbMic.ToolTip"));
             this.tbMic.Value = 60;
             this.tbMic.Scroll += new System.EventHandler(this.tbMic_Scroll);
+            // 
+            // grpInput
+            // 
+            this.grpInput.Controls.Add(this.chkInputMuteAll);
+            this.grpInput.Controls.Add(this.lblFlexWireIn);
+            this.grpInput.Controls.Add(this.chkFlexWireInSel);
+            this.grpInput.Controls.Add(this.tbFlexWireIn);
+            this.grpInput.Controls.Add(this.lblMic);
+            this.grpInput.Controls.Add(this.chkMicSel);
+            this.grpInput.Controls.Add(this.tbMic);
+            this.grpInput.Location = new System.Drawing.Point(8, 8);
+            this.grpInput.Name = "grpInput";
+            this.grpInput.Size = new System.Drawing.Size(120, 216);
+            this.grpInput.TabIndex = 2;
+            this.grpInput.TabStop = false;
+            this.grpInput.Text = "Input (Stage 1)";
+            this.toolTip1.SetToolTip(this.grpInput, resources.GetString("grpInput.ToolTip"));
             // 
             // btnCodecDump
             // 
@@ -333,22 +350,6 @@ namespace PowerSDR
             this.lblPhones.Text = "Phones";
             this.lblPhones.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // grpInput
-            // 
-            this.grpInput.Controls.Add(this.chkInputMuteAll);
-            this.grpInput.Controls.Add(this.lblFlexWireIn);
-            this.grpInput.Controls.Add(this.chkFlexWireInSel);
-            this.grpInput.Controls.Add(this.tbFlexWireIn);
-            this.grpInput.Controls.Add(this.lblMic);
-            this.grpInput.Controls.Add(this.chkMicSel);
-            this.grpInput.Controls.Add(this.tbMic);
-            this.grpInput.Location = new System.Drawing.Point(8, 8);
-            this.grpInput.Name = "grpInput";
-            this.grpInput.Size = new System.Drawing.Size(120, 216);
-            this.grpInput.TabIndex = 2;
-            this.grpInput.TabStop = false;
-            this.grpInput.Text = "Input";
-            // 
             // FLEX1500MixerForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -366,10 +367,10 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbPhones)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbFlexWireIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).EndInit();
-            this.grpOutput.ResumeLayout(false);
-            this.grpOutput.PerformLayout();
             this.grpInput.ResumeLayout(false);
             this.grpInput.PerformLayout();
+            this.grpOutput.ResumeLayout(false);
+            this.grpOutput.PerformLayout();
             this.ResumeLayout(false);
 
 		}

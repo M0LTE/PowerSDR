@@ -63,11 +63,11 @@ safealloc16(int count, int nbytes, char *tag)
 	return p;
 }
 
-char *
-safealloc(int count, int nbytes, char *tag)
+char * safealloc(int count, int nbytes, char *tag) // ke9ns 
 {
-	char *p = calloc(count, nbytes);
-	if (!p)
+	char *p = calloc(count, nbytes);  // ke9ns allocate memory to pointer p (size or array = count) (size of each element = nbytes)
+	
+	if (!p)  // ke9ns if it fails do below
 	{
 		if (tag && *tag)
 			fprintf(stderr, "safealloc: %s\n", tag);
@@ -76,26 +76,23 @@ safealloc(int count, int nbytes, char *tag)
 		exit(1);
 	}
 
-	_safemem_currcount += count * nbytes;
+	_safemem_currcount += count * nbytes; // ke9ns update counter with total number of bytes added to safe memory
 
-	return p;
+	return p; // ke9ns return address of pointer
 }
 
-void
-safefree(char *p) 
+void safefree(char *p) 
 {
 	if (p)
 		free((void *) p);
 }
 
-size_t
-safememcurrcount(void)
+size_t safememcurrcount(void)
 {
 	return _safemem_currcount;
 }
 
-void
-safememreset(void)
+void safememreset(void)
 {
 	_safemem_currcount = 0;
 }
@@ -103,8 +100,7 @@ safememreset(void)
 //------------------------------------------------------------------------
 // allocate/free just vectors
 
-REAL *
-newvec_REAL(int size, char *tag)
+REAL * newvec_REAL(int size, char *tag)
 {
 	return (REAL *) safealloc(size, sizeof(REAL), tag);
 }

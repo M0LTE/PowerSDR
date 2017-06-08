@@ -320,6 +320,7 @@ namespace PowerSDR
                         console.filter2[ii] = "";
 
                     }
+                  //  Debug.WriteLine("BANDSTACK: " + freq);
 
                   
                     freq1[ii] = freq;
@@ -327,7 +328,7 @@ namespace PowerSDR
                   //   if (ii >= 9) bigmessage1 = (ii + 1).ToString() + ": " + freq.ToString("N" + 6).PadLeft(11) + ":"; //.PadLeft(11)
                   //    else bigmessage1 = (ii + 1).ToString() + " : " + freq.ToString("N" + 6).PadLeft(11) + ":";
 
-                    bigmessage1 = freq.ToString("N" + 6).PadLeft(11) + ":"; // 4 less than having index numbers
+                    bigmessage1 = freq.ToString("####.000000").PadLeft(11) + ":"; // was N6 4 less than having index numbers
 
                     bigmessage2 = "---:";
                     //----------------------------------------------------------------

@@ -1388,9 +1388,14 @@ namespace PowerSDR
                 }
                 else
                 {
-                    file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+
+                  //  file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + QAName() + ".wav";
+                    string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // ke9ns ignore extra part of name
+
+                    file_name = files[0];
+
                 }
-      
+
 
             }
             else
@@ -1443,11 +1448,11 @@ namespace PowerSDR
                  //   console.MON = true;
                 }
 #endif
-
+              
                 if (!OpenWaveFile(file_name, false))
 				{
                     chkQuickPlay.Checked = false;
-                    Audio.MON_PRE = temp_pre;  // ke9sn add
+                    Audio.MON_PRE = temp_pre;  // ke9ns add
 
                     if (temp_mon == false)
                     {
@@ -1540,9 +1545,9 @@ namespace PowerSDR
                     System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns add create sub directory
                     System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudioMP3"); // ke9ns add create sub directory
 
-                    file_name = console.AppDataPath + "QuickAudio"+ "\\SDRQuickAudio"+QAC.ToString() +".wav";
+                    file_name = console.AppDataPath + "QuickAudio"+ "\\SDRQuickAudio" + QAC.ToString() + QAName() + ".wav";
 
-                    quickmp3 = console.AppDataPath + "QuickAudioMP3" + "\\SDRQuickAudio" + QAC.ToString() + ".mp3"; // ke9ns add mp3
+                    quickmp3 = console.AppDataPath + "QuickAudioMP3" + "\\SDRQuickAudio" + QAC.ToString() + QAName() +".mp3"; // ke9ns add mp3
                     
                     //   Debug.WriteLine("qac" + QAC);
 
@@ -1769,14 +1774,18 @@ namespace PowerSDR
         //=========================================================================================
         //=========================================================================================
         public DSPMode BandL = 0;
+        public int TxfhL = 0;
+
         private void createBoxTS_CheckedChanged(object sender, EventArgs e)
         {
             if (createBoxTS.Checked)
             {
               //  Debug.WriteLine("check create");
                
-                if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))  // check if we need to create a new wave file or use the old one.
+                if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL) || ((console.WIDEWATERID == true) && (console.TXFilterHigh != TxfhL)) )  // check if we need to create a new wave file or use the old one.
                 {
+                    TxfhL = console.TXFilterHigh;
+
                     Thread t = new Thread(new ThreadStart(CreateWaterfallID));
                     t.Name = "Create Waterfall ID wave file Thread";
                     t.IsBackground = true;
@@ -1834,7 +1843,7 @@ namespace PowerSDR
                
                     }
 
-                    double bright = 400;      // was 300 amplitude factor
+                    double bright = 500;      // ke9ns volume level (was 400 amplitude factor_
 
                     int n1 = 0;   // used by USB/LSB routine
                     int n2 = 0;
@@ -1842,9 +1851,14 @@ namespace PowerSDR
                     int n4 = 0;
                     SizeF cl = new SizeF();  // determine left or right side of bitmap
 
-                    const int fontS = 12; // was 12
+                    int fontS = 14; // was 12
 
-                    int ym = 22; // height was 22
+                    int ym = 40; // height was 22
+
+                    if (IMAGE == 0)
+                    {
+                         ym = 22;
+                    }
                     int xm = 80; // width was 80
 
                     long xm4 = 4 * ((xm + 3) / 4);
@@ -1877,13 +1891,45 @@ namespace PowerSDR
                         g1.InterpolationMode = InterpolationMode.HighQualityBicubic;
                         g1.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                        Pen p = new Pen(Color.AntiqueWhite, 1);                // pen color white
-                        g1.DrawRectangle(p, 1, 4, xm - 1, ym - 4);      // draw box
+                     //   Pen p = new Pen(Color.AntiqueWhite, 1);                // pen color white
+                     //   g1.DrawRectangle(p, 1, 4, xm - 1, ym - 4);      // draw box
 
 
                         n4 = 0;          //  USB 
+                      string temp1A = console.Callsign;
+                      int temp2 = console.Callsign.Length;
 
-                        cl = g1.MeasureString(console.Callsign, new Font("Arial", fontS)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
+
+             
+
+                    if (temp2 < 8)  //if the callsign text is less then 7 char, then add space between each character to make it more legible 
+                    {
+                        temp1A = "";
+                        for (int z = 0; z < temp2; z++)
+                        {
+                            temp1A = temp1A + console.Callsign.Substring(z, 1);
+
+                            if (z != (temp2 - 1)) temp1A = temp1A + " ";
+
+                        }
+                    }
+                    
+
+                Debug.WriteLine("CALLSIGN [" + temp1A + "]");
+
+                do
+                {
+                    cl = g1.MeasureString(temp1A, new Font("Arial", fontS, FontStyle.Regular)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
+                    fontS--;
+                } while ((cl.Width > 89) && (fontS > 9));  // ke9ns reduce size of font until the string fits into bandpass
+
+
+               // Debug.WriteLine("MEASUREMENT LENGTH "+ cl);
+               // ke9ns cl = 89 is max width in pixels
+
+                        // cl = g1.MeasureString(console.Callsign, new Font("Arial", fontS,FontStyle.Regular)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
+
+                        //   cl = g1.MeasureString(console.Callsign, new Font(SystemFonts.DefaultFont,FontStyle.Regular)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
                         cl.Width = (xm / 2) - (cl.Width / 2);
                         cl.Height = (ym / 2) - (cl.Height / 2) + 2;
 
@@ -1901,39 +1947,48 @@ namespace PowerSDR
 
                         } // vfoA
 
+                     // new Font("Arial", fontS),
+                      g1.DrawString(temp1A, new Font("Arial", fontS,FontStyle.Regular), Brushes.White, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
 
-                        g1.DrawString(console.Callsign, new Font("Arial", fontS), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
+                      //  g1.DrawString(console.Callsign, new Font(SystemFonts.DefaultFont,FontStyle.Regular), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
                         g1.Flush();  // done with graphic function
 
-
+             
                         //=======================================================================
                         // CONVERT BITMAP into ARRAY of float values for brightness x,y
                         // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
 
-                        for (int y = ym - 1; y >= 0; y--) // image is saved in correct direction
+                       for (int y = ym - 1; y >= 0; y--) // image is saved in correct direction
                         {
 
                             for (int n = 0; n != xm; n++)  // 
                             {
+
+                                Color pixel = ke9ns_bmp.GetPixel(n, y);                                  // bitmap is correct x direction but y is backwards
+                                float temp1 = (((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
+
+                                byte temp = (byte)(temp1 * 0.6);
+
+                       
                                 // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
                                 // the /255 is to convert down to a 
 
                                 if (n4 == 0) // USB
                                 {
-                                    Color pixel = ke9ns_bmp.GetPixel(n, y);                                  // bitmap is correct x direction but y is backwards
-                                    ap[n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
+                                     ap[n, ym - y - 1] = temp;
                                 }
                                 else // LSB  
                                 {
-                                    Color pixel = ke9ns_bmp.GetPixel(n, y);                                 // Both x and y are backwards
-                                    ap[xm - n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
+                                     ap[xm - n, ym - y - 1] = temp;
                                 }
-                            } // X
+                      
+
+                            } // n
 
                         } // Y
 
-
+               
                         ke9ns_bmp.Dispose(); // text image
                         g1.Dispose();
 
@@ -2015,35 +2070,44 @@ namespace PowerSDR
                             } // vfoA
 
 
-                            //=============================================================================================
-                            // convert bitmap into grayscale bitmap corrected for sending
-                            // ap[,] = vales between 0 and 1 (0=dark, 255=white)
+                    //=============================================================================================
+                    // convert bitmap into grayscale bitmap corrected for sending
+                    // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
+                   
                             for (int y = 0; y < ym; y++) // image is saved in correct direction
                             {
                                 for (int n = 0; n != xm; n++)  // 
                                 {
-                                    // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
-                                    // the /255 is to convert down to a 
+                            // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
+                            // the /255 is to convert down to a 
+
+                                    float temp1 = ((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte()));
+                                    byte temp = (byte)(temp1 * 0.45); // reduce overall max value to prevent overdriving sine waves
 
                                     if (n4 == 0) // USB
                                     {
-                                        ap[n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
-                                        if (ap[n, y] < 20) ap[n, y] = 0;
+                                       ap[n, y] = (byte)(114 - temp);
 
+                                       if (ap[n, y] < 10) ap[n, y] = 0;
+
+                                 
                                     }
                                     else // LSB  
                                     {
-                                        ap[xm - n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
-                                        if (ap[xm - n, y] < 20) ap[xm - n, y] = 0;
+                                       ap[xm - n, y] = (byte)(114 - temp);
+                                       if (ap[xm - n, y] < 10) ap[xm - n, y] = 0;
+
                                     }
 
+
                                 } // X
+                       
 
-                            } // Y
+                    } // Y
 
-
-                        } // color24 ==1
+                   
+                } // color24 ==1
 
                         //=========================================================================================
                         // 256 color 8bpp Image bitmap scan
@@ -2174,7 +2238,20 @@ namespace PowerSDR
                     int waveSize = ym;
 
                     const int lowtx = 150;
-                    const int bandpass = 2400;
+
+                    int bandpass = 2400;
+
+                    if (console.WIDEWATERID == true)
+                    {
+                        if (console.TXFilterHigh > 2400) bandpass = (console.TXFilterHigh - 150);
+                        else bandpass = 2400;
+
+                    }
+                    else
+                    {
+                        bandpass = 2400;
+                
+                    }
 
                     int t2 = 2;                                                     // divide the time for each line (this controls how long each line takes)
 
@@ -2182,7 +2259,7 @@ namespace PowerSDR
                     {
                         float t3 = ((float)xm / (float)ym);         // picture ratio to maintain in waterfall (80w x 80h = 1) (200w x 150h = 1.33) (80w x 20h = 4)
                                                                     // float t4 = ((float)bandpass / (float)xm);  // number of freqs in width of images (200w = 13hz per pixel)longer time .076pix/hz,  (80w= 30hz per pixel)shorter time.033pix/hz
-                        t2 = (int)((float)xm * 2 / 20 / t3);// t2 small means long vertical , t2 big means short (20 is max)
+                        t2 = (int)((float)xm * 2 / 20 / (t3+ 1));        // t2 small means long vertical , t2 big means short (20 is max)
 
                         if (t2 > 20) t2 = 20;
                     }
@@ -2218,18 +2295,21 @@ namespace PowerSDR
                     //   int tottx = hightx - lowtx; // band width
 
 
-                    int hzperpixel = (int)(((float)bandpass / (float)xm) + .5);    // keep image 2khz wide always  25hz/pix
+                    int hzperpixel = (int)(((float)bandpass / (float)xm) + .5);    //  2khz wide =  25hz/pix  6000 = 60 hz per pixel
 
-            
+           
+          //  Debug.WriteLine("hzperpixel " + hzperpixel);
+
                     int sample2 = samplesPerSecond / t2;      // samples2 = the amount of time spent on each y1 line
 
                     // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
                     bright = bright / (float)xm; // correct brightness level of PCM audio by how many freq points go into each pass
 
-                    //=========================================================================================
-                    // Create Digital PCM Stream
-                    //=========================================================================================
+            //=========================================================================================
+            // Create Digital PCM Stream
+            //=========================================================================================
+
             
                     for (int y1 = 0; y1 < ym; y1++)   // each line (bottom of bitmap is first line out)
                     {
@@ -2244,16 +2324,24 @@ namespace PowerSDR
                             //===========================================================
                             // depending on width of bitmap, display within 150 hz to 2550hz
 
-                            for (float freq = lowtx; freq < (bandpass + lowtx); freq = freq + hzperpixel)             // add up all the frequencies from each line(row) of the bitmap into 1 signal
+                            for (float freq = lowtx; freq < (bandpass + lowtx); freq = freq + hzperpixel,i++)             // add up all the frequencies from each line(row) of the bitmap into 1 signal
                             {
-                                temp7 = temp7 + ((double)ap[i++, y1] * (Math.Sin(t * (double)freq * 2.0 * Math.PI)));  // generate individual tone 
+
+                                if (ap[i, y1] > 1)
+                                {
+                                    temp7 = temp7 + ((double)ap[i, y1] * (Math.Sin(t * (double)freq * 2.0 * Math.PI) ) );  // generate individual tone 
+                              
+                                }
+
+
+
 
                             } // freq loop
 
-                            //============================================================
+                    //============================================================
+                 
 
-
-                            short s = (short)(temp7 * bright);
+                           short s = (short)(temp7 * bright);
 
                             writer.Write(s);  // left 16bits
                                               //   writer.Write(s);  // right 16bits (this channel is needed by Flex Quickplay routine)
@@ -2316,13 +2404,15 @@ namespace PowerSDR
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString(); // + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMER.wav";
 
-                MessageBox.Show("Done Recording.\nIDTIMER.wav file will be created." + file_name);
+                string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() +"*.wav"); // ke9ns find file but ignore extra information about file
 
-                System.IO.File.Copy(file_name, file_name1,true);
+                MessageBox.Show("Done Recording.\nIDTIMER.wav file will be created." );
 
+               // System.IO.File.Copy(file_name, file_name1,true);
+                System.IO.File.Copy(files[0], file_name1, true);
             }
             else
             {
@@ -2342,12 +2432,14 @@ namespace PowerSDR
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMERCW.wav";
 
-                MessageBox.Show("Done Recording.\nIDTIMERCW.wav file will be created." + file_name);
+                string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
 
-                System.IO.File.Copy(file_name, file_name1, true);
+                MessageBox.Show("Done Recording.\nIDTIMERCW.wav file will be created.");
+
+                System.IO.File.Copy(files[0], file_name1, true);
 
             }
             else
@@ -2368,12 +2460,14 @@ namespace PowerSDR
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\CQCQ.wav";
 
-                MessageBox.Show("Done Recording.\nCQCQ.wav file will be created." + file_name);
+                string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
 
-                System.IO.File.Copy(file_name, file_name1, true);
+                MessageBox.Show("Done Recording.\nCQCQ.wav file will be created.");
+
+                System.IO.File.Copy(files[0], file_name1, true);
 
             }
             else
@@ -2424,12 +2518,14 @@ namespace PowerSDR
             {
                 console.ckQuickRec.Checked = false;
 
-                string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
+              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\CALL.wav";
 
-                MessageBox.Show("Done Recording.\nCALL.wav file will be created." + file_name);
+                string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
 
-                System.IO.File.Copy(file_name, file_name1, true);
+                MessageBox.Show("Done Recording.\nCALL.wav file will be created.");
+
+                System.IO.File.Copy(files[0], file_name1, true);
 
             }
             else
@@ -2458,6 +2554,23 @@ namespace PowerSDR
         //k6jca  End Quick Record & Play
         //
         ////////////////////////
+
+
+
+        //===================================================================
+        // ke9ns add
+        public string QAName()
+        {
+            string temp = "__" + console.RX1DSPMode.ToString() + "_";   // DSP mode
+            temp += console.VFOAFreq.ToString("f6") + "MHz_";    // Freq
+            temp += DateTime.Now.ToString();                     // Date and time
+            temp = temp.Replace("/", "-");
+            temp = temp.Replace(":", "_");
+
+            return temp;
+
+
+        } // QAName()
 
     } // Class wavecontrol
 

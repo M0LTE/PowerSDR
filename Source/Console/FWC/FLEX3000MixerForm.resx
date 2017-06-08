@@ -120,6 +120,31 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="tbLineInDB9.ToolTip" xml:space="preserve">
+    <value>Stage 1 Adjusts the Line In DB9 Input Volume:
+
+Stage 1: MIXER slider
+Stage 2: MIC slider (stay under -10 dBm on MIC meter)
+Stage 3: Expander / EQ (stay under -2 dBm on EQ meter)
+Stage 4: Leveler  (stay under &lt; 0 dBm on LEV meter)
+Stage 5: ALC / TX Filter / Modulation / DX / Compander</value>
+  </data>
+  <data name="tbMic.ToolTip" xml:space="preserve">
+    <value>Stage 1: Adjusts the Mic Input Volume:
+
+Stage 1: MIXER slider
+Stage 2: MIC slider (stay under -10 dBm on MIC meter)
+Stage 3: Expander / EQ (stay under -2 dBm on EQ meter)
+Stage 4: Leveler  (stay under &lt; 0 dBm on LEV meter)
+Stage 5: ALC / TX Filter / Modulation / DX / Compander</value>
+  </data>
+  <data name="grpInput.ToolTip" xml:space="preserve">
+    <value>Stage 1: MIXER slider
+Stage 2: MIC slider (stay under -10 dBm on MIC meter)
+Stage 3: Expander / EQ (stay under -2 dBm on EQ meter)
+Stage 4: Leveler  (stay under &lt; 0 dBm on LEV meter)
+Stage 5: ALC / TX Filter / Modulation / DX / Compander</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

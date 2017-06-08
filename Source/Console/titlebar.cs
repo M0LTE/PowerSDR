@@ -45,7 +45,7 @@ namespace PowerSDR
 
          public const string BUILT_BY = "Mods Compiled by [KE9NS]";
 #endif    
-        public const string VERSION_SUFFIX = ""; // Make this "" for production
+        public const string VERSION_SUFFIX = SVNRev.LATEST_REV; // Make this "" for production
 
         public const string ALPHABETA = ""; // change to "Alpha" or "" as appropriate
 
@@ -53,18 +53,18 @@ namespace PowerSDR
 
         public static string GetString()
         {
-            string version = GetVerNum();
+            string version = GetVerNum(); // 2.8.0
 
             string s = "FlexRadio Systems™  PowerSDR™";
 
             
-            if (ALPHABETA != "") s += "  "+ALPHABETA;
+            if (ALPHABETA != "") s += "  " + ALPHABETA;
 
-            s += "  v" + version;
+            s += "  v" + version;  // 2.8.0
 
-            if (VERSION_SUFFIX != "") s += " " + VERSION_SUFFIX;
+         //   if (VERSION_SUFFIX != "") s += "." + VERSION_SUFFIX;
 
-            if (SVN != "") s += "   " + SVN; 
+         //   if (SVN != "") s += "   " + SVN; 
 
             if (BUILT_BY != "") s += "   " + BUILT_BY;
 
@@ -76,7 +76,10 @@ namespace PowerSDR
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
+          //  return fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf(".")); // ke9ns mod
+
+            return fvi.FileVersion.ToString();
+
         }
     }
 }

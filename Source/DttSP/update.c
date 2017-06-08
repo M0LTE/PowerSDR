@@ -415,8 +415,7 @@ DttSP_EXP int SetRXFilter (unsigned int thread, unsigned int subrx, double low_f
 	return rtn;
  }
 
-DttSP_EXP void
-Release_Update ()
+DttSP_EXP void Release_Update ()
 {
 	sem_post (&top[0].sync.upd.sem);
 	sem_post (&top[1].sync.upd.sem);
@@ -437,10 +436,13 @@ SetOscPhase(double phase)
 	sem_wait(&top[0].sync.upd.sem);
 	sem_wait(&top[1].sync.upd.sem);
 	sem_wait(&top[2].sync.upd.sem);
-	for(i=0;i<3;i++) {
+
+	for(i=0;i<3;i++)
+	{
 		for(j=0;j<uni[i].multirx.nrx;j++) rx[i][j].osc.phase = phase;
 		tx[i].osc.phase = phase;
 	}
+
 	sem_post(&top[2].sync.upd.sem);
 	sem_post(&top[1].sync.upd.sem);
 	sem_post(&top[0].sync.upd.sem);
@@ -458,16 +460,15 @@ DttSP_EXP int SetRXOsc (unsigned int thread, unsigned subrx, double newfreq)
 	return 0;
 }
 
-DttSP_EXP int
-SetTXOsc (unsigned int thread, double newfreq)
+DttSP_EXP int SetTXOsc (unsigned int thread, double newfreq)
 {
-	if (fabs (newfreq) >= 0.5 * uni[thread].samplerate)
-		return -1;
+	if (fabs (newfreq) >= 0.5 * uni[thread].samplerate) return -1; // fabs returns just a positive value 
 
-	newfreq *= 2.0 * M_PI / uni[thread].samplerate;
+	newfreq *= 2.0 * M_PI / uni[thread].samplerate;  // newfreq = newfreq * 2PI / SR
 	sem_wait(&top[thread].sync.upd.sem);
-	tx[thread].osc.gen->Frequency = (REAL)newfreq;
+	tx[thread].osc.gen->Frequency = (REAL)newfreq; // REAL = just a float value
 	sem_post(&top[thread].sync.upd.sem);
+
 	return 0;
 }
 
@@ -821,10 +822,8 @@ SetTXALCDecay (unsigned int thread, int decay)
 	REAL tmp = (REAL)decay;
 	sem_wait(&top[thread].sync.upd.sem);
 
-	tx[thread].alc.gen->decay =
-		(REAL) (1.0 - exp (-1000.0 / (tmp * uni[thread].samplerate)));
-	tx[thread].alc.gen->one_m_decay =
-		(REAL) exp (-1000.0 / (tmp * uni[thread].samplerate));
+	tx[thread].alc.gen->decay =	(REAL) (1.0 - exp (-1000.0 / (tmp * uni[thread].samplerate)));
+	tx[thread].alc.gen->one_m_decay = (REAL) exp (-1000.0 / (tmp * uni[thread].samplerate));
 
 	sem_post(&top[thread].sync.upd.sem);
 }
@@ -1784,8 +1783,7 @@ DttSP_EXP float  CalculateRXMeter (unsigned int thread, unsigned int subrx, METE
 	return returnval;
 }
 
-DttSP_EXP float
-CalculateTXMeter (unsigned int thread, METERTYPE mt)
+DttSP_EXP float CalculateTXMeter (unsigned int thread, METERTYPE mt)
 {
 	float returnval = 0;
 	//sem_wait (&top[thread].sync.upd.sem);

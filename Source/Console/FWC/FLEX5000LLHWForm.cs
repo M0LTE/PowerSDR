@@ -29,11 +29,13 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Diagnostics;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using System.Data;
+using System.IO;
 
 namespace PowerSDR
 {
@@ -212,10 +214,13 @@ namespace PowerSDR
 		private System.Windows.Forms.ButtonTS btnFlexWireRead2Val;
         private CheckBoxTS chkManualIOUpdate;
         private ButtonTS btnIOUpdate;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+        private ButtonTS btnEEPROMRead1;
+        private ButtonTS buttonTS1;
+
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
 		#endregion
 
@@ -420,6 +425,7 @@ namespace PowerSDR
             this.lblEEPROMOffset = new System.Windows.Forms.LabelTS();
             this.btnEEPROMWrite = new System.Windows.Forms.ButtonTS();
             this.btnEEPROMRead = new System.Windows.Forms.ButtonTS();
+            this.btnEEPROMRead1 = new System.Windows.Forms.ButtonTS();
             this.grpPIO = new System.Windows.Forms.GroupBoxTS();
             this.comboPIOReg = new System.Windows.Forms.ComboBoxTS();
             this.txtPIORead = new System.Windows.Forms.TextBox();
@@ -454,6 +460,7 @@ namespace PowerSDR
             this.btnDDSRead = new System.Windows.Forms.ButtonTS();
             this.comboMuxChan = new System.Windows.Forms.ComboBoxTS();
             this.lblMuxChannel = new System.Windows.Forms.LabelTS();
+            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             ((System.ComponentModel.ISupportInitialize)(this.udATUL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udATUC)).BeginInit();
             this.grpATURelays.SuspendLayout();
@@ -1705,8 +1712,10 @@ namespace PowerSDR
             this.chkRX2EEPROM.Image = null;
             this.chkRX2EEPROM.Location = new System.Drawing.Point(120, 16);
             this.chkRX2EEPROM.Name = "chkRX2EEPROM";
-            this.chkRX2EEPROM.Size = new System.Drawing.Size(16, 24);
+            this.chkRX2EEPROM.Size = new System.Drawing.Size(50, 24);
             this.chkRX2EEPROM.TabIndex = 44;
+            this.chkRX2EEPROM.Text = "rx2";
+            this.chkRX2EEPROM.CheckedChanged += new System.EventHandler(this.chkRX2EEPROM_CheckedChanged);
             // 
             // txtEEPROMReadFloat
             // 
@@ -1728,21 +1737,21 @@ namespace PowerSDR
             // btnEEPROMWriteFloat
             // 
             this.btnEEPROMWriteFloat.Image = null;
-            this.btnEEPROMWriteFloat.Location = new System.Drawing.Point(16, 104);
+            this.btnEEPROMWriteFloat.Location = new System.Drawing.Point(6, 104);
             this.btnEEPROMWriteFloat.Name = "btnEEPROMWriteFloat";
-            this.btnEEPROMWriteFloat.Size = new System.Drawing.Size(40, 23);
+            this.btnEEPROMWriteFloat.Size = new System.Drawing.Size(50, 23);
             this.btnEEPROMWriteFloat.TabIndex = 29;
-            this.btnEEPROMWriteFloat.Text = "Write";
+            this.btnEEPROMWriteFloat.Text = "WriteF";
             this.btnEEPROMWriteFloat.Click += new System.EventHandler(this.btnEEPROMWriteFloat_Click);
             // 
             // btnEEPROMReadFloat
             // 
             this.btnEEPROMReadFloat.Image = null;
-            this.btnEEPROMReadFloat.Location = new System.Drawing.Point(16, 128);
+            this.btnEEPROMReadFloat.Location = new System.Drawing.Point(6, 128);
             this.btnEEPROMReadFloat.Name = "btnEEPROMReadFloat";
-            this.btnEEPROMReadFloat.Size = new System.Drawing.Size(40, 23);
+            this.btnEEPROMReadFloat.Size = new System.Drawing.Size(50, 23);
             this.btnEEPROMReadFloat.TabIndex = 30;
-            this.btnEEPROMReadFloat.Text = "Read";
+            this.btnEEPROMReadFloat.Text = "ReadF";
             this.btnEEPROMReadFloat.Click += new System.EventHandler(this.btnEEPROMReadFloat_Click);
             // 
             // txtEEPROMOffset
@@ -1752,6 +1761,7 @@ namespace PowerSDR
             this.txtEEPROMOffset.Size = new System.Drawing.Size(40, 20);
             this.txtEEPROMOffset.TabIndex = 26;
             this.txtEEPROMOffset.Text = "0";
+            this.txtEEPROMOffset.TextChanged += new System.EventHandler(this.txtEEPROMOffset_TextChanged);
             // 
             // txtEEPROMRead
             // 
@@ -1782,9 +1792,9 @@ namespace PowerSDR
             // btnEEPROMWrite
             // 
             this.btnEEPROMWrite.Image = null;
-            this.btnEEPROMWrite.Location = new System.Drawing.Point(16, 48);
+            this.btnEEPROMWrite.Location = new System.Drawing.Point(6, 48);
             this.btnEEPROMWrite.Name = "btnEEPROMWrite";
-            this.btnEEPROMWrite.Size = new System.Drawing.Size(40, 23);
+            this.btnEEPROMWrite.Size = new System.Drawing.Size(50, 23);
             this.btnEEPROMWrite.TabIndex = 24;
             this.btnEEPROMWrite.Text = "Write";
             this.btnEEPROMWrite.Click += new System.EventHandler(this.btnEEPROMWrite_Click);
@@ -1792,12 +1802,22 @@ namespace PowerSDR
             // btnEEPROMRead
             // 
             this.btnEEPROMRead.Image = null;
-            this.btnEEPROMRead.Location = new System.Drawing.Point(16, 72);
+            this.btnEEPROMRead.Location = new System.Drawing.Point(6, 72);
             this.btnEEPROMRead.Name = "btnEEPROMRead";
-            this.btnEEPROMRead.Size = new System.Drawing.Size(40, 23);
+            this.btnEEPROMRead.Size = new System.Drawing.Size(50, 23);
             this.btnEEPROMRead.TabIndex = 25;
             this.btnEEPROMRead.Text = "Read";
             this.btnEEPROMRead.Click += new System.EventHandler(this.btnEEPROMRead_Click);
+            // 
+            // btnEEPROMRead1
+            // 
+            this.btnEEPROMRead1.Image = null;
+            this.btnEEPROMRead1.Location = new System.Drawing.Point(352, 596);
+            this.btnEEPROMRead1.Name = "btnEEPROMRead1";
+            this.btnEEPROMRead1.Size = new System.Drawing.Size(152, 23);
+            this.btnEEPROMRead1.TabIndex = 45;
+            this.btnEEPROMRead1.Text = "Record ALL EEPROM";
+            this.btnEEPROMRead1.Click += new System.EventHandler(this.btnEEPROMRead1_Click);
             // 
             // grpPIO
             // 
@@ -2178,10 +2198,22 @@ namespace PowerSDR
             this.lblMuxChannel.TabIndex = 1;
             this.lblMuxChannel.Text = "Mux:";
             // 
+            // buttonTS1
+            // 
+            this.buttonTS1.Image = null;
+            this.buttonTS1.Location = new System.Drawing.Point(272, 596);
+            this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Size = new System.Drawing.Size(58, 23);
+            this.buttonTS1.TabIndex = 45;
+            this.buttonTS1.Text = "MARS";
+            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
+            // 
             // FLEX5000LLHWForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(640, 494);
+            this.ClientSize = new System.Drawing.Size(640, 508);
+            this.Controls.Add(this.buttonTS1);
+            this.Controls.Add(this.btnEEPROMRead1);
             this.Controls.Add(this.lblATUC);
             this.Controls.Add(this.udATUC);
             this.Controls.Add(this.lblATUL);
@@ -2445,7 +2477,10 @@ namespace PowerSDR
 			btnPIORead_Click(this, EventArgs.Empty);
 		}
 
-		private void btnEEPROMRead_Click(object sender, System.EventArgs e)
+
+        //=====================================================================================
+        // ke9ns read offset hex value, get eeprom value from radio and display it.
+        private void btnEEPROMRead_Click(object sender, System.EventArgs e)
 		{
 			if(txtEEPROMOffset.Text == "") return;
 			txtEEPROMRead.BackColor = Color.Red;
@@ -2468,7 +2503,125 @@ namespace PowerSDR
 			txtEEPROMRead.Text = String.Format("{0:X4}", data);
 		}
 
-		private void btnEEPROMWrite_Click(object sender, System.EventArgs e)
+
+
+        //=====================================================================================
+        // ke9ns ADD  get all of eeprom and save it in a file called EEPROMDATA.txt in the database folder
+        private void btnEEPROMRead1_Click(object sender, System.EventArgs e)
+        {
+           // if (txtEEPROMOffset.Text == "") return;
+            txtEEPROMRead.BackColor = Color.Red;
+            Application.DoEvents();
+            //  uint offset = uint.Parse(txtEEPROMOffset.Text, System.Globalization.NumberStyles.HexNumber);
+
+
+            Debug.WriteLine("TRYING TO OPEN EEPROM TXT FILE TO WRITE TO ");
+
+
+            string file_name2 = console.AppDataPath + "EEEPROMDATA.txt"; // save data for my mods
+
+            FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open   file
+            BinaryWriter writer2 = new BinaryWriter(stream2);
+
+            Debug.WriteLine("OPENED EEPROM TXT FILE TO WRITE TO ");
+            uint offset;
+
+            byte data;
+            string datastring;
+            string final;
+            string offsetstring;
+
+            for (offset = 0; offset < 3000; offset++)
+            {
+
+                Debug.Write("   Reading offset-> "+ offset);
+
+                if (!chkRX2EEPROM.Checked)
+                {
+                    if (FWC.ReadTRXEEPROMByte(offset, out data) == 0)
+                        MessageBox.Show("Error in ReadTRXEEPROM.");
+                }
+                else
+                {
+                    if (FWC.ReadRX2EEPROMByte(offset, out data) == 0)
+                        MessageBox.Show("Error in ReadRX2EEPROM.");
+                }
+
+                Debug.WriteLine("   Data-> " + data);
+
+                txtEEPROMRead.BackColor = SystemColors.Control;
+             
+                datastring = String.Format("{0:X4}", data);
+
+                txtEEPROMRead.Text = datastring;
+
+                offsetstring = String.Format("{0:X4}", offset);
+
+                txtEEPROMOffset.Text = offsetstring;
+                    
+                final = offsetstring + " , " + datastring + "\n";
+
+                writer2.Write(final);
+
+
+            } // for offset loop
+
+
+            writer2.Close();    // close  file
+            stream2.Close();   // close stream
+
+
+        } // btnEEPROMRead1_Click
+
+
+       //==========================================================================================
+       // ke9ns add change 3000 or 5000 radio to Extended
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Warning: You must have Authorization as an offical MARS Licensed Operator\n",
+                         
+                           "Do you have authorization?",
+                           MessageBoxButtons.YesNo,
+                           MessageBoxIcon.Question);
+
+            if (dr == DialogResult.Yes)
+            {
+
+                if (FWC.WriteTRXEEPROMByte(0x0034, 0x2D) == 0) MessageBox.Show("Error in WriteEEPROM 34");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0035, 0x05) == 0) MessageBox.Show("Error in WriteEEPROM 35");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0036, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 36");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0037, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 37");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0038, 0x0D) == 0) MessageBox.Show("Error in WriteEEPROM 38");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0039, 0x0B) == 0) MessageBox.Show("Error in WriteEEPROM 39");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003A, 0x01) == 0) MessageBox.Show("Error in WriteEEPROM 3a");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003B, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 3b");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003C, 0x78) == 0) MessageBox.Show("Error in WriteEEPROM 3c");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+
+            }
+
+        } // buttonTS1_Click
+
+
+
+        private void btnEEPROMWrite_Click(object sender, System.EventArgs e)
 		{
 			if(txtEEPROMOffset.Text == "") return;
 			txtEEPROMWrite.BackColor = Color.Red;
@@ -2797,6 +2950,8 @@ namespace PowerSDR
 			btnEEPROMReadFloat_Click(this, EventArgs.Empty);
 		}
 
+        //===========================================================================================
+        // ke9ns 
 		private void btnEEPROMReadFloat_Click(object sender, System.EventArgs e)
 		{
 			if(txtEEPROMOffset.Text == "") return;
@@ -2964,5 +3119,17 @@ namespace PowerSDR
         {
             FWC.DDSIOUpdate();
         }
-	}
+
+        private void chkRX2EEPROM_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtEEPROMOffset_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+      
+    }
 }

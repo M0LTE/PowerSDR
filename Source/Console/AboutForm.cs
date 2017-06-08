@@ -36,6 +36,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace PowerSDR
 {
@@ -181,7 +182,7 @@ namespace PowerSDR
                    
                     Debug.WriteLine("link2 " + result.ToString());
 
-                    Process.Start(result.ToString());
+                    Process.Start("explorer.exe", result.ToString());
                 }
                 catch
                 {
@@ -194,5 +195,115 @@ namespace PowerSDR
         {
 
         }
-    }
+
+        private void okButton_Click(object sender, EventArgs e)
+        {
+
+    /*
+             <?xml version="1.0" encoding = "utf-8"?>
+             <powersdr>
+                 <version>2.8.0.28</version>
+                <url>http://ke9ns.com/flexpage.html/</url>
+             </powersdr>
+        */
+
+            string downloadUrl = "";
+            Version newVersion = null;
+            string xmlUrl = "http://ke9ns.com/update.xml";
+            XmlTextReader reader = null;
+
+            try
+            {
+                Debug.WriteLine("HERE0");
+
+                reader = new XmlTextReader(xmlUrl);
+                Debug.WriteLine("HERE1");
+
+                reader.MoveToContent();
+
+                string elementName = "";
+                Debug.WriteLine("HERE2");
+
+                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "powersdr"))
+                {
+                    while(reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                        {
+                            elementName = reader.Name;
+                        }
+                        else
+                        {
+                            if ((reader.NodeType == XmlNodeType.Text) && (reader.HasValue))
+                            {
+                                switch (elementName)
+                                {
+                                    case "version":
+                                        newVersion = new Version(reader.Value);
+                                        break;
+                                    case "url":
+                                        downloadUrl = reader.Value;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception e1)
+            {
+                if (reader != null) reader.Close();
+                MessageBox.Show("Failed to get update information. " + e1,
+                 "Update Error",
+                 MessageBoxButtons.OK,
+                 MessageBoxIcon.Error);
+
+                return;
+            }
+            finally
+            {
+                if (reader != null) reader.Close();
+            }
+
+            
+            Version appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version; // ke9ns this is your current installed version
+
+            if (appVersion.CompareTo(newVersion) < 0)
+            {
+                DialogResult dr = MessageBox.Show(
+                    "Version " + newVersion.Major + "." + newVersion.Minor + "." + newVersion.Build + "." + newVersion.Revision + " of ke9ns PowerSDR is available for download, would you like to download it?",
+
+                    "This is Your currently installed version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build + "." + appVersion.Revision,
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (dr == DialogResult.No) return;
+                else if (dr == DialogResult.Yes)
+                {
+
+                    MessageBox.Show("OK. Make sure to make a Database backup at Setup->Export Database before you install the update.",
+                    "Database Backup Request",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                    System.Diagnostics.Process.Start("explorer.exe", downloadUrl);
+
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("PowerSDR ke9ns Version: " + appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build + "." + appVersion.Revision + " is up to date!",
+                "No need to Update",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            }
+
+        } // okButton_Click
+
+
+
+
+
+    } // class about
 }

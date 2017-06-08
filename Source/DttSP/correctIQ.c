@@ -38,8 +38,7 @@ Bridgewater, NJ 08807
 
 
 
-IQ
-newCorrectIQ (REAL phase, REAL gain, REAL mu)
+IQ newCorrectIQ (REAL phase, REAL gain, REAL mu)
 {
 	IQ iq = (IQ) safealloc (1, sizeof (iqstate), "IQ state");
 	iq->phase = phase;
@@ -57,8 +56,7 @@ newCorrectIQ (REAL phase, REAL gain, REAL mu)
 	return iq;
 }
 
-void
-delCorrectIQ (IQ iq)
+void delCorrectIQ (IQ iq)
 {
 	safefree((char *)iq->w);
 	safefree((char *)iq->y);
@@ -68,8 +66,7 @@ delCorrectIQ (IQ iq)
 
 int IQdoit = 1;
 
-void
-correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan)
+void correctIQ (CXB sigbuf, IQ iq, BOOLEAN isTX, int subchan)
 {
 	int i;
 	REAL doit;

@@ -126,14 +126,15 @@ This list includes Short Wave AM Broadcast, Maritime, Military, Beacons
 and Digital signals: ALE, HFDL, Digital Audio (DRM), Stanag, Fax, DSC, Navtex</value>
   </data>
   <data name="textBox3.Text" xml:space="preserve">
-    <value>Add or Edit DX Cluster's or reverse Beacon telnet address and port# and your call sign.
-Like: ve7cc.net:23 or k1rfi.com:7300 or telnet.reversebeacon.net:7000
+    <value>&lt;&lt;&lt; Add or Edit DX Cluster's or reverse Beacon telnet address and port# and your call sign.
 Left Click on Spot to go to Freq and set Mode, or Right Click on spot to open QRZ page.
 Left Click on Spot BEAM HEADING to Freq &amp; Mode and Move Antenna using DDUtil
-PAN: Left Click on Left side of DX Spot + CTRL key to open QRZ page or Shift key to see Spotters
-PAN: Left Click on Right side of DX Spot + CTRL key to Move Antenna using DDUtil
-PAN: Left Click on Memory spot + CTRL key  to set Freq &amp; Mode.
-PAN: Left Click on Red Dots  + CTRL key to go to Freq and Mode of DX station</value>
+PAN: Left Click + CTRL on Red Dots, DX, Memory, or SWL to set Freq, Mode, Split
+PAN: Left Click + CTRL key on last letter of DX Spot to Move Antenna using DDUtil
+PAN: Right Click on DX  to open QRZ page 
+PAN: Right Click on Memory to open up Memory Comments URL internet address
+PAN: Right Click on SWL to open up Google Search
+PAN: Left Click anywhere in PowerSDR + Shift key to see DX Spotters</value>
   </data>
   <data name="btnTrack.ToolTip" xml:space="preserve">
     <value>Click to Turn on/off World Map, and/or  GrayLine (Earth Dark &amp; Light Areas),
@@ -166,9 +167,19 @@ Sync up your PC clock time to NIST.
 Use this feature before running a Beacon Scan,
 or before running WJST (JT65) or WSPR digital modes</value>
   </data>
-  <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>264, 17</value>
-  </metadata>
+  <data name="chkISS.ToolTip" xml:space="preserve">
+    <value>True (Zenith) position of the ISS will show on Panadapter screen 
+When you Click on the TRACK button to activate the World Map
+In Panadapter or Special PanaFall modes
+NOTE: This is internet based ISS Location Data (not a PSDR calculation)</value>
+  </data>
+  <data name="chkMoon.ToolTip" xml:space="preserve">
+    <value>True (Zenith) position of the Moon will show on Panadapter screen 
+When you Click on the TRACK button to activate the World Map
+In Panadapter or Special PanaFall modes
+
+Left Click on the Moon and hit the CTRL key to Rotate your Antenna</value>
+  </data>
   <data name="checkBoxWWV.ToolTip" xml:space="preserve">
     <value>Check this box, then Click  on "Time Sync"
 
@@ -188,8 +199,22 @@ higher band: 14.1 -&gt; 18.11 -&gt; 21.15 -&gt; 24.93 -&gt; 28.2
 
 This takes 15 minutes to fully complete</value>
   </data>
+  <data name="chkBoxMem.ToolTip" xml:space="preserve">
+    <value>Show Memories directly on Panadapter.
+
+Left Click Memory in Pan + CTRL to move Memory into BandPass and set all parameters
+
+Right Click on memory in Pan to open up Memory Comments URL internet address
+(Example: if you place http://ke9ns.com in the Comments field of a Memory)
+
+LEFT CLICK on PAN + ALT + M keys to save New Memory
+</value>
+  </data>
+  <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>264, 17</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>31</value>
+    <value>66</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

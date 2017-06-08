@@ -2093,7 +2093,7 @@ namespace PowerSDR
                         break;
                     }
 
-                case 3:
+                case 3:// ke9ns should be A<>B but its said to be only the VFO and not the mode
                     {
                         VfoSwap(msg);
                         break;
@@ -3020,8 +3020,10 @@ namespace PowerSDR
                 parser.nSet = 11;
                 parser.nGet = 0;
 
-                string FreqA = commands.ZZFA("");
-                commands.ZZFB(FreqA);
+                m_parent.CopyVFOAtoB();
+
+              //  string FreqA = commands.ZZFA("");
+              //  commands.ZZFB(FreqA);
             }
         }
 
@@ -3033,23 +3035,28 @@ namespace PowerSDR
                 parser.nSet = 11;
                 parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                commands.ZZFA(FreqB);
+                m_parent.CopyVFOBtoA();
+
+              //  string FreqB = commands.ZZFB("");
+               // commands.ZZFA(FreqB);
             }
         }
 
-        private void VfoSwap(int msg)
+        private void VfoSwap(int msg) // ke9ns A<>B
         {
             if (msg == 127)
             {
                 parser.nSet = 11;
                 parser.nGet = 0;
 
-                string FreqB = commands.ZZFB("");
-                string FreqA = commands.ZZFA("");
-                commands.ZZFA(FreqB);
-                commands.ZZFB(FreqA);
+                m_parent.VFOSwap(); // ke9ns add to do a real A <> B swap
+
+                //    string FreqB = commands.ZZFB("");
+                //   string FreqA = commands.ZZFA("");
+                //   commands.ZZFA(FreqB);
+                //  commands.ZZFB(FreqA);
             }
+
         }
 
         private void XIT(int msg)

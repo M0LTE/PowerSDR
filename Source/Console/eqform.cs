@@ -707,7 +707,7 @@ namespace PowerSDR
             this.grpTXEQ.Size = new System.Drawing.Size(528, 224);
             this.grpTXEQ.TabIndex = 1;
             this.grpTXEQ.TabStop = false;
-            this.grpTXEQ.Text = "Transmit Equalizer";
+            this.grpTXEQ.Text = "Stage 3: Transmit Equalizer";
             // 
             // lblTXEQ15db2
             // 
@@ -1133,7 +1133,7 @@ namespace PowerSDR
             this.Controls.Add(this.grpTXEQ);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "EQForm";
-            this.Text = "Equalizer Settings";
+            this.Text = " Equalizer Settings";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.EQForm_Closing);
             this.grpRXEQ.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ10)).EndInit();

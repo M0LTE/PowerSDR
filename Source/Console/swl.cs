@@ -59,7 +59,7 @@ namespace PowerSDR
         private Button button1;
         private RichTextBox richTextBox1;
         private Button button2;
-        private RichTextBox richTextBox2;
+        public RichTextBox richTextBox2;
         private IContainer components;
 
      //   public DXMemList dxmemlist;
@@ -482,7 +482,7 @@ namespace PowerSDR
         int xxx = 0;
 
 
-        private void richTextBox2_MouseUp(object sender, MouseEventArgs e)
+        public void richTextBox2_MouseUp(object sender, MouseEventArgs e)
         {
             richTextBox2.ShortcutsEnabled = false;
 

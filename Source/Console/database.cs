@@ -127,20 +127,20 @@ namespace PowerSDR
                                 4.998000, 4.998000, "EBC",                     	false,
                                 15.006000, 15.006000, "EBC",                    false,
 
-								0.135700, 0.137799, "2.2kM CW & Narrow Band",   false,
+								0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // ke9ns change
                                 0.153000, 0.279000, "AM - Long Wave",			false,
                                 0.415000, 0.471999, "Maritime Band",            false,
-                                0.472000, 0.478999, "630M CW & Narrow Band",    false,
+                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // ke9ns change
                                 0.479000, 0.526400, "Maritime Band",            false,
 								0.530000, 1.710000, "Broadcast AM Med Wave",	false,
 								2.300000, 2.495000, "120M Short Wave",			false,
 								3.200000, 3.329999, "90M Short Wave",			false,
                                 3.330001, 3.400000, "90M Short Wave",			false,
-								4.750000, 4.995999, "60M Short Wave",			false,
-                                4.996001, 4.997999, "60M Short Wave",			false,
-                                4.998001, 4.999999, "60M Short Wave",			false,
-                                5.000001, 5.060000, "60M Short Wave",			false,
-								5.900000, 7.000000, "49M Short Wave",			false,
+								4.750000, 4.995999, "61M Short Wave",			false,
+                                4.996001, 4.997999, "61M Short Wave",			false,
+                                4.998001, 4.999999, "61M Short Wave",			false,
+                                5.000001, 5.060000, "61M Short Wave",			false,
+								5.900000, 6.999999, "49M Short Wave",			false,
 								7.300000, 7.350000, "41M Short Wave",			false,
 								7.360000, 9.900000, "31M Short Wave",			false,
 								11.600000, 12.100000, "25M Short Wave",			false,
@@ -149,7 +149,103 @@ namespace PowerSDR
 								17.480000, 17.900000, "16M Short Wave",			false,
 								18.900000, 19.020000, "15M Short Wave",			false,
 								21.450000, 21.850000, "13M Short Wave",			false,
-								25.600000, 27.900000, "11M Short Wave",			false,
+
+                                25.600000, 26.960000, "11M Short Wave",         false,
+
+                                26.960001, 26.969999, "11M CB ch 1",              false,
+                                26.970001, 26.979999, "11M CB ch 2",              false,
+                                26.980001, 26.989999, "11M CB ch 3",              false,
+                                26.990001, 26.999999, "11M CB RC",              false,
+                                27.000001, 27.009999, "11M CB ch 4",              false,
+                                27.010001, 27.019999, "11M CB ch 5",              false,
+                                27.020001, 27.029999, "11M CB ch 6",              false,
+                                27.030001, 27.039999, "11M CB ch 7",              false,
+                                27.040001, 27.049999, "11M CB RC",              false,
+                                27.050001, 27.059999, "11M CB ch 8",              false,
+                                27.060001, 27.069999, "11M CB ch 9",              false,
+                                27.070001, 27.079999, "11M CB ch 10",             false,
+                                27.080001, 27.089999, "11M CB ch 11",             false,
+                                27.090001, 27.099999, "11M CB RC",             false,
+                                27.100001, 27.109999, "11M CB ch 12",             false,
+                                27.110001, 27.119999, "11M CB ch 13",             false,
+                                27.120001, 27.129999, "11M CB ch 14",             false,
+                                27.130001, 27.139999, "11M CB ch 15",             false,
+                                27.140001, 27.149999, "11M CB RC",             false,
+                                27.150001, 27.159999, "11M CB ch 16",             false,
+                                27.160001, 27.169999, "11M CB ch 17",             false,
+                                27.170001, 27.179999, "11M CB ch 18",             false,
+                                27.180001, 27.189999, "11M CB ch 19",             false,
+                                27.190001, 27.199999, "11M CB RC",             false,
+                                27.200001, 27.209999, "11M CB ch 20",             false,
+                                27.210001, 27.219999, "11M CB ch 21",             false,
+                                27.220001, 27.229999, "11M CB ch 22",             false,
+                                27.250001, 27.259999, "11M CB ch 23",             false,
+                                27.230001, 27.239999, "11M CB ch 24",             false,
+                                27.240001, 27.249999, "11M CB ch 25",             false,
+                                27.260001, 27.269999, "11M CB ch 26",             false,
+                                27.270001, 27.279999, "11M CB ch 27",             false,
+                                27.280001, 27.289999, "11M CB ch 28",             false,
+                                27.290001, 27.299999, "11M CB ch 29",             false,
+                                27.300001, 27.309999, "11M CB ch 30",             false,
+                                27.310001, 27.319999, "11M CB ch 31",             false,
+                                27.320001, 27.329999, "11M CB ch 32",             false,
+                                27.330001, 27.339999, "11M CB ch 33",             false,
+                                27.340001, 27.349999, "11M CB ch 34",             false,
+                                27.350001, 27.359999, "11M CB ch 35",             false,
+                                27.360001, 27.369999, "11M CB ch 36",             false,
+                                27.370001, 27.379999, "11M CB ch 37",             false,
+                                27.380001, 27.389999, "11M CB ch 38",             false,
+                                27.390001, 27.399999, "11M CB ch 39",             false,
+                                27.400001, 27.409999, "11M CB ch 40",             false,
+
+                                27.410001, 27.419999, "11M ch 41",             false,
+                                27.420001, 27.429999, "11M ch 42",             false,
+                                27.430001, 27.439999, "11M ch 43",             false,
+                                27.440001, 27.449999, "11M ch 44",             false,
+                                27.450001, 27.459999, "11M ch 45",             false,
+                                27.460001, 27.469999, "11M ch 46",             false,
+                                27.470001, 27.479999, "11M ch 47",             false,
+                                27.480001, 27.489999, "11M ch 48",             false,
+                                27.490001, 27.499999, "11M ch 49",             false,
+                                27.500001, 27.509999, "11M ch 50",             false,
+
+                                27.510001, 27.519999, "11M ch 51",             false,
+                                27.520001, 27.529999, "11M ch 52",             false,
+                                27.530001, 27.539999, "11M ch 53",             false,
+                                27.540001, 27.549999, "11M ch 54",             false,
+                                27.550001, 27.559999, "11M ch 55",             false,
+                                27.560001, 27.569999, "11M ch 56",             false,
+                                27.570001, 27.579999, "11M ch 57",             false,
+                                27.580001, 27.589999, "11M ch 58",             false,
+                                27.590001, 27.599999, "11M ch 59",             false,
+                                27.600001, 27.609999, "11M ch 60",             false,
+
+                                27.610001, 27.619999, "11M ch 61",             false,
+                                27.620001, 27.629999, "11M ch 62",             false,
+                                27.630001, 27.639999, "11M ch 63",             false,
+                                27.640001, 27.649999, "11M ch 64",             false,
+                                27.650001, 27.659999, "11M ch 65",             false,
+                                27.660001, 27.669999, "11M ch 66",             false,
+                                27.670001, 27.679999, "11M ch 67",             false,
+                                27.680001, 27.689999, "11M ch 68",             false,
+                                27.690001, 27.699999, "11M ch 69",             false,
+                                27.700001, 27.709999, "11M ch 70",             false,
+
+                                27.710001, 27.719999, "11M ch 71",             false,
+                                27.720001, 27.729999, "11M ch 72",             false,
+                                27.730001, 27.739999, "11M ch 73",             false,
+                                27.740001, 27.749999, "11M ch 74",             false,
+                                27.750001, 27.759999, "11M ch 75",             false,
+                                27.760001, 27.769999, "11M ch 76",             false,
+                                27.770001, 27.779999, "11M ch 77",             false,
+                                27.780001, 27.789999, "11M ch 78",             false,
+                                27.790001, 27.799999, "11M ch 79",             false,
+                                27.800001, 27.809999, "11M ch 80",             false,
+                             
+                                27.810000, 27.999999, "11M Short Wave",         false,
+
+
+
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -164,6 +260,163 @@ namespace PowerSDR
 
         } //  AddBandTextSWB()
 
+        private static void AddBandRussiaTextSWB()
+        {
+            // SW Broadcast & Misc. Band Plan
+            DataTable t = ds.Tables["BandText"];
+
+            object[] data = {
+                                2.500000, 2.500000, "WWV Time",                 false,
+                                5.000000, 5.000000, "WWV Time",                 false,
+                                10.000000, 10.000000, "WWV Time",               false,
+                                15.000000, 15.000000, "WWV Time",               false,
+                                20.000000, 20.000000, "WWV Time",               false,
+                                25.000000, 25.000000, "WWV Time",               false,  // ke9ns add
+                                3.330000, 3.330000, "CHU Time",                 false,
+                                7.850000, 7.850000, "CHU Time",                 false,
+                                14.670000, 14.670000, "CHU Time",               false,
+                                4.996000, 4.996000, "RWM",                      false,
+                                9.996000, 9.996000, "RWM",                      false,
+                                14.996000, 14.996000, "RWM",                    false,
+                                4.998000, 4.998000, "EBC",                      false,
+                                15.006000, 15.006000, "EBC",                    false,
+
+                                0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // ke9ns change
+                                0.153000, 0.279000, "AM - Long Wave",           false,
+                                0.415000, 0.471999, "Maritime Band",            false,
+                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // ke9ns change
+                                0.479000, 0.526400, "Maritime Band",            false,
+                                0.530000, 1.710000, "Broadcast AM Med Wave",    false,
+                                2.300000, 2.495000, "120M Short Wave",          false,
+                                3.200000, 3.329999, "90M Short Wave",           false,
+                                3.330001, 3.400000, "90M Short Wave",           false,
+                                4.750000, 4.995999, "61M Short Wave",           false,
+                                4.996001, 4.997999, "61M Short Wave",           false,
+                                4.998001, 4.999999, "61M Short Wave",           false,
+                                5.000001, 5.060000, "61M Short Wave",           false,
+                                5.900000, 6.999999, "49M Short Wave",           false,
+                                7.300000, 7.350000, "41M Short Wave",           false,
+                                7.360000, 9.900000, "31M Short Wave",           false,
+                                11.600000, 12.100000, "25M Short Wave",         false,
+                                13.570000, 13.870000, "22M Short Wave",         false,
+                                15.100000, 15.800000, "19M Short Wave",         false,
+                                17.480000, 17.900000, "16M Short Wave",         false,
+                                18.900000, 19.020000, "15M Short Wave",         false,
+                                21.450000, 21.850000, "13M Short Wave",         false,
+
+                                25.600000, 26.960000, "11M Short Wave",         true,
+
+                                26.960001, 26.969999, "11M CB ch 1",              true,
+                                26.970001, 26.979999, "11M CB ch 2",              true,
+                                26.980001, 26.989999, "11M CB ch 3",              true,
+                                26.990001, 26.999999, "11M CB RC",              true,
+                                27.000001, 27.009999, "11M CB ch 4",              true,
+                                27.010001, 27.019999, "11M CB ch 5",              true,
+                                27.020001, 27.029999, "11M CB ch 6",              true,
+                                27.030001, 27.039999, "11M CB ch 7",              true,
+                                27.040001, 27.049999, "11M CB RC",              true,
+                                27.050001, 27.059999, "11M CB ch 8",              true,
+                                27.060001, 27.069999, "11M CB ch 9",              true,
+                                27.070001, 27.079999, "11M CB ch 10",             true,
+                                27.080001, 27.089999, "11M CB ch 11",             true,
+                                27.090001, 27.099999, "11M CB RC",             true,
+                                27.100001, 27.109999, "11M CB ch 12",             true,
+                                27.110001, 27.119999, "11M CB ch 13",             true,
+                                27.120001, 27.129999, "11M CB ch 14",             true,
+                                27.130001, 27.139999, "11M CB ch 15",             true,
+                                27.140001, 27.149999, "11M CB RC",             true,
+                                27.150001, 27.159999, "11M CB ch 16",             true,
+                                27.160001, 27.169999, "11M CB ch 17",             true,
+                                27.170001, 27.179999, "11M CB ch 18",             true,
+                                27.180001, 27.189999, "11M CB ch 19",             true,
+                                27.190001, 27.199999, "11M CB RC",             true,
+                                27.200001, 27.209999, "11M CB ch 20",             true,
+                                27.210001, 27.219999, "11M CB ch 21",             true,
+                                27.220001, 27.229999, "11M CB ch 22",             true,
+                                27.250001, 27.259999, "11M CB ch 23",             true,
+                                27.230001, 27.239999, "11M CB ch 24",             true,
+                                27.240001, 27.249999, "11M CB ch 25",             true,
+                                27.260001, 27.269999, "11M CB ch 26",             true,
+                                27.270001, 27.279999, "11M CB ch 27",             true,
+                                27.280001, 27.289999, "11M CB ch 28",             true,
+                                27.290001, 27.299999, "11M CB ch 29",             true,
+                                27.300001, 27.309999, "11M CB ch 30",             true,
+                                27.310001, 27.319999, "11M CB ch 31",             true,
+                                27.320001, 27.329999, "11M CB ch 32",             true,
+                                27.330001, 27.339999, "11M CB ch 33",             true,
+                                27.340001, 27.349999, "11M CB ch 34",             true,
+                                27.350001, 27.359999, "11M CB ch 35",             true,
+                                27.360001, 27.369999, "11M CB ch 36",             true,
+                                27.370001, 27.379999, "11M CB ch 37",             true,
+                                27.380001, 27.389999, "11M CB ch 38",             true,
+                                27.390001, 27.399999, "11M CB ch 39",             true,
+                                27.400001, 27.409999, "11M CB ch 40",             true,
+
+                                27.410001, 27.419999, "11M ch 41",             true,
+                                27.420001, 27.429999, "11M ch 42",             true,
+                                27.430001, 27.439999, "11M ch 43",             true,
+                                27.440001, 27.449999, "11M ch 44",             true,
+                                27.450001, 27.459999, "11M ch 45",             true,
+                                27.460001, 27.469999, "11M ch 46",             true,
+                                27.470001, 27.479999, "11M ch 47",             true,
+                                27.480001, 27.489999, "11M ch 48",             true,
+                                27.490001, 27.499999, "11M ch 49",             true,
+                                27.500001, 27.509999, "11M ch 50",             true,
+
+                                27.510001, 27.519999, "11M ch 51",             true,
+                                27.520001, 27.529999, "11M ch 52",             true,
+                                27.530001, 27.539999, "11M ch 53",             true,
+                                27.540001, 27.549999, "11M ch 54",             true,
+                                27.550001, 27.559999, "11M ch 55",             true,
+                                27.560001, 27.569999, "11M ch 56",             true,
+                                27.570001, 27.579999, "11M ch 57",             true,
+                                27.580001, 27.589999, "11M ch 58",             true,
+                                27.590001, 27.599999, "11M ch 59",             true,
+                                27.600001, 27.609999, "11M ch 60",             true,
+
+                                27.610001, 27.619999, "11M ch 61",             true,
+                                27.620001, 27.629999, "11M ch 62",             true,
+                                27.630001, 27.639999, "11M ch 63",             true,
+                                27.640001, 27.649999, "11M ch 64",             true,
+                                27.650001, 27.659999, "11M ch 65",             true,
+                                27.660001, 27.669999, "11M ch 66",             true,
+                                27.670001, 27.679999, "11M ch 67",             true,
+                                27.680001, 27.689999, "11M ch 68",             true,
+                                27.690001, 27.699999, "11M ch 69",             true,
+                                27.700001, 27.709999, "11M ch 70",             true,
+
+                                27.710001, 27.719999, "11M ch 71",             true,
+                                27.720001, 27.729999, "11M ch 72",             true,
+                                27.730001, 27.739999, "11M ch 73",             true,
+                                27.740001, 27.749999, "11M ch 74",             true,
+                                27.750001, 27.759999, "11M ch 75",             true,
+                                27.760001, 27.769999, "11M ch 76",             true,
+                                27.770001, 27.779999, "11M ch 77",             true,
+                                27.780001, 27.789999, "11M ch 78",             true,
+                                27.790001, 27.799999, "11M ch 79",             true,
+                                27.800001, 27.809999, "11M ch 80",             true,
+
+                                27.810000, 27.860000, "11M Short Wave",        true,
+
+                                27.860001, 27.999999, "11M Short Wave",        false,
+
+
+
+                            };
+
+            Debug.WriteLine("russia2 " + (data.Length / 4));
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = t.NewRow();
+                dr["Low"] = (double)data[i * 4 + 0];
+                dr["High"] = (double)data[i * 4 + 1];
+                dr["Name"] = (string)data[i * 4 + 2];
+                dr["TX"] = (bool)data[i * 4 + 3];
+                t.Rows.Add(dr);
+            }
+
+        } //  AddBandRussiaTextSWB()
 
         private static void ClearBandText()
         {
@@ -338,23 +591,36 @@ namespace PowerSDR
        //             channels_60m.Add(new Channel(5.3730, 2800));
        //             channels_60m.Add(new Channel(5.4050, 2800));
 
+
+     // 5.250000, 5.351499, "60M RX Only"
+     // 5.351500, 5.335999, "60M 200hz Narrow Band Modes
+     // 5.354000, 5.356999, "60M USB Voice
+     // 5.357000, 5.359999, "60M USB Voice (US CH 3)"
+     // 5.360000, 5.362999, "60M USB Voice"            
+     // 5.363000, 5.365999, "60M USB Voice"            
+     // 5.366000, 5.366500, "60M 20hz Narrow Band Modes"    
+     // 5.366501, 5.450000, "60M RX Only"          
+
         // ke9ns modified
         private static void AddRegion1ABandText60m() // Germany, Luxembourg, Belgium, spain, switzerland, Finland
         {
             DataTable t = ds.Tables["BandText"];
+            Debug.WriteLine("EUROPE==============");
 
             object[] data = {
                                 5.250000, 5.351499, "60M RX Only",              false,
 
-                                5.351500, 5.335999, "60M 200hz Narrow Band Modes",    true,
-                                5.354000, 5.358499, "60M USB Voice",            true,
-                                5.358500, 5.361300, "60M USB Voice (US CH 3)",  true,
-                                5.361301, 5.362999, "60M USB Voice",            true,
-                                5.363000, 5.365999, "60M USB Voice",            true,
+                                5.351500, 5.353999, "60M 200hz Narrow Band Modes",    true,
+                                5.354000, 5.356999, "60M USB Voice (UK CH 7)",  true,
+                                5.357000, 5.359999, "60M USB Voice (US CH 3)",  true,
+                                5.360000, 5.362999, "60M USB Voice",            true,
+                                5.363000, 5.365999, "60M USB Voice (UK CH 8)",  true,
                                 5.366000, 5.366500, "60M 20hz Narrow Band Modes",    true,
 
                                 5.366501, 5.450000, "60M RX Only",              false,
                             };
+
+           
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -367,6 +633,125 @@ namespace PowerSDR
             }
         }
 
+        //====================================================================================================================
+        // ke9ns add CB 11m
+        private static void AddBandText11m() // ke9ns add CB
+        {
+            DataTable t = ds.Tables["BandText"];
+            Debug.WriteLine("11m==============");
+
+            object[] data = {
+                                26.960001, 26.969999, "CB ch 1",              false,
+                                26.970001, 26.979999, "CB ch 2",              false,
+                                26.980001, 26.989999, "CB ch 3",              false,
+                                26.990001, 26.999999, "CB RC",              false,
+                                27.000001, 27.009999, "CB ch 4",              false,
+                                27.010001, 27.019999, "CB ch 5",              false,
+                                27.020001, 27.029999, "CB ch 6",              false,
+                                27.030001, 27.039999, "CB ch 7",              false,
+                                27.040001, 27.049999, "CB RC",              false,
+                                27.050001, 27.059999, "CB ch 8",              false,
+                                27.060001, 27.069999, "CB ch 9",              false,
+                                27.070001, 27.079999, "CB ch 10",             false,
+                                27.080001, 27.089999, "CB ch 11",             false,
+                                27.090001, 27.099999, "CB RC",             false,
+                                27.100001, 27.109999, "CB ch 12",             false,
+                                27.110001, 27.119999, "CB ch 13",             false,
+                                27.120001, 27.129999, "CB ch 14",             false,
+                                27.130001, 27.139999, "CB ch 15",             false,
+                                27.140001, 27.149999, "CB RC",             false,
+                                27.150001, 27.159999, "CB ch 16",             false,
+                                27.160001, 27.169999, "CB ch 17",             false,
+                                27.170001, 27.179999, "CB ch 18",             false,
+                                27.180001, 27.189999, "CB ch 19",             false,
+                                27.190001, 27.199999, "CB RC",             false,
+                                27.200001, 27.209999, "CB ch 20",             false,
+                                27.210001, 27.219999, "CB ch 21",             false,
+                                27.220001, 27.229999, "CB ch 22",             false,
+                                27.250001, 27.259999, "CB ch 23",             false,
+                                27.230001, 27.239999, "CB ch 24",             false,
+                                27.240001, 27.249999, "CB ch 25",             false,
+                                27.260001, 27.269999, "CB ch 26",             false,
+                                27.270001, 27.279999, "CB ch 27",             false,
+                                27.280001, 27.289999, "CB ch 28",             false,
+                                27.290001, 27.299999, "CB ch 29",             false,
+                                27.300001, 27.309999, "CB ch 30",             false,
+                                27.310001, 27.319999, "CB ch 31",             false,
+                                27.320001, 27.329999, "CB ch 32",             false,
+                                27.330001, 27.339999, "CB ch 33",             false,
+                                27.340001, 27.349999, "CB ch 34",             false,
+                                27.350001, 27.359999, "CB ch 35",             false,
+                                27.360001, 27.369999, "CB ch 36",             false,
+                                27.370001, 27.379999, "CB ch 37",             false,
+                                27.380001, 27.389999, "CB ch 38",             false,
+                                27.390001, 27.399999, "CB ch 39",             false,
+                                27.400001, 27.409999, "CB ch 40",             false,
+
+                                27.410001, 27.419999, "ch 41",             false,
+                                27.420001, 27.429999, "ch 42",             false,
+                                27.430001, 27.439999, "ch 43",             false,
+                                27.440001, 27.449999, "ch 44",             false,
+                                27.450001, 27.459999, "ch 45",             false,
+                                27.460001, 27.469999, "ch 46",             false,
+                                27.470001, 27.479999, "ch 47",             false,
+                                27.480001, 27.489999, "ch 48",             false,
+                                27.490001, 27.499999, "ch 49",             false,
+                                27.500001, 27.509999, "ch 50",             false,
+
+                                27.510001, 27.519999, "ch 51",             false,
+                                27.520001, 27.529999, "ch 52",             false,
+                                27.530001, 27.539999, "ch 53",             false,
+                                27.540001, 27.549999, "ch 54",             false,
+                                27.550001, 27.559999, "ch 55",             false,
+                                27.560001, 27.569999, "ch 56",             false,
+                                27.570001, 27.579999, "ch 57",             false,
+                                27.580001, 27.589999, "ch 58",             false,
+                                27.590001, 27.599999, "ch 59",             false,
+                                27.600001, 27.609999, "ch 60",             false,
+
+                                27.610001, 27.619999, "ch 61",             false,
+                                27.620001, 27.629999, "ch 62",             false,
+                                27.630001, 27.639999, "ch 63",             false,
+                                27.640001, 27.649999, "ch 64",             false,
+                                27.650001, 27.659999, "ch 65",             false,
+                                27.660001, 27.669999, "ch 66",             false,
+                                27.670001, 27.679999, "ch 67",             false,
+                                27.680001, 27.689999, "ch 68",             false,
+                                27.690001, 27.699999, "ch 69",             false,
+                                27.700001, 27.709999, "ch 70",             false,
+
+                                27.710001, 27.719999, "ch 71",             false,
+                                27.720001, 27.729999, "ch 72",             false,
+                                27.730001, 27.739999, "ch 73",             false,
+                                27.740001, 27.749999, "ch 74",             false,
+                                27.750001, 27.759999, "ch 75",             false,
+                                27.760001, 27.769999, "ch 76",             false,
+                                27.770001, 27.779999, "ch 77",             false,
+                                27.780001, 27.789999, "ch 78",             false,
+                                27.790001, 27.799999, "ch 79",             false,
+                                27.800001, 27.809999, "ch 80",             false,
+
+
+                            };
+
+
+
+
+
+            for (int i = 0; i < data.Length / 4; i++)
+            {
+                DataRow dr = t.NewRow();
+                dr["Low"] = (double)data[i * 4 + 0];
+                dr["High"] = (double)data[i * 4 + 1];
+                dr["Name"] = (string)data[i * 4 + 2];
+                dr["TX"] = (bool)data[i * 4 + 3];
+                t.Rows.Add(dr);
+            }
+
+        } // AddRegion1ABandText11m() // ke9ns add CB
+
+
+
         // ke9ns parts of region 1 that dont get the new 60m plan
         private static void AddRegion1BBandText60m() // Netherlands
         {
@@ -374,7 +759,7 @@ namespace PowerSDR
 
             object[] data = {
                                 5.250000, 5.349999, "60M RX Only",              false,
-                                5.350000, 5.450000, "60M Amateur Service",             true,
+                                5.350000, 5.450000, "60M Amateur Service",      true,
 
                               
                            };
@@ -396,9 +781,20 @@ namespace PowerSDR
         private static void AddRegion1BandText60m()
         {
             DataTable t = ds.Tables["BandText"];
+            Debug.WriteLine("EUROPE1==============");
 
             object[] data = {
-                                5.250000, 5.450000, "60M RX Only",              false,
+                
+                                5.250000, 5.351499, "60M RX Only",              false,
+
+                                5.351500, 5.335999, "60M 200hz RX Narrow Band Modes",    false,
+                                5.354000, 5.356999, "60M RX USB (UK CH 7)",            false,
+                                5.357000, 5.359999, "60M RX USB (US CH 3)",  false,
+                                5.360000, 5.362999, "60M RX USB",            false,
+                                5.363000, 5.365999, "60M RX USB (UK CH 8)",            false,
+                                5.366000, 5.366500, "60M 20hz RX Narrow Band Modes",    false,
+
+                                5.366501, 5.450000, "60M RX Only",              false,
 
                            };
 
@@ -989,6 +1385,8 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
+                                
+
                                 5.250000, 5.258499, "60M Band",                 false,
 								5.258500, 5.264000, "60M Band Segment 1",		true,
 
@@ -1008,10 +1406,12 @@ namespace PowerSDR
 								5.333000, 5.338000, "60M Band Segment 6",		true,
 
                                 5.338001, 5.353999, "60M Band",                 false,
-								5.354000, 5.358000, "60M Band Segment 7",		true,
+								5.354000, 5.358000, "60M Band Segment 7 (IARU 1)",	true,
 
                                 5.358001, 5.361999, "60M Band",                 false,
-                                5.362000, 5.374500, "60M Band Segment 8",		true,
+                                5.362000, 5.362999, "60M Band Segment 8",		true,
+                                5.363000, 5.365999, "60M Band Segment 8 (IARU 1)",		true,
+                                5.366000, 5.374500, "60M Band Segment 8",		true,
 
                                 5.374501, 5.377999, "60M Band",                 false,                                
                                 5.378000, 5.382000, "60M Band Segment 9",		true,
@@ -1023,6 +1423,7 @@ namespace PowerSDR
                                 5.403500, 5.406500, "60M Band Segment 11",		true,
 
                                 5.406501, 5.449999, "60M Band",                 false,
+
 			};
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -1045,6 +1446,8 @@ namespace PowerSDR
 
             object[] data = {
                                 5.250000, 5.450000, "60M Amateur Service",      true,
+
+
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -1173,7 +1576,7 @@ namespace PowerSDR
         {
             DataTable t = ds.Tables["BandText"];
             object[] data = {
-								26.970000, 27.850000, "11M Citizens Band",		true,
+								26.970000, 27.860000, "11M Citizens Band",		true,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -1317,6 +1720,8 @@ namespace PowerSDR
             ds.Tables.Add("BandText");
             DataTable t = ds.Tables["BandText"];
 
+            Debug.WriteLine("USA==============");
+
             t.Columns.Add("Low", typeof(double));
             t.Columns.Add("High", typeof(double));
             t.Columns.Add("Name", typeof(string));
@@ -1345,19 +1750,21 @@ namespace PowerSDR
 								3.885000, 3.885000, "75M AM Calling Frequency", true,
 								3.885001, 3.999999, "75M SSB",					true,
 
+                                5.167500, 5.167500, "60M Emergency Channel",            true, // ke9ns add
+
                                 5.250000, 5.331999, "60M General",              false,
 								5.332000, 5.332000, "60M Channel 1",			true,
                                 5.332001, 5.347999, "60M General",              false,
 								5.348000, 5.348000, "60M Channel 2",			true,
                                 5.348001, 5.358499, "60M General",              false,
-								5.358500, 5.358500, "60M Channel 3",			true,
+								5.358500, 5.358500, "60M Channel 3 (IARU 1)",			true,
                                 5.358501, 5.372999, "60M General",              false,
 								5.373000, 5.373000, "60M Channel 4",			true,
                                 5.373001, 5.404999, "60M General",              false,
 								5.405000, 5.405000, "60M Channel 5",			true,
                                 5.405001, 5.449999, "60M General",              false,
 								
-								7.000000, 7.024999, "40M Extra CW",				true,
+								7.000000, 7.024999, "40M Extra CW",				true, // ke9ns mod
 								7.025000, 7.039999, "40M CW",					true,
 								7.040000, 7.040000, "40M RTTY DX",				true,
 								7.040001, 7.099999, "40M RTTY",					true,
@@ -1632,8 +2039,9 @@ namespace PowerSDR
                 dr["TX"] = (bool)data[i * 4 + 3];
                 t.Rows.Add(dr);
             }
-            AddBandTextSWB();
 
+            AddBandTextSWB(); // ke9ns add CB
+          
         } // AddBandTextTable() Region2
 
         #endregion
@@ -1690,7 +2098,19 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                5.100000, 5.449999, "60M RX Only",              false,
+
+
+                                5.250000, 5.351499, "60M RX Only",              false,
+
+                                5.351500, 5.335999, "60M 200hz RX Narrow Band Modes",    false,
+                                5.354000, 5.356999, "60M RX USB (UK CH 7)",            false,
+                                5.357000, 5.359999, "60M RX USB (US CH 3)",  false,
+                                5.360000, 5.362999, "60M RX USB",            false,
+                                5.363000, 5.365999, "60M RX USB (UK CH 8)",            false,
+                                5.366000, 5.366500, "60M 20hz RX Narrow Band Modes",    false,
+
+                                5.366501, 5.450000, "60M RX Only",              false,
+
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -2262,9 +2682,14 @@ namespace PowerSDR
 								"80M", "CWL", "F1", 3.510000,
 								"80M", "DIGU", "F1", 3.590000,
 								"80M", "LSB", "F6", 3.750000,
-                                "60M", "CWU", "F1", 5.310000,
-								"60M", "DIGU", "F1", 5.355000,
-								"60M", "USB", "F6", 5.380000,
+
+                                "60M", "DIGU", "F1", 5.351500, // DIGI
+                                "60M", "USB", "F6", 5.35400, // uk CHANNEL 7
+                                "60M", "USB", "F6", 5.35700, // us channel 3
+                                "60M", "USB", "F6", 5.35000, // 
+                                "60M", "USB", "F6", 5.36300, // uK channel 8
+                                "60M", "CWU", "F6", 5.366525, // CW
+
                                 "40M", "CWL", "F1", 7.010000,
 								"40M", "DIGU", "F1", 7.045000,
 								"40M", "LSB", "F6", 7.10000,
@@ -2309,7 +2734,7 @@ namespace PowerSDR
 
 
 
-            };
+            }; 
 
             for (int i = 0; i < data.Length / 4; i++)
             {
@@ -2346,9 +2771,12 @@ namespace PowerSDR
                                 "80M", "DIGU", "F1", 3.590000,
                                 "80M", "LSB", "F6", 3.750000,
 
-                                "60M", "CWU", "F1", 5.351500,
-                                "60M", "USB", "F6", 5.35400,
-                                "60M", "USB", "F6", 5.35850, // us channel 3
+                                "60M", "DIGU", "F1", 5.351500, // DIGI
+                                "60M", "USB", "F6", 5.35400, // uk CHANNEL 7
+                                "60M", "USB", "F6", 5.35700, // us channel 3
+                                "60M", "USB", "F6", 5.35000, // 
+                                "60M", "USB", "F6", 5.36300, // uK channel 8
+                                "60M", "CWU", "F6", 5.366525, // CW
 
                                 "40M", "CWL", "F1", 7.010000,
                                 "40M", "DIGU", "F1", 7.045000,
@@ -2424,9 +2852,16 @@ namespace PowerSDR
 								"80M", "CWL", "F1", 3.510000,
 								"80M", "DIGU", "F1", 3.580000,
 								"80M", "LSB", "F6", 3.750000,
-                                "60M", "USB", "F6", 5.264000,
-								"60M", "USB", "F6", 5.357000,
-								"60M", "USB", "F6", 5.403500,
+
+                                "61M", "USB", "F6",  4.629995, // "Japan Int. Emergency", true,
+
+                                "60M", "DIGU", "F1", 5.351500, // DIGI
+                                "60M", "USB", "F6", 5.35400, // uk CHANNEL 7
+                                "60M", "USB", "F6", 5.35700, // us channel 3
+                                "60M", "USB", "F6", 5.35000, // 
+                                "60M", "USB", "F6", 5.36300, // uK channel 8
+                                "60M", "CWU", "F6", 5.366525, // CW
+
                                 "40M", "CWL", "F1", 7.010000,
 								"40M", "DIGU", "F1", 7.035000,
 								"40M", "LSB", "F6", 7.12000,
@@ -2577,10 +3012,20 @@ namespace PowerSDR
 								"80M", "CWL", "F1", 3.510000,
 								"80M", "DIGU", "F1", 3.590000,
 								"80M", "LSB", "F6", 3.750000,
-                                "60M", "USB", "F6", 5.310000,
-								"60M", "USB", "F6", 5.320000,
-								"60M", "USB", "F6", 5.380000,
-								"60M", "USB", "F6", 5.390000,
+
+                              //  "60M", "USB", "F6", 5.310000,
+						//		"60M", "USB", "F6", 5.320000,
+							//	"60M", "USB", "F6", 5.380000,
+								//"60M", "USB", "F6", 5.390000,
+
+                                "60M", "DIGU", "F1", 5.351500, // DIGI
+                                "60M", "USB", "F6", 5.35400, // uk CHANNEL 7
+                                "60M", "USB", "F6", 5.35700, // us channel 3
+                                "60M", "USB", "F6", 5.35000, // 
+                                "60M", "USB", "F6", 5.36300, // uK channel 8
+                                "60M", "CWU", "F6", 5.366525, // CW
+
+
                                 "40M", "CWL", "F1", 7.010000,
 								"40M", "DIGU", "F1", 7.045000,
 								"40M", "LSB", "F6", 7.10000,
@@ -5689,7 +6134,9 @@ namespace PowerSDR
 				// check low freq
 				string f = ((double)dr["Low"]).ToString("f6");
 				f = f.Replace(",", ".");
-				DataRow[] rows = ds.Tables["BandText"].Select(f+">=Low AND "+f+"<=High");
+                if (f.Contains(".") == false) f = f + ".0"; // ke9ns add
+
+                DataRow[] rows = ds.Tables["BandText"].Select(f+">=Low AND "+f+"<=High");
 				if(rows.Length > 1)
 				{
 					// handle multiple entries
@@ -5700,7 +6147,9 @@ namespace PowerSDR
 				// check high freq
 				f = ((double)dr["High"]).ToString("f6");
 				f = f.Replace(",", ".");
-				rows = ds.Tables["BandText"].Select(f+">=Low AND "+f+"<=High");
+                if (f.Contains(".") == false) f = f + ".0"; // ke9ns add
+
+                rows = ds.Tables["BandText"].Select(f+">=Low AND "+f+"<=High");
 				if(rows.Length > 1)
 				{
 					// handle multiple entries
@@ -5906,8 +6355,13 @@ namespace PowerSDR
 			{
 				outStr = "";
 				string f = freq.ToString("f6");
+
 				f = f.Replace(",", ".");
-				DataRow[] rows = ds.Tables["BandText"].Select(f+">=Low AND "+f+"<=High");
+                if( f.Contains(".") == false)   f = f + ".0"; // ke9ns add
+
+
+				DataRow[] rows = ds.Tables["BandText"].Select(f + ">=Low AND " + f + "<=High");
+
 				if(rows.Length == 0)		// band not found
 				{
 					outStr = "Out of Band";
@@ -6291,19 +6745,30 @@ namespace PowerSDR
             //harmonize BandText and BandStack with radio region
             switch (current_region)
             {                
-                case FRSRegion.Spain_UK:
+
+                // ke9ns is this EU01 (UK,CH,Slov,France,Malta)?
+
+                case FRSRegion.UK: // EU01
                 case FRSRegion.Slovakia:
                 case FRSRegion.France:
 
-                    if (current_region == FRSRegion.Spain_UK) AddRegion1ABandStack(); // ke9ns mod
-                    else AddRegion1BandStack();
+                   
+                   // if (current_region == FRSRegion.Spain_UK)
+                    //    AddRegion1ABandStack(); // ke9ns mod
+                                                //  else 
+                    AddRegion1BandStack();
 
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    if (current_region == FRSRegion.Spain_UK) AddRegion1ABandText60m();
-                    else AddRegion1BandText60m();
+
+                    //  if (current_region == FRSRegion.Spain_UK)
+                    //    AddRegion1ABandText60m(); // transmit region1
+                    // else
+
+                    AddRegion1BandText60m(); // non transmit region1
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6315,16 +6780,20 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                  
+
+
                     break;
 
-                case FRSRegion.Europe:
-                    AddRegion1ABandStack(); // ke9ns mod
+                case FRSRegion.Europe: // EU00
+                    AddRegion1ABandStack(); // ke9ns mod 
 
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1ABandText60m();
+                    AddRegion1ABandText60m(); // KE9NS add transmit
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6336,15 +6805,50 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                  
                     break;
 
-                case FRSRegion.Italy:
-                    AddRegion1BandStack();
+              //  case FRSRegion.Switerland: // EU12
+                case FRSRegion.ES_CH_FIN: // EU12
+              //  case FRSRegion.Finland: // EU12
+
+
+                    AddRegion1ABandStack();
+
+                    AddBandStackSWL(); // ke9ns add
+                    ClearBandText();
+                    AddNetherlandsBandText160m();
+                    AddRegion1BandText80m();
+
+                    AddRegion1ABandText60m(); // ke9ns add transmit
+
+                    AddRegion1BandText40m();
+                    AddRegion1BandText30m();
+                    AddRegion1BandText20m();
+                    AddRegion1BandText17m();
+                    AddRegion1BandText15m();
+                    AddRegion1BandText12m();
+                    AddRegion1BandText10m();
+                    AddRegion1BandText6m();
+                    AddRegion1BandText4m();
+                    AddRegion1BandTextVHFplus();
+                    AddBandTextSWB();
+                  
+                    break;
+
+                case FRSRegion.Italy: // EU10
+
+
+                  //  AddRegion1BandStack();
+                    AddRegion1ABandStack(); // ke9ns mod
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddItalyBandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BandText60m(); // ke9ns no transmit
+                 //   AddRegion1ABandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6356,15 +6860,18 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                  
                     break;
 
-                case FRSRegion.UK_Plus:
+                case FRSRegion.UK_Plus: // EU02
                     AddUK_PlusBandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
                     AddUK_PlusBandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6376,16 +6883,20 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                  
+
                     break;
 
-                case FRSRegion.Norway:
+                case FRSRegion.Norway: // EU03
                 case FRSRegion.Denmark:
                     AddRegion1BandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddNorwayBandText60m();
+                    AddNorwayBandText60m(); // 5.25 to 5.45 tx
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6397,15 +6908,21 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                   
                     break;
 
-                case FRSRegion.Latvia:
-                    AddRegion1BandStack();
+                case FRSRegion.Latvia:// EU08
+
+                  //  AddRegion1BandStack();
+                    AddRegion1ABandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BandText60m();  // no transmit
+                  //  AddRegion1ABandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6417,15 +6934,20 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                   
                     break;
 
-                case FRSRegion.Bulgaria:
-                    AddRegion1BandStack();
+                case FRSRegion.Bulgaria: // EU07
+                   // AddRegion1BandStack();
+                    AddRegion1ABandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BandText60m(); // no TX
+                  //  AddRegion1ABandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6437,15 +6959,20 @@ namespace PowerSDR
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
                     AddBandTextSWB();
+                 
                     break;
 
-                case FRSRegion.Greece:
+                case FRSRegion.Greece: // EU09
+                  //  AddRegion1BandStack();
                     AddRegion1BandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddBulgariaBandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BandText60m(); // no TX
+                  //  AddRegion1ABandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6459,13 +6986,17 @@ namespace PowerSDR
                     AddBandTextSWB();
                     break;
 
-                case FRSRegion.Hungary:
-                    AddRegion1BandStack();
+                case FRSRegion.Hungary: // EU05
+                   // AddRegion1BandStack();
+                    AddRegion1ABandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+                    AddRegion1BandText60m(); // no tx
+                  //AddRegion1ABandText60m();
+
                     AddHungaryBandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6479,13 +7010,17 @@ namespace PowerSDR
                     AddBandTextSWB();
                     break;
 
-                case FRSRegion.Netherlands:
+                case FRSRegion.Netherlands: // EU13
+
                     AddRegion1BandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddNetherlandsBandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BBandText60m(); // ke9ns add
+
+                    AddRegion1BBandText60m(); // ke9ns add 5.35 to 5.45 TX
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6499,34 +7034,49 @@ namespace PowerSDR
                     AddBandTextSWB();
                     break;
 
-                case FRSRegion.Russia:
-                    AddRegion1BandStack();
+                case FRSRegion.Russia: // RUSS
+                    Debug.WriteLine("RUSSIA===============");
+
+                  //  AddRegion1BandStack();
+                    AddRegion1ABandStack(); // 60m bandstack
                     AddBandStackSWL(); // ke9ns add
+
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddRegion1BandText60m();
+
+                    AddRegion1BandText60m(); // no tx
+                  //AddRegion1ABandText60m();
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
                     AddRegion1BandText17m();
                     AddRegion1BandText15m();
                     AddRussiaBandText12m();
-                    AddRussiaBandText11m();
+                 
                     AddRegion1BandText10m();
                     AddGreeceBandText6m();
                     AddRegion1BandText4m();
                     AddRegion1BandTextVHFplus();
-                    AddBandTextSWB();
+                    //  AddRussiaBandText11m(); // ke9ns this was the original
+                    AddBandRussiaTextSWB();
+
                     break;
 
-                case FRSRegion.Sweden:
+                case FRSRegion.Sweden: // EU06
                     AddSwedenBandStack();
+
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddRegion1BandText160m();
                     AddRegion1BandText80m();
-                    AddSwedenBandText60m();
+                    //  AddSwedenBandText60m(); // 5.
+
+                  
+                    AddRegion1ABandText60m(); // ke9ns sweden now IARU 1 60m
+
+
                     AddRegion1BandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();
@@ -6546,7 +7096,9 @@ namespace PowerSDR
                     ClearBandText();
                     AddRegion3BandText160m();
                     AddRegion3BandText80m();
-                    AddRegion3BandText60m();
+                   // AddRegion3BandText60m();
+                    AddRegion1BandText60m(); // no transmit
+
                     AddRegion3BandText40m();
                     AddRegion3BandText30m();
                     AddRegion3BandText20m();
@@ -6565,8 +7117,12 @@ namespace PowerSDR
                     ClearBandText();
                     AddJapanBandText160m();
                     AddJapanBandText80m();
-                    AddRegion3BandText60m();
+                    AddRegion3BandText60m(); // no transmit
+
+                  //  AddRegion1BandText60m(); // no transmit
+
                     AddJapanBandTextEmergency();
+
                     AddJapanBandText40m();
                     AddRegion3BandText30m();
                     AddRegion3BandText20m();
@@ -6579,13 +7135,17 @@ namespace PowerSDR
                     AddBandTextSWB();
                     break;
 
-                case FRSRegion.Italy_Plus:
-                    AddRegion1BandStack();
+                case FRSRegion.Italy_Plus: // EU11
+                 //   AddRegion1BandStack();
+                    AddRegion1ABandStack();
+                  
                     AddBandStackSWL(); // ke9ns add
                     ClearBandText();
                     AddItalyBandText160m();
                     AddRegion1BandText80m();
                     AddRegion1BandText60m();
+                  //  AddRegion1ABandText60m();
+
                     AddItalyPlusBandText40m();
                     AddRegion1BandText30m();
                     AddRegion1BandText20m();

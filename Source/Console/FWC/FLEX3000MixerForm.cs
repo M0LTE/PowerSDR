@@ -132,18 +132,18 @@ namespace PowerSDR
             this.lblMic = new System.Windows.Forms.LabelTS();
             this.chkMicSel = new System.Windows.Forms.CheckBoxTS();
             this.tbMic = new System.Windows.Forms.TrackBarTS();
+            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             this.grpOutput = new System.Windows.Forms.GroupBoxTS();
             this.lblLineOutDB9 = new System.Windows.Forms.LabelTS();
             this.lblHeadphone = new System.Windows.Forms.LabelTS();
             this.lblExtSpkr = new System.Windows.Forms.LabelTS();
-            this.grpInput = new System.Windows.Forms.GroupBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.tbLineOutDB9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbHeadphone)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbExtSpkr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbLineInDB9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).BeginInit();
-            this.grpOutput.SuspendLayout();
             this.grpInput.SuspendLayout();
+            this.grpOutput.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkLineOutDB9Sel
@@ -289,7 +289,7 @@ namespace PowerSDR
             this.tbLineInDB9.TabIndex = 9;
             this.tbLineInDB9.TickFrequency = 16;
             this.tbLineInDB9.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.toolTip1.SetToolTip(this.tbLineInDB9, "Adjusts the Line In DB9 Input Volume");
+            this.toolTip1.SetToolTip(this.tbLineInDB9, resources.GetString("tbLineInDB9.ToolTip"));
             this.tbLineInDB9.Scroll += new System.EventHandler(this.tbLineInDB9_Scroll);
             // 
             // lblMic
@@ -327,8 +327,25 @@ namespace PowerSDR
             this.tbMic.TabIndex = 0;
             this.tbMic.TickFrequency = 16;
             this.tbMic.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.toolTip1.SetToolTip(this.tbMic, "Adjusts the Mic Input Volume");
+            this.toolTip1.SetToolTip(this.tbMic, resources.GetString("tbMic.ToolTip"));
             this.tbMic.Scroll += new System.EventHandler(this.tbMic_Scroll);
+            // 
+            // grpInput
+            // 
+            this.grpInput.Controls.Add(this.chkInputMuteAll);
+            this.grpInput.Controls.Add(this.lblLineInDB9);
+            this.grpInput.Controls.Add(this.chkLineInDB9Sel);
+            this.grpInput.Controls.Add(this.tbLineInDB9);
+            this.grpInput.Controls.Add(this.lblMic);
+            this.grpInput.Controls.Add(this.chkMicSel);
+            this.grpInput.Controls.Add(this.tbMic);
+            this.grpInput.Location = new System.Drawing.Point(8, 8);
+            this.grpInput.Name = "grpInput";
+            this.grpInput.Size = new System.Drawing.Size(120, 216);
+            this.grpInput.TabIndex = 2;
+            this.grpInput.TabStop = false;
+            this.grpInput.Text = "Input (Stage 1)";
+            this.toolTip1.SetToolTip(this.grpInput, resources.GetString("grpInput.ToolTip"));
             // 
             // grpOutput
             // 
@@ -379,22 +396,6 @@ namespace PowerSDR
             this.lblExtSpkr.Text = "Pow Spkr Out";
             this.lblExtSpkr.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // grpInput
-            // 
-            this.grpInput.Controls.Add(this.chkInputMuteAll);
-            this.grpInput.Controls.Add(this.lblLineInDB9);
-            this.grpInput.Controls.Add(this.chkLineInDB9Sel);
-            this.grpInput.Controls.Add(this.tbLineInDB9);
-            this.grpInput.Controls.Add(this.lblMic);
-            this.grpInput.Controls.Add(this.chkMicSel);
-            this.grpInput.Controls.Add(this.tbMic);
-            this.grpInput.Location = new System.Drawing.Point(8, 8);
-            this.grpInput.Name = "grpInput";
-            this.grpInput.Size = new System.Drawing.Size(120, 216);
-            this.grpInput.TabIndex = 2;
-            this.grpInput.TabStop = false;
-            this.grpInput.Text = "Input";
-            // 
             // FLEX3000MixerForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -410,10 +411,10 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbExtSpkr)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbLineInDB9)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMic)).EndInit();
-            this.grpOutput.ResumeLayout(false);
-            this.grpOutput.PerformLayout();
             this.grpInput.ResumeLayout(false);
             this.grpInput.PerformLayout();
+            this.grpOutput.ResumeLayout(false);
+            this.grpOutput.PerformLayout();
             this.ResumeLayout(false);
 
 		}

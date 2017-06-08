@@ -26,6 +26,168 @@
 //    USA
 //=================================================================
 
+/*
+
+
+FWC.WriteTRXEEPROMUshort(addr, offset);    Pal.WriteOp(Opcode.RDAL_OP_WRITE_TRX_EEPROM_UINT16, offset, (uint)buf);
+FWC.ReadTRXEEPROMUshort(addr, out temp);   Pal.ReadOp(Opcode.RDAL_OP_READ_TRX_EEPROM_UINT32, offset, 0, out buf);
+		}
+
+--------------------------------------------------------------------------------------------
+EEPROM memory  193 sets of (4 ints) 16 bytes to read = 3088 bytes  (0x0000 to 0x0c00)
+0x0000         ff
+0x0001         ff
+0x0002         ff
+0x0003         ff
+0x0004         1A
+0x0005         11  
+0x0006         00
+0x0007         00
+0x0008         1C
+0x0009         0A  
+0x000A         00
+0x000B         00
+0x000C         22
+0x000D         02
+0x000E         00
+0x000F         00
+
+0x0010         34
+0x0011         01
+0x0012         00 
+0x0013         00 
+0x0014         00
+0x0015         FF
+0x0016         FF
+0x0017         FF     
+0x0018         0C  12  first 2 digits of Serial# 
+0x0019         0B  11  2nd 2 digits of serial#
+0x001A         62  
+0x001B         0C  0c62 = the last part of the serial#  
+0x001C         0A
+0x001D         00
+0x001E         60    
+0x001F         03
+
+0x0020         0D
+0x0021         0B   
+0x0022         14   
+0x0023         00
+0x0024         0C
+0x0025         0B   
+0x0026         2F   
+0x0027         00
+0x0028         0C
+0x0029         0B
+0x002A         37
+0x002B         00
+
+0x002C         09 // ??
+0x002D         0B // ??
+0x002E         1D // ??
+0x002F         00 // ??
+
+0x0030         FF
+0x0031         FF
+0x0032         FF
+0x0033         FF
+
+0x0034         2D // MARS extended
+0x0035         05 // 
+0x0036         00 // 
+0x0037         00 // 
+0x0038         0D // 
+0x0039         0B // 
+0x003A         01 // 
+0x003B         00 // 
+0x003C         78 // 
+
+0x003D         FF
+0x003E         FF
+---------------------------------------------------
+0x003F         FF                TRX_Checksum_present c5=true ff = false
+0x0040        CE A8 D1 01         UTCFILEWRITETIME (LSW) lastcal date and time
+0x0044        C7 2E 0D 30          UTCFILEWRITETIME (MSW)
+0x0048   =  00 01 =   0x0100      RXLevel Pointer
+0x004A   =  90 01 =   0x0190      RXIMage POinter
+0x004C   =  C0 01 =   0x01C0      RX phase offset
+0x004E   =  F0 01 =   0x01F0      TXImage
+0x0050   =  20 02 =   0x0220      TX phase offset
+0x0054   =  C0 02 =   0x02C0      PABIAS
+0x0056   =  E0 02 =   0x02E0      PABRIDGE
+0x0058   =  F0 03 =   0x03F0      PAPOWER
+0x005A   =  30 06 =   0x0630      PASWR
+0x005C   =  FF FF =??    0x068F      ATUSWR (only for 3000?)
+0x005e   =  90 06 =  0x0690      VULEVEL
+0x0060   =  A0 06 =  0x06A0      VUPower
+0x0062   =  00 07 =  0x0700  ?? 0x0250      TXCarrier supposed to by 0x760
+
+0x0064   =  FF
+....
+0x006A    = FF
+-----------------------------------------------------
+0x0100                   RXLevel 160m
+0x0188                   RXlevel 6m
+0x018F                   RXlevelchecksum
+
+0x0190                   RXImage 160m   (gain offset) every 4 bytes
+0x01B8                   RXImage 6m
+
+0x01BE                   RX1ImageVER = 5    (rx1_image_ver)
+0x01BF                   RXImagegainchecksum
+
+0x01C0                   RXPhase_OFFSET  160m
+0x01EC                   RXPhase_offset  6m
+0x01EF                   RXPhase_offset checksum
+
+0x01F0                   TXImage 160m
+0x021C                   TXIamge 6m
+0x021F                   Tximage checksum
+
+0x0220                   TXPhase_offset   160m
+0x024C                   TXPhase_offset 6m
+0x024F                   TXPhaseoffsetchecksum
+
+0x0250                   TXCarrier   160m
+0x027C                   TXCarrier 6m
+0x027E                   PABIAS checksum  (BYTE)
+0x027F                   TXCarrierchecksum
+
+0x02C0                   PABIAS   160m
+0x02EC                   PABIAS   6m
+
+0x02E0                   PABRIDGE   160m
+0x03EC                   PABRIDGE  6m
+0x03EF                   PABRIDGE checksum
+
+0x03F0                   PAPOWER   160m
+0x041C                   PAPOWER  6m
+0x062F                   PAPOWER checksum
+
+
+0x0630                   PAPOWERSWR   160m
+0x065C                   PAPOWERSWR  6m
+0x065F                   PAPOWERSWR checksum
+
+0x0690                   VULEVEL  VHF0
+0x069F                   VULEVEL   VHF1
+0x068e                   VULEVEL checksum
+
+0x06A0                   VUPower  VHF0
+0x06A4                   VUPower   VHF1
+0x068D                   VUPower checksum
+
+
+0x0A6F    last memory to have data in it
+
+------------------------------------------------
+LAST MEMORY
+0xA70...0xF9F  == FF    NOTHING MORE
+
+
+
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -161,7 +323,8 @@ namespace PowerSDR
 
 
         //=================================================================================
-		private static Progress progress; // progress bard
+        // ke9ns
+        private static Progress progress; // progress bard
 		public static void StartDump()
 		{
 			progress = new Progress("Backing Up EEPROM");
@@ -208,7 +371,8 @@ namespace PowerSDR
 					s.Append("F3K_");
 					break;
 			}
-			FWC.ReadTRXEEPROMUint(0x18, out data);
+			FWC.ReadTRXEEPROMUint(0x18, out data); // radio serial#
+
 			s.Append(((byte)(data)).ToString("00"));
 			s.Append(((byte)(data>>8)).ToString("00"));
 			s.Append("-"+((ushort)(data>>16)).ToString("0000"));
@@ -330,6 +494,8 @@ namespace PowerSDR
             return vita * Math.Pow(2, -20) * 1e-6;
         }
 
+        //========================================================================================
+        // ke9ns 
         private static bool CheckedWriteUint(uint addr, uint data)
         {
             uint temp = 0;
@@ -349,6 +515,8 @@ namespace PowerSDR
             return true;
         }
 
+        //========================================================================================
+        // ke9ns 
         private static bool CheckedWriteUshort(uint addr, ushort data)
         {
             ushort temp = 0;
@@ -368,6 +536,8 @@ namespace PowerSDR
             return true;
         }
 
+        //========================================================================================
+        // ke9ns 
         private static bool CheckedWriteByte(uint addr, byte data)
         {
             byte temp = 0;
@@ -587,6 +757,8 @@ namespace PowerSDR
 
 		private const int NUM_WRITES_TO_TRY = 5;
 
+        // ======================================================================
+        // ke9ns   compare eeprom values with database values
         public static bool CheckRXLevel()
 		{
 			Random rand = new Random();
@@ -608,7 +780,7 @@ namespace PowerSDR
 			for(int i=0; i<(int)Band.LAST; i++)
 				rx_level_check[i] = new float[3];
 			
-			ReadRXLevel(rx_level_check);
+			ReadRXLevel(rx_level_check); // ke9ns read eeprom values to compare
 
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -619,9 +791,11 @@ namespace PowerSDR
 				}
 			}
 			return true;
-		}
+        } // CheckRXLevel()
 
-		public static void WriteRXLevel(float[][] table, out byte checksum)
+        // ======================================================================
+        // ke9ns   EEPROM mem loc 0x0100 to 0x180
+        public static void WriteRXLevel(float[][] table, out byte checksum)
 		{
 			WriteCalDateTime();			
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -681,9 +855,11 @@ namespace PowerSDR
 			byte sum = Checksum.Calc(table);
 			WriteRXLevelChecksum(sum);
 			checksum = sum;
-		}
+        } // WriteRXLevel(float[][] table, out byte checksum)
 
-		public static void WriteRXLevelChecksum(byte sum)
+        // ======================================================================
+        // ke9ns   EEPROM mem loc 0x018f
+        public static void WriteRXLevelChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -702,9 +878,14 @@ namespace PowerSDR
 					}
 				}
 			} while(read != sum);
-		}
 
-		public static void ReadRXLevel(float[][] table)
+        } // WriteRXLevelChecksum(byte sum)
+
+
+
+        // ======================================================================
+        // ke9ns   EEPROM mem loc 0x0100 to 0x0180
+        public static void ReadRXLevel(float[][] table)
 		{
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
 							   Band.B17M, Band.B15M, Band.B12M, Band.B10M, Band.B6M };
@@ -729,20 +910,29 @@ namespace PowerSDR
 					table[(int)bands[i]][j] = (float)Math.Round(f, 3);
 				}
 			}
-		}
+        } // ReadRXLevel(float[][] table)
 
-		public static byte ReadRXLevelChecksum()
+        // ======================================================================
+        // ke9ns   EEPROM mem loc 0x018f
+        public static byte ReadRXLevelChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x18F, out read);
 			return read;
 		}
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#region RX Image
+        #region RX Image
 
-		public static bool CheckRXImage()
+
+        // ======================================================================
+        // ke9ns   compare eeprom values with database values
+        public static bool CheckRXImage()
 		{
 			Random rand = new Random();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -766,7 +956,7 @@ namespace PowerSDR
 			float[] gain_check = new float[(int)Band.LAST];
 			float[] phase_check = new float[(int)Band.LAST];
 
-			ReadRXImage(gain_check, phase_check);
+			ReadRXImage(gain_check, phase_check); // ke9ns check eeprom values to compare
 
 			byte gain_sum_check = Checksum.CalcHF(gain_check);
 			byte phase_sum_check = Checksum.CalcHF(phase_check);
@@ -782,9 +972,11 @@ namespace PowerSDR
 					return false;
 			}
 			return true;
-		}
+        } // CheckRXImage()
 
-		public static void WriteRXImage(float[] gain_table, float[] phase_table, out byte gain_sum, out byte phase_sum)
+        // ======================================================================
+        // ke9ns   EEPROM mem 0x190
+        public static void WriteRXImage(float[] gain_table, float[] phase_table, out byte gain_sum, out byte phase_sum)
 		{
 			WriteCalDateTime();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -907,19 +1099,25 @@ namespace PowerSDR
 						}
 					}
 				} while(test != phase_table[(int)bands[i]]);
-			}
 
-			// calculate and write checksums
-			byte sum = Checksum.CalcHF(gain_table);
+            } // 	for(uint i=0; i<bands.Length; i++)
+
+            // calculate and write checksums
+            byte sum = Checksum.CalcHF(gain_table);
 			WriteRXImageGainChecksum(sum);
 			gain_sum = sum;
 
 			sum = Checksum.CalcHF(phase_table);
 			WriteRXImagePhaseChecksum(sum);
 			phase_sum = sum;
-		}
+		} // WriteRXIMage()
 
-		public static void WriteRXImageGainChecksum(byte sum)
+
+
+
+        //========================================================================================
+        // ke9ns 
+        public static void WriteRXImageGainChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -940,7 +1138,9 @@ namespace PowerSDR
 			} while(read != sum);
 		}
 
-		public static void WriteRXImagePhaseChecksum(byte sum)
+        //========================================================================================
+        // ke9ns 
+        public static void WriteRXImagePhaseChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -959,9 +1159,11 @@ namespace PowerSDR
 					}
 				}
 			} while(read != sum);
-		}
+        } // WriteRXImagePhaseChecksum(byte sum)
 
-		public static void ReadRXImage(float[] gain_table, float[] phase_table)
+        //========================================================================================
+        // ke9ns 
+        public static void ReadRXImage(float[] gain_table, float[] phase_table)
 		{
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
 							   Band.B17M, Band.B15M, Band.B12M, Band.B10M, Band.B6M };
@@ -1003,31 +1205,41 @@ namespace PowerSDR
 				}
 				phase_table[(int)bands[i]] = f;
 			}
-		}
+        } // ReadRXImage(float[] gain_table, float[] phase_table)
 
-		public static byte ReadRXImageGainChecksum()
+        //========================================================================================
+        // ke9ns 
+        public static byte ReadRXImageGainChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x1BF, out read);
 			return read;
 		}
 
-		public static byte ReadRXImagePhaseChecksum()
+        //========================================================================================
+        // ke9ns 
+        public static byte ReadRXImagePhaseChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x1EF, out read);
 			return read;
 		}
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#endregion
+        #endregion
 
-		#region TX
+        #region TX
 
-		#region TX Image
+        #region TX Image
 
-		public static bool CheckTXImage()
+        //===============================================================================================
+        // ke9ns
+        public static bool CheckTXImage()
 		{
 			Random rand = new Random();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -1059,7 +1271,9 @@ namespace PowerSDR
 			return true;
 		}
 
-		public static void WriteTXImage(float[] gain_table, float[] phase_table, out byte gain_sum, out byte phase_sum)
+        //===============================================================================================
+        // ke9ns
+        public static void WriteTXImage(float[] gain_table, float[] phase_table, out byte gain_sum, out byte phase_sum)
 		{
 			WriteCalDateTime();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -1184,9 +1398,12 @@ namespace PowerSDR
 			sum = Checksum.CalcHF(phase_table);
 			WriteTXImagePhaseChecksum(sum);
 			phase_sum = sum;
-		}
+		} // WriteTXImage
 
-		public static void WriteTXImageGainChecksum(byte sum)
+
+        //===============================================================================================
+        // ke9ns
+        public static void WriteTXImageGainChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -1207,7 +1424,9 @@ namespace PowerSDR
 			} while(read != sum);
 		}
 
-		public static void WriteTXImagePhaseChecksum(byte sum)
+        //===============================================================================================
+        // ke9ns
+        public static void WriteTXImagePhaseChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -1228,7 +1447,9 @@ namespace PowerSDR
 			} while(read != sum);
 		}
 
-		public static void ReadTXImage(float[] gain_table, float[] phase_table)
+        //===============================================================================================
+        // ke9ns
+        public static void ReadTXImage(float[] gain_table, float[] phase_table)
 		{
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
 							   Band.B17M, Band.B15M, Band.B12M, Band.B10M, Band.B6M };
@@ -1279,9 +1500,11 @@ namespace PowerSDR
 				}
 				phase_table[(int)bands[i]] = f;
 			}
-		}
+		} // READTXImage
 
-		public static byte ReadTXImageGainChecksum()
+        //===============================================================================================
+        // ke9ns
+        public static byte ReadTXImageGainChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x21F, out read);
@@ -1456,15 +1679,21 @@ namespace PowerSDR
 			return read;
 		}
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#region PA
+        #region PA
 
-		#region PA Bias
+        #region PA Bias
 
-		public static bool CheckPABias()
+        //===============================================================================================
+        // ke9ns
+        public static bool CheckPABias()
 		{
 			Random rand = new Random();
 
@@ -1496,7 +1725,9 @@ namespace PowerSDR
 			return true;
 		}
 
-		public static void WritePABias(int[][] table, out byte checksum)
+        //===============================================================================================
+        // ke9ns
+        public static void WritePABias(int[][] table, out byte checksum)
 		{
 			WriteCalDateTime();
 			
@@ -1582,9 +1813,15 @@ namespace PowerSDR
 			byte sum = Checksum.Calc(table, false);
 			WritePABiasChecksum(sum);
 			checksum = sum;
-		}
 
-		public static void WritePABiasChecksum(byte sum)
+		} // WritePABIAS
+
+
+
+
+        //===============================================================================================
+        // ke9ns
+        public static void WritePABiasChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -1605,7 +1842,9 @@ namespace PowerSDR
 			} while(read != sum);
 		}
 
-		public static void ReadPABias(int[][] table)
+        //===============================================================================================
+        // ke9ns
+        public static void ReadPABias(int[][] table)
 		{
 			ushort offset;
 			FWC.ReadTRXEEPROMUshort(0x54, out offset);
@@ -1631,18 +1870,26 @@ namespace PowerSDR
 			}
 		}
 
-		public static byte ReadPABiasChecksum()
+        //===============================================================================================
+        // ke9ns
+        public static byte ReadPABiasChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x27E, out read);
 			return read;
 		}
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#region PA Bridge
+        #region PA Bridge
 
-		public static bool CheckPABridge()
+        //===============================================================================================
+        // ke9ns
+        public static bool CheckPABridge()
 		{
 			Random rand = new Random();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -1676,7 +1923,9 @@ namespace PowerSDR
 			return true;
 		}
 
-		public static void WritePABridge(float[][] table, out byte checksum)
+        //===============================================================================================
+        // ke9ns
+        public static void WritePABridge(float[][] table, out byte checksum)
 		{
 			WriteCalDateTime();			
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -1748,9 +1997,12 @@ namespace PowerSDR
 			byte sum = Checksum.Calc(table);
 			WritePABridgeChecksum(sum);
 			checksum = sum;
-		}
 
-		public static void WritePABridgeChecksum(byte sum)
+		} // WritePABridge
+
+        //===============================================================================================
+        // ke9ns
+        public static void WritePABridgeChecksum(byte sum)
 		{
 			byte read, errors=0;
 			do
@@ -1771,7 +2023,9 @@ namespace PowerSDR
 			} while(read != sum);
 		}
 
-		public static void ReadPABridge(float[][] table)
+        //===============================================================================================
+        // ke9ns
+        public static void ReadPABridge(float[][] table)
 		{
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
 							   Band.B17M, Band.B15M, Band.B12M, Band.B10M, Band.B6M };
@@ -1808,9 +2062,11 @@ namespace PowerSDR
 					else table[(int)bands[i]][j] = (float)Math.Round(f, 4);
 				}
 			}
-		}
+		} // READPABRIDGE
 
-		public static byte ReadPABridgeChecksum()
+        //===============================================================================================
+        // ke9ns
+        public static byte ReadPABridgeChecksum()
 		{
 			byte read;
 			FWC.ReadTRXEEPROMByte(0x3EF, out read);
@@ -2154,15 +2410,19 @@ namespace PowerSDR
 			return read;
 		}
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#region RX2
+        #region RX2
 
-		#region RX2 Level
+        #region RX2 Level
 
-		public static bool CheckRX2Level()
+        public static bool CheckRX2Level()
 		{
 			Random rand = new Random();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -2600,13 +2860,17 @@ namespace PowerSDR
 			return read;
 		}
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
+        //===============================================================================================
 
-		#region ATU
+        #region ATU
 
-		public static bool CheckATUSWR()
+        public static bool CheckATUSWR()
 		{
 			Random rand = new Random();
 			Band[] bands = { Band.B160M, Band.B80M, Band.B60M, Band.B40M, Band.B30M, Band.B20M,
@@ -2944,6 +3208,8 @@ namespace PowerSDR
 
         #region VU Power
 
+        //===============================================================================================
+        // ke9ns
         public static bool CheckVUPower() // assumes length of tables is V:14  U:22
         {
             const int V_LENGTH = 14;
@@ -2984,6 +3250,8 @@ namespace PowerSDR
             return true;
         }
 
+        //===============================================================================================
+        // ke9ns
         public static void WriteVUPower(float[] vtable, float[] utable, out byte checksum)
         {
             WriteCalDateTime();
@@ -3094,8 +3362,10 @@ namespace PowerSDR
             sum += Checksum.Calc(utable);
             WritePAPowerChecksum(sum);
             checksum = sum;
-        }
+        } // WRITEVUPOWER
 
+        //===============================================================================================
+        // ke9ns
         public static void WriteVUPowerChecksum(byte sum)
         {
             byte read, errors = 0;
@@ -3117,6 +3387,8 @@ namespace PowerSDR
             } while (read != sum);
         }
 
+        //===============================================================================================
+        // ke9ns
         public static void ReadVUPower(float[] vtable, float[] utable)
         {
             ushort offset;
@@ -3164,7 +3436,7 @@ namespace PowerSDR
                 }
                 else utable[i] = (float)Math.Round(f, 4);
             }
-        }
+        } // READVUPOWER
 
         public static byte ReadVUPowerChecksum()
         {
@@ -3325,6 +3597,9 @@ namespace PowerSDR
             return "RX Level: Passed";
         }
 
+
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckRXImage()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3366,8 +3641,13 @@ namespace PowerSDR
             }
 
             return "RX Image: Passed";
-        }
 
+        } // SanityCheckRXImage()
+
+
+
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckTXImage()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3409,8 +3689,13 @@ namespace PowerSDR
             }
 
             return "TX Image: Passed";
-        }
 
+        } // SanityCheckTXImage()
+
+
+
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckTXCarrier()
         {
             ushort temp = 0;
@@ -3452,6 +3737,8 @@ namespace PowerSDR
             return "TX Carrier: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckPABias()
         {
             ushort temp = 0;
@@ -3472,6 +3759,8 @@ namespace PowerSDR
             return "PA Bias: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckPABridge()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3507,6 +3796,8 @@ namespace PowerSDR
             return "PA Bridge: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckPAPower()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3542,6 +3833,8 @@ namespace PowerSDR
             return "PA Power: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckPASWR()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3567,6 +3860,8 @@ namespace PowerSDR
             return "PA SWR: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckATU()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3592,6 +3887,8 @@ namespace PowerSDR
             return "ATU: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckRX2Level()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3639,6 +3936,8 @@ namespace PowerSDR
             return "RX2 Level: Passed";
         }
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckRX2Image()
         {
             string[] bands = { "160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m" };
@@ -3680,8 +3979,10 @@ namespace PowerSDR
             }
 
             return "RX2 Image: Passed";
-        }
+        } //  SanityCheckRX2Image()
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckVULevel()
         {
             float[] target = { -16.1f, -36.2f, -8.6f, -28.4f };
@@ -3705,8 +4006,10 @@ namespace PowerSDR
             }
 
             return "VU Level: Passed";
-        }
+        } // SanityCheckVULevel()
 
+        //==================================================================================================================
+        // ke9ns
         private static string SanityCheckVUPower()
         {
             ushort temp = 0;
@@ -3729,7 +4032,7 @@ namespace PowerSDR
             }
 
             return "VU Power: Passed";
-        }
+        } // SanityCheckVUPower()
 
         #endregion
     }

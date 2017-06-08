@@ -45,6 +45,12 @@ namespace PowerSDR
     {
         #region Private Variables
 
+        public Skin(Console c)
+        {
+            console = c;
+
+        }
+
         private enum ImageState
         {
             NormalUp,
@@ -56,6 +62,8 @@ namespace PowerSDR
             MouseOverUp,
             MouseOverDown,
         }
+
+        public static Console console;   // ke9ns mod
 
         private static string name;
         private static string path;
@@ -119,6 +127,7 @@ namespace PowerSDR
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext)) // pic_file_ext = .png
             {
                 f.BackgroundImage = Image.FromFile(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                f.Invalidate(); // ke9ns add
             }
             else
             {
@@ -732,16 +741,16 @@ namespace PowerSDR
 
         private static void Button_StateChanged(object sender, EventArgs e)
         {
+
+
             Button ctrl = (Button)sender;
             ImageState state = ImageState.NormalUp;
 
-            if (!ctrl.Enabled &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledUp.ToString()) >= 0)
+            if (!ctrl.Enabled &&  ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledUp.ToString()) >= 0)
             {
                 state = ImageState.DisabledUp;
             }
-            else if (ctrl.Focused &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedUp.ToString()) >= 0)
+            else if (ctrl.Focused &&  ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedUp.ToString()) >= 0)
             {
                 state = ImageState.FocusedUp;
             }
@@ -780,10 +789,15 @@ namespace PowerSDR
 
         private static void SetButtonImageState(Button ctrl, ImageState state)
         {
+
             if (ctrl.ImageList == null) return;
+
             int index = ctrl.ImageList.Images.IndexOfKey(state.ToString());
+
             if (index < 0) return;
-            ctrl.BackgroundImage = ctrl.ImageList.Images[index];
+
+            ctrl.BackgroundImage = ctrl.ImageList.Images[index];         // ke9ns this is where the button png images are draw over the buttons
+            ctrl.Invalidate(); // ke9ns add
         }
 
         #endregion
@@ -874,6 +888,8 @@ namespace PowerSDR
 
         private static void SetupCheckBoxImages(CheckBox ctrl)
         {
+
+          
             if (ctrl.ImageList == null)
                 ctrl.ImageList = new ImageList();
             else ctrl.ImageList.Images.Clear();
@@ -1188,6 +1204,10 @@ namespace PowerSDR
 
         private static void SaveRadioButton(RadioButton ctrl, XmlTextWriter writer)
         {
+
+            Debug.WriteLine("8 saveradiobutton=====");
+
+
             writer.WriteStartElement(ctrl.Name);
             writer.WriteElementString("Type", "RadioButton");
             writer.WriteElementString("Appearance", ctrl.Appearance.ToString());
@@ -1210,6 +1230,9 @@ namespace PowerSDR
 
         private static void RestoreRadioButton(RadioButton ctrl, XmlDocument doc)
         {
+
+
+
             XmlNodeList matches = doc.GetElementsByTagName(ctrl.Name);
             if (matches.Count == 0) // not found
                 return;
@@ -1276,9 +1299,11 @@ namespace PowerSDR
         //==============================================================================================
         private static void SetupRadioButtonImages(RadioButton ctrl)
         {
-            if (ctrl.ImageList == null)
-                ctrl.ImageList = new ImageList();
+
+         
+            if (ctrl.ImageList == null)  ctrl.ImageList = new ImageList();
             else ctrl.ImageList.Images.Clear();
+
             ctrl.ImageList.ImageSize = ctrl.Size; // may be an issue with smaller images
             ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 
@@ -1318,25 +1343,27 @@ namespace PowerSDR
 
 
 
+        public static bool meterPause = false; // ke9ns add to pause meter
 
-        private static void RadioButton_StateChanged(object sender, EventArgs e)
+        private static void RadioButton_StateChanged(object sender, EventArgs e) // ke9ns draw the button being pushed down and up here
         {
+
+            meterPause = true; // ke9ns add pause image pointer on meter while updating button images
+
             RadioButton ctrl = (RadioButton)sender;
             ImageState state = ImageState.NormalUp;
 
-            if (!ctrl.Enabled &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledDown.ToString()) >= 0 &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledUp.ToString()) >= 0)
+            if (!ctrl.Enabled &&  (ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledDown.ToString()) >= 0) &&  (ctrl.ImageList.Images.IndexOfKey(ImageState.DisabledUp.ToString()) >= 0) )
             {
+               
                 if (ctrl.Checked)
                     state = ImageState.DisabledDown;
                 else
                     state = ImageState.DisabledUp;
             }
-            else if (ctrl.Focused &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedDown.ToString()) >= 0 &&
-                ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedUp.ToString()) >= 0)
+            else if (ctrl.Focused &&  ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedDown.ToString()) >= 0 &&  ctrl.ImageList.Images.IndexOfKey(ImageState.FocusedUp.ToString()) >= 0)
             {
+              
                 if (ctrl.Checked)
                     state = ImageState.FocusedDown;
                 else
@@ -1344,6 +1371,7 @@ namespace PowerSDR
             }
             else
             {
+              
                 if (ctrl.Checked)
                     state = ImageState.NormalDown;
                 else
@@ -1351,13 +1379,19 @@ namespace PowerSDR
             }
 
             SetRadioButtonImageState(ctrl, state);
-        }
+
+            meterPause = false; // ke9ns add pause image pointer on meter while updating button images
+           
+
+        } //  RadioButton_StateChanged
 
 
 
 
         private static void RadioButton_MouseEnter(object sender, EventArgs e)
         {
+          
+
             RadioButton ctrl = (RadioButton)sender;
             if (!ctrl.Enabled) return;
 
@@ -1369,11 +1403,25 @@ namespace PowerSDR
 
         private static void SetRadioButtonImageState(RadioButton ctrl, ImageState state)
         {
-            if (ctrl.ImageList == null) return;
+          
+            if (ctrl.ImageList == null)
+            {
+              
+                return;
+            }
+
             int index = ctrl.ImageList.Images.IndexOfKey(state.ToString());
-            if (index < 0) return;
-            ctrl.BackgroundImage = ctrl.ImageList.Images[index];
-        }
+
+            if (index < 0)
+            {
+              
+                return;
+            }
+          
+            ctrl.BackgroundImage = ctrl.ImageList.Images[index]; // ke9ns this is where the buttons image is set
+            ctrl.Invalidate(); // ke9ns add
+
+        } //  SetRadioButtonImageState
 
         #endregion
 
@@ -1486,16 +1534,33 @@ namespace PowerSDR
             // load images
             string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
 
-            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add
-            s = s.Replace("GN", "VHF"); // ke9ns add
+            s = s.Replace("btnBandHF1", "btnBandHF"); // ke9ns add to allow HF1 to use the skin of HF buttons
+            s = s.Replace("GN", "VHF"); // ke9ns add  to allow GN to use the skin of VHF buttons
+
+
+            s = s.Replace("ptbTune", "ptbPWR");  // ke9ns add to allow ptbTune to use the skin of ptbPWR slider (back and head)
+            s = s.Replace("ptbMON", "ptbAF");  // ke9ns add to allow ptbTune to use the skin of ptbAF slider (back and head)
+
 
             if (File.Exists(s + "back" + pic_file_ext))
+            {
                 ctrl.BackgroundImage = Image.FromFile(s + "back" + pic_file_ext);
-            else ctrl.BackgroundImage = null;
+                ctrl.Invalidate(); // ke9ns add
+            }
+            else
+            {
+                ctrl.BackgroundImage = null;
+            }
 
-            if(File.Exists(s + "head" + pic_file_ext))
+            if (File.Exists(s + "head" + pic_file_ext))
+            {
                 ctrl.HeadImage = Image.FromFile(s + "head" + pic_file_ext);
-            else ctrl.HeadImage = null;
+                ctrl.Invalidate(); // ke9ns add
+            }
+            else
+            {
+                ctrl.HeadImage = null;
+            }
 
             ctrl.Invalidate();
         }
@@ -1622,7 +1687,7 @@ namespace PowerSDR
 
         public static void SetBackgroundImage(Control c)
         {
-            if (c.Name == "panelOptions") return; // ke9ns add
+            if (c.Name == "panelOptions") return; // ke9ns add              // do this so ke9ns can draw rings round groups instead of an external image from the skin file
             if (c.Name == "panelModeSpecificPhone") return; // ke9ns add
             if (c.Name == "panelModeSpecificFM") return; // ke9ns add
             if (c.Name == "panelModeSpecificCW") return; // ke9ns add
@@ -1642,6 +1707,7 @@ namespace PowerSDR
             if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
             {
                 c.BackgroundImage = Image.FromFile(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
+                c.Invalidate(); // ke9ns add
             }
             else
             {

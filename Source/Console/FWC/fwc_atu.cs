@@ -250,7 +250,28 @@ namespace PowerSDR
             FlushBuffer(true);
         }
 
-		public static void MemoryTune()
+        //=====================================================================
+        // ke9ns add
+        public static void ReadSWR()
+        {
+            int count = 0;
+            byte cmd, b2, b3, b4;
+
+            FWC.ATUSendCmd((byte)ATURequest.REQ_ALLUPDATE,0,0);
+
+            do
+            {
+                FWC.ATUGetResult(out cmd, out b2, out b3, out b4, 250);
+                ParseResult(cmd, b2, b3);
+             
+                Thread.Sleep(10);
+            } while ( cmd != 255 && count++ < 20);  //6 = CMD_SWR (tune success), 10 = CMD_TUNEFAIL
+
+
+        } // ReadSWR()
+
+
+        public static void MemoryTune()
 		{
 			int count = 0;
 			byte cmd, b2, b3, b4;

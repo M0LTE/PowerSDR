@@ -206,9 +206,15 @@ namespace PowerSDR
             base.OnEnabledChanged(e);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)  // ke9ns hits this Down before the UP
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left) // ke9ns ie a right click or middle
+            {
+               
+                return;
+            }
+          
+
             if (head_rect.IsEmpty) return;
 
             if (this.Enabled)
@@ -323,9 +329,15 @@ namespace PowerSDR
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e) // ke9ns hits the Down before this 
         {
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left) // ke9ns  not left means looking for Right click or Middle
+            {
+             
+                return;
+            }
+          
+
             if (head_rect.IsEmpty) return;
 
             sliding = false;

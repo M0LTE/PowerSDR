@@ -63,7 +63,14 @@ namespace PowerSDR
 		private System.Windows.Forms.ComboBoxTS comboSWRThresh;
 		private System.Windows.Forms.CheckBoxTS chkUseTUN;
         private CheckBoxTS chkATUEnabledOnBandChange;
-		private System.ComponentModel.IContainer components;
+        private ButtonTS buttonTS1;
+        private LabelTS lblIND;
+        private LabelTS lblCAP;
+        private ButtonTS capdown;
+        private ButtonTS indup;
+        private ButtonTS inddown;
+        private ButtonTS capup;
+        private System.ComponentModel.IContainer components;
 
 		#endregion
 
@@ -120,20 +127,27 @@ namespace PowerSDR
             this.grpSWRThreshold = new System.Windows.Forms.GroupBoxTS();
             this.comboSWRThresh = new System.Windows.Forms.ComboBoxTS();
             this.grpFeedback = new System.Windows.Forms.GroupBoxTS();
+            this.indup = new System.Windows.Forms.ButtonTS();
+            this.inddown = new System.Windows.Forms.ButtonTS();
+            this.capup = new System.Windows.Forms.ButtonTS();
+            this.capdown = new System.Windows.Forms.ButtonTS();
+            this.lblIND = new System.Windows.Forms.LabelTS();
+            this.lblCAP = new System.Windows.Forms.LabelTS();
+            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.lblTuneComplete = new System.Windows.Forms.LabelTS();
             this.lblSWR = new System.Windows.Forms.LabelTS();
             this.lblReflected = new System.Windows.Forms.LabelTS();
             this.lblPower = new System.Windows.Forms.LabelTS();
             this.lblFreq = new System.Windows.Forms.LabelTS();
             this.lblForward = new System.Windows.Forms.LabelTS();
+            this.grpTune = new System.Windows.Forms.GroupBoxTS();
             this.chkUseTUN = new System.Windows.Forms.CheckBoxTS();
             this.btnTuneFull = new System.Windows.Forms.ButtonTS();
             this.btnTuneMemory = new System.Windows.Forms.ButtonTS();
+            this.grpMode = new System.Windows.Forms.GroupBoxTS();
             this.radModeAuto = new System.Windows.Forms.RadioButtonTS();
             this.radModeSemiAuto = new System.Windows.Forms.RadioButtonTS();
             this.radModeBypass = new System.Windows.Forms.RadioButtonTS();
-            this.grpTune = new System.Windows.Forms.GroupBoxTS();
-            this.grpMode = new System.Windows.Forms.GroupBoxTS();
             this.grpSWRThreshold.SuspendLayout();
             this.grpFeedback.SuspendLayout();
             this.grpTune.SuspendLayout();
@@ -184,6 +198,13 @@ namespace PowerSDR
             // grpFeedback
             // 
             this.grpFeedback.BackColor = System.Drawing.SystemColors.Control;
+            this.grpFeedback.Controls.Add(this.indup);
+            this.grpFeedback.Controls.Add(this.inddown);
+            this.grpFeedback.Controls.Add(this.capup);
+            this.grpFeedback.Controls.Add(this.capdown);
+            this.grpFeedback.Controls.Add(this.lblIND);
+            this.grpFeedback.Controls.Add(this.lblCAP);
+            this.grpFeedback.Controls.Add(this.buttonTS1);
             this.grpFeedback.Controls.Add(this.lblTuneComplete);
             this.grpFeedback.Controls.Add(this.lblSWR);
             this.grpFeedback.Controls.Add(this.lblReflected);
@@ -192,18 +213,93 @@ namespace PowerSDR
             this.grpFeedback.Controls.Add(this.lblForward);
             this.grpFeedback.Location = new System.Drawing.Point(8, 166);
             this.grpFeedback.Name = "grpFeedback";
-            this.grpFeedback.Size = new System.Drawing.Size(264, 96);
+            this.grpFeedback.Size = new System.Drawing.Size(405, 96);
             this.grpFeedback.TabIndex = 5;
             this.grpFeedback.TabStop = false;
             this.grpFeedback.Text = "Tuner Feedback";
             this.toolTip1.SetToolTip(this.grpFeedback, "The information in this window is returned from the ATU after a tune sequence.");
+            // 
+            // indup
+            // 
+            this.indup.Image = null;
+            this.indup.Location = new System.Drawing.Point(374, 71);
+            this.indup.Name = "indup";
+            this.indup.Size = new System.Drawing.Size(31, 23);
+            this.indup.TabIndex = 13;
+            this.indup.Text = ">";
+            this.toolTip1.SetToolTip(this.indup, "IND up (0 to 127)");
+            this.indup.Click += new System.EventHandler(this.indup_Click);
+            // 
+            // inddown
+            // 
+            this.inddown.Image = null;
+            this.inddown.Location = new System.Drawing.Point(254, 67);
+            this.inddown.Name = "inddown";
+            this.inddown.Size = new System.Drawing.Size(31, 23);
+            this.inddown.TabIndex = 12;
+            this.inddown.Text = "<";
+            this.toolTip1.SetToolTip(this.inddown, "IND down ( 0 to 127)");
+            this.inddown.Click += new System.EventHandler(this.inddown_Click);
+            // 
+            // capup
+            // 
+            this.capup.Image = null;
+            this.capup.Location = new System.Drawing.Point(374, 42);
+            this.capup.Name = "capup";
+            this.capup.Size = new System.Drawing.Size(31, 23);
+            this.capup.TabIndex = 11;
+            this.capup.Text = ">";
+            this.toolTip1.SetToolTip(this.capup, "CAP UP (0 to 127)");
+            this.capup.Click += new System.EventHandler(this.capup_Click);
+            // 
+            // capdown
+            // 
+            this.capdown.Image = null;
+            this.capdown.Location = new System.Drawing.Point(254, 41);
+            this.capdown.Name = "capdown";
+            this.capdown.Size = new System.Drawing.Size(31, 23);
+            this.capdown.TabIndex = 10;
+            this.capdown.Text = "<";
+            this.toolTip1.SetToolTip(this.capdown, "Cap down (0 to 127)");
+            this.capdown.Click += new System.EventHandler(this.capdown_Click);
+            // 
+            // lblIND
+            // 
+            this.lblIND.Image = null;
+            this.lblIND.Location = new System.Drawing.Point(291, 71);
+            this.lblIND.Name = "lblIND";
+            this.lblIND.Size = new System.Drawing.Size(72, 16);
+            this.lblIND.TabIndex = 9;
+            this.lblIND.Text = "IND:";
+            this.toolTip1.SetToolTip(this.lblIND, "Values = 0 to 127");
+            // 
+            // lblCAP
+            // 
+            this.lblCAP.Image = null;
+            this.lblCAP.Location = new System.Drawing.Point(291, 46);
+            this.lblCAP.Name = "lblCAP";
+            this.lblCAP.Size = new System.Drawing.Size(72, 16);
+            this.lblCAP.TabIndex = 8;
+            this.lblCAP.Text = "CAP:";
+            this.toolTip1.SetToolTip(this.lblCAP, "Values = 0 to 127");
+            // 
+            // buttonTS1
+            // 
+            this.buttonTS1.Image = null;
+            this.buttonTS1.Location = new System.Drawing.Point(244, 14);
+            this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Size = new System.Drawing.Size(77, 23);
+            this.buttonTS1.TabIndex = 4;
+            this.buttonTS1.Text = "TUN Check";
+            this.toolTip1.SetToolTip(this.buttonTS1, "Read the current SWR  as seen by the ATU and not the Flex SWR");
+            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
             // 
             // lblTuneComplete
             // 
             this.lblTuneComplete.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTuneComplete.ForeColor = System.Drawing.Color.Green;
             this.lblTuneComplete.Image = null;
-            this.lblTuneComplete.Location = new System.Drawing.Point(16, 24);
+            this.lblTuneComplete.Location = new System.Drawing.Point(1, 19);
             this.lblTuneComplete.Name = "lblTuneComplete";
             this.lblTuneComplete.Size = new System.Drawing.Size(232, 16);
             this.lblTuneComplete.TabIndex = 7;
@@ -212,7 +308,7 @@ namespace PowerSDR
             // lblSWR
             // 
             this.lblSWR.Image = null;
-            this.lblSWR.Location = new System.Drawing.Point(176, 48);
+            this.lblSWR.Location = new System.Drawing.Point(327, 19);
             this.lblSWR.Name = "lblSWR";
             this.lblSWR.Size = new System.Drawing.Size(72, 16);
             this.lblSWR.TabIndex = 3;
@@ -221,7 +317,7 @@ namespace PowerSDR
             // lblReflected
             // 
             this.lblReflected.Image = null;
-            this.lblReflected.Location = new System.Drawing.Point(168, 72);
+            this.lblReflected.Location = new System.Drawing.Point(157, 72);
             this.lblReflected.Name = "lblReflected";
             this.lblReflected.Size = new System.Drawing.Size(80, 16);
             this.lblReflected.TabIndex = 2;
@@ -230,7 +326,7 @@ namespace PowerSDR
             // lblPower
             // 
             this.lblPower.Image = null;
-            this.lblPower.Location = new System.Drawing.Point(16, 72);
+            this.lblPower.Location = new System.Drawing.Point(1, 72);
             this.lblPower.Name = "lblPower";
             this.lblPower.Size = new System.Drawing.Size(64, 16);
             this.lblPower.TabIndex = 1;
@@ -239,7 +335,7 @@ namespace PowerSDR
             // lblFreq
             // 
             this.lblFreq.Image = null;
-            this.lblFreq.Location = new System.Drawing.Point(16, 48);
+            this.lblFreq.Location = new System.Drawing.Point(1, 49);
             this.lblFreq.Name = "lblFreq";
             this.lblFreq.Size = new System.Drawing.Size(152, 16);
             this.lblFreq.TabIndex = 0;
@@ -248,11 +344,23 @@ namespace PowerSDR
             // lblForward
             // 
             this.lblForward.Image = null;
-            this.lblForward.Location = new System.Drawing.Point(80, 72);
+            this.lblForward.Location = new System.Drawing.Point(78, 72);
             this.lblForward.Name = "lblForward";
             this.lblForward.Size = new System.Drawing.Size(80, 16);
             this.lblForward.TabIndex = 6;
             this.lblForward.Text = "Forward: 0";
+            // 
+            // grpTune
+            // 
+            this.grpTune.Controls.Add(this.chkUseTUN);
+            this.grpTune.Controls.Add(this.btnTuneFull);
+            this.grpTune.Controls.Add(this.btnTuneMemory);
+            this.grpTune.Location = new System.Drawing.Point(144, 8);
+            this.grpTune.Name = "grpTune";
+            this.grpTune.Size = new System.Drawing.Size(128, 120);
+            this.grpTune.TabIndex = 4;
+            this.grpTune.TabStop = false;
+            this.grpTune.Text = "Tuning Options";
             // 
             // chkUseTUN
             // 
@@ -265,7 +373,7 @@ namespace PowerSDR
             this.chkUseTUN.TabIndex = 3;
             this.chkUseTUN.Text = "Use TUN";
             this.toolTip1.SetToolTip(this.chkUseTUN, "Checking this box will enable the front panel TUN function when using the Memory " +
-                    "or Full Tune functions above.");
+        "or Full Tune functions above.");
             // 
             // btnTuneFull
             // 
@@ -287,8 +395,20 @@ namespace PowerSDR
             this.btnTuneMemory.TabIndex = 1;
             this.btnTuneMemory.Text = "Memory Tune";
             this.toolTip1.SetToolTip(this.btnTuneMemory, "Performs a Memory Tune.  Uses previously saved tune settings if found for the cur" +
-                    "rent frequency.  If a previous setting is not found, a Full Tune is performed.");
+        "rent frequency.  If a previous setting is not found, a Full Tune is performed.");
             this.btnTuneMemory.Click += new System.EventHandler(this.btnTuneMemory_Click);
+            // 
+            // grpMode
+            // 
+            this.grpMode.Controls.Add(this.radModeAuto);
+            this.grpMode.Controls.Add(this.radModeSemiAuto);
+            this.grpMode.Controls.Add(this.radModeBypass);
+            this.grpMode.Location = new System.Drawing.Point(8, 8);
+            this.grpMode.Name = "grpMode";
+            this.grpMode.Size = new System.Drawing.Size(128, 120);
+            this.grpMode.TabIndex = 0;
+            this.grpMode.TabStop = false;
+            this.grpMode.Text = "Operating Mode";
             // 
             // radModeAuto
             // 
@@ -299,8 +419,8 @@ namespace PowerSDR
             this.radModeAuto.TabIndex = 2;
             this.radModeAuto.Text = "Automatic";
             this.toolTip1.SetToolTip(this.radModeAuto, "Activates the ATU requiring just RF to automatically begin a tuning sequence.  Th" +
-                    "is works for all transmission modes.  Note that manually tuning is still possibl" +
-                    "e in this mode.");
+        "is works for all transmission modes.  Note that manually tuning is still possibl" +
+        "e in this mode.");
             this.radModeAuto.CheckedChanged += new System.EventHandler(this.radModeAuto_CheckedChanged);
             // 
             // radModeSemiAuto
@@ -327,34 +447,10 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.radModeBypass, "Effectively deactivates the ATU by unlatching all relays.");
             this.radModeBypass.CheckedChanged += new System.EventHandler(this.radModeBypass_CheckedChanged);
             // 
-            // grpTune
-            // 
-            this.grpTune.Controls.Add(this.chkUseTUN);
-            this.grpTune.Controls.Add(this.btnTuneFull);
-            this.grpTune.Controls.Add(this.btnTuneMemory);
-            this.grpTune.Location = new System.Drawing.Point(144, 8);
-            this.grpTune.Name = "grpTune";
-            this.grpTune.Size = new System.Drawing.Size(128, 120);
-            this.grpTune.TabIndex = 4;
-            this.grpTune.TabStop = false;
-            this.grpTune.Text = "Tuning Options";
-            // 
-            // grpMode
-            // 
-            this.grpMode.Controls.Add(this.radModeAuto);
-            this.grpMode.Controls.Add(this.radModeSemiAuto);
-            this.grpMode.Controls.Add(this.radModeBypass);
-            this.grpMode.Location = new System.Drawing.Point(8, 8);
-            this.grpMode.Name = "grpMode";
-            this.grpMode.Size = new System.Drawing.Size(128, 120);
-            this.grpMode.TabIndex = 0;
-            this.grpMode.TabStop = false;
-            this.grpMode.Text = "Operating Mode";
-            // 
             // FWCATUForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(392, 274);
+            this.ClientSize = new System.Drawing.Size(425, 274);
             this.Controls.Add(this.chkATUEnabledOnBandChange);
             this.Controls.Add(this.grpSWRThreshold);
             this.Controls.Add(this.grpFeedback);
@@ -570,9 +666,13 @@ namespace PowerSDR
 				lblFreq.Text = "Freq (MHz): "+FWCATU.TXFreq.ToString("f2");
 				lblForward.Text = "Forward: "+FWCATU.ForwardPower.ToString("f0");
 				lblReflected.Text = "Reflected: "+FWCATU.ReflectedPower.ToString("f0");
-				lblSWR.Text = "SWR: "+FWCATU.SWR.ToString("f1");
-			}
-			else
+
+                lblSWR.Text = "SWR: "+FWCATU.SWR.ToString("f1");
+                lblCAP.Text = "CAP: " + FWCATU.CapacitorValue.ToString();
+                lblIND.Text = "IND: " + FWCATU.InductorValue.ToString();
+
+            }
+            else
 			{
 				lblTuneComplete.ForeColor = Color.Red;
 				switch(FWCATU.TuneFail)
@@ -591,7 +691,9 @@ namespace PowerSDR
 				lblForward.Text = "Forward:";
 				lblReflected.Text = "Reflected:";
 				lblSWR.Text = "SWR:";
-			}
+                lblCAP.Text = "CAP:";
+                lblIND.Text = "IND:";
+            }
 		}
 
 		private void comboSWRThresh_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -619,8 +721,129 @@ namespace PowerSDR
 
 
 
-		#endregion
 
 
-	}
-}
+        // ke9ns add to force a SWR read from the built in ATU tuner
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+
+            Thread t = new Thread(new ThreadStart(READSWR));
+            t.Name = "SWR Thread";
+            t.IsBackground = true;
+            t.Priority = ThreadPriority.Normal;
+            t.Start();
+
+        }
+
+        public void READSWR()
+        {
+            SWRRUN = true;
+            int old_tun_pwr = 50;
+
+            do
+            {
+                if (ADJUST == 1) FWCATU.DecrementCapacitance(); // ADJUST set by <> buttons on FWC ATU screen
+                else if (ADJUST == 2) FWCATU.IncrementCapacitance();
+                else if (ADJUST == 3) FWCATU.DecrementInductance();
+                else if (ADJUST == 4) FWCATU.IncrementInductance();
+
+
+                ADJUST = 0; // reset back 
+
+                if (!console.fwc_init || console.CurrentModel != Model.FLEX5000) return;
+               
+                btnTuneMemory.BackColor = console.ButtonSelectedColor;
+                if (chkUseTUN.Checked)
+                {
+                    console.TUN = true;
+                 //   old_tun_pwr = console.PWR;
+                  //  console.PWR = 10;
+                }
+                FWCATU.ReadSWR(); // AT-200 sends all updated data to me
+                UpdateFeedback();
+            }
+            while (ADJUST != 0); // if you push <> button before done, then keep going
+
+
+            if (chkUseTUN.Checked)
+            {
+              //  console.PWR = old_tun_pwr;
+                console.TUN = false;
+            }
+            btnTuneMemory.BackColor = SystemColors.Control;
+            UpdateFeedback();
+
+            SWRRUN = false; // reset to allow this thread to start again 
+
+        } // buttonTS1_Click
+        #endregion
+
+
+        // ke9ns add
+
+        public int ADJUST = 0; // 1=capdown, 2=capup, 3=ind down, 4=ind up
+        public bool SWRRUN = false;
+
+        private void capdown_Click(object sender, EventArgs e)
+        {
+
+            ADJUST = 1;
+
+            if (SWRRUN == false)
+            {
+                Thread t = new Thread(new ThreadStart(READSWR));
+                t.Name = "SWR Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
+
+
+        }
+
+        private void capup_Click(object sender, EventArgs e)
+        {
+            ADJUST = 2;
+
+            if (SWRRUN == false)
+            {
+                Thread t = new Thread(new ThreadStart(READSWR));
+                t.Name = "SWR Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
+        }
+
+        private void inddown_Click(object sender, EventArgs e)
+        {
+            ADJUST = 3;
+
+            if (SWRRUN == false)
+            {
+                Thread t = new Thread(new ThreadStart(READSWR));
+                t.Name = "SWR Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
+
+        }
+
+        private void indup_Click(object sender, EventArgs e)
+        {
+
+            ADJUST = 4;
+
+            if (SWRRUN == false)
+            {
+                Thread t = new Thread(new ThreadStart(READSWR));
+                t.Name = "SWR Thread";
+                t.IsBackground = true;
+                t.Priority = ThreadPriority.Normal;
+                t.Start();
+            }
+        }
+    } // class FWCATUForm
+
+} // PowerSDR

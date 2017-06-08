@@ -170,7 +170,20 @@ namespace PowerSDR
 			set { peak = value; }
 		}
 
-		private static bool vox_enabled = false;
+
+        private static float peak1 = 0.001F; // ke9ns add (for MIC dBm value while in RX mode
+        public static float Peak1
+        {
+            get {
+                    if (peak1 < 0.0001F) return 0.001F;
+                    else return peak1;
+                }
+            set {
+                    peak1 = value;
+                }
+        } // Peak1
+
+        private static bool vox_enabled = false;
 		public static bool VOXEnabled
 		{
 			get { return vox_enabled; }
@@ -1089,6 +1102,9 @@ namespace PowerSDR
                     {
                         ScaleBuffer(in_l, in_l, frameCount, (float)mic_preamp);
                         ScaleBuffer(in_r, in_r, frameCount, (float)mic_preamp);
+
+                     //   if ( (console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
+
                     }
                 }
             }
@@ -1849,6 +1865,8 @@ namespace PowerSDR
                         {
                             ScaleBuffer(in_l, in_l, frameCount, (float)mic_preamp);
                             ScaleBuffer(in_r, in_r, frameCount, (float)mic_preamp);
+
+                          //  if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
                         }
                     }
                 }
@@ -2258,20 +2276,19 @@ namespace PowerSDR
                 }
 
                 //--------------------------------------------------------------
-                // ke9ns add  comes here every 42msec @ 48kSR with 2048 Buffer size
-                if (console.BeaconSigAvg == true)
+                // ke9ns add  comes here every 42msec @ 48kSR with 4096 Buffer size
+                if (console.BeaconSigAvg == true) // true = beacon scan on or wwv time reading
                 {
 
-
-                    fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame
+                    fixed (float* WWVP = &console.WWV_data[0]) // 4096 readings per frame
                     {
                          Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
                       
                     }
                   
-                        console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
-                        console.WWVReady = true;
-                        console.WWV_Count = 0;
+                    console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+                    console.WWVReady = true;
+                    console.WWV_Count = 0;
          
 
                 } //   if (console.BeaconSigAvg == true)
@@ -2697,44 +2714,57 @@ namespace PowerSDR
                 }
             }*/
 
-			#region VOX
-			if(vox_enabled)
-			{
-				float* vox_l = null, vox_r = null;
-				switch(soundcard)
-				{
-					case SoundCard.FIREBOX:
-					case SoundCard.EDIROL_FA_66:
-						vox_l = in_l_ptr1;
-						vox_r = in_r_ptr1;
-						break;
-					case SoundCard.DELTA_44:
-					default:
-						vox_l = in_l_ptr2;
-						vox_r = in_r_ptr2;
-						break;
-				}
 
-				if(tx_dsp_mode == DSPMode.LSB ||
-					tx_dsp_mode == DSPMode.USB ||
-					tx_dsp_mode == DSPMode.DSB ||
-					tx_dsp_mode == DSPMode.AM  ||
-					tx_dsp_mode == DSPMode.SAM ||
-					tx_dsp_mode == DSPMode.FM)
-				{
-					peak = MaxSample(vox_l, vox_r, frameCount);
 
-					// compare power to threshold
-					if(peak > vox_threshold) 
-						vox_active = true;
-					else 
-						vox_active = false;
-				}
-			}
-			#endregion
 
-			// scale input with mic preamp
-			if((!vac_enabled &&
+
+            #region VOX
+            if (vox_enabled)
+            {
+                float* vox_l = null, vox_r = null;
+                //switch(soundcard)
+                //		{
+                //	case SoundCard.FIREBOX: // ke9ns remove
+                //case SoundCard.EDIROL_FA_66:
+                //		vox_l = in_l_ptr1;
+                //	vox_r = in_r_ptr1;
+                //	break;
+                //	case SoundCard.DELTA_44:
+                //		default:
+                vox_l = in_l_ptr2;
+                vox_r = in_r_ptr2;
+                //		break;
+                //	}
+
+                // ke9ns add this 
+                //This is a standard 16 bit WAV WAV file. The largest sample value in the files
+                //is 21188 and the maximum possible value is 32767.
+                //    20 * log10(21188 / 32767) => -3.79dB
+
+                if (tx_dsp_mode == DSPMode.LSB ||
+                    tx_dsp_mode == DSPMode.USB ||
+                    tx_dsp_mode == DSPMode.DSB ||
+                    tx_dsp_mode == DSPMode.AM ||
+                    tx_dsp_mode == DSPMode.SAM ||
+                    tx_dsp_mode == DSPMode.FM)
+                {
+                    peak = MaxSample(vox_l, vox_r, frameCount);
+
+
+                    // compare power to threshold
+                    if (peak > vox_threshold)
+                        vox_active = true;
+                    else
+                        vox_active = false;
+                }
+            }
+           
+           
+
+            #endregion
+
+            // scale input with mic preamp
+            if ((!vac_enabled &&
 				(tx_dsp_mode == DSPMode.LSB ||
 				tx_dsp_mode == DSPMode.USB ||
 				tx_dsp_mode == DSPMode.DSB ||
@@ -2771,7 +2801,9 @@ namespace PowerSDR
 						{
 							ScaleBuffer(in_l, in_l, frameCount, (float)mic_preamp);
 							ScaleBuffer(in_r, in_r, frameCount, (float)mic_preamp);
-						}
+
+                            if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
+                        }
 					}
 				}
 			}
@@ -3745,11 +3777,11 @@ namespace PowerSDR
                     }
                 }
             } // vac2 on 
-#endregion
+            #endregion
 
             //---------------------------------------------------------------------------------
             // VOX enabled (check threshold against tx_in_l and _r)
-#region VOX
+            #region VOX
             if (vox_enabled)
             {
                 if (tx_dsp_mode == DSPMode.LSB ||
@@ -3770,7 +3802,9 @@ namespace PowerSDR
                         vox_active = false;
                 }
             }
-#endregion
+            
+            
+            #endregion
 
 
             //-----------------------------------------------------------------------------------
@@ -3815,8 +3849,12 @@ namespace PowerSDR
                     {
                         ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)mic_preamp);
                         ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)mic_preamp);
+
+                        if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(tx_in_l, tx_in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
                     }
                 }
+
+
             } // scale inputs
 
 
@@ -5591,7 +5629,7 @@ namespace PowerSDR
 		unsafe public static float MaxSample(float* buf1, float* buf2, int samples)
 		{
 			float max = float.MinValue;
-			for(int i=0; i<samples; i++)
+			for(int i=0; i < samples; i++)
 			{
 				if(buf1[i] > max) max = buf1[i];
 				if(buf2[i] > max) max = buf2[i];
@@ -6395,10 +6433,24 @@ namespace PowerSDR
 				in_rx2_l = 2;
 				in_rx2_r = 3;
 
-				/*in_tx_l = 5;
+                /*in_tx_l = 5;
 				in_tx_r = 6;*/
-                
-                retval = StartAudio(ref callback8, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, 8, 0, latency1);    // ke9ns use primary input_dev1 device
+
+                 retval = StartAudio(ref callback8, (uint)block_size1, sample_rate1, host1, input_dev1, output_dev1, 8, 0, latency1);    // ke9ns use primary input_dev1 device
+/*
+                unsafe
+                {
+                    JanusAudio.SetNRx(nr); //set number of receivers
+                    JanusAudio.SetDuplex(1); // set full duplex mode
+
+                  //  retval = StartAudio(ref callback3port, (uint)block_size1, sample_rate1);
+                    retval = StartAudioJanus(ref callback8, (uint)block_size1, sample_rate1);
+
+
+                }
+
+*/
+
             }
             else if (console.hid_init && console.CurrentModel == Model.FLEX1500)
             {
@@ -6448,11 +6500,14 @@ namespace PowerSDR
 
                 try   // ke9ns 	int new_input = ((PADeviceInfo)comboAudioInput2.SelectedItem).Index;
                 {
-                    Debug.WriteLine("NOT GOOD111============ in " + input_dev2 +" output "+output_dev2);
+                    Debug.WriteLine("STARTING AUDIO STREAM:: INPUT: " + input_dev2 + ", Output: " + output_dev2 + 
+                        ", block size: " + block_size + ", sample rate: " + sample_rate + ", host: " + host2 + ", num_chan " + num_chan + ", latency: " + latency + ",callbackVAC: " + callbackVAC);
+
                     // host2 = type of audio driver
 
-                    retval = StartAudio(ref callbackVAC, (uint)block_size, sample_rate, host2, input_dev2, output_dev2, num_chan, 1, latency);  // ke9ns use VAC1 input_dev2 device
-                    Debug.WriteLine("NOT GOOD222============");
+                    retval = StartAudio(ref callbackVAC, (uint)block_size, sample_rate, host2, input_dev2, output_dev2, num_chan, 1, latency);  // ke9ns use VAC1 input_dev2 device (was 1)
+
+                    Debug.WriteLine("STARTING AUDIO STREAM:: RETVAL: " + retval);
 
                 }
                 catch (Exception)
@@ -6511,16 +6566,24 @@ namespace PowerSDR
 		{
             empty_buffers = 0;
 
-           // input_dev_index = 2; // ke9ns test
+            // input_dev_index = 2; // ke9ns test
 
-			int in_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, input_dev_index);
+            Debug.WriteLine("HOST INDEX" + host_api_index);
+            Debug.WriteLine("in_dev index " + input_dev_index);
+            Debug.WriteLine("out_dev index " + output_dev_index);
 
-			int out_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, output_dev_index);
+            int in_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, input_dev_index);
+            int out_dev = PA19.PA_HostApiDeviceIndexToDeviceIndex(host_api_index, output_dev_index);
 
-           
-            PA19.PaStreamParameters inparam = new PA19.PaStreamParameters();
-			PA19.PaStreamParameters outparam = new PA19.PaStreamParameters();
-				
+            Debug.WriteLine("in_dev " + in_dev);
+            Debug.WriteLine("out_dev " + out_dev);
+
+
+            var inparam = new PA19.PaStreamParameters();
+			var outparam = new PA19.PaStreamParameters();
+			
+          
+                	
 			inparam.device = in_dev;
 			inparam.channelCount = num_channels;
 #if (INTERLEAVED)
@@ -6540,26 +6603,19 @@ namespace PowerSDR
 			outparam.suggestedLatency = ((float)latency_ms/1000);
 			
 			int error = 0;
-            //if (console.CurrentModel == Model.FLEX1500)
-                //Flex1500.StopListener(); // temporarily halt listening to commands to start audio
-
-            // be prepared to restart the audio if it fails, but only for the 1500.  This is only
-            // for port audio and can be removed when we are back on a custom driver
-
+           
             int RETRY_AUDIO_START_TIMES = (console.CurrentModel == Model.FLEX1500 ? 25 : 1);
 
-         //   Debug.WriteLine("host " + host_api_index);
-         //   Debug.WriteLine("in_dev " + in_dev);
-         //   Debug.WriteLine("out_dev " + out_dev);
-
+           
             int i;
-            // in case we fail, try multiple times (FLEX1500)
+           
             for (i = 0; i < RETRY_AUDIO_START_TIMES; i++)
             {
              
-                switch (callback_num) // ke9ns = 0
+                switch (callback_num) // ke9ns 1=vac1
                 {
                     case 1: // VAC1
+                        Debug.WriteLine("VAC1CALL=====");
                         error = PA19.PA_OpenStream(out stream2, &inparam, &outparam, sample_rate, block_size, 0, callback, 1);
                         break;
                     case 2: //VAC2
@@ -6567,15 +6623,10 @@ namespace PowerSDR
                         break;
                     default:
                         error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0); // ke9ns this is the default stream  callback = callback8 (which is callback2)
-                    //  Debug.WriteLine("startcallback0=====");
+                      Debug.WriteLine("startcallback0=====");
                         break;
                 }
-                /*
-                                if (callback_num == 0)
-                                    error = PA19.PA_OpenStream(out stream1, &inparam, &outparam, sample_rate, block_size, 0, callback, 0);
-                                else
-                                    error = PA19.PA_OpenStream(out stream2, &inparam, &outparam, sample_rate, block_size, 0, callback, 1);
-                */
+               
              
                 if (error == 0) // ke9ns 0=good
                 {
@@ -6585,19 +6636,14 @@ namespace PowerSDR
 
             } // for loop
 
-         //   Debug.WriteLine("host1 " + host_api_index);
-         //   Debug.WriteLine("in_dev1 " + in_dev);
-         //   Debug.WriteLine("out_dev1 " + out_dev);
-
+        
             if (console.CurrentModel == Model.FLEX1500) Debug.WriteLine("audio start retry = "+ i +" times");
 
-            //if (console.CurrentModel == Model.FLEX1500)
-            //Flex1500.StartListener(); // restart listening to commands to start audio
-
+          
            
             if (error != 0)
 			{
-                Debug.WriteLine("startaudio()");
+                Debug.WriteLine("startaudio1() " + error);
                 PortAudioErrorMessageBox(error);
 				return false;
 			}

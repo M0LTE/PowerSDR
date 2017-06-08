@@ -118,13 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="textBox3.Text" xml:space="preserve">
-    <value>Still Experimenting
-Scan Band: Scan Band Button from Low end to High end
-You can change the Low and High ends within the Band your currently on
+    <value>MEMORY SCAN or Current BandStack or Custom list:  Records Signal Strength -dBm
+Select Memory GROUP, Scan Speed, and Squelch Break Pause options.
 
-Set the Squelch high enough that it trips when it hits a large signal
-if you click in the Low or High windows, it reset the scan</value>
+LOW-HIGH SCAN: Scans from Low to High Frequency within same Band.
+Select Step Size and Speed and Squelch Break option.
+Remember to set SQUELCH LEVEL correctly. </value>
   </data>
+  <metadata name="openFileDialog2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
+  <data name="btnCustomList.ToolTip" xml:space="preserve">
+    <value>Click to open Folder.  This is where you put your text file (any name you want)
+
+Inside the Text File contains multiple Text lines (up to 50):
+
+NAME of Memory, FREQUENCY in MHZ, Mode, Filter
+
+Example:    IARU Beacon,14.200,USB,F3 
+
+Filters can be: F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,VAR1,VAR2
+Modes can be: LSB,USB,DSB,CWL,CWU,FM,AM,DIGU,SPEC,DIGL,SAM,DRM
+</value>
+  </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>37</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

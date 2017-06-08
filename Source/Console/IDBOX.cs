@@ -241,7 +241,7 @@ namespace PowerSDR
 
        
         //=======================================================
-        // thread for 5 second
+        // THREAD for 5 second
         private  void mompop_timer()
         {
             timerrunning = true;

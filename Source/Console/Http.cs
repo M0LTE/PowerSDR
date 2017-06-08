@@ -46,6 +46,8 @@ using System.IO.Ports;
 using TDxInput;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
+using Microsoft.JScript;
+//using System.Runtime.Remoting.Contexts;
 
 namespace PowerSDR
 {
@@ -134,7 +136,8 @@ namespace PowerSDR
     
                 try
                 {
-                      TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
+                    Thread.Sleep(50);
+                    TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
 
                     //   TcpClient client = m_listener.AcceptTcpClient();
                     //   string ip = ((IPEndPoint)m_listener.Server.LocalEndPoint).Address.ToString();
@@ -180,6 +183,7 @@ namespace PowerSDR
 
             } //while (!m_terminated)
 
+            
             console.URLPRESENT = false;
 
         } // TCPSERVER() THREAD
@@ -299,9 +303,8 @@ namespace PowerSDR
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
+      
 
-        int URLP_counter = 1000;
-         
         public void ImageRequest(TcpClient m_tcpClient)
         {
                      
@@ -309,12 +312,12 @@ namespace PowerSDR
 
             Debug.WriteLine("IMAGEREQUEST1");
 
-            if (console.URLPRESENT == false) console.URLPRESENT = true;
+            if (console.URLPRESENT == false) console.URLPRESENT = true; // ke9ns let the setup HTTP server know that someone is requesting an image
+            
+         
+            byte[] imageArray = console.getImage(); // ke9ns this gets either the Spectral Display or the entire Console widow and puts it into a jpeg byte array
 
-
-            byte[] imageArray = getImage();
-                     
-            if (imageArray == null)
+            if (imageArray == null) // if we dont have an image, let the requestor know we dont have an image to send.
             {
                 string CodeStr = "500 " + ((System.Net.HttpStatusCode)500).ToString();
 
@@ -332,33 +335,114 @@ namespace PowerSDR
             //  "<meta http-equiv= \"refresh\" content= \"500\" > \r\n" +
 
             string responseHeaders =   "HTTP/1.1 200 The file is coming right up!\r\n" +
-                                     "Server: MyOwnServer\r\n" +
-                                    "Content-Length: " + imageArray.Length + "\r\n" +
-                                    "Content-Type: image/jpeg\r\n" +
-                                    "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
-                                    "\r\n";
+                                       "Server: MyOwnServer\r\n" +
+                                       "Content-Length: " + imageArray.Length + "\r\n" +
+                                       "Content-Type: image/jpeg\r\n" +
+                                       "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
+                                       "\r\n";
 
 
           
-            byte[] headerArray = Encoding.ASCII.GetBytes(responseHeaders);
+            byte[] headerArray = Encoding.ASCII.GetBytes(responseHeaders); // convert responseheader into byte array
 
-            NetworkStream stream = m_tcpClient.GetStream();
 
-            stream.Write(headerArray, 0, headerArray.Length);
-            stream.Write(imageArray, 0, imageArray.Length);
+            NetworkStream stream1 = m_tcpClient.GetStream(); // create a stream to send/receive data over the TCP/IP connection
 
-            stream.Close();
+            stream1.Write(headerArray, 0, headerArray.Length); // send header
+            stream1.Write(imageArray, 0, imageArray.Length);   // send image
+
+
+            stream1.Close();
+
             m_tcpClient.Close();
 
 
         } // ImageRequest()
-          
-          //=========================================================================================
-          //=========================================================================================
-          //=========================================================================================
-          //=========================================================================================
-          //=========================================================================================
-          //=========================================================================================
+
+
+        public void AudioRequest(TcpClient m_tcpClient)
+        {
+
+            if (m_tcpClient == null) return;
+
+            Debug.WriteLine("AudioREQUEST1");
+
+            if (console.URLPRESENT == false) console.URLPRESENT = true; // ke9ns let the setup HTTP server know that someone is requesting an image
+
+            byte[] audioArray = console.getAudio(); // ke9ns gets audio stream
+
+
+            if (audioArray == null) // if we dont have an image, let the requestor know we dont have an image to send.
+            {
+                string CodeStr = "500 " + ((System.Net.HttpStatusCode)500).ToString();
+
+                string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";
+
+                string Str = "HTTP/1.1 " + CodeStr + "\nContent-type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
+
+                byte[] Buffer = Encoding.ASCII.GetBytes(Str);
+
+                m_tcpClient.GetStream().Write(Buffer, 0, Buffer.Length);
+                m_tcpClient.Close();
+                return;
+            }
+
+            //  "<meta http-equiv= \"refresh\" content= \"500\" > \r\n" +
+
+            string responseHeaders = "HTTP/1.1 200 The file is coming right up!\r\n" +
+                                       "Server: MyOwnServer\r\n" +
+                                       "Content-Length: " + audioArray.Length + "\r\n" +
+                                       "Content-Type: audio/wav\r\n" +
+                                     //  "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
+                                       "\r\n";
+
+
+
+            byte[] headerArray = Encoding.ASCII.GetBytes(responseHeaders); // convert responseheader into byte array
+
+
+            NetworkStream stream1 = m_tcpClient.GetStream(); // create a stream to send/receive data over the TCP/IP connection
+
+            stream1.Write(headerArray, 0, headerArray.Length); // send header
+            stream1.Write(audioArray, 0, audioArray.Length);   // send audio
+
+            stream1.Close();
+
+            m_tcpClient.Close();
+
+
+        } // AudioRequest()
+
+        //===============================================================================
+
+
+        public void PlayAudio() //  public void PlayAudio(int id)
+        {
+            byte[] bytes = new byte[0];
+
+           // using (The_FactoryDBContext db = new The_FactoryDBContext())
+          //  {
+            //    if (db.Words.FirstOrDefault(word => word.wordID == id).engAudio != null)
+              //  {
+            //        bytes = db.Words.FirstOrDefault(word => word.wordID == id).engAudio;
+            
+              //  }
+           // }
+
+         //  Context.Response.Clear();
+          //  Context.Response.ClearHeaders();
+          //  Context.Response.ContentType = "audio/wav"; //  "audio/mpeg";
+           // Context.Response.AddHeader("Content-Length", bytes.Length.ToString());
+           // Context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+           // Context.Response.End();
+        }
+
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
 
         public void UnknownRequest(TcpClient m_tcpClient)
         {
@@ -435,6 +519,8 @@ namespace PowerSDR
 
         }
 
+       
+
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
@@ -449,18 +535,14 @@ namespace PowerSDR
         private byte[] getImage()
         {
 
-            bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-            console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-           
+                bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
+                console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
 
-            using (memstream = new MemoryStream())
-            {
-                bitmap.Save(memstream, ImageFormat.Jpeg);
-                picDisplayOutput = memstream.ToArray();
-            }
-      
-
-
+                using (memstream = new MemoryStream())
+                {
+                    bitmap.Save(memstream, ImageFormat.Jpeg);
+                    picDisplayOutput = memstream.ToArray();
+                }
 
 
             return picDisplayOutput;

@@ -1293,6 +1293,8 @@ namespace PowerSDR
         {
             uint status;
             int rtn = Pal.ReadOp(Opcode.RDAL_OP_GET_STATUS, 0, 0, out status);
+
+         //  Debug.WriteLine("1EXTENDED " + rtn + " , "+status);
             return (status != 0);
         }
 

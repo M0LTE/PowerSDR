@@ -49,12 +49,45 @@ namespace PowerSDR
         private Console console;
         public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
 
-      
+
         #endregion
 
         #region Constructor
 
         /*
+         * 
+        ke9ns new format that inludes recording information
+      <Group>beacon</Group>
+      <RXFreq>0.467</RXFreq>
+      <Name>0.467</Name>
+      <DSPMode>LSB</DSPMode>
+      <StartDate>2017-01-23T18:06:19.2817956-06:00</StartDate>
+      <Duration>25</Duration>
+      <Recording>false</Recording>
+      <Repeating>false</Repeating>
+      <Repeatingm>false</Repeatingm>
+      <Comments />
+      <Scan>true</Scan>
+      <TuneStep>500Hz</TuneStep>
+      <RPTR>Simplex</RPTR>
+      <RPTROffset>0</RPTROffset>
+      <CTCSSOn>false</CTCSSOn>
+      <CTCSSFreq>100</CTCSSFreq>
+      <Deviation>2500</Deviation>
+      <Power>5</Power>
+      <Split>false</Split>
+      <TXFreq>0.467</TXFreq>
+      <RXFilter>F5</RXFilter>
+      <RXFilterLow>-2900</RXFilterLow>
+      <RXFilterHigh>0</RXFilterHigh>
+      <AGCMode>MED</AGCMode>
+      <AGCT>87</AGCT>
+      <ScheduleOn>false</ScheduleOn>
+      <Extra>0</Extra>
+
+
+
+
       <Group>Am Broadcast</Group>
       <RXFreq>0.78</RXFreq>
       <Name>WBBM 780</Name>

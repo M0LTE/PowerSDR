@@ -43,9 +43,12 @@ namespace System.Windows.Forms
 			get { return base.AcceptsReturn; }
 			set
 			{
-				if(base.InvokeRequired)
-					this.Invoke(new UI.SetCtrlDel(UI.SetTextBoxAcceptsReturn), new object[] {this, value});
-				else base.AcceptsReturn = value;
+                if (base.InvokeRequired)
+                {
+                    this.Invoke(new UI.SetCtrlDel(UI.SetTextBoxAcceptsReturn), new object[] { this, value });
+                  //  this.SetStyle(ControlStyles.SupportsTransparentBackColor, true); // ke9ns add
+                }
+                else base.AcceptsReturn = value;
 			}
 		}
 

@@ -156,9 +156,14 @@ namespace PowerSDR
             Common.RestoreForm(this, "FLEX5000FinalTestForm", false);
 			
             // set powermaster COM port based on data in powermaster.txt file if it exists
-            string pm_file_path = Path.Combine(common_data_path, "powermaster.txt");
-            
-			if(File.Exists(pm_file_path))
+            string pm_file_path = Path.Combine(common_data_path, "powermaster.txt");  // programData\flexradio systems\powersdr folder
+
+            // ke9ns info:    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  ==   %userprofile%\AppData\Roaming
+            // path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\FlexRadio Systems\\PowerSDR";  // ke9ns this is the ProgramData folder
+            // Application.StartupPath  = \Program Files (x86)\FlexRadio Systems\PowerSDR v2.8.0
+
+
+            if (File.Exists(pm_file_path))
 			{
                 StreamReader reader = new StreamReader(pm_file_path);
 				string[] temp = reader.ReadToEnd().Split('\n');
@@ -1191,9 +1196,9 @@ namespace PowerSDR
                 StreamReader reader = new StreamReader(pm_file_path);
 				string temp = reader.ReadLine();
 
-				int start = temp.IndexOf(":")+1;
+				int start = temp.IndexOf(":") + 1;
 				int length = temp.Length - start;
-				lstDebug.Items.Insert(0, "PowerMaster S/N: "+temp.Substring(start, length).Trim());
+				lstDebug.Items.Insert(0, "PowerMaster S/N: " + temp.Substring(start, length).Trim());
 				
 				for(int i=0; i<11; i++)
 				{

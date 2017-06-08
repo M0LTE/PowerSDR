@@ -87,10 +87,14 @@ namespace PowerSDR
 		{
 			InitializeComponent();
 
+          //  Version appVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version; // ke9ns this is your current installed version
+          //  appVersion.Major + "." + appVersion.Minor + "." + appVersion.Build + "." + appVersion.Revision + " is up to date!",
+               
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
              
-            textBox1.Text = "v" + fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf(".")) + "."+SVNRev.LATEST_REV;
+          //  textBox1.Text = "v" + fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf(".")) + "." + SVNRev.LATEST_REV;
+            textBox1.Text = "v" + fvi.FileVersion.ToString();
 
             this.Opacity = .00;
 			timer1.Interval = TIMER_INTERVAL;
@@ -143,7 +147,7 @@ namespace PowerSDR
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.ForeColor = System.Drawing.Color.Yellow;
-            this.textBox1.Location = new System.Drawing.Point(140, 154);
+            this.textBox1.Location = new System.Drawing.Point(130, 152);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(115, 24);
             this.textBox1.TabIndex = 3;
