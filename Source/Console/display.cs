@@ -382,8 +382,7 @@ namespace PowerSDR
 			set
 			{
 				split_enabled = value;
-				if(current_display_mode == DisplayMode.PANADAPTER && draw_tx_filter)
-					DrawBackground();
+				if(current_display_mode == DisplayMode.PANADAPTER && draw_tx_filter) DrawBackground();
 			}
 		}
 
@@ -2909,8 +2908,12 @@ namespace PowerSDR
                         {
                             filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
                             filter_right_x = (int)((float)(tx_filter_high - Low + xit_hz - rit_hz + (vfoa_sub_hz - vfoa_hz)) / (High - Low) * W);
+
+                         
+
+
                         }
-                   }
+                    }
 
                     if (bottom) // && tx_on_vfob)  // if transmitting on RX2 then draw lines on bottom
                     {

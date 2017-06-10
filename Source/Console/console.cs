@@ -20973,8 +20973,8 @@ namespace PowerSDR
                         l = -high;  // ke9ns normal AM mode
                         h = high;
                     }
-                    Debug.WriteLine("HIGH LOW " + h + " , " + l);
 
+                
                     break; // AM
 
                 case DSPMode.SAM:
@@ -20994,9 +20994,8 @@ namespace PowerSDR
                         l = -high;  // ke9ns normal AM mode
                         h = high;
                     }
-                    Debug.WriteLine("HIGH LOW " + h + " , " + l);
 
-                    break; // AM
+                    break; // SAM
 
 				case DSPMode.FM:
                     if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
@@ -21040,10 +21039,21 @@ namespace PowerSDR
 
 			Display.TXFilterLow = l;
 			Display.TXFilterHigh = h;
-		} // set txfilters
+
+            Debug.WriteLine("HIGH-LOW " + h + " , " + l);
 
 
-		public void UpdateTXProfile(string name)
+            
+            if (chkVFOSplit.Checked == true)
+            {
+                Display.SplitEnabled = true; // reset the SPLIT TX for AM-U and AM-L 
+
+            }
+
+        } // set txfilters
+
+
+        public void UpdateTXProfile(string name)
 		{
 			if(setupForm == null) return; 
 
@@ -57540,7 +57550,7 @@ namespace PowerSDR
             {
                 if (chkVFOSplit.Checked) chkVFOSplit.Checked = false;
             }
-
+            
             if (chkVFOATX.Checked || !rx2_enabled)
 			{
 				Audio.TXDSPMode = new_mode;
@@ -57554,6 +57564,7 @@ namespace PowerSDR
 			}
 
 			Display.RX1DSPMode = new_mode;
+
             if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
             {
                 FWC.SetRX1DSPMode(new_mode);
@@ -58007,9 +58018,9 @@ namespace PowerSDR
                         chkBIN.Checked = false;
 						chkBIN.Enabled = false;
 
-                        if (!chkVFOBTX.Checked) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX
-                      //  SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-
+                        if ((!chkVFOBTX.Checked) || (AMMODE != AMMODE_LAST)) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX (ke9ns mod)
+                        //   SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
+                        AMMODE_LAST = AMMODE; // ke9ns add
                         dsp.GetDSPTX(0).TXOsc = 11025.0;
 					}
                     panelModeSpecificPhone.BringToFront();
@@ -58026,15 +58037,17 @@ namespace PowerSDR
 
                     if (chkVFOATX.Checked || chkVFOBTX.Checked || !rx2_enabled)
 					{
-#if NO_MON  // ke9ns off to allow mon function in FM mode
+#if NO_MON  // ke9ns off to allow mon function in SAM mode
                         chkMON.Checked = false; // ke9ns test
                         chkMON.Enabled = false;
 #endif
                         chkBIN.Checked = false;
 						chkBIN.Enabled = false;
 
-                        if (!chkVFOBTX.Checked) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX
-                       // SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
+                        if ((!chkVFOBTX.Checked )|| (SAMMODE != SAMMODE_LAST)) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX  (ke9ns mod)
+                          //  SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
+
+                        SAMMODE_LAST = SAMMODE; // ke9ns add
 
                         dsp.GetDSPTX(0).TXOsc = 11025.0;
 					}
@@ -58134,6 +58147,7 @@ namespace PowerSDR
                     chkTNF.Enabled = false;
                     chkTNF.Checked = false;                    
 					break; //DRM mode
+
 			} // Switch (new mode)
 
             if (RX1IsOn60mChannel())
@@ -58315,9 +58329,13 @@ namespace PowerSDR
         } // radModeAM_MouseUp
 
         public DSPISB AMMODE = DSPISB.FIRST; // ke9ns add
+        public DSPISB AMMODE_LAST = DSPISB.FIRST; // ke9ns add
+
         public bool AMRESET = false;
 
         public DSPISB SAMMODE = DSPISB.FIRST; // ke9ns add
+        public DSPISB SAMMODE_LAST = DSPISB.FIRST; // ke9ns add
+
         public bool SAMRESET = false;
 
         private void radModeSAM_MouseUp(object sender, MouseEventArgs e)
@@ -59377,6 +59395,7 @@ namespace PowerSDR
 		private void chkVFOSplit_CheckedChanged(object sender, System.EventArgs e)
 		{
 			Display.SplitEnabled = chkVFOSplit.Checked;
+
             if (chkVFOSplit.Checked)
             {
                 
@@ -59481,10 +59500,10 @@ namespace PowerSDR
 				SetSoftRockOscFreqs();
 			}
 #endif
-		}
+        } // chkVFOSplit_CheckedChanged
 
 
-		private void chkXIT_CheckedChanged(object sender, System.EventArgs e)
+        private void chkXIT_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(chkXIT.Checked)
 			{
