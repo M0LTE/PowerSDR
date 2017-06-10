@@ -14,8 +14,8 @@ PowerSDR_ke9ns_Installer_RevT9.msi The actual installer program to move the file
 To create the Installer, you must go to VS->Tools->Extensions and updates and download the free "Visual Studio Installer Projects" by Microsoft
 
 
-Currently compiling under Visual Studio 2015 (VS2015) and NET 4.5.2
-After you download and install VS2015, you must then download and install the VS2015 "UPDATE 3" & "Patch" 3
+Currently compiling under Visual Studio 2017 (VS2017) and NET 4.5.2
+After you download and install VS2015, you must then download and install the VS2017 and all its updates.
 Sometimes the visual design form can become out of sync with its .cs code file.
 This can happen if you change some code in the .cs file that VS wants you to change from the design form.
 If you get an error message trying to view the "Design" form, close the console (both Design and CS files) and reload.
