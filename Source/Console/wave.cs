@@ -1851,15 +1851,18 @@ namespace PowerSDR
                     int n4 = 0;
                     SizeF cl = new SizeF();  // determine left or right side of bitmap
 
-                    int fontS = 14; // was 12
+                    int fontS = 34; // was 12
 
                     int ym = 40; // height was 22
 
                     if (IMAGE == 0)
                     {
-                         ym = 22;
+                         ym = 26; // was 22
                     }
-                    int xm = 80; // width was 80
+
+                    int xm = 100; // width was 80
+
+            
 
                     long xm4 = 4 * ((xm + 3) / 4);
 
@@ -1921,10 +1924,10 @@ namespace PowerSDR
                 {
                     cl = g1.MeasureString(temp1A, new Font("Arial", fontS, FontStyle.Regular)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
                     fontS--;
-                } while ((cl.Width > 89) && (fontS > 9));  // ke9ns reduce size of font until the string fits into bandpass
+                } while ((cl.Width > 100) && (fontS > 9));  // 89 ke9ns reduce size of font until the string fits into bandpass
 
 
-               // Debug.WriteLine("MEASUREMENT LENGTH "+ cl);
+                Debug.WriteLine("MEASUREMENT LENGTH "+ cl + " , " + fontS + " , "+ xm);
                // ke9ns cl = 89 is max width in pixels
 
                         // cl = g1.MeasureString(console.Callsign, new Font("Arial", fontS,FontStyle.Regular)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
@@ -2294,9 +2297,9 @@ namespace PowerSDR
                     //  int hightx = console.TXFilterHigh;
                     //   int tottx = hightx - lowtx; // band width
 
-
-                    int hzperpixel = (int)(((float)bandpass / (float)xm) + .5);    //  2khz wide =  25hz/pix  6000 = 60 hz per pixel
-
+                    // xm = 80 pixels wide
+                    int hzperpixel = (int)(((float)bandpass / (float)xm ) + .5);    //  2khz wide =  25hz/pix  6000 = 75 hz per pixel
+            
            
           //  Debug.WriteLine("hzperpixel " + hzperpixel);
 

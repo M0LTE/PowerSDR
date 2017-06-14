@@ -5,6 +5,7 @@
 #define filt2p2z
 #include <bufvec.h>
 
+
 typedef enum filter_shape_param {
 	Q,
 	BW,

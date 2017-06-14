@@ -120,6 +120,19 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
+  <data name="groupBox2.ToolTip" xml:space="preserve">
+    <value>Allows you to view the Display are of PowerSDR remotely
+
+To view your Display.
+1) Locate the IP address off your computer (example: 192.168.1.100)
+2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
+
+
+</value>
+  </data>
   <data name="udHttpRefresh.ToolTip" xml:space="preserve">
     <value>Select Port# to allow Remote Login by adding the Port# 
 to the end of the URL
@@ -155,16 +168,6 @@ Below is what you can insert on your own web page for others to see your Flex Pa
     &lt;iframe id="frame" src="http://YOUR_IP_ADDRESS_HERE.net:8081"&gt;&lt;/iframe&gt;  
  &lt;/div&gt;</value>
   </data>
-  <data name="groupBox2.ToolTip" xml:space="preserve">
-    <value>Allows you to view the Display are of PowerSDR remotely
-
-To view your Display.
-1) Locate the IP address off your computer (example: 192.168.1.100)
-2) Open your Web browser and type:  http://&lt;your local IP address&gt;:8081
-
-
-</value>
-  </data>
   <data name="tbWaterOffset.ToolTip" xml:space="preserve">
     <value>Use this to Lighten or Darken the Waterfall by 20db UP or DOWN from the "Automatic" avg found
 If you find the "AutoWater Level" is too dark, increase this slider
@@ -175,17 +178,17 @@ if you find it too light, decrease this slider.</value>
 If you find the Panadapter signal too high up in the window, decrease the slider.
 If you find the Panadapter signal too low in the window, increase the slider.</value>
   </data>
-  <data name="chkDSPLevelerEnabled.ToolTip" xml:space="preserve">
-    <value>Check this box to Enabled (activate) the leveler feature.
-
-Stage 1: MIXER slider
+  <data name="grpDSPLeveler.ToolTip" xml:space="preserve">
+    <value>Stage 1: MIXER slider
 Stage 2: MIC slider (stay under -10 dBm on MIC meter)
 Stage 3: Expander / EQ (stay under -2 dBm on EQ meter)
 Stage 4: Leveler  (stay under &lt; 0 dBm on LEV meter)
 Stage 5: ALC / TX Filter / Modulation / DX / Compander</value>
   </data>
-  <data name="grpDSPLeveler.ToolTip" xml:space="preserve">
-    <value>Stage 1: MIXER slider
+  <data name="chkDSPLevelerEnabled.ToolTip" xml:space="preserve">
+    <value>Check this box to Enabled (activate) the leveler feature.
+
+Stage 1: MIXER slider
 Stage 2: MIC slider (stay under -10 dBm on MIC meter)
 Stage 3: Expander / EQ (stay under -2 dBm on EQ meter)
 Stage 4: Leveler  (stay under &lt; 0 dBm on LEV meter)

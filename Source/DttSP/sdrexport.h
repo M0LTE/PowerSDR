@@ -292,11 +292,17 @@ extern struct _tx
 		REAL preemphasis_filter;
 		REAL deemphasis_out;
 		REAL k_preemphasis;
-		REAL k_deemphasis;		
+		REAL k_deemphasis;	
+		REAL k_preemphasis1;
+		REAL k_deemphasis1;
 		REAL clip_threshold;
 		IIR_BPF_2P input_BPF;
 		IIR_LPF_2P output_LPF1;
 		IIR_LPF_2P output_LPF2;
+
+		IIR_LPF_2P output_LPF3; // ke9ns add
+		IIR_LPF_2P output_LPF4;
+
 		IIR_LPF_2P input_BPF1;
 		IIR_LPF_2P input_BPF2;
 		IIR_LPF_2P input_BPF3;
@@ -306,6 +312,12 @@ extern struct _tx
 		IIR_HPF_2P input_HPF1;
 		IIR_HPF_2P input_HPF2;
 
+		IIR_LPF_2P input_LPF3; // ke9ns add
+		IIR_LPF_2P input_LPF4;
+		IIR_HPF_2P input_HPF3;
+		IIR_HPF_2P input_HPF4;
+		BOOLEAN fmdata;  // ke9ns add
+ 
 		struct
 		{
 			double freq_hz;
@@ -313,6 +325,7 @@ extern struct _tx
 			REAL amp;
 			BOOL flag;
 		}ctcss;
+
 	} fm;
 
 	struct

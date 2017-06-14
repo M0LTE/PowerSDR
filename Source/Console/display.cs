@@ -12995,7 +12995,7 @@ namespace PowerSDR
 
                     Debug.WriteLine("TNFZOOM9");
 
-                    // draw zoom background
+                    // draw zoom background box
                     if (bottom) g.FillRectangle(new SolidBrush(Color.FromArgb(230, 0, 0, 0)), 0, H, W, H / zoom_height);
                     else g.FillRectangle(new SolidBrush(Color.FromArgb(230, 0, 0, 0)), 0, 0, W, H / zoom_height);
 
@@ -13080,8 +13080,11 @@ namespace PowerSDR
 
                     // draw data
                     start_sample_index = (BUFFER_SIZE >> 1) + (int)((low * BUFFER_SIZE) / sample_rate);
+
                     num_samples = (int)((high - low) * BUFFER_SIZE / sample_rate);
+
                     if (start_sample_index < 0) start_sample_index += DATA_BUFFER_SIZE;
+
                     if ((num_samples - start_sample_index) > (BUFFER_SIZE + 1)) num_samples = BUFFER_SIZE - start_sample_index;
 
                     //Debug.WriteLine("start_sample_index: "+start_sample_index);
@@ -13094,9 +13097,12 @@ namespace PowerSDR
                     {
                         float max = float.MinValue;
                         float dval = i * slope + start_sample_index;
+
                         int lindex = (int)Math.Floor(dval);
+
                         int rindex = (int)Math.Floor(dval + slope);
 
+                       
                         if (rx == 1)
                         {
                             if (slope <= 1.0 || lindex == rindex)
@@ -13137,8 +13143,10 @@ namespace PowerSDR
                             max_x = i;
                         }
 
+                     
+
                         points[i].X = i;
-                        points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H / zoom_height / yRange));    //used to be 6
+                        points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H / (zoom_height )/ yRange));    //used to be 6  / zoom_height 
                         points[i].Y = Math.Min(points[i].Y, H);
 
                         if (bottom) points[i].Y += H;
@@ -13146,8 +13154,8 @@ namespace PowerSDR
 
                     if (pan_fill)
                     {
-                        points[W].X = W; points[W].Y = (int)(H / zoom_height);
-                        points[W + 1].X = 0; points[W + 1].Y = (int)(H / zoom_height);
+                        points[W].X = W; points[W].Y = (int)(H / zoom_height); // 
+                        points[W + 1].X = 0; points[W + 1].Y = (int)(H / zoom_height);  // / zoom_height
                         if (bottom)
                         {
                             points[W].Y += H;
@@ -13169,11 +13177,6 @@ namespace PowerSDR
                         g.DrawLines(data_line_pen, points);  // g.DrawLines(data_line_pen, points);
                     }
                 } // ZZOOM == true
-
-
-
-
-
 
 
 

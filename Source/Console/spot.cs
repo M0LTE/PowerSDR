@@ -8495,6 +8495,8 @@ namespace PowerSDR
 
         public bool beacon16 = false; // true=PTT was diable prior to running a beacon chk, false = PPT was not disabled prior to running beacon chk
 
+
+        public PreampMode beacon44;  // to store preamp mode before running beacon scan
         public DSPMode beacon7;       // to store prior operating mode before running beacon scan
         public int beacon8 = 0;       // to store prior high filter before running beacon scan
         public int beacon9= 0;        //to store prior low filter before running beacon scan
@@ -9819,13 +9821,14 @@ namespace PowerSDR
         {
 
 
-         //   timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);
-         //   setup_timer(1000);
+            //   timeProcPeriodic = new TimeProc(TimerPeriodicEventCallback);
+            //   setup_timer(1000);
 
+            beacon44 = console.RX1PreampMode;       // get preamp mode so you can restore it when you turn off wwvtime
 
-            beacon7 = console.RX1DSPMode;           // get mode so you can restore it when you turn off the beacon check
-            beacon8 = console.RX1FilterHigh;        // get high filter so you can restore it when you turn off the beacon check
-            beacon9 = console.RX1FilterLow;         // get low filter so you can restore it when you turn off the beacon check
+            beacon7 = console.RX1DSPMode;           // get mode so you can restore it when you turn off wwvtime
+            beacon8 = console.RX1FilterHigh;        // get high filter so you can restore it when you turn off wwvtime
+            beacon9 = console.RX1FilterLow;         // get low filter so you can restore it when you turn off wwvtime
 
             beacon89 = console.RX1Filter;           // get filter name so you can restore
 
@@ -9835,8 +9838,10 @@ namespace PowerSDR
             beacon33 = console.DSPBufPhoneRX;       // get DSP RX buffer size (needs to be 4096 for good wwv pulses
 
 
-         //   beacon55 = console.CATPreamp;
+            //   beacon55 = console.CATPreamp;
 
+
+            console.RX1PreampMode = PreampMode.HIGH; // turn on Preamp
 
             oldSR = console.SampleRate1;            // get SR
 
@@ -10715,7 +10720,9 @@ namespace PowerSDR
             console.BlockSize1 = beacon66;          // get blocksize (must be 2048 during wwv bcd read)
             console.VFOAFreq = beacon88;             // restore VfoA
 
-            
+            console.RX1PreampMode = beacon44; // restore preamp
+
+
             if (beacon33 != 4096)
             {
                 console.DSPBufPhoneRX = beacon33;

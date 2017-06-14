@@ -1101,6 +1101,7 @@ namespace PowerSDR
         public CheckBoxTS chk2ndMeter;
         private ButtonTS buttonTS1;
         public CheckBoxTS chkBoxDial;
+        public CheckBoxTS chkFMDataMic;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -2381,6 +2382,7 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.chkFMDataMic = new System.Windows.Forms.CheckBoxTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -9735,6 +9737,7 @@ namespace PowerSDR
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkFMDataMic);
             this.tpTransmit.Controls.Add(this.chk2ndMeter);
             this.tpTransmit.Controls.Add(this.chkTXWtrID);
             this.tpTransmit.Controls.Add(this.chkTXMeter2);
@@ -16730,6 +16733,18 @@ namespace PowerSDR
             this.saveFileDialog1.Filter = "PowerSDR Database Files (*.xml)|*.xml|All files|*.*";
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            // 
+            // chkFMDataMic
+            // 
+            this.chkFMDataMic.Image = null;
+            this.chkFMDataMic.Location = new System.Drawing.Point(378, 82);
+            this.chkFMDataMic.Name = "chkFMDataMic";
+            this.chkFMDataMic.Size = new System.Drawing.Size(61, 43);
+            this.chkFMDataMic.TabIndex = 65;
+            this.chkFMDataMic.Text = "FM Wide MIC";
+            this.toolTip1.SetToolTip(this.chkFMDataMic, "In FM Data mode (10khz deviation)\r\nChecked, uses MIC input\r\nUnchecked acts like D" +
+        "IGU or DIGL input bypassing MIC");
+            this.chkFMDataMic.CheckedChanged += new System.EventHandler(this.chkFMDataMic_CheckedChanged);
             // 
             // Setup
             // 
@@ -28418,6 +28433,13 @@ namespace PowerSDR
             
 
         } // chkBoxDial_CheckedChanged
+
+
+        // ke9ns add
+        private void chkFMDataMic_CheckedChanged(object sender, EventArgs e)
+        {
+
+        } // chkFMDataMic_CheckedChanged
 
 
 

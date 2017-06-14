@@ -187,6 +187,11 @@ namespace PowerSDR
         [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetTXFMDeviation")]///
         public static extern void SetTXFMDeviation(uint thread, double deviation);
 
+
+        [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetTXFMDataMode")]///
+        public static extern void SetTXFMDataMode(uint thread, bool fmdata); // ke9ns add for FM data mode (Calls update.c)
+
+
         [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetRXFMDeviation")]///
         public static extern void SetRXFMDeviation(uint thread, uint subrx, double deviation);
 

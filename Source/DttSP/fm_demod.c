@@ -106,17 +106,36 @@ FMDemod (FMD fm)
 
 	// copy to the squelch processing buffer
 	memcpy(CXBbase(fm->squelch_obuf), CXBbase(fm->obuf), CXBsize(fm->obuf)*sizeof(COMPLEX));
-
-	for (i = 0; i < CXBsize (fm->ibuf); i++)
+	
+	if (fm->deviation == FMDataDeviation) // ke9ns add
 	{
-		//// copy to the squelch processing buffer
-		//CXBreal(fm->squelch_obuf,i) = CXBreal(fm->obuf, i);
+	
+		for (i = 0; i < CXBsize(fm->ibuf); i++)
+		{
+			//// copy to the squelch processing buffer
+			//CXBreal(fm->squelch_obuf,i) = CXBreal(fm->obuf, i);
 
-		//Demphasis (low-pass filter)
-		deemphasis_in = 4.0f * CXBreal (fm->obuf, i);
-		fm->deemphasis_out = (deemphasis_in/fm->k_deemphasis) + (fm->k_deemphasis-1.0f)/fm->k_deemphasis*fm->deemphasis_out;
-		CXBreal (fm->obuf, i) = CXBimag (fm->obuf, i) = fm->deemphasis_out;
+			//Demphasis (low-pass filter)
+			deemphasis_in = 4.0f * CXBreal(fm->obuf, i);
+			fm->deemphasis_out = (deemphasis_in / fm->k_deemphasis1) + (fm->k_deemphasis1 - 1.0f) / fm->k_deemphasis1 * fm->deemphasis_out;
+			CXBreal(fm->obuf, i) = CXBimag(fm->obuf, i) = fm->deemphasis_out;
+		}
 	}
+	else
+	{
+	
+		for (i = 0; i < CXBsize(fm->ibuf); i++)
+		{
+			//// copy to the squelch processing buffer
+			//CXBreal(fm->squelch_obuf,i) = CXBreal(fm->obuf, i);
+
+			//Demphasis (low-pass filter)
+			deemphasis_in = 4.0f * CXBreal(fm->obuf, i);
+			fm->deemphasis_out = (deemphasis_in / fm->k_deemphasis) + (fm->k_deemphasis - 1.0f) / fm->k_deemphasis * fm->deemphasis_out;
+			CXBreal(fm->obuf, i) = CXBimag(fm->obuf, i) = fm->deemphasis_out;
+		}
+	}
+
 
 	// Squelch filtering on Demodulated output
 	// call the same 2-pole filter twice to get 4 poles
@@ -129,17 +148,14 @@ FMDemod (FMD fm)
 		/////Noise Squelch Detector
 		rectify = abs(CXBreal(fm->squelch_obuf, i));
 
-		fm->squelch_filter = fm->squelch_k*rectify + (1-fm->squelch_k)* fm->squelch_filter;
+		fm->squelch_filter = fm->squelch_k * rectify + (1-fm->squelch_k) * fm->squelch_filter;
 
 		if(fm->squelch_muted)	//muted
 		{
-			if(fm->squelch_filter < fm->squelch_threshold_unmute )
-				fm->squelch_muted = FALSE;
-			else
-				CXBreal(fm->obuf, i) = (REAL)(rand()%3 - 1) * 1e-16f;
+			if(fm->squelch_filter < fm->squelch_threshold_unmute )	fm->squelch_muted = FALSE;
+			else CXBreal(fm->obuf, i) = (REAL)(rand()%3 - 1) * 1e-16f;
 
-			if(fm->squelch_strong_timer > 0)
-				fm->squelch_strong_timer--;
+			if(fm->squelch_strong_timer > 0)	fm->squelch_strong_timer--;
 		}
 
 		else	//unmuted
@@ -179,13 +195,28 @@ FMDemod (FMD fm)
 		//}
 	}
 
-	//300-3000 BPF
-	do_IIR_LPF_2P(fm->input_LPF1);
-	do_IIR_LPF_2P(fm->input_LPF2);
-	do_IIR_HPF_2P(fm->input_HPF1);
-	do_IIR_HPF_2P(fm->input_HPF2);
+	if (fm->deviation == FMDataDeviation) // ke9ns add
+	{
+		do_IIR_LPF_2P(fm->input_LPF1);
+		do_IIR_LPF_2P(fm->input_LPF2);
+		do_IIR_HPF_2P(fm->input_HPF1);
+		do_IIR_HPF_2P(fm->input_HPF2);
 
-}
+		//do_IIR_LPF_2P(fm->input_LPF3);
+		//do_IIR_LPF_2P(fm->input_LPF4);
+		//do_IIR_HPF_2P(fm->input_HPF3);
+		//do_IIR_HPF_2P(fm->input_HPF4);
+	}
+	else
+	{
+		//300-3000 BPF
+		do_IIR_LPF_2P(fm->input_LPF1);
+		do_IIR_LPF_2P(fm->input_LPF2);
+		do_IIR_HPF_2P(fm->input_HPF1);
+		do_IIR_HPF_2P(fm->input_HPF2);
+	}
+
+} // FMDemod
 
 FMD
 newFMD (REAL samprate,
@@ -206,17 +237,30 @@ newFMD (REAL samprate,
 	fm->lock = 0.5;
 	fm->afc = 0.0;
 	//fm->cvt = (REAL) (0.45 * samprate / (M_PI * f_bandwid));
+	
 	fm->deviation = 5000.0f;
+
 	fm->cvt = (REAL)(samprate / (fm->deviation * TWOPI) * 0.4 * pow(10, -0.5)); // overwritten on PowerSDR init
-	fm->k_deemphasis = (REAL)(1.0f + samprate / (TWOPI * 250.0f)); 
+	
 	fm->demod_comp_filter = new_IIR_1P1Z(fm->obuf, samprate, 24000, 1500);		// compensate for 1500 Hz low pass in PLL
 
+	// fm standard mode
+	fm->k_deemphasis = (REAL)(1.0f + samprate / (TWOPI * 250.0f));
 	fm->input_HPF1 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		//300 Hz high-pass butterworth
 	fm->input_HPF2 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 1.848f);		//300 Hz high-pass butterworth
 	fm->input_LPF1 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 0.25f);	//3000 Hz low-pass butterworth
 	fm->input_LPF2 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 1.75f);	//3000 Hz low-pass butterworth
 
+	// ke9ns add fm data mode
+	fm->k_deemphasis1 = FMDataDe;  // (REAL)(1.0f + samprate / (TWOPI * 250.0f)); // turn off deemphasis
+	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		
+	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 1.848f);	 // to allow CTSS tones	
+	fm->input_LPF3 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 0.25f);
+	fm->input_LPF4 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 1.75f);
+
+
 	fm->squelch_HPF = new_IIR_HPF_2P(fm->squelch_obuf, samprate, 5500.0f, 0.707f);
+
 	fm->squelch_k = (REAL)(1.0f/(samprate/TWOPI/200.0f + 1.0f));
 	fm->squelch_threshold_weak = 0.05f;
 	fm->squelch_threshold_strong = 0.025f;
@@ -240,7 +284,14 @@ delFMD (FMD fm)
 		del_IIR_HPF_2P(fm->input_HPF2);
 		del_IIR_LPF_2P(fm->input_LPF1);
 		del_IIR_LPF_2P(fm->input_LPF2);
+
+		del_IIR_HPF_2P(fm->input_HPF3); // ke9ns add
+		del_IIR_HPF_2P(fm->input_HPF4);
+		del_IIR_LPF_2P(fm->input_LPF3);
+		del_IIR_LPF_2P(fm->input_LPF4);
+
 		del_IIR_HPF_2P(fm->squelch_HPF);
+
 		del_IIR_1P1Z(fm->demod_comp_filter);
 		safefree ((char *) fm);
 	}

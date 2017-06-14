@@ -775,6 +775,8 @@ namespace PowerSDR
         public PictureBox VFODialB;
         public PictureBox VFODialAA;
         public PictureBox VFODialBB;
+        private LabelTS labelTS6;
+        private ComboBoxTS comboCWTXProfile;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -3045,6 +3047,7 @@ namespace PowerSDR
             this.ptbNoiseGate = new PowerSDR.PrettyTrackBar();
             this.ptbCPDR = new PowerSDR.PrettyTrackBar();
             this.ptbDX = new PowerSDR.PrettyTrackBar();
+            this.comboCWTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -3134,6 +3137,7 @@ namespace PowerSDR
             this.lblFMMic = new System.Windows.Forms.LabelTS();
             this.labelTS7 = new System.Windows.Forms.LabelTS();
             this.panelModeSpecificCW = new System.Windows.Forms.PanelTS();
+            this.labelTS6 = new System.Windows.Forms.LabelTS();
             this.lblCWSpeed = new System.Windows.Forms.LabelTS();
             this.grpSemiBreakIn = new System.Windows.Forms.GroupBoxTS();
             this.lblCWBreakInDelay = new System.Windows.Forms.LabelTS();
@@ -4033,12 +4037,12 @@ namespace PowerSDR
             0,
             0});
             this.udRX2FilterHigh.Maximum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             0});
             this.udRX2FilterHigh.Minimum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             -2147483648});
@@ -4062,12 +4066,12 @@ namespace PowerSDR
             0,
             0});
             this.udRX2FilterLow.Maximum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             0});
             this.udRX2FilterLow.Minimum = new decimal(new int[] {
-            9999,
+            15000,
             0,
             0,
             -2147483648});
@@ -4511,6 +4515,7 @@ namespace PowerSDR
             this.comboDigTXProfile.Name = "comboDigTXProfile";
             this.toolTip1.SetToolTip(this.comboDigTXProfile, resources.GetString("comboDigTXProfile.ToolTip"));
             this.comboDigTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboDigTXProfile_SelectedIndexChanged);
+            this.comboDigTXProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.comboDigTXProfile_MouseDown);
             // 
             // chkVACStereo
             // 
@@ -4700,6 +4705,7 @@ namespace PowerSDR
             this.radModeFMN.Name = "radModeFMN";
             this.toolTip1.SetToolTip(this.radModeFMN, resources.GetString("radModeFMN.ToolTip"));
             this.radModeFMN.CheckedChanged += new System.EventHandler(this.radModeFMN_CheckedChanged);
+            this.radModeFMN.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radModeFMN_MouseUp);
             // 
             // radModeDIGU
             // 
@@ -6099,6 +6105,18 @@ namespace PowerSDR
             this.ptbDX.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbDX_Scroll);
             this.ptbDX.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbDX_MouseDown);
             // 
+            // comboCWTXProfile
+            // 
+            this.comboCWTXProfile.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.comboCWTXProfile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboCWTXProfile.DropDownWidth = 96;
+            resources.ApplyResources(this.comboCWTXProfile, "comboCWTXProfile");
+            this.comboCWTXProfile.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.comboCWTXProfile.Name = "comboCWTXProfile";
+            this.toolTip1.SetToolTip(this.comboCWTXProfile, resources.GetString("comboCWTXProfile.ToolTip"));
+            this.comboCWTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboCWTXProfile_SelectedIndexChanged);
+            this.comboCWTXProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.comboCWTXProfile_MouseDown);
+            // 
             // timer_clock
             // 
             this.timer_clock.Enabled = true;
@@ -6948,6 +6966,8 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.panelModeSpecificCW, "panelModeSpecificCW");
             this.panelModeSpecificCW.BackColor = System.Drawing.Color.Transparent;
+            this.panelModeSpecificCW.Controls.Add(this.labelTS6);
+            this.panelModeSpecificCW.Controls.Add(this.comboCWTXProfile);
             this.panelModeSpecificCW.Controls.Add(this.ptbCWSpeed);
             this.panelModeSpecificCW.Controls.Add(this.udCWPitch);
             this.panelModeSpecificCW.Controls.Add(this.lblCWSpeed);
@@ -6958,6 +6978,12 @@ namespace PowerSDR
             this.panelModeSpecificCW.Controls.Add(this.chkCWIambic);
             this.panelModeSpecificCW.Name = "panelModeSpecificCW";
             this.panelModeSpecificCW.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRing_Paint);
+            // 
+            // labelTS6
+            // 
+            this.labelTS6.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.labelTS6, "labelTS6");
+            this.labelTS6.Name = "labelTS6";
             // 
             // lblCWSpeed
             // 
@@ -8937,6 +8963,7 @@ namespace PowerSDR
 			comboTXProfile.Text = setupForm.TXProfile;
 			comboDigTXProfile.Text = setupForm.TXProfile;
             comboFMTXProfile.Text = setupForm.TXProfile;
+            comboCWTXProfile.Text = setupForm.TXProfile;  // ke9ns add
             comboFMCTCSS.Text = "100.0";
 			
 			GetState();                         // recall saved state
@@ -13076,7 +13103,7 @@ namespace PowerSDR
 								break;
 						}
 							preset[m].LastFilter = Filter.F6;
-							break;
+							break; // lsb
 						case (int)DSPMode.USB:	
 						switch(f)
 						{
@@ -13118,7 +13145,7 @@ namespace PowerSDR
 								break;
 						}
 							preset[m].LastFilter = Filter.F6;
-							break;
+							break; //usb
                         case (int)DSPMode.DIGL:
                             switch (f)
                             {
@@ -13160,7 +13187,7 @@ namespace PowerSDR
                                     break;
                             }
                             preset[m].LastFilter = Filter.F5;
-                            break;
+                            break; //digl
                         case (int)DSPMode.DIGU:
                             switch (f)
                             {
@@ -13202,7 +13229,7 @@ namespace PowerSDR
                                     break;
                             }
                             preset[m].LastFilter = Filter.F5;
-                            break;	
+                            break;	// digu
 						case (int)DSPMode.CWL:
 						switch(f)
 						{
@@ -13244,7 +13271,7 @@ namespace PowerSDR
 								break;
 						}
 							preset[m].LastFilter = Filter.F5;
-							break;
+							break; // cwl
 						case (int)DSPMode.CWU:
 						switch(f)
 						{
@@ -13286,7 +13313,7 @@ namespace PowerSDR
 								break;
 						}
 							preset[m].LastFilter = Filter.F5;
-							break;
+							break; //cwu
 						case (int)DSPMode.AM:
 						case (int)DSPMode.SAM:
 						case (int)DSPMode.DSB:
@@ -13330,14 +13357,14 @@ namespace PowerSDR
 								break;
 						}
 							preset[m].LastFilter = Filter.F5;
-							break;
+							break; // am,dsb
 						default:
 							preset[m].LastFilter = Filter.NONE;
 							break;
 					}
 				}
 			}
-		}
+		} // initfilterpresets
 
 		private void InitDisplayModes()
 		{
@@ -20476,7 +20503,13 @@ namespace PowerSDR
 					}
 					break;
                 case DSPMode.FM:
-                    if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
+
+                    if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation) // ke9ns add FMData == true
+                    {
+                        low = -FMDataLowHigh;
+                        high = FMDataLowHigh;
+                    }
+                    else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
                         low = -8000;
                         high = 8000;
@@ -20552,7 +20585,7 @@ namespace PowerSDR
 				if(filterRX1Form.DSPMode == rx1_dsp_mode)
 					filterRX1Form.CurrentFilter = rx1_filter;
 			}
-		}
+		} // updaterx1fitlers
 
 		public void UpdateRX2Filters(int low, int high)
 		{
@@ -20580,7 +20613,13 @@ namespace PowerSDR
 					}
 					break;
                 case DSPMode.FM:
-                    if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
+
+                    if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation)  // FMData == true)
+                    {
+                        low = -FMDataLowHigh;
+                        high = FMDataLowHigh;
+                    }
+                    else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
                         low = -8000;
                         high = 8000;
@@ -20593,11 +20632,13 @@ namespace PowerSDR
                     break;
 			}
 
+            if (low < -14999) low = -14999; // ke9ns add
+            if (high > 14999) high = 14999;
 
-			if(low < -9999)
-				low = -9999;
-			if(high > 9999) 
-				high = 9999;
+          //  if (low < -9999)
+		//		low = -9999;
+		//	if(high > 9999) 
+			//	high = 9999;
 
 			// send the settings to the DSP
 			dsp.GetDSPRX(1, 0).SetRXFilter(low, high);
@@ -20612,8 +20653,7 @@ namespace PowerSDR
 			udRX2FilterHigh.Value = high;
 
 			// update display
-            if(!chkPower.Checked)
-    			Display.DrawBackground();
+            if(!chkPower.Checked)	Display.DrawBackground();
 
 			if(filterRX2Form != null && !filterRX2Form.IsDisposed)
 			{
@@ -20958,14 +20998,14 @@ namespace PowerSDR
                     break;
 				case DSPMode.AM:
 
-                    if (AMMODE == DSPISB.AML)
+                    if (AMMODE == DSPISB.AML) // ke9ns add
                     {
                         l = -high;
-                        h = 130; //  low; // was 100
+                        h = 130; //  needs 130 to allow full power of carrier
                     }
                     else if (AMMODE == DSPISB.AMU)
                     {
-                        l = -130; // -low; // was -100
+                        l = -130; // needs -130 to allow full power of carrier
                         h = high;
                     }
                     else
@@ -20979,14 +21019,14 @@ namespace PowerSDR
 
                 case DSPMode.SAM:
        
-                    if (SAMMODE == DSPISB.AML)
+                    if (SAMMODE == DSPISB.AML) // ke9ns add
                     {
                         l = -high;
-                        h = 130; //  low; // was 100
+                        h = 130; //  needs 130 to allow full power of carrier
                     }
                     else if (SAMMODE == DSPISB.AMU)
                     {
-                        l = -130; // -low; // was -100
+                        l = -130; // needs -130 to allow full power of carrier
                         h = high;
                     }
                     else
@@ -20998,7 +21038,12 @@ namespace PowerSDR
                     break; // SAM
 
 				case DSPMode.FM:
-                    if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
+                    if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation)     //FMData == true) // ke9ns add (FM data mode with larger freq window)
+                    {
+                        l = -FMDataLowHigh;
+                        h = FMDataLowHigh;
+                    }
+                    else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
                         l = -8000;
                         h = 8000;
@@ -21061,13 +21106,15 @@ namespace PowerSDR
 			comboTXProfile.Items.Clear();
 			comboDigTXProfile.Items.Clear();
             comboFMTXProfile.Items.Clear();
-			string[] s = setupForm.GetTXProfileStrings();
+            comboCWTXProfile.Items.Clear(); // ke9ns
+            string[] s = setupForm.GetTXProfileStrings();
 
 			comboTXProfile.Items.AddRange(s);
 			comboDigTXProfile.Items.AddRange(s);
             comboFMTXProfile.Items.AddRange(s);
+            comboCWTXProfile.Items.AddRange(s); // ke9ns add
 
-			if(name != "") comboTXProfile.Text = name;
+            if (name != "") comboTXProfile.Text = name;
 		}
 
 
@@ -29070,8 +29117,11 @@ namespace PowerSDR
 			{
 				if(comboTXProfile != null) comboTXProfile.Text = value;
 				if(comboDigTXProfile != null) comboDigTXProfile.Text = value;
-			}
-		}
+                if (comboCWTXProfile != null) comboCWTXProfile.Text = value;  // ke9ns add
+                if (comboFMTXProfile != null) comboFMTXProfile.Text = value; // ke9ns add
+
+            }
+        }
 
         private string vac_sample_rate = "48000";
         public string VACSampleRate
@@ -29662,9 +29712,9 @@ namespace PowerSDR
 			get { return default_low_cut; }
 			set
 			{				
-				for(DSPMode m = DSPMode.FIRST+1; m<DSPMode.LAST; m++)
+				for(DSPMode m = DSPMode.FIRST+1; m < DSPMode.LAST; m++)
 				{
-					for(Filter f = Filter.FIRST+1; f<Filter.LAST; f++)
+					for(Filter f = Filter.FIRST+1; f < Filter.LAST; f++)
 					{
 						int low = rx1_filters[(int)m].GetLow(f);
 						int high = rx1_filters[(int)m].GetHigh(f);
@@ -29673,13 +29723,11 @@ namespace PowerSDR
 						{
 							case DSPMode.USB:
                                 /* case DSPMode.DIGU: */
-								if(low == default_low_cut)
-									rx1_filters[(int)m].SetLow(f, value);
+								if(low == default_low_cut)	rx1_filters[(int)m].SetLow(f, value);
 								break; 
 							case DSPMode.LSB:
                                 /* case DSPMode.DIGL: */
-								if(high == -default_low_cut)
-									rx1_filters[(int)m].SetHigh(f, -value); 
+								if(high == -default_low_cut)	rx1_filters[(int)m].SetHigh(f, -value); 
 								break;
 						}
 					}
@@ -34604,7 +34652,7 @@ namespace PowerSDR
 
 				r.Checked = true;
 			}
-		}
+		} // RX1DSPMODE
 
 		private DSPMode rx2_dsp_mode = DSPMode.FIRST;
 		public DSPMode RX2DSPMode
@@ -34652,7 +34700,7 @@ namespace PowerSDR
 
 				r.Checked = true;
 			}
-		}
+		} // RX2DSPMODE
 
 		private Filter rx1_filter = Filter.FIRST;
 		public Filter RX1Filter
@@ -36934,7 +36982,13 @@ namespace PowerSDR
             set
             {
                 fm_deviation_hz = value;
-                if (fm_deviation_hz == 5000)
+
+                if (fm_deviation_hz == FMDataDeviation) // ke9ns add
+                {
+                    radFMDeviation2kHz.Checked = false;
+                    radFMDeviation5kHz.Checked = false;
+                }
+                else if (fm_deviation_hz == 5000)
                 {
                      radFMDeviation2kHz.Checked = false;
                      radFMDeviation5kHz.Checked = true;
@@ -52752,7 +52806,10 @@ namespace PowerSDR
             if(comboFMTXProfile.Text != comboTXProfile.Text)
                 comboFMTXProfile.Text = comboTXProfile.Text;
 
-			UpdateDisplay();
+            if (comboCWTXProfile.Text != comboTXProfile.Text)
+                comboCWTXProfile.Text = comboTXProfile.Text;
+
+            UpdateDisplay();
 
 			if(comboTXProfile.Focused) btnHidden.Focus();
 		}
@@ -52768,10 +52825,32 @@ namespace PowerSDR
             if(comboFMTXProfile.Text != comboTXProfile.Text)
                 comboFMTXProfile.Text = comboTXProfile.Text;
 
-			UpdateDisplay();
+            if (comboCWTXProfile.Text != comboTXProfile.Text)
+                comboCWTXProfile.Text = comboTXProfile.Text;
+            UpdateDisplay();
 
 			if(comboDigTXProfile.Focused) btnHidden.Focus();
 		}
+
+        // ke9ns add
+        private void comboCWTXProfile_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (setupForm == null || initializing) return;
+            setupForm.TXProfile = comboCWTXProfile.Text;
+
+            if (comboTXProfile.Text != comboDigTXProfile.Text)
+                comboTXProfile.Text = comboDigTXProfile.Text;
+
+            if (comboFMTXProfile.Text != comboTXProfile.Text)
+                comboFMTXProfile.Text = comboTXProfile.Text;
+
+           if (comboCWTXProfile.Text != comboTXProfile.Text)
+                comboCWTXProfile.Text = comboTXProfile.Text;
+
+            UpdateDisplay();
+
+            if (comboCWTXProfile.Focused) btnHidden.Focus();
+        } // comboCWTXProfile_SelectedIndexChanged
 
 
         private void comboFMTXProfile_SelectedIndexChanged(object sender, EventArgs e)
@@ -52785,6 +52864,8 @@ namespace PowerSDR
             if (comboDigTXProfile.Text != comboTXProfile.Text)
                 comboDigTXProfile.Text = comboTXProfile.Text;
 
+            if (comboCWTXProfile.Text != comboTXProfile.Text)
+                comboCWTXProfile.Text = comboTXProfile.Text;
             UpdateDisplay();
 
             if (comboFMTXProfile.Focused) btnHidden.Focus();
@@ -57961,13 +58042,11 @@ namespace PowerSDR
 				case DSPMode.FM:                    
 					radModeFMN.BackColor = button_selected_color;
 
-                    if ((current_txprofile != fm_txprofile) & (TXProfileByMode) & !initializing)
-                        comboTXProfile.Text = fm_txprofile;
+                    if ((current_txprofile != fm_txprofile) & (TXProfileByMode) & !initializing)  comboTXProfile.Text = fm_txprofile;
 
                     DisableAllFilters();
 
-                    if(!initializing)
-                        rx1_squelch_threshold_scroll = ptbSquelch.Value;
+                    if(!initializing)     rx1_squelch_threshold_scroll = ptbSquelch.Value;
 
                     ptbSquelch.Minimum = 0;
                     ptbSquelch.Maximum = 100;
@@ -57989,6 +58068,8 @@ namespace PowerSDR
 #endif
                         chkBIN.Checked = false;
 						chkBIN.Enabled = false;
+
+                       
                         if (!chkVFOBTX.Checked) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX
                        // SetTXFilters(new_mode, tx_filter_low, tx_filter_high); // ke9ns original code
 
@@ -57997,6 +58078,8 @@ namespace PowerSDR
                         ptbFMMic_Scroll(this, EventArgs.Empty);
 					}
                     panelModeSpecificFM.BringToFront();
+
+
 					break;
 
 				case DSPMode.AM:
@@ -58047,7 +58130,7 @@ namespace PowerSDR
                         if ((!chkVFOBTX.Checked )|| (SAMMODE != SAMMODE_LAST)) SetTXFilters(new_mode, tx_filter_low, tx_filter_high); //W0DHB TX  (ke9ns mod)
                           //  SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
 
-                        SAMMODE_LAST = SAMMODE; // ke9ns add
+                        SAMMODE_LAST = SAMMODE; // ke9ns add  save 
 
                         dsp.GetDSPTX(0).TXOsc = 11025.0;
 					}
@@ -58181,8 +58264,7 @@ namespace PowerSDR
 
             if(old_mode == DSPMode.FM)   chkSquelch.Checked = rx1_squelch_on;  // ke9ns 
 
-            if(old_mode == DSPMode.FM || new_mode == DSPMode.FM)
-                ptbSquelch_Scroll(this, EventArgs.Empty);
+            if(old_mode == DSPMode.FM || new_mode == DSPMode.FM)   ptbSquelch_Scroll(this, EventArgs.Empty);
 
 			if(rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM && rx1_dsp_mode != DSPMode.DRM)
 			{
@@ -58192,7 +58274,11 @@ namespace PowerSDR
 			{
                 if (rx1_dsp_mode == DSPMode.FM)
                 {
-                    if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
+                    if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation) // ke9ns add
+                    {
+                        UpdateRX1Filters(-FMDataLowHigh, FMDataLowHigh);
+                    }
+                    else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
                         UpdateRX1Filters(-8000, 8000);
                     }
@@ -58227,6 +58313,8 @@ namespace PowerSDR
             // voacap
 
         } // SetRX1Mode()
+
+
 
 		private void radModeLSB_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -58277,13 +58365,72 @@ namespace PowerSDR
 			{
 				SetRX1Mode(DSPMode.FM);
 			}
-			//dsp.GetDSP(0, 0).SetRXFilter(-50000, 50000);
-		}
+            else
+            {
+                FMRESET = false;
+            }
+
+            //dsp.GetDSP(0, 0).SetRXFilter(-50000, 50000);
+        }
 
 
-		private void radModeAM_CheckedChanged(object sender, System.EventArgs e)
+        public bool FMRESET = false; // ke9ns add true=FM button pushed
+        public bool FMData = false; // ke9ns add true=FM data mode
+        public double lastdeviation = 0; // ke9ns add false = 2k, true = 5k
+
+        public const int FMDataDeviation = 10000; // ke9ns deviation amount for FM Data mode
+        public const int FMDataLowHigh = 15000; // ke9ns +10000 or -10000
+
+        // ke9ns add  (to allow a digital version of FM just like DIGU or DIGL)
+        private void radModeFMN_MouseUp(object sender, MouseEventArgs e)
+        {
+            if ((radModeFMN.Checked) && (FMRESET == true))
+            {
+                if (FMData == false)
+                {
+                    FMData = true;
+                    radModeFMN.Text = "D-FM"; // digital FM (wider)
+                    FMDeviation_Hz = FMDataDeviation;
+                    lastdeviation = dsp.GetDSPTX(0).TXFMDeviation; // store deviation used last
+                    FMDeviation10khz(); // ke9ns make it 10khz deviation
+
+                    dsp.GetDSPTX(0).TXFMDataMode = true; // set bool value to let TX FM know your in 10khz data mode
+
+                    if (!chkVFOBTX.Checked) SetTXFilters(DSPMode.FM, tx_filter_low, tx_filter_high); //W0DHB TX (will set FM wider)
+                }
+                else
+                {
+                    FMData = false;
+                    radModeFMN.Text = "FM";
+                    dsp.GetDSPTX(0).TXFMDataMode = false;
+
+                    Debug.WriteLine("DEVIATION " + lastdeviation);
+
+                    if (lastdeviation == 2500) // return deviation back to normal FM
+                    {
+                        FMDeviation_Hz = 2500;
+                    }
+                    else
+                    {
+                        FMDeviation_Hz = 5000;
+                    }
+                }
+            }
+            else
+            {
+                FMRESET = true;
+            }
+
+
+        } // radModeFMN_MouseUp
+
+
+
+
+        private void radModeAM_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeAM.Checked)
+
+            if (radModeAM.Checked)
 			{
                 
                 SetRX1Mode(DSPMode.AM);
@@ -58296,6 +58443,7 @@ namespace PowerSDR
 
         } // radModeAM_CheckedChanged
 
+        // ke9ns add
         private void radModeAM_MouseUp(object sender, MouseEventArgs e)
         {
             if ((radModeAM.Checked) && (AMRESET == true))
@@ -58338,6 +58486,7 @@ namespace PowerSDR
 
         public bool SAMRESET = false;
 
+        // ke9ns add (for H3E mode)
         private void radModeSAM_MouseUp(object sender, MouseEventArgs e)
         {
             if ((radModeSAM.Checked) && (SAMRESET == true))
@@ -61702,8 +61851,8 @@ namespace PowerSDR
 				{
 					Audio.TXDSPMode = new_mode;
 					dsp.GetDSPTX(0).CurrentDSPMode = new_mode;
-                    if (fwc_init && (current_model == Model.FLEX5000))
-                        FWC.SetTXDSPMode(new_mode);
+
+                    if (fwc_init && (current_model == Model.FLEX5000))  FWC.SetTXDSPMode(new_mode);
 				}
 			}
 			Display.RX2DSPMode = new_mode;
@@ -61766,12 +61915,9 @@ namespace PowerSDR
 					radRX2ModeFMN.BackColor = SystemColors.Control;
                     if (rx2_enabled)
 					{	
-						if(new_mode != DSPMode.AM && 
-							new_mode != DSPMode.SAM &&
-							new_mode != DSPMode.FM)
+						if(new_mode != DSPMode.AM && new_mode != DSPMode.SAM && new_mode != DSPMode.FM)
 						{
-                            if(chkVFOBTX.Checked)
-    							chkMON.Enabled = true;
+                            if(chkVFOBTX.Checked)	chkMON.Enabled = true;
 
                             chkRX2BIN.Enabled = true;
 						}
@@ -61867,7 +62013,7 @@ namespace PowerSDR
 					rx2_if_freq = setupForm.IFFreq;
 					CalcDisplayFreq();
 					break;
-			} // set RX2 mode
+			} // old mode
 
            	switch(new_mode)
 			{
@@ -61974,13 +62120,13 @@ namespace PowerSDR
 					{
                         if(chkVFOBTX.Checked)
                         {
-                            if (!rx_only && chkPower.Checked)
-							    chkMOX.Enabled = true;
+                            if (!rx_only && chkPower.Checked)  chkMOX.Enabled = true;
 
                             chkMON.Checked = false;
                             chkMON.Enabled = false;
 
                             SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
+
                             dsp.GetDSPTX(0).TXOsc = 11025.0;
 
                             ptbFMMic_Scroll(this, EventArgs.Empty);
@@ -62118,7 +62264,11 @@ namespace PowerSDR
             {
                 if (rx2_dsp_mode == DSPMode.FM)
                 {
-                    if (dsp.GetDSPRX(1, 0).RXFMDeviation == 5000)
+                    if (dsp.GetDSPRX(1, 0).RXFMDeviation == FMDataDeviation) // ke9ns add
+                    {
+                        UpdateRX2Filters(-FMDataLowHigh, FMDataLowHigh);
+                    }
+                    else if (dsp.GetDSPRX(1, 0).RXFMDeviation == 5000)
                     {
                         UpdateRX2Filters(-8000, 8000);
                     }
@@ -62914,8 +63064,9 @@ namespace PowerSDR
 				case DSPMode.DSB:
 				case DSPMode.AM:
 				case DSPMode.SAM:
-				case DSPMode.FM:
-					size = dsp_buf_phone_rx; // ke9ns filter buffer size from setup dsp form
+              //  case DSPMode.FM:
+
+                    size = dsp_buf_phone_rx; // ke9ns filter buffer size from setup dsp form
 					break;
 				case DSPMode.CWL:
 				case DSPMode.CWU:
@@ -62926,7 +63077,19 @@ namespace PowerSDR
 				case DSPMode.DRM:
 					size = dsp_buf_dig_rx;
 					break;
-			}
+                case DSPMode.FM:
+
+                    if (FMData == true)
+                    {
+                        size = dsp_buf_dig_rx;
+                    }
+                    else
+                    {
+                        size = dsp_buf_phone_rx; // ke9ns filter buffer size from setup dsp form
+                    }
+                    break;
+
+            }
 
 			int offset = 0;
 			switch(size)
@@ -62993,7 +63156,7 @@ namespace PowerSDR
 				case DSPMode.DSB:
 				case DSPMode.AM:
 				case DSPMode.SAM:
-				case DSPMode.FM:
+				//case DSPMode.FM:
 					size = dsp_buf_phone_rx;
 					break;
 				case DSPMode.CWL:
@@ -63005,7 +63168,19 @@ namespace PowerSDR
 				case DSPMode.DRM:
 					size = dsp_buf_dig_rx;
 					break;
-			}
+                case DSPMode.FM:
+
+                    if (FMData == true)
+                    {
+                        size = dsp_buf_dig_rx;
+                    }
+                    else
+                    {
+                        size = dsp_buf_phone_rx; // ke9ns filter buffer size from setup dsp form
+                    }
+                    break;
+
+            }
 
 			int offset = 0;
 			switch(size)
@@ -64513,6 +64688,7 @@ namespace PowerSDR
             {
                 dsp.GetDSPTX(0).TXFMDeviation = 2500;
                 dsp.GetDSPRX(0, 0).RXFMDeviation = 2500;
+
                 if (RX1DSPMode == DSPMode.FM)
                 {
                     UpdateRX1Filters(-4000, 4000);
@@ -64536,6 +64712,7 @@ namespace PowerSDR
             {
                 dsp.GetDSPTX(0).TXFMDeviation = 5000;
                 dsp.GetDSPRX(0, 0).RXFMDeviation = 5000;
+
                 if (RX1DSPMode == DSPMode.FM)
                 {
                     UpdateRX1Filters(-8000, 8000);
@@ -64552,6 +64729,32 @@ namespace PowerSDR
                 }
             }
         }
+
+        //==================================================
+        // ke9ns add
+        public void FMDeviation10khz()
+        {
+            dsp.GetDSPTX(0).TXFMDeviation = FMDataDeviation;
+            dsp.GetDSPRX(0, 0).RXFMDeviation = FMDataDeviation;
+
+            if (RX1DSPMode == DSPMode.FM)
+            {
+                UpdateRX1Filters(-FMDataLowHigh, FMDataLowHigh);
+                UpdateDisplay();
+            }
+            if (RX2DSPMode == DSPMode.FM)
+            {
+                UpdateRX2Filters(-FMDataLowHigh, FMDataLowHigh);
+                UpdateDisplay();
+            }
+            if (dsp.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
+            {
+                SetTXFilters(DSPMode.FM, -FMDataLowHigh, FMDataLowHigh);
+            }
+
+        } // FMDeviation10khz()
+
+
 
         private void udFMOffset_ValueChanged(object sender, EventArgs e)
         {
@@ -67456,7 +67659,7 @@ namespace PowerSDR
 
 
             } // right click
-        }
+        } // chkVAC2_MouseDown
 
 
         // ke9ns add
@@ -67480,7 +67683,7 @@ namespace PowerSDR
             //    setupForm.chkAudioIQtoVAC.Focus();
 
             } // right click
-        }
+        } // comboTXProfile_MouseDown
 
         // ke9ns add
         private void lblAntRX1_MouseDown(object sender, MouseEventArgs e)
@@ -71283,7 +71486,57 @@ namespace PowerSDR
         byte[] picDisplayOutput; // ke9ns add
         MemoryStream memstream; // ke9ns add
 
-      
+        // ke9ns add
+        private void comboCWTXProfile_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+                setupForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                setupForm.tcSetup.SelectedIndex = 4; // select audio tab;
+
+                //   setupForm.tcAudio.SelectedIndex = 1; // select vac1 tab
+                //    setupForm.chkAudioIQtoVAC.Focus();
+
+            } // right click
+        } //comboCWTXProfile_mousedown
+
+        // ke9ns add
+        private void comboDigTXProfile_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+
+                if (setupForm == null || setupForm.IsDisposed)
+                    setupForm = new Setup(this);
+
+                setupForm.Show();
+                setupForm.Focus();
+                setupForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                setupForm.tcSetup.SelectedIndex = 4; // select audio tab;
+
+                //   setupForm.tcAudio.SelectedIndex = 1; // select vac1 tab
+                //    setupForm.chkAudioIQtoVAC.Focus();
+
+            } // right click
+        } // comboDigTXProfile
+
+
+
+
+
+
 
 
 

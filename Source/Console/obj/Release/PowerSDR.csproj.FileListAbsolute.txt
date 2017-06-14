@@ -388,7 +388,6 @@ C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\bin\Release
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\bin\Release\PowerSDR.exe.manifest
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\bin\Release\PowerSDR.application
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\bin\Release\PowerSDR.exe
-C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.csprojResolveAssemblyReference.cache
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.csproj.ResolveComReference.cache
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.DJConsoleUI.DJConsoleSelect.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.DJConsoleMK2Config.resources

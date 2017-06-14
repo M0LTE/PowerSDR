@@ -19,13 +19,16 @@
 #include <oscillator.h>
 #include <filt2p2z.h>
 
+
 typedef struct _fm_demod
 {
   int size;
   CXB ibuf, obuf, squelch_obuf;
   REAL deviation;
   REAL k_deemphasis;
-  REAL deemphasis_out;
+  REAL k_deemphasis1; // ke9ns add
+
+  REAL deemphasis_out; 
   REAL squelch_envelope;
   REAL squelch_filter;
   REAL squelch_threshold_weak;
@@ -37,12 +40,20 @@ typedef struct _fm_demod
   BOOLEAN squelch_muted;
   int squelch_strong_timer_hang;
   int squelch_weak_timer_hang;
+
   IIR_LPF_2P input_LPF1;
   IIR_LPF_2P input_LPF2;
   IIR_HPF_2P input_HPF1;
   IIR_HPF_2P input_HPF2;
+
+  IIR_LPF_2P input_LPF3; // ke9ns add
+  IIR_LPF_2P input_LPF4;
+  IIR_HPF_2P input_HPF3;
+  IIR_HPF_2P input_HPF4;
+
   IIR_HPF_2P squelch_HPF;
   IIR_1P1Z demod_comp_filter;
+
 
   struct
   {
@@ -60,6 +71,7 @@ typedef struct _fm_demod
   } pll;
 
   REAL lock, afc, cvt;
+
 } FMDDesc, *FMD;
 
 extern void FMDemod (FMD fm);

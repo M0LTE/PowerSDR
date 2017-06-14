@@ -183,7 +183,7 @@ DttSP_EXP void AudioReset (void)
 
 DttSP_EXP void SetRXManualNotchEnable(unsigned int thread, unsigned int subrx, unsigned int index, BOOLEAN setit)
 {
-	fprintf(stderr, "DttSP::SetRXManualNotchEnable(%u, %u, %u, %u)\n", thread, subrx, index, setit);
+	//fprintf(stderr, "DttSP::SetRXManualNotchEnable(%u, %u, %u, %u)\n", thread, subrx, index, setit);
 	fflush(stderr);
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][subrx].notch[index].flag = setit;
@@ -193,8 +193,8 @@ DttSP_EXP void SetRXManualNotchEnable(unsigned int thread, unsigned int subrx, u
 DttSP_EXP void SetRXManualNotchBW(unsigned int thread, unsigned int subrx, unsigned int index, double BW)
 {
 	//REAL w0,sw,cw,alpha;
-	fprintf(stderr, "DttSP::SetRXManualNotchBW(%u, %u, %u, %lf)\n", thread, subrx, index, BW);
-	fflush(stderr);
+	//fprintf(stderr, "DttSP::SetRXManualNotchBW(%u, %u, %u, %lf)\n", thread, subrx, index, BW);
+	//fflush(stderr);
 
 	/*w0 = (REAL)(2*M_PI*rx[thread][subrx].notch[index].gen->F0/rx[thread][subrx].notch[index].gen->Fs);
 	sw = (REAL)sin(w0);
@@ -220,7 +220,7 @@ DttSP_EXP void SetRXManualNotchBW(unsigned int thread, unsigned int subrx, unsig
 DttSP_EXP void SetRXManualNotchFreq(unsigned int thread, unsigned int subrx, unsigned int index, double F0)
 {
 	REAL w0,sw,cw,alpha;
-	fprintf(stderr, "DttSP::SetRXManualNotchFreq(%u, %u, %u, %lf)\n", thread, subrx, index, F0);
+	//fprintf(stderr, "DttSP::SetRXManualNotchFreq(%u, %u, %u, %lf)\n", thread, subrx, index, F0);
 	fflush(stderr);
 
 	w0 = (REAL)(2*M_PI*F0/rx[thread][subrx].notch[index].gen->Fs);
@@ -265,16 +265,41 @@ DttSP_EXP void SetTXDCBlock (unsigned int thread, BOOLEAN setit)
 
 DttSP_EXP void SetTXFMDeviation(unsigned int thread, double deviation)
 {
+	
+	fprintf(stderr, "TX dttsp SetTXFMDeviation: %f\n", deviation);
+	fflush(stderr);
+
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].fm.cvtmod2freq = (REAL) (deviation * TWOPI / uni[thread].samplerate);
+	
 	sem_post(&top[thread].sync.upd.sem);
 }
+
+//===============================================================================
+// ke9ns add (sdr.c is where its used) called from console.cs  dsp.GetDSPTX(0).TXFMDataMode = true; 
+// not really needed since I also set deviation = 10000, that can be used as a trigger for FM data mode
+
+DttSP_EXP void SetTXFMDataMode(unsigned int thread, BOOLEAN fmdata)
+{
+	//if (fmdata == TRUE) fprintf(stderr, "FMDATA ON\n"), fflush(stderr);
+	//else fprintf(stderr, "FMDATA OFF\n"), fflush(stderr);
+
+	sem_wait(&top[thread].sync.upd.sem);
+
+	tx[thread].fm.fmdata = fmdata; // ke9ns true = in FM data mode, false = standard FM
+
+	sem_post(&top[thread].sync.upd.sem);
+
+} // SetTXFMDataMode
+
+
 
 DttSP_EXP void SetRXFMDeviation(unsigned int thread, unsigned int k, double deviation)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	rx[thread][k].fm.gen->deviation = (REAL)deviation;
 	rx[thread][k].fm.gen->cvt = (REAL)(uni[thread].samplerate / (deviation * TWOPI));
+
 	fprintf(stderr, "dttsp SetRXFMDeviation: %f\n", deviation);
 	fflush(stderr);
 	sem_post(&top[thread].sync.upd.sem);

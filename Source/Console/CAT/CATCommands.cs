@@ -905,9 +905,9 @@ namespace PowerSDR
 			if(s == "0" || s == "2")	// read the main transceiver s meter
 			{
 				float num = 0f;
-				if(console.PowerOn)
-					num = DttSP.CalculateRXMeter(0, 0,DttSP.MeterType.SIGNAL_STRENGTH);
-				num = num+console.MultiMeterCalOffset+console.PreampOffset;
+				if(console.PowerOn)	num = DttSP.CalculateRXMeter(0, 0,DttSP.MeterType.SIGNAL_STRENGTH);
+
+                num = num+console.MultiMeterCalOffset+console.PreampOffset;
 
 				num = Math.Max(-140, num);
 				num = Math.Min(-10, num);

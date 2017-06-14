@@ -205,7 +205,9 @@ namespace PowerSDR
             this.RXOsc = rx.rx_osc;
             this.DCBlock = rx.dc_block;
             this.RXFMDeviation = rx.rx_fm_deviation;
-        }
+
+            
+        } // copy(DSPRX )
 
         //=====================================================================================
         private void SyncAll()
@@ -1343,7 +1345,9 @@ namespace PowerSDR
             CTCSSFreqHz = ctcss_freq_hz;
             TXFMDeviation = tx_fm_deviation;
             CTCSSFlag = ctcss_flag;
-		}
+            TXFMDataMode = fm_data_mode; // ke9ns add
+
+		} // syncall
 
         #region Non-Static Properties & Routines
 
@@ -1674,6 +1678,7 @@ namespace PowerSDR
 
         private double tx_fm_deviation = 5000.0;
         private double tx_fm_deviation_dsp = 5000.0;
+
         public double TXFMDeviation
         {
             get { return tx_fm_deviation; }
@@ -1689,7 +1694,37 @@ namespace PowerSDR
                     }
                 }
             }
-        }
+        } // TXFMDeviation
+
+
+        //========================================================================================
+        // ke9ns add FMData turn off K_Preemphasis and K_Deemphasis here
+        // this calls dttsp.cs, which calls update.c, which  sdr.c will read the tx[thread].fm struct 
+        // console calls  dsp.GetDSPTX(0).TXFMDataMode
+
+        private bool fm_data_mode = false; // true = no preemphasis, no deemphasis and 15k bandwidth
+        private bool fm_data_mode_dsp = false; // true = no preemphasis, no deemphasis and 15k bandwidth
+
+        public bool TXFMDataMode
+        {
+            get { return fm_data_mode; }
+            set
+            {
+                fm_data_mode = value;
+                if (update)
+                {
+                    if (value != fm_data_mode_dsp || force)
+                    {
+                        DttSP.SetTXFMDataMode(thread, value); //  dttsp.cs     update.c place value into tx[thread].fm.fmdata struct     sdr.c will then use it
+                        fm_data_mode_dsp = value;
+                    
+                    }
+                }
+            }
+        } // TXFMDataMode
+
+        //==================================================================================
+
 
         private double ctcss_freq_hz = 100.0;
         private double ctcss_freq_hz_dsp = 100.0;

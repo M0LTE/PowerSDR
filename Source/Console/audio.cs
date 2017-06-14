@@ -1093,10 +1093,11 @@ namespace PowerSDR
                 }
                 else
                 {
-                    if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
+                    if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU  || (tx_dsp_mode == DSPMode.FM && console.FMData == true && console.setupForm.chkFMDataMic.Checked == false))   )
                     {
                         ScaleBuffer(in_l, in_l, frameCount, (float)vac_preamp);
                         ScaleBuffer(in_r, in_r, frameCount, (float)vac_preamp);
+                       
                     }
                     else
                     {
@@ -1856,10 +1857,11 @@ namespace PowerSDR
                     }
                     else
                     {
-                        if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
+                        if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU || (tx_dsp_mode == DSPMode.FM && console.FMData == true && console.setupForm.chkFMDataMic.Checked == false))   )  // ke9ns mod for FMData
                         {
                             ScaleBuffer(in_l, in_l, frameCount, (float)vac_preamp);
                             ScaleBuffer(in_r, in_r, frameCount, (float)vac_preamp);
+                          
                         }
                         else
                         {
@@ -2792,17 +2794,20 @@ namespace PowerSDR
 				{
 					if(localmox)
 					{
-						if(!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
-						{
+						if(!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU || (tx_dsp_mode == DSPMode.FM && console.FMData == true && console.setupForm.chkFMDataMic.Checked == false))    )
+                        {
 							ScaleBuffer(in_l, in_l, frameCount, (float)vac_preamp);
 							ScaleBuffer(in_r, in_r, frameCount, (float)vac_preamp);
+
+                          
+
 						}
 						else
 						{
 							ScaleBuffer(in_l, in_l, frameCount, (float)mic_preamp);
 							ScaleBuffer(in_r, in_r, frameCount, (float)mic_preamp);
 
-                            if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
+                            if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add, to allow for MIC level check in RX mode
                         }
 					}
 				}
@@ -3796,8 +3801,7 @@ namespace PowerSDR
                     peak = MaxSample(tx_in_l, tx_in_r, frameCount);
 
                     // compare power to threshold
-                    if (peak > vox_threshold)
-                        vox_active = true;
+                    if (peak > vox_threshold)    vox_active = true;
                     else
                         vox_active = false;
                 }
@@ -3840,10 +3844,12 @@ namespace PowerSDR
                 }
                 else
                 {
-                    if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU))
+                    if (!vac_enabled && (tx_dsp_mode == DSPMode.DIGL || tx_dsp_mode == DSPMode.DIGU || (tx_dsp_mode == DSPMode.FM && console.FMData == true && console.setupForm.chkFMDataMic.Checked == false)))
                     {
                         ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)vac_preamp);
                         ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)vac_preamp);
+                       
+
                     }
                     else
                     {
