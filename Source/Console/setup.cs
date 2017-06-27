@@ -1102,6 +1102,12 @@ namespace PowerSDR
         private ButtonTS buttonTS1;
         public CheckBoxTS chkBoxDial;
         public CheckBoxTS chkFMDataMic;
+        public CheckBoxTS chkPhaseRotate;
+        private LabelTS labelTS23;
+        public NumericUpDownTS udTOT;
+        public CheckBoxTS chkBoxTOT;
+        public TextBoxTS textBoxTOT;
+        private TextBox textBox1;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1354,6 +1360,10 @@ namespace PowerSDR
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
+            this.textBoxTOT = new System.Windows.Forms.TextBoxTS();
+            this.labelTS23 = new System.Windows.Forms.LabelTS();
+            this.udTOT = new System.Windows.Forms.NumericUpDownTS();
+            this.chkBoxTOT = new System.Windows.Forms.CheckBoxTS();
             this.grpHWSoftRock = new System.Windows.Forms.GroupBoxTS();
             this.lblGenSoftRockCenterFreq = new System.Windows.Forms.LabelTS();
             this.udSoftRockCenterFreq = new System.Windows.Forms.NumericUpDownTS();
@@ -1817,6 +1827,8 @@ namespace PowerSDR
             this.udDSPAGCFixedGaindB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkPhaseRotate = new System.Windows.Forms.CheckBoxTS();
+            this.chkFMDataMic = new System.Windows.Forms.CheckBoxTS();
             this.chk2ndMeter = new System.Windows.Forms.CheckBoxTS();
             this.chkTXWtrID = new System.Windows.Forms.CheckBoxTS();
             this.chkTXMeter2 = new System.Windows.Forms.CheckBoxTS();
@@ -2382,11 +2394,12 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.chkFMDataMic = new System.Windows.Forms.CheckBoxTS();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
             this.tpGeneralHardware.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTOT)).BeginInit();
             this.grpHWSoftRock.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udSoftRockCenterFreq)).BeginInit();
             this.grpGeneralDDS.SuspendLayout();
@@ -2719,6 +2732,10 @@ namespace PowerSDR
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralHardware.Controls.Add(this.textBoxTOT);
+            this.tpGeneralHardware.Controls.Add(this.labelTS23);
+            this.tpGeneralHardware.Controls.Add(this.udTOT);
+            this.tpGeneralHardware.Controls.Add(this.chkBoxTOT);
             this.tpGeneralHardware.Controls.Add(this.grpHWSoftRock);
             this.tpGeneralHardware.Controls.Add(this.grpGeneralDDS);
             this.tpGeneralHardware.Controls.Add(this.grpGeneralModel);
@@ -2732,6 +2749,62 @@ namespace PowerSDR
             this.tpGeneralHardware.Size = new System.Drawing.Size(592, 318);
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "Hardware Config";
+            // 
+            // textBoxTOT
+            // 
+            this.textBoxTOT.Location = new System.Drawing.Point(440, 240);
+            this.textBoxTOT.MaxLength = 50;
+            this.textBoxTOT.Name = "textBoxTOT";
+            this.textBoxTOT.Size = new System.Drawing.Size(76, 20);
+            this.textBoxTOT.TabIndex = 29;
+            // 
+            // labelTS23
+            // 
+            this.labelTS23.Image = null;
+            this.labelTS23.Location = new System.Drawing.Point(404, 264);
+            this.labelTS23.Name = "labelTS23";
+            this.labelTS23.Size = new System.Drawing.Size(52, 23);
+            this.labelTS23.TabIndex = 9;
+            this.labelTS23.Text = "Seconds";
+            // 
+            // udTOT
+            // 
+            this.udTOT.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTOT.Location = new System.Drawing.Point(336, 262);
+            this.udTOT.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.udTOT.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTOT.Name = "udTOT";
+            this.udTOT.Size = new System.Drawing.Size(62, 20);
+            this.udTOT.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.udTOT, "Time-Out Time Limit Value (in Seconds)");
+            this.udTOT.Value = new decimal(new int[] {
+            180,
+            0,
+            0,
+            0});
+            // 
+            // chkBoxTOT
+            // 
+            this.chkBoxTOT.Image = null;
+            this.chkBoxTOT.Location = new System.Drawing.Point(336, 240);
+            this.chkBoxTOT.Name = "chkBoxTOT";
+            this.chkBoxTOT.Size = new System.Drawing.Size(104, 16);
+            this.chkBoxTOT.TabIndex = 28;
+            this.chkBoxTOT.Text = "Time-Out Timer";
+            this.toolTip1.SetToolTip(this.chkBoxTOT, resources.GetString("chkBoxTOT.ToolTip"));
+            this.chkBoxTOT.CheckedChanged += new System.EventHandler(this.chkBoxTOT_CheckedChanged);
             // 
             // grpHWSoftRock
             // 
@@ -4542,11 +4615,12 @@ namespace PowerSDR
             // 
             // grpOptSpaceNav
             // 
+            this.grpOptSpaceNav.Controls.Add(this.textBox1);
             this.grpOptSpaceNav.Controls.Add(this.chkSpaceNavFlyPanadapter);
             this.grpOptSpaceNav.Controls.Add(this.chkSpaceNavControlVFOs);
             this.grpOptSpaceNav.Location = new System.Drawing.Point(3, 3);
             this.grpOptSpaceNav.Name = "grpOptSpaceNav";
-            this.grpOptSpaceNav.Size = new System.Drawing.Size(122, 79);
+            this.grpOptSpaceNav.Size = new System.Drawing.Size(399, 220);
             this.grpOptSpaceNav.TabIndex = 0;
             this.grpOptSpaceNav.TabStop = false;
             this.grpOptSpaceNav.Text = "Space Navigator";
@@ -9737,6 +9811,7 @@ namespace PowerSDR
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkPhaseRotate);
             this.tpTransmit.Controls.Add(this.chkFMDataMic);
             this.tpTransmit.Controls.Add(this.chk2ndMeter);
             this.tpTransmit.Controls.Add(this.chkTXWtrID);
@@ -9762,6 +9837,28 @@ namespace PowerSDR
             this.tpTransmit.Size = new System.Drawing.Size(584, 322);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
+            // 
+            // chkPhaseRotate
+            // 
+            this.chkPhaseRotate.Image = null;
+            this.chkPhaseRotate.Location = new System.Drawing.Point(306, 161);
+            this.chkPhaseRotate.Name = "chkPhaseRotate";
+            this.chkPhaseRotate.Size = new System.Drawing.Size(118, 26);
+            this.chkPhaseRotate.TabIndex = 66;
+            this.chkPhaseRotate.Text = "Phase Invert";
+            this.toolTip1.SetToolTip(this.chkPhaseRotate, "Audio Phase Invert. Check your audio with the Panascope.");
+            // 
+            // chkFMDataMic
+            // 
+            this.chkFMDataMic.Image = null;
+            this.chkFMDataMic.Location = new System.Drawing.Point(378, 82);
+            this.chkFMDataMic.Name = "chkFMDataMic";
+            this.chkFMDataMic.Size = new System.Drawing.Size(61, 43);
+            this.chkFMDataMic.TabIndex = 65;
+            this.chkFMDataMic.Text = "FM Wide MIC";
+            this.toolTip1.SetToolTip(this.chkFMDataMic, "In FM Data mode (10khz deviation)\r\nChecked, uses MIC input\r\nUnchecked acts like D" +
+        "IGU or DIGL input bypassing MIC");
+            this.chkFMDataMic.CheckedChanged += new System.EventHandler(this.chkFMDataMic_CheckedChanged);
             // 
             // chk2ndMeter
             // 
@@ -16734,17 +16831,16 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
-            // chkFMDataMic
+            // textBox1
             // 
-            this.chkFMDataMic.Image = null;
-            this.chkFMDataMic.Location = new System.Drawing.Point(378, 82);
-            this.chkFMDataMic.Name = "chkFMDataMic";
-            this.chkFMDataMic.Size = new System.Drawing.Size(61, 43);
-            this.chkFMDataMic.TabIndex = 65;
-            this.chkFMDataMic.Text = "FM Wide MIC";
-            this.toolTip1.SetToolTip(this.chkFMDataMic, "In FM Data mode (10khz deviation)\r\nChecked, uses MIC input\r\nUnchecked acts like D" +
-        "IGU or DIGL input bypassing MIC");
-            this.chkFMDataMic.CheckedChanged += new System.EventHandler(this.chkFMDataMic_CheckedChanged);
+            this.textBox1.Location = new System.Drawing.Point(15, 67);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(320, 132);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "Twist controls VFOA(or if in split, VFOB)\r\nPush forward/ backward Zooms the panad" +
+    "apter\r\nPush left / right Pans the panadapter\r\nPush up / down controls the filter" +
+    " width";
             // 
             // Setup
             // 
@@ -16769,6 +16865,8 @@ namespace PowerSDR
             this.tpGeneral.ResumeLayout(false);
             this.tcGeneral.ResumeLayout(false);
             this.tpGeneralHardware.ResumeLayout(false);
+            this.tpGeneralHardware.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTOT)).EndInit();
             this.grpHWSoftRock.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSoftRockCenterFreq)).EndInit();
             this.grpGeneralDDS.ResumeLayout(false);
@@ -17386,6 +17484,7 @@ namespace PowerSDR
             else
             {
                 chkAudioEnableVAC.Enabled = true; // VAC1
+                chkVAC2Enable.Enabled = true; // ke9ns add
                 console.EnableDAX();
             }
 	
@@ -19811,8 +19910,8 @@ namespace PowerSDR
 
                     if (dax_audio_setup_enum)
                     {
-                        chkVAC2Enable.Enabled = rx2_ok;   //ke9ns  this turns on the enable checkbox
-                        chkVAC2AutoEnable.Enabled = rx2_ok;  //
+                        chkVAC2Enable.Enabled = true; // rx2_ok;   //ke9ns  this turns on the enable checkbox
+                        chkVAC2AutoEnable.Enabled = true; // rx2_ok;  //
                     }
 
                     if (console.CurrentModel == Model.FLEX5000)
@@ -20427,10 +20526,7 @@ namespace PowerSDR
 		{
             bool rx_only = chkGeneralRXOnly.Checked;
 
-			if(chkGeneralRXOnly.Focused && 
-				comboAudioSoundCard.Text == "Unsupported Card" &&
-				!rx_only &&
-				radGenModelSDR1000.Checked)
+			if(chkGeneralRXOnly.Focused && comboAudioSoundCard.Text == "Unsupported Card" && !rx_only &&	radGenModelSDR1000.Checked)
 			{
 				DialogResult dr = MessageBox.Show(
 					"Unchecking Receive Only while in Unsupported Card mode may \n"+
@@ -20984,18 +21080,22 @@ namespace PowerSDR
             bool val = chkVAC2Enable.Checked;
             bool old_val = console.VAC2Enabled;
 
-       
+       /* ke9ns mod
            if (!radGenModelFLEX5000.Checked || !FWCEEPROM.RX2OK)
             {
                if (chkVAC2Enable.Checked)   chkVAC2Enable.Checked = false;
                 console.VAC2Enabled = false;
                return;
            }
-
+*/
             if (val)
             {
-                if (comboAudioDriver3.SelectedIndex < 0 &&   comboAudioDriver3.Items.Count > 0)
+                if (comboAudioDriver3.SelectedIndex < 0 && comboAudioDriver3.Items.Count > 0)
+                {
                     comboAudioDriver3.SelectedIndex = 0;
+                    Debug.WriteLine("7VAC2---");
+
+                }
             }
 
             bool power = console.PowerOn;
@@ -21124,13 +21224,10 @@ namespace PowerSDR
             console.AudioDriverIndex3 = new_driver;
             Audio.Host3 = new_driver;
             GetDevices3();
-            if (comboAudioInput3.Items.Count != 0)
-                comboAudioInput3.SelectedIndex = 0;
-            if (comboAudioOutput3.Items.Count != 0)
-                comboAudioOutput3.SelectedIndex = 0;
+            if (comboAudioInput3.Items.Count != 0)  comboAudioInput3.SelectedIndex = 0;
+            if (comboAudioOutput3.Items.Count != 0)  comboAudioOutput3.SelectedIndex = 0;
 
-            if (power && chkVAC2Enable.Checked && old_driver != new_driver)
-                console.PowerOn = true;
+            if (power && chkVAC2Enable.Checked && old_driver != new_driver)  console.PowerOn = true;
         }
 
 
@@ -28440,6 +28537,17 @@ namespace PowerSDR
         {
 
         } // chkFMDataMic_CheckedChanged
+
+
+        // ke9ns add Time-Out Timer function
+        private void chkBoxTOT_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TOT_ONOFF = chkBoxTOT.Checked; // update console to let it know if you want the Time-Out Timer ON or OFF
+
+            if (chkBoxTOT.Checked == false)  textBoxTOT.Text = "OFF";
+
+
+        } //  chkBoxTOT_CheckedChanged
 
 
 

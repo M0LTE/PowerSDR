@@ -777,6 +777,7 @@ namespace PowerSDR
         public PictureBox VFODialBB;
         private LabelTS labelTS6;
         private ComboBoxTS comboCWTXProfile;
+        private Label label6;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -890,6 +891,8 @@ namespace PowerSDR
         public HidDevice.PowerMate PowerMate;              // ke9ns add communicate with powermate HID
 
         public IDBOX IDBOXForm;                          // ke9ns add ID Timer function function (idtimer)
+        public TOTBOX TOTBOXForm;                          // ke9ns add Timeout Timer function function (tottimer)
+
 
         public SpotControl SpotForm;                       // ke9ns add DX spotter function
         public ScanControl ScanForm;                       // ke9ns add freq Scanner function
@@ -3124,6 +3127,7 @@ namespace PowerSDR
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelDisplay2 = new System.Windows.Forms.PanelTS();
+            this.label6 = new System.Windows.Forms.Label();
             this.ptbRX2Squelch = new PowerSDR.PrettyTrackBar();
             this.panelOptions = new System.Windows.Forms.PanelTS();
             this.panelTSBandStack = new System.Windows.Forms.PanelTS();
@@ -6823,8 +6827,15 @@ namespace PowerSDR
             this.panelDisplay2.Controls.Add(this.chkDisplayPeak);
             this.panelDisplay2.Controls.Add(this.comboDisplayMode);
             this.panelDisplay2.Controls.Add(this.chkDisplayAVG);
+            this.panelDisplay2.Controls.Add(this.label6);
             this.panelDisplay2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelDisplay2.Name = "panelDisplay2";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label6.Name = "label6";
             // 
             // ptbRX2Squelch
             // 
@@ -8431,6 +8442,8 @@ namespace PowerSDR
            
             Setup.console = this;                 // ke9ns add  setup.cs to this console so setup can talk to console
             IDBOX.console = this;                 // ke9ns add IDBOX to this console
+            TOTBOX.console = this;                 // ke9ns add TOTBOX to this console
+
 
             SpotControl.console = this;           // ke9ns add  spot.cs to this console so spot can talk to console
             ScanControl.console = this;           // ke9ns add  scan.cs to this console so scan can talk to console
@@ -8874,7 +8887,14 @@ namespace PowerSDR
 
               IDBOXForm.Show();
               IDBOXForm.Close();
-            
+
+
+
+            TOTBOXForm = new TOTBOX(this);         // ke9ns create TOT timer message box now
+
+            TOTBOXForm.Show();
+            TOTBOXForm.Close();
+
 
             setupForm.StartPosition = FormStartPosition.Manual;
 			
@@ -9226,13 +9246,15 @@ namespace PowerSDR
             if (setupForm != null)		// make sure Setup form is deallocated
 				setupForm.Dispose();
 
-            if (IDBOXForm != null)
+            if (IDBOXForm != null)   // ke9ns add
                 IDBOXForm.Dispose();
-           
 
+
+            if (TOTBOXForm != null)  // ke9ns add
+                TOTBOXForm.Dispose();
 
             // ke9ns add
-                if (SpotForm != null)      // make sure spotter form is deallocated
+            if (SpotForm != null)      // make sure spotter form is deallocated
                    SpotForm.Dispose();
 
             // ke9ns add
@@ -35947,17 +35969,17 @@ namespace PowerSDR
 		}
 
         private bool vac2_enabled = false;
-        public bool VAC2Enabled
+        public bool VAC2Enabled // called by setup.cs
         {
             get { return vac2_enabled; }
             set
             {
-              if ((current_model == Model.FLEX5000 && FWCEEPROM.RX2OK) )   //|| (current_model == Model.FLEX3000))  // ke9ns mod 
-              {
+             // if ((current_model == Model.FLEX5000 && FWCEEPROM.RX2OK) )   // ke9ns mod to allow all models to use VAC2
+            //  {
                     vac2_enabled = value;
                     Audio.VAC2Enabled = value;
                     if (chkVAC2 != null) chkVAC2.Checked = value;
-              }
+            //  }
             }
         }
 
@@ -51338,9 +51360,7 @@ namespace PowerSDR
 
                     spur_reduction = setupForm.chkGeneralSpurRed.Checked;
 
-                    if (rx1_dsp_mode != DSPMode.DRM &&
-                    rx1_dsp_mode != DSPMode.SPEC)
-                        if_shift = true;
+                    if (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC) if_shift = true;
 				}
                 else if (hid_init && current_model == Model.FLEX1500)
                 {
@@ -51348,9 +51368,7 @@ namespace PowerSDR
 
                     spur_reduction = chkSR.Checked;
 
-                    if (rx1_dsp_mode != DSPMode.DRM &&
-                    rx1_dsp_mode != DSPMode.SPEC)
-                        if_shift = true;
+                    if (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC)  if_shift = true;
 
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 }
@@ -53070,7 +53088,7 @@ namespace PowerSDR
         {
             // enable VAC on console
             chkVAC1.Enabled = true;
-            chkVAC2.Enabled = false;  // set to true later if RX2 installed 
+            chkVAC2.Enabled = true;  // was false set to true later if RX2 installed 
             dax_audio_enum = true;  
         }
 
@@ -57857,8 +57875,7 @@ namespace PowerSDR
 				case DSPMode.DRM:
 					radModeDRM.BackColor = SystemColors.Control;
 
-                    if (TXProfileByMode & !initializing)
-                        drm_txprofile = comboTXProfile.Text;
+                    if (TXProfileByMode & !initializing) drm_txprofile = comboTXProfile.Text;
 
 					if_shift = true;
 					vfo_offset = 0.0;
@@ -58378,8 +58395,8 @@ namespace PowerSDR
         public bool FMData = false; // ke9ns add true=FM data mode
         public double lastdeviation = 0; // ke9ns add false = 2k, true = 5k
 
-        public const int FMDataDeviation = 10000; // ke9ns deviation amount for FM Data mode
-        public const int FMDataLowHigh = 15000; // ke9ns +10000 or -10000
+        public const int FMDataDeviation = 7000; // ke9ns deviation amount for FM Data mode
+        public const int FMDataLowHigh = 10000; // ke9ns +10000 or -10000
 
         // ke9ns add  (to allow a digital version of FM just like DIGU or DIGL)
         private void radModeFMN_MouseUp(object sender, MouseEventArgs e)
@@ -64086,7 +64103,7 @@ namespace PowerSDR
        Push up / down controls the filter width
 
 */
-            if (spacenav_controlvfos)
+            if (spacenav_controlvfos) // setupForm VFO Control
             {
                 del = Math.Exp(r.Angle / 10.0) - 1.0;
                 if (del >= 0.1)
@@ -64103,7 +64120,7 @@ namespace PowerSDR
                         VFOAFreq += del;
                 }
             }
-            if (spacenav_flypanadapter)
+            if (spacenav_flypanadapter) // setupForm Panadapter Flight
             {
                 if (Math.Abs(t.Z) > 1.0)
                 {
@@ -68687,6 +68704,144 @@ namespace PowerSDR
 
         } // txtTimer_KeyDown
 
+
+        //===============================================================================
+        // ke9ns add called by setup.cs program when TOT box checked on or off
+        public bool tot_onoff = false; // ke9ns add  ON or OFF
+        public bool TOT_TRIP = false; // ke9ns add TOT exceeded wait to clear popup to return to false
+
+        public bool TOT_ONOFF
+        {
+            get
+            {
+                return tot_onoff;
+            }
+
+            set
+            {
+                tot_onoff = value;
+
+                if (tot_onoff == true)
+                {
+                    Debug.WriteLine("TOT ON");
+                    if (TOTBOXForm == null) TOTBOXForm = new TOTBOX(this);
+
+                    Thread t5 = new Thread(new ThreadStart(TOTTIMER)); // ke9ns start TIME-OUT TIMER HERE
+                    t5.Name = "Time-Out Timer Thread";
+                    t5.IsBackground = true;
+                    t5.Priority = ThreadPriority.BelowNormal;
+                    t5.Start();
+                }
+                else
+                {
+                    tot_onoff = false; // ke9ns turn normal operation back on
+                    TOT_TRIP = false; // ke9ns turn normal operation back on
+                   if (setupForm != null) setupForm.textBoxTOT.Text = "OFF";
+                }
+
+            }
+
+
+        } // TOT_ONOFF
+
+
+
+        
+        Stopwatch TOTTIME = new Stopwatch();  // ke9ns add
+
+        public bool TOT_TX = false; // ke9ns add
+        public bool TOT_RXONLY = false; // ke9ns add
+
+        //=====================================================================
+        // ke9ns add THREAD
+        private void TOTTIMER()
+        {
+        
+            while ((tot_onoff == true) ) // exit thread if TOT turned OFF
+            {
+                Thread.Sleep(100);            // 
+
+                if (mox)
+                {
+                    if (TOT_TX == false) // if TX active start timer 1 time
+                    {
+                        TOT_TX = true;
+                        TOTTIME.Restart(); // timer on now
+
+
+                    } // if (TOT_TX == false)
+
+                } // if (mox)
+                else
+                {
+                  
+                    if (TOT_TRIP == false)
+                    {
+                        if (setupForm != null) setupForm.textBoxTOT.Text = "Ready";
+                        TOTTIME.Reset(); // dont clear this if you have tripped the timer OUT
+                        TOT_TX = false;
+                    }
+
+                } // in RX mode here
+
+
+                try
+                {
+                    if (TOT_TX == true)
+                    {
+                        if (TOTTIME.ElapsedMilliseconds > ((long)setupForm.udTOT.Value * 1000)) // 
+                        {
+                            TOT_TRIP = true;
+
+                            TOTTIME.Reset();
+
+                            if (TOTBOXForm == null) TOTBOXForm = new TOTBOX(this);
+
+                            TOTBOXForm.Show();
+                            TOTBOXForm.Focus();
+                            TOTBOXForm.WindowState = FormWindowState.Normal; // ke9ns POP UP Window for TOT
+
+                            MOX = false;
+
+                            RXOnly = true; // kill transmit
+
+                            if (setupForm != null) setupForm.textBoxTOT.Text = "TIME-OUT";
+
+                        } // if (TOTTIME.ElapsedMilliseconds > (setupForm.udTOT.Value * 1000))
+                        else if (TOT_TRIP == false)
+                        {
+                           
+                            long temp1 = (long)setupForm.udTOT.Value - ((long)TOTTIME.ElapsedMilliseconds / 1000);
+
+                            if (setupForm != null) setupForm.textBoxTOT.Text = temp1.ToString();
+
+                        }
+
+                    }
+
+
+
+                }
+                catch (Exception)
+                {
+
+                    setupForm.textBoxTOT.Text = "problem";
+                }
+
+
+            } //   while ((tot_onoff == true))
+
+            TOTTIME.Stop();
+            setupForm.textBoxTOT.Text = "OFF";
+
+        } // TOTTIMER THREAD
+
+
+
+
+
+
+        // ke9ns add
         private void txtTimer_MouseUp(object sender, MouseEventArgs e)
         {
             txtTimer.ShortcutsEnabled = false;
@@ -69879,7 +70034,7 @@ namespace PowerSDR
 
         } // pan text from console window
 
-
+        
         // ke9ns add  make sure to turn off CTUN if not in water, or pan or panfall modes
         private bool CTUN1
         {

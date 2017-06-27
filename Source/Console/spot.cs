@@ -231,7 +231,7 @@ namespace PowerSDR
         public Button SSBbutton;
         public TextBox textBox1;
         public TextBox nodeBox1;
-        private TextBox textBox3;
+        private RichTextBox textBox3;
         public TextBox callBox;
         public TextBox portBox2;
         private TextBox statusBox;
@@ -374,7 +374,7 @@ namespace PowerSDR
             this.SSBbutton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.nodeBox1 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.RichTextBox();
             this.callBox = new System.Windows.Forms.TextBox();
             this.portBox2 = new System.Windows.Forms.TextBox();
             this.statusBox = new System.Windows.Forms.TextBox();
@@ -480,13 +480,13 @@ namespace PowerSDR
             this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.textBox1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.HideSelection = false;
-            this.textBox1.Location = new System.Drawing.Point(12, 126);
+            this.textBox1.Location = new System.Drawing.Point(12, 143);
             this.textBox1.MaximumSize = new System.Drawing.Size(1000, 1000);
             this.textBox1.MaxLength = 10000000;
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(759, 203);
+            this.textBox1.Size = new System.Drawing.Size(759, 186);
             this.textBox1.TabIndex = 6;
             this.textBox1.TabStop = false;
             this.textBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDown);
@@ -511,13 +511,13 @@ namespace PowerSDR
             // textBox3
             // 
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(287, 7);
-            this.textBox3.Multiline = true;
+            this.textBox3.Location = new System.Drawing.Point(298, 7);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(484, 113);
+            this.textBox3.Size = new System.Drawing.Size(473, 130);
             this.textBox3.TabIndex = 8;
             this.textBox3.TabStop = false;
             this.textBox3.Text = resources.GetString("textBox3.Text");
+            this.textBox3.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.textBox3_LinkClicked);
             // 
             // callBox
             // 
@@ -673,7 +673,7 @@ namespace PowerSDR
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridView1.Size = new System.Drawing.Size(269, 113);
+            this.dataGridView1.Size = new System.Drawing.Size(280, 130);
             this.dataGridView1.TabIndex = 72;
             this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
@@ -704,7 +704,7 @@ namespace PowerSDR
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dataGridView2.Location = new System.Drawing.Point(498, 126);
+            this.dataGridView2.Location = new System.Drawing.Point(498, 143);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -12292,8 +12292,35 @@ RT1:
                     
             } // Calculate(oblate)
 
+        private void textBox3_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            var result = new StringBuilder(Environment.ExpandEnvironmentVariables("%userprofile%"));
 
+            try
+            {
 
+                System.Diagnostics.Process.Start(e.LinkText);    // HTTP
+            }
+            catch
+            {
+                try
+                {
+                    var link = e.LinkText.Replace("file://%userprofile%", ""); //file
+                    link = link.Replace("%20", " ");
+
+                    result.Append(link);
+
+                    Debug.WriteLine("link2 " + result.ToString());
+
+                    Process.Start("explorer.exe", result.ToString());
+                }
+                catch
+                {
+
+                }
+            }
+
+        } // textbox3_linkclicked
 
 
     } // Spotcontrol

@@ -123,6 +123,12 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <data name="chkBoxTOT.ToolTip" xml:space="preserve">
+    <value>Check to Enable Time-Out Timer.
+Which Shuts down Transmitter if you keep the Radio in TX mode beyond the Time Limit
+
+If TX Time Active exceeds Timer Limit, Flex goes into RX mode Until  POP-UP Screen is cleared</value>
+  </data>
   <data name="groupBox2.ToolTip" xml:space="preserve">
     <value>Allows you to view the Display are of PowerSDR remotely
 

@@ -46,6 +46,7 @@ using NAudio.Wave;
 using NAudio.Lame;
 
 
+
 namespace PowerSDR
 {
 	public class WaveControl : System.Windows.Forms.Form
@@ -1596,10 +1597,11 @@ namespace PowerSDR
                 WaveOptions.comboSampleRate.Text = quickmp3SR; // restore file size
 
                 //---------------------------------------------------------
-                // ke9ns add save an MP3 to go along with the WAV file
+                // ke9ns add save an MP3 to go along with the WAV file (NAudio.Lame)
                 if (chkBoxMP3.Checked == true)
                 {
                  
+                    
                     try
                     {
                         using (var reader = new WaveFileReader(file_name)) // closes reader when done using
