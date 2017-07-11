@@ -90,6 +90,8 @@ namespace PowerSDR
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.ScheduleExtra = new System.Windows.Forms.NumericUpDownTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.ScheduleStartTimeUTC = new System.Windows.Forms.DateTimePicker();
+            this.textBox9 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScheduleDurationTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScheduleExtra)).BeginInit();
@@ -235,7 +237,7 @@ namespace PowerSDR
             // 
             this.ScheduleRepeatm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ScheduleRepeatm.Image = null;
-            this.ScheduleRepeatm.Location = new System.Drawing.Point(133, 436);
+            this.ScheduleRepeatm.Location = new System.Drawing.Point(124, 438);
             this.ScheduleRepeatm.Name = "ScheduleRepeatm";
             this.ScheduleRepeatm.Size = new System.Drawing.Size(116, 23);
             this.ScheduleRepeatm.TabIndex = 70;
@@ -248,7 +250,7 @@ namespace PowerSDR
             // 
             this.ScheduleOn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ScheduleOn.Image = null;
-            this.ScheduleOn.Location = new System.Drawing.Point(237, 454);
+            this.ScheduleOn.Location = new System.Drawing.Point(67, 466);
             this.ScheduleOn.Name = "ScheduleOn";
             this.ScheduleOn.Size = new System.Drawing.Size(101, 23);
             this.ScheduleOn.TabIndex = 62;
@@ -443,7 +445,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.ScheduleExtra.Location = new System.Drawing.Point(237, 466);
+            this.ScheduleExtra.Location = new System.Drawing.Point(447, 492);
             this.ScheduleExtra.Maximum = new decimal(new int[] {
             120,
             0,
@@ -475,11 +477,36 @@ namespace PowerSDR
             this.chkAlwaysOnTop.Text = "Always On Top";
             this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
+            // ScheduleStartTimeUTC
+            // 
+            this.ScheduleStartTimeUTC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ScheduleStartTimeUTC.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.ScheduleStartTimeUTC.Location = new System.Drawing.Point(237, 451);
+            this.ScheduleStartTimeUTC.Name = "ScheduleStartTimeUTC";
+            this.ScheduleStartTimeUTC.ShowUpDown = true;
+            this.ScheduleStartTimeUTC.Size = new System.Drawing.Size(90, 20);
+            this.ScheduleStartTimeUTC.TabIndex = 73;
+            this.toolTip1.SetToolTip(this.ScheduleStartTimeUTC, "Initial Time of Schedule for this Selected Memory.\r\nIgnores the seconds.");
+            this.ScheduleStartTimeUTC.ValueChanged += new System.EventHandler(this.ScheduleStartTimeUTC_ValueChanged);
+            // 
+            // textBox9
+            // 
+            this.textBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox9.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox9.Location = new System.Drawing.Point(237, 437);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(90, 13);
+            this.textBox9.TabIndex = 74;
+            this.textBox9.Text = "Start Time (UTC)";
+            this.toolTip1.SetToolTip(this.textBox9, "Schedule Start Time to change Frequency and optionally record");
+            // 
             // MemoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(975, 558);
+            this.Controls.Add(this.textBox9);
+            this.Controls.Add(this.ScheduleStartTimeUTC);
             this.Controls.Add(this.buttonTS1);
             this.Controls.Add(this.ScheduleExtra);
             this.Controls.Add(this.ScheduleRepeatm);
@@ -558,6 +585,8 @@ namespace PowerSDR
         private System.Windows.Forms.ButtonTS buttonTS1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.DateTimePicker ScheduleStartTimeUTC;
+        private System.Windows.Forms.TextBox textBox9;
     } //memoryform
 
 } //PowerSDR

@@ -137,6 +137,7 @@
     <None Include="..\Console\titlebar.cs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="..\hiir\hiir.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="am_demod.h">

@@ -35,49 +35,65 @@ Bridgewater, NJ 08807
 
 // cf "Musical Engineer's Handbook" by Bernie Hutchins
 
-PRIVATE REAL
-pole[12] = {
+PRIVATE REAL pole[12] =
+{
    0.3609f, 2.7412f, 11.1573f, 44.7581f, 179.6242f,  798.4578f,
    1.2524f, 5.5671f, 22.3423f, 89.6271f, 364.7914f, 2770.1114f
 };
 
-Hilbert
-newHilbert(CXB ibuf, CXB obuf, REAL rate) {
+
+//==================================================================
+Hilbert newHilbert(CXB ibuf, CXB obuf, REAL rate)
+{
   Hilbert h = (Hilbert) safealloc(1, sizeof(HilbertInfo), "Hilbert Transformer");
+
   h->size = CXBsize(ibuf);
   h->c  = newvec_REAL(12, "Hilbert Transformer c vector");
   h->x1 = newvec_REAL(12, "Hilbert Transformer x1 vector");
   h->y1 = newvec_REAL(12, "Hilbert Transformer y1 vector");
   {
     int i;
-    for (i = 0; i < 12; i++) {
+    for (i = 0; i < 12; i++)
+	{
       REAL u = (REAL)(pole[i] * M_PI * 15.0 * rate);
       h->c[i] = (REAL)((u - 1.0) / (u + 1.0));
       h->x1[i] = h->y1[i] = 0.0;
     }
   }
+
   h->buf.i = newCXB(h->size, CXBbase(ibuf), "Hilbert Transformer input buffer");
   h->buf.o = newCXB(h->size, CXBbase(obuf), "Hilbert Transformer output buffer");
+ 
   return h;
 }
 
-Hilsim
-newHilbertsim(CXB ibuf, CXB obuf)
+
+
+//==================================================================
+Hilsim newHilbertsim(CXB ibuf, CXB obuf)
 {
   Hilsim h;
   h = (Hilsim) safealloc(1, sizeof(HilsimInfo), "Hilbert Transformer");
+
   h->size = CXBsize(ibuf);
+
   h->buf.i = newCXB(h->size, CXBbase(ibuf), "Hilbert Transformer input buffer");
   h->buf.o = newCXB(h->size, CXBbase(obuf), "Hilbert Transformer output buffer");
-  memset(h->d,0,sizeof(REAL)*6);
-  memset(h->y,0,sizeof(REAL)*6);
-  memset(h->x,0,sizeof(REAL)*4);
+
+  memset(h->d, 0, sizeof(REAL)*6);
+  memset(h->y, 0, sizeof(REAL)*6);
+  memset(h->x, 0, sizeof(REAL)*4);
+
   h->invert = TRUE;
   return h;
 }
-void
-delHilbert(Hilbert h) {
-  if (h) {
+
+
+//==================================================================
+void delHilbert(Hilbert h)
+{
+  if (h) 
+  {
     delvec_REAL(h->c);
     delvec_REAL(h->x1);
     delvec_REAL(h->y1);
@@ -87,33 +103,41 @@ delHilbert(Hilbert h) {
   }
 }
 
+
+//==================================================================
 void delHilsim(Hilsim h)
 {
-	if (h) {
+	if (h) 
+	{
 		delCXB(h->buf.i);
 		delCXB(h->buf.o);
 		safefree((char *)h);
 	}
 }
 
-void
-hilbert_transform(Hilbert h) {
+
+//==================================================================
+void hilbert_transform(Hilbert h)
+{
   REAL xn1, xn2, yn1, yn2;
   int i;
 
-  for (i = 0; i < h->size; i++) {
+  for (i = 0; i < h->size; i++) 
+  {
     int j;
 
     xn1 = xn2 = CXBreal(h->buf.i, i);
 
-    for (j = 0; j < 6; j++) {
+    for (j = 0; j < 6; j++)
+	{
       yn1 = h->c[j] * (xn1 - h->y1[j]) + h->x1[j];
       h->x1[j] = xn1;
       h->y1[j] = yn1;
       xn1 = yn1;
     }
     
-    for (j = 6; j < 12; j++) {
+    for (j = 6; j < 12; j++) 
+	{
       yn2 = h->c[j] * (xn2 - h->y1[j]) + h->x1[j];
       h->x1[j] = xn2;
       h->y1[j] = yn2;
@@ -124,8 +148,9 @@ hilbert_transform(Hilbert h) {
   }
 }
  
-void
-hilsim_transform(Hilsim h) {
+//==================================================================
+void hilsim_transform(Hilsim h) 
+{
   REAL *x = h->x,
        *y = h->y,
        *d = h->d;

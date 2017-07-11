@@ -107,7 +107,7 @@ namespace PowerSDR
 
         } // httpserver()
 
-
+       
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
@@ -120,6 +120,8 @@ namespace PowerSDR
             try
             {
                 m_listener.Start();
+
+         
             }
             catch (Exception e)
             {
@@ -137,6 +139,8 @@ namespace PowerSDR
                 try
                 {
                     Thread.Sleep(50);
+
+                 
                     TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
 
                     //   TcpClient client = m_listener.AcceptTcpClient();
@@ -549,6 +553,8 @@ namespace PowerSDR
           
         } // getImage()
 
+
+    
 
 
 /*     // ke9ns if you want to save image as a file and then read file

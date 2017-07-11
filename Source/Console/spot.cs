@@ -941,8 +941,8 @@ namespace PowerSDR
             this.checkBoxMUF.Size = new System.Drawing.Size(75, 24);
             this.checkBoxMUF.TabIndex = 95;
             this.checkBoxMUF.Text = "VOACAP";
-            this.toolTip1.SetToolTip(this.checkBoxMUF, "Use VOACAP to map Signal Strength from your station, \r\nbased on your Lat & Long\r\n" +
-        "\r\nView using TRACK button\r\n\r\n");
+            this.toolTip1.SetToolTip(this.checkBoxMUF, "Hit F1 for a Full Description\r\n\r\nUse VOACAP to map Signal Strength from your stat" +
+        "ion, \r\nbased on your Lat & Long\r\n\r\nView using TRACK button\r\n\r\n");
             this.checkBoxMUF.CheckedChanged += new System.EventHandler(this.checkBoxMUF_CheckedChanged);
             this.checkBoxMUF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxMUF_MouseDown);
             // 
@@ -1472,6 +1472,7 @@ namespace PowerSDR
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximumSize = new System.Drawing.Size(800, 1000);
             this.Menu = this.mainMenu1;
             this.MinimumSize = new System.Drawing.Size(800, 400);
@@ -1479,6 +1480,7 @@ namespace PowerSDR
             this.Text = "DX / SWL Spotter";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SpotControl_FormClosing);
             this.Load += new System.EventHandler(this.SpotControl_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SpotControl_KeyDown);
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
@@ -12322,6 +12324,56 @@ RT1:
 
         } // textbox3_linkclicked
 
+
+        //=========================================
+        // for F1 help sceen
+        private void SpotControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            Debug.WriteLine("F1 key0");
+
+
+
+            if (e.KeyCode == Keys.F1) // ke9ns add for help messages (F1 help screen)
+            {
+              
+
+                Debug.WriteLine("F1 key");
+
+                if (MouseIsOverControl(checkBoxMUF) == true)
+                {
+                    if (console.helpboxForm == null || console.helpboxForm.IsDisposed) console.helpboxForm = new helpbox(console);
+
+                    console.helpboxForm.Show();
+                    console.helpboxForm.Focus();
+                    console.helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
+                  
+                    console.helpboxForm.helpbox_message.Text = console.helpboxForm.PropagationTextBox.Text;
+                }
+                else if (MouseIsOverControl(btnTrack) == true)
+                {
+                    if (console.helpboxForm == null || console.helpboxForm.IsDisposed) console.helpboxForm = new helpbox(console);
+
+                    console.helpboxForm.Show();
+                    console.helpboxForm.Focus();
+                    console.helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
+                    
+                    console.helpboxForm.helpbox_message.Text = console.helpboxForm.TRACKMap.Text;
+                }
+
+
+
+            } // if (e.KeyCode == Keys.F1)
+
+
+
+
+        } // SpotControl_KeyDown
+
+
+        public bool MouseIsOverControl(Control c)
+        {
+            return c.ClientRectangle.Contains(c.PointToClient(Control.MousePosition));
+        }
 
     } // Spotcontrol
 

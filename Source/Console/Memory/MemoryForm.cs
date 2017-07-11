@@ -116,6 +116,10 @@ namespace PowerSDR
         public MemoryForm(Console c)
         {
             InitializeComponent();
+
+            ScheduleStartTimeUTC.Format = DateTimePickerFormat.Custom;
+            ScheduleStartTimeUTC.CustomFormat = "HH:mm:ss";
+
             console = c;
             Common.RestoreForm(this, "MemoryForm", true); // ke9ns bring up memory window in place you left it last time
 
@@ -896,6 +900,17 @@ namespace PowerSDR
             }
         }
 
+        //===============================================================================
+        // ke9ns add UTC version of start time
+        private void ScheduleStartTimeUTC_ValueChanged(object sender, EventArgs e)
+        {
+
+            ScheduleStartTime.Value = ScheduleStartTimeUTC.Value.ToLocalTime();
+
+
+
+        } // ScheduleStartTimeUTC_ValueChanged
+
 
         //===============================================================================
         // ke9ns add DATE for datetime for schedule
@@ -905,6 +920,11 @@ namespace PowerSDR
 
             ScheduleStartDate.Value = ScheduleStartDate.Value.Date + ScheduleStartTime.Value.TimeOfDay;
 
+            if (ScheduleStartTimeUTC.Value != ScheduleStartTime.Value.ToUniversalTime())
+            {
+                ScheduleStartTimeUTC.Value = ScheduleStartTime.Value.ToUniversalTime();
+            }
+           
             try
             {
                 LASTUTC = 0;
@@ -1539,6 +1559,10 @@ namespace PowerSDR
         {
 
         }
+
+      
+
+
     } // memoryform
 
     } // powerSDR

@@ -336,6 +336,7 @@
   <ItemGroup>
     <None Include="..\Console\svnrev.cs" />
     <None Include="..\Console\titlebar.cs" />
+    <None Include="..\hiir\hiir.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="am_demod.h" />

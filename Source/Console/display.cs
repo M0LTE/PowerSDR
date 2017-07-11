@@ -1724,7 +1724,7 @@ namespace PowerSDR
 		unsafe public static void RenderGDIPlus(ref PaintEventArgs e)
 		{
 
-             
+         
             /*BitmapData display_bmpData = display_bmp.LockBits(
 				new Rectangle(0, 0, W, H),
 				ImageLockMode.WriteOnly,
@@ -1749,9 +1749,9 @@ namespace PowerSDR
 
 			display_bmp.UnlockBits(display_bmpData);*/
 
-			//Graphics g = Graphics.FromImage(display_bitmap);
-			//g.SmoothingMode = SmoothingMode.AntiAlias;
-			bool update = true;
+            //Graphics g = Graphics.FromImage(display_bitmap);
+            //g.SmoothingMode = SmoothingMode.AntiAlias;
+            bool update = true;
 			
 //======================================================
 // ke9ns RX1 only TOP of panel to bottom of panel H
@@ -1759,7 +1759,92 @@ namespace PowerSDR
 
             K13 = H;  // used to create special BMP file size
 
-			if(!split_display)
+            /*
+            if (console.N1MM_MINIMIZE == true)
+            {
+
+                if (console.N1MM_ON == true)
+                {
+                    console.N1MM_Sample = W;
+                    console.N1MM_Low = (int)((vfoa_hz + Low) / 1000);  //rx_display_low;
+                    console.N1MM_High = (int)((vfoa_hz + High) / 1000);
+
+                }
+
+                //=================================================================
+                // draw line that makes up spectrum (width of window)
+                //=================================================================
+                for (int i = 0; i < W; i++)
+                {
+                    float max = float.MinValue;                             // max = y point determined by RX data of spectrum as you go from 0 to W
+                    float dval = i * slope + start_sample_index;            // dval = how many digital values per pixel (going left to right)
+                    int lindex = (int)Math.Floor(dval);                     // L index = int of dval
+                    int rindex = (int)Math.Floor(dval + slope);             // R index = int of dval + slope ?
+
+
+
+                    if (rx == 1)
+                    {
+
+                        if (slope <= 1.0 || lindex == rindex)   // if your zoom in there is less than 1 digital value per pixel so fake it.
+                        {
+                            max = current_display_data[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                        }
+                        else // otherwise there is more than 1 digital value per pixel so take the largest value ?
+                        {
+                            for (int j = lindex; j < rindex; j++)
+                                if (current_display_data[j % DATA_BUFFER_SIZE] > max) max = current_display_data[j % DATA_BUFFER_SIZE]; // % modulus (i.e. remainder only)
+                        }
+
+
+
+                    } // rx1
+                    else if (rx == 2)
+                    {
+                        if (slope <= 1.0 || lindex == rindex)
+                        {
+                            max = current_display_data_bottom[lindex % DATA_BUFFER_SIZE] * ((float)lindex - dval + 1) + current_display_data_bottom[(lindex + 1) % DATA_BUFFER_SIZE] * (dval - (float)lindex);
+                        }
+                        else
+                        {
+                            for (int j = lindex; j < rindex; j++)
+                                if (current_display_data_bottom[j % DATA_BUFFER_SIZE] > max) max = current_display_data_bottom[j % DATA_BUFFER_SIZE];
+                        }
+                    } // rx2
+
+                    if (rx == 1) max += rx1_display_cal_offset;
+                    else if (rx == 2) max += rx2_display_cal_offset;
+
+                    if (!local_mox)
+                    {
+                        if (rx == 1) max += rx1_preamp_offset;
+                        else if (rx == 2) max += rx2_preamp_offset;
+                    }
+
+                    if (max > local_max_y)
+                    {
+                        local_max_y = max;
+                        max_x = i;
+                    }
+
+
+                    //=====================================================
+                    // ke9ns add 
+                    if ((console.N1MM_ON == true) && (!mox))
+                    {
+                        console.N1MM_Data[i] = (int)max;
+
+                        if ((int)max < console.N1MM_Floor) console.N1MM_Floor = (int)max;
+
+                    } // if (console.N1MM_ON == true)
+
+
+                } // for (int i = 0; i < W; i++)
+
+            } //  if (console.N1MM_MINIMIZE == true)
+            */
+
+            if (!split_display)
 			{
 				switch(current_display_mode) // ke9ns full screen display (only RX1)
 				{
@@ -1800,13 +1885,15 @@ namespace PowerSDR
 						update = DrawHistogram(e.Graphics, W, H);
 						break;
 					case DisplayMode.PANAFALL:
-            
+
+                      
                         if (map == 1) // ke9ns add  if in special map viewing panafall mode
                         {
                            
                             K9 = 7;             //special panafall mode for sun/grayline tracking mode
                             K11 = 0;
 
+                          
                             update = DrawPanadapter(e.Graphics, W, 5 * H / 6, 1, false);    //     in pure panadapter mode: update = DrawPanadapter(e.Graphics, W, H, 1, false);
                             update = DrawWaterfall(e.Graphics, W, 5 * H / 6, 1, true);        // bottom half RX2 is not on
                             split_display = false;
@@ -2534,7 +2621,7 @@ namespace PowerSDR
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
         {
 
-
+            
             if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan display in 1/3 instead of 1/2
 
             if ((K9 == 5) && (K10 == 5) && (bottom)) H1 = H - (H / 2); // to help RX2 pan display in 1/4 instead of 1/2
@@ -2560,16 +2647,16 @@ namespace PowerSDR
 
             int grid_step = 0;  // 
 
-
+          
             //------------------------------------------------------------------------------
             // ke9ns add   this S-Unit scale is designed to display a Grid based on the the S unit dBm
             if ((display_label_align == DisplayLabelAlignment.Sunit) && (!local_mox)) // if in S unit mode then draw lines only on the S unit point
             {
 
                 if (SUNIT == false)  SUNIT = true; // let code know we are now in special S-Unit mode
-               
 
-               
+              
+
 
                 if ((K9 == 5)) // if rx2 is enabled cut the number of grids down in half
                 {
@@ -2704,7 +2791,7 @@ namespace PowerSDR
             double w_pixel_step = (double)W * freq_step_size / width;
             int w_steps = width / freq_step_size;
 
-
+         
 
             //===========================================================
             // calculate vertical step size
@@ -2782,6 +2869,7 @@ namespace PowerSDR
                         filter_left_x, top, filter_right_x - filter_left_x, H - top);
                 }
 
+               
                 //===============================================================
                 // draw Sub RX 0Hz line
                 //===============================================================
@@ -2800,6 +2888,7 @@ namespace PowerSDR
 
             } // draw sub filter
 
+        
             //============================================================================================
             //============================================================================================
             //============================================================================================
@@ -2825,17 +2914,19 @@ namespace PowerSDR
                     // make the filter display at least one pixel wide.
                     if (filter_left_x == filter_right_x) filter_right_x = filter_left_x + 1;
 
-                 
+
                     // draw rx filter
-                 //   if (bottom)
-                 //   {
-                  //      g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
-                   //         filter_left_x, H + top, filter_right_x - filter_left_x, H + H - top );
-                   // }
-                   // else // top half
-                   // {
-                        g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                    //   if (bottom)
+                    //   {
+                    //      g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
+                    //         filter_left_x, H + top, filter_right_x - filter_left_x, H + H - top );
+                    // }
+                    // else // top half
+                    // {
+                  
+                    g.FillRectangle(new SolidBrush(display_filter_color),   // draw filter overlay
                             filter_left_x, top, filter_right_x - filter_left_x, H - top  );
+
                    // }
                 } // main RX1 filter
                 else if ((local_mox) && (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU) && (!split_enabled)) // draw CW rx box when you tx.
@@ -2858,7 +2949,7 @@ namespace PowerSDR
                         filter_left_x, top, filter_right_x - filter_left_x, H - top);
                    
                 }
-
+               
                 //============================================================================================
                 // ke9ns  RX1 draw tx line for everything but cw
                 //============================================================================================
@@ -3307,7 +3398,7 @@ namespace PowerSDR
                     else
                         drawNotchBar(g, n, notch_left_x, notch_right_x, top, H - top, c1, c2);
                 }
-
+              
                 //draw notch statuses in this for loop
                 if (!tnf_zoom)
                 {
@@ -12227,9 +12318,9 @@ namespace PowerSDR
                  spectrum_grid_min = spectrum_grid_min1;
 
             }
-
+          
             DrawPanadapterGrid(ref g, W, H, rx, bottom);
-
+          
             if ((K9 == 5) && (K10 != 5) && (bottom)) H1 = H - (H / 2); // for display in 1/3 area instead of 1/2
 
             if ((K9 == 5) && (K10 == 5) && (bottom)) H2 = H - (H / 2); // for display in 1/4 area instead of 1/2
@@ -12425,8 +12516,15 @@ namespace PowerSDR
                 IDENT_Reset = true;
 
             }
-
-
+            
+            // ke9ns add
+            if (console.N1MM_ON == true)
+            {
+                console.N1MM_Sample = W;
+                console.N1MM_Low = (int)((vfoa_hz + Low) / 1000);  //rx_display_low;
+                console.N1MM_High = (int)((vfoa_hz + High) / 1000);
+              
+            }
 
             //=================================================================
             // draw line that makes up spectrum (width of window)
@@ -12437,6 +12535,7 @@ namespace PowerSDR
 				float dval = i * slope + start_sample_index;            // dval = how many digital values per pixel (going left to right)
 				int lindex = (int)Math.Floor(dval);                     // L index = int of dval
 				int rindex = (int)Math.Floor(dval + slope);             // R index = int of dval + slope ?
+
 
               
 				if(rx == 1)
@@ -12483,7 +12582,19 @@ namespace PowerSDR
 					max_x = i;
 				}
 
-				points[i].X = i; //  position as you progress left to right
+
+                //=====================================================
+                // ke9ns add 
+                if ((console.N1MM_ON == true) && (!mox))
+                {
+                     console.N1MM_Data[i] = (int)max;
+
+                    if ((int)max < console.N1MM_Floor) console.N1MM_Floor = (int)max;
+
+                } // if (console.N1MM_ON == true)
+
+
+                points[i].X = i; //  position as you progress left to right
 
                 if ((K9 == 5) && (K10 != 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H1 / yRange));  // display in 3rds
                 else if ((K9 == 5) && (K10 == 5) && (bottom)) points[i].Y = (int)(Math.Floor((spectrum_grid_max - max) * H2 / yRange));  // display in 4ths
@@ -12890,8 +13001,7 @@ namespace PowerSDR
                     int notch_zoom_left_x = (int)((float)(notch.Freq * 1e6 - rf_freq - notch.BW / 2 - low - rit) / (high - low) * W);
                     int notch_zoom_right_x = (int)((float)(notch.Freq * 1e6 - rf_freq + notch.BW / 2 - low - rit) / (high - low) * W);
 
-                    if (notch_zoom_left_x == notch_zoom_right_x)
-                        notch_zoom_right_x = notch_zoom_left_x + 1;
+                    if (notch_zoom_left_x == notch_zoom_right_x)  notch_zoom_right_x = notch_zoom_left_x + 1;
 
                     //draw zoomed notch bars
                     if (!bottom)         drawNotchBar(g, notch, notch_zoom_left_x, notch_zoom_right_x, 0, (int)(H / zoom_height), c1, c2);
@@ -13189,7 +13299,6 @@ namespace PowerSDR
 
             //=========================================================
             // ke9ns add   
-
        
             if ((console.ScanForm != null) && (console.ScanForm.chkBoxIdent.Checked == true) && (rx == 1))
             {

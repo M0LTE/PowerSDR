@@ -380,8 +380,8 @@ PRIVATE void setup_tx (unsigned int thread)
 
 	tx[thread].fm.input_LPF3 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 0.25f);	//4 pole butterworth Q = 0.76537, 1.84776	
 	tx[thread].fm.input_LPF4 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 1.75f);	//4 pole butterworth Q = 0.76537, 1.84776
-	tx[thread].fm.input_HPF3 = new_IIR_HPF_2P(tx[thread].buf.i, uni[thread].samplerate, 150.0f, 0.34f);	//4 pole butterworth Q = 0.76537, 1.84776	
-	tx[thread].fm.input_HPF4 = new_IIR_HPF_2P(tx[thread].buf.i, uni[thread].samplerate, 150.0f, 0.94f);	//4 pole butterworth Q = 0.76537, 1.84776	
+	tx[thread].fm.input_HPF3 = new_IIR_HPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLow, 0.34f);	//4 pole butterworth Q = 0.76537, 1.84776	
+	tx[thread].fm.input_HPF4 = new_IIR_HPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLow, 0.94f);	//4 pole butterworth Q = 0.76537, 1.84776	
 
 	tx[thread].fm.output_LPF3 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 0.25f);	//4 pole butterworth Q = 0.76537, 1.84776	
 	tx[thread].fm.output_LPF4 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 1.75f);	//4 pole butterworth Q = 0.76537, 1.84776	

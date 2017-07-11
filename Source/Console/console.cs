@@ -790,8 +790,8 @@ namespace PowerSDR
             private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
                IntPtr pdv, [In] ref uint pcFonts); // this imports the addfont call
        
-            private static FontFamily S1,S2,S3;    // setup 3 font families
-            private static  Font ff,ff1,ff2,ff3,ff4,ff5,ff6,ff7,ff8;  // 8 different font sizes and styles
+            private static FontFamily S1,S2,S3,S4;    // setup 3 font families
+            private static  Font ff,ff1,ff2,ff3,ff4,ff5,ff6,ff7,ff8, ff9, ff9a;  // 8 different font sizes and styles
 
 
         //============================================================================ ke9ns ad
@@ -1793,20 +1793,27 @@ namespace PowerSDR
             byte[] fontArray = Properties.Resources.swissek;  //  swissek buffer to hold Font file
             int dataLength = Properties.Resources.swissek.Length; //  swissek get length of Font file
 
-            byte[] fontArray1 = Properties.Resources.swissb;  // swissbi  buffer to hold Font file
+            byte[] fontArray1 = Properties.Resources.swissb;  // swissbi  buffer to hold Font file     SWIS721 Bold
             int dataLength1 = Properties.Resources.swissb.Length; // swissbi  get length of Font file
 
-            byte[] fontArray2 = Properties.Resources.swisscki;  // swissbi  buffer to hold Font file
-            int dataLength2 = Properties.Resources.swisscki.Length; // swissbi  get length of Font file
+            byte[] fontArray2 = Properties.Resources.swisscki;  // swisscki  buffer to hold Font file    SWIS721 Condensed Kerfed Italic FONT
+            int dataLength2 = Properties.Resources.swisscki.Length; // swisscki  get length of Font file
+
+
+            byte[] fontArray3 = Properties.Resources.swissbo;  // swisscbo  buffer to hold Font file     SWIS721 OUTLINE FONT
+            int dataLength3 = Properties.Resources.swissbo.Length; // swisscbo  get length of Font file
 
 
             IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength); //int pointer to a allocated block of unmanaged memory the size of the Font File
             IntPtr ptrData1 = Marshal.AllocCoTaskMem(dataLength1); //int pointer to a allocated block of unmanaged memory the size of the Font File
            IntPtr ptrData2 = Marshal.AllocCoTaskMem(dataLength2); //int pointer to a allocated block of unmanaged memory the size of the Font File
+            IntPtr ptrData3 = Marshal.AllocCoTaskMem(dataLength3); //int pointer to a allocated block of unmanaged memory the size of the Font File
+
 
             Marshal.Copy(fontArray, 0, ptrData, dataLength); // copy Font File bytes source -> into unmanged memory block
             Marshal.Copy(fontArray1, 0, ptrData1, dataLength1); // copy Font File bytes source -> into unmanged memory block
-           Marshal.Copy(fontArray2, 0, ptrData2, dataLength2); // copy Font File bytes source -> into unmanged memory block
+            Marshal.Copy(fontArray2, 0, ptrData2, dataLength2); // copy Font File bytes source -> into unmanged memory block
+            Marshal.Copy(fontArray3, 0, ptrData3, dataLength3); // copy Font File bytes source -> into unmanged memory block
 
             uint cFonts = 0;
            
@@ -1814,22 +1821,28 @@ namespace PowerSDR
             AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
             AddFontMemResourceEx(ptrData1, (uint)fontArray1.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
            AddFontMemResourceEx(ptrData2, (uint)fontArray2.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
+            AddFontMemResourceEx(ptrData3, (uint)fontArray3.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
 
             PrivateFontCollection pfc = new PrivateFontCollection();  // class to provide client provided fonts
             PrivateFontCollection pfc1 = new PrivateFontCollection();  // class to provide client provided fonts
+            PrivateFontCollection pfc3 = new PrivateFontCollection();  // class to provide client provided fonts
+
 
             pfc.AddMemoryFont(ptrData, dataLength); // add Font from unmanaged memory block
             pfc.AddMemoryFont(ptrData1, dataLength1); // add Font from unmanaged memory block
             pfc1.AddMemoryFont(ptrData2, dataLength2); // add Font from unmanaged memory block
+            pfc3.AddMemoryFont(ptrData3, dataLength3); // add Font from unmanaged memory block
 
             Marshal.FreeCoTaskMem(ptrData);  // release unmanaged memory block (safe again)
             Marshal.FreeCoTaskMem(ptrData1);  // release unmanaged memory block (safe again)
             Marshal.FreeCoTaskMem(ptrData2);  // release unmanaged memory block (safe again)
+            Marshal.FreeCoTaskMem(ptrData3);  // release unmanaged memory block (safe again)
 
-            S1 = pfc.Families[0];
-            S2 = pfc.Families[1];
+            S1 = pfc.Families[0]; // swissek
+            S2 = pfc.Families[1]; // swissb  Swis721 BT Bold
 
-            S3 = pfc1.Families[0];
+            S3 = pfc1.Families[0]; //swisscki
+            S4 = pfc3.Families[0]; //swisscbo
 
             ff = new Font(S1, 7.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BlkEx B  // analog meters
             ff1 = new Font(S1, 6.9f, FontStyle.Bold | FontStyle.Italic); // Swis721 BlkEx B // white numbers
@@ -1850,6 +1863,10 @@ namespace PowerSDR
 
             ff6 = new Font(S3, 32.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BI for txtVFOAMSD (A and B) its already a Bold and Italic font
             ff7 = new Font(S3, 27.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BI for txtVFOALSD (A and B)
+
+            ff9 = new Font(S4, 32.5f,  FontStyle.Bold); // Swis721 BO for txtVFOAMSD (A and B) its already a Open and Italic font
+            ff9a = new Font(S4, 27.0f, FontStyle.Bold); // Swis721 BO for txtVFOAMSD (A and B) its already a Open and Italic font
+
 
             //============================================================================================================ ke9ns add end
 
@@ -6401,6 +6418,8 @@ namespace PowerSDR
             this.trackMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.trackMenuItem1.Name = "trackMenuItem1";
             this.trackMenuItem1.Click += new System.EventHandler(this.trackMenuItem1_Click);
+            this.trackMenuItem1.MouseEnter += new System.EventHandler(this.trackMenuItem1_MouseEnter);
+            this.trackMenuItem1.MouseLeave += new System.EventHandler(this.trackMenuItem1_MouseLeave);
             // 
             // herosToolStripMenuItem
             // 
@@ -9220,7 +9239,8 @@ namespace PowerSDR
             Debug.WriteLine("((((((((TERMINATE PROGRM 1))))))))))))))))");
 
             vfodial = false; // ke9ns add to terminal the dial routine
-          
+            N1MM_ON = false; // ke9ns add to shut off N1MM
+
             try
             {   // always close Pal as it was open to detect radios
                 //if (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)
@@ -36294,6 +36314,21 @@ namespace PowerSDR
 			}
 		}
 
+        bool vfoopenfont = false; // ke9ns add
+
+        public bool VFOOpenFont
+        {
+            get { return false; }
+
+            set
+            {
+                vfoopenfont = value;
+
+              
+            }
+
+
+        } // VFOOpenFont
 
 
         //===============================================================
@@ -36321,16 +36356,35 @@ namespace PowerSDR
 
                 if (value == true) 
                 {
-                 
-                    txtVFOAFreq.Font = ff6; // ke9ns add embedded Swis721 B and I
-                    txtVFOBFreq.Font = ff6; // ke9ns add embedded Swis721
-                    txtVFOAMSD.Font = ff6; // ke9ns add embedded Swis721
-                    txtVFOBMSD.Font = ff6; // ke9ns add embedded Swis721
-                    txtVFOALSD.Font = ff7; // ke9ns add embedded Swis721
-                    txtVFOBLSD.Font = ff7; // ke9ns add embedded Swis721
 
-                    boldfont = 6;
-                    boldfont1 = -5;
+                    if (vfoopenfont == true)
+                    {
+                        txtVFOAFreq.Font = ff9; // ke9ns add embedded Swis721 B and I
+                        txtVFOBFreq.Font = ff9; // ke9ns add embedded Swis721
+                        txtVFOAMSD.Font = ff9; // ke9ns add embedded Swis721
+                        txtVFOBMSD.Font = ff9; // ke9ns add embedded Swis721
+
+                        txtVFOALSD.Font = ff9a; // ke9ns add embedded Swis721
+                        txtVFOBLSD.Font = ff9a; // ke9ns add embedded Swis721
+
+                        boldfont = 4;
+                        boldfont1 = -5;
+                    }
+                    else
+                    {
+                        txtVFOAFreq.Font = ff6; // ke9ns add embedded Swis721 B and I
+                        txtVFOBFreq.Font = ff6; // ke9ns add embedded Swis721
+                        txtVFOAMSD.Font = ff6; // ke9ns add embedded Swis721
+                        txtVFOBMSD.Font = ff6; // ke9ns add embedded Swis721
+
+                        txtVFOALSD.Font = ff7; // ke9ns add embedded Swis721
+                        txtVFOBLSD.Font = ff7; // ke9ns add embedded Swis721
+
+                        boldfont = 6;
+                        boldfont1 = -5;
+                    }
+
+                  
 
                 }
                 else
@@ -37034,7 +37088,9 @@ namespace PowerSDR
             switch (current_display_engine)
 			{
 				case DisplayEngine.GDI_PLUS:
+
                     picDisplay.Invalidate();
+                   
                     
 					break;
 					/*case DisplayEngine.DIRECT_X:
@@ -37207,14 +37263,21 @@ namespace PowerSDR
         } // WaterfallPixelToTime
 
         #endregion
-        
+
         #region Paint Event Handlers
         // ======================================================
         // Paint Event Handlers
         // ======================================================
 
-        private void picDisplay_Paint(object sender, PaintEventArgs e)
-		{
+
+        PaintEventArgs PD;
+
+        private void picDisplay_Paint(object sender, PaintEventArgs e) //System.Windows.Forms.PaintEventArgs
+        {
+            PD = e;
+
+            Debug.WriteLine("picDisplay Paint here");
+
             if (panelTSBandStack.Enabled == true) // ke9ns add
             {
               
@@ -37222,11 +37285,15 @@ namespace PowerSDR
 
             }
 
+           
+
             switch (current_display_engine)
 			{
 				case DisplayEngine.GDI_PLUS:
-					Display.RenderGDIPlus(ref e);
-					break;
+
+                   
+                    Display.RenderGDIPlus(ref PD);  // System.Windows.Forms.PaintEventArgs
+                    break;
 				case DisplayEngine.DIRECT_X:
 					/*Thread t = new Thread(new ThreadStart(Display.RenderDirectX));
 						t.Name = "DirectX Background Update";
@@ -46698,14 +46765,15 @@ namespace PowerSDR
         }
 
         private static byte regBand = 0; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking) 1=CTRL key pressed
-        public static bool ALTM = false; // ke9ns add
-       
+        public static bool ALTM = false; // ke9ns add ALT + M key used to add memory
+        public static bool HELPMAP = false; // ke9ns add true = mouse over map menuitem button trackmenuitem1
+
         //===============================================================================================================
         //===============================================================================================================
         //===============================================================================================================
         private void Console_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e )
 		{
-            if (e.KeyCode == Keys.F1) // ke9ns add for help messages
+            if (e.KeyCode == Keys.F1) // ke9ns add for help messages (F1 help screen)
             {
             
                 if (MouseIsOverControl(txtTimer) == true)
@@ -46725,13 +46793,23 @@ namespace PowerSDR
                     helpboxForm.Show();
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
-
                   
                     helpboxForm.helpbox_message.Text = helpboxForm.solar_message.Text;
 
+                }
+                else if (HELPMAP == true) 
+                {
+                    if (helpboxForm == null || helpboxForm.IsDisposed) helpboxForm = new helpbox(this);
 
+                    helpboxForm.Show();
+                    helpboxForm.Focus();
+                    helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                    helpboxForm.helpbox_message.Text = helpboxForm.TRACKMap.Text;
 
                 }
+
+
 
             } // if (e.KeyCode == Keys.F1)
 
@@ -57012,6 +57090,8 @@ namespace PowerSDR
 
         private void picDisplay_Resize(object sender, System.EventArgs e)
 		{
+          //  Debug.WriteLine("picDisplay RESIZE  here");
+
 			Display.Target = picDisplay;
 			Display.Init();
 			//Display.DrawBackground();
@@ -63591,8 +63671,29 @@ namespace PowerSDR
 //================================================================================================ke9ns MOD
 		public void Console_Resize(object sender, System.EventArgs e)
 		{
-			if (this.WindowState == FormWindowState.Minimized)
-				return;
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                N1MM_MINIMIZE = true;
+
+                if (N1MM_ON == true) // ke9ns add
+                {
+                   
+
+                  //  if (mox)
+                        return;
+                }
+                else
+                {
+                    N1MM_MINIMIZE = false;
+                    return;
+                }
+
+
+            } // window is minimized
+            else
+            {
+                N1MM_MINIMIZE = false; 
+            }
 
 			if(dpi == 0) dpi = (int)picDisplay.CreateGraphics().DpiX;
 
@@ -66025,15 +66126,26 @@ namespace PowerSDR
         // ke9ns add to draw curved colored line around groupbox
         private void grpVFOA_Paint(object sender, PaintEventArgs p)  // ke9ns ADD
         {
-           
-             //   Debug.WriteLine("z layer for VFOA1 " + grpVFOA.Parent.Controls.GetChildIndex(grpVFOA));  //7
-             //   Debug.WriteLine("z layer for VFOA2 " + grpVFOA.Parent.Controls.GetChildIndex(VFODialA));  //46
-             //   Debug.WriteLine("z layer for VFOA3 " + grpVFOA.Parent.Controls.GetChildIndex(VFODialAA));  //2;
-             //   VFODialAA.Parent.Controls.SetChildIndex(VFODialAA, 45);
+
+            //   Debug.WriteLine("z layer for VFOA1 " + grpVFOA.Parent.Controls.GetChildIndex(grpVFOA));  //7
+            //   Debug.WriteLine("z layer for VFOA2 " + grpVFOA.Parent.Controls.GetChildIndex(VFODialA));  //46
+            //   Debug.WriteLine("z layer for VFOA3 " + grpVFOA.Parent.Controls.GetChildIndex(VFODialAA));  //2;
+            //   VFODialAA.Parent.Controls.SetChildIndex(VFODialAA, 45);
 
 
-            if ((setupForm != null) && (setupForm.chkVFOBoldFont.Checked == true)) VFOBoldFont = true;
-            else VFOBoldFont = false;
+            if ((setupForm != null))
+            {
+                if ((setupForm.chkVFOOpenFont.Checked == true)) vfoopenfont = true;
+                else vfoopenfont = false;
+
+
+                if ((setupForm.chkVFOBoldFont.Checked == true)) VFOBoldFont = true;
+                     else VFOBoldFont = false;
+
+
+            }
+
+
 
             PanelTS box = (PanelTS)sender;
             p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -66177,8 +66289,16 @@ namespace PowerSDR
         // ke9ns add to draw curved colored line around groupbox
         private void grpVFOB_Paint(object sender, PaintEventArgs p)
         {
-            if ((setupForm != null) && (setupForm.chkVFOBoldFont.Checked == true)) VFOBoldFont = true;
-            else VFOBoldFont = false;
+            if ((setupForm != null))
+            {
+                if ((setupForm.chkVFOOpenFont.Checked == true)) vfoopenfont = true;
+                else vfoopenfont = false;
+
+                if ((setupForm.chkVFOBoldFont.Checked == true)) VFOBoldFont = true;
+                else VFOBoldFont = false;
+
+
+            }
 
             PanelTS box = (PanelTS)sender;
             p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -71866,7 +71986,242 @@ namespace PowerSDR
 
         } // HTTP_PORT
 
+        // ke9ns add
+        private void trackMenuItem1_MouseEnter(object sender, EventArgs e)
+        {
+            HELPMAP = true;
+         
+        }
 
+        private void trackMenuItem1_MouseLeave(object sender, EventArgs e)
+        {
+            HELPMAP = false;
+    
+        }
+
+
+        //==========================================================================
+        // ke9ns add
+        public bool N1MM
+        {
+            get
+            {
+                return true;
+            }
+            set
+            {
+                if (value == true)
+                {
+                    N1MM_ON = true;
+                    Thread t8 = new Thread(new ThreadStart(N1MM_SPECTRUM));
+                    t8.Name = "N1MM_SPECTRUM display";
+                    t8.IsBackground = true;
+                    t8.Priority = ThreadPriority.Normal;
+                    t8.Start();
+                   
+                }
+                else
+                {
+                     N1MM_ON = false; // shut down thread
+                   
+                }
+            }
+
+
+
+        } //  N1MM
+
+
+        // ke9ns n1mm
+       
+
+
+        //=========================================================================================
+        /*
+         
+     <?xml version="1.0" encoding="utf-8"?>
+     <Spectrum>
+     <Name>N1MM SDR1</Name>
+     <LowScopeFrequency>14000</LowScopeFrequency>
+     <HighScopeFrequency>14055</HighScopeFrequency>
+     <ScalingFactor>0.3125</ScalingFactor>
+     <DataCount>475</DataCount>
+     <SpectrumData>0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0, 
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0, 
+     0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,19,25,0,0,0,0,0,0,0,4,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0, 
+     1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0, 
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,38,50,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0, 
+     0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 
+     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0
+     </SpectrumData>
+     </Spectrum>
+          
+         */
+
+
+        IPEndPoint RemoteEndPoint; // ke9ns add
+        Socket server; // ke9ns add
+
+        public bool N1MM_ON = false; // ke9ns add setupform turns this ON
+        public int N1MM_Sample = 0; // ke9ns add  current number of samples in the pan (W)
+        public int N1MM_Floor = -130; // ke9ns add  current lowest dBm value on the pan
+        public int N1MM_Low = 0; // ke9ns add in khz found in display.cs
+        public int N1MM_High = 0; // ke9ns add in khz found in display.cs
+        public bool N1MM_MINIMIZE = false; // ke9ns add console minimized or not
+
+        public int[] N1MM_Data = new int[6000]; // ke9ns add
+
+        // StringBuilder N1MM_Data_String = new StringBuilder();
+        string N1MM_Data_String;
+
+      
+
+        //=========================================================================================
+        // ke9ns add thread  (N1MM+ uses connectionless UDP that is unreliable)
+
+        public void N1MM_SPECTRUM()
+        {
+            Debug.WriteLine("N1MM START");
+
+            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
+
+              RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 13064);
+               server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+          
+            //    IPEndPoint RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 13064);
+            //    Socket server = new Socket(AddressFamily.InterNetwork,SocketType.Dgram, ProtocolType.Udp);
+            //  string welcome = "Hello, are you there?";
+
+            // this should be the bandpass, so LOW = VFOA - lowrxbandpass, HIGH = VFOA + highrxbandpass
+
+            while (N1MM_ON == true)
+            {
+                Thread.Sleep(100);
+
+                if (!mox)
+                {
+                 
+/*
+                    // check if picDisplay_Paint() is firing, that is that it is not minimized
+                    if (N1MM_MINIMIZE == true) // normall display.cs is not called when true
+                    {
+                       Debug.WriteLine("N1MM MINIMIZED HERE> " + PD);
+                        // UpdateDisplay();    
+                            picDisplay.Invalidate();
+                           picDisplay.Refresh();
+                         picDisplay.Update();
+                        //  this.Update();
+                        //  this.Refresh();
+
+                        // this.Invalidate();
+                        //  this.Update();
+                        //  this.Refresh();
+                         Application.DoEvents();
+
+                        //  picDisplay_Paint(this, System.Windows.Forms.PaintEventArgs(this.picDisplay_Paint));
+
+                        //  PaintEventArgs ps = picDisplay.Paint();
+
+
+                        //  var ps = Graphics.FromHwnd(picDisplay.Handle);
+                        //  var ps = PaintEventArgs.Empty;
+                        try
+                        {
+                            Display.RenderGDIPlus(ref PD);
+                        }
+                        catch(Exception f)
+                        {
+                            Debug.WriteLine("RENDERGDIPLUS FAULT>> " + f);
+
+                        }
+                    } //
+*/
+
+                    N1MM_Data_String = "";
+
+                    int y = 0;
+
+                    //  Debug.WriteLine("Floor "+ N1MM_Floor);
+                    //  Debug.WriteLine("samples " + N1MM_Sample);
+
+                    int yy = 0;
+
+                    yy = N1MM_Floor * (-1);
+
+                    N1MM_Floor = 0; // reset
+
+                    int qq = N1MM_Sample / 2; // cut the number of samples in half
+
+                    for (int i = 0; i < N1MM_Sample - 1; i = i + 2)
+                    {
+                        y = (yy + N1MM_Data[i]) * 3; // 140
+
+                        N1MM_Data_String = N1MM_Data_String + y.ToString();
+
+                        if (i < N1MM_Sample - 3)
+                        {
+                            N1MM_Data_String = N1MM_Data_String + ",";
+                        }
+
+
+                    } // for samples
+
+                    string welcome = "<?xml version=\"1.0\" encoding=\"utf - 8\"?>\n" +
+                         "<Spectrum>\n" +
+                         "<Name>" +
+                      SpotControl.callB.ToString() +     //  SpotForm.callBox.Text.ToString() +  // "KE9NS" +
+                        "</Name>\n" +
+
+                        "<LowScopeFrequency>" +
+                        N1MM_Low.ToString() + // "14000" +  // low freq
+                        "</LowScopeFrequency>\n" +
+
+                        "<HighScopeFrequency>" +
+                        N1MM_High.ToString() + // "14055" +  // high freq
+                        "</HighScopeFrequency>\n" +
+
+                        "<ScalingFactor>" +
+                        setupForm.udN1MMscale.Value.ToString() + // "0.3125" + // scale factor
+                        "</ScalingFactor>\n" +
+
+                        "<DataCount>" +
+                        qq.ToString() +     // N1MM_Sample.ToString() +   //"475" +
+                        "</DataCount>\n" +
+
+                         "<SpectrumData>" +
+
+                         N1MM_Data_String +
+
+                         //  "0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,\n" +
+                         // "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,\n" +
+                         //  "0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,19,25,0,0,0,0,0,0,0,4,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,\n" +
+                         //  "1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,\n" +
+                         //  "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,38,50,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,\n" +
+                         //  "0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\n" +
+                         //  "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0\n" +
+
+                         "</SpectrumData>\n" +
+                         "</Spectrum>\n";
+
+                    //   Debug.WriteLine("N1MM DATA");
+                    //   Debug.WriteLine(welcome);
+
+
+                    byte[] data = Encoding.ASCII.GetBytes(welcome);
+
+                    server.SendTo(data, data.Length, SocketFlags.None, RemoteEndPoint);
+
+                } // !mox
+
+            } // while N1MM_ON == true
+
+            Debug.WriteLine("N1MM STOP");
+
+           
+            server.Close(); // shut down N1MM
+
+        } // N1MM_SPECTRUM()
 
 
 

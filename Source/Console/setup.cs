@@ -1108,6 +1108,13 @@ namespace PowerSDR
         public CheckBoxTS chkBoxTOT;
         public TextBoxTS textBoxTOT;
         private TextBox textBox1;
+        private LabelTS labelTS27;
+        public NumericUpDownTS udN1MMport;
+        public CheckBoxTS checkBoxN1MM;
+        public NumericUpDownTS udN1MMscale;
+        private LabelTS labelTS28;
+        private LabelTS labelTS29;
+        public CheckBoxTS chkVFOOpenFont;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1492,10 +1499,16 @@ namespace PowerSDR
             this.chkRX2AutoMuteRX2OnVFOATX = new System.Windows.Forms.CheckBoxTS();
             this.tpGeneralNavigation = new System.Windows.Forms.TabPage();
             this.grpOptSpaceNav = new System.Windows.Forms.GroupBoxTS();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.chkSpaceNavFlyPanadapter = new System.Windows.Forms.CheckBoxTS();
             this.chkSpaceNavControlVFOs = new System.Windows.Forms.CheckBoxTS();
             this.tpUserInterface = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelTS29 = new System.Windows.Forms.LabelTS();
+            this.udN1MMscale = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS27 = new System.Windows.Forms.LabelTS();
+            this.udN1MMport = new System.Windows.Forms.NumericUpDownTS();
+            this.checkBoxN1MM = new System.Windows.Forms.CheckBoxTS();
             this.checkBoxHTTP1 = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxHttp2 = new System.Windows.Forms.CheckBoxTS();
             this.labelTS19 = new System.Windows.Forms.LabelTS();
@@ -1689,6 +1702,7 @@ namespace PowerSDR
             this.tpDSP = new System.Windows.Forms.TabPage();
             this.tcDSP = new System.Windows.Forms.TabControl();
             this.tpDSPOptions = new System.Windows.Forms.TabPage();
+            this.labelTS28 = new System.Windows.Forms.LabelTS();
             this.btnRSTNB2 = new System.Windows.Forms.ButtonTS();
             this.btnRSTNB = new System.Windows.Forms.ButtonTS();
             this.btnRSTANF = new System.Windows.Forms.ButtonTS();
@@ -1962,6 +1976,7 @@ namespace PowerSDR
             this.clrbtnOutOfBand = new PowerSDR.ColorButton();
             this.lblOutOfBand = new System.Windows.Forms.LabelTS();
             this.grpAppearanceVFO = new System.Windows.Forms.GroupBoxTS();
+            this.chkVFOOpenFont = new System.Windows.Forms.CheckBoxTS();
             this.chkVFOBoldFont = new System.Windows.Forms.CheckBoxTS();
             this.labelTS24 = new System.Windows.Forms.LabelTS();
             this.clrbtnVFORing = new PowerSDR.ColorButton();
@@ -2394,7 +2409,6 @@ namespace PowerSDR
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2444,6 +2458,8 @@ namespace PowerSDR
             this.grpOptSpaceNav.SuspendLayout();
             this.tpUserInterface.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMscale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -4625,6 +4641,17 @@ namespace PowerSDR
             this.grpOptSpaceNav.TabStop = false;
             this.grpOptSpaceNav.Text = "Space Navigator";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(15, 67);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(320, 132);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "Twist controls VFOA(or if in split, VFOB)\r\nPush forward/ backward Zooms the panad" +
+    "apter\r\nPush left / right Pans the panadapter\r\nPush up / down controls the filter" +
+    " width";
+            // 
             // chkSpaceNavFlyPanadapter
             // 
             this.chkSpaceNavFlyPanadapter.AutoSize = true;
@@ -4664,6 +4691,11 @@ namespace PowerSDR
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.labelTS29);
+            this.groupBox2.Controls.Add(this.udN1MMscale);
+            this.groupBox2.Controls.Add(this.labelTS27);
+            this.groupBox2.Controls.Add(this.udN1MMport);
+            this.groupBox2.Controls.Add(this.checkBoxN1MM);
             this.groupBox2.Controls.Add(this.checkBoxHTTP1);
             this.groupBox2.Controls.Add(this.chkBoxHttp2);
             this.groupBox2.Controls.Add(this.labelTS19);
@@ -4683,6 +4715,92 @@ namespace PowerSDR
             this.groupBox2.Text = "HttpServer";
             this.toolTip1.SetToolTip(this.groupBox2, resources.GetString("groupBox2.ToolTip"));
             // 
+            // labelTS29
+            // 
+            this.labelTS29.Image = null;
+            this.labelTS29.Location = new System.Drawing.Point(373, 58);
+            this.labelTS29.Name = "labelTS29";
+            this.labelTS29.Size = new System.Drawing.Size(34, 16);
+            this.labelTS29.TabIndex = 85;
+            this.labelTS29.Text = "Scale:";
+            // 
+            // udN1MMscale
+            // 
+            this.udN1MMscale.DecimalPlaces = 2;
+            this.udN1MMscale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMscale.Location = new System.Drawing.Point(373, 74);
+            this.udN1MMscale.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.udN1MMscale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.udN1MMscale.Name = "udN1MMscale";
+            this.udN1MMscale.Size = new System.Drawing.Size(53, 20);
+            this.udN1MMscale.TabIndex = 81;
+            this.toolTip1.SetToolTip(this.udN1MMscale, "Speed of Freq Change");
+            this.udN1MMscale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // labelTS27
+            // 
+            this.labelTS27.Image = null;
+            this.labelTS27.Location = new System.Drawing.Point(435, 58);
+            this.labelTS27.Name = "labelTS27";
+            this.labelTS27.Size = new System.Drawing.Size(34, 16);
+            this.labelTS27.TabIndex = 84;
+            this.labelTS27.Text = "Port:";
+            // 
+            // udN1MMport
+            // 
+            this.udN1MMport.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            65536});
+            this.udN1MMport.Location = new System.Drawing.Point(438, 75);
+            this.udN1MMport.Maximum = new decimal(new int[] {
+            20000,
+            0,
+            0,
+            0});
+            this.udN1MMport.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udN1MMport.Name = "udN1MMport";
+            this.udN1MMport.Size = new System.Drawing.Size(61, 20);
+            this.udN1MMport.TabIndex = 83;
+            this.toolTip1.SetToolTip(this.udN1MMport, "N1MM default port# 13064 to UDP spectrum data");
+            this.udN1MMport.Value = new decimal(new int[] {
+            13064,
+            0,
+            0,
+            0});
+            // 
+            // checkBoxN1MM
+            // 
+            this.checkBoxN1MM.Image = null;
+            this.checkBoxN1MM.Location = new System.Drawing.Point(262, 72);
+            this.checkBoxN1MM.Name = "checkBoxN1MM";
+            this.checkBoxN1MM.Size = new System.Drawing.Size(112, 24);
+            this.checkBoxN1MM.TabIndex = 82;
+            this.checkBoxN1MM.Text = "N1MM Spectrum";
+            this.toolTip1.SetToolTip(this.checkBoxN1MM, "N1MM Spectrum data transmit");
+            this.checkBoxN1MM.CheckedChanged += new System.EventHandler(this.checkBoxN1MM_CheckedChanged);
+            // 
             // checkBoxHTTP1
             // 
             this.checkBoxHTTP1.Image = null;
@@ -4697,7 +4815,7 @@ namespace PowerSDR
             // chkBoxHttp2
             // 
             this.chkBoxHttp2.Image = null;
-            this.chkBoxHttp2.Location = new System.Drawing.Point(6, 72);
+            this.chkBoxHttp2.Location = new System.Drawing.Point(6, 68);
             this.chkBoxHttp2.Name = "chkBoxHttp2";
             this.chkBoxHttp2.Size = new System.Drawing.Size(105, 22);
             this.chkBoxHttp2.TabIndex = 14;
@@ -7552,6 +7670,7 @@ namespace PowerSDR
             // 
             // tpDSPOptions
             // 
+            this.tpDSPOptions.Controls.Add(this.labelTS28);
             this.tpDSPOptions.Controls.Add(this.btnRSTNB2);
             this.tpDSPOptions.Controls.Add(this.btnRSTNB);
             this.tpDSPOptions.Controls.Add(this.btnRSTANF);
@@ -7570,6 +7689,15 @@ namespace PowerSDR
             this.tpDSPOptions.Size = new System.Drawing.Size(592, 318);
             this.tpDSPOptions.TabIndex = 2;
             this.tpDSPOptions.Text = "Options";
+            // 
+            // labelTS28
+            // 
+            this.labelTS28.Image = null;
+            this.labelTS28.Location = new System.Drawing.Point(24, 171);
+            this.labelTS28.Name = "labelTS28";
+            this.labelTS28.Size = new System.Drawing.Size(208, 26);
+            this.labelTS28.TabIndex = 42;
+            this.labelTS28.Text = "Set RX buffer size to 2048 or less for NR or ANF to work.";
             // 
             // btnRSTNB2
             // 
@@ -7618,7 +7746,7 @@ namespace PowerSDR
             // labelTS7
             // 
             this.labelTS7.Image = null;
-            this.labelTS7.Location = new System.Drawing.Point(13, 246);
+            this.labelTS7.Location = new System.Drawing.Point(13, 254);
             this.labelTS7.Name = "labelTS7";
             this.labelTS7.Size = new System.Drawing.Size(96, 26);
             this.labelTS7.TabIndex = 10;
@@ -7631,7 +7759,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udTNFWidth.Location = new System.Drawing.Point(115, 252);
+            this.udTNFWidth.Location = new System.Drawing.Point(115, 260);
             this.udTNFWidth.Maximum = new decimal(new int[] {
             600,
             0,
@@ -7658,7 +7786,7 @@ namespace PowerSDR
             this.chkDSPTXMeterPeak.Checked = true;
             this.chkDSPTXMeterPeak.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDSPTXMeterPeak.Image = null;
-            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(16, 200);
+            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(16, 210);
             this.chkDSPTXMeterPeak.Name = "chkDSPTXMeterPeak";
             this.chkDSPTXMeterPeak.Size = new System.Drawing.Size(144, 32);
             this.chkDSPTXMeterPeak.TabIndex = 38;
@@ -11907,6 +12035,7 @@ namespace PowerSDR
             // 
             // grpAppearanceVFO
             // 
+            this.grpAppearanceVFO.Controls.Add(this.chkVFOOpenFont);
             this.grpAppearanceVFO.Controls.Add(this.chkVFOBoldFont);
             this.grpAppearanceVFO.Controls.Add(this.labelTS24);
             this.grpAppearanceVFO.Controls.Add(this.clrbtnVFORing);
@@ -11926,6 +12055,17 @@ namespace PowerSDR
             this.grpAppearanceVFO.TabStop = false;
             this.grpAppearanceVFO.Text = "VFO";
             // 
+            // chkVFOOpenFont
+            // 
+            this.chkVFOOpenFont.Image = null;
+            this.chkVFOOpenFont.Location = new System.Drawing.Point(38, 111);
+            this.chkVFOOpenFont.Name = "chkVFOOpenFont";
+            this.chkVFOOpenFont.Size = new System.Drawing.Size(90, 24);
+            this.chkVFOOpenFont.TabIndex = 79;
+            this.chkVFOOpenFont.Text = "Outline Font";
+            this.toolTip1.SetToolTip(this.chkVFOOpenFont, "Check Bold and Outline boxes to change to Bold Outline Font");
+            this.chkVFOOpenFont.CheckedChanged += new System.EventHandler(this.chkVFOOpenFont_CheckedChanged);
+            // 
             // chkVFOBoldFont
             // 
             this.chkVFOBoldFont.Checked = true;
@@ -11942,7 +12082,7 @@ namespace PowerSDR
             // labelTS24
             // 
             this.labelTS24.Image = null;
-            this.labelTS24.Location = new System.Drawing.Point(10, 232);
+            this.labelTS24.Location = new System.Drawing.Point(16, 244);
             this.labelTS24.Name = "labelTS24";
             this.labelTS24.Size = new System.Drawing.Size(72, 24);
             this.labelTS24.TabIndex = 77;
@@ -11954,7 +12094,7 @@ namespace PowerSDR
             this.clrbtnVFORing.Automatic = "Automatic";
             this.clrbtnVFORing.Color = System.Drawing.Color.DarkGreen;
             this.clrbtnVFORing.Image = null;
-            this.clrbtnVFORing.Location = new System.Drawing.Point(88, 233);
+            this.clrbtnVFORing.Location = new System.Drawing.Point(88, 239);
             this.clrbtnVFORing.MoreColors = "More Colors...";
             this.clrbtnVFORing.Name = "clrbtnVFORing";
             this.clrbtnVFORing.Size = new System.Drawing.Size(40, 23);
@@ -11967,7 +12107,7 @@ namespace PowerSDR
             this.clrbtnVFOBackground.Automatic = "Automatic";
             this.clrbtnVFOBackground.Color = System.Drawing.Color.Black;
             this.clrbtnVFOBackground.Image = null;
-            this.clrbtnVFOBackground.Location = new System.Drawing.Point(88, 121);
+            this.clrbtnVFOBackground.Location = new System.Drawing.Point(88, 141);
             this.clrbtnVFOBackground.MoreColors = "More Colors...";
             this.clrbtnVFOBackground.Name = "clrbtnVFOBackground";
             this.clrbtnVFOBackground.Size = new System.Drawing.Size(40, 23);
@@ -11977,7 +12117,7 @@ namespace PowerSDR
             // lblVFOBackground
             // 
             this.lblVFOBackground.Image = null;
-            this.lblVFOBackground.Location = new System.Drawing.Point(16, 121);
+            this.lblVFOBackground.Location = new System.Drawing.Point(13, 146);
             this.lblVFOBackground.Name = "lblVFOBackground";
             this.lblVFOBackground.Size = new System.Drawing.Size(72, 24);
             this.lblVFOBackground.TabIndex = 72;
@@ -11988,7 +12128,7 @@ namespace PowerSDR
             this.clrbtnVFOSmallColor.Automatic = "Automatic";
             this.clrbtnVFOSmallColor.Color = System.Drawing.Color.OrangeRed;
             this.clrbtnVFOSmallColor.Image = null;
-            this.clrbtnVFOSmallColor.Location = new System.Drawing.Point(88, 185);
+            this.clrbtnVFOSmallColor.Location = new System.Drawing.Point(88, 200);
             this.clrbtnVFOSmallColor.MoreColors = "More Colors...";
             this.clrbtnVFOSmallColor.Name = "clrbtnVFOSmallColor";
             this.clrbtnVFOSmallColor.Size = new System.Drawing.Size(40, 23);
@@ -11998,7 +12138,7 @@ namespace PowerSDR
             // lblVFOSmallColor
             // 
             this.lblVFOSmallColor.Image = null;
-            this.lblVFOSmallColor.Location = new System.Drawing.Point(16, 185);
+            this.lblVFOSmallColor.Location = new System.Drawing.Point(16, 205);
             this.lblVFOSmallColor.Name = "lblVFOSmallColor";
             this.lblVFOSmallColor.Size = new System.Drawing.Size(72, 24);
             this.lblVFOSmallColor.TabIndex = 70;
@@ -12009,7 +12149,7 @@ namespace PowerSDR
             this.chkVFOSmallLSD.Checked = true;
             this.chkVFOSmallLSD.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVFOSmallLSD.Image = null;
-            this.chkVFOSmallLSD.Location = new System.Drawing.Point(16, 153);
+            this.chkVFOSmallLSD.Location = new System.Drawing.Point(19, 170);
             this.chkVFOSmallLSD.Name = "chkVFOSmallLSD";
             this.chkVFOSmallLSD.Size = new System.Drawing.Size(104, 24);
             this.chkVFOSmallLSD.TabIndex = 69;
@@ -16831,17 +16971,6 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(15, 67);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(320, 132);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "Twist controls VFOA(or if in split, VFOB)\r\nPush forward/ backward Zooms the panad" +
-    "apter\r\nPush left / right Pans the panadapter\r\nPush up / down controls the filter" +
-    " width";
-            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -16915,6 +17044,8 @@ namespace PowerSDR
             this.tpUserInterface.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMscale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udN1MMport)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpRefresh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udHttpPort)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -28252,6 +28383,12 @@ namespace PowerSDR
         private void chkVFOBoldFont_CheckedChanged(object sender, EventArgs e)
         {
 
+            if (chkVFOOpenFont.Checked == true)
+            {
+                console.VFOOpenFont = true;
+            }
+            else console.VFOOpenFont = false;
+
             if (chkVFOBoldFont.Checked == true)
             {
                 console.VFOBoldFont = true;
@@ -28261,6 +28398,31 @@ namespace PowerSDR
           
         } // chkVFOBoldFont_CheckedChanged
 
+
+        // ke9ns add
+        private void chkVFOOpenFont_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (chkVFOBoldFont.Checked == true)
+            {
+                console.VFOBoldFont = true;
+            }
+            else console.VFOBoldFont = false;
+
+            if (chkVFOOpenFont.Checked == true)
+            {
+                console.VFOOpenFont = true;
+            }
+            else console.VFOOpenFont = false;
+
+            if (chkVFOBoldFont.Checked == true)
+            {
+                console.VFOBoldFont = true;
+            }
+            else console.VFOBoldFont = false;
+
+
+        } // chkVFOOpenFont_CheckedChanged
 
         //==================================================================
         // ke9ns add
@@ -28549,6 +28711,15 @@ namespace PowerSDR
 
         } //  chkBoxTOT_CheckedChanged
 
+        //ke9ns add
+        private void checkBoxN1MM_CheckedChanged(object sender, EventArgs e)
+        {
+            console.N1MM = checkBoxN1MM.Checked; // tell console to start N1MM specturm
+
+        } // checkBoxN1MM_CheckedChanged
+
+
+      
 
 
         //===============================================================================

@@ -253,8 +253,8 @@ newFMD (REAL samprate,
 
 	// ke9ns add fm data mode
 	fm->k_deemphasis1 = FMDataDe;  // (REAL)(1.0f + samprate / (TWOPI * 250.0f)); // turn off deemphasis
-	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		
-	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 1.848f);	 // to allow CTSS tones	
+	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 0.765f);
+	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 1.848f);	 // to allow CTSS tones	
 	fm->input_LPF3 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 0.25f);
 	fm->input_LPF4 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 1.75f);
 

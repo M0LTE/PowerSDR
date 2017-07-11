@@ -147,6 +147,42 @@ NWRA.com&gt;&gt; Effective SunSpot# based on ionospheric measurements, updated h
 Effective SSN# is a more accurate SSN# since it takes time for actual SunSpots to effect the ionoshere. 
 </value>
   </data>
+  <data name="PropagationTextBox.Text" xml:space="preserve">
+    <value>PowerSDR KE9NS "Voacap" Propagation Mapping:
+
+VOACAP propagation uses the (ef), so its more accurate, but it doesn't take high (K) values or (SpW) geo storms into account.
+VOACAP propagation assumes you have a rotatable dipole or 3 element beam at 35' (if you select it)
+
+Dots: The Dots show signal strengths computed for the exact locations over the map. Areas on the map with small or no Dots have the weakest signals. 
+Large Dots have stronger signals. Blue is the strongest signal, then Green, then Orange, then Yellow, then Gray
+
+Contours: Contour lines are derived by a formula from the dots, but can sometimes be difficult to see coverage gaps on the map.
+Blue is the strongest, then Green, then Orange, then Yellow, then Gray.
+The problem with contours is it is hard to determine the Gaps in coverage. You may see a Blue contour line, but if you change over to the Dots map, you will see no signal strength adjacent to the Blue area of the map. (i.e. a Gap)
+
+Reasons you may hear stations when the Propagation map shows no conditions:
+Some Ham Radio stations have large Antenna arrays and may show up on an empty part of the Propagation map, due in part to their very large Effective Radiated Power (ERP) when compared to a wire dipole. 
+Or, 
+at 27mhz or above, Tropospheric Ducting Propagation (see http://www.dxinfocentre.com/tropo.html  )
+and/or Sporadic E propagation (see http://www.dxmaps.com/spots/mapg.php?Lan=E&amp;Frec=MUF&amp;ML=M&amp;HF=N  )
+
+Also: You may not hear stations found in a Blue or Green area of the map, due to Antenna directionality, takeoff angles, Geo Storms,or high K readings, or they may be in Gaps found in the propagation area</value>
+  </data>
+  <data name="TRACKMap.Text" xml:space="preserve">
+    <value>World Tracking Map:
+
+Must have Sun and/or Grayline turned ON to activate
+(See Spotting menu)
+Optionally you can add Location of Moon and ISS to map
+ (Left Click, then CTRL key over Moon or ISS to move your Antenna to current position)
+
+Activate DX Spotting to place DX Spots directly onto map (as Red Dots)
+Mouse over a Red Dot, Left Click, then hit CTRL key to set Radio to Frequency &amp; mode of DX Spot
+Optionally you can Display Country, or Call sign to DX Spots found in your Pan or in the entire Band, or all Bands
+
+Shift key to see LAT/LONG grid numbers
+</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

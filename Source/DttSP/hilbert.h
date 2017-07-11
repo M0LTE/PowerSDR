@@ -40,25 +40,32 @@ Bridgewater, NJ 08807
 #include <bufvec.h>
 #include <cxops.h>
 
-typedef
-struct _hilbert {
+typedef struct _hilbert
+{
   int size;
   REAL *c, *x1, *y1;
-  struct {
+  struct
+  {
     CXB i, o;
   } buf;
   BOOLEAN invert;
+
 } HilbertInfo, *Hilbert;
 
-typedef
-struct _hilsim {
+
+typedef struct _hilsim
+{
   int size;
-  struct {
+  struct 
+  {
     CXB i, o;
   } buf;
+
   REAL x[4], y[6], d[6];
   BOOLEAN invert;
+
 } HilsimInfo, *Hilsim;
+
 
 extern Hilbert newHilbert(CXB ibuf, CXB obuf, REAL rate);
 extern Hilsim newHilbertsim(CXB ibuf, CXB obuf);

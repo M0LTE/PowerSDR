@@ -184,4 +184,13 @@
   <data name="disk3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\disk3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="swisscbo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\swisscbo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="swissko" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\swissko.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="swissbo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\swissbo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

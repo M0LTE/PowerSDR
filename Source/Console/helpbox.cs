@@ -52,6 +52,8 @@ namespace PowerSDR
         public RichTextBox helpbox_message;
         public RichTextBox solar_message;
         public RichTextBox recplay_message;
+        public RichTextBox PropagationTextBox;
+        public RichTextBox TRACKMap;
         private ToolTip toolTip1;
 
         // public static helpbox helpboxForm;                       // ke9ns add 
@@ -108,6 +110,8 @@ namespace PowerSDR
             this.helpbox_message = new System.Windows.Forms.RichTextBox();
             this.solar_message = new System.Windows.Forms.RichTextBox();
             this.recplay_message = new System.Windows.Forms.RichTextBox();
+            this.PropagationTextBox = new System.Windows.Forms.RichTextBox();
+            this.TRACKMap = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // chkAlwaysOnTop
@@ -143,6 +147,7 @@ namespace PowerSDR
             this.helpbox_message.Size = new System.Drawing.Size(636, 389);
             this.helpbox_message.TabIndex = 102;
             this.helpbox_message.Text = "helpbox";
+            this.helpbox_message.TextChanged += new System.EventHandler(this.helpbox_message_TextChanged);
             // 
             // solar_message
             // 
@@ -162,6 +167,24 @@ namespace PowerSDR
             this.recplay_message.TabIndex = 104;
             this.recplay_message.Text = "recplay";
             // 
+            // PropagationTextBox
+            // 
+            this.PropagationTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PropagationTextBox.Location = new System.Drawing.Point(12, 12);
+            this.PropagationTextBox.Name = "PropagationTextBox";
+            this.PropagationTextBox.Size = new System.Drawing.Size(636, 389);
+            this.PropagationTextBox.TabIndex = 105;
+            this.PropagationTextBox.Text = resources.GetString("PropagationTextBox.Text");
+            // 
+            // TRACKMap
+            // 
+            this.TRACKMap.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TRACKMap.Location = new System.Drawing.Point(12, 12);
+            this.TRACKMap.Name = "TRACKMap";
+            this.TRACKMap.Size = new System.Drawing.Size(636, 389);
+            this.TRACKMap.TabIndex = 106;
+            this.TRACKMap.Text = resources.GetString("TRACKMap.Text");
+            // 
             // helpbox
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -172,6 +195,8 @@ namespace PowerSDR
             this.Controls.Add(this.txttimer_message);
             this.Controls.Add(this.solar_message);
             this.Controls.Add(this.recplay_message);
+            this.Controls.Add(this.PropagationTextBox);
+            this.Controls.Add(this.TRACKMap);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -218,11 +243,10 @@ namespace PowerSDR
             this.TopMost = true;
         }
 
+        private void helpbox_message_TextChanged(object sender, EventArgs e)
+        {
 
-
-
-
-
+        }
     } // helpbox
 
 } // PowerSDR
