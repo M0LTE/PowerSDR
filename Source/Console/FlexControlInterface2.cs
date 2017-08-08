@@ -157,7 +157,7 @@ namespace PowerSDR
             {
                 int index = console.TuneStepIndex; // get current step index
 
-                if (console.setupForm.chkBoxIND.Checked == true)
+                if (console.setupForm.chkBoxIND2.Checked == true)
                 {
                      index = console.TuneStepIndex2; // get current step index
                 }
@@ -170,7 +170,7 @@ namespace PowerSDR
             }
             else
             {
-                if (console.setupForm.chkBoxIND.Checked == true)
+                if (console.setupForm.chkBoxIND2.Checked == true)
                 {
                     return console.CurrentTuneStepHz2;
                 }

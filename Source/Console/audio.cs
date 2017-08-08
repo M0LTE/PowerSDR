@@ -2838,7 +2838,7 @@ namespace PowerSDR
 
 
 
-                            if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add, to allow for MIC level check in RX mode
+                            if ((console.TXMeter2 == true) && ((console.CurrentMeterTX1Mode == MeterTXMode.MIC) || (console.CurrentMeterTX1Mode == MeterTXMode.Combo))) peak1 = MaxSample(in_l, in_r, frameCount); // ke9ns add, to allow for MIC level check in RX mode
                         }
 					}
 				}
@@ -3898,7 +3898,7 @@ namespace PowerSDR
                             ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)mic_preamp);
                         }
 
-                        if ((console.TXMeter2 == true) && (console.CurrentMeterTX1Mode == MeterTXMode.MIC)) peak1 = MaxSample(tx_in_l, tx_in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
+                        if ((console.TXMeter2 == true) && ((console.CurrentMeterTX1Mode == MeterTXMode.MIC) || (console.CurrentMeterTX1Mode == MeterTXMode.Combo))) peak1 = MaxSample(tx_in_l, tx_in_r, frameCount); // ke9ns add to allow for MIC level check in RX mode
                     }
                 }
 

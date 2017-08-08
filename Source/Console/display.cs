@@ -2582,7 +2582,7 @@ namespace PowerSDR
 		}
 
 #if(!NO_TNF)
-        static float zoom_height = 1.5f;   // Should be > 1.  H = H/zoom_height
+        static float zoom_height = 1.5f;   // Should be > 1.  H = H/zoom_height  (1.0 would cover entire pan, 2.0 covers half of pan)
 #endif
 
 
@@ -4064,8 +4064,8 @@ namespace PowerSDR
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
                     // 60m edges
-                  
-                        int[] band_edge_list_r14 = {  5351500, 5353999, 5354000, 5365999, 5366000, 5366500  };
+                   
+                    int[] band_edge_list_r14 = {  5351500, 5353999, 5354000, 5365999, 5366000, 5366500  };
 
                         for (int i = 0; i < band_edge_list_r14.Length; i++)
                         {
@@ -4513,6 +4513,50 @@ namespace PowerSDR
                         }
                     }
 
+                    //---------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------
+                    // 60m edges  
+
+                    int[] band_edge_list_r14aa = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
+
+                    for (int i = 0; i < band_edge_list_r14aa.Length; i++)
+                    {
+                        double band_edge_offset = band_edge_list_r14aa[i] - vfo;
+                        if (bottom)
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = H + top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = (H + H) - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                        else
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = H - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+
+
+                    } // 60m uk 
 #if (!NO_KE9NS)
                     // ke9ns add CB 11m band channels 1 - 40
                     for (int i = 0; i < band_edge_list_r77.Length; i++)
@@ -6723,7 +6767,7 @@ namespace PowerSDR
                 //============================================================================================================
                 //============================================================================================================
                 //===============================================
-                case FRSRegion.Region_2:  // IARU2
+                case FRSRegion.IARU2:  // IARU2
 
                     for (int i = 0; i < f_steps + 1; i++)
                     {
@@ -6737,8 +6781,8 @@ namespace PowerSDR
 
                         if (!show_freq_offset)
                         {
-                            if (actual_fgrid == 1.81 || actual_fgrid == 2.0 ||
-                                actual_fgrid == 3.5 || actual_fgrid == 3.4 ||
+                            if (actual_fgrid == 1.80 || actual_fgrid == 2.0 ||
+                                actual_fgrid == 3.5 || actual_fgrid == 4.0 ||
                                 actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
                                 actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
                                 actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
@@ -6748,7 +6792,7 @@ namespace PowerSDR
                                 actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
                                 actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
                                 actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
-                                actual_fgrid == 144.0 || actual_fgrid == 146.0)
+                                actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
@@ -6838,9 +6882,9 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------IARU2
                     //---------------------------------------------------------------------------------------------------
-                    int[] band_edge_list_r1r = { 1810000, 2000000, 3500000, 3400000, 5250000, 5450000,
+                    int[] band_edge_list_r1r = { 1800000, 2000000, 3500000, 4000000, 5250000, 5450000,
                                                 7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-                                                24890000, 24990000, 28000000, 29700000,  50000000, 54000000, 144000000, 146000000 };
+                                                24890000, 24990000, 28000000, 29700000,  50000000, 54000000, 144000000, 148000000 };
 
                     for (int i = 0; i < band_edge_list_r1r.Length; i++)
                     {
@@ -6857,7 +6901,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------EU15
                     //---------------------------------------------------------------------------------------------------
-
+                    // 60m IARU1
                     int[] band_edge_list_r14r = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
                     for (int i = 0; i < band_edge_list_r14r.Length; i++)
@@ -6938,8 +6982,227 @@ namespace PowerSDR
 #endif
                     break; // IARU 2
 
+                //============================================================================================================
+                //============================================================================================================
+                //============================================================================================================
+                //===============================================
+                case FRSRegion.Australia:  // 
 
-             
+                    for (int i = 0; i < f_steps + 1; i++)
+                    {
+                        string label;
+                        int offsetL;
+                        int offsetR;
+
+                        int fgrid = i * freq_step_size + (Low / freq_step_size) * freq_step_size;
+                        double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;
+                        int vgrid = (int)((double)(fgrid - vfo_delta - Low) / (High - Low) * W);
+
+                        if (!show_freq_offset)
+                        {
+                            if (actual_fgrid == 1.81 || actual_fgrid == 1.875 ||
+                                actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
+                                actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
+                                actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
+                                actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
+                                actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
+                                actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
+                                actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
+                                actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
+                                actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
+                                actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
+                                actual_fgrid == 144.0 || actual_fgrid == 147.975)
+                            {
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
+
+                                label = actual_fgrid.ToString("f4");
+                                label = label.Replace(",", ".");    // handle Windows localization issues
+                                int offset = label.IndexOf('.') + 4;
+                                label = label.Insert(offset, ".");
+
+                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .01));
+
+                                int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
+                                int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
+                                float scale = (float)(x_2 - vgrid) / inbetweenies;
+
+                                for (int j = 1; j < inbetweenies; j++)
+                                {
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                {
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                }
+
+                                int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
+                                int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
+                                float scale = (float)(x_2 - vgrid) / inbetweenies;
+
+                                for (int j = 1; j < inbetweenies; j++)
+                                {
+                                    if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                                    {
+                                        float x3 = (float)vgrid + (j * scale);
+                                        if (bottom) g.DrawLine(grid_pen_dark, x3, H + top, x3, H + H);
+                                        else g.DrawLine(grid_pen_dark, x3, top, x3, H);
+                                    }
+                                }
+
+                                double actual_fgrid_label = Math.Round(actual_fgrid, 4);
+                                label = actual_fgrid_label.ToString("f4");
+                                label = label.Replace(",", ".");    // handle Windows localization issues
+                                int offset = label.IndexOf('.') + 4;
+                                label = label.Insert(offset, ".");
+
+                                if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                            }
+                        }
+                        else
+                        {
+                            vgrid = Convert.ToInt32((double)-(fgrid - Low) / (Low - High) * W); //wa6ahl
+                            if (grid_off == 0) // ke9ns add (dont draw grid lines if =1 
+                            {
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                            }
+                            double new_fgrid = (vfoa_hz + fgrid) / 1000000;
+
+                            label = fgrid.ToString();
+                            offsetL = (int)((label.Length + 1) * 4.1);
+                            offsetR = (int)(label.Length * 4.1);
+                            if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
+                            {
+                                if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .01));
+                                else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .01));
+                            }
+                        }
+                    }
+
+                    //---------------------------------------------------------------------------------------------------IARU2
+                    //---------------------------------------------------------------------------------------------------
+                    int[] band_edge_list_r1z = { 1810000, 2000000, 3500000, 3400000, 5250000, 5450000,
+                                                7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
+                                                24890000, 24990000, 28000000, 29700000,  50000000, 54000000, 144000000, 147975000 };
+
+                    for (int i = 0; i < band_edge_list_r1z.Length; i++)
+                    {
+                        double band_edge_offset = band_edge_list_r1z[i] - vfo;
+                        if (band_edge_offset >= Low && band_edge_offset <= High)
+                        {
+                            int temp_vline = (int)((double)(band_edge_offset - Low) / (High - Low) * W);//wa6ahl
+                            if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H + top, temp_vline, H + H);//wa6ahl
+                            else g.DrawLine(new Pen(band_edge_color), temp_vline, top, temp_vline, H);//wa6ahl
+                        }
+                    }
+
+
+
+                    //---------------------------------------------------------------------------------------------------EU15
+                    //---------------------------------------------------------------------------------------------------
+
+                    int[] band_edge_list_r14z = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
+
+                    for (int i = 0; i < band_edge_list_r14z.Length; i++)
+                    {
+                        double band_edge_offset = band_edge_list_r14z[i] - vfo;
+                        if (bottom)
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = H + top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = (H + H) - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                        else
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = H - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                    } // for loop for 60m
+
+#if (!NO_KE9NS)
+                    // ke9ns add CB 11m band channels 1 - 40
+                    for (int i = 0; i < band_edge_list_r77.Length; i++)
+                    {
+                        double band_edge_offset = band_edge_list_r77[i] - vfo;
+                        if (bottom)
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = H + top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = (H + H) - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                        else
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = H - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                    } // for loop for 11m
+#endif
+                    break; // Australia
+
+
+
 
                 //============================================================================================================
                 //============================================================================================================
@@ -7169,7 +7432,7 @@ namespace PowerSDR
                 //============================================================================================================
                 //============================================================================================================
                 //===============================================
-                case FRSRegion.Region_3: // (no 60m)
+                case FRSRegion.IARU3: // (no 60m)
                 case FRSRegion.Japan:
 
                     for (int i = 0; i < f_steps + 1; i++)
@@ -7383,7 +7646,7 @@ namespace PowerSDR
                         } // for loop for 60m
                     }
 
-                    break;  // FRSRegion.Region_3: Japan 
+                    break;  // FRSRegion.IARU3: Japan 
                   
 
             } // Band edges (all regions)
@@ -11026,18 +11289,14 @@ namespace PowerSDR
                         }
 
 
-                        break; // EU15
-
-
-
-
+                        break; // Luxembourg EU15
 
 
                     //============================================================================================================
                     //============================================================================================================
                     //============================================================================================================
                     //===============================================
-                    case FRSRegion.Region_2:  // IARU2
+                    case FRSRegion.IARU2:  // IARU2
 
                         for (int i = 0; i <= h_steps + 1; i++)
                         {
@@ -11052,7 +11311,7 @@ namespace PowerSDR
                             if (!show_freq_offset)
                             {
                                 if (actual_fgrid == 1.80 || actual_fgrid == 2.00 ||
-                                    actual_fgrid == 3.5 || actual_fgrid == 3.4 ||
+                                    actual_fgrid == 3.5 || actual_fgrid == 4.0 ||
                                     actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
                                     actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
                                     actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
@@ -11062,7 +11321,7 @@ namespace PowerSDR
                                     actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
                                     actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
                                     actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
-                                    actual_fgrid == 144.0 || actual_fgrid == 146.0)
+                                    actual_fgrid == 144.0 || actual_fgrid == 148.0)
                                 {
                                     if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
                                     else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
@@ -11188,9 +11447,9 @@ namespace PowerSDR
                         }
 
 
-                        int[] band_edge_list_r1q = {  1800000, 2000000, 3500000, 3800000, 5250000,5450000,
-                                    7000000, 7200000, 10100000, 10150000, 14000000, 14350000,18068000, 18168000, 21000000, 21450000,
-                                    24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 146000000 };
+                        int[] band_edge_list_r1q = {  1800000, 2000000, 3500000, 4000000, 5250000,5450000,
+                                    7000000, 7300000, 10100000, 10150000, 14000000, 14350000,18068000, 18168000, 21000000, 21450000,
+                                    24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 };
 
                         for (int i = 0; i < band_edge_list_r1q.Length; i++)
                         {
@@ -11208,13 +11467,186 @@ namespace PowerSDR
                         break; // IARU2
 
 
+                    //============================================================================================================
+                    //============================================================================================================
+                    //============================================================================================================
+                    //===============================================
+                    case FRSRegion.Australia:  // 
+
+                        for (int i = 0; i <= h_steps + 1; i++)
+                        {
+                            string label;
+                            int offsetL;
+                            int offsetR;
+
+                            int fgrid = i * freq_step_size + (low / freq_step_size) * freq_step_size;
+                            double actual_fgrid = ((double)(vfo_round + fgrid)) / 1000000;
+                            int vgrid = (int)((double)(fgrid - vfo_delta - low) / (high - low) * W);
+
+                            if (!show_freq_offset)
+                            {
+                                if (actual_fgrid == 1.80 || actual_fgrid == 1.875 ||
+                                    actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
+                                    actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns no transmit
+                                    actual_fgrid == 7.0 || actual_fgrid == 7.3 ||
+                                    actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
+                                    actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
+                                    actual_fgrid == 18.068 || actual_fgrid == 18.168 ||
+                                    actual_fgrid == 21.0 || actual_fgrid == 21.45 ||
+                                    actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
+                                    actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
+                                    actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
+                                    actual_fgrid == 144.0 || actual_fgrid == 147.975)
+                                {
+                                    if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
+
+                                    label = actual_fgrid.ToString("f4");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
+
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                    /* if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length + 1) * 4.1) - 8; */
+
+                                    if (bottom) g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, new SolidBrush(band_edge_color), vgrid - offsetL, (float)Math.Floor(H * .005));
+                                }
+                                else
+                                {
+
+                                    if (freq_step_size >= 2000)
+                                    {
+                                        double t100;
+                                        double t1000;
+                                        t100 = (actual_fgrid * 100);
+                                        t1000 = (actual_fgrid * 1000);
+
+                                        int it100 = (int)t100;
+                                        int it1000 = (int)t1000;
+
+                                        int it100x10 = it100 * 10;
+
+                                        if (it100x10 == it1000)
+                                        {
+                                        }
+                                        else
+                                        {
+                                            grid_pen.DashStyle = DashStyle.Dot;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (freq_step_size == 1000)
+                                        {
+                                            double t200;
+                                            double t2000;
+                                            t200 = (actual_fgrid * 200);
+                                            t2000 = (actual_fgrid * 2000);
+
+                                            int it200 = (int)t200;
+                                            int it2000 = (int)t2000;
+
+                                            int it200x10 = it200 * 10;
+
+                                            if (it200x10 == it2000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            double t1000;
+                                            double t10000;
+                                            t1000 = (actual_fgrid * 1000);
+                                            t10000 = (actual_fgrid * 10000);
+
+                                            int it1000 = (int)t1000;
+                                            int it10000 = (int)t10000;
+
+                                            int it1000x10 = it1000 * 10;
+
+                                            if (it1000x10 == it10000)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                grid_pen.DashStyle = DashStyle.Dot;
+                                            }
+                                        }
+                                    }
+                                    if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                    else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+                                    grid_pen.DashStyle = DashStyle.Solid;
+
+                                    // make freq grid labels
+                                    double actual_fgrid_label = Math.Round(actual_fgrid, 4);
+                                    label = actual_fgrid_label.ToString("f4");
+                                    label = label.Replace(",", ".");    // handle Windows localization issues
+                                    int offset = label.IndexOf('.') + 4;
+                                    label = label.Insert(offset, ".");
+
+                                    if (actual_fgrid < 10) offsetL = (int)((label.Length + 2) * 4.1) - 14;
+                                    else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                                    else offsetL = (int)((label.Length) * 4.1) - 8;
+
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
+                                }
+                            }
+                            else
+                            {
+                                vgrid = Convert.ToInt32((double)-(fgrid - low) / (low - high) * W); //wa6ahl
+                                if (bottom) g.DrawLine(grid_pen, vgrid, H + top, vgrid, H + H);
+                                else g.DrawLine(grid_pen, vgrid, top, vgrid, H);            //wa6ahl
+
+                                double new_fgrid = (vfoa_hz + fgrid) / 1000000;
+
+                                label = fgrid.ToString();
+                                offsetL = (int)((label.Length + 1) * 4.1);
+                                offsetR = (int)(label.Length * 4.1);
+                                if ((vgrid - offsetL >= 0) && (vgrid + offsetR < W) && (fgrid != 0))
+                                {
+                                    if (bottom) g.DrawString(label, font, grid_text_brush, vgrid - offsetL, H + (float)Math.Floor(H * .005));
+                                    else g.DrawString(label, font, grid_text_brush, vgrid - offsetL, (float)Math.Floor(H * .005));
+                                }
+                            }
+                        }
+
+
+                        int[] band_edge_list_r1h = {  1800000, 1875000, 3500000, 3800000, 5250000,5450000,
+                                    7000000, 7300000, 10100000, 10150000, 14000000, 14350000,18068000, 18168000, 21000000, 21450000,
+                                    24890000, 24990000, 28000000, 29700000, 50000000, 54000000, 144000000, 147975000 };
+
+                        for (int i = 0; i < band_edge_list_r1h.Length; i++)
+                        {
+                            double band_edge_offset = band_edge_list_r1h[i] - vfo;
+                            if (band_edge_offset >= low && band_edge_offset <= high)
+                            {
+                                int temp_vline = (int)((double)(band_edge_offset - low) / (high - low) * W);//wa6ahl
+                                if (bottom) g.DrawLine(new Pen(band_edge_color), temp_vline, H, temp_vline, H + top);//wa6ahl
+                                else g.DrawLine(new Pen(band_edge_color), temp_vline, 0, temp_vline, top);
+                            }
+                            if (i == 1 && !show_freq_offset) break;
+                        }
+
+
+                        break; // Australia
 
 
                     //============================================================================================================
                     //============================================================================================================
                     //============================================================================================================
                     //===============================================
-                    case FRSRegion.Region_3:  // IARU3
+                    case FRSRegion.IARU3:  // IARU3
 
                         for (int i = 0; i <= h_steps + 1; i++)
                         {
@@ -12520,10 +12952,12 @@ namespace PowerSDR
             // ke9ns add
             if (console.N1MM_ON == true)
             {
-                console.N1MM_Sample = W;
+                console.N1MM_Sample = W; // literaly the width in pixels of your PAN display area
                 console.N1MM_Low = (int)((vfoa_hz + Low) / 1000);  //rx_display_low;
                 console.N1MM_High = (int)((vfoa_hz + High) / 1000);
-              
+              // Debug.WriteLine("N1MM " + W + " , " + DATA_BUFFER_SIZE + " , " + num_samples + " , " + slope);
+               // num_samples = data_bugger_size / zoom level
+
             }
 
             //=================================================================
@@ -13167,6 +13601,7 @@ namespace PowerSDR
                     c1 = notch_on_color_zoomed;
                     c2 = notch_highlight_color_zoomed;
 
+                    /*
                     if (!tnf_active)
                     {
                         c1 = notch_off_color;
@@ -13177,6 +13612,7 @@ namespace PowerSDR
                         c1 = notch_perm_on_color;
                         c2 = notch_perm_highlight_color;
                     }
+                    */
                     Debug.WriteLine("TNFZOOM99");
 
                  //   int notch_zoom_left_x = (int)((float)(notch.Freq * 1e6 - rf_freq - notch.BW / 2 - low - rit) / (high - low) * W);

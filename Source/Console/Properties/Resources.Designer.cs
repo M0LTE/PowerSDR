@@ -93,6 +93,36 @@ namespace PowerSDR.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Black_combo {
+            get {
+                object obj = ResourceManager.GetObject("Black_combo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Black_TXonly {
+            get {
+                object obj = ResourceManager.GetObject("Black_TXonly", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Black_TXonly1 {
+            get {
+                object obj = ResourceManager.GetObject("Black_TXonly1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap black2 {
             get {
                 object obj = ResourceManager.GetObject("black2", resourceCulture);
@@ -157,6 +187,16 @@ namespace PowerSDR.Properties {
             get {
                 object obj = ResourceManager.GetObject("moon1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] napoli {
+            get {
+                object obj = ResourceManager.GetObject("napoli", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

@@ -319,10 +319,10 @@ namespace PowerSDR
 
             if (!File.Exists(file_name))
             {
-                console.DXMemList.List.Add(new DXMemRecord("k1rfi.com:7300"));
+                console.DXMemList.List.Add(new DXMemRecord("wb8zrl.no-ip.org:7300")); // k1rfi.com:7300
                 console.DXMemList.List.Add(new DXMemRecord("ve7cc.net:23"));
                 console.DXMemList.List.Add(new DXMemRecord("telnet.reversebeacon.net:7000"));
-                console.DXMemList.List.Add(new DXMemRecord(""));
+                console.DXMemList.List.Add(new DXMemRecord("n7od.pentux.net:7300"));
                 console.DXMemList.List.Add(new DXMemRecord(""));
                 console.DXMemList.List.Add(new DXMemRecord(""));
                 console.DXMemList.List.Add(new DXMemRecord(""));
@@ -675,7 +675,7 @@ namespace PowerSDR
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Size = new System.Drawing.Size(280, 130);
             this.dataGridView1.TabIndex = 72;
-            this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  k1rfi.com:7300\r\n");
+            this.toolTip1.SetToolTip(this.dataGridView1, "Enter DX address : port#\r\nExample:  wb8zrl.no-ip.org:7300\r\n");
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.DoubleClick += new System.EventHandler(this.dataGridView1_DoubleClick);
             // 
@@ -3018,7 +3018,7 @@ namespace PowerSDR
                                     DX_Mode[DX_Index1] = 4; // olivia mode
 
                                 }
-                                else if (DX_Message[DX_Index1].Contains("jt65"))
+                                else if (DX_Message[DX_Index1].Contains("jt6"))
                                 {
                                     if (chkBoxDIG.Checked != true) continue; // check for a Digitla mode spot
                                     DX_Mode[DX_Index1] = 5; // jt65 mode
@@ -3084,9 +3084,24 @@ namespace PowerSDR
                                     DX_Mode[DX_Index1] = 14; // AM mode
 
                                 }
+                                else if (DX_Message[DX_Index1].Contains("ft8"))
+                                {
+                                    if (chkBoxDIG.Checked != true) continue; // check for a Digitla mode spot
+                                    DX_Mode[DX_Index1] = 15; // ft8 mode
 
+                                }
+                                else if (DX_Message[DX_Index1].Contains("mfsk"))
+                                {
+                                    if (chkBoxDIG.Checked != true) continue; // check for a Digitla mode spot
+                                    DX_Mode[DX_Index1] = 16; // mfsk mode
 
+                                }
+                                else if (DX_Message[DX_Index1].Contains("feld"))
+                                {
+                                    if (chkBoxDIG.Checked != true) continue; // check for a Digitla mode spot
+                                    DX_Mode[DX_Index1] = 17; // Feld hell mode
 
+                                }
 
                                 if (DX_Mode[DX_Index1] == 0)
                                 {
@@ -4425,6 +4440,10 @@ namespace PowerSDR
                 else if (DX_Mode[ii] == 12) DXmode = " drm ";
                 else if (DX_Mode[ii] == 13) DXmode = " sstv";
                 else if (DX_Mode[ii] == 14) DXmode = " am  ";
+                else if (DX_Mode[ii] == 15) DXmode = " ft8 ";
+                else if (DX_Mode[ii] == 16) DXmode = " mfsk";
+                else if (DX_Mode[ii] == 17) DXmode = " feld";
+
 
                 else DXmode = "     ";
 
@@ -4495,6 +4514,9 @@ namespace PowerSDR
                 else if (BX_Mode[ii] == 12) DXmode = " drm ";
                 else if (BX_Mode[ii] == 13) DXmode = " sstv";
                 else if (BX_Mode[ii] == 14) DXmode = " am  ";
+                else if (BX_Mode[ii] == 15) DXmode = " ft8 ";
+                else if (BX_Mode[ii] == 16) DXmode = " mfsk";
+                else if (BX_Mode[ii] == 17) DXmode = " feld";
 
                 else DXmode = "     ";
 
@@ -4851,6 +4873,9 @@ namespace PowerSDR
                             else if (DX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.LSB;
                             else if (DX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGL;
                             else if (DX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
+                            else if (DX_Mode[iii] == 15) console.RX1DSPMode = DSPMode.DIGU; // FT8
+                            else if (DX_Mode[iii] == 16) console.RX1DSPMode = DSPMode.DIGL;
+                            else if (DX_Mode[iii] == 17) console.RX1DSPMode = DSPMode.DIGL;
                             else console.RX1DSPMode = DSPMode.LSB;
 
 
@@ -4880,6 +4905,10 @@ namespace PowerSDR
                             else if (DX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.USB;
                             else if (DX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGU;
                             else if (DX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
+                            else if (DX_Mode[iii] == 15) console.RX1DSPMode = DSPMode.DIGU; // FT8
+                            else if (DX_Mode[iii] == 16) console.RX1DSPMode = DSPMode.DIGU;
+                            else if (DX_Mode[iii] == 17) console.RX1DSPMode = DSPMode.DIGU;
+
                             else console.RX1DSPMode = DSPMode.USB;
 
                         }
@@ -4953,6 +4982,9 @@ namespace PowerSDR
                             else if (BX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.LSB;
                             else if (BX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGL;
                             else if (BX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
+                            else if (BX_Mode[iii] == 15) console.RX1DSPMode = DSPMode.DIGU; // ft8
+                            else if (BX_Mode[iii] == 16) console.RX1DSPMode = DSPMode.DIGL;
+                            else if (BX_Mode[iii] == 17) console.RX1DSPMode = DSPMode.DIGL;
                             else console.RX1DSPMode = DSPMode.LSB;
 
 
@@ -4982,6 +5014,10 @@ namespace PowerSDR
                             else if (BX_Mode[iii] == 12) console.RX1DSPMode = DSPMode.USB;
                             else if (BX_Mode[iii] == 13) console.RX1DSPMode = DSPMode.DIGU;
                             else if (BX_Mode[iii] == 14) console.RX1DSPMode = DSPMode.SAM;
+                            else if (BX_Mode[iii] == 15) console.RX1DSPMode = DSPMode.DIGU; // ft8
+                            else if (BX_Mode[iii] == 16) console.RX1DSPMode = DSPMode.DIGU;
+                            else if (BX_Mode[iii] == 17) console.RX1DSPMode = DSPMode.DIGU;
+
                             else console.RX1DSPMode = DSPMode.USB;
 
                         }

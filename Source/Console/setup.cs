@@ -1115,6 +1115,7 @@ namespace PowerSDR
         private LabelTS labelTS28;
         private LabelTS labelTS29;
         public CheckBoxTS chkVFOOpenFont;
+        public CheckBoxTS chkBoxIND2;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1525,6 +1526,7 @@ namespace PowerSDR
             this.btnConfigure = new System.Windows.Forms.Button();
             this.cbConsoleSelect = new System.Windows.Forms.ComboBox();
             this.groupBoxTS1 = new System.Windows.Forms.GroupBoxTS();
+            this.chkBoxIND2 = new System.Windows.Forms.CheckBoxTS();
             this.labelTS26 = new System.Windows.Forms.LabelTS();
             this.btnTuneStepChangeLarger2 = new System.Windows.Forms.ButtonTS();
             this.btnTuneStepChangeSmaller2 = new System.Windows.Forms.ButtonTS();
@@ -4709,7 +4711,7 @@ namespace PowerSDR
             this.groupBox2.Controls.Add(this.chkBoxHTTP);
             this.groupBox2.Location = new System.Drawing.Point(32, 184);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(505, 100);
+            this.groupBox2.Size = new System.Drawing.Size(521, 100);
             this.groupBox2.TabIndex = 54;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "HttpServer";
@@ -4996,6 +4998,7 @@ namespace PowerSDR
             // 
             // groupBoxTS1
             // 
+            this.groupBoxTS1.Controls.Add(this.chkBoxIND2);
             this.groupBoxTS1.Controls.Add(this.labelTS26);
             this.groupBoxTS1.Controls.Add(this.btnTuneStepChangeLarger2);
             this.groupBoxTS1.Controls.Add(this.btnTuneStepChangeSmaller2);
@@ -5006,15 +5009,26 @@ namespace PowerSDR
             this.groupBoxTS1.Controls.Add(this.udSpeedPM);
             this.groupBoxTS1.Location = new System.Drawing.Point(362, 11);
             this.groupBoxTS1.Name = "groupBoxTS1";
-            this.groupBoxTS1.Size = new System.Drawing.Size(184, 155);
+            this.groupBoxTS1.Size = new System.Drawing.Size(192, 155);
             this.groupBoxTS1.TabIndex = 53;
             this.groupBoxTS1.TabStop = false;
             this.groupBoxTS1.Text = "PowerMate and FlexControl";
             // 
+            // chkBoxIND2
+            // 
+            this.chkBoxIND2.Image = null;
+            this.chkBoxIND2.Location = new System.Drawing.Point(9, 133);
+            this.chkBoxIND2.Name = "chkBoxIND2";
+            this.chkBoxIND2.Size = new System.Drawing.Size(182, 16);
+            this.chkBoxIND2.TabIndex = 81;
+            this.chkBoxIND2.Text = "Alt Tune Step for FlexControl\r\n";
+            this.toolTip1.SetToolTip(this.chkBoxIND2, "Check to use the  Alternative Tune Step \r\nFor the FlexControl\r\n\r\nUncheck to use t" +
+        "he main cosnsole PowerSDR Tune Step");
+            // 
             // labelTS26
             // 
             this.labelTS26.Image = null;
-            this.labelTS26.Location = new System.Drawing.Point(43, 76);
+            this.labelTS26.Location = new System.Drawing.Point(43, 67);
             this.labelTS26.Name = "labelTS26";
             this.labelTS26.Size = new System.Drawing.Size(115, 16);
             this.labelTS26.TabIndex = 80;
@@ -5028,7 +5042,7 @@ namespace PowerSDR
             this.btnTuneStepChangeLarger2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnTuneStepChangeLarger2.Image = null;
             this.btnTuneStepChangeLarger2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(118, 96);
+            this.btnTuneStepChangeLarger2.Location = new System.Drawing.Point(119, 85);
             this.btnTuneStepChangeLarger2.Name = "btnTuneStepChangeLarger2";
             this.btnTuneStepChangeLarger2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeLarger2.TabIndex = 79;
@@ -5044,7 +5058,7 @@ namespace PowerSDR
             this.btnTuneStepChangeSmaller2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.btnTuneStepChangeSmaller2.Image = null;
             this.btnTuneStepChangeSmaller2.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(43, 96);
+            this.btnTuneStepChangeSmaller2.Location = new System.Drawing.Point(46, 85);
             this.btnTuneStepChangeSmaller2.Name = "btnTuneStepChangeSmaller2";
             this.btnTuneStepChangeSmaller2.Size = new System.Drawing.Size(16, 19);
             this.btnTuneStepChangeSmaller2.TabIndex = 78;
@@ -5059,7 +5073,7 @@ namespace PowerSDR
             this.txtWheelTune2.Cursor = System.Windows.Forms.Cursors.Default;
             this.txtWheelTune2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.txtWheelTune2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtWheelTune2.Location = new System.Drawing.Point(64, 95);
+            this.txtWheelTune2.Location = new System.Drawing.Point(65, 86);
             this.txtWheelTune2.Name = "txtWheelTune2";
             this.txtWheelTune2.ReadOnly = true;
             this.txtWheelTune2.Size = new System.Drawing.Size(48, 20);
@@ -5072,19 +5086,18 @@ namespace PowerSDR
             // chkBoxIND
             // 
             this.chkBoxIND.Image = null;
-            this.chkBoxIND.Location = new System.Drawing.Point(26, 118);
+            this.chkBoxIND.Location = new System.Drawing.Point(9, 110);
             this.chkBoxIND.Name = "chkBoxIND";
-            this.chkBoxIND.Size = new System.Drawing.Size(132, 31);
+            this.chkBoxIND.Size = new System.Drawing.Size(182, 17);
             this.chkBoxIND.TabIndex = 7;
-            this.chkBoxIND.Text = "Alt Tune Step ON";
-            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the this Alternative Tune Step \r\nWorks with both PowerMate and FlexC" +
-        "ontrol\r\n\r\nUncheck to use the main cosnsole PowerSDR Tune Step");
-            this.chkBoxIND.CheckedChanged += new System.EventHandler(this.chkBoxIND_CheckedChanged);
+            this.chkBoxIND.Text = "Alt Tune Step for PowerMate\r\n";
+            this.toolTip1.SetToolTip(this.chkBoxIND, "Check to use the Alternative Tune Step \r\nFor PowerMate Knob\r\n\r\nUncheck to use the" +
+        " main cosnsole PowerSDR Tune Step");
             // 
             // labelTS15
             // 
             this.labelTS15.Image = null;
-            this.labelTS15.Location = new System.Drawing.Point(6, 25);
+            this.labelTS15.Location = new System.Drawing.Point(6, 42);
             this.labelTS15.Name = "labelTS15";
             this.labelTS15.Size = new System.Drawing.Size(108, 16);
             this.labelTS15.TabIndex = 5;
@@ -5093,11 +5106,11 @@ namespace PowerSDR
             // chkBoxPM
             // 
             this.chkBoxPM.Image = null;
-            this.chkBoxPM.Location = new System.Drawing.Point(26, 42);
+            this.chkBoxPM.Location = new System.Drawing.Point(26, 12);
             this.chkBoxPM.Name = "chkBoxPM";
-            this.chkBoxPM.Size = new System.Drawing.Size(130, 31);
+            this.chkBoxPM.Size = new System.Drawing.Size(149, 27);
             this.chkBoxPM.TabIndex = 6;
-            this.chkBoxPM.Text = "PowerMate Active";
+            this.chkBoxPM.Text = "PowerMate Knob Active";
             this.chkBoxPM.CheckedChanged += new System.EventHandler(this.chkBoxPM_CheckedChanged);
             // 
             // udSpeedPM
@@ -5108,7 +5121,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udSpeedPM.Location = new System.Drawing.Point(120, 21);
+            this.udSpeedPM.Location = new System.Drawing.Point(119, 40);
             this.udSpeedPM.Maximum = new decimal(new int[] {
             8,
             0,
@@ -13149,7 +13162,8 @@ namespace PowerSDR
             this.comboMeterType.Items.AddRange(new object[] {
             "AnalogTR7",
             "Edge",
-            "Analog"});
+            "Analog",
+            "Bar"});
             this.comboMeterType.Location = new System.Drawing.Point(80, 16);
             this.comboMeterType.Name = "comboMeterType";
             this.comboMeterType.Size = new System.Drawing.Size(80, 21);
@@ -26463,8 +26477,12 @@ namespace PowerSDR
             // see MTRset  (setupform.MTRset in console.cs)
           
             if (comboMeterType.Text == "") return;
-          
-            switch (comboMeterType.Text)
+
+            console.lblMultiSMeter.Visible = false;
+            console.lblRX2Meter.Visible = false;
+
+
+             switch (comboMeterType.Text)
 			{
      
                 case "AnalogTR7":
@@ -26480,6 +26498,18 @@ namespace PowerSDR
                 case "Analog":
                     console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Analog;
                     comboMeterType.SelectedItem = MultiMeterDisplayMode.Analog;
+                    break;
+
+                case "Bar":
+                    console.CurrentMeterDisplayMode = MultiMeterDisplayMode.Bar;
+                    comboMeterType.SelectedItem = MultiMeterDisplayMode.Bar;
+
+                    console.lblMultiSMeter.Visible = true;
+
+                    if (console.meterCombo != true) //MeterTXMode.Combo)
+                    {
+                        console.lblRX2Meter.Visible = true;
+                    }
                     break;
             }
    
@@ -28136,11 +28166,6 @@ namespace PowerSDR
                 tune_step_index2 = value;
                 txtWheelTune2.Text = console.tune_step_list[tune_step_index2].Name;
             }
-        }
-
-        private void chkBoxIND_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
 

@@ -73,7 +73,7 @@ namespace PowerSDR
 
         #region Properties
 
-        private string dxurl = "k1rfi.com:7300";
+        private string dxurl = "wb8zrl.no-ip.org:7300"; // was k1rfi.com
         public string DXURL
         {
             get { return dxurl; }

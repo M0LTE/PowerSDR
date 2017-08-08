@@ -731,6 +731,8 @@
     <EmbeddedResource Include="Resources\disk3.png" />
     <EmbeddedResource Include="Resources\arrowA.png" />
     <EmbeddedResource Include="Resources\arrowB.png" />
+    <EmbeddedResource Include="Resources\Black_TXonly.png" />
+    <EmbeddedResource Include="Resources\Black_combo.png" />
     <Content Include="Scripts\json-serialize.js" />
     <Content Include="Scripts\json-serialize.min.js" />
     <EmbeddedResource Include="Resources\picD1.png" />
@@ -975,6 +977,7 @@
     <Content Include="CAT\CATStructs.xml" />
     <EmbeddedResource Include="images\flex-3000.jpg" />
     <Content Include="images\PowerSDR.ico" />
+    <EmbeddedResource Include="Resources\napoli.ttf" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

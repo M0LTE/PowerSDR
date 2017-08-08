@@ -241,6 +241,8 @@ namespace PowerSDR
 		Original = 0,    // was a bargraph now ke9ns added tr7
 		Edge,            // analog meter with straight needle
 		Analog,          // ke9ns added
+        Bar,             // ke9ns add back bar graph
+        
 	}
 
 	public enum FilterWidthMode
@@ -397,6 +399,7 @@ namespace PowerSDR
 		ALC,
 		ALC_G,
 		SWR,
+        Combo, // ke9ns add
 		OFF,
 		LAST,
 	}
@@ -421,7 +424,7 @@ namespace PowerSDR
     public enum FRSRegion
     {
         FIRST = -1,
-        US = 0,           // USA  USA, CA, ROW, IARU2
+        US = 0,           // USA  USA, CA, ROW 
         UK = 1,           // EU01 UK, Slovakia, France, Malta
         Europe = 2,       // EU00 Germany, European Union, IARU1
         UK_Plus = 3,      // EU02 UK+ (adds 60m band)
@@ -437,14 +440,15 @@ namespace PowerSDR
         France = 13,      // EU01 UK, Slovakia, France, Malta
         Russia = 14,      // RUSS  
         Sweden = 15,      // EU06 
-        Region_3 = 16,    // IARU3 China, Australia, New Zealand
+        IARU3 = 16,       // IARU3 China, Australia, New Zealand
         Japan = 17,       // JPN  
         Italy_Plus = 18,  // EU11 Italy+ (40m band)
         ES_CH_FIN = 19,   // EU12 Spain, Switzerland, Finland (ES,CH,FIN)  
         Netherlands = 20, // EU13 
         EU_Travel = 21,   // EU14 
         Luxembourg = 22,  // EU15
-        Region_2 = 23,    // IARU2 (Central & South America)		
+        IARU2 = 23,       // IARU2 (Central & South America)	
+        Australia = 24,   // AUS
         LAST,
     }
 
@@ -778,6 +782,7 @@ namespace PowerSDR
         private LabelTS labelTS6;
         private ComboBoxTS comboCWTXProfile;
         private Label label6;
+        private PictureBox picRX3Meter;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -808,6 +813,9 @@ namespace PowerSDR
         public static Stream meter_image1 = myAssembly.GetManifestResourceStream("PowerSDR.Resources.meterback1.png"); // ke9ns add light color analog meter background
         public static Stream meter_image2 = myAssembly.GetManifestResourceStream("PowerSDR.Resources.meterback2.png");// ke9ns add dark color analog meter background
 
+        public static Stream meter_image3 = myAssembly.GetManifestResourceStream("PowerSDR.Resources.Black_combo.png");// ke9ns add  meter 
+        public static Stream meter_image4 = myAssembly.GetManifestResourceStream("PowerSDR.Resources.Black_TXonly.png");// ke9ns add  meter 
+
         public static Stream antpic = myAssembly.GetManifestResourceStream("PowerSDR.Resources.ant2.png");// ke9ns add clip art of antenna symbol
         public static Stream dialpic = myAssembly.GetManifestResourceStream("PowerSDR.Resources.disk3.png");// ke9ns add dial graphic
         public static Stream vfoApic = myAssembly.GetManifestResourceStream("PowerSDR.Resources.arrowA.png");// ke9ns add vfoA graphic
@@ -820,9 +828,13 @@ namespace PowerSDR
         public static Stream White_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.white2.png");// ke9ns add yellow needle analog meter
 
 
+
         Image TR7 = new Bitmap(meter_image);         // pre-can the images 
         Image meterback1 = new Bitmap(meter_image1);
         Image meterback2 = new Bitmap(meter_image2);
+
+        Image meterback3 = new Bitmap(meter_image3); // ke9ns combo meter
+        Image meterback4 = new Bitmap(meter_image4);
 
         Image ant2 = new Bitmap(antpic); // image of antenna symbol
         Image dial = new Bitmap(dialpic); // image of vfo a
@@ -1420,7 +1432,7 @@ namespace PowerSDR
 		private System.Windows.Forms.Timer timer_cpu_meter;
 		private System.Windows.Forms.LabelTS lblFilterHigh;
 		private System.Windows.Forms.LabelTS lblFilterLow;
-		private System.Windows.Forms.LabelTS lblMultiSMeter;
+        public LabelTS lblMultiSMeter;
         private PictureBox picMultiMeterDigital;
         private PictureBox picRX2Meter;
         private System.Windows.Forms.CheckBoxTS chkSquelch;
@@ -1565,7 +1577,7 @@ namespace PowerSDR
 		private System.Windows.Forms.CheckBoxTS chkRX2NR;
 		
 		private System.Windows.Forms.TextBoxTS txtRX2Meter;
-		private System.Windows.Forms.LabelTS lblRX2Meter;
+        public LabelTS lblRX2Meter;
         private System.Windows.Forms.CheckBoxTS chkRX2Preamp;
         private System.Windows.Forms.LabelTS lblRX2RF;
         private System.Windows.Forms.PictureBox picSquelch;
@@ -1793,6 +1805,7 @@ namespace PowerSDR
             byte[] fontArray = Properties.Resources.swissek;  //  swissek buffer to hold Font file
             int dataLength = Properties.Resources.swissek.Length; //  swissek get length of Font file
 
+           
             byte[] fontArray1 = Properties.Resources.swissb;  // swissbi  buffer to hold Font file     SWIS721 Bold
             int dataLength1 = Properties.Resources.swissb.Length; // swissbi  get length of Font file
 
@@ -1803,6 +1816,8 @@ namespace PowerSDR
             byte[] fontArray3 = Properties.Resources.swissbo;  // swisscbo  buffer to hold Font file     SWIS721 OUTLINE FONT
             int dataLength3 = Properties.Resources.swissbo.Length; // swisscbo  get length of Font file
 
+          //  byte[] fontArray3 = Properties.Resources.napoli;  //   buffer to hold Font file
+          //  int dataLength3 = Properties.Resources.napoli.Length; //   get length of Font file
 
             IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength); //int pointer to a allocated block of unmanaged memory the size of the Font File
             IntPtr ptrData1 = Marshal.AllocCoTaskMem(dataLength1); //int pointer to a allocated block of unmanaged memory the size of the Font File
@@ -3068,6 +3083,7 @@ namespace PowerSDR
             this.ptbCPDR = new PowerSDR.PrettyTrackBar();
             this.ptbDX = new PowerSDR.PrettyTrackBar();
             this.comboCWTXProfile = new System.Windows.Forms.ComboBoxTS();
+            this.picRX3Meter = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -3294,6 +3310,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbNoiseGate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX3Meter)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
@@ -5065,8 +5082,8 @@ namespace PowerSDR
             this.comboRX2MeterMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboRX2MeterMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRX2MeterMode.DropDownWidth = 72;
-            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboRX2MeterMode, "comboRX2MeterMode");
+            this.comboRX2MeterMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.comboRX2MeterMode.Name = "comboRX2MeterMode";
             this.toolTip1.SetToolTip(this.comboRX2MeterMode, resources.GetString("comboRX2MeterMode.ToolTip"));
             this.comboRX2MeterMode.SelectedIndexChanged += new System.EventHandler(this.comboRX2MeterMode_SelectedIndexChanged);
@@ -5522,8 +5539,8 @@ namespace PowerSDR
             this.comboMeterTX1Mode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterTX1Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterTX1Mode.DropDownWidth = 72;
-            this.comboMeterTX1Mode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterTX1Mode, "comboMeterTX1Mode");
+            this.comboMeterTX1Mode.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.comboMeterTX1Mode.Name = "comboMeterTX1Mode";
             this.toolTip1.SetToolTip(this.comboMeterTX1Mode, resources.GetString("comboMeterTX1Mode.ToolTip"));
             this.comboMeterTX1Mode.SelectedIndexChanged += new System.EventHandler(this.comboMeterTX1Mode_SelectedIndexChanged);
@@ -5793,7 +5810,6 @@ namespace PowerSDR
             this.picRX2Meter.Name = "picRX2Meter";
             this.picRX2Meter.TabStop = false;
             this.toolTip1.SetToolTip(this.picRX2Meter, resources.GetString("picRX2Meter.ToolTip"));
-            this.picRX2Meter.Click += new System.EventHandler(this.picRX2Meter_MouseUp);
             this.picRX2Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Meter_Paint);
             this.picRX2Meter.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRX2Meter_MouseUp);
             // 
@@ -6137,6 +6153,16 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.comboCWTXProfile, resources.GetString("comboCWTXProfile.ToolTip"));
             this.comboCWTXProfile.SelectedIndexChanged += new System.EventHandler(this.comboCWTXProfile_SelectedIndexChanged);
             this.comboCWTXProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.comboCWTXProfile_MouseDown);
+            // 
+            // picRX3Meter
+            // 
+            this.picRX3Meter.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.picRX3Meter, "picRX3Meter");
+            this.picRX3Meter.Name = "picRX3Meter";
+            this.picRX3Meter.TabStop = false;
+            this.toolTip1.SetToolTip(this.picRX3Meter, resources.GetString("picRX3Meter.ToolTip"));
+            this.picRX3Meter.Click += new System.EventHandler(this.picRX3Meter_Click);
+            this.picRX3Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX3Meter_Paint);
             // 
             // timer_clock
             // 
@@ -7768,9 +7794,9 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.grpMultimeter, "grpMultimeter");
             this.grpMultimeter.BackColor = System.Drawing.Color.Transparent;
+            this.grpMultimeter.Controls.Add(this.lblMultiSMeter);
             this.grpMultimeter.Controls.Add(this.comboMeterTXMode);
             this.grpMultimeter.Controls.Add(this.picMultiMeterDigital);
-            this.grpMultimeter.Controls.Add(this.lblMultiSMeter);
             this.grpMultimeter.Controls.Add(this.comboMeterRXMode);
             this.grpMultimeter.Controls.Add(this.txtMultiText);
             this.grpMultimeter.ForeColor = System.Drawing.Color.White;
@@ -7852,9 +7878,10 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this.grpRX2Meter, "grpRX2Meter");
             this.grpRX2Meter.BackColor = System.Drawing.Color.Transparent;
+            this.grpRX2Meter.Controls.Add(this.lblRX2Meter);
+            this.grpRX2Meter.Controls.Add(this.picRX3Meter);
             this.grpRX2Meter.Controls.Add(this.picRX2Meter);
             this.grpRX2Meter.Controls.Add(this.comboMeterTX1Mode);
-            this.grpRX2Meter.Controls.Add(this.lblRX2Meter);
             this.grpRX2Meter.Controls.Add(this.comboRX2MeterMode);
             this.grpRX2Meter.Controls.Add(this.txtRX2Meter);
             this.grpRX2Meter.ForeColor = System.Drawing.Color.White;
@@ -8077,6 +8104,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbNoiseGate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX3Meter)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
@@ -11421,14 +11449,20 @@ namespace PowerSDR
         // Firmware upate: Flex-1500 2017-05-07 0.5.3.14   
 
 
+        // ke9ns add 7/21/17 From Tim to align with FRSRegions in SmartSDR v2.0
+        // Firmware upate: Flex-5000 2017-07-20 2.1.4.6   
+        // Firmware upate: Flex-3000 2017-07-20 2.1.4.6   
+        // Firmware upate: Flex-1500 2017-07-20 0.5.3.15   
+
+
         private uint GetMinVersion(Model m)
         {
             uint MIN_VERSION = 0;
             switch(m)
             {
-                case Model.FLEX5000: MIN_VERSION = 0x02010405; break; // was 0x02010309 was 0x02010404
-                case Model.FLEX3000: MIN_VERSION = 0x02010405; break; // was 0x02010307 was 0x02010404
-                case Model.FLEX1500: MIN_VERSION = 0x0005030E; break;  // was 0x0005030A was 0x0005030D
+                case Model.FLEX5000: MIN_VERSION = 0x02010406; break; // was 0x02010309, was 0x02010404 ,was 0x02010405
+                case Model.FLEX3000: MIN_VERSION = 0x02010406; break; // was 0x02010307, was 0x02010404 ,was 0x02010405
+                case Model.FLEX1500: MIN_VERSION = 0x0005030F; break;  // was 0x0005030A, was 0x0005030D ,was 0x0005030E
             }
             return MIN_VERSION;
         }
@@ -13469,7 +13503,8 @@ namespace PowerSDR
 			comboMeterTXMode.Items.Add("ALC");			
 			comboMeterTXMode.Items.Add("ALC Comp");
 			comboMeterTXMode.Items.Add("CPDR");
-			comboMeterTXMode.Items.Add("Off");
+          
+            comboMeterTXMode.Items.Add("Off");
 
 
             //ke9ns add block below
@@ -13483,6 +13518,7 @@ namespace PowerSDR
             comboMeterTX1Mode.Items.Add("ALC");
             comboMeterTX1Mode.Items.Add("ALC Comp");
             comboMeterTX1Mode.Items.Add("CPDR");
+            comboMeterTX1Mode.Items.Add("Combo"); // ke9ns add for combo meter
             comboMeterTX1Mode.Items.Add("Off");
 
         }// initmultimeterModes()
@@ -13992,7 +14028,7 @@ namespace PowerSDR
                         DB.SaveBandStack("90M", band_90m_index, mode, filter, freq);
                     break;
                 case Band.B61M:
-                    if (freq >= 4.10 && freq < 5.25) // was 5.06
+                    if (freq > 4.00 && freq < 5.25) // was 5.06
                         DB.SaveBandStack("61M", band_61m_index, mode, filter, freq);
                     break;
                 case Band.B49M:
@@ -15104,7 +15140,7 @@ namespace PowerSDR
                    // return Band.B80M;
                 }
 
-                else if (freq >= 4.00 && freq < 5.25)
+                else if (freq > 4.00 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15320,14 +15356,14 @@ namespace PowerSDR
                     return Band.B120M;
                 }
 
-                else if (freq >= 3.0 && freq < 4.1)
+                else if (freq >= 3.0 && freq < 3.5)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 4.00 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15475,7 +15511,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq > 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15489,7 +15525,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15634,7 +15670,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq > 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15648,7 +15684,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15793,7 +15829,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15807,7 +15843,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15946,14 +15982,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.83) // italy
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.85 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15967,7 +16003,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16047,7 +16083,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // italy
 
                 else if (region == FRSRegion.Norway)
                 {
@@ -16106,14 +16142,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81) // norway
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16127,7 +16163,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16265,14 +16301,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16286,7 +16322,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16423,14 +16459,14 @@ namespace PowerSDR
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16444,7 +16480,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16524,7 +16560,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Latvia
 
                 else if (region == FRSRegion.Slovakia)
                 {
@@ -16583,14 +16619,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16604,7 +16640,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16683,7 +16719,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Slovakia
 
                 else if (region == FRSRegion.Bulgaria)
                 {
@@ -16741,14 +16777,14 @@ namespace PowerSDR
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.85 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16762,7 +16798,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16841,7 +16877,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Bulgaria
 
 
                 else if (region == FRSRegion.Greece)
@@ -16897,14 +16933,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.850 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16918,7 +16954,7 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq > 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16998,7 +17034,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Greece
 
 
 
@@ -17060,14 +17096,14 @@ namespace PowerSDR
 
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17081,21 +17117,21 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
-                else if (freq >= 7.20 && freq < 9.0)
+                else if (freq >= 7.10 && freq < 9.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17160,7 +17196,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Hungary
 
 
                 else if (region == FRSRegion.Belgium)
@@ -17220,14 +17256,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81) // Belgium
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.88 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17241,14 +17277,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17320,7 +17356,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Belgium
 
 
                 else if (region == FRSRegion.France)
@@ -17380,14 +17416,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17401,14 +17437,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17480,7 +17516,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // France
 
 
                 else if (region == FRSRegion.Russia)
@@ -17540,14 +17576,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17561,14 +17597,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17640,7 +17676,8 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Russia
+
                 else if (region == FRSRegion.Sweden)
                 {
                 if (freq >= 1.81 && freq <= 2.0)
@@ -17697,14 +17734,14 @@ namespace PowerSDR
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81) // sweden
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17718,14 +17755,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17797,8 +17834,9 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
-                else if (region == FRSRegion.Region_3)
+                } // Sweden
+
+                else if (region == FRSRegion.IARU3)
                 {
                 if (freq >= 1.8 && freq <= 2.0)
                 {
@@ -17855,14 +17893,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.80) // IARU3
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17876,21 +17914,21 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.9 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
-                else if (freq >= 7.20 && freq < 9.0)
+                else if (freq >= 7.30 && freq < 9.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17955,7 +17993,9 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // IARU3
+
+
                 else if (region == FRSRegion.Japan)
                 {
                 if (freq >= 1.81 && freq <= 1.9125)
@@ -18013,14 +18053,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.912 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18034,14 +18074,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.805 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18113,7 +18153,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-                }
+                } // Japan
 
                 else if (region == FRSRegion.Italy_Plus)
                 {
@@ -18171,7 +18211,7 @@ namespace PowerSDR
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.83)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18192,14 +18232,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 6.975)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18272,10 +18312,10 @@ namespace PowerSDR
                 else
                     return Band.GEN;
 
-                }// italy
+                }// italy+
 
 
-            else if (region == FRSRegion.ES_CH_FIN)
+            else if (region == FRSRegion.ES_CH_FIN) // Spain switz and finland
             {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
@@ -18338,7 +18378,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18352,14 +18392,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.80 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18431,7 +18471,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-            }
+            } // Spain, Switz, Finland
 
             else if (region == FRSRegion.Netherlands)
             {
@@ -18497,7 +18537,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 1.88 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18511,14 +18551,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18590,7 +18630,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-            }
+            } // Netherlands
 
             else if (region == FRSRegion.EU_Travel)
             {
@@ -18649,14 +18689,14 @@ namespace PowerSDR
                 }
 
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.80) // EU travel
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18670,14 +18710,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18749,7 +18789,7 @@ namespace PowerSDR
 
                 else
                     return Band.GEN;
-            }
+            } // EU travel
 
             else if (region == FRSRegion.Luxembourg)
             {
@@ -18807,14 +18847,14 @@ namespace PowerSDR
                     panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
-                else if (freq >= 0.20 && freq < 1.80)
+                else if (freq >= 0.20 && freq < 1.81)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18828,14 +18868,14 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 3.8 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18908,7 +18948,7 @@ namespace PowerSDR
                 else
                     return Band.GEN;
             }
-            else if (region == FRSRegion.Region_2)
+            else if (region == FRSRegion.IARU2) // 
             {
                 if (freq >= 1.8 && freq <= 2.0)
                 {
@@ -18971,7 +19011,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18985,21 +19025,21 @@ namespace PowerSDR
                     return Band.B90M;
                 }
 
-                else if (freq >= 4.10 && freq < 5.25)
+                else if (freq >= 4.00 && freq < 5.25)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
-                else if (freq >= 5.45 && freq < 7.20)
+                else if (freq >= 5.45 && freq < 7.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
-                else if (freq >= 7.20 && freq < 9.0)
+                else if (freq >= 7.30 && freq < 9.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -19066,6 +19106,163 @@ namespace PowerSDR
                     return Band.GEN;
             } // region_2
 
+            else if (region == FRSRegion.Australia) // ke9ns add
+            {
+                if (freq >= 1.8 && freq <= 1.875)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                }
+                else if (freq >= 3.5 && freq <= 3.8)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                }
+                else if (freq >= 5.25 && freq <= 5.45) // else if (freq >= 5.1 && freq <= 5.5)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                }
+                else if (freq >= 7.0 && freq <= 7.3)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                }
+                else if (freq >= 10.1 && freq <= 10.15)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                }
+                else if (freq >= 14.0 && freq <= 14.35)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                }
+                else if (freq >= 18.068 && freq <= 18.168)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                }
+                else if (freq >= 21.0 && freq <= 21.450)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                }
+                else if (freq >= 24.89 && freq <= 24.99)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                }
+                else if (freq >= 28.0 && freq <= 29.7)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                }
+                else if (freq >= 50.0 && freq <= 54.0)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                }
+                else if (freq >= 144.0 && freq <= 148.0) // ke9ns 
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                }
+                else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
+                        freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
+                {
+                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                }
+                // ke9ns add
+                else if (freq >= 0.20 && freq < 1.80)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.BLMF;
+                }
+
+                else if (freq >= 1.875 && freq < 3.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B120M;
+                }
+
+                else if (freq >= 3.0 && freq < 3.50)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B90M;
+                }
+
+                else if (freq > 3.8 && freq < 5.25)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B61M;
+                }
+
+                else if (freq >= 5.45 && freq < 7.00)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B49M;
+                }
+
+                else if (freq >= 7.30 && freq < 9.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B41M;
+                }
+
+                else if (freq >= 9.0 && freq < 9.99)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B31M;
+                }
+
+                else if (freq >= 11.6 && freq < 13.57)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B25M;
+                }
+
+                else if (freq >= 13.57 && freq < 13.87)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B22M;
+                }
+
+                else if (freq >= 15.1 && freq < 17.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B19M;
+                }
+
+                else if (freq >= 17.0 && freq < 18.0)
+                {
+
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B16M;
+                }
+
+                else if (freq >= 18.0 && freq < 21.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B14M;
+                }
+                else if (freq >= 21.00 && freq < 25.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B13M;
+                }
+
+                else if (freq >= 25.0 && freq < 28.0)
+                {
+                    panelBandHF.Visible = false;
+                    panelBandGN.Visible = true;
+                    return Band.B11M;
+                }
+
+                else
+                    return Band.GEN;
+            } // Australia
 
             // if nothing matched to this point, just put it in the GEN band
             return Band.GEN;
@@ -19858,7 +20055,7 @@ namespace PowerSDR
                     else if (f >= 50.0 && f <= 52.0) ret_val = true;
                     else ret_val = false;
                     break;
-                case FRSRegion.Region_3: // 16
+                case FRSRegion.IARU3: // 16
                     if (f >= 1.8 && f <= 2.0) ret_val = true;
                     else if (f >= 3.5 && f <= 3.9) ret_val = true;
                     else if (f >= 7.0 && f <= 7.3) ret_val = true;
@@ -19955,7 +20152,7 @@ namespace PowerSDR
                     else if (f >= 50.00 && f <= 52.0) ret_val = true;
                     else ret_val = false;
                     break;
-                case FRSRegion.Region_2: // 23
+                case FRSRegion.IARU2: // 23
                     if (f >= 1.8 && f <= 2.0) ret_val = true;
                     else if (f >= 3.5 && f <= 4.0) ret_val = true;
                     else if (f >= 5.3515 && f <= 5.3665) ret_val = true; // New IARU 2 60m band
@@ -19967,7 +20164,23 @@ namespace PowerSDR
                     else if (f >= 24.89 && f <= 24.99) ret_val = true;
                     else if (f >= 27.0 && f <= 29.7) ret_val = true;
                     else if (f >= 50.0 && f <= 54.0) ret_val = true;
-                    else if (FWCEEPROM.VUOK && f >= 144.0 && f <= 146.0) ret_val = true;
+                    else if (FWCEEPROM.VUOK && f >= 144.0 && f <= 148.0) ret_val = true;
+                    else if (FWCEEPROM.VUOK && f >= 430.0 && f <= 450.0) ret_val = true;
+                    else ret_val = false;
+                    break;
+
+                case FRSRegion.Australia: // 24  (no 60m transmit)
+                    if (f >= 1.8 && f <= 1.875) ret_val = true;
+                    else if (f >= 3.5 && f <= 3.8) ret_val = true;
+                    else if (f >= 7.0 && f <= 7.3) ret_val = true;
+                    else if (f >= 10.1 && f <= 10.15) ret_val = true;
+                    else if (f >= 14.0 && f <= 14.35) ret_val = true;
+                    else if (f >= 18.068 && f <= 18.168) ret_val = true;
+                    else if (f >= 21.0 && f <= 21.45) ret_val = true;
+                    else if (f >= 24.89 && f <= 24.99) ret_val = true;
+                    else if (f >= 27.0 && f <= 29.7) ret_val = true;
+                    else if (f >= 50.0 && f <= 54.0) ret_val = true;
+                    else if (FWCEEPROM.VUOK && f >= 144.0 && f <= 147.975) ret_val = true;
                     else if (FWCEEPROM.VUOK && f >= 430.0 && f <= 450.0) ret_val = true;
                     else ret_val = false;
                     break;
@@ -20548,8 +20761,8 @@ namespace PowerSDR
 
                     if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation) // ke9ns add FMData == true
                     {
-                        low = -FMDataLowHigh;
-                        high = FMDataLowHigh;
+                        low = -FMDataLowHigh; // -10000
+                        high = FMDataLowHigh; // 10000
                     }
                     else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
@@ -20658,8 +20871,8 @@ namespace PowerSDR
 
                     if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation)  // FMData == true)
                     {
-                        low = -FMDataLowHigh;
-                        high = FMDataLowHigh;
+                        low = -FMDataLowHigh; // -10000
+                        high = FMDataLowHigh; // +10000
                     }
                     else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
@@ -21082,8 +21295,8 @@ namespace PowerSDR
 				case DSPMode.FM:
                     if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation)     //FMData == true) // ke9ns add (FM data mode with larger freq window)
                     {
-                        l = -FMDataLowHigh;
-                        h = FMDataLowHigh;
+                        l = -FMDataLowHigh; // -10000
+                        h = FMDataLowHigh;  // 10000
                     }
                     else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
@@ -29159,7 +29372,7 @@ namespace PowerSDR
 			{
 				if(comboTXProfile != null) comboTXProfile.Text = value;
 				if(comboDigTXProfile != null) comboDigTXProfile.Text = value;
-                if (comboCWTXProfile != null) comboCWTXProfile.Text = value;  // ke9ns add
+                if (comboCWTXProfile != null) comboCWTXProfile.Text = value;  // ke9ns add to show TX profile on all the panels of the main console
                 if (comboFMTXProfile != null) comboFMTXProfile.Text = value; // ke9ns add
 
             }
@@ -29263,14 +29476,19 @@ namespace PowerSDR
 						        case MultiMeterDisplayMode.Edge:
                                 picMultiMeterDigital.Invalidate();
                                 picMultiMeterDigital.BackColor = edge_meter_background_color;
-                                picRX2Meter.Invalidate();
-                                    picRX2Meter.BackColor = edge_meter_background_color;
+
+                                if (meterCombo == true ) picRX3Meter.Invalidate(); // ke9ns12 add
+                                else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                                //  picRX2Meter.Invalidate();
+                                picRX2Meter.BackColor = edge_meter_background_color;
 							    break; // edge
 
                                 case MultiMeterDisplayMode.Original:
                                 picMultiMeterDigital.Invalidate();
                                  picMultiMeterDigital.BackColor = meter_background_color;
-                                picRX2Meter.Invalidate();
+                              
+                                  picRX2Meter.Invalidate();
                                 picRX2Meter.BackColor = meter_background_color;
                                 break; // original
 
@@ -29292,8 +29510,12 @@ namespace PowerSDR
                         case MultiMeterDisplayMode.Edge:
                             picMultiMeterDigital.Invalidate();
                              picMultiMeterDigital.BackColor = edge_meter_background_color;
-                            picRX2Meter.Invalidate();
-                             picRX2Meter.BackColor = edge_meter_background_color;
+
+                                if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                                else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                                //picRX2Meter.Invalidate();
+                                picRX2Meter.BackColor = edge_meter_background_color;
                             break; // edge
 
                         case MultiMeterDisplayMode.Original:
@@ -29322,8 +29544,12 @@ namespace PowerSDR
                         case MultiMeterDisplayMode.Edge:
                             picMultiMeterDigital.Invalidate();
                             picMultiMeterDigital.BackColor = edge_meter_background_color;
-                            picRX2Meter.Invalidate();
-                            picRX2Meter.BackColor = edge_meter_background_color;
+
+                                if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                                else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                                //picRX2Meter.Invalidate();
+                                picRX2Meter.BackColor = edge_meter_background_color;
                             break; // edge
 
                         case MultiMeterDisplayMode.Original:
@@ -29452,7 +29678,11 @@ namespace PowerSDR
                     picMultiMeterDigital.Invalidate();
 
                     picRX2Meter.BackColor = value;
-                   picRX2Meter.Invalidate();  // RX2
+
+                    if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                    else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                    //  picRX2Meter.Invalidate();  // RX2
                 }
                 else if (current_meter_display_mode == MultiMeterDisplayMode.Original)
                 {
@@ -29477,7 +29707,11 @@ namespace PowerSDR
 				if(current_meter_display_mode == MultiMeterDisplayMode.Edge)
                 {
                     picMultiMeterDigital.Invalidate();
-                    picRX2Meter.Invalidate();
+
+                    if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                    else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                  //  picRX2Meter.Invalidate();
                 }
 			}
 		}
@@ -29492,9 +29726,12 @@ namespace PowerSDR
 				if(current_meter_display_mode == MultiMeterDisplayMode.Edge)
                 {
                     picMultiMeterDigital.Invalidate();
-                     picRX2Meter.Invalidate();
+                    if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                    else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                    //picRX2Meter.Invalidate();
                 }
-			}
+            }
 		}
 
 		private static Color edge_avg_color = Color.Yellow;  // ke9ns needle color
@@ -29507,9 +29744,12 @@ namespace PowerSDR
                 if (current_meter_display_mode == MultiMeterDisplayMode.Edge)
                 {
                     picMultiMeterDigital.Invalidate();
-                     picRX2Meter.Invalidate();
+                    if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                    else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                    //   picRX2Meter.Invalidate();
                 }
-               
+
             }
 		}
 
@@ -29568,7 +29808,9 @@ namespace PowerSDR
         // ke9ns add
         private bool meterLMB = false; // light meter background = true
         private bool meterDMB = false; // dark meter background = true
+        public bool meterCombo = false; // combo meter background = true
 
+        // ke9ns add
         public bool AnalogMeterLMB
         {
 
@@ -29580,6 +29822,7 @@ namespace PowerSDR
 
         } // AnalogMeterLMB
 
+        // ke9ns add
         public bool AnalogMeterDMB
         {
 
@@ -29590,6 +29833,18 @@ namespace PowerSDR
             }
 
         } // AnalogMeterDMB
+
+        // ke9ns add 
+        public bool ComboMeter
+        {
+
+            get { return meterCombo; }
+            set
+            {
+                meterCombo = value;
+            }
+
+        } // ComboMeter
 
         private bool meterPointer = false;
         public bool AnalogPointer
@@ -30923,7 +31178,7 @@ namespace PowerSDR
                             if (!comboMeterTXMode.Items.Contains("SWR"))  comboMeterTXMode.Items.Insert(2, "SWR");
                             if (comboMeterTXMode.SelectedIndex < 0)   comboMeterTXMode.SelectedIndex = 0;
 
-                            //ke9ns add below
+                            //ke9ns add below for 2nd TX mode meter
                             if (!comboMeterTX1Mode.Items.Contains("Ref Pwr")) comboMeterTX1Mode.Items.Insert(1, "Ref Pwr"); // 
                             if (!comboMeterTX1Mode.Items.Contains("SWR")) comboMeterTX1Mode.Items.Insert(2, "SWR"); // 
                             if (comboMeterTX1Mode.SelectedIndex < 0) comboMeterTX1Mode.SelectedIndex = 0; //
@@ -31130,23 +31385,20 @@ namespace PowerSDR
                             comboPreamp.Text = "  0";
                             comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
 
-                            if (comboMeterTXMode.Items.Contains("Ref Pwr"))
-                                comboMeterTXMode.Items.Remove("Ref Pwr");
-                            if (comboMeterTXMode.Items.Contains("SWR"))
-                                comboMeterTXMode.Items.Remove("SWR");
+                            if (comboMeterTXMode.Items.Contains("Ref Pwr"))   comboMeterTXMode.Items.Remove("Ref Pwr");
+                            if (comboMeterTXMode.Items.Contains("SWR"))  comboMeterTXMode.Items.Remove("SWR");
 
                             if (comboMeterTXMode.SelectedIndex < 0 ||
                                 comboMeterTXMode.SelectedIndex > comboMeterTXMode.Items.Count - 1)
                                 comboMeterTXMode.SelectedIndex = 0;
 
                             // ke9ns add below for 2nd meter
-                            if (comboMeterTX1Mode.Items.Contains("Ref Pwr"))
-                                comboMeterTX1Mode.Items.Remove("Ref Pwr");
-                            if (comboMeterTX1Mode.Items.Contains("SWR"))
-                                comboMeterTX1Mode.Items.Remove("SWR");
+                            if (comboMeterTX1Mode.Items.Contains("Ref Pwr"))  comboMeterTX1Mode.Items.Remove("Ref Pwr");
+                            if (comboMeterTX1Mode.Items.Contains("SWR"))   comboMeterTX1Mode.Items.Remove("SWR");
 
-                            if (comboMeterTX1Mode.SelectedIndex < 0 ||
-                                comboMeterTX1Mode.SelectedIndex > comboMeterTX1Mode.Items.Count - 1)
+                            if (comboMeterTX1Mode.Items.Contains("Combo")) comboMeterTX1Mode.Items.Remove( "Combo"); //ke9ns add for full combo TX meter  (Power, SWR, ALC, MIC)
+
+                            if (comboMeterTX1Mode.SelectedIndex < 0 || comboMeterTX1Mode.SelectedIndex > comboMeterTX1Mode.Items.Count - 1)
                                 comboMeterTX1Mode.SelectedIndex = 0;
 
 
@@ -34985,7 +35237,12 @@ namespace PowerSDR
 					case MeterTXMode.SWR:
 						text = "SWR";
 						break;
-					case MeterTXMode.OFF:		// BT Added 07/24/05 for CAT commands
+
+                    case MeterTXMode.Combo:
+                        text = "Combo"; //ke9ns add
+                        break;
+
+                    case MeterTXMode.OFF:		// BT Added 07/24/05 for CAT commands
 						text = "Off";
 						break;
 				}
@@ -35038,6 +35295,10 @@ namespace PowerSDR
                     case MeterTXMode.SWR:
                         text = "SWR";
                         break;
+                    case MeterTXMode.Combo: 
+                        text = "Combo"; // ke9ns add
+                        break;
+
                     case MeterTXMode.OFF:       // BT Added 07/24/05 for CAT commands
                         text = "Off";
                         break;
@@ -35474,8 +35735,16 @@ namespace PowerSDR
 
 		public bool MOX
 		{
-			get { return chkMOX.Checked; }
-            set { chkMOX.Checked = value; }
+			get
+            {
+                return chkMOX.Checked;
+            }
+            set
+            {
+
+                chkMOX.Checked = value;
+            }
+
 		}
 
 		public bool MOXEnabled
@@ -36816,6 +37085,9 @@ namespace PowerSDR
                     if (!comboMeterTX1Mode.Items.Contains("SWR"))
                         comboMeterTX1Mode.Items.Insert(2, "SWR");
 
+                    if (!comboMeterTX1Mode.Items.Contains("Combo")) //ke9ns add
+                        comboMeterTX1Mode.Items.Insert(2, "Combo");
+
                     if (comboMeterTX1Mode.SelectedIndex < 0)
                         comboMeterTX1Mode.SelectedIndex = 0;
 
@@ -36839,8 +37111,12 @@ namespace PowerSDR
                     cur_txt = comboMeterTX1Mode.Text;
                     if (comboMeterTX1Mode.Items.Contains("Ref Pwr"))
                         comboMeterTX1Mode.Items.Remove("Ref Pwr");
+
                     if (comboMeterTX1Mode.Items.Contains("SWR"))
                         comboMeterTX1Mode.Items.Remove("SWR");
+
+                    if (comboMeterTX1Mode.Items.Contains("Combo")) // ke9ns add for combo meter
+                        comboMeterTX1Mode.Items.Remove("Combo");
 
                     comboMeterTX1Mode.Text = cur_txt;
                     if (comboMeterTX1Mode.SelectedIndex < 0 &&
@@ -37276,7 +37552,7 @@ namespace PowerSDR
         {
             PD = e;
 
-            Debug.WriteLine("picDisplay Paint here");
+          //  Debug.WriteLine("picDisplay Paint here");
 
             if (panelTSBandStack.Enabled == true) // ke9ns add
             {
@@ -37496,6 +37772,392 @@ namespace PowerSDR
             switch (current_meter_display_mode)
 			{
 
+                //=============================================================
+                //=============================================================
+                // KE9NS mod 1 RX1 BAR GRAPH METERS
+                //=============================================================
+                //=============================================================
+
+                case MultiMeterDisplayMode.Bar:  // lblRX2Meter is the text for RX2 bar graph (lblMultiSMeter is for RX1)
+                    #region Bar
+
+                  
+                    if (meter_data_ready)
+                    {
+                        current_meter_data = new_meter_data;
+                        meter_data_ready = false;
+                    }
+
+                    if (!mox)
+                    {
+                        num = current_meter_data;
+
+                        switch (current_meter_rx_mode)
+                        {
+                            case MeterRXMode.SIGNAL_STRENGTH:
+                            case MeterRXMode.SIGNAL_AVERAGE:
+                            case MeterRXMode.SIGNAL_PEAK:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        double s = (num + 127) / 6;
+                                        if (s <= 9.0F)
+                                            pixel_x = (int)((s * 7.5) + 2);
+                                        else
+                                        {
+                                            double over_s9 = num + 73;
+                                            pixel_x = 69 + (int)(over_s9 * 1.05);
+                                        }
+                                        break;
+                                    case 120:
+                                        if (num <= -97.0f)
+                                            pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                        else if (num <= -91.0f)
+                                            pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                        else if (num <= -85.0f)
+                                            pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                        else if (num <= -79.0f)
+                                            pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                        else if (num <= -73.0f)
+                                            pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                        else if (num <= -53.0f)
+                                            pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                        else if (num <= -33.0f)
+                                            pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                        else if (num <= -13.0f)
+                                            pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                        else
+                                            pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+                                        break;
+                                }
+                                break;
+                            case MeterRXMode.ADC_L:
+                            case MeterRXMode.ADC_R:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        pixel_x = (int)(((num + 100) * 1.2) + 12);
+                                        break;
+                                    case 120:
+                                        if (num <= -100.0f)
+                                            pixel_x = (int)(0 + (num + 110.0) / 10.0 * 14);
+                                        else if (num <= -80.0f)
+                                            pixel_x = (int)(14 + (num + 100.0) / 20.0 * 27);
+                                        else if (num <= -60.0f)
+                                            pixel_x = (int)(41 + (num + 80.0) / 20.0 * 28);
+                                        else if (num <= -40.0f)
+                                            pixel_x = (int)(69 + (num + 60.0) / 20.0 * 28);
+                                        else if (num <= -20.0f)
+                                            pixel_x = (int)(97 + (num + 40.0) / 20.0 * 27);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(124 + (num + 20.0) / 20.0 * 24);
+                                        else
+                                            pixel_x = (int)(148 + (num - 0.0) / 10.0 * 19);
+                                        break;
+                                }
+                                break;
+                            case MeterRXMode.OFF:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        num = current_meter_data;
+
+                        MeterTXMode mode = current_meter_tx_mode;
+                        if (chkTUN.Checked) mode = tune_meter_tx_mode;
+                        switch (mode)
+                        {
+                            case MeterTXMode.MIC:
+                            case MeterTXMode.EQ:
+                            case MeterTXMode.LEVELER:
+                            case MeterTXMode.CPDR:
+                            case MeterTXMode.ALC:
+                                //num += 3.0;  // number no longer has fudge factor added in the dsp, must be remove
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= -20.0f)
+                                            pixel_x = (int)(0 + (num + 25.0) / 5.0 * 9);
+                                        else if (num <= -10.0f)
+                                            pixel_x = (int)(9 + (num + 20.0) / 10.0 * 27);
+                                        else if (num <= -5.0f)
+                                            pixel_x = (int)(36 + (num + 10.0) / 5.0 * 27);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(63 + (num + 5.0) / 5.0 * 24);
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(87 + (num - 0.0) / 1.0 * 15);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(102 + (num - 1.0) / 1.0 * 15);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(117 + (num - 2.0) / 1.0 * 15);
+                                        else
+                                            pixel_x = (int)(132 + (num - 3.0) / 0.5 * 8);
+                                        break;
+                                    case 120:
+                                        if (num <= -20.0f)
+                                            pixel_x = (int)(0 + (num + 25.0) / 5.0 * 10);
+                                        else if (num <= -10.0f)
+                                            pixel_x = (int)(10 + (num + 20.0) / 10.0 * 30);
+                                        else if (num <= -5.0f)
+                                            pixel_x = (int)(40 + (num + 10.0) / 5.0 * 30);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(70 + (num + 5.0) / 5.0 * 27);
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(97 + (num - 0.0) / 1.0 * 17);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(114 + (num - 1.0) / 1.0 * 17);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(131 + (num - 2.0) / 1.0 * 17);
+                                        else
+                                            pixel_x = (int)(148 + (num - 3.0) / 0.5 * 23);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.FORWARD_POWER:
+                            case MeterTXMode.REVERSE_POWER:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 2);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(2 + (num - 1) / 4 * 24);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(26 + (num - 5) / 5 * 24);
+                                        else if (num <= 50.0f)
+                                            pixel_x = (int)(50 + (num - 10) / 40 * 24);
+                                        else if (num <= 100.0f)
+                                            pixel_x = (int)(74 + (num - 50) / 50 * 24);
+                                        else if (num <= 120.0f)
+                                            pixel_x = (int)(98 + (num - 100) / 20 * 24);
+                                        else
+                                            pixel_x = (int)(122 + (num - 120) / 20 * 16);
+                                        break;
+                                    case 120:
+                                        if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 1) / 4 * 26);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(29 + (num - 5) / 5 * 26);
+                                        else if (num <= 50.0f)
+                                            pixel_x = (int)(55 + (num - 10) / 40 * 27);
+                                        else if (num <= 100.0f)
+                                            pixel_x = (int)(82 + (num - 50) / 50 * 28);
+                                        else if (num <= 120.0f)
+                                            pixel_x = (int)(110 + (num - 100) / 20 * 27);
+                                        else
+                                            pixel_x = (int)(137 + (num - 120) / 20 * 30);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.SWR:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (double.IsInfinity(num))
+                                            pixel_x = 200;
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 1.5f)
+                                            pixel_x = (int)(3 + (num - 1.0) / 0.5 * 27);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(30 + (num - 1.5) / 0.5 * 20);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(50 + (num - 2.0) / 1.0 * 21);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(71 + (num - 3.0) / 2.0 * 21);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(92 + (num - 5.0) / 5.0 * 21);
+                                        else
+                                            pixel_x = (int)(113 + (num - 10.0) / 15.0 * 26);
+                                        break;
+                                    case 120:
+                                        if (double.IsInfinity(num))
+                                            pixel_x = 200;
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 1.5f)
+                                            pixel_x = (int)(3 + (num - 1.0) / 0.5 * 31);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(34 + (num - 1.5) / 0.5 * 22);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(56 + (num - 2.0) / 1.0 * 22);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(78 + (num - 3.0) / 2.0 * 23);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(101 + (num - 5.0) / 5.0 * 23);
+                                        else
+                                            pixel_x = (int)(124 + (num - 10.0) / 15.0 * 43);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.ALC_G:
+                            case MeterTXMode.LVL_G:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= 0.0f)
+                                            pixel_x = 3;
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 0.0) / 5.0 * 28);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(31 + (num - 5.0) / 5.0 * 29);
+                                        else if (num <= 15.0f)
+                                            pixel_x = (int)(60 + (num - 10.0) / 5.0 * 30);
+                                        else if (num <= 20.0f)
+                                            pixel_x = (int)(90 + (num - 15.0) / 5.0 * 31);
+                                        else
+                                            pixel_x = (int)(121 + (num - 20.0) / 5.0 * 29);
+                                        break;
+                                    case 120:
+                                        if (num <= 0.0f)
+                                            pixel_x = 3;
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 0.0) / 5.0 * 31);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(34 + (num - 5.0) / 5.0 * 33);
+                                        else if (num <= 15.0f)
+                                            pixel_x = (int)(77 + (num - 10.0) / 5.0 * 33);
+                                        else if (num <= 20.0f)
+                                            pixel_x = (int)(110 + (num - 15.0) / 5.0 * 35);
+                                        else
+                                            pixel_x = (int)(145 + (num - 20.0) / 5.0 * 32);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.OFF:
+                                break;
+                        }
+                    }
+
+                    switch ((int)g.DpiX)
+                    {
+                        case 96:
+                            if (pixel_x > 139) pixel_x = 139;
+                            break;
+                        case 120:
+                            if (pixel_x > 167) pixel_x = 167;
+                            break;
+                    }
+
+                    if ((!mox && current_meter_rx_mode != MeterRXMode.OFF) ||
+                        (mox && current_meter_tx_mode != MeterTXMode.OFF))
+                    {
+                        if (pixel_x <= 0) pixel_x = 1;
+
+                        LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, pixel_x, H),
+                            meter_left_color, meter_right_color, LinearGradientMode.Horizontal);
+
+                        g.FillRectangle(brush, 0, 0, pixel_x, H);
+
+                        for (int i = 0; i < 21; i++)
+                            g.DrawLine(new Pen(meter_background_color), 6 + i * 8, 0, 6 + i * 8, H);
+
+                        g.DrawLine(new Pen(Color.Red), pixel_x, 0, pixel_x, H);
+                        g.FillRectangle(new SolidBrush(meter_background_color), pixel_x + 1, 0, W - pixel_x, H);
+
+                        if (pixel_x >= meter_peak_value)
+                        {
+                            meter_peak_count = 0;
+                            meter_peak_value = pixel_x;
+                        }
+                        else
+                        {
+                            if (meter_peak_count++ >= multimeter_peak_hold_samples)
+                            {
+                                meter_peak_count = 0;
+                                meter_peak_value = pixel_x;
+                            }
+                            else
+                            {
+                                g.DrawLine(new Pen(Color.Red), meter_peak_value, 0, meter_peak_value, H);
+                                g.DrawLine(new Pen(Color.Red), meter_peak_value - 1, 0, meter_peak_value - 1, H);
+                            }
+                        }
+                    }
+
+                    meter_timer.Stop();
+
+                    string format = "f0";
+                    if (meter_detail) format = "f1";
+
+                    if (meter_timer.DurationMsec >= meter_dig_delay)
+                    {
+                        if (!mox)
+                        {
+                            switch (current_meter_rx_mode)
+                            {
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                    output = num.ToString(format) + " dBm";
+                                    break;
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                    output = num.ToString("f1") + " dBFS";
+                                    break;
+                                case MeterRXMode.OFF:
+                                    output = "";
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            MeterTXMode mode = current_meter_tx_mode;
+                            if (chkTUN.Checked) mode = tune_meter_tx_mode;
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.LVL_G:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.CPDR:
+                                case MeterTXMode.ALC:
+                                case MeterTXMode.ALC_G:
+                                    output = num.ToString(format) + " dB";
+                                    break;
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+                                    switch (current_model)
+                                    {
+                                        case Model.SDR1000:
+                                            if (pa_present && VFOAFreq < 30.0)
+                                                output = num.ToString("f0") + " W";
+                                            else output = (num * 1000).ToString("f0") + " mW";
+                                            break;
+                                        case Model.FLEX5000:
+                                        case Model.FLEX3000:
+                                            output = num.ToString("f0") + " W";
+                                            break;
+                                        case Model.FLEX1500:
+                                            output = num.ToString("f0") + " %";
+                                            break;
+                                    }
+                                    break;
+                                case MeterTXMode.SWR:
+                                    output = num.ToString("f1") + " : 1";
+                                    break;
+                                case MeterTXMode.OFF:
+                                    output = "";
+                                    break;
+                            }
+                        }
+                        txtMultiText.Text = output;
+                        meter_timer.Start();
+                    }
+
+                    if (meter_data_ready)
+                    {
+                        meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
+                    }
+                    break; // bar meter 
+
+                #endregion 
+
+
+
+
 
                 //=============================================================
                 //=============================================================
@@ -37503,7 +38165,7 @@ namespace PowerSDR
                 //=============================================================
                 //=============================================================
 
-                    
+
                 case MultiMeterDisplayMode.Original:
 #region AnalogTR7
     
@@ -38522,7 +39184,8 @@ namespace PowerSDR
 //=============================================
                     meter_timer.Stop();
 
-                    string format = "f0";
+                    //string
+                     format = "f0";
                     if (meter_detail) format = "f1";
 
                     if (meter_timer.DurationMsec >= meter_dig_delay)
@@ -38605,7 +39268,7 @@ namespace PowerSDR
                    
 #endregion //analogTR7                    
 
-                    break; // original
+                     break; // original
                     
                 //=============================================================
                 //=============================================================
@@ -39221,6 +39884,7 @@ namespace PowerSDR
                       //  txtMultiText.BackColor = Color.FromArgb(146, 146, 140);
                         
                     }
+
                     else
                     {
                         low_brush = new SolidBrush(analog_low_color); // white text
@@ -40668,13 +41332,434 @@ namespace PowerSDR
         //=============================================================
         //=============================================================
         //=============================================================
+        // COMBO meter routine fake like its a 3rd meter, instead of the 2nd
+
+        private void picRX3Meter_Click(object sender, EventArgs e)
+        {
+            meterCombo = false;
+            CurrentMeterTX1Mode = MeterTXMode.ALC;
+
+        }
+
+
+        //--------------------------------------------------------------
+        // POWER, SWR, ALC, MIC
+        // ke9ns add below to draw combo meter gradient lines
+        static LinearGradientBrush  pwr_Brush = new LinearGradientBrush(new Rectangle(0, 0, 164, 5), Color.Black, Color.Black, 0, false);
+        static ColorBlend pwr_cb = new ColorBlend();
+        static int pwr_out = 161;
+        static double pwr_num = 0;
+        static double tx2_meter_current_data_pwr = 0;
+        static double tx2_meter_new_data_pwr = 0;
+        static double tx2_meter_peak_pwr = 0;
+        static int tx2_meter_peak4_pwr = 0;
+        static int tx2_meter_peak5_pwr = 0;
+
+
+        static LinearGradientBrush swr_Brush = new LinearGradientBrush(new Rectangle(0, 0, 164, 5), Color.Black, Color.Black, 0, false);
+        static ColorBlend swr_cb = new ColorBlend();
+        static int swr_out = 161;
+        static double swr_num = 0;
+        static double tx2_meter_current_data_swr = 0;
+        static double tx2_meter_new_data_swr = 0;
+        static double tx2_meter_peak_swr = 0;
+        static int tx2_meter_peak4_swr = 0;
+        static int tx2_meter_peak5_swr = 0;
+
+        static LinearGradientBrush alc_Brush = new LinearGradientBrush(new Rectangle(0, 0, 164, 5), Color.Black, Color.Black, 0, false);
+        static ColorBlend alc_cb = new ColorBlend();
+        static int alc_out = 161;
+        static int alcG_out = 161;
+        static double alc_num = 0;
+        static double tx2_meter_current_data_alc = 0;
+        static double tx2_meter_current_data_alcG = 0;
+        static double tx2_meter_new_data_alc = 0;
+        static double tx2_meter_new_data_alcG = 0;
+        static double tx2_meter_peak_alc = 0;
+        static int tx2_meter_peak4_alc = 0;
+        static int tx2_meter_peak5_alc = 0;
+
+        static LinearGradientBrush mic_Brush = new LinearGradientBrush(new Rectangle(0, 0, 164, 5), Color.Black, Color.Black, 0, false);
+        static ColorBlend mic_cb = new ColorBlend();
+        static int mic_out = 161;
+        static double mic_num = 0;
+        static double tx2_meter_current_data_mic = 0;
+        static double tx2_meter_new_data_mic = 0;
+        static double tx2_meter_peak_mic = 0;
+        static int tx2_meter_peak4_mic = 0;
+        static int tx2_meter_peak5_mic = 0;
+
+        static double comboW = 160; // ke9ns add for width of combo meter
+        static double spacingW = 0;
+
+        // ke9ns add
+        private double tx2_avg_pwr_num = -130.0;
+        private double tx2_avg_swr_num = -130.0;
+        private double tx2_avg_alc_num = -130.0;
+        private double tx2_avg_mic_num = -130.0;
+
+        private void picRX3Meter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+
+            int H = picRX3Meter.ClientSize.Height;
+            int W = picRX3Meter.ClientSize.Width;
+            Graphics g = e.Graphics;
+
+            double num;
+            int pixel_x = 0;
+            int pixel_x1 = 0; // ke9ns ADD for new meters
+            string output = "";
+
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+
+            line_dark_pen = new Pen( // this causes a shadow color around the needle of the EDGE meters
+                        Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2, // red
+                        (edge_avg_color.G + edge_meter_background_color.G) / 2, // green
+                        (edge_avg_color.B + edge_meter_background_color.B) / 2)); // blue
+
+
+/*
+            //---------------------------------------------------------------------------------------------
+            bool mox2 = false; // ke9ns add  false = rx    true = 2nd tx meter active
+
+            if ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
+            {
+                if ((!FWCEEPROM.RX2OK) || (FWCEEPROM.RX2OK && chkRX2.Checked == false)) mox2 = true; // ke9ns keep meter set for the TX type you wanted all the time
+                else mox2 = false; // receiving on RX2 or dont want 2nd tX meter
+
+                //  Debug.WriteLine("wwwwwwwwwwwwwwwwwwwwwwww " + mox2);
+
+
+                if ((mox2 == true) && (current_meter_tx1_mode == MeterTXMode.MIC))
+                {
+                    rx2_meter_new_data = (float)tx2_meter_new_data;
+                }
+            }
+            else
+            {
+                mox2 = true; // transmitting and want 2nd tx meter to function
+            }
+
+*/
+            //---------------------------------------------------------------------------------------------
+            // ke9ns combo
+
+            if (meterCombo == true)
+            {
+              
+       
+                g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
+
+              //  low_brush = new SolidBrush(edge_low_color);
+              //  high_brush = new SolidBrush(edge_high_color);
+
+                MeterTXMode mode = current_meter_tx1_mode;
+
+                if (rx2_meter_data_ready)
+                {
+                    // rx2_meter_current_data = rx2_meter_new_data;
+
+                    tx2_meter_current_data_pwr = tx2_meter_new_data_pwr;
+                    tx2_meter_current_data_swr = tx2_meter_new_data_swr;
+                    tx2_meter_current_data_alc = tx2_meter_new_data_alc;
+                    tx2_meter_current_data_alcG = tx2_meter_new_data_alcG;
+                    tx2_meter_current_data_mic = tx2_meter_new_data_mic;
+
+                    rx2_meter_data_ready = false;
+                }
+
+                //--------------------------------------------------------------
+                // POWER
+                //  LinearGradientBrush pwr_Brush = new LinearGradientBrush(new Rectangle(0,0,160,5), Color.Black, Color.Black, 0, false);
+                //  ColorBlend pwr_cb = new ColorBlend();
+                pwr_cb.Positions = new[] {0, 0.8f, 0.85f, 0.9f ,1 }; // 
+                pwr_cb.Colors = new[] { Color.Green, Color.Yellow, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
+                pwr_Brush.InterpolationColors = pwr_cb;
+
+               
+
+                if (tx2_avg_pwr_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                {
+                    pwr_num = tx2_avg_pwr_num = tx2_meter_current_data_pwr;
+                }
+                else
+                {
+                  if (tx2_meter_current_data_pwr > tx2_avg_pwr_num)
+                        pwr_num = tx2_avg_pwr_num = tx2_meter_current_data_pwr * 0.8 + tx2_avg_pwr_num * 0.2; // fast rise
+                    else
+                        pwr_num = tx2_avg_pwr_num = tx2_meter_current_data_pwr * 0.8 + tx2_avg_pwr_num * 0.2; // slow decay
+                }
+
+
+                //--------------------------------------------------------------
+                // SWR
+                //  LinearGradientBrush swr_Brush = new LinearGradientBrush(new Rectangle(0, 0, 160, 5), Color.Black, Color.Black, 0, false);
+                //   ColorBlend swr_cb = new ColorBlend();
+                swr_cb.Positions = new[] { 0, 0.4f, 0.45f, 0.50f, 1 };
+                swr_cb.Colors = new[] { Color.Green, Color.Yellow, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
+                swr_Brush.InterpolationColors = swr_cb;
+
+
+                if (tx2_avg_swr_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                {
+                    swr_num = tx2_avg_swr_num = tx2_meter_current_data_swr;
+                }
+                else
+                {
+                    if (tx2_meter_current_data_swr > tx2_avg_swr_num)
+                        swr_num = tx2_avg_swr_num = tx2_meter_current_data_swr * 0.8 + tx2_avg_swr_num * 0.2; // fast rise
+                    else
+                        swr_num = tx2_avg_swr_num = tx2_meter_current_data_swr * 0.8 + tx2_avg_swr_num * 0.2; // slow decay
+                }
+
+
+                //--------------------------------------------------------------
+                // ALC
+                //  LinearGradientBrush alc_Brush = new LinearGradientBrush(new Rectangle(0, 0, 160, 5), Color.Black, Color.Black, 0, false);
+                //   ColorBlend alc_cb = new ColorBlend();
+                alc_cb.Positions = new[] { 0, 0.5f, 0.75f, 0.8f, 1 };
+                alc_cb.Colors = new[] { Color.Yellow, Color.Green, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
+                alc_Brush.InterpolationColors = alc_cb;
+
+
+                if (tx2_avg_alc_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                {
+                    alc_num = tx2_avg_alc_num = tx2_meter_current_data_alc;
+                }
+                else
+                {
+                    if (tx2_meter_current_data_alc > tx2_avg_alc_num)
+                        alc_num = tx2_avg_alc_num = tx2_meter_current_data_alc * 0.8 + tx2_avg_alc_num * 0.2; // fast rise
+                    else
+                        alc_num = tx2_avg_alc_num = tx2_meter_current_data_alc * 0.8 + tx2_avg_alc_num * 0.2; // slow decay
+                }
+
+
+
+
+                //--------------------------------------------------------------
+                // MIC
+                // LinearGradientBrush mic_Brush = new LinearGradientBrush(new Rectangle(0, 0, 160, 5), Color.Black, Color.Black, 0, false);
+                //  ColorBlend mic_cb = new ColorBlend();
+                mic_cb.Positions = new[] { 0, 0.5f, 0.75f, 0.8f, 1 };
+                mic_cb.Colors = new[] { Color.Yellow, Color.Green, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
+                mic_Brush.InterpolationColors = mic_cb;
+
+
+
+                if (tx2_avg_mic_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                {
+                    mic_num = tx2_avg_mic_num = tx2_meter_current_data_mic;
+                }
+                else
+                {
+                    if (tx2_meter_current_data_alc > tx2_avg_alc_num)
+                        mic_num = tx2_avg_mic_num = tx2_meter_current_data_mic * 0.8 + tx2_avg_mic_num * 0.2; // fast rise
+                    else
+                        mic_num = tx2_avg_mic_num = tx2_meter_current_data_mic * 0.8 + tx2_avg_mic_num * 0.2; // slow decay
+                }
+
+
+                //----------------------------------------------------------------
+                g.DrawImageUnscaled(meterback4, 0, 0); // new Rectangle(0, 0, W, H));  // rectangle to show bitmap image in
+
+                //   txtRX2Meter.ForeColor = Color.Black;
+                //   txtRX2Meter.BackColor = Color.FromArgb(0xff, 0xff, 0xe4);
+
+
+                //-------------------------------------------------------------------------------
+                // Power
+                //combo meter
+
+
+                if (pwr_num <= 100.0) // low area
+                {
+                    spacingW = (comboW * 0.75 - 2.0) / 4.0;
+
+                    if (pwr_num <= 5.0)        pwr_out = (int)(pwr_num / 5.0 * (int)spacingW);
+                    else if (pwr_num <= 10.0)  pwr_out = (int)(spacingW + (pwr_num - 5.0) / 5.0 * spacingW);
+                    else if (pwr_num <= 50.0)  pwr_out = (int)(2 * spacingW + (pwr_num - 10.0) / 40.0 * spacingW);
+                    else                       pwr_out = (int)(3 * spacingW + (pwr_num - 50.0) / 50.0 * spacingW);
+                }
+                else
+                {
+                    spacingW = (comboW * 0.25 - 2.0 - 10.0) / 1.0;
+                    if (pwr_num <= 120.0)     pwr_out = (int)(comboW * 0.75 + (pwr_num - 100.0) / 20.0 * spacingW);
+                    else                      pwr_out = (int)(comboW * 0.75 + spacingW + (pwr_num - 120.0) / 60.0 * spacingW);
+                }
+
+
+                g.FillRectangle(pwr_Brush, new Rectangle(5, 17, pwr_out, 4));     // x,y, width,height
+
+                //-------------------------------------------------------------
+                // peak hold value for PWR
+                pwr_num = tx2_meter_peak_pwr;
+
+                if (pwr_num <= 100.0) // low area
+                {
+                    spacingW = (comboW * 0.75 - 2.0) / 4.0;
+
+                    if (pwr_num <= 5.0)       pwr_out = (int)(pwr_num / 5.0 * (int)spacingW);
+                    else if (pwr_num <= 10.0) pwr_out = (int)(spacingW + (pwr_num - 5.0) / 5.0 * spacingW);
+                    else if (pwr_num <= 50.0) pwr_out = (int)(2 * spacingW + (pwr_num - 10.0) / 40.0 * spacingW);
+                    else                      pwr_out = (int)(3 * spacingW + (pwr_num - 50.0) / 50.0 * spacingW);
+                }
+                else
+                {
+                    spacingW = (comboW * 0.25 - 2.0 - 10.0) / 1.0;
+                    if (pwr_num <= 120.0) pwr_out = (int)(comboW * 0.75 + (pwr_num - 100.0) / 20.0 * spacingW);
+                    else pwr_out = (int)(comboW * 0.75 + spacingW + (pwr_num - 120.0) / 60.0 * spacingW);
+                }
+
+
+                g.FillRectangle(pwr_Brush, new Rectangle(pwr_out-2, 17, 4, 4));     // x,y, width,height
+
+               
+
+                //-------------------------------------------------------------------------------
+                // SWR
+
+
+                if (swr_num < 10.0) // low area
+                {
+                    spacingW = (comboW * 0.75 - 2.0) / 4.0;
+
+                    if (swr_num <= 1.5)       swr_out = (int)((swr_num - 1.0) / 0.5 * spacingW);
+                    else if (swr_num <= 2.0)  swr_out = (int)(spacingW + (swr_num - 1.5) / 0.5 * spacingW);
+                    else if (swr_num <= 5.0)  swr_out = (int)(2 * spacingW + (swr_num - 2.0) / 3.0 * spacingW);
+                    else                      swr_out = (int)(3 * spacingW + (swr_num - 5.0) / 5.0 * spacingW);
+                }
+                else
+                {
+                    spacingW = (comboW * 0.25 - 2.0 - 9.0) / 1.0;
+                    swr_out = (int)(comboW * 0.75 + (swr_num - 10.0) / 10.0 * spacingW);
+                }
+                if (double.IsInfinity(swr_num)) swr_out = (int)(comboW - 2);
+
+                if (swr_out < 0) swr_out = swr_out * -1;
+
+
+
+                g.FillRectangle(swr_Brush, new Rectangle(5, 45, swr_out, 4));
+
+
+                //-------------------------------------------
+                // Peak hold value for SWR
+                swr_num = tx2_meter_peak_swr;
+
+                if (swr_num < 10.0) // low area
+                {
+                    spacingW = (comboW * 0.75 - 2.0) / 4.0;
+
+                    if (swr_num <= 1.5) swr_out = (int)((swr_num - 1.0) / 0.5 * spacingW);
+                    else if (swr_num <= 2.0) swr_out = (int)(spacingW + (swr_num - 1.5) / 0.5 * spacingW);
+                    else if (swr_num <= 5.0) swr_out = (int)(2 * spacingW + (swr_num - 2.0) / 3.0 * spacingW);
+                    else swr_out = (int)(3 * spacingW + (swr_num - 5.0) / 5.0 * spacingW);
+                }
+                else
+                {
+                    spacingW = (comboW * 0.25 - 2.0 - 9.0) / 1.0;
+                    swr_out = (int)(comboW * 0.75 + (swr_num - 10.0) / 10.0 * spacingW);
+                }
+                if (double.IsInfinity(swr_num)) swr_out = (int)(comboW - 2);
+
+                if (swr_out < 0) swr_out = swr_out * -1;
+
+                g.FillRectangle(swr_Brush, new Rectangle(swr_out-2, 45, 4, 4));
+
+                //-------------------------------------------------------------------------------
+                // ALC
+
+
+                if (alc_num > 0.0) // high area
+                {
+                    alc_out = (int)(comboW * 0.665 + alc_num / 3.0 * (160 * 0.335 - 4));
+                }
+                else
+                {
+                    alc_out = (int)((alc_num + 30.0) / 30.0 * (comboW * 0.665 - 1.0));
+                }
+
+                spacingW = (comboW * 0.75 - 2.0) / 4.0;
+                alcG_out = (int)(alc_num / 5.0 * spacingW);
+
+
+                g.FillRectangle(alc_Brush, new Rectangle(5, 74, alc_out, 4));
+
+                //-------------------------------------------
+                // Peak hold value for ALC
+                alc_num = tx2_meter_peak_alc;
+
+
+                if (alc_num > 0.0) // high area
+                {
+                    alc_out = (int)(comboW * 0.665 + alc_num / 3.0 * (160 * 0.335 - 4));
+                }
+                else
+                {
+                    alc_out = (int)((alc_num + 30.0) / 30.0 * (comboW * 0.665 - 1.0));
+                }
+
+                spacingW = (comboW * 0.75 - 2.0) / 4.0;
+                alcG_out = (int)(alc_num / 5.0 * spacingW);
+
+
+                g.FillRectangle(alc_Brush, new Rectangle(alc_out-2, 74, 4, 4));
+
+
+
+                //-------------------------------------------------------------------------------
+                // MIC
+
+                if (mic_num > 0.0) // high area
+                {
+                    mic_out = (int)(comboW * 0.665 + mic_num / 3.0 * (160 * 0.335 - 4));
+                }
+                else
+                {
+                    mic_out = (int)((mic_num + 30.0) / 30.0 * (comboW * 0.665 - 1.0));
+                }
+
+                g.FillRectangle(mic_Brush, new Rectangle(5, 101, mic_out, 4));
+
+
+                //-------------------------------------------
+                // Peak hold value for Mic
+                mic_num = tx2_meter_peak_mic;
+
+                if (mic_num > 0.0) // high area
+                {
+                    mic_out = (int)(comboW * 0.665 + mic_num / 3.0 * (160 * 0.335 - 4));
+                }
+                else
+                {
+                    mic_out = (int)((mic_num + 30.0) / 30.0 * (comboW * 0.665 - 1.0));
+                }
+
+                g.FillRectangle(mic_Brush, new Rectangle(mic_out-2, 101, 4, 4));
+
+
+
+
+            } //  if (meterCombo == true)
+
+        } //picRX3Meter_Paint (for TX1 meter)
 
 
 
         //========================================================
-        // RX2 meters
+        //========================================================
+        //========================================================
+        //========================================================
+        // RX2 meters  (RX3 is the combo that draws over this meter)
+        //========================================================
+        //========================================================
+        //========================================================
         //========================================================
         private double rx2_avg_num = -130.0;
+
 		private void picRX2Meter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			int H = picRX2Meter.ClientSize.Height;
@@ -40720,2351 +41805,666 @@ namespace PowerSDR
                 mox2 = true; // transmitting and want 2nd tx meter to function
             }
 
-           
+
             //---------------------------------------------------------------------------------------------
-
-            switch (current_meter_display_mode) // ke9ns which meter type is selected
-			{
-
-               //=============================================================
-               //=============================================================
-               // KE9NS 4 RX2 TR7 meter
-               //=============================================================
-               //=============================================================
-
-				case MultiMeterDisplayMode.Original:
-#region AnalogTR7
-
-               
-					if(rx2_meter_data_ready)
-					{
-						rx2_meter_current_data = rx2_meter_new_data;
-						rx2_meter_data_ready = false;
-					}
-
-					if(rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
-					{
-						num = rx2_avg_num = rx2_meter_current_data;
-					}
-					else
-					{
-						if(rx2_meter_current_data > rx2_avg_num)
-							num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
-						else 
-							num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
-					}
+            // ke9ns combo
 
 
-                  //  if ((mox2) && (!mox)) num = -100.0;  // zero the value if in 2nd tx mode but not transmitting
-
-                    g.DrawRectangle(new Pen(meter_background_color), 0, 0, W, H);
-
-					 low_brush = new SolidBrush(edge_low_color);
-					 high_brush = new SolidBrush(edge_high_color);
+           
+           switch (current_meter_display_mode) // ke9ns which meter type is selected
+                {
 
 
-                    if (!mox2)
+                //=============================================================
+                //=============================================================
+                // KE9NS 4 RX2 BAR GRAPH meter
+                //=============================================================
+                //=============================================================
+
+                case MultiMeterDisplayMode.Bar:   // lblRX2Meter is the text for RX2 bar graph (lblMultiSMeter is for RX1)
+ #region Bar
+
+                    if (rx2_meter_data_ready)
                     {
-                        switch (rx2_meter_mode)
-                        {
-
-                            //=============================================
-                            // Receiver meters ke9ns10
-                            //=============================================
-
-                            case MeterRXMode.SIGNAL_STRENGTH:
-                            case MeterRXMode.SIGNAL_AVERAGE:
-                            case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
-
-                                //=================================================================
-                           
-
-                                int Origin_x = W / 2;
-                                int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-                                low_brush1 = new Pen(edge_low_color);  // white
-
-                                high_brush2 = new Pen(Brushes.Red); // blue
-
-                                high_brush1 = new Pen(Brushes.Red); // red
-                                double spacing;
-                                double string_height = 0;
-                                //=======================================
-                                // meter image TR7 rx2
-                                //=======================================
-
-                               // Image src = new Bitmap(meter_image);
-
-                                g.DrawImage(TR7, new Rectangle(0, 5, W, H));  // rectangle to show bitmap image in
-
-                                //========================================
-
-
-                                if (FREQB < 30)
-                                {
-                                    if (num > -73)
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
-                                    }
-                                } // < 30 mhz
-                                else // correction for freq > 29 mhz
-                                {
-                                    if (num > -93) // ke9ns ADD correct S9 above 30mhz
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
-                                    }
-                                } // > 29 mhz
-
-                                break; // signal RX2
-
-
-                            case MeterRXMode.ADC_L:
-                            case MeterRXMode.ADC_R:
-                            case MeterRXMode.ADC2_L:
-                            case MeterRXMode.ADC2_R:
-
-                                spacing = ((double)W - 5.0) / 6.0;
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
-                                g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
-                                for (int i = 1; i < 7; i++)
-                                {
-                                     b = low_brush;
-                                    if (i == 6) b = high_brush;
-                                    g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    string s = (-120 + i * 20).ToString();
-                                    SizeF size = g.MeasureString(s, ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                    string_height = size.Height - 2.0;
-
-                                    g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
-                                break;
-                            case MeterRXMode.OFF:
-                                break;
-                        } //rx2_meter_mode
-
-                    } // !MOX2
-
-
-                    //=============================================
-                    // Transmitter meters TR7 RX2
-                    //=============================================
-
-                    else
-                    {
-                        MeterTXMode mode = current_meter_tx1_mode;
-                       // if (chkTUN.Checked) mode = tune_meter_tx_mode;
-                        switch (mode)
-                        {
-                            case MeterTXMode.MIC:
-                            case MeterTXMode.EQ:
-                            case MeterTXMode.LEVELER:
-                            case MeterTXMode.CPDR:
-                            case MeterTXMode.ALC:
-
-                                //=================================================================
-                                // Draw curved meter movement for signal strength
-                                //=================================================================
-                          
-                                double line1 = 0;
-                                int angle_start = 45;
-                                int angle_span = 90;
-
-                                int Origin_x = W / 2;
-                                int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                                low_brush1 = new Pen(edge_low_color);  // white
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush1 = new Pen(Brushes.Red); // red
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                                                           //   Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                high_brush5 = new Pen(Brushes.Green); // 
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-
-                                double spacing = (W * 0.665 - 2.0) / 3.0;
-                                double string_height = 0;
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -75, -61); // draw OUTER arc
-
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -27); // draw OUTER arc  -31
-
-                                //======================================
-                                // Draw GREEN full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush5.Width = arc_thick1;
-                                g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-                                for (double i = 1; i < 4; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers
-
-
-                                    //  Font f = new Font("Swis721 BlkEx BT", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = (i * spacing - string_width + (i / 5));
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
-
-                                    g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
-
-                                for (double i = 1; i < 4; i++) //red
-                                {
-
-                                    line1 = W * 0.665 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = W * 0.665 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text
-
-                                    //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString(i.ToString(), ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    line1 = (W * 0.665 + i * spacing - (int)string_width);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
-
-
-                                    g.DrawString(i.ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-
-                                if (num > 0.0) // high area
-                                {
-                                    pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
-                                }
-                                else
-                                {
-                                    pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
-                                }
-                                break; // ALC TR7 rx1
-
-                            //===========================================TR7
-
-                            case MeterTXMode.FORWARD_POWER:
-                            case MeterTXMode.REVERSE_POWER:
-
-                                if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
-                                      (hid_init && current_model == Model.FLEX1500))
-                                {
-                                    g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
-                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 10, 2);
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    string_height = 0;
-                                    //   string[] list = { "5", "10", "50", "100" };
-
-                                  //  Image src = new Bitmap(meter_image);
-
-                                    g.DrawImage(TR7, new Rectangle(0, 5, W, H));  // rectangle to show bitmap image in
-
-                                    //====================================TR7
-                                    // redone to work with TR7 scale ke9ns scale
-                                    // 19pixel = 0watts on scale
-                                    // 50px = 10watts (jumps 5px from 0 to 10)
-                                    // 92px = 50watts (jumps 10px from 10watts to 50w)
-                                    // 108px = 90watts (jumps 3px form 50 to 100w)
-
-
-                                    spacing = (W * 0.75 - 2.0) / 4.0;                //  (W * 0.75 - 2.0) / 4.0; = 28.5
-
-                                    if (num <= 9.0)
-                                    {
-                                        pixel_x = (int)(num / 9.0 * (int)spacing);          // pixel_x = (int)(num / 5.0 * (int)spacing);
-                                    }
-                                    else if (num <= 50.0)
-                                    {
-
-                                        pixel_x = (int)(spacing + (num - 9.0) / 22.0 * spacing);// pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((1.863 * spacing) + spacing + (num - 50.0) / 80.0 * spacing);
-                                    }
-
-                                    pixel_x = pixel_x + 19; // zero point
-
-
-                                } // 100watt TR7 scale
-
-
-                                else // 1W version
-                                {
-                                    g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
-                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 9, 2);
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    string_height = 0;
-                                    string[] list = { "100", "250", "500", "800", "1000" };
-
-
-
-                                    for (int i = 1; i < 5; i++)
-                                    {
-                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
-                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
-
-                                        string s = list[i - 1];
-                                        // Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-                                        string_height = size.Height - 2.0;
-
-                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 + (int)(i / 2) - (int)(i / 4)), (int)(H - 4 - 8 - string_height));
-                                    }
-                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                    for (int i = 1; i < 2; i++)
-                                    {
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
-
-                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-
-                                        g.DrawString("1000", ff, high_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - 4 - 8 - string_height));
-                                    }
-
-
-
-                                    num *= 1000;
-                                    if (num < 801.0) // low area
-                                    {
-                                        spacing = (W * 0.75 - 2.0) / 4.0;
-                                        if (num <= 100.0)
-                                            pixel_x = (int)(num / 100.0 * spacing);
-                                        else if (num <= 250.0)
-                                            pixel_x = (int)(spacing + (num - 100.0) / 150.0 * spacing);
-                                        else if (num <= 500.0)
-                                            pixel_x = (int)(2 * spacing + (num - 250.0) / 250.0 * spacing);
-                                        else
-                                            pixel_x = (int)(3 * spacing + (num - 500.0) / 300.0 * spacing);
-                                    }
-                                    else
-                                    {
-                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                        pixel_x = (int)(W * 0.75 + (num - 800.0) / 200.0 * spacing);
-                                    }
-                                } // 1 watt version
-
-
-
-
-                                break; //POWER RX1 TR7
-
-                            //==========================================TR7
-
-                            case MeterTXMode.SWR:
-
-
-                                //=================================================================
-                                // Draw curved meter movement for SWR
-                                //=================================================================
-                        
-                                line1 = 0;
-                                angle_start = 45;
-                                angle_span = 90;
-
-                                Origin_x = W / 2;
-                                Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                                low_brush1 = new Pen(edge_low_color);  // white
-                                high_brush2 = new Pen(Brushes.Red); // blue
-                                high_brush1 = new Pen(Brushes.Red); // red
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                high_brush4 = new Pen(Brushes.AntiqueWhite); // 
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
-
-                                //======================================
-                                // Draw Yellow full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush3.Width = arc_thick1;
-                                g.DrawArc(high_brush3, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] swr_list = { "1.5", "2", "5", "10", "20" };
-
-                                for (double i = 1; i < 5; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers
-
-                                    string s = swr_list[(int)i - 1];
-
-                                    //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
-
-                                    g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-
-                                for (double i = 1; i < 2; i++) //red
-                                {
-
-                                    line1 = (double)W * 0.75 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush2, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = (double)W * 0.75 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text
-
-                                    //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    line1 = W * 0.75 + i * spacing - (int)3.5 * string_width;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
-
-                                    g.DrawString("20+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-
-
-
-                                if (num < 10.0) // low area
-                                {
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    if (num <= 1.5)
-                                        pixel_x = (int)((num - 1.0) / 0.5 * spacing);
-                                    else if (num <= 2.0)
-                                        pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
-                                    else if (num <= 5.0)
-                                        pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
-                                    else
-                                        pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
-                                }
-                                else
-                                {
-                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                    pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
-                                }
-                                if (double.IsInfinity(num)) pixel_x = W - 2;
-
-                                break;// case MeterTXMode.SWR:
-
-                            case MeterTXMode.ALC_G:
-                            case MeterTXMode.LVL_G:
-
-
-                                //=================================================================
-                                // Draw curved meter movement for signal strength
-                                //=================================================================
-                         
-                                line1 = 0;
-                                angle_start = 45;
-                                angle_span = 90;
-
-                                Origin_x = W / 2;
-                                Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                                low_brush1 = new Pen(edge_low_color);  // white
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush1 = new Pen(Brushes.Red); // red
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                                                       //  high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                high_brush5 = new Pen(Brushes.Green); // 
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] gain_list = { "5", "10", "15", "20", "25" };
-
-
-                                //=================================================================
-                                // Draw curved meter movement for Power
-                                //=================================================================
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
-
-                                //======================================
-                                // Draw GREEN full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush5.Width = arc_thick1;
-                                g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-                                for (double i = 1; i < 5; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers
-
-                                    string s = gain_list[(int)i - 1];
-                                    //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = (i * spacing - string_width + (i / 5));
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
-
-                                  //  g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                    g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // white ticks and test
-
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-
-                                for (double i = 1; i < 2; i++) //red
-                                {
-
-                                    line1 = W * 0.75 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = W * 0.75 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text
-
-                                    //   Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-
-                                    line1 = (W * 0.75 + i * spacing - (int)2.5 * string_width);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
-
-
-                                    g.DrawString("25+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                pixel_x = (int)(num / 5.0 * spacing);
-
-
-                                break;// case MeterTXMode.LVL_G:
-                            case MeterTXMode.OFF:
-                                break;
-                        } // switch (mode)
-
-                    } // mox2
-
-
-
-                    //=============================================
-                    // ke9ns needle movement TR7 rx2 
-                    //=============================================
-
-                    if (  // EDGE meter movement here
-                        (((rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
-                       (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L)) &&
-                       (!mox2 && rx2_meter_mode != MeterRXMode.OFF))
-                        || ( (mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && (current_meter_tx1_mode != MeterTXMode.LVL_G) &&
-                        (current_meter_tx1_mode != MeterTXMode.ALC_G) && (current_meter_tx1_mode != MeterTXMode.CPDR) &&
-                        (current_meter_tx1_mode != MeterTXMode.LEVELER) && (current_meter_tx1_mode != MeterTXMode.EQ) && 
-                        (current_meter_tx1_mode != MeterTXMode.MIC) && (current_meter_tx1_mode != MeterTXMode.ALC) &&
-                        (current_meter_tx1_mode != MeterTXMode.SWR) && (current_meter_tx1_mode != MeterTXMode.FORWARD_POWER) && 
-                        (current_meter_tx1_mode != MeterTXMode.REVERSE_POWER) )
-                         )
-                    // if meter is ON in RX or TX mode, then draw line
-                    {
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);
-
-                        line_pen = new Pen(edge_avg_color);
-
-                      //  line_dark_pen = new Pen(
-                       //     Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
-                       //     (edge_avg_color.G + edge_meter_background_color.G) / 2,
-                       //     (edge_avg_color.B + edge_meter_background_color.B) / 2));
-
-                   
-                        g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H);
-                        g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
-                        g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
-                       
+                        rx2_meter_current_data = rx2_meter_new_data;
+                        rx2_meter_data_ready = false;
                     }
-                    else if (  // TX TR7 meter movements
-                                 ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.LVL_G) ||
-                                 (current_meter_tx1_mode == MeterTXMode.ALC_G) || (current_meter_tx1_mode == MeterTXMode.EQ) ||
-                                 (current_meter_tx1_mode == MeterTXMode.MIC) || (current_meter_tx1_mode == MeterTXMode.ALC) ||
-                                 (current_meter_tx1_mode == MeterTXMode.SWR)))
-                            )
 
+                    num = rx2_meter_current_data;
+
+                    switch (rx2_meter_mode)
                     {
-
-                        // pixel_x (i.e. signal) goes from 0 to W  Width 
-                        // posx = originx + (2 * D * cos (angle))
-                        // posy = originy + (2 * D * sin (angle))
-                        // for a meter of 45deg to 135deg = 90deg total span :   
-                        // but sin and cos in radians not degs.
-                        // posx = originx + (2 * D * cos (angle*PI/180))
-
-                        //  box dimensions:
-                        //  0,0   W,0
-                        //  0,H   W,H
-
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
-
-
-                
-
-                        line_pen = new Pen(Color.Blue);
-                        line_pen.Width = 2.8F;
-
-
-                        int Origin_x = W / 2;
-                        int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                        double angle_start = 45;
-                        double angle_span = 90;
-
-                        angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                        signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                        int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
-                        int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
-
-                        g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                      
-
-
-                    } // SWR TX curved needle
-
-                    // POWER ONLY===TR7==RX2======================================================================================= ke9ns scale
-                    else if (
-                        ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.FORWARD_POWER) ||
-                        (current_meter_tx1_mode == MeterTXMode.REVERSE_POWER)))
-                        )
-                    {
-
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
-
-                        line_pen = new Pen(Color.Red); // rx 
-
-                      
-
-                        // 54 = 10 watts" 
-                        // 80 = 40 watts
-
-
-                        int Origin_x = (W / 2) - 1;
-                        int Origin_y = (int)((double)(H * 1.84)); //1.90  1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-                        double angle_start = 45;
-                        double angle_span = 89;
-
-
-                        angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                        signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                        int POSW = (int)((double)(H * 1.6) * Math.Cos(signal));  // 1.65 convert signal to arc
-                        int POSH = (int)((double)(H * 1.6) * Math.Sin(signal));
-
-
-                        line_pen.Width = 2.8F;
-                        g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-
-                    } // power
-                      // SIGNAL ONLY===TR7==RX2=========================================================================================================
-                      // this should be SIGNAL, AVG SIGNAL, PEAK SIGNAL
-                    else if (
-                            (((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) ||
-                            (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK)) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF))
-                       )
-                    {
-                        // SIGNAL ONLY
-
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
-
-                        pixel_x1 = Math.Max(0, pixel_x1);
-                        pixel_x1 = Math.Min(W - 3, pixel_x1);                                             // define limits of X dimension
-
-                        line_pen = new Pen(Color.Yellow); // rx 
-
-
-                        int Origin_x = (W / 2) - 3;
-                        int Origin_y = (int)((double)(H * 1.9)); // 1.84 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                        double angle_start = 45;
-                        double angle_span = 89;
-                        
-
-                        if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
-                        {
-
-                            angle = signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                            int POSW1 = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc 1.6 length of needle
-                            int POSH1 = (int)((double)(H * 1.65) * Math.Sin(signal));
-
-                            line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.0F;
-                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                        } // peak
-
-                        angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                        signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                        int POSW = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc
-                        int POSH = (int)((double)(H * 1.65) * Math.Sin(signal));
-
-                        line_pen = new Pen(Color.Yellow);
-
-                        line_pen.Width = 2.6F;
-                        g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                     
-                    } //   if meter is ON in RX or TX mode, then draw line
-
-
-                    //=================================================================
-                    // needle RX2 TR7
-
-                    /*
-                    if ( // RX2 EDGE movement
-                       
-                        ( (rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
-                       (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L)) && 
-                       ((!mox && rx2_meter_mode != MeterRXMode.OFF) || (mox && current_meter_tx1_mode != MeterTXMode.OFF))
-
-                       )  
-                 		{
-						pixel_x = Math.Max(0, pixel_x);
-						pixel_x = Math.Min(W-3, pixel_x);
-
-						line_pen = new Pen(edge_avg_color);
-						line_dark_pen = new Pen(
-							Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
-							(edge_avg_color.G+edge_meter_background_color.G)/2,
-							(edge_avg_color.B+edge_meter_background_color.B)/2));
-
-						
-
-						g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H);
-						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
-						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
-
-						
-					}
-
-                   
-                    else if ( // RX2 SIGNAL, AVG SIGNAL, PEAK SIGNAL tr7
-
-                            ((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) ||
-                            (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK)) && ( (!mox && rx2_meter_mode != MeterRXMode.OFF)
-                                      || (mox && current_meter_tx1_mode != MeterTXMode.OFF) )
-                        )
-
-                    {
-
-                        // pixel_x (i.e. signal) goes from 0 to W  Width 
-                        // posx = originx + (2 * D * cos (angle))
-                        // posy = originy + (2 * D * sin (angle))
-                        // for a meter of 45deg to 135deg = 90deg total span :   
-                        // but sin and cos in radians not degs.
-                        // posx = originx + (2 * D * cos (angle*PI/180))
-
-                        //  box dimensions:
-                        //  0,0   W,0
-                        //  0,H   W,H
-
-
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
-
-                        pixel_x1 = Math.Max(0, pixel_x1);
-                        pixel_x1 = Math.Min(W - 3, pixel_x1);
-
-                        line_pen = new Pen(Color.Yellow); // rx 
-                      //  line_dark_pen = 
-                      //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
-
-                            
-                       
-
-                        int Origin_x = (W / 2)-3;
-                        int Origin_y = (int)((double)(H * 1.84)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                        double angle_start = 45;
-                        double angle_span = 89;
-                       
-
-                        if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
-                        {
-                       
-                          angle =   signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                            int POSW1 = (int)((double)(H * 1.6) * Math.Cos(signal));  // convert signal to arc
-                            int POSH1 = (int)((double)(H * 1.6) * Math.Sin(signal));
-
-                            line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.5F;
-                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-                        } // peak
-
-
-                       angle =   signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                        signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                        int POSW = (int)( (double)(H*1.6) * Math.Cos(signal) );  // convert signal to arc
-                        int POSH = (int)( (double)(H*1.6) * Math.Sin(signal) );
-
-                        line_pen = new Pen(Color.Yellow);
-                        line_pen.Width = 2.5F;
-
-                        g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                      
-
-                       
-                       
-                    } //   if meter is ON in RX or TX mode, then draw line
-                    */
-                    //================================================================
-                    rx2_meter_timer.Stop();
-
-					string format = "f0";
-					if(meter_detail) format = "f1";
-
-                    if (rx2_meter_timer.DurationMsec >= meter_dig_delay) // timer to update numbers 
-                    {
-                        if (!mox2) // RX
-                        {
-                            
-                                switch (rx2_meter_mode)
-                                {
-                                    case MeterRXMode.SIGNAL_STRENGTH:
-
-                                    case MeterRXMode.SIGNAL_AVERAGE:
-                                        output = num.ToString(format) + " dBm ";
-                                        break;
-                                    case MeterRXMode.SIGNAL_PEAK: // ke9ns2 ADD 
-                                        output = rx2_meter_peak_value.ToString(format) + " dBm ";
-                                        break;
-                                    case MeterRXMode.ADC_L:
-                                    case MeterRXMode.ADC_R:
-                                    case MeterRXMode.ADC2_L:
-                                    case MeterRXMode.ADC2_R:
-                                        output = num.ToString("f1") + " dBFS ";
-                                        break;
-                                    case MeterRXMode.OFF:
-                                        output = "";
-                                        break;
-                                }
-                           
-                        }
-                       else
-                        {
-
-                          
-                                MeterTXMode mode = current_meter_tx1_mode;
-                            // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
-                            switch (mode)
+                        case MeterRXMode.SIGNAL_STRENGTH:
+                        case MeterRXMode.SIGNAL_AVERAGE:
+                        case MeterRXMode.SIGNAL_PEAK:
+                            switch ((int)g.DpiX)
                             {
-                                case MeterTXMode.MIC:
-                                    output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.LEVELER:
-                                case MeterTXMode.LVL_G:
-                                case MeterTXMode.EQ:
-                                case MeterTXMode.CPDR:
-                                case MeterTXMode.ALC:
-                                case MeterTXMode.ALC_G:
-                                    if (!mox) output = "-30 dB ";
-                                    else output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.FORWARD_POWER:
-                                case MeterTXMode.REVERSE_POWER:
-                                    switch (current_model)
+                                case 96:
+                                    double s = (num + 127) / 6;
+                                    if (s <= 9.0F)
+                                        pixel_x = (int)((s * 7.5) + 2);
+                                    else
                                     {
-                                       case Model.FLEX5000:
-                                        case Model.FLEX3000:
-                                          if (!mox) output =  "0 W ";
-                                            else output = num.ToString("f0") + " W ";
-                                            break;
-                                        case Model.FLEX1500:
-                                            if (!mox) output = "0 % ";
-                                            else output = num.ToString("f0") + " % ";
-                                            break;
+                                        double over_s9 = num + 73;
+                                        pixel_x = 69 + (int)(over_s9 * 1.05);
                                     }
                                     break;
-                                case MeterTXMode.SWR:
-                                    if (!mox) output = "0 : 1 ";
-                                    else output = num.ToString("f1") + " : 1 ";
+                                case 120:
+                                    if (num <= -97.0f)
+                                        pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                    else if (num <= -91.0f)
+                                        pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                    else if (num <= -85.0f)
+                                        pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                    else if (num <= -79.0f)
+                                        pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                    else if (num <= -73.0f)
+                                        pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                    else if (num <= -53.0f)
+                                        pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                    else if (num <= -33.0f)
+                                        pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                    else if (num <= -13.0f)
+                                        pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                    else
+                                        pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
                                     break;
-                                case MeterTXMode.OFF:
-                                    output = "";
+                            }
+                            break;
+                        case MeterRXMode.ADC_L:
+                        case MeterRXMode.ADC_R:
+                            switch ((int)g.DpiX)
+                            {
+                                case 96:
+                                    pixel_x = (int)(((num + 100) * 1.2) + 12);
                                     break;
+                                case 120:
+                                    if (num <= -100.0f)
+                                        pixel_x = (int)(0 + (num + 110.0) / 10.0 * 14);
+                                    else if (num <= -80.0f)
+                                        pixel_x = (int)(14 + (num + 100.0) / 20.0 * 27);
+                                    else if (num <= -60.0f)
+                                        pixel_x = (int)(41 + (num + 80.0) / 20.0 * 28);
+                                    else if (num <= -40.0f)
+                                        pixel_x = (int)(69 + (num + 60.0) / 20.0 * 28);
+                                    else if (num <= -20.0f)
+                                        pixel_x = (int)(97 + (num + 40.0) / 20.0 * 27);
+                                    else if (num <= 0.0f)
+                                        pixel_x = (int)(124 + (num + 20.0) / 20.0 * 24);
+                                    else
+                                        pixel_x = (int)(148 + (num - 0.0) / 10.0 * 19);
+                                    break;
+                            }
+                            break;
+                        case MeterRXMode.OFF:
+                            break;
+                    }
 
-                            }// switch mode
-                        }//mox2
-
-                            txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
-
-						rx2_meter_timer.Start();
-					}
-
-					if(rx2_meter_data_ready)
-					{
-						rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
-					}
-
-					
-#endregion
-
-                    break; // RX2 TR7
-
-
-                //=============================================================
-                //=============================================================
-                //KE9NS 5 RX2 EDGE
-                //=============================================================
-                //=============================================================
-                
-                case MultiMeterDisplayMode.Edge:
-#region Edge
-
-                
-					if(rx2_meter_data_ready)
-					{
-						rx2_meter_current_data = rx2_meter_new_data;
-						rx2_meter_data_ready = false;
-					}
-
-					if(rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
-					{
-						num = rx2_avg_num = rx2_meter_current_data;
-					}
-					else
-					{
-						if(rx2_meter_current_data > rx2_avg_num)
-							num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
-						else 
-							num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
-					}
-
-                 //   if ((mox2) && (!mox)) num = 0.0;  // zero the value if in 2nd tx mode but not transmitting
-
-                    g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
-
-					 low_brush = new SolidBrush(edge_low_color);
-					 high_brush = new SolidBrush(edge_high_color);
-
-
-                    if (!mox2)
+                    switch ((int)g.DpiX)
                     {
-                        switch (rx2_meter_mode)
-                        {
-                            case MeterRXMode.SIGNAL_STRENGTH:
-                            case MeterRXMode.SIGNAL_AVERAGE:
-                            case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
+                        case 96:
+                            if (pixel_x > 139) pixel_x = 139;
+                            break;
+                        case 120:
+                            if (pixel_x > 167) pixel_x = 167;
+                            break;
+                    }
 
-
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.5), 2);                    // draw line at bottom of meter white 
-                                g.FillRectangle(high_brush, (int)(W * 0.5), H - 8, (int)(W * 0.5) - 4, 2);      // draw line at bottom of meter red
-
-                                double spacing = (W * 0.5 - 2.0) / 5.0;
-                                double string_height = 0;
-
-                                for (int i = 1; i < 6; i++)                                                 // white tick marks and white Signal strength numbers
-                                {
-                                    g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-
-                                    SizeF size = g.MeasureString((-1 + i * 2).ToString(), ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                    g.SmoothingMode = SmoothingMode.AntiAlias;
-
-                                    g.DrawString((-1 + i * 2).ToString(), ff, low_brush, (int)(i * spacing - string_width + (int)(i / 5)), (int)(H - 8 - 12 - 3 - string_height));
-                                    g.SmoothingMode = SmoothingMode.None;
-                                }
-
-
-                                spacing = ((double)W * 0.5 - 2.0 - 4.0) / 3.0;
-                                for (int i = 1; i < 4; i++)                                              // Red tick marks and white Signal strength numbers
-                                {
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //  Font f = new Font("swis721blkexbt", 5.5f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("+" + (i * 20).ToString(), ff, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                    g.DrawString("+" + (i * 20).ToString(), ff2, high_brush, (int)(W * 0.5 + i * spacing - (int)string_width * 3 - i / 3 * 2), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-
-
-
-                                if (FREQB < 30)
-                                {
-                                    if (num > -73)
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
-                                    }
-                                } // < 30 mhz
-                                else // correction for freq > 29 mhz
-                                {
-                                    if (num > -93) // ke9ns ADD correct S9 above 30mhz
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
-                                    }
-                                } // > 29 mhz
-
-
-                                break; // signal rx2
-
-
-                            case MeterRXMode.ADC_L:
-                            case MeterRXMode.ADC_R:
-                            case MeterRXMode.ADC2_L:
-                            case MeterRXMode.ADC2_R:
-                                spacing = ((double)W - 5.0) / 6.0;
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
-                                g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
-                                for (int i = 1; i < 7; i++)
-                                {
-                                     b = low_brush;
-                                    if (i == 6) b = high_brush;
-                                    g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    string s = (-120 + i * 20).ToString();
-                                    SizeF size = g.MeasureString(s, ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                    string_height = size.Height - 2.0;
-
-                                    g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
-                                break;
-                            case MeterRXMode.OFF:
-                                break;
-                        } // rx2 meter mode					
-                    } // !MOX2
-
-                    else
+                    if (rx2_meter_mode != MeterRXMode.OFF)
                     {
-                        MeterTXMode mode = current_meter_tx1_mode;
-                       // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
-                        switch (mode)
+                        if (pixel_x <= 0) pixel_x = 1;
+
+                        LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, pixel_x, H),
+                            meter_left_color, meter_right_color, LinearGradientMode.Horizontal);
+
+                        g.FillRectangle(brush, 0, 0, pixel_x, H);
+
+                        for (int i = 0; i < 21; i++)
+                            g.DrawLine(new Pen(meter_background_color), 6 + i * 8, 0, 6 + i * 8, H);
+
+                        g.DrawLine(new Pen(Color.Red), pixel_x, 0, pixel_x, H);
+                        g.FillRectangle(new SolidBrush(meter_background_color), pixel_x + 1, 0, W - pixel_x, H);
+
+                        if (pixel_x >= rx2_meter_peak_value)
                         {
-                            case MeterTXMode.MIC:
-                            case MeterTXMode.EQ:
-                            case MeterTXMode.LEVELER:
-                            case MeterTXMode.CPDR:
-                            case MeterTXMode.ALC:
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.665), 2);
-                                g.FillRectangle(high_brush, (int)(W * 0.665), H - 8, (int)(W * 0.335) - 2, 2);
-                                double spacing = (W * 0.665 - 2.0) / 3.0;
-                                double string_height = 0;
-                                for (int i = 1; i < 4; i++)
-                                {
-                                    g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    string s = (-30 + i * 10).ToString();
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                    //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                    g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 - (int)(i / 2) + (int)(i / 3)), (int)(H - 8 - 12 - 3 - string_height));
-                                    //g.SmoothingMode = SmoothingMode.None;
-                                }
-                                spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
-                                for (int i = 1; i < 4; i++)
-                                {
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString(i.ToString(), ff, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                    g.DrawString(i.ToString(), ff, high_brush, (int)(W * 0.665 + i * spacing - (int)string_width), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                if (num > 0.0) // high area
-                                {
-                                    pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
-                                }
-                                else
-                                {
-                                    pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
-                                }
-                                break;
-
-                            case MeterTXMode.FORWARD_POWER:
-                            case MeterTXMode.REVERSE_POWER:
-                                if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
-                                    (hid_init && current_model == Model.FLEX1500))
-                                {
-                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 10, 2);
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    string_height = 0;
-                                    string[] list = { "5", "10", "50", "100" };
-                                    for (int i = 1; i < 5; i++)
-                                    {
-                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                        string s = list[i - 1];
-                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-                                        string_height = size.Height - 2.0;
-
-                                        //g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                        //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
-                                        //g.SmoothingMode = SmoothingMode.None;
-                                    }
-                                    spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
-                                    for (int i = 1; i < 2; i++)
-                                    {
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-
-                                        g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                        g.DrawString("120+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)3.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
-                                    }
-
-                                    if (num <= 100.0) // low area
-                                    {
-                                        spacing = (W * 0.75 - 2.0) / 4.0;
-                                        if (num <= 5.0)
-                                            pixel_x = (int)(num / 5.0 * (int)spacing);
-                                        else if (num <= 10.0)
-                                            pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
-                                        else if (num <= 50.0)
-                                            pixel_x = (int)(2 * spacing + (num - 10.0) / 40.0 * spacing);
-                                        else
-                                            pixel_x = (int)(3 * spacing + (num - 50.0) / 50.0 * spacing);
-                                    }
-                                    else
-                                    {
-                                        spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
-                                        if (num <= 120.0)
-                                            pixel_x = (int)(W * 0.75 + (num - 100.0) / 20.0 * spacing);
-                                        else
-                                            pixel_x = (int)(W * 0.75 + spacing + (num - 120.0) / 60.0 * spacing);
-                                    }
-                                }
-                                else // 1W version
-                                {
-                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    string_height = 0;
-                                    string[] list = { "100", "250", "500", "800", "1000" };
-                                    for (int i = 1; i < 5; i++)
-                                    {
-                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                        string s = list[i - 1];
-                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-                                        string_height = size.Height - 2.0;
-
-                                        //g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                        //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 + (int)(i / 2) - (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
-                                        //g.SmoothingMode = SmoothingMode.None;
-                                    }
-                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                    for (int i = 1; i < 2; i++)
-                                    {
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                        SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
-                                        double string_width = size.Width - 2.0;
-
-                                        //g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                        g.DrawString("1000", ff, high_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - 8 - 12 - 3 - string_height));
-                                    }
-
-                                    num *= 1000;
-                                    if (num < 801.0) // low area
-                                    {
-                                        spacing = (W * 0.75 - 2.0) / 4.0;
-                                        if (num <= 100.0)
-                                            pixel_x = (int)(num / 100.0 * spacing);
-                                        else if (num <= 250.0)
-                                            pixel_x = (int)(spacing + (num - 100.0) / 150.0 * spacing);
-                                        else if (num <= 500.0)
-                                            pixel_x = (int)(2 * spacing + (num - 250.0) / 250.0 * spacing);
-                                        else
-                                            pixel_x = (int)(3 * spacing + (num - 500.0) / 300.0 * spacing);
-                                    }
-                                    else
-                                    {
-                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                        pixel_x = (int)(W * 0.75 + (num - 800.0) / 200.0 * spacing);
-                                    }
-                                }
-                                break;
-
-                            case MeterTXMode.SWR:
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] swr_list = { "1.5", "2", "5", "10", "20" };
-                                for (int i = 1; i < 5; i++)
-                                {
-                                    g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    string s = swr_list[i - 1];
-                                    //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                    //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                    g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
-                                    //g.SmoothingMode = SmoothingMode.None;
-                                }
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                for (int i = 1; i < 2; i++)
-                                {
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                    g.DrawString("20+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)2.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                if (num < 10.0) // low area
-                                {
-                                    spacing = (W * 0.75 - 2.0) / 4.0;
-                                    if (num <= 1.5)
-                                        pixel_x = (int)((num - 1.0) / 0.5 * spacing);
-                                    else if (num <= 2.0)
-                                        pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
-                                    else if (num <= 5.0)
-                                        pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
-                                    else
-                                        pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
-                                }
-                                else
-                                {
-                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                    pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
-                                }
-                                if (double.IsInfinity(num)) pixel_x = W - 2;
-                                break;
-
-                            case MeterTXMode.ALC_G:
-                            case MeterTXMode.LVL_G:
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] gain_list = { "5", "10", "15", "20", "25" };
-                                for (int i = 1; i < 5; i++)
-                                {
-                                    g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    string s = gain_list[i - 1];
-                                    //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.AntiAlias;
-                                    //g.SmoothingMode = SmoothingMode.AntiAlias;
-                                    g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + (int)(i / 3)), (int)(H - 8 - 12 - 3 - string_height));
-                                    //g.SmoothingMode = SmoothingMode.None;
-                                }
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                for (int i = 1; i < 2; i++)
-                                {
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    //g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                    g.DrawString("25+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)2.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                pixel_x = (int)(num / 5.0 * spacing);
-                                break;
-                            case MeterTXMode.OFF:
-                                break;
-                        }
-                    } // MOX2
-
-
-
-                    //===================================================================================
-                    if ((!mox2 && rx2_meter_mode != MeterRXMode.OFF) ||	(mox2 && current_meter_tx1_mode != MeterTXMode.OFF))
-					{
-						pixel_x = Math.Max(0, pixel_x);
-						pixel_x = Math.Min(W-3, pixel_x);
-
-                        pixel_x1 = Math.Max(0, pixel_x1);
-                        pixel_x1 = Math.Min(W - 3, pixel_x1);
-
-                        line_pen = new Pen(edge_avg_color);
-
-                      //  line_dark_pen = new Pen(
-						//	Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
-						//	(edge_avg_color.G+edge_meter_background_color.G)/2,
-						//	(edge_avg_color.B+edge_meter_background_color.B)/2));
-
-					
-
-                        if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
-                        {
-                            line_pen = new Pen(Color.Red);
-                            line_pen.Width = 3.0F;
-                            g.DrawLine(line_pen, pixel_x1, 0, pixel_x1, H);
-
-                        } // peak
-
-                        line_pen = new Pen(edge_avg_color);
-                        g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H); // rx2 edge
-						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
-						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
-
-
-                      
-					}
-
-    //====================================================
-					rx2_meter_timer.Stop();
-
-					format = "f0";
-					if(meter_detail) format = "f1";
-
-					if(rx2_meter_timer.DurationMsec >= meter_dig_delay)
-					{
-                        if (!mox2) // rx
-                        {
-
-                            
-                                switch (rx2_meter_mode)
-                                {
-                                    case MeterRXMode.SIGNAL_STRENGTH:
-
-                                    case MeterRXMode.SIGNAL_AVERAGE:
-                                        output = num.ToString(format) + " dBm ";
-                                        break;
-                                    case MeterRXMode.SIGNAL_PEAK: // ke9ns2 ADD 
-                                        output = rx2_meter_peak_value.ToString(format) + " dBm ";
-                                        break;
-                                    case MeterRXMode.ADC_L:
-                                    case MeterRXMode.ADC_R:
-                                    case MeterRXMode.ADC2_L:
-                                    case MeterRXMode.ADC2_R:
-                                        output = num.ToString("f1") + " dBFS ";
-                                        break;
-                                    case MeterRXMode.OFF:
-                                        output = "";
-                                        break;
-                                }
-                            
+                            rx2_meter_peak_count = 0;
+                            rx2_meter_peak_value = pixel_x;
                         }
                         else
                         {
-                            MeterTXMode mode = current_meter_tx1_mode;
-                            // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
-                            switch (mode)
+                            if (rx2_meter_peak_count++ >= multimeter_peak_hold_samples)
                             {
-                                case MeterTXMode.MIC:
-                                    output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.LEVELER:
-                                case MeterTXMode.LVL_G:
-                                case MeterTXMode.EQ:
-                                case MeterTXMode.CPDR:
-                                case MeterTXMode.ALC:
-                                case MeterTXMode.ALC_G:
-                                    if (!mox2) output = "-30 dB ";
-                                    else output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.FORWARD_POWER:
-                                case MeterTXMode.REVERSE_POWER:
-                                    switch (current_model)
-                                    {
-                                        case Model.FLEX5000:
-                                        case Model.FLEX3000:
-                                            if (!mox) output =  "0 W ";
-                                            else output = num.ToString("f0") + " W ";
-                                            break;
-                                        case Model.FLEX1500:
-                                            if (!mox) output = "0 % ";
-                                            else output = num.ToString("f0") + " % ";
-                                            break;
-                                    }
-                                    break;
-                                case MeterTXMode.SWR:
-                                    if (!mox) output = "0 : 1 ";
-                                    else output = num.ToString("f1") + " : 1 ";
-                                    break;
-                                case MeterTXMode.OFF:
-                                    output = "";
-                                    break;
-
-                            }// switch mode
-                        }//mox2
-
-
-                         txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
-
-                        rx2_meter_timer.Start();
-					}
-
-					if(rx2_meter_data_ready)
-					{
-						rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
-					}
-
-					
-#endregion
-                    break; // RX2 edge
-
-                //========================================mi=====================
-                //=============================================================
-                // KE9NS 6 RX2 ANALOG
-                //=============================================================
-                //=============================================================
-            
-                
-                case MultiMeterDisplayMode.Analog:
-                    #region Analog
-
-                 //   Debug.WriteLine(rx2_meter_new_data + " dB MIC-");
-                  
-                   
-                 //   Debug.WriteLine(rx2_avg_num + "  rx2_avg_num");
-
-                    if (rx2_meter_data_ready)
-					{
-						rx2_meter_current_data = rx2_meter_new_data;
-						rx2_meter_data_ready = false;
-					}
-
-					if(rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
-					{
-						num = rx2_avg_num = rx2_meter_current_data;
-					}
-					else
-					{
-						if(rx2_meter_current_data > rx2_avg_num)
-							num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
-						else 
-							num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
-					}
-
-                 //   Debug.WriteLine(num + " dB MIC--");
-
-                    //  if ((mox2) && (!mox)) num = 0.0;  // zero the value if in 2nd tx mode but not transmitting
-
-                    high_brush = new SolidBrush(analog_high_color);
-
-
-                    //--------------------------------------------------------
-                    // ke9ns add below
-
-                
-                    if (meterLMB == true)
-                    {
-                        low_brush = new SolidBrush(Color.Black); // white text
-                        low_brush1 = new Pen(Color.Black);  // white
-
-
-                        g.DrawImageUnscaled(meterback1, 0, 0); // new Rectangle(0, 0, W, H));  // rectangle to show bitmap image in
-
-                     //   txtRX2Meter.ForeColor = Color.Black;
-                     //   txtRX2Meter.BackColor = Color.FromArgb(0xff, 0xff, 0xe4);
-                    }
-                    else if (meterDMB == true)
-                    {
-                        low_brush = new SolidBrush(Color.Black); // white text
-                        low_brush1 = new Pen(Color.Black);  // white
-
-                        g.DrawImageUnscaled(meterback2, 0, 0); // new Rectangle(0, 0, W, H));  // rectangle to show bitmap image in
-
-                      //  txtRX2Meter.ForeColor = Color.Black;
-                      //  txtRX2Meter.BackColor = Color.FromArgb(146, 146, 140);
-                    }
-                    else
-                    {
-                        low_brush = new SolidBrush(analog_low_color); // white text
-                        low_brush1 = new Pen(analog_low_color);  // white
-
-                        g.DrawRectangle(new Pen(analog_meter_background_color), 0, 0, W, H); // black background
-
-                      //  txtRX2Meter.ForeColor = MeterDigitalTextColor;
-                      //  txtRX2Meter.BackColor = MeterDigitalBackgroundColor;
+                                rx2_meter_peak_count = 0;
+                                rx2_meter_peak_value = pixel_x;
+                            }
+                            else
+                            {
+                                g.DrawLine(new Pen(Color.Red), rx2_meter_peak_value, 0, rx2_meter_peak_value, H);
+                                g.DrawLine(new Pen(Color.Red), rx2_meter_peak_value - 1, 0, rx2_meter_peak_value - 1, H);
+                            }
+                        }
                     }
 
-                    //===========================================================================================
-                    // ke9ns add TX meter to RX2 (but only when not using RX2)
+                    rx2_meter_timer.Stop();
 
-                    if (!mox2)
+                    string format = "f0";
+                    if (meter_detail) format = "f1";
+
+                    if (rx2_meter_timer.DurationMsec >= meter_dig_delay)
                     {
-           
                         switch (rx2_meter_mode)
                         {
                             case MeterRXMode.SIGNAL_STRENGTH:
                             case MeterRXMode.SIGNAL_AVERAGE:
-                            case MeterRXMode.SIGNAL_PEAK:       // ke9ns ADD
-
-                                //=================================================================
-                                // Draw curved meter movement for signal strength ke9ns12
-                                //=================================================================
-                             
-
-                                double line1 = 0;
-                                double angle_start = 45;
-                                double angle_span = 90;
-
-                                int Origin_x = W / 2;
-                                int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-                             //   low_brush1 = new Pen(analog_low_color);  // white
-
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush1 = new Pen(analog_high_color); // red 
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                                                           // high_brush4 = new Pen(Brushes.BurlyWood); //  
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-
-                                double spacing = ((double)W * 0.5 - 2.0) / 5.0;
-                                double string_height = 0;
-
-                               
-                                //======================================
-                                // Draw WHITE arc line
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -90, -47); // draw OUTER arc
-
-                                //======================================
-                                // Draw Red arc line
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -43); // draw OUTER arc -47
-
-                                //======================================
-                                // Draw WHITE full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush4.Width = arc_thick1;
-                                g.DrawArc(high_brush4, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-                                //======================================
-                                // Draw Meter Name text behind needle
-                                if (rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) g.DrawString("SIG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-                                else if (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) g.DrawString("AVG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-                                else if (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) g.DrawString("SIG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-                                for (double i = 1; i < 6; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
-
-
-                                    //===============================================
-                                    // Draw white numbers
-
-                                    //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString((-1 + i * 2).ToString(), ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = (i * spacing - string_width + (i / 5));
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
-
-                                    g.DrawString((-1 + i * 2).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = ((double)W * 0.5 - 2.0 - 4.0) / 3.0;
-
-                                for (double i = 1; i < 4; i++) //red
-                                {
-
-                                    line1 = W * 0.5 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
-
-                                    line1 = W * 0.5 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
-
-                                    //==========================================
-                                    // draw red text RX2 signal
-
-                                    //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("+" + (i * 20).ToString(), ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    line1 = (W * 0.5 + i * spacing - string_width * 3 - i / 3 * 2);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.35) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.35 - (.05 * (i - 1)))) * Math.Sin(line));
-
-
-                                    g.DrawString("+" + (i * 20).ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-
-                                if (FREQB < 30)
-                                {
-                                    if (num > -73)
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
-                                    }
-                                } // < 30 mhz
-                                else // correction for freq > 29 mhz
-                                {
-                                    if (num > -93) // ke9ns ADD correct S9 above 30mhz
-                                    {
-                                        pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
-                                        pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
-                                    }
-                                    else
-                                    {
-                                        pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
-                                        pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
-                                    }
-                                } // > 29 mhz
-
-
-
-                                break; // signal RX2 analog
-
+                                output = num.ToString(format) + " dBm";
+                                break;
                             case MeterRXMode.ADC_L:
                             case MeterRXMode.ADC_R:
-                            case MeterRXMode.ADC2_L:
-                            case MeterRXMode.ADC2_R:
-                                spacing = ((double)W - 5.0) / 6.0;
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
-                                g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
-                                for (int i = 1; i < 7; i++)
-                                {
-                                     b = low_brush;
-                                    if (i == 6) b = high_brush;
-                                    g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
-                                    g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
-
-                                    //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    string s = (-120 + i * 20).ToString();
-                                    SizeF size = g.MeasureString(s, ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    string_height = size.Height - 2.0;
-
-                                    g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
-                                }
-
-                                pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
+                                output = num.ToString("f1") + " dBFS";
                                 break;
                             case MeterRXMode.OFF:
+                                output = "";
                                 break;
                         }
+                        txtRX2Meter.Text = output;
+                        rx2_meter_timer.Start();
+                    }
 
-                    } // !MOX2 (RX)
-
-                    //=============================================
-                    // Transmitter meters ke9ns12tx RX2
-                    //=============================================
-
-                    else
+                    if (rx2_meter_data_ready)
                     {
+                        rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
+                    }
+                    break; // BAR RX2
+                #endregion
 
-                     // Debug.WriteLine("MOX2T " + num);
 
-                        MeterTXMode mode = current_meter_tx1_mode;
-                       // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
-                        switch (mode)
+
+
+                //=============================================================
+                //=============================================================
+                // KE9NS 4 RX2 TR7 meter
+                //=============================================================
+                //=============================================================
+
+                case MultiMeterDisplayMode.Original:
+                        #region AnalogTR7
+
+
+                        if (rx2_meter_data_ready)
                         {
-                            case MeterTXMode.MIC:
-                            case MeterTXMode.EQ:
-                            case MeterTXMode.LEVELER:
-                            case MeterTXMode.CPDR:
-                            case MeterTXMode.ALC:
-
-                                //=================================================================
-                                // Draw curved meter movement for signal strength
-                                //=================================================================
-                              
-                                double line1 = 0;
-                                int angle_start = 45;
-                                int angle_span = 90;
-
-                                int Origin_x = W / 2;
-                                int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-                             //   low_brush1 = new Pen(analog_low_color);  // white
-                                high_brush1 = new Pen(analog_high_color); // red
-
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                high_brush5 = new Pen(Brushes.Green); // 
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-                                double spacing = (W * 0.665 - 2.0) / 3.0;
-                                double string_height = 0;
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -75, -61); // draw OUTER arc
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -27); // draw OUTER arc -31
-
-                                //======================================
-                                // Draw GREEN full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush5.Width = arc_thick1;
-                                g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-
-                                //======================================
-                                // Draw TX Meter Name text
-                                if (mode == MeterTXMode.CPDR) g.DrawString("CPDR", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
-                                else if (mode == MeterTXMode.LEVELER) g.DrawString("LVL", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-                                else if (mode == MeterTXMode.EQ) g.DrawString("EQ", ff8, low_brush, W * 0.405F, H * 0.75F); // DDAA
-                                else if (mode == MeterTXMode.MIC) g.DrawString("MIC", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-                                else if (mode == MeterTXMode.ALC) g.DrawString("ALC", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-                                for (double i = 1; i < 4; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers ALC RX1 analog
-
-
-                                    //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = (i * spacing - string_width + (i / 5));
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // 1.4 convert signal to arc
-                                    POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));  // 1.48
-
-
-                                    g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
-
-                                for (double i = 1; i < 4; i++) //red
-                                {
-
-                                    line1 = W * 0.665 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = W * 0.665 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text alc rx1 analog
-
-                                    //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString(i.ToString(), ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    line1 = (W * 0.665 + i * spacing - (int)string_width);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.38) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.38 - (.05 * (i - 1)))) * Math.Sin(line));
-
-
-                                    g.DrawString(i.ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-
-
-                                if (num > 0.0) // high area
-                                {
-                                    pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
-                                }
-                                else
-                                {
-                                    pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
-                                }
-                                break; // case MeterTXMode.ALC:
-
-                            //===========================================
-
-                            case MeterTXMode.FORWARD_POWER:
-                            case MeterTXMode.REVERSE_POWER:
-
-                                line1 = 0;
-                                angle_start = 45;
-                                angle_span = 90;
-
-                                Origin_x = W / 2;
-                                Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-
-                             //   low_brush1 = new Pen(analog_low_color);  // white
-                                high_brush1 = new Pen(analog_high_color); // red
-
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-                                if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
-                                    (hid_init && current_model == Model.FLEX1500))
-                                {
+                            rx2_meter_current_data = rx2_meter_new_data;
+                            rx2_meter_data_ready = false;
+                        }
+
+                        if (rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                        {
+                            num = rx2_avg_num = rx2_meter_current_data;
+                        }
+                        else
+                        {
+                            if (rx2_meter_current_data > rx2_avg_num)
+                                num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
+                            else
+                                num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
+                        }
+
+
+                        //  if ((mox2) && (!mox)) num = -100.0;  // zero the value if in 2nd tx mode but not transmitting
+
+                        g.DrawRectangle(new Pen(meter_background_color), 0, 0, W, H);
+
+                        low_brush = new SolidBrush(edge_low_color);
+                        high_brush = new SolidBrush(edge_high_color);
+
+
+                        if (!mox2)
+                        {
+                            switch (rx2_meter_mode)
+                            {
+
+                                //=============================================
+                                // Receiver meters ke9ns10
+                                //=============================================
+
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
 
                                     //=================================================================
-                                    // Draw curved meter movement for Power
+
+
+                                    int Origin_x = W / 2;
+                                    int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+                                    low_brush1 = new Pen(edge_low_color);  // white
+
+                                    high_brush2 = new Pen(Brushes.Red); // blue
+
+                                    high_brush1 = new Pen(Brushes.Red); // red
+                                    double spacing;
+                                    double string_height = 0;
+                                    //=======================================
+                                    // meter image TR7 rx2
+                                    //=======================================
+
+                                    // Image src = new Bitmap(meter_image);
+
+                                    g.DrawImage(TR7, new Rectangle(0, 5, W, H));  // rectangle to show bitmap image in
+
+                                    //========================================
+
+
+                                    if (FREQB < 30)
+                                    {
+                                        if (num > -73)
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
+                                        }
+                                    } // < 30 mhz
+                                    else // correction for freq > 29 mhz
+                                    {
+                                        if (num > -93) // ke9ns ADD correct S9 above 30mhz
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
+                                        }
+                                    } // > 29 mhz
+
+                                    break; // signal RX2
+
+
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                case MeterRXMode.ADC2_L:
+                                case MeterRXMode.ADC2_R:
+
+                                    spacing = ((double)W - 5.0) / 6.0;
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
+                                    g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
+                                    for (int i = 1; i < 7; i++)
+                                    {
+                                        b = low_brush;
+                                        if (i == 6) b = high_brush;
+                                        g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        string s = (-120 + i * 20).ToString();
+                                        SizeF size = g.MeasureString(s, ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                        string_height = size.Height - 2.0;
+
+                                        g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
+                                    break;
+                                case MeterRXMode.OFF:
+                                    break;
+                            } //rx2_meter_mode
+
+                        } // !MOX2
+
+
+                        //=============================================
+                        // Transmitter meters TR7 RX2
+                        //=============================================
+
+                        else
+                        {
+                            MeterTXMode mode = current_meter_tx1_mode;
+                            // if (chkTUN.Checked) mode = tune_meter_tx_mode;
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.CPDR:
+                                case MeterTXMode.ALC:
+
                                     //=================================================================
+                                    // Draw curved meter movement for signal strength
+                                    //=================================================================
+
+                                    double line1 = 0;
+                                    int angle_start = 45;
+                                    int angle_span = 90;
+
+                                    int Origin_x = W / 2;
+                                    int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                                    low_brush1 = new Pen(edge_low_color);  // white
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush1 = new Pen(Brushes.Red); // red
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                                                           //   Pen high_brush4 = new Pen(Brushes.BurlyWood); //  
+                                    high_brush5 = new Pen(Brushes.Green); // 
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+
+
+                                    double spacing = (W * 0.665 - 2.0) / 3.0;
+                                    double string_height = 0;
 
                                     //======================================
                                     // Draw WHITE arc line
                                     // upper left corner x,y , width,height, start angle, sweep angle
 
                                     low_brush1.Width = arc_thick;
-                                    g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -75, -61); // draw OUTER arc
+
 
                                     //======================================
                                     // Draw Red arc line
                                     // upper left corner x,y , width,height, start angle, sweep angle
 
                                     high_brush1.Width = arc_thick;
-                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -27); // draw OUTER arc  -31
 
                                     //======================================
-                                    // Draw BLUE full arc line under white/red 
+                                    // Draw GREEN full arc line under white/red 
                                     // upper left corner x,y , width,height, start angle, sweep angle
 
-                                    high_brush2.Width = arc_thick1;
-                                    g.DrawArc(high_brush2, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+                                    high_brush5.Width = arc_thick1;
+                                    g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
 
                                     //======================================
-                                    // Draw TX Meter Name text
-                                    if (mode == MeterTXMode.FORWARD_POWER) g.DrawString("FWD", ff8, low_brush, W * 0.375F, H * 0.75F); // DDAA
-                                    else if (mode == MeterTXMode.REVERSE_POWER) g.DrawString("REV", ff8, low_brush, W * 0.38F, H * 0.75F); // DDAA
+                                    // WHITE  tick marks and text
 
+                                    for (double i = 1; i < 4; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                        //===============================================
+                                        // Draw white numbers
+
+
+                                        //  Font f = new Font("Swis721 BlkEx BT", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        line1 = (i * spacing - string_width + (i / 5));
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+
+                                        g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                    } // white ticks and test
+
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
+
+                                    for (double i = 1; i < 4; i++) //red
+                                    {
+
+                                        line1 = W * 0.665 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = W * 0.665 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        //==========================================
+                                        // draw red text
+
+                                        //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString(i.ToString(), ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        line1 = (W * 0.665 + i * spacing - (int)string_width);
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
+
+
+                                        g.DrawString(i.ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+
+                                    if (num > 0.0) // high area
+                                    {
+                                        pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
+                                    }
+                                    else
+                                    {
+                                        pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
+                                    }
+                                    break; // ALC TR7 rx1
+
+                                //===========================================TR7
+
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+
+                                    if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
+                                          (hid_init && current_model == Model.FLEX1500))
+                                    {
+                                        g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
+                                        g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 10, 2);
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        string_height = 0;
+                                        //   string[] list = { "5", "10", "50", "100" };
+
+                                        //  Image src = new Bitmap(meter_image);
+
+                                        g.DrawImage(TR7, new Rectangle(0, 5, W, H));  // rectangle to show bitmap image in
+
+                                        //====================================TR7
+                                        // redone to work with TR7 scale ke9ns scale
+                                        // 19pixel = 0watts on scale
+                                        // 50px = 10watts (jumps 5px from 0 to 10)
+                                        // 92px = 50watts (jumps 10px from 10watts to 50w)
+                                        // 108px = 90watts (jumps 3px form 50 to 100w)
+
+
+                                        spacing = (W * 0.75 - 2.0) / 4.0;                //  (W * 0.75 - 2.0) / 4.0; = 28.5
+
+                                        if (num <= 9.0)
+                                        {
+                                            pixel_x = (int)(num / 9.0 * (int)spacing);          // pixel_x = (int)(num / 5.0 * (int)spacing);
+                                        }
+                                        else if (num <= 50.0)
+                                        {
+
+                                            pixel_x = (int)(spacing + (num - 9.0) / 22.0 * spacing);// pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((1.863 * spacing) + spacing + (num - 50.0) / 80.0 * spacing);
+                                        }
+
+                                        pixel_x = pixel_x + 19; // zero point
+
+
+                                    } // 100watt TR7 scale
+
+
+                                    else // 1W version
+                                    {
+                                        g.FillRectangle(low_brush, 0, H - 4, (int)(W * 0.75), 2);
+                                        g.FillRectangle(high_brush, (int)(W * 0.75), H - 4, (int)(W * 0.25) - 9, 2);
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        string_height = 0;
+                                        string[] list = { "100", "250", "500", "800", "1000" };
+
+
+
+                                        for (int i = 1; i < 5; i++)
+                                        {
+                                            g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
+                                            g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
+
+                                            string s = list[i - 1];
+                                            // Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+                                            string_height = size.Height - 2.0;
+
+                                            g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 + (int)(i / 2) - (int)(i / 4)), (int)(H - 4 - 8 - string_height));
+                                        }
+                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                        for (int i = 1; i < 2; i++)
+                                        {
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
+
+                                            //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+
+                                            g.DrawString("1000", ff, high_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - 4 - 8 - string_height));
+                                        }
+
+
+
+                                        num *= 1000;
+                                        if (num < 801.0) // low area
+                                        {
+                                            spacing = (W * 0.75 - 2.0) / 4.0;
+                                            if (num <= 100.0)
+                                                pixel_x = (int)(num / 100.0 * spacing);
+                                            else if (num <= 250.0)
+                                                pixel_x = (int)(spacing + (num - 100.0) / 150.0 * spacing);
+                                            else if (num <= 500.0)
+                                                pixel_x = (int)(2 * spacing + (num - 250.0) / 250.0 * spacing);
+                                            else
+                                                pixel_x = (int)(3 * spacing + (num - 500.0) / 300.0 * spacing);
+                                        }
+                                        else
+                                        {
+                                            spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                            pixel_x = (int)(W * 0.75 + (num - 800.0) / 200.0 * spacing);
+                                        }
+                                    } // 1 watt version
+
+
+
+
+                                    break; //POWER RX1 TR7
+
+                                //==========================================TR7
+
+                                case MeterTXMode.SWR:
+
+
+                                    //=================================================================
+                                    // Draw curved meter movement for SWR
+                                    //=================================================================
+
+                                    line1 = 0;
+                                    angle_start = 45;
+                                    angle_span = 90;
+
+                                    Origin_x = W / 2;
+                                    Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                                    low_brush1 = new Pen(edge_low_color);  // white
+                                    high_brush2 = new Pen(Brushes.Red); // blue
+                                    high_brush1 = new Pen(Brushes.Red); // red
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                    high_brush4 = new Pen(Brushes.AntiqueWhite); // 
+
+                                    //======================================
+                                    // Draw WHITE arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                                    //======================================
+                                    // Draw Red arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+                                    //======================================
+                                    // Draw Yellow full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush3.Width = arc_thick1;
+                                    g.DrawArc(high_brush3, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
 
                                     //======================================
                                     // WHITE  tick marks and text
@@ -43072,7 +42472,7 @@ namespace PowerSDR
 
                                     spacing = (W * 0.75 - 2.0) / 4.0;
                                     string_height = 0;
-                                    string[] list = { "5", "10", "50", "100" };
+                                    string[] swr_list = { "1.5", "2", "5", "10", "20" };
 
                                     for (double i = 1; i < 5; i++)
                                     {
@@ -43107,10 +42507,11 @@ namespace PowerSDR
 
 
                                         //===============================================
-                                        // Draw white numbers fwd rx1 analog
+                                        // Draw white numbers
 
-                                        string s = list[(int)i - 1];
-                                        //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+                                        string s = swr_list[(int)i - 1];
+
+                                        //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
 
                                         SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
                                         double string_width = size.Width - 2.0;
@@ -43121,8 +42522,8 @@ namespace PowerSDR
                                         line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                                         line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                                        POSW = (int)((double)(H * 1.44) * Math.Cos(line));  //1.4  convert signal to arc
-                                        POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));  // 1.48
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
 
                                         g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
 
@@ -43132,7 +42533,2072 @@ namespace PowerSDR
                                     // =======================
                                     // RED tick marks and text
 
-                                    spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+
+                                    for (double i = 1; i < 2; i++) //red
+                                    {
+
+                                        line1 = (double)W * 0.75 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush2, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = (double)W * 0.75 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        //==========================================
+                                        // draw red text
+
+                                        //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        line1 = W * 0.75 + i * spacing - (int)3.5 * string_width;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
+
+                                        g.DrawString("20+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+
+
+
+                                    if (num < 10.0) // low area
+                                    {
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        if (num <= 1.5)
+                                            pixel_x = (int)((num - 1.0) / 0.5 * spacing);
+                                        else if (num <= 2.0)
+                                            pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
+                                        else if (num <= 5.0)
+                                            pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
+                                        else
+                                            pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
+                                    }
+                                    else
+                                    {
+                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                        pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
+                                    }
+                                    if (double.IsInfinity(num)) pixel_x = W - 2;
+
+                                    break;// case MeterTXMode.SWR:
+
+                                case MeterTXMode.ALC_G:
+                                case MeterTXMode.LVL_G:
+
+
+                                    //=================================================================
+                                    // Draw curved meter movement for signal strength
+                                    //=================================================================
+
+                                    line1 = 0;
+                                    angle_start = 45;
+                                    angle_span = 90;
+
+                                    Origin_x = W / 2;
+                                    Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                                    low_brush1 = new Pen(edge_low_color);  // white
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush1 = new Pen(Brushes.Red); // red
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                                                           //  high_brush4 = new Pen(Brushes.BurlyWood); //  
+                                    high_brush5 = new Pen(Brushes.Green); // 
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    string_height = 0;
+                                    string[] gain_list = { "5", "10", "15", "20", "25" };
+
+
+                                    //=================================================================
+                                    // Draw curved meter movement for Power
+                                    //=================================================================
+
+                                    //======================================
+                                    // Draw WHITE arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
+
+                                    //======================================
+                                    // Draw Red arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
+
+                                    //======================================
+                                    // Draw GREEN full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush5.Width = arc_thick1;
+                                    g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+
+                                    //======================================
+                                    // WHITE  tick marks and text
+
+                                    for (double i = 1; i < 5; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                        //===============================================
+                                        // Draw white numbers
+
+                                        string s = gain_list[(int)i - 1];
+                                        //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        line1 = (i * spacing - string_width + (i / 5));
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+
+                                        //  g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                        g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // white ticks and test
+
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+
+                                    for (double i = 1; i < 2; i++) //red
+                                    {
+
+                                        line1 = W * 0.75 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = W * 0.75 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        //==========================================
+                                        // draw red text
+
+                                        //   Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+
+                                        line1 = (W * 0.75 + i * spacing - (int)2.5 * string_width);
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
+
+
+                                        g.DrawString("25+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    pixel_x = (int)(num / 5.0 * spacing);
+
+
+                                    break;// case MeterTXMode.LVL_G:
+                                case MeterTXMode.OFF:
+                                    break;
+                            } // switch (mode)
+
+                        } // mox2
+
+
+
+                        //=============================================
+                        // ke9ns needle movement TR7 rx2 
+                        //=============================================
+
+                        if (  // EDGE meter movement here
+                            (((rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
+                           (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L)) &&
+                           (!mox2 && rx2_meter_mode != MeterRXMode.OFF))
+                            || ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && (current_meter_tx1_mode != MeterTXMode.LVL_G) &&
+                            (current_meter_tx1_mode != MeterTXMode.ALC_G) && (current_meter_tx1_mode != MeterTXMode.CPDR) &&
+                            (current_meter_tx1_mode != MeterTXMode.LEVELER) && (current_meter_tx1_mode != MeterTXMode.EQ) &&
+                            (current_meter_tx1_mode != MeterTXMode.MIC) && (current_meter_tx1_mode != MeterTXMode.ALC) &&
+                            (current_meter_tx1_mode != MeterTXMode.SWR) && (current_meter_tx1_mode != MeterTXMode.FORWARD_POWER) &&
+                            (current_meter_tx1_mode != MeterTXMode.REVERSE_POWER))
+                             )
+                        // if meter is ON in RX or TX mode, then draw line
+                        {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+
+                            line_pen = new Pen(edge_avg_color);
+
+                            //  line_dark_pen = new Pen(
+                            //     Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,
+                            //     (edge_avg_color.G + edge_meter_background_color.G) / 2,
+                            //     (edge_avg_color.B + edge_meter_background_color.B) / 2));
+
+
+                            g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H);
+                            g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
+                            g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
+
+                        }
+                        else if (  // TX TR7 meter movements
+                                     ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.LVL_G) ||
+                                     (current_meter_tx1_mode == MeterTXMode.ALC_G) || (current_meter_tx1_mode == MeterTXMode.EQ) ||
+                                     (current_meter_tx1_mode == MeterTXMode.MIC) || (current_meter_tx1_mode == MeterTXMode.ALC) ||
+                                     (current_meter_tx1_mode == MeterTXMode.SWR)))
+                                )
+
+                        {
+
+                            // pixel_x (i.e. signal) goes from 0 to W  Width 
+                            // posx = originx + (2 * D * cos (angle))
+                            // posy = originy + (2 * D * sin (angle))
+                            // for a meter of 45deg to 135deg = 90deg total span :   
+                            // but sin and cos in radians not degs.
+                            // posx = originx + (2 * D * cos (angle*PI/180))
+
+                            //  box dimensions:
+                            //  0,0   W,0
+                            //  0,H   W,H
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+
+
+
+                            line_pen = new Pen(Color.Blue);
+                            line_pen.Width = 2.8F;
+
+
+                            int Origin_x = W / 2;
+                            int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                            double angle_start = 45;
+                            double angle_span = 90;
+
+                            angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                            int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
+                            int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
+
+                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
+
+
+
+                        } // SWR TX curved needle
+
+                        // POWER ONLY===TR7==RX2======================================================================================= ke9ns scale
+                        else if (
+                            ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.FORWARD_POWER) ||
+                            (current_meter_tx1_mode == MeterTXMode.REVERSE_POWER)))
+                            )
+                        {
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+                            line_pen = new Pen(Color.Red); // rx 
+
+
+
+                            // 54 = 10 watts" 
+                            // 80 = 40 watts
+
+
+                            int Origin_x = (W / 2) - 1;
+                            int Origin_y = (int)((double)(H * 1.84)); //1.90  1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+                            double angle_start = 45;
+                            double angle_span = 89;
+
+
+                            angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                            int POSW = (int)((double)(H * 1.6) * Math.Cos(signal));  // 1.65 convert signal to arc
+                            int POSH = (int)((double)(H * 1.6) * Math.Sin(signal));
+
+
+                            line_pen.Width = 2.8F;
+                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
+
+                        } // power
+                          // SIGNAL ONLY===TR7==RX2=========================================================================================================
+                          // this should be SIGNAL, AVG SIGNAL, PEAK SIGNAL
+                        else if (
+                                (((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) ||
+                                (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK)) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF))
+                           )
+                        {
+                            // SIGNAL ONLY
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+                            pixel_x1 = Math.Max(0, pixel_x1);
+                            pixel_x1 = Math.Min(W - 3, pixel_x1);                                             // define limits of X dimension
+
+                            line_pen = new Pen(Color.Yellow); // rx 
+
+
+                            int Origin_x = (W / 2) - 3;
+                            int Origin_y = (int)((double)(H * 1.9)); // 1.84 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                            double angle_start = 45;
+                            double angle_span = 89;
+
+
+                            if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
+                            {
+
+                                angle = signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                int POSW1 = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc 1.6 length of needle
+                                int POSH1 = (int)((double)(H * 1.65) * Math.Sin(signal));
+
+                                line_pen = new Pen(Color.Red);
+                                line_pen.Width = 3.0F;
+                                g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
+                            } // peak
+
+                            angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                            int POSW = (int)((double)(H * 1.65) * Math.Cos(signal));  // convert signal to arc
+                            int POSH = (int)((double)(H * 1.65) * Math.Sin(signal));
+
+                            line_pen = new Pen(Color.Yellow);
+
+                            line_pen.Width = 2.6F;
+                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
+
+                        } //   if meter is ON in RX or TX mode, then draw line
+
+
+                        //=================================================================
+                        // needle RX2 TR7
+
+                        /*
+                        if ( // RX2 EDGE movement
+
+                            ( (rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
+                           (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L)) && 
+                           ((!mox && rx2_meter_mode != MeterRXMode.OFF) || (mox && current_meter_tx1_mode != MeterTXMode.OFF))
+
+                           )  
+                            {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W-3, pixel_x);
+
+                            line_pen = new Pen(edge_avg_color);
+                            line_dark_pen = new Pen(
+                                Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
+                                (edge_avg_color.G+edge_meter_background_color.G)/2,
+                                (edge_avg_color.B+edge_meter_background_color.B)/2));
+
+
+
+                            g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H);
+                            g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
+                            g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
+
+
+                        }
+
+
+                        else if ( // RX2 SIGNAL, AVG SIGNAL, PEAK SIGNAL tr7
+
+                                ((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) ||
+                                (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK)) && ( (!mox && rx2_meter_mode != MeterRXMode.OFF)
+                                          || (mox && current_meter_tx1_mode != MeterTXMode.OFF) )
+                            )
+
+                        {
+
+                            // pixel_x (i.e. signal) goes from 0 to W  Width 
+                            // posx = originx + (2 * D * cos (angle))
+                            // posy = originy + (2 * D * sin (angle))
+                            // for a meter of 45deg to 135deg = 90deg total span :   
+                            // but sin and cos in radians not degs.
+                            // posx = originx + (2 * D * cos (angle*PI/180))
+
+                            //  box dimensions:
+                            //  0,0   W,0
+                            //  0,H   W,H
+
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+                            pixel_x1 = Math.Max(0, pixel_x1);
+                            pixel_x1 = Math.Min(W - 3, pixel_x1);
+
+                            line_pen = new Pen(Color.Yellow); // rx 
+                          //  line_dark_pen = 
+                          //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
+
+
+
+
+                            int Origin_x = (W / 2)-3;
+                            int Origin_y = (int)((double)(H * 1.84)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                            double angle_start = 45;
+                            double angle_span = 89;
+
+
+                            if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
+                            {
+
+                              angle =   signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                int POSW1 = (int)((double)(H * 1.6) * Math.Cos(signal));  // convert signal to arc
+                                int POSH1 = (int)((double)(H * 1.6) * Math.Sin(signal));
+
+                                line_pen = new Pen(Color.Red);
+                                line_pen.Width = 3.5F;
+                                g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+                            } // peak
+
+
+                           angle =   signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                            int POSW = (int)( (double)(H*1.6) * Math.Cos(signal) );  // convert signal to arc
+                            int POSH = (int)( (double)(H*1.6) * Math.Sin(signal) );
+
+                            line_pen = new Pen(Color.Yellow);
+                            line_pen.Width = 2.5F;
+
+                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
+
+
+
+
+                        } //   if meter is ON in RX or TX mode, then draw line
+                        */
+                        //================================================================
+                        rx2_meter_timer.Stop();
+
+                    //string 
+                    format = "f0";
+                        if (meter_detail) format = "f1";
+
+                        if (rx2_meter_timer.DurationMsec >= meter_dig_delay) // timer to update numbers 
+                        {
+                            if (!mox2) // RX
+                            {
+
+                                switch (rx2_meter_mode)
+                                {
+                                    case MeterRXMode.SIGNAL_STRENGTH:
+
+                                    case MeterRXMode.SIGNAL_AVERAGE:
+                                        output = num.ToString(format) + " dBm ";
+                                        break;
+                                    case MeterRXMode.SIGNAL_PEAK: // ke9ns2 ADD 
+                                        output = rx2_meter_peak_value.ToString(format) + " dBm ";
+                                        break;
+                                    case MeterRXMode.ADC_L:
+                                    case MeterRXMode.ADC_R:
+                                    case MeterRXMode.ADC2_L:
+                                    case MeterRXMode.ADC2_R:
+                                        output = num.ToString("f1") + " dBFS ";
+                                        break;
+                                    case MeterRXMode.OFF:
+                                        output = "";
+                                        break;
+                                }
+
+                            }
+                            else
+                            {
+
+
+                                MeterTXMode mode = current_meter_tx1_mode;
+                                // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
+                                switch (mode)
+                                {
+                                    case MeterTXMode.MIC:
+                                        output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.LEVELER:
+                                    case MeterTXMode.LVL_G:
+                                    case MeterTXMode.EQ:
+                                    case MeterTXMode.CPDR:
+                                    case MeterTXMode.ALC:
+                                    case MeterTXMode.ALC_G:
+                                        if (!mox) output = "-30 dB ";
+                                        else output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.FORWARD_POWER:
+                                    case MeterTXMode.REVERSE_POWER:
+                                        switch (current_model)
+                                        {
+                                            case Model.FLEX5000:
+                                            case Model.FLEX3000:
+                                                if (!mox) output = "0 W ";
+                                                else output = num.ToString("f0") + " W ";
+                                                break;
+                                            case Model.FLEX1500:
+                                                if (!mox) output = "0 % ";
+                                                else output = num.ToString("f0") + " % ";
+                                                break;
+                                        }
+                                        break;
+                                    case MeterTXMode.SWR:
+                                        if (!mox) output = "0 : 1 ";
+                                        else output = num.ToString("f1") + " : 1 ";
+                                        break;
+                                    case MeterTXMode.OFF:
+                                        output = "";
+                                        break;
+
+                                }// switch mode
+                            }//mox2
+
+                            txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
+
+                            rx2_meter_timer.Start();
+                        }
+
+                        if (rx2_meter_data_ready)
+                        {
+                            rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
+                        }
+
+
+                        #endregion
+                        break; // RX2 TR7
+
+
+                    //=============================================================
+                    //=============================================================
+                    //KE9NS 5 RX2 EDGE
+                    //=============================================================
+                    //=============================================================
+
+                    case MultiMeterDisplayMode.Edge:
+               
+                        #region Edge
+
+
+                        if (rx2_meter_data_ready)
+                        {
+                            rx2_meter_current_data = rx2_meter_new_data;
+                            rx2_meter_data_ready = false;
+                        }
+
+                        if (rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                        {
+                            num = rx2_avg_num = rx2_meter_current_data;
+                        }
+                        else
+                        {
+                            if (rx2_meter_current_data > rx2_avg_num)
+                                num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
+                            else
+                                num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
+                        }
+
+                        //   if ((mox2) && (!mox)) num = 0.0;  // zero the value if in 2nd tx mode but not transmitting
+
+                        g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
+
+                        low_brush = new SolidBrush(edge_low_color);
+                        high_brush = new SolidBrush(edge_high_color);
+
+
+                        if (!mox2)
+                        {
+                            switch (rx2_meter_mode)
+                            {
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
+
+
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.5), 2);                    // draw line at bottom of meter white 
+                                    g.FillRectangle(high_brush, (int)(W * 0.5), H - 8, (int)(W * 0.5) - 4, 2);      // draw line at bottom of meter red
+
+                                    double spacing = (W * 0.5 - 2.0) / 5.0;
+                                    double string_height = 0;
+
+                                    for (int i = 1; i < 6; i++)                                                 // white tick marks and white Signal strength numbers
+                                    {
+                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+
+                                        SizeF size = g.MeasureString((-1 + i * 2).ToString(), ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                        g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                                        g.DrawString((-1 + i * 2).ToString(), ff, low_brush, (int)(i * spacing - string_width + (int)(i / 5)), (int)(H - 8 - 12 - 3 - string_height));
+                                        g.SmoothingMode = SmoothingMode.None;
+                                    }
+
+
+                                    spacing = ((double)W * 0.5 - 2.0 - 4.0) / 3.0;
+                                    for (int i = 1; i < 4; i++)                                              // Red tick marks and white Signal strength numbers
+                                    {
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //  Font f = new Font("swis721blkexbt", 5.5f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("+" + (i * 20).ToString(), ff, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                        g.DrawString("+" + (i * 20).ToString(), ff2, high_brush, (int)(W * 0.5 + i * spacing - (int)string_width * 3 - i / 3 * 2), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+
+
+
+                                    if (FREQB < 30)
+                                    {
+                                        if (num > -73)
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
+                                        }
+                                    } // < 30 mhz
+                                    else // correction for freq > 29 mhz
+                                    {
+                                        if (num > -93) // ke9ns ADD correct S9 above 30mhz
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
+                                        }
+                                    } // > 29 mhz
+
+
+                                    break; // signal rx2
+
+
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                case MeterRXMode.ADC2_L:
+                                case MeterRXMode.ADC2_R:
+                                    spacing = ((double)W - 5.0) / 6.0;
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
+                                    g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
+                                    for (int i = 1; i < 7; i++)
+                                    {
+                                        b = low_brush;
+                                        if (i == 6) b = high_brush;
+                                        g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        string s = (-120 + i * 20).ToString();
+                                        SizeF size = g.MeasureString(s, ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                        string_height = size.Height - 2.0;
+
+                                        g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
+                                    break;
+                                case MeterRXMode.OFF:
+                                    break;
+                            } // rx2 meter mode					
+                        } // !MOX2
+
+                        else // if MOX2 == true
+                        {
+                            MeterTXMode mode = current_meter_tx1_mode;
+                            // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.CPDR:
+                                case MeterTXMode.ALC:
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.665), 2);
+                                    g.FillRectangle(high_brush, (int)(W * 0.665), H - 8, (int)(W * 0.335) - 2, 2);
+                                    double spacing = (W * 0.665 - 2.0) / 3.0;
+                                    double string_height = 0;
+                                    for (int i = 1; i < 4; i++)
+                                    {
+                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        string s = (-30 + i * 10).ToString();
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                        //g.SmoothingMode = SmoothingMode.AntiAlias;
+                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 - (int)(i / 2) + (int)(i / 3)), (int)(H - 8 - 12 - 3 - string_height));
+                                        //g.SmoothingMode = SmoothingMode.None;
+                                    }
+                                    spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
+                                    for (int i = 1; i < 4; i++)
+                                    {
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString(i.ToString(), ff, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                        g.DrawString(i.ToString(), ff, high_brush, (int)(W * 0.665 + i * spacing - (int)string_width), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    if (num > 0.0) // high area
+                                    {
+                                        pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
+                                    }
+                                    else
+                                    {
+                                        pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
+                                    }
+                                    break;
+
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+                                    if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
+                                        (hid_init && current_model == Model.FLEX1500))
+                                    {
+                                        g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
+                                        g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 10, 2);
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        string_height = 0;
+                                        string[] list = { "5", "10", "50", "100" };
+                                        for (int i = 1; i < 5; i++)
+                                        {
+                                            g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                            g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                            string s = list[i - 1];
+                                            //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+                                            string_height = size.Height - 2.0;
+
+                                            //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                            //g.SmoothingMode = SmoothingMode.AntiAlias;
+                                            g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
+                                            //g.SmoothingMode = SmoothingMode.None;
+                                        }
+                                        spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
+                                        for (int i = 1; i < 2; i++)
+                                        {
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                            //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+
+                                            g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                            g.DrawString("120+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)3.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
+                                        }
+
+                                        if (num <= 100.0) // low area
+                                        {
+                                            spacing = (W * 0.75 - 2.0) / 4.0;
+                                            if (num <= 5.0)
+                                                pixel_x = (int)(num / 5.0 * (int)spacing);
+                                            else if (num <= 10.0)
+                                                pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
+                                            else if (num <= 50.0)
+                                                pixel_x = (int)(2 * spacing + (num - 10.0) / 40.0 * spacing);
+                                            else
+                                                pixel_x = (int)(3 * spacing + (num - 50.0) / 50.0 * spacing);
+                                        }
+                                        else
+                                        {
+                                            spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
+                                            if (num <= 120.0)
+                                                pixel_x = (int)(W * 0.75 + (num - 100.0) / 20.0 * spacing);
+                                            else
+                                                pixel_x = (int)(W * 0.75 + spacing + (num - 120.0) / 60.0 * spacing);
+                                        }
+                                    }
+                                    else // 1W version
+                                    {
+                                        g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
+                                        g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        string_height = 0;
+                                        string[] list = { "100", "250", "500", "800", "1000" };
+                                        for (int i = 1; i < 5; i++)
+                                        {
+                                            g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                            g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                            string s = list[i - 1];
+                                            //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+                                            string_height = size.Height - 2.0;
+
+                                            //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                            //g.SmoothingMode = SmoothingMode.AntiAlias;
+                                            g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 1.0 + (int)(i / 2) - (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
+                                            //g.SmoothingMode = SmoothingMode.None;
+                                        }
+                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                        for (int i = 1; i < 2; i++)
+                                        {
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                            g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                            //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+
+                                            //g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                            g.DrawString("1000", ff, high_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - 8 - 12 - 3 - string_height));
+                                        }
+
+                                        num *= 1000;
+                                        if (num < 801.0) // low area
+                                        {
+                                            spacing = (W * 0.75 - 2.0) / 4.0;
+                                            if (num <= 100.0)
+                                                pixel_x = (int)(num / 100.0 * spacing);
+                                            else if (num <= 250.0)
+                                                pixel_x = (int)(spacing + (num - 100.0) / 150.0 * spacing);
+                                            else if (num <= 500.0)
+                                                pixel_x = (int)(2 * spacing + (num - 250.0) / 250.0 * spacing);
+                                            else
+                                                pixel_x = (int)(3 * spacing + (num - 500.0) / 300.0 * spacing);
+                                        }
+                                        else
+                                        {
+                                            spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                            pixel_x = (int)(W * 0.75 + (num - 800.0) / 200.0 * spacing);
+                                        }
+                                    }
+                                    break;
+
+                                case MeterTXMode.SWR:
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
+                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    string_height = 0;
+                                    string[] swr_list = { "1.5", "2", "5", "10", "20" };
+                                    for (int i = 1; i < 5; i++)
+                                    {
+                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        string s = swr_list[i - 1];
+                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                        //g.SmoothingMode = SmoothingMode.AntiAlias;
+                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4)), (int)(H - 8 - 12 - 3 - string_height));
+                                        //g.SmoothingMode = SmoothingMode.None;
+                                    }
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                    for (int i = 1; i < 2; i++)
+                                    {
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                        g.DrawString("20+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)2.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    if (num < 10.0) // low area
+                                    {
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        if (num <= 1.5)
+                                            pixel_x = (int)((num - 1.0) / 0.5 * spacing);
+                                        else if (num <= 2.0)
+                                            pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
+                                        else if (num <= 5.0)
+                                            pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
+                                        else
+                                            pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
+                                    }
+                                    else
+                                    {
+                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                        pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
+                                    }
+                                    if (double.IsInfinity(num)) pixel_x = W - 2;
+                                    break;
+
+                                case MeterTXMode.ALC_G:
+                                case MeterTXMode.LVL_G:
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
+                                    g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    string_height = 0;
+                                    string[] gain_list = { "5", "10", "15", "20", "25" };
+                                    for (int i = 1; i < 5; i++)
+                                    {
+                                        g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(low_brush, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        string s = gain_list[i - 1];
+                                        //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                        //g.SmoothingMode = SmoothingMode.AntiAlias;
+                                        g.DrawString(s, ff, low_brush, (int)(i * spacing - string_width * s.Length + (int)(i / 3)), (int)(H - 8 - 12 - 3 - string_height));
+                                        //g.SmoothingMode = SmoothingMode.None;
+                                    }
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                    for (int i = 1; i < 2; i++)
+                                    {
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //  Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        //g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                        g.DrawString("25+", ff, high_brush, (int)(W * 0.75 + i * spacing - (int)2.5 * string_width), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    pixel_x = (int)(num / 5.0 * spacing);
+                                    break;
+                                case MeterTXMode.OFF:
+                                    break;
+                            }
+                        } // MOX2
+
+
+
+                        //===================================================================================
+                        if ((!mox2 && rx2_meter_mode != MeterRXMode.OFF) || (mox2 && current_meter_tx1_mode != MeterTXMode.OFF))
+                        {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+
+                            pixel_x1 = Math.Max(0, pixel_x1);
+                            pixel_x1 = Math.Min(W - 3, pixel_x1);
+
+                            line_pen = new Pen(edge_avg_color);
+
+                            //  line_dark_pen = new Pen(
+                            //	Color.FromArgb((edge_avg_color.R+edge_meter_background_color.R)/2,
+                            //	(edge_avg_color.G+edge_meter_background_color.G)/2,
+                            //	(edge_avg_color.B+edge_meter_background_color.B)/2));
+
+
+
+                            if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF)) // ke9ns ADD
+                            {
+                                line_pen = new Pen(Color.Red);
+                                line_pen.Width = 3.0F;
+                                g.DrawLine(line_pen, pixel_x1, 0, pixel_x1, H);
+
+                            } // peak
+
+                            line_pen = new Pen(edge_avg_color);
+                            g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H); // rx2 edge
+                            g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
+                            g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
+
+
+
+                        }
+
+                        //====================================================
+                        rx2_meter_timer.Stop();
+
+                        format = "f0";
+                        if (meter_detail) format = "f1";
+
+                        if (rx2_meter_timer.DurationMsec >= meter_dig_delay)
+                        {
+                            if (!mox2) // rx
+                            {
+
+
+                                switch (rx2_meter_mode)
+                                {
+                                    case MeterRXMode.SIGNAL_STRENGTH:
+
+                                    case MeterRXMode.SIGNAL_AVERAGE:
+                                        output = num.ToString(format) + " dBm ";
+                                        break;
+                                    case MeterRXMode.SIGNAL_PEAK: // ke9ns2 ADD 
+                                        output = rx2_meter_peak_value.ToString(format) + " dBm ";
+                                        break;
+                                    case MeterRXMode.ADC_L:
+                                    case MeterRXMode.ADC_R:
+                                    case MeterRXMode.ADC2_L:
+                                    case MeterRXMode.ADC2_R:
+                                        output = num.ToString("f1") + " dBFS ";
+                                        break;
+                                    case MeterRXMode.OFF:
+                                        output = "";
+                                        break;
+                                }
+
+                            }
+                            else
+                            {
+                                MeterTXMode mode = current_meter_tx1_mode;
+                                // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
+                                switch (mode)
+                                {
+                                    case MeterTXMode.MIC:
+                                        output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.LEVELER:
+                                    case MeterTXMode.LVL_G:
+                                    case MeterTXMode.EQ:
+                                    case MeterTXMode.CPDR:
+                                    case MeterTXMode.ALC:
+                                    case MeterTXMode.ALC_G:
+                                        if (!mox2) output = "-30 dB ";
+                                        else output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.FORWARD_POWER:
+                                    case MeterTXMode.REVERSE_POWER:
+                                        switch (current_model)
+                                        {
+                                            case Model.FLEX5000:
+                                            case Model.FLEX3000:
+                                                if (!mox) output = "0 W ";
+                                                else output = num.ToString("f0") + " W ";
+                                                break;
+                                            case Model.FLEX1500:
+                                                if (!mox) output = "0 % ";
+                                                else output = num.ToString("f0") + " % ";
+                                                break;
+                                        }
+                                        break;
+                                    case MeterTXMode.SWR:
+                                        if (!mox) output = "0 : 1 ";
+                                        else output = num.ToString("f1") + " : 1 ";
+                                        break;
+                                    case MeterTXMode.OFF:
+                                        output = "";
+                                        break;
+
+                                }// switch mode
+                            }//mox2
+
+
+                            txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
+
+                            rx2_meter_timer.Start();
+                        }
+
+                        if (rx2_meter_data_ready)
+                        {
+                            rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
+                        }
+
+
+                        #endregion
+                    
+                    break; // RX2 edge
+
+                    //========================================mi=====================
+                    //=============================================================
+                    // KE9NS 6 RX2 ANALOG
+                    //=============================================================
+                    //=============================================================
+
+
+                    case MultiMeterDisplayMode.Analog:
+                        #region Analog
+
+                        //   Debug.WriteLine(rx2_meter_new_data + " dB MIC-");
+
+
+                        //   Debug.WriteLine(rx2_avg_num + "  rx2_avg_num");
+
+                        if (rx2_meter_data_ready)
+                        {
+                            rx2_meter_current_data = rx2_meter_new_data;
+                            rx2_meter_data_ready = false;
+                        }
+
+                        if (rx2_avg_num == Display.CLEAR_FLAG) // reset average -- just use new value
+                        {
+                            num = rx2_avg_num = rx2_meter_current_data;
+                        }
+                        else
+                        {
+                            if (rx2_meter_current_data > rx2_avg_num)
+                                num = rx2_avg_num = rx2_meter_current_data * 0.8 + rx2_avg_num * 0.2; // fast rise
+                            else
+                                num = rx2_avg_num = rx2_meter_current_data * 0.2 + rx2_avg_num * 0.8; // slow decay
+                        }
+
+                        //   Debug.WriteLine(num + " dB MIC--");
+
+                        //  if ((mox2) && (!mox)) num = 0.0;  // zero the value if in 2nd tx mode but not transmitting
+
+                        high_brush = new SolidBrush(analog_high_color);
+
+
+                        //--------------------------------------------------------
+                        // ke9ns add below
+                       
+                      
+                        if (meterLMB == true)
+                        {
+                            low_brush = new SolidBrush(Color.Black); // white text
+                            low_brush1 = new Pen(Color.Black);  // white
+
+
+                            g.DrawImageUnscaled(meterback1, 0, 0); // new Rectangle(0, 0, W, H));  // rectangle to show bitmap image in
+
+                            //   txtRX2Meter.ForeColor = Color.Black;
+                            //   txtRX2Meter.BackColor = Color.FromArgb(0xff, 0xff, 0xe4);
+                        }
+                        else if (meterDMB == true)
+                        {
+                            low_brush = new SolidBrush(Color.Black); // white text
+                            low_brush1 = new Pen(Color.Black);  // white
+
+                            g.DrawImageUnscaled(meterback2, 0, 0); // new Rectangle(0, 0, W, H));  // rectangle to show bitmap image in
+
+                            //  txtRX2Meter.ForeColor = Color.Black;
+                            //  txtRX2Meter.BackColor = Color.FromArgb(146, 146, 140);
+                        }
+                        else
+                        {
+                            low_brush = new SolidBrush(analog_low_color); // white text
+                            low_brush1 = new Pen(analog_low_color);  // white
+
+                            g.DrawRectangle(new Pen(analog_meter_background_color), 0, 0, W, H); // black background
+
+                            //  txtRX2Meter.ForeColor = MeterDigitalTextColor;
+                            //  txtRX2Meter.BackColor = MeterDigitalBackgroundColor;
+                        }
+
+                        //===========================================================================================
+                        // ke9ns add TX meter to RX2 (but only when not using RX2)
+
+                        if (!mox2)
+                        {
+
+                            switch (rx2_meter_mode)
+                            {
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                case MeterRXMode.SIGNAL_PEAK:       // ke9ns ADD
+
+                                    //=================================================================
+                                    // Draw curved meter movement for signal strength ke9ns12
+                                    //=================================================================
+
+
+                                    double line1 = 0;
+                                    double angle_start = 45;
+                                    double angle_span = 90;
+
+                                    int Origin_x = W / 2;
+                                    int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+                                    //   low_brush1 = new Pen(analog_low_color);  // white
+
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush1 = new Pen(analog_high_color); // red 
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                                                           // high_brush4 = new Pen(Brushes.BurlyWood); //  
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+
+
+                                    double spacing = ((double)W * 0.5 - 2.0) / 5.0;
+                                    double string_height = 0;
+
+
+                                    //======================================
+                                    // Draw WHITE arc line
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -90, -47); // draw OUTER arc
+
+                                    //======================================
+                                    // Draw Red arc line
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -43); // draw OUTER arc -47
+
+                                    //======================================
+                                    // Draw WHITE full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush4.Width = arc_thick1;
+                                    g.DrawArc(high_brush4, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+                                    //======================================
+                                    // Draw Meter Name text behind needle
+                                    if (rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) g.DrawString("SIG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+                                    else if (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE) g.DrawString("AVG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+                                    else if (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) g.DrawString("SIG", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+
+                                    //======================================
+                                    // WHITE  tick marks and text
+
+                                    for (double i = 1; i < 6; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
+
+
+                                        //===============================================
+                                        // Draw white numbers
+
+                                        //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString((-1 + i * 2).ToString(), ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        line1 = (i * spacing - string_width + (i / 5));
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+
+                                        g.DrawString((-1 + i * 2).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                    } // white ticks and test
+
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = ((double)W * 0.5 - 2.0 - 4.0) / 3.0;
+
+                                    for (double i = 1; i < 4; i++) //red
+                                    {
+
+                                        line1 = W * 0.5 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
+
+                                        line1 = W * 0.5 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement
+
+                                        //==========================================
+                                        // draw red text RX2 signal
+
+                                        //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("+" + (i * 20).ToString(), ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        line1 = (W * 0.5 + i * spacing - string_width * 3 - i / 3 * 2);
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.35) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.35 - (.05 * (i - 1)))) * Math.Sin(line));
+
+
+                                        g.DrawString("+" + (i * 20).ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+
+                                    if (FREQB < 30)
+                                    {
+                                        if (num > -73)
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (73.0 + num) / 63.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (73.0 + rx2_meter_peak_value) / 63.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 60.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 60.0 * (W * 0.5));
+                                        }
+                                    } // < 30 mhz
+                                    else // correction for freq > 29 mhz
+                                    {
+                                        if (num > -93) // ke9ns ADD correct S9 above 30mhz
+                                        {
+                                            pixel_x = (int)(W * 0.5 + (93.0 + num) / 43.0 * (W * 0.5 - 3));
+                                            pixel_x1 = (int)(W * 0.5 + (93.0 + rx2_meter_peak_value) / 43.0 * (W * 0.5 - 3));
+                                        }
+                                        else
+                                        {
+                                            pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
+                                            pixel_x1 = (int)((rx2_meter_peak_value + 133.0) / 40.0 * (W * 0.5));
+                                        }
+                                    } // > 29 mhz
+
+
+
+                                    break; // signal RX2 analog
+
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                case MeterRXMode.ADC2_L:
+                                case MeterRXMode.ADC2_R:
+                                    spacing = ((double)W - 5.0) / 6.0;
+                                    g.FillRectangle(low_brush, 0, H - 8, (int)(W - 3.0 - spacing), 2);
+                                    g.FillRectangle(high_brush, (int)(W - 3.0 - spacing), H - 8, (int)spacing, 2);
+                                    for (int i = 1; i < 7; i++)
+                                    {
+                                        b = low_brush;
+                                        if (i == 6) b = high_brush;
+                                        g.FillRectangle(b, (int)(i * spacing - spacing / 2), H - 8 - 3 - 3, 1, 6);
+                                        g.FillRectangle(b, (int)(i * spacing), H - 8 - 6 - 6, 2, 12);
+
+                                        //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        string s = (-120 + i * 20).ToString();
+                                        SizeF size = g.MeasureString(s, ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                        string_height = size.Height - 2.0;
+
+                                        g.DrawString(s, ff, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - 8 - 12 - 3 - string_height));
+                                    }
+
+                                    pixel_x = (int)((num + 120.0) / 120.0 * (W - 5.0));
+                                    break;
+                                case MeterRXMode.OFF:
+                                    break;
+                            }
+
+                        } // !MOX2 (RX)
+
+                        //=============================================
+                        // Transmitter meters ke9ns12tx RX2
+                        //=============================================
+
+                        else
+                        {
+
+                            // Debug.WriteLine("MOX2T " + num);
+
+                            MeterTXMode mode = current_meter_tx1_mode;
+                            // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.CPDR:
+                                case MeterTXMode.ALC:
+
+                                    //=================================================================
+                                    // Draw curved meter movement for signal strength
+                                    //=================================================================
+
+                                    double line1 = 0;
+                                    int angle_start = 45;
+                                    int angle_span = 90;
+
+                                    int Origin_x = W / 2;
+                                    int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+                                    //   low_brush1 = new Pen(analog_low_color);  // white
+                                    high_brush1 = new Pen(analog_high_color); // red
+
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                    high_brush5 = new Pen(Brushes.Green); // 
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+
+                                    double spacing = (W * 0.665 - 2.0) / 3.0;
+                                    double string_height = 0;
+
+                                    //======================================
+                                    // Draw WHITE arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -75, -61); // draw OUTER arc
+
+                                    //======================================
+                                    // Draw Red arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -27); // draw OUTER arc -31
+
+                                    //======================================
+                                    // Draw GREEN full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush5.Width = arc_thick1;
+                                    g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+
+                                    //======================================
+                                    // Draw TX Meter Name text
+                                    if (mode == MeterTXMode.CPDR) g.DrawString("CPDR", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
+                                    else if (mode == MeterTXMode.LEVELER) g.DrawString("LVL", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+                                    else if (mode == MeterTXMode.EQ) g.DrawString("EQ", ff8, low_brush, W * 0.405F, H * 0.75F); // DDAA
+                                    else if (mode == MeterTXMode.MIC) g.DrawString("MIC", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+                                    else if (mode == MeterTXMode.ALC) g.DrawString("ALC", ff8, low_brush, W * 0.39F, H * 0.75F); // DDAA
+
+                                    //======================================
+                                    // WHITE  tick marks and text
+
+                                    for (double i = 1; i < 4; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                        //===============================================
+                                        // Draw white numbers ALC RX1 analog
+
+
+                                        //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        line1 = (i * spacing - string_width + (i / 5));
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // 1.4 convert signal to arc
+                                        POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));  // 1.48
+
+
+                                        g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                    } // white ticks and test
+
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = (W * 0.335 - 2.0 - 3.0) / 3.0;
+
+                                    for (double i = 1; i < 4; i++) //red
+                                    {
+
+                                        line1 = W * 0.665 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = W * 0.665 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        //==========================================
+                                        // draw red text alc rx1 analog
+
+                                        //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString(i.ToString(), ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+                                        line1 = (W * 0.665 + i * spacing - (int)string_width);
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.38) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.38 - (.05 * (i - 1)))) * Math.Sin(line));
+
+
+                                        g.DrawString(i.ToString(), ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+
+
+                                    if (num > 0.0) // high area
+                                    {
+                                        pixel_x = (int)(W * 0.665 + num / 3.0 * (W * 0.335 - 4));
+                                    }
+                                    else
+                                    {
+                                        pixel_x = (int)((num + 30.0) / 30.0 * (W * 0.665 - 1.0));
+                                    }
+                                    break; // case MeterTXMode.ALC:
+
+                                //===========================================
+
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+
+                                    line1 = 0;
+                                    angle_start = 45;
+                                    angle_span = 90;
+
+                                    Origin_x = W / 2;
+                                    Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+
+                                    //   low_brush1 = new Pen(analog_low_color);  // white
+                                    high_brush1 = new Pen(analog_high_color); // red
+
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
+
+                                    if (pa_present || (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)) ||
+                                        (hid_init && current_model == Model.FLEX1500))
+                                    {
+
+                                        //=================================================================
+                                        // Draw curved meter movement for Power
+                                        //=================================================================
+
+                                        //======================================
+                                        // Draw WHITE arc line
+                                        // upper left corner x,y , width,height, start angle, sweep angle
+
+                                        low_brush1.Width = arc_thick;
+                                        g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
+
+                                        //======================================
+                                        // Draw Red arc line
+                                        // upper left corner x,y , width,height, start angle, sweep angle
+
+                                        high_brush1.Width = arc_thick;
+                                        g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
+
+                                        //======================================
+                                        // Draw BLUE full arc line under white/red 
+                                        // upper left corner x,y , width,height, start angle, sweep angle
+
+                                        high_brush2.Width = arc_thick1;
+                                        g.DrawArc(high_brush2, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+                                        //======================================
+                                        // Draw TX Meter Name text
+                                        if (mode == MeterTXMode.FORWARD_POWER) g.DrawString("FWD", ff8, low_brush, W * 0.375F, H * 0.75F); // DDAA
+                                        else if (mode == MeterTXMode.REVERSE_POWER) g.DrawString("REV", ff8, low_brush, W * 0.38F, H * 0.75F); // DDAA
+
+
+                                        //======================================
+                                        // WHITE  tick marks and text
+
+
+                                        spacing = (W * 0.75 - 2.0) / 4.0;
+                                        string_height = 0;
+                                        string[] list = { "5", "10", "50", "100" };
+
+                                        for (double i = 1; i < 5; i++)
+                                        {
+
+                                            line1 = i * spacing - spacing * 0.5;
+
+                                            double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                            int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                            int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                            int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                            low_brush1.Width = tick_thin;
+                                            g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                            line1 = i * spacing;
+
+                                            line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                            POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                            POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                            POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                            low_brush1.Width = tick_thick;
+                                            g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                            //===============================================
+                                            // Draw white numbers fwd rx1 analog
+
+                                            string s = list[(int)i - 1];
+                                            //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+                                            string_height = size.Height - 2.0;
+
+                                            line1 = i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4);
+
+                                            line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            POSW = (int)((double)(H * 1.44) * Math.Cos(line));  //1.4  convert signal to arc
+                                            POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));  // 1.48
+
+                                            g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                        } // white ticks and test
+
+                                        // =======================
+                                        // RED tick marks and text
+
+                                        spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
+
+                                        for (double i = 1; i < 2; i++) //red
+                                        {
+
+                                            line1 = (double)W * 0.75 + i * spacing - spacing * 0.5;
+
+                                            double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                            int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                            int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                            int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                            high_brush1.Width = tick_thin;
+                                            g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                            line1 = (double)W * 0.75 + i * spacing;
+
+                                            line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                            POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                            POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                            POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                            high_brush1.Width = tick_thick;
+                                            g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                            //==========================================
+                                            // draw red text fwd analog
+
+                                            //   Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                            SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
+                                            double string_width = size.Width - 2.0;
+
+                                            line1 = W * 0.75 + i * spacing - (int)3.5 * string_width;
+
+                                            line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                            line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                            POSW = (int)((double)(H * 1.30) * Math.Cos(line));  // convert signal to arc
+                                            POSH = (int)((double)(H * (1.30 - (.05 * (i - 1)))) * Math.Sin(line));
+
+                                            g.TextRenderingHint = TextRenderingHint.SystemDefault;
+                                            g.DrawString("120+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                        } // red ticks and text
+
+
+                                        if (num <= 100.0) // low area
+                                        {
+                                            spacing = (W * 0.75 - 2.0) / 4.0;
+                                            if (num <= 5.0)
+                                                pixel_x = (int)(num / 5.0 * (int)spacing);
+                                            else if (num <= 10.0)
+                                                pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
+                                            else if (num <= 50.0)
+                                                pixel_x = (int)(2 * spacing + (num - 10.0) / 40.0 * spacing);
+                                            else
+                                                pixel_x = (int)(3 * spacing + (num - 50.0) / 50.0 * spacing);
+                                        }
+                                        else
+                                        {
+                                            spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
+                                            if (num <= 120.0)
+                                                pixel_x = (int)(W * 0.75 + (num - 100.0) / 20.0 * spacing);
+                                            else
+                                                pixel_x = (int)(W * 0.75 + spacing + (num - 120.0) / 60.0 * spacing);
+                                        }
+                                    } //
+
+
+
+                                    break; //case MeterTXMode.REVERSE_POWER:
+
+                                //==========================================
+
+                                case MeterTXMode.SWR:
+
+                                    //=================================================================
+                                    // Draw curved meter movement for SWR RX2
+                                    //=================================================================
+
+                                    line1 = 0;
+                                    angle_start = 45;
+                                    angle_span = 90;
+
+                                    Origin_x = W / 2;
+                                    Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+
+                                    //   low_brush1 = new Pen(analog_low_color);  // white
+
+
+                                    high_brush2 = new Pen(Brushes.Red); // blue
+                                    high_brush1 = new Pen(analog_high_color); // red
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                    high_brush4 = new Pen(Brushes.AntiqueWhite); // 
+
+
+                                    //======================================
+                                    // Draw WHITE arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                                    //======================================
+                                    // Draw Red arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+                                    //======================================
+                                    // Draw Yellow full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush3.Width = arc_thick1;
+                                    g.DrawArc(high_brush3, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+                                    //======================================
+                                    // Draw TX Meter Name text
+                                    if (mode == MeterTXMode.SWR) g.DrawString("SWR", ff8, low_brush, W * 0.375F, H * 0.75F); // DDAA
+
+                                    //======================================
+                                    // WHITE  tick marks and text SWR
+
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    string_height = 0;
+                                    string[] swr_list = { "1.5", "2", "5", "10", "20" };
+
+                                    for (double i = 1; i < 5; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                        //===============================================
+                                        // Draw white numbers rx2 swr analog
+
+                                        string s = swr_list[(int)i - 1];
+
+                                        //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+
+                                        line1 = i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4);
+
+                                        if (i == 1) line1 = line1 + 10;
+
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        if (i == 1)
+                                        {
+                                            POSW = (int)((double)(H * 1.50) * Math.Cos(line));  // convert signal to arc
+                                            POSH = (int)((double)(H * (1.50 - (.010 * (i - 1)))) * Math.Sin(line));
+                                        }
+                                        else
+                                        {
+                                            POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // convert signal to arc
+                                            POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));
+                                        }
+
+                                        g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                    } // white ticks and test
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
 
                                     for (double i = 1; i < 2; i++) //red
                                     {
@@ -43166,7 +44632,7 @@ namespace PowerSDR
                                         g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
 
                                         //==========================================
-                                        // draw red text fwd analog
+                                        // draw red text
 
                                         //   Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
 
@@ -43178,701 +44644,491 @@ namespace PowerSDR
                                         line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                                         line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                                        POSW = (int)((double)(H * 1.30) * Math.Cos(line));  // convert signal to arc
-                                        POSH = (int)((double)(H * (1.30 - (.05 * (i - 1)))) * Math.Sin(line));
+                                        POSW = (int)((double)(H * 1.3) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.3 - (.05 * (i - 1)))) * Math.Sin(line));
 
-                                        g.TextRenderingHint = TextRenderingHint.SystemDefault;
-                                        g.DrawString("120+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+                                        g.DrawString("20+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
 
                                     } // red ticks and text
 
 
-                                    if (num <= 100.0) // low area
+
+                                    if (num < 10.0) // low area
                                     {
                                         spacing = (W * 0.75 - 2.0) / 4.0;
-                                        if (num <= 5.0)
-                                            pixel_x = (int)(num / 5.0 * (int)spacing);
-                                        else if (num <= 10.0)
-                                            pixel_x = (int)(spacing + (num - 5.0) / 5.0 * spacing);
-                                        else if (num <= 50.0)
-                                            pixel_x = (int)(2 * spacing + (num - 10.0) / 40.0 * spacing);
+                                        if (num <= 1.5)
+                                            pixel_x = (int)((num - 1.0) / 0.5 * spacing);
+                                        else if (num <= 2.0)
+                                            pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
+                                        else if (num <= 5.0)
+                                            pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
                                         else
-                                            pixel_x = (int)(3 * spacing + (num - 50.0) / 50.0 * spacing);
+                                            pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
                                     }
                                     else
                                     {
-                                        spacing = (W * 0.25 - 2.0 - 10.0) / 1.0;
-                                        if (num <= 120.0)
-                                            pixel_x = (int)(W * 0.75 + (num - 100.0) / 20.0 * spacing);
-                                        else
-                                            pixel_x = (int)(W * 0.75 + spacing + (num - 120.0) / 60.0 * spacing);
+                                        spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+                                        pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
                                     }
-                                } //
+                                    if (double.IsInfinity(num)) pixel_x = W - 2;
 
+                                    break;// case MeterTXMode.SWR:
 
+                                case MeterTXMode.ALC_G:
+                                case MeterTXMode.LVL_G:
 
-                                break; //case MeterTXMode.REVERSE_POWER:
+                                    //=================================================================
+                                    // Draw curved meter movement for signal strength
+                                    //=================================================================
 
-                            //==========================================
+                                    line1 = 0;
+                                    angle_start = 45;
+                                    angle_span = 90;
 
-                            case MeterTXMode.SWR:
+                                    Origin_x = W / 2;
+                                    Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                                //=================================================================
-                                // Draw curved meter movement for SWR RX2
-                                //=================================================================
-                               
-                                line1 = 0;
-                                angle_start = 45;
-                                angle_span = 90;
 
-                                Origin_x = W / 2;
-                                Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+                                    //   low_brush1 = new Pen(analog_low_color);  // white
 
 
-                             //   low_brush1 = new Pen(analog_low_color);  // white
+                                    high_brush2 = new Pen(Brushes.Blue); // blue
+                                    high_brush1 = new Pen(analog_high_color); // red
+                                    high_brush3 = new Pen(Brushes.Yellow); // yellow
+                                    high_brush5 = new Pen(Brushes.Green); // 
+                                    high_brush4 = new Pen(Brushes.DarkSlateGray); // 
 
 
-                                high_brush2 = new Pen(Brushes.Red); // blue
-                                high_brush1 = new Pen(analog_high_color); // red
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                high_brush4 = new Pen(Brushes.AntiqueWhite); // 
-
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
-
-                                //======================================
-                                // Draw Yellow full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush3.Width = arc_thick1;
-                                g.DrawArc(high_brush3, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-                                //======================================
-                                // Draw TX Meter Name text
-                                if (mode == MeterTXMode.SWR) g.DrawString("SWR", ff8, low_brush, W * 0.375F, H * 0.75F); // DDAA
-
-                                //======================================
-                                // WHITE  tick marks and text SWR
-
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] swr_list = { "1.5", "2", "5", "10", "20" };
-
-                                for (double i = 1; i < 5; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers rx2 swr analog
-
-                                    string s = swr_list[(int)i - 1];
-
-                                    //  Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-
-                                    line1 = i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4);
-
-                                    if (i == 1) line1 = line1 + 10;
-
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    if (i == 1)
-                                    {
-                                        POSW = (int)((double)(H * 1.50) * Math.Cos(line));  // convert signal to arc
-                                        POSH = (int)((double)(H * (1.50 - (.010 * (i - 1)))) * Math.Sin(line));
-                                    }
-                                    else
-                                    {
-                                        POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // convert signal to arc
-                                        POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));
-                                    }
-
-                                    g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-
-                                for (double i = 1; i < 2; i++) //red
-                                {
-
-                                    line1 = (double)W * 0.75 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = (double)W * 0.75 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text
-
-                                    //   Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-                                    line1 = W * 0.75 + i * spacing - (int)3.5 * string_width;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.3) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.3 - (.05 * (i - 1)))) * Math.Sin(line));
-
-                                    g.DrawString("20+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-
-
-                                if (num < 10.0) // low area
-                                {
                                     spacing = (W * 0.75 - 2.0) / 4.0;
-                                    if (num <= 1.5)
-                                        pixel_x = (int)((num - 1.0) / 0.5 * spacing);
-                                    else if (num <= 2.0)
-                                        pixel_x = (int)(spacing + (num - 1.5) / 0.5 * spacing);
-                                    else if (num <= 5.0)
-                                        pixel_x = (int)(2 * spacing + (num - 2.0) / 3.0 * spacing);
-                                    else
-                                        pixel_x = (int)(3 * spacing + (num - 5.0) / 5.0 * spacing);
+                                    string_height = 0;
+                                    string[] gain_list = { "5", "10", "15", "20", "25" };
+
+
+                                    //=================================================================
+                                    // Draw curved meter movement for Power
+                                    //=================================================================
+
+                                    //======================================
+                                    // Draw WHITE arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    low_brush1.Width = arc_thick;
+                                    g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
+
+                                    //======================================
+                                    // Draw Red arc line
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush1.Width = arc_thick;
+                                    g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
+
+                                    //======================================
+                                    // Draw Green full arc line under white/red 
+                                    // upper left corner x,y , width,height, start angle, sweep angle
+
+                                    high_brush5.Width = arc_thick1;
+                                    g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
+
+                                    //======================================
+                                    // Draw TX Meter Name text
+                                    if (mode == MeterTXMode.LVL_G) g.DrawString("LVLG", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
+                                    else if (mode == MeterTXMode.ALC_G) g.DrawString("ALCG", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
+
+                                    //======================================
+                                    // WHITE  tick marks and text
+
+                                    for (double i = 1; i < 5; i++)
+                                    {
+
+                                        line1 = i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thin;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        low_brush1.Width = tick_thick;
+                                        g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+
+                                        //===============================================
+                                        // Draw white numbers
+
+                                        string s = gain_list[(int)i - 1];
+                                        //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+                                        string_height = size.Height - 2.0;
+
+                                        line1 = (i * spacing - string_width + (i / 5));
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+
+                                        //  g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+                                        g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
+
+                                    } // white ticks and test
+
+
+                                    // =======================
+                                    // RED tick marks and text
+
+                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
+
+                                    for (double i = 1; i < 2; i++) //red
+                                    {
+
+                                        line1 = W * 0.75 + i * spacing - spacing * 0.5;
+
+                                        double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
+                                        int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
+
+                                        int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thin;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        line1 = W * 0.75 + i * spacing;
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * 1.25) * Math.Sin(line));
+
+                                        POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
+                                        POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
+
+                                        high_brush1.Width = tick_thick;
+                                        g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
+
+                                        //==========================================
+                                        // draw red text
+
+                                        //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
+
+                                        SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
+                                        double string_width = size.Width - 2.0;
+
+
+                                        line1 = (W * 0.75 + i * spacing - (int)2.5 * string_width);
+
+                                        line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                        line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                                        POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
+
+
+                                        g.DrawString("25+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
+
+                                    } // red ticks and text
+
+                                    spacing = (W * 0.75 - 2.0) / 4.0;
+                                    pixel_x = (int)(num / 5.0 * spacing);
+
+                                    break;// case MeterTXMode.LVL_G:
+
+
+
+
+                                case MeterTXMode.OFF:
+                                    break;
+                            } // switch (mode)
+
+                        } // mox2 (TX)
+
+
+                        //--------------------------------------------------------------------------------
+
+                        //============================
+                        // needle meter movement RX2 ANALOG ke9ns12
+                        //=============================
+
+
+                        if ( // EDGE rx2 METER MOVEMENT
+                             ((rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
+                            (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L))
+                            && ((!mox2 && rx2_meter_mode != MeterRXMode.OFF) || (mox2 && current_meter_tx1_mode != MeterTXMode.OFF))
+
+                            )
+
+                        {
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);
+
+                            line_pen = new Pen(edge_avg_color); // yellow
+
+                            //	line_dark_pen = new Pen(
+                            //	Color.FromArgb((analog_avg_color.R+edge_meter_background_color.R)/2,
+                            //	(edge_avg_color.G+edge_meter_background_color.G)/2,
+                            //	(edge_avg_color.B+edge_meter_background_color.B)/2));
+
+
+                            g.DrawLine(line_dark_pen, pixel_x - 1, 0, pixel_x - 1, H); // rx2 analog edge
+                            g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
+                            g.DrawLine(line_dark_pen, pixel_x + 1, 0, pixel_x + 1, H);
+
+                        }
+
+                        else if (  // TX meter movements
+                                   ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.LVL_G) ||
+                                   (current_meter_tx1_mode == MeterTXMode.ALC_G) || (current_meter_tx1_mode == MeterTXMode.CPDR) ||
+                                   (current_meter_tx1_mode == MeterTXMode.LEVELER) || (current_meter_tx1_mode == MeterTXMode.EQ) ||
+                                   (current_meter_tx1_mode == MeterTXMode.MIC) || (current_meter_tx1_mode == MeterTXMode.ALC) ||
+                                   (current_meter_tx1_mode == MeterTXMode.SWR) || (current_meter_tx1_mode == MeterTXMode.FORWARD_POWER) ||
+                                   (current_meter_tx1_mode == MeterTXMode.REVERSE_POWER)))
+                              )
+                        {
+
+
+                            // pixel_x (i.e. signal) goes from 0 to W  Width 
+                            // posx = originx + (2 * D * cos (angle))
+                            // posy = originy + (2 * D * sin (angle))
+                            // for a meter of 45deg to 135deg = 90deg total span :   
+                            // but sin and cos in radians not degs.
+                            // posx = originx + (2 * D * cos (angle*PI/180))
+
+                            //  box dimensions:
+                            //  0,0   W,0
+                            //  0,H   W,H
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+                            line_pen = new Pen(analog_avg_color);
+                            line_pen = new Pen(analog_high_color); // Color.Red
+
+                            line_pen.Width = 2.8F;
+
+
+                            int Origin_x = W / 2;
+                            int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                            double angle_start = 45;
+                            double angle_span = 90;
+
+                            angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+
+                            if ((meterDMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
+                            {
+                                if ((meterPointer == true))
+                                {
+                                    RotateImage(yell, angle, Origin_y);
+                                    g.DrawImageUnscaled(rotatedImage, 0, 0);
+
+                                    //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                    //  g.DrawImage(yell1, dest);            // draw rotated image
+
                                 }
                                 else
                                 {
-                                    spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-                                    pixel_x = (int)(W * 0.75 + (num - 10.0) / 10.0 * spacing);
+                                    RotateImage(white, angle, Origin_y);
+                                    g.DrawImageUnscaled(rotatedImage, 0, 0);
+
+                                    // RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                    //  g.DrawImage(white1, dest);            // draw rotated image
+
                                 }
-                                if (double.IsInfinity(num)) pixel_x = W - 2;
 
-                                break;// case MeterTXMode.SWR:
 
-                            case MeterTXMode.ALC_G:
-                            case MeterTXMode.LVL_G:
-
-                                //=================================================================
-                                // Draw curved meter movement for signal strength
-                                //=================================================================
-                              
-                                line1 = 0;
-                                angle_start = 45;
-                                angle_span = 90;
-
-                                Origin_x = W / 2;
-                                Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-
-                             //   low_brush1 = new Pen(analog_low_color);  // white
-
-
-                                high_brush2 = new Pen(Brushes.Blue); // blue
-                                high_brush1 = new Pen(analog_high_color); // red
-                                high_brush3 = new Pen(Brushes.Yellow); // yellow
-                                high_brush5 = new Pen(Brushes.Green); // 
-                                high_brush4 = new Pen(Brushes.DarkSlateGray); // 
-
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                string_height = 0;
-                                string[] gain_list = { "5", "10", "15", "20", "25" };
-
-
-                                //=================================================================
-                                // Draw curved meter movement for Power
-                                //=================================================================
-
-                                //======================================
-                                // Draw WHITE arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -67, -68); // draw OUTER arc
-
-                                //======================================
-                                // Draw Red arc line
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -20); // draw OUTER arc -24
-
-                                //======================================
-                                // Draw Green full arc line under white/red 
-                                // upper left corner x,y , width,height, start angle, sweep angle
-
-                                high_brush5.Width = arc_thick1;
-                                g.DrawArc(high_brush5, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
-
-                                //======================================
-                                // Draw TX Meter Name text
-                                if (mode == MeterTXMode.LVL_G) g.DrawString("LVLG", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
-                                else if (mode == MeterTXMode.ALC_G) g.DrawString("ALCG", ff8, low_brush, W * 0.35F, H * 0.75F); // DDAA
-
-                                //======================================
-                                // WHITE  tick marks and text
-
-                                for (double i = 1; i < 5; i++)
-                                {
-
-                                    line1 = i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thin;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    low_brush1.Width = tick_thick;
-                                    g.DrawLine(low_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-
-                                    //===============================================
-                                    // Draw white numbers
-
-                                    string s = gain_list[(int)i - 1];
-                                    //   Font f = new Font("swis721blkexbt", 6.9f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff1, 1, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-                                    string_height = size.Height - 2.0;
-
-                                    line1 = (i * spacing - string_width + (i / 5));
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
-
-                                  //  g.DrawString((-30 + i * 10).ToString(), ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-                                    g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
-
-
-                                } // white ticks and test
-
-
-                                // =======================
-                                // RED tick marks and text
-
-                                spacing = (W * 0.25 - 2.0 - 9.0) / 1.0;
-
-                                for (double i = 1; i < 2; i++) //red
-                                {
-
-                                    line1 = W * 0.75 + i * spacing - spacing * 0.5;
-
-                                    double line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    int POSW = (int)((double)(H * 1.15) * Math.Cos(line));  // convert signal to arc
-                                    int POSH = (int)((double)(H * 1.15) * Math.Sin(line));
-
-                                    int POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    int POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thin;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    line1 = W * 0.75 + i * spacing;
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.25) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * 1.25) * Math.Sin(line));
-
-                                    POSW_BOT = (int)((double)(H * 1.05) * Math.Cos(line));  // convert signal to arc
-                                    POSH_BOT = (int)((double)(H * 1.05) * Math.Sin(line));
-
-                                    high_brush1.Width = tick_thick;
-                                    g.DrawLine(high_brush1, Origin_x - POSW_BOT, Origin_y - POSH_BOT, Origin_x - POSW, Origin_y - POSH);  // draw meter 
-
-                                    //==========================================
-                                    // draw red text
-
-                                    //  Font f = new Font("swis721blkexbt", 5.6f, FontStyle.Bold | FontStyle.Italic); // was 7
-
-                                    SizeF size = g.MeasureString("0", ff2, 3, StringFormat.GenericTypographic);
-                                    double string_width = size.Width - 2.0;
-
-
-                                    line1 = (W * 0.75 + i * spacing - (int)2.5 * string_width);
-
-                                    line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                                    line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.4 - (.05 * (i - 1)))) * Math.Sin(line));
-
-
-                                    g.DrawString("25+", ff2, high_brush, Origin_x - POSW, Origin_y - POSH);
-
-                                } // red ticks and text
-
-                                spacing = (W * 0.75 - 2.0) / 4.0;
-                                pixel_x = (int)(num / 5.0 * spacing);
-
-                                break;// case MeterTXMode.LVL_G:
-
-
-
-
-                            case MeterTXMode.OFF:
-                                break;
-                        } // switch (mode)
-
-                    } // mox2 (TX)
-
-
-                //--------------------------------------------------------------------------------
-
-                    //============================
-                    // needle meter movement RX2 ANALOG ke9ns12
-                    //=============================
-
-
-                    if ( // EDGE rx2 METER MOVEMENT
-                         ( (rx2_meter_mode == MeterRXMode.ADC2_R) || (rx2_meter_mode == MeterRXMode.ADC2_L) ||
-                        (rx2_meter_mode == MeterRXMode.ADC_R) || (rx2_meter_mode == MeterRXMode.ADC_L)) 
-                        && ( (!mox2 && rx2_meter_mode != MeterRXMode.OFF) || (mox2 && current_meter_tx1_mode != MeterTXMode.OFF) ) 
-                         
-                        )  
-
-					{
-						pixel_x = Math.Max(0, pixel_x);
-						pixel_x = Math.Min(W-3, pixel_x);
-                       
-                        line_pen = new Pen(edge_avg_color); // yellow
-                    
-					//	line_dark_pen = new Pen(
-						//	Color.FromArgb((analog_avg_color.R+edge_meter_background_color.R)/2,
-						//	(edge_avg_color.G+edge_meter_background_color.G)/2,
-						//	(edge_avg_color.B+edge_meter_background_color.B)/2));
-
-						
-						g.DrawLine(line_dark_pen, pixel_x-1, 0, pixel_x-1, H); // rx2 analog edge
-						g.DrawLine(line_pen, pixel_x, 0, pixel_x, H);
-						g.DrawLine(line_dark_pen, pixel_x+1, 0, pixel_x+1, H);
-						
-					}
-
-                    else if (  // TX meter movements
-                               ((mox2 && current_meter_tx1_mode != MeterTXMode.OFF) && ((current_meter_tx1_mode == MeterTXMode.LVL_G) ||
-                               (current_meter_tx1_mode == MeterTXMode.ALC_G) || (current_meter_tx1_mode == MeterTXMode.CPDR) ||
-                               (current_meter_tx1_mode == MeterTXMode.LEVELER) || (current_meter_tx1_mode == MeterTXMode.EQ) ||
-                               (current_meter_tx1_mode == MeterTXMode.MIC) || (current_meter_tx1_mode == MeterTXMode.ALC) ||
-                               (current_meter_tx1_mode == MeterTXMode.SWR) || (current_meter_tx1_mode == MeterTXMode.FORWARD_POWER) ||
-                               (current_meter_tx1_mode == MeterTXMode.REVERSE_POWER)))
-                          )
-                    {
-
-                     
-                        // pixel_x (i.e. signal) goes from 0 to W  Width 
-                        // posx = originx + (2 * D * cos (angle))
-                        // posy = originy + (2 * D * sin (angle))
-                        // for a meter of 45deg to 135deg = 90deg total span :   
-                        // but sin and cos in radians not degs.
-                        // posx = originx + (2 * D * cos (angle*PI/180))
-
-                        //  box dimensions:
-                        //  0,0   W,0
-                        //  0,H   W,H
-
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
-
-                        line_pen = new Pen(analog_avg_color);
-                        line_pen = new Pen(analog_high_color); // Color.Red
-
-                        line_pen.Width = 2.8F;
-
-                        
-                        int Origin_x = W / 2;
-                        int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
-
-                        double angle_start = 45;
-                        double angle_span = 90;
-
-                        angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                         signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
-
-                        if ((meterDMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
-                        {
-                            if ((meterPointer == true))
+                            }
+                            else if (meterLMB == true) // Dark meter background, so needle shadow is light
                             {
-                                RotateImage(yell, angle, Origin_y);
+                                RotateImage(black, angle, Origin_y);
                                 g.DrawImageUnscaled(rotatedImage, 0, 0);
 
-                              //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                              //  g.DrawImage(yell1, dest);            // draw rotated image
+                                //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                //  g.DrawImage(black1, dest);            // draw rotated image
 
                             }
                             else
                             {
-                                RotateImage(white, angle, Origin_y);
-                                g.DrawImageUnscaled(rotatedImage, 0, 0);
+                                line_pen = new Pen(analog_avg_color);
+                                line_pen.Width = 2.2F; // was 2.6F
 
-                                // RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                                //  g.DrawImage(white1, dest);            // draw rotated image
+                                int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
+                                int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
+
+                                g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
 
                             }
 
 
-                        }
-                        else if (meterLMB == true) // Dark meter background, so needle shadow is light
-                        {
-                            RotateImage(black, angle, Origin_y);
-                            g.DrawImageUnscaled(rotatedImage, 0, 0);
+                            //  Debug.WriteLine("Signal " + signal);
 
-                          //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                          //  g.DrawImage(black1, dest);            // draw rotated image
 
-                        }
-                        else
+                        } // TX curved needle
+
+                        else if ( //RX2 ANALOG meter movement
+                             ((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) ||
+                            (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE)) && ((!mox2 && rx2_meter_mode != MeterRXMode.OFF) ||
+                            (mox2 && current_meter_tx1_mode != MeterTXMode.OFF))
+
+                            )
+
                         {
+                            // pixel_x (i.e. signal) goes from 0 to W  Width 
+                            // posx = originx + (2 * D * cos (angle))
+                            // posy = originy + (2 * D * sin (angle))
+                            // for a meter of 45deg to 135deg = 90deg total span :   
+                            // but sin and cos in radians not degs.
+                            // posx = originx + (2 * D * cos (angle*PI/180))
+
+                            //  box dimensions:
+                            //  0,0   W,0
+                            //  0,H   W,H
+
+                            pixel_x = Math.Max(0, pixel_x);
+                            pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+
+                            pixel_x1 = Math.Max(0, pixel_x1);
+                            pixel_x1 = Math.Min(W - 3, pixel_x1);
+
                             line_pen = new Pen(analog_avg_color);
-                            line_pen.Width = 2.2F; // was 2.6F
-                          
-                            int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
-                            int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
 
-                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-                        }
+                            //  line_dark_pen1 = 
+                            //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
 
 
-                        //  Debug.WriteLine("Signal " + signal);
+
+                            int Origin_x = W / 2;
+                            int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
+
+                            double angle_start = 45;
+                            double angle_span = 90;
 
 
-                    } // TX curved needle
+                            if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF))  // ke9ns ADD
+                            {
 
-                    else if ( //RX2 ANALOG meter movement
-                         ((rx2_meter_mode == MeterRXMode.SIGNAL_STRENGTH) || (rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) ||
-                        (rx2_meter_mode == MeterRXMode.SIGNAL_AVERAGE)) && ( (!mox2 && rx2_meter_mode != MeterRXMode.OFF) ||
-                        (mox2 && current_meter_tx1_mode != MeterTXMode.OFF) ) 
-                        
-                        )                    
-                        
-                    {
-                        // pixel_x (i.e. signal) goes from 0 to W  Width 
-                        // posx = originx + (2 * D * cos (angle))
-                        // posy = originy + (2 * D * sin (angle))
-                        // for a meter of 45deg to 135deg = 90deg total span :   
-                        // but sin and cos in radians not degs.
-                        // posx = originx + (2 * D * cos (angle*PI/180))
+                                angle = signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                                signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                        //  box dimensions:
-                        //  0,0   W,0
-                        //  0,H   W,H
 
-                        pixel_x = Math.Max(0, pixel_x);
-                        pixel_x = Math.Min(W - 3, pixel_x);                                             // define limits of X dimension
+                                if ((meterDMB == true) || (meterLMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
+                                {
+                                    RotateImage(red, angle, Origin_y);
+                                    g.DrawImageUnscaled(rotatedImage, 0, 0);
 
-                        pixel_x1 = Math.Max(0, pixel_x1);
-                        pixel_x1 = Math.Min(W - 3, pixel_x1);
+                                    //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                    //  g.DrawImage(red1, dest);            // draw rotated image
+                                }
+                                else
+                                {
 
-                        line_pen = new Pen(analog_avg_color);
+                                    int POSW1 = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
+                                    int POSH1 = (int)((double)(H * 1.25) * Math.Sin(signal));
 
-                      //  line_dark_pen1 = 
-                      //  new Pen( Color.FromArgb((edge_avg_color.R + edge_meter_background_color.R) / 2,(edge_avg_color.G + edge_meter_background_color.G) / 2,(edge_avg_color.B + edge_meter_background_color.B) / 2));
+                                    line_pen = new Pen(analog_high_color); // Color.Red
+                                    line_pen.Width = 2.6F;
 
-                                                             
+                                    g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
+                                }
 
-                        int Origin_x = W / 2;
-                        int Origin_y = (int)((double)(H * 1.5)); // 1.4 slightly below meter window area (where virtual meter adjustment screw would be)
 
-                        double angle_start = 45;
-                        double angle_span = 90;
-                      
-                       
-                        if ((rx2_meter_mode == MeterRXMode.SIGNAL_PEAK) && (!mox2 && rx2_meter_mode != MeterRXMode.OFF))  // ke9ns ADD
-                        {
+                            } // peak
 
-                            angle = signal = (angle_start + ((double)pixel_x1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
+                            angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                             signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
 
-                            if ((meterDMB == true) || (meterLMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
+                            if ((meterDMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
                             {
-                                RotateImage(red, angle, Origin_y);
+                                if ((meterPointer == true))
+                                {
+                                    RotateImage(yell, angle, Origin_y);
+                                    g.DrawImageUnscaled(rotatedImage, 0, 0);
+
+                                    //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                    //  g.DrawImage(yell1, dest);            // draw rotated image
+                                }
+
+                                else
+                                {
+                                    RotateImage(white, angle, Origin_y);
+                                    g.DrawImageUnscaled(rotatedImage, 0, 0);
+
+                                    //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
+                                    //  g.DrawImage(white1, dest);            // draw rotated image
+                                }
+
+
+                            }
+                            else if (meterLMB == true) // Dark meter background, so needle shadow is light
+                            {
+                                RotateImage(black, angle, Origin_y);
                                 g.DrawImageUnscaled(rotatedImage, 0, 0);
 
+
                                 //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                                //  g.DrawImage(red1, dest);            // draw rotated image
+                                // g.DrawImage(black1, dest);            // draw rotated image
                             }
                             else
                             {
-                             
-                                int POSW1 = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
-                                int POSH1 = (int)((double)(H * 1.25) * Math.Sin(signal));
+                                line_pen = new Pen(analog_avg_color);
+                                line_pen.Width = 2.2F; // was 2.6F
 
-                                line_pen = new Pen(analog_high_color); // Color.Red
-                                line_pen.Width = 2.6F;
+                                int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
+                                int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
 
-                                g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW1, Origin_y - POSH1);  // draw meter needle movement (by flipping result around since inc values go down not up)
+                                g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
+
+
                             }
 
 
-                        } // peak
 
-                        angle = signal = (angle_start + ((double)pixel_x * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
-                        signal = signal * Math.PI / 180;                                                // convert angle to radians for cos/sin math
+                            // ke9ns 7 rx2 analog needle
 
 
-                        if ((meterDMB == true) || (meterPointer == true)) // Dark meter background, so needle shadow is light
+
+                        } //   if meter is ON in RX or TX mode, then draw line
+
+
+                        //=========================================================================
+
+
+                        rx2_meter_timer.Stop();
+
+                        format = "f0";
+                        if (meter_detail) format = "f1";
+
+                        if (rx2_meter_timer.DurationMsec >= meter_dig_delay)
                         {
-                            if ((meterPointer == true))
+                            if (!mox2) // rx
                             {
-                                RotateImage(yell, angle, Origin_y);
-                                g.DrawImageUnscaled(rotatedImage, 0, 0);
-
-                                //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                                //  g.DrawImage(yell1, dest);            // draw rotated image
-                            }
-
-                            else
-                            {
-                                RotateImage(white, angle, Origin_y);
-                                g.DrawImageUnscaled(rotatedImage, 0, 0);
-
-                                //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                                //  g.DrawImage(white1, dest);            // draw rotated image
-                            }
 
 
-                        }
-                        else if (meterLMB == true) // Dark meter background, so needle shadow is light
-                        {
-                            RotateImage(black, angle, Origin_y);
-                            g.DrawImageUnscaled(rotatedImage, 0, 0);
-
-
-                            //  RotatePointer(signal, H * 1.25, Origin_x, Origin_y);
-                            // g.DrawImage(black1, dest);            // draw rotated image
-                        }
-                        else
-                        {
-                            line_pen = new Pen(analog_avg_color);
-                            line_pen.Width = 2.2F; // was 2.6F
-                          
-                            int POSW = (int)((double)(H * 1.25) * Math.Cos(signal));  // convert signal to arc
-                            int POSH = (int)((double)(H * 1.25) * Math.Sin(signal));
-
-                            g.DrawLine(line_pen, Origin_x, Origin_y, Origin_x - POSW, Origin_y - POSH);  // draw meter needle movement (by flipping result around since inc values go down not up)
-
-
-                        }
-
-
-
-                        // ke9ns 7 rx2 analog needle
-
-
-
-                    } //   if meter is ON in RX or TX mode, then draw line
-
-
-                    //=========================================================================
-
-
-                    rx2_meter_timer.Stop();
-
-					format = "f0";
-					if(meter_detail) format = "f1";
-
-					if(rx2_meter_timer.DurationMsec >= meter_dig_delay)
-					{
-                        if (!mox2) // rx
-                        {
-
-                           
                                 switch (rx2_meter_mode)
                                 {
                                     case MeterRXMode.SIGNAL_STRENGTH:
@@ -43893,72 +45149,74 @@ namespace PowerSDR
                                         output = "";
                                         break;
                                 }
-                            
-                        }
-                        else
-                        {
 
-                             MeterTXMode mode = current_meter_tx1_mode;
-                           // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
-                            switch (mode)
+                            }
+                            else
                             {
-                                case MeterTXMode.MIC:
-                                    output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.LEVELER:
-                                case MeterTXMode.LVL_G:
-                                case MeterTXMode.EQ:
-                                case MeterTXMode.CPDR:
-                                case MeterTXMode.ALC:
-                                case MeterTXMode.ALC_G:
-                                    if (!mox) output = "-30 dB ";
-                                    else output = num.ToString(format) + " dB ";
-                                    break;
-                                case MeterTXMode.FORWARD_POWER:
-                                case MeterTXMode.REVERSE_POWER:
-                                    switch (current_model)
-                                    {
-                                        case Model.FLEX5000:
-                                        case Model.FLEX3000:
-                                            if (!mox) output = "0 W ";
-                                            else output = num.ToString("f0") + " W ";
-                                            break;
-                                        case Model.FLEX1500:
-                                            if (!mox) output = "0 % ";
-                                            else output = num.ToString("f0") + " % ";
-                                            break;
-                                    }
-                                    break;
-                                case MeterTXMode.SWR:
-                                    if (!mox) output = "0 : 1 ";
-                                   else output = num.ToString("f1") + " : 1 ";
-                                    break;
-                                case MeterTXMode.OFF:
-                                    output = "";
-                                    break;
 
-                            }// switch mode
-                        }//mox2
+                                MeterTXMode mode = current_meter_tx1_mode;
+                                // if (chkTUN.Checked) mode = tune_meter_tx1_mode;
+                                switch (mode)
+                                {
+                                    case MeterTXMode.MIC:
+                                        output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.LEVELER:
+                                    case MeterTXMode.LVL_G:
+                                    case MeterTXMode.EQ:
+                                    case MeterTXMode.CPDR:
+                                    case MeterTXMode.ALC:
+                                    case MeterTXMode.ALC_G:
+                                        if (!mox) output = "-30 dB ";
+                                        else output = num.ToString(format) + " dB ";
+                                        break;
+                                    case MeterTXMode.FORWARD_POWER:
+                                    case MeterTXMode.REVERSE_POWER:
+                                        switch (current_model)
+                                        {
+                                            case Model.FLEX5000:
+                                            case Model.FLEX3000:
+                                                if (!mox) output = "0 W ";
+                                                else output = num.ToString("f0") + " W ";
+                                                break;
+                                            case Model.FLEX1500:
+                                                if (!mox) output = "0 % ";
+                                                else output = num.ToString("f0") + " % ";
+                                                break;
+                                        }
+                                        break;
+                                    case MeterTXMode.SWR:
+                                        if (!mox) output = "0 : 1 ";
+                                        else output = num.ToString("f1") + " : 1 ";
+                                        break;
+                                    case MeterTXMode.OFF:
+                                        output = "";
+                                        break;
 
-                           txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
-                       
+                                }// switch mode
+                            }//mox2
 
-                        rx2_meter_timer.Start();
-                    } //if(rx2_meter_timer.DurationMsec >= meter_dig_delay)
-
-
-                    if (rx2_meter_data_ready)
-					{
-						rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
-					}
-
-					
-#endregion
-                    break;  //  RX2 Analog
+                            txtRX2Meter.Text = output; //only show digital numbers if RX2 ON or 2nd Meter is ON and in TX mode
 
 
-            } // switch(current_meter_display_mode)
-		} // picRX2Meter_Paint
+                            rx2_meter_timer.Start();
+                        } //if(rx2_meter_timer.DurationMsec >= meter_dig_delay)
+
+
+                        if (rx2_meter_data_ready)
+                        {
+                            rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
+                        }
+
+
+                        #endregion
+                        break;  //  RX2 Analog
+
+
+                } // switch(current_meter_display_mode)
+            
+
+        } // picRX2Meter_Paint
 
 
         //=============================================================
@@ -44531,15 +45789,202 @@ namespace PowerSDR
 			meter_timer.Start();
 			while(chkPower.Checked)
 			{
-				if(!meter_data_ready)
+              
+                if (!meter_data_ready)
 				{
-					if(!mox)
+                   
+                    if (!mox)
 					{
-						/*if(Audio.CurrentAudioState1 != Audio.AudioState.DTTSP)
+                       
+                        /*if(Audio.CurrentAudioState1 != Audio.AudioState.DTTSP)
 							goto end;*/
 
-						MeterRXMode mode = CurrentMeterRXMode;
-						float num = 0f;
+                        if (CurrentMeterTX1Mode == MeterTXMode.Combo) // ke9ns add
+                        {
+                          
+                            if (chkRX2.Checked == false)
+                            {
+                                if (picRX3Meter.Visible == false)
+                                {
+                                    picRX3Meter.Visible = true;  // turn on Combo if in RX mode but RX2 is not ON
+                                    picRX3Meter.Enabled = true;
+                                    meterCombo = true;
+                                }
+                            }
+                            else if ((picRX3Meter.Visible == true)) // turn off combo meter when RX2 is ON in RX mode
+                            {
+
+                                picRX3Meter.Visible = false;
+                                picRX3Meter.Enabled = false;
+                                meterCombo = false;
+                            }
+
+
+
+                        }
+                        else if ((picRX3Meter.Visible == true) && (chkRX2.Checked == true)) // turn off combo meter when RX2 is ON in RX mode
+                        {
+                          
+                            picRX3Meter.Visible = false;
+                            picRX3Meter.Enabled = false;
+                            meterCombo = false;
+                        }
+                        float num = 0f;
+
+                        if (meterCombo == true)
+                        {
+
+                         
+                            //combo meter
+                            // fwd power, swr, alc, mic
+
+                            //-----------------------------------------------
+                            // PWR
+
+                            tx2_meter_new_data_pwr = num =  0;
+
+                            if (tx2_meter_peak_pwr == Display.CLEAR_FLAG) tx2_meter_peak_pwr = num;
+
+
+                            if (tx2_meter_peak_pwr < num) // new value larger than before
+                            {
+                                tx2_meter_peak_pwr = num; // new peak value
+                                tx2_meter_peak5_pwr = 0;
+                            }
+                            else // new value smaller than before
+                            {
+                                if (tx2_meter_peak5_pwr == 20)
+                                {
+                                    // Debug.WriteLine("Peak5 " + tx2_meter_peak_pwr);
+                                    if (tx2_meter_peak_pwr > num)
+                                    {
+                                        tx2_meter_peak_pwr = tx2_meter_peak_pwr - 1; // reduce peak slowly
+                                    }
+                                    else
+                                    {
+                                        tx2_meter_peak5_pwr = 0; // once the peak moves back down to the current value, reset the counter
+                                    }
+                                }
+                                else tx2_meter_peak5_pwr++;
+                              //  Debug.WriteLine("peak5 " + tx2_meter_peak5_pwr);
+
+
+                            }
+
+                            //-----------------------------------------------
+                            // SWR
+
+
+                            tx2_meter_new_data_swr = num = 1;
+
+
+                            if (tx2_meter_peak_swr == Display.CLEAR_FLAG) tx2_meter_peak_swr = num;
+
+
+                            if (tx2_meter_peak_swr < num) // new value larger than before
+                            {
+                                tx2_meter_peak_swr = num; // new peak value
+                                tx2_meter_peak5_swr = 0;
+                            }
+                            else // new value smaller than before
+                            {
+                                if (tx2_meter_peak5_swr == 20)
+                                {
+                                    if (tx2_meter_peak_swr > num)
+                                    {
+                                        tx2_meter_peak_swr = tx2_meter_peak_swr - 1; // reduce peak slowly
+                                    }
+                                    else
+                                    {
+                                        tx2_meter_peak5_swr = 0; // once the peak moves back down to the current value, reset the counter
+                                    }
+                                }
+                                else tx2_meter_peak5_swr++;
+                             }
+
+
+                          //  Debug.WriteLine(" SWR  " + tx2_meter_peak_swr);
+
+
+                            //-----------------------------------------------
+                            // ALC
+
+
+                            tx2_meter_new_data_alc = num = -60;
+                            tx2_meter_new_data_alcG = -60;
+
+
+
+                            if (tx2_meter_peak_alc == Display.CLEAR_FLAG) tx2_meter_peak_alc = num;
+
+
+                            if (tx2_meter_peak_alc < num) // new value larger than before
+                            {
+                                tx2_meter_peak_alc = num; // new peak value
+                                tx2_meter_peak5_alc = 0;
+                            }
+                            else // new value smaller than before
+                            {
+                                if (tx2_meter_peak5_alc == 20)
+                                {
+                                    if (tx2_meter_peak_alc > num)
+                                    {
+                                        tx2_meter_peak_alc = tx2_meter_peak_alc - 1; // reduce peak slowly
+                                    }
+                                    else
+                                    {
+                                        tx2_meter_peak5_alc = 0; // once the peak moves back down to the current value, reset the counter
+                                    }
+                                }
+                                else tx2_meter_peak5_alc++;
+                            }
+
+
+
+                            //-----------------------------------------------
+                            // MIC
+
+                            if ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || RX2Enabled == true) // ke9ns allow TX 2nd meter if option selected and not in duplex mode
+                            {
+
+
+                                
+                                    tx2_meter_new_data_mic = num = -60;
+
+                                    if (tx2_meter_peak_mic == Display.CLEAR_FLAG) tx2_meter_peak_mic = num;
+
+                                    if (tx2_meter_peak_mic < num) // new value larger than before
+                                    {
+                                        tx2_meter_peak_mic = num; // new peak value
+                                        tx2_meter_peak5_mic = 0;
+                                    }
+                                    else // new value smaller than before
+                                    {
+                                        if (tx2_meter_peak5_mic == 20)
+                                        {
+                                            if (tx2_meter_peak_mic > num)
+                                            {
+                                                tx2_meter_peak_mic = tx2_meter_peak_mic - 1; // reduce peak slowly
+                                            }
+                                            else
+                                            {
+                                                tx2_meter_peak5_mic = 0; // once the peak moves back down to the current value, reset the counter
+                                            }
+                                        }
+                                        else tx2_meter_peak5_mic++;
+                                    }
+
+
+                                
+                            }
+                            //combo meter
+
+
+                        } // meterCombo
+
+
+                        MeterRXMode mode = CurrentMeterRXMode;
+						
                         float peak3 = 0f; // ke9ns ADD for RX1 peak meter routine
                       
                         switch (mode)
@@ -44803,17 +46248,44 @@ namespace PowerSDR
 
                             }
 
-                            if (current_meter_tx1_mode == MeterTXMode.MIC)
+                            if ( (current_meter_tx1_mode == MeterTXMode.MIC) || (current_meter_tx1_mode == MeterTXMode.Combo))
                             {
                               
                                  //  Debug.WriteLine("PEAK1 Level" + Audio.Peak1 + " MIC");
-                                    tx2_meter_new_data = (double)20 * Math.Log10(Audio.Peak1); // ke9ns get dBm value from MIC audio stream
-                      
+                                tx2_meter_new_data_mic =   tx2_meter_new_data = (double)20 * Math.Log10(Audio.Peak1); // ke9ns get dBm value from MIC audio stream
+
+
+                                if (tx2_meter_peak_mic == Display.CLEAR_FLAG) tx2_meter_peak_mic = tx2_meter_new_data;
+
+                                if (tx2_meter_peak_mic < tx2_meter_new_data) // new value larger than before
+                                {
+                                    tx2_meter_peak_mic = tx2_meter_new_data; // new peak value
+                                    tx2_meter_peak5_mic = 0;
+                                }
+                                else // new value smaller than before
+                                {
+                                    if (tx2_meter_peak5_mic == 20)
+                                    {
+                                        if (tx2_meter_peak_mic > tx2_meter_new_data)
+                                        {
+                                            tx2_meter_peak_mic = tx2_meter_peak_mic - 1; // reduce peak slowly
+                                        }
+                                        else
+                                        {
+                                            tx2_meter_peak5_mic = 0; // once the peak moves back down to the current value, reset the counter
+                                        }
+                                    }
+                                    else tx2_meter_peak5_mic++;
+                                }
+
+
                             } // ke9ns add check TX2 meter mode to see if we can make it live during RX
 
 
                             rx2_meter_data_ready = true;
-                            picRX2Meter.Invalidate(); // ke9ns12 add
+
+                            if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                           else  picRX2Meter.Invalidate(); // ke9ns12 add
 
                         }
 
@@ -44821,13 +46293,33 @@ namespace PowerSDR
 
                     else //MOX  (TX) 
 					{
-						MeterTXMode mode = CurrentMeterTXMode;  // ke9ns  RX1 meter first
+                         
+                        if (picRX3Meter.Visible == false) // ke9ns add
+                        {
+                            if (CurrentMeterTX1Mode == MeterTXMode.Combo)
+                            {
+                                if (picRX3Meter.Visible == false)
+                                {
+                                    picRX3Meter.Visible = true; // turn on combo if in combo and TX
+                                    picRX3Meter.Enabled = true;
+
+                                    meterCombo = true;
+
+
+                                }
+
+                            }
+                           
+                        }
+
+                        MeterTXMode mode = CurrentMeterTXMode;  // ke9ns  RX1 meter first
 						float num = 0f;
 						double power = 0.0;
 
 						switch(mode)
 						{
-							case MeterTXMode.MIC:
+
+                            case MeterTXMode.MIC:
 								if(peak_tx_meter) num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.MIC_PK));
 								else num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.MIC)+3.0f);
 								//output = num.ToString("f1")+" dB ";
@@ -44951,6 +46443,8 @@ namespace PowerSDR
 							//	}
 								new_meter_data = (float)swr;
 								break;
+
+
 							case MeterTXMode.OFF:
 								//output = "";
 								new_meter_data = -200.0f;
@@ -45012,22 +46506,23 @@ namespace PowerSDR
                                 case MeterTXMode.FORWARD_POWER:
                                     switch (current_model)
                                     {
-                                     /*   case Model.SDR1000:
-                                            if (pa_present && VFOAFreq < 30.0)
-                                            {
-                                                power = PAPower(pa_fwd_power);
-                                                //output = power.ToString("f0")+" W";
-                                                rx2_meter_new_data = (float)power;
-                                            }
-                                            else
-                                            {
-                                                num = (float)Math.Max(0.0, DttSP.CalculateTXMeter(1, DttSP.MeterType.PWR));
-                                                num *= (float)((double)ptbPWR.Value * 0.01);
-                                                //output = (num*1000).ToString("f0")+" mW";
-                                                rx2_meter_new_data = num;
-                                            }
-                                            break;
-                                     */   case Model.FLEX5000:
+                                        /*   case Model.SDR1000:
+                                               if (pa_present && VFOAFreq < 30.0)
+                                               {
+                                                   power = PAPower(pa_fwd_power);
+                                                   //output = power.ToString("f0")+" W";
+                                                   rx2_meter_new_data = (float)power;
+                                               }
+                                               else
+                                               {
+                                                   num = (float)Math.Max(0.0, DttSP.CalculateTXMeter(1, DttSP.MeterType.PWR));
+                                                   num *= (float)((double)ptbPWR.Value * 0.01);
+                                                   //output = (num*1000).ToString("f0")+" mW";
+                                                   rx2_meter_new_data = num;
+                                               }
+                                               break;
+                                        */
+                                        case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             //output = ((double)pa_fwd_power/4096*2.5).ToString("f3")+" V";
                                             power = FWCPAPower(pa_fwd_power);
@@ -45093,6 +46588,168 @@ namespace PowerSDR
                                   //  }
                                     rx2_meter_new_data = (float)swr;
                                     break;
+
+                               case MeterTXMode.Combo:
+                                    //combo meter
+                                    // fwd power, swr, alc, mic
+
+                                    //-----------------------------------------------
+                                    // PWR
+                                    switch (current_model)
+                                    {
+                                       
+                                        case Model.FLEX5000:
+                                        case Model.FLEX3000:
+                                          
+                                            power = FWCPAPower(pa_fwd_power);
+                                           
+                                            tx2_meter_new_data_pwr = num = (float)power;
+                                            break;
+                                        case Model.FLEX1500:
+                                            num = (float)Math.Max(0.0, DttSP.CalculateTXMeter(1, DttSP.MeterType.PWR));
+                                            num *= (float)(ptbPWR.Value);
+                                            tx2_meter_new_data_pwr = num;
+                                            break;
+                                    }
+                                    
+                                   
+                                    if (tx2_meter_peak_pwr == Display.CLEAR_FLAG) tx2_meter_peak_pwr = num;
+
+                                   
+                                    if (tx2_meter_peak_pwr < num) // new value larger than before
+                                    {
+                                        tx2_meter_peak_pwr = num; // new peak value
+                                        tx2_meter_peak5_pwr = 0;
+                                    }
+                                    else // new value smaller than before
+                                    {
+                                        if (tx2_meter_peak5_pwr == 20)
+                                        {
+                                            // Debug.WriteLine("Peak5 " + tx2_meter_peak_pwr);
+                                            if (tx2_meter_peak_pwr > num)
+                                            {
+                                                tx2_meter_peak_pwr = tx2_meter_peak_pwr - 1; // reduce peak slowly
+                                            }
+                                            else
+                                            {
+                                                tx2_meter_peak5_pwr = 0; // once the peak moves back down to the current value, reset the counter
+                                            }
+                                        }
+                                        else tx2_meter_peak5_pwr++;
+                                         // Debug.WriteLine("peak5 " + tx2_meter_peak5_pwr);
+
+
+                                    }
+
+
+
+
+                                    //-----------------------------------------------
+                                    // SWR
+                                    swr = 0.0;
+                                   
+                                    switch (current_model)
+                                    {
+                                        case Model.FLEX5000:
+                                        case Model.FLEX3000:
+                                            swr = FWCSWR(pa_fwd_power, pa_rev_power);
+                                           
+                                            break;
+                                           
+                                    }
+                                   
+                                    tx2_meter_new_data_swr = num = (float)swr;
+
+
+                                    if (tx2_meter_peak_swr == Display.CLEAR_FLAG) tx2_meter_peak_swr = num;
+
+                                    if (tx2_meter_peak_swr < num) // new value larger than before
+                                    {
+                                        tx2_meter_peak_swr = num; // new peak value
+                                        tx2_meter_peak5_swr = 0;
+                                    }
+                                    else // new value smaller than before
+                                    {
+                                        if (tx2_meter_peak5_swr == 20)
+                                        {
+                                            
+                                            if (tx2_meter_peak_swr > num) tx2_meter_peak_swr = tx2_meter_peak_swr - 1;
+                                            else tx2_meter_peak5_swr = 0;
+                                        }
+                                        else tx2_meter_peak5_swr++;
+                                  
+
+                                    }
+
+
+                                    //-----------------------------------------------
+                                    // ALC
+
+                                    if (peak_tx1_meter) num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.ALC_PK));
+                                    else num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.ALC) + 3.0f);
+                                    tx2_meter_new_data_alc = num;
+
+                                    // this is if you want ALC Gain instead
+                                    // num = (float)Math.Max(0, -DttSP.CalculateTXMeter(1, DttSP.MeterType.ALC_G));
+                                    //  tx2_meter_new_data_alcG = num;
+
+
+                                    if (tx2_meter_peak_alc == Display.CLEAR_FLAG) tx2_meter_peak_alc = num;
+
+                                    if (tx2_meter_peak_alc < num) // new value larger than before
+                                    {
+                                        tx2_meter_peak_alc = num; // new peak value
+                                        tx2_meter_peak5_alc = 0;
+                                    }
+                                    else // new value smaller than before
+                                    {
+                                        if (tx2_meter_peak5_alc == 20)
+                                        {
+
+                                            if (tx2_meter_peak_alc > num) tx2_meter_peak_alc = tx2_meter_peak_alc - 1;
+                                            else tx2_meter_peak5_alc = 0;
+                                        }
+                                        else tx2_meter_peak5_alc++;
+
+
+                                    }
+
+
+
+                                    //-----------------------------------------------
+                                    // MIC
+                                    if (peak_tx1_meter) num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.MIC_PK));
+                                    else num = (float)Math.Max(-30.0f, -DttSP.CalculateTXMeter(1, DttSP.MeterType.MIC) + 3.0f);
+                                    
+                                    tx2_meter_new_data_mic = num;
+
+                                    if (tx2_meter_peak_mic == Display.CLEAR_FLAG) tx2_meter_peak_mic = num;
+
+                                    if (tx2_meter_peak_mic < num) // new value larger than before
+                                    {
+                                        tx2_meter_peak_mic = num; // new peak value
+                                        tx2_meter_peak5_mic = 0;
+                                    }
+                                    else // new value smaller than before
+                                    {
+                                        if (tx2_meter_peak5_mic == 20)
+                                        {
+
+                                            if (tx2_meter_peak_mic > num) tx2_meter_peak_mic = tx2_meter_peak_mic - 1;
+                                            else tx2_meter_peak5_mic = 0;
+                                        }
+                                        else tx2_meter_peak5_mic++;
+
+
+                                    }
+
+
+
+
+
+                                    //combo meter
+                                    break;
+                            
                                 case MeterTXMode.OFF:
                                     //output = "";
                                     rx2_meter_new_data = -200.0f;
@@ -45101,10 +46758,14 @@ namespace PowerSDR
                             } // mode1
 
                             rx2_meter_data_ready = true;
-                            picRX2Meter.Invalidate(); // ke9ns12 add
+
+                            if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                            else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                            //  picRX2Meter.Invalidate(); // ke9ns12 add
 
                         } // TXMeter2
-                        
+
 
                     } // TX MOX
 
@@ -45138,6 +46799,7 @@ namespace PowerSDR
         private int peak4 = 0; // ke9ns ADD RX1 peak hold routine
         private int peak5 = 0; // ke9ns ADD RX2 peak hold routine
 
+       
         private void UpdateRX2MeterData()
 		{
 			rx2_meter_timer.Start();
@@ -45284,7 +46946,11 @@ namespace PowerSDR
                         rx2_meter_data_ready = true;
 
                         //    Debug.Write(" 333 ");
-                        picRX2Meter.Invalidate(); // ke9ns12 add
+
+                        if (meterCombo == true) picRX3Meter.Invalidate(); // ke9ns12 add
+                        else picRX2Meter.Invalidate(); // ke9ns12 add
+
+                      //  picRX2Meter.Invalidate(); // ke9ns12 add
 
                     } // !rx2meterdataready			
                 } // !mox
@@ -48142,14 +49808,16 @@ namespace PowerSDR
                                 case FRSRegion.France:
                                 case FRSRegion.Russia:
                                 case FRSRegion.Sweden:
-                                case FRSRegion.Region_3:
+                                case FRSRegion.IARU3:
                                 case FRSRegion.Japan:
                                 case FRSRegion.Italy_Plus:
                                 case FRSRegion.ES_CH_FIN:
                                 case FRSRegion.Netherlands:
                                 case FRSRegion.EU_Travel:
                                 case FRSRegion.Luxembourg:
-                                case FRSRegion.Region_2:
+                                case FRSRegion.IARU2:
+                                case FRSRegion.Australia:
+
                                     if (band_60m_index == 4)  // 5 60m channels for all entities
                                     {
                                         band_40m_index = 0;
@@ -58373,7 +60041,7 @@ namespace PowerSDR
                 {
                     if (dsp.GetDSPTX(0).TXFMDeviation == FMDataDeviation) // ke9ns add
                     {
-                        UpdateRX1Filters(-FMDataLowHigh, FMDataLowHigh);
+                        UpdateRX1Filters(-FMDataLowHigh, FMDataLowHigh); // +/- 10000
                     }
                     else if (dsp.GetDSPTX(0).TXFMDeviation == 5000)
                     {
@@ -58475,8 +60143,8 @@ namespace PowerSDR
         public bool FMData = false; // ke9ns add true=FM data mode
         public double lastdeviation = 0; // ke9ns add false = 2k, true = 5k
 
-        public const int FMDataDeviation = 7000; // ke9ns deviation amount for FM Data mode
-        public const int FMDataLowHigh = 10000; // ke9ns +10000 or -10000
+        public const int FMDataDeviation = 9000; // ke9ns deviation amount for FM Data mode
+        public const int FMDataLowHigh = 11000; // ke9ns +10000 or -10000
 
         // ke9ns add  (to allow a digital version of FM just like DIGU or DIGL)
         private void radModeFMN_MouseUp(object sender, MouseEventArgs e)
@@ -62824,9 +64492,11 @@ namespace PowerSDR
 				ResetRX2MeterPeak();
 			}
 
-			picRX2Meter.Invalidate();
+            if (meterCombo == true ) picRX3Meter.Invalidate(); // ke9ns12 add
+            else picRX2Meter.Invalidate(); // ke9ns12 add
+                                           //	picRX2Meter.Invalidate();
 
-			if(comboRX2MeterMode.Focused)	btnHidden.Focus();
+            if (comboRX2MeterMode.Focused)	btnHidden.Focus();
 		} //comboRx2metermode_selectedindexchanged
 
 		private void chkRX2Preamp_CheckedChanged(object sender, System.EventArgs e)
@@ -65538,10 +67208,10 @@ namespace PowerSDR
         }
 
 
-        private void picRX2Meter_MouseUp(object sender, EventArgs e)
-        {
+      //  private void picRX2Meter_MouseUp(object sender, EventArgs e) // mouse click
+      //  {
 
-        }
+      //  }
 
 
         //=======================================================================
@@ -65553,17 +67223,20 @@ namespace PowerSDR
             
             if ((me.Button == System.Windows.Forms.MouseButtons.Right))
             {
-              
 
-                if (setupForm == null || setupForm.IsDisposed)
-                    setupForm = new Setup(this);
+               // meterCombo = false;
+               // CurrentMeterTX1Mode = MeterTXMode.ALC; // go back to another TX meter
 
-                setupForm.Show();
-                setupForm.Focus();
-                setupForm.WindowState = FormWindowState.Normal; // ke9ns add
+                   if (setupForm == null || setupForm.IsDisposed)
+                       setupForm = new Setup(this);
 
-                setupForm.tcSetup.SelectedIndex = 6; // select appearance tab;
-                setupForm.tcAppearance.SelectedIndex = 2; // select  tab meter
+                   setupForm.Show();
+                   setupForm.Focus();
+                   setupForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                   setupForm.tcSetup.SelectedIndex = 6; // select appearance tab;
+                   setupForm.tcAppearance.SelectedIndex = 2; // select  tab meter
+               
 
             } // right click
             else
@@ -65622,6 +67295,31 @@ namespace PowerSDR
 
                 switch (current_meter_display_mode)
                 {
+
+
+                    case MultiMeterDisplayMode.Bar: // if edge switch to analog
+                        meterLMB = false;
+                        meterDMB = false;
+
+                       
+                        lblMultiSMeter.Visible = false;
+
+                        
+                        lblRX2Meter.Visible = false;
+
+                        if (setupForm != null)
+                        {
+                            setupForm.chkBoxLMB.Checked = false;
+                            setupForm.chkBoxDMB.Checked = false;
+
+                        }
+
+                        current_meter_display_mode = MultiMeterDisplayMode.Edge; // switch to analog
+                        CurrentMeterDisplayMode = current_meter_display_mode;
+                        // setupForm.MTRSet = "Analog";  // comboMeterType update
+                        //  AnalogMeterBackgroundColor = analog_meter_background_color;
+
+                        break;
 
                     case MultiMeterDisplayMode.Edge: // if edge switch to analog
                         meterLMB = false;
@@ -65689,10 +67387,23 @@ namespace PowerSDR
                         break;
                     case MultiMeterDisplayMode.Original: // if already TR7 switch to EDGE
 
-                        current_meter_display_mode = MultiMeterDisplayMode.Edge;
+                        current_meter_display_mode = MultiMeterDisplayMode.Bar;
                         CurrentMeterDisplayMode = current_meter_display_mode;
-                        setupForm.MTRSet = "Edge";
+                        setupForm.MTRSet = "Bar";
                         EdgeMeterBackgroundColor = edge_meter_background_color;
+
+                       
+                        lblMultiSMeter.Visible = true;
+
+                        if (meterCombo != true) //MeterTXMode.Combo)
+                        {
+                            lblRX2Meter.Visible = true;
+                        }
+
+                        //  current_meter_display_mode = MultiMeterDisplayMode.Edge;
+                        //  CurrentMeterDisplayMode = current_meter_display_mode;
+                        //  setupForm.MTRSet = "Edge";
+                        //  EdgeMeterBackgroundColor = edge_meter_background_color;
 
                         break;
 
@@ -68506,6 +70217,8 @@ namespace PowerSDR
             }
             else
             {
+                meterCombo = false;
+
                 switch (comboMeterTX1Mode.Text)
                 {
                     case "Fwd Pwr":
@@ -68538,11 +70251,34 @@ namespace PowerSDR
                     case "SWR":
                         mode = MeterTXMode.SWR;
                         break;
+                    case "Combo":
+                        meterCombo = true;
+                        mode = MeterTXMode.Combo;
+
+
+                       
+                        break;
+
+
                     case "Off":
                         mode = MeterTXMode.OFF;
                         break;
 
                 } // switch (comboMeterTX1Mode.Text)
+
+
+                if (mode == MeterTXMode.Combo)
+                {
+                    picRX3Meter.Visible = true;
+                    picRX3Meter.Enabled = true;
+
+                }
+                else
+                {
+                    picRX3Meter.Visible = false;
+                    picRX3Meter.Enabled = false;
+
+                }
 
                 //  if (chkTUN.Checked)
                 //  {
@@ -68593,7 +70329,9 @@ namespace PowerSDR
 
             } // mox
 
-            picRX2Meter.Invalidate();
+            if (meterCombo == true ) picRX3Meter.Invalidate(); // ke9ns12 add
+            else picRX2Meter.Invalidate(); // ke9ns12 add
+           // picRX2Meter.Invalidate();
 
             if (comboMeterTX1Mode.Focused)  btnHidden.Focus();
 
@@ -71993,6 +73731,8 @@ namespace PowerSDR
          
         }
 
+       
+
         private void trackMenuItem1_MouseLeave(object sender, EventArgs e)
         {
             HELPMAP = false;
@@ -72097,7 +73837,7 @@ namespace PowerSDR
 
             while (N1MM_ON == true)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(140); // translates into 7 frames per second
 
                 if (!mox)
                 {
@@ -72142,8 +73882,8 @@ namespace PowerSDR
 
                     int y = 0;
 
-                    //  Debug.WriteLine("Floor "+ N1MM_Floor);
-                    //  Debug.WriteLine("samples " + N1MM_Sample);
+                   //   Debug.WriteLine("Floor "+ N1MM_Floor);
+                   //  Debug.WriteLine("samples " + N1MM_Sample);
 
                     int yy = 0;
 
@@ -72151,15 +73891,25 @@ namespace PowerSDR
 
                     N1MM_Floor = 0; // reset
 
-                    int qq = N1MM_Sample / 2; // cut the number of samples in half
+                    int sampleCut = 1;
 
-                    for (int i = 0; i < N1MM_Sample - 1; i = i + 2)
+                    if (N1MM_Sample > 1024) sampleCut = 2; // if too much data, then cut in half
+
+                    int qq = N1MM_Sample / sampleCut; // cut the number of samples in half
+
+                    if (sampleCut == 1) qq = qq - 1;
+
+                  //  Debug.WriteLine("1samples " + qq);
+
+                 //  Debug.WriteLine("CUT " + sampleCut);
+
+                    for (int i = 0; i < (N1MM_Sample - 1); i = i + sampleCut) // -1 for sampleCut of 2
                     {
                         y = (yy + N1MM_Data[i]) * 3; // 140
 
                         N1MM_Data_String = N1MM_Data_String + y.ToString();
 
-                        if (i < N1MM_Sample - 3)
+                        if ( i < (N1MM_Sample - (sampleCut + 1)) )  // 3 = sampleCut of 2   2=sampleCut of 1
                         {
                             N1MM_Data_String = N1MM_Data_String + ",";
                         }
@@ -72205,7 +73955,7 @@ namespace PowerSDR
                          "</Spectrum>\n";
 
                     //   Debug.WriteLine("N1MM DATA");
-                    //   Debug.WriteLine(welcome);
+                    //  Debug.WriteLine(welcome);
 
 
                     byte[] data = Encoding.ASCII.GetBytes(welcome);
