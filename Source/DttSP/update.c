@@ -1483,7 +1483,7 @@ DttSP_EXP void SetTXAGCFFCompression (unsigned int thread, double txcompression)
 
 
 //=========================================================================================
-// ke9ns  console uses this to 
+// ke9ns  console uses this to set squelch threshold
 //=========================================================================================
 DttSP_EXP void SetSquelchVal (unsigned int thread, unsigned int subrx, float setit)
 {
@@ -1495,7 +1495,7 @@ DttSP_EXP void SetSquelchVal (unsigned int thread, unsigned int subrx, float set
 
 
 //=========================================================================================
-// ke9ns  console uses this to 
+// ke9ns  console uses this to turn squelch ON/OFF
 //=========================================================================================
 DttSP_EXP SetSquelchState (unsigned int thread, unsigned int subrx,BOOLEAN setit)
 {

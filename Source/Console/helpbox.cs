@@ -54,6 +54,7 @@ namespace PowerSDR
         public RichTextBox recplay_message;
         public RichTextBox PropagationTextBox;
         public RichTextBox TRACKMap;
+        public RichTextBox SWRScanner;
         private ToolTip toolTip1;
 
         // public static helpbox helpboxForm;                       // ke9ns add 
@@ -112,6 +113,7 @@ namespace PowerSDR
             this.recplay_message = new System.Windows.Forms.RichTextBox();
             this.PropagationTextBox = new System.Windows.Forms.RichTextBox();
             this.TRACKMap = new System.Windows.Forms.RichTextBox();
+            this.SWRScanner = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // chkAlwaysOnTop
@@ -185,6 +187,15 @@ namespace PowerSDR
             this.TRACKMap.TabIndex = 106;
             this.TRACKMap.Text = resources.GetString("TRACKMap.Text");
             // 
+            // SWRScanner
+            // 
+            this.SWRScanner.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SWRScanner.Location = new System.Drawing.Point(12, 12);
+            this.SWRScanner.Name = "SWRScanner";
+            this.SWRScanner.Size = new System.Drawing.Size(636, 389);
+            this.SWRScanner.TabIndex = 107;
+            this.SWRScanner.Text = resources.GetString("SWRScanner.Text");
+            // 
             // helpbox
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -197,6 +208,7 @@ namespace PowerSDR
             this.Controls.Add(this.recplay_message);
             this.Controls.Add(this.PropagationTextBox);
             this.Controls.Add(this.TRACKMap);
+            this.Controls.Add(this.SWRScanner);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -207,6 +219,7 @@ namespace PowerSDR
             this.Name = "helpbox";
             this.Text = "PowerSDR F1 Help";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.helpbox_Closing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.helpbox_FormClosing);
             this.ResumeLayout(false);
 
 		}
@@ -245,6 +258,13 @@ namespace PowerSDR
 
         private void helpbox_message_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void helpbox_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Console.HELPMAP = false;
+            Console.HELPSWR = false;
 
         }
     } // helpbox

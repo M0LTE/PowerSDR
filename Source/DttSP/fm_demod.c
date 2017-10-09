@@ -37,8 +37,7 @@ Bridgewater, NJ 08807
 /* private to FM */
 /*------------------------------------------------------------------------------*/
 
-PRIVATE void
-init_pll (FMD fm,
+PRIVATE void init_pll (FMD fm,
 	  REAL samprate, REAL freq, REAL lofreq, REAL hifreq, REAL bandwidth)
 {
 	REAL fac = (REAL) (TWOPI / samprate);
@@ -54,8 +53,7 @@ init_pll (FMD fm,
 	fm->pll.beta = fm->pll.alpha * fm->pll.alpha * 0.25f;	/* second order term */
 }
 
-PRIVATE void
-pll (FMD fm, COMPLEX sig)
+PRIVATE void pll (FMD fm, COMPLEX sig)
 {
 	COMPLEX z = Cmplx ((REAL) cos (fm->pll.phs), (IMAG) sin (fm->pll.phs));
 	REAL diff;
@@ -84,8 +82,7 @@ pll (FMD fm, COMPLEX sig)
 /* public */
 /*------------------------------------------------------------------------------*/
 
-void
-FMDemod (FMD fm)
+void FMDemod (FMD fm)
 {
 	int i;
 	static int count = 0;
@@ -197,13 +194,13 @@ FMDemod (FMD fm)
 
 	if (fm->deviation == FMDataDeviation) // ke9ns add
 	{
-		do_IIR_LPF_2P(fm->input_LPF1);
-		do_IIR_LPF_2P(fm->input_LPF2);
-		do_IIR_HPF_2P(fm->input_HPF1);
-		do_IIR_HPF_2P(fm->input_HPF2);
 
-		//do_IIR_LPF_2P(fm->input_LPF3);
-		//do_IIR_LPF_2P(fm->input_LPF4);
+		//fprintf(stderr, "FM DATA HERE" );
+		//	fflush(stderr);
+
+
+		do_IIR_LPF_2P(fm->input_LPF3); // this is to allow a larger RX window 
+		do_IIR_LPF_2P(fm->input_LPF4);
 		//do_IIR_HPF_2P(fm->input_HPF3);
 		//do_IIR_HPF_2P(fm->input_HPF4);
 	}
@@ -246,15 +243,15 @@ newFMD (REAL samprate,
 
 	// fm standard mode
 	fm->k_deemphasis = (REAL)(1.0f + samprate / (TWOPI * 250.0f));
-	fm->input_HPF1 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		//300 Hz high-pass butterworth
+	fm->input_HPF1 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		//300 Hz high-pass butterworth to allow CTCSS tones
 	fm->input_HPF2 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 1.848f);		//300 Hz high-pass butterworth
 	fm->input_LPF1 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 0.25f);	//3000 Hz low-pass butterworth
 	fm->input_LPF2 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 1.75f);	//3000 Hz low-pass butterworth
 
 	// ke9ns add fm data mode
-	fm->k_deemphasis1 = FMDataDe;  // (REAL)(1.0f + samprate / (TWOPI * 250.0f)); // turn off deemphasis
-	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 0.765f);
-	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 1.848f);	 // to allow CTSS tones	
+	fm->k_deemphasis1 = FMDataDe;  // (REAL)(1.0f + samprate / (TWOPI * 250.0f)); // turn off deemphasis FMDataDe = 1
+	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 0.765f); // FMDataLow = 0
+	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 1.848f);	 // 	
 	fm->input_LPF3 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 0.25f);
 	fm->input_LPF4 = new_IIR_LPF_2P(fm->obuf, samprate, FMDataLowHigh, 1.75f);
 
@@ -280,12 +277,12 @@ delFMD (FMD fm)
 		delCXB (fm->ibuf);
 		delCXB (fm->obuf);
 		// delete deemphasis and pinching filters
-		del_IIR_HPF_2P(fm->input_HPF1);
+		del_IIR_HPF_2P(fm->input_HPF1); // normal 300hz filter for CTCSS
 		del_IIR_HPF_2P(fm->input_HPF2);
 		del_IIR_LPF_2P(fm->input_LPF1);
 		del_IIR_LPF_2P(fm->input_LPF2);
 
-		del_IIR_HPF_2P(fm->input_HPF3); // ke9ns add
+		del_IIR_HPF_2P(fm->input_HPF3); // ke9ns add for D-FM mode
 		del_IIR_HPF_2P(fm->input_HPF4);
 		del_IIR_LPF_2P(fm->input_LPF3);
 		del_IIR_LPF_2P(fm->input_LPF4);

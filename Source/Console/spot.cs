@@ -260,8 +260,8 @@ namespace PowerSDR
         private Button SWLbutton2;
         public CheckBoxTS chkBoxNA;
         public CheckBoxTS chkBoxWrld;
-        private NumericUpDownTS udDisplayLat;
-        private NumericUpDownTS udDisplayLong;
+        public NumericUpDownTS udDisplayLat;
+        public NumericUpDownTS udDisplayLong;
         private Label label3;
         private Label label4;
         public CheckBoxTS chkBoxBeam;
@@ -623,6 +623,8 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.btnTrack, resources.GetString("btnTrack.ToolTip"));
             this.btnTrack.UseVisualStyleBackColor = false;
             this.btnTrack.Click += new System.EventHandler(this.btnTrack_Click);
+            this.btnTrack.MouseEnter += new System.EventHandler(this.btnTrack_MouseEnter);
+            this.btnTrack.MouseLeave += new System.EventHandler(this.btnTrack_MouseLeave);
             // 
             // nameBox
             // 
@@ -1482,6 +1484,7 @@ namespace PowerSDR
             this.Load += new System.EventHandler(this.SpotControl_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SpotControl_KeyDown);
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.SpotControl_Layout);
+            this.MouseEnter += new System.EventHandler(this.SpotControl_MouseEnter);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbPanPower)).EndInit();
@@ -1777,7 +1780,7 @@ namespace PowerSDR
             string file_name = " ";
             string file_name1 = " ";
 
-            int FLAG22 = 0;
+          //  int FLAG22 = 0;
 
 
             file_name = console.AppDataPath + "SWL.csv"; //  sked - b15.csv  
@@ -2135,7 +2138,7 @@ namespace PowerSDR
                                 //-------------------------------------------------------------------------------------
                                 //-------------------------------------------------------------------------------------
                                 // Ke9ns MERGE SWL and SWL2
-                                FLAG22 = 0; // reset for next line
+                                //FLAG22 = 0; // reset for next line
 
                                 if ((SWL2_Index1 > 0) && (SWL_Index1 > 2)) // only try and merge SWL2 into SWL if SWL2 exists
                                 {
@@ -2184,7 +2187,7 @@ namespace PowerSDR
 
                                                 //  Debug.WriteLine("INSERT 2 HERE= index=" + SWL_Index1 + " Freq=" + SWL_Freq[SWL_Index1] + " station name=" + SWL_Station[SWL_Index1]);
 
-                                                FLAG22 = 1; // flag that you inserted a new SWL2 line into SWL
+                                                //FLAG22 = 1; // flag that you inserted a new SWL2 line into SWL
 
                                                 if (SWL_Band[SWL_Index1] > SWL_Index) // MHZ of the current examined spot > the mhz your looking at?
                                                 {
@@ -2866,13 +2869,13 @@ namespace PowerSDR
                                 DX_Spotter[DX_Index1] = sb.ToString();
 
                             }
-                            catch (FormatException e)
+                            catch (FormatException)
                             {
                                 DX_Spotter[DX_Index1] = "NA";
                            
                             //    textBox1.Text = e.ToString();
                             }
-                            catch (ArgumentOutOfRangeException e)
+                            catch (ArgumentOutOfRangeException )
                             {
                            
                             //    textBox1.Text = e.ToString();
@@ -2956,12 +2959,12 @@ namespace PowerSDR
 
 
                             } // try to determine if in the cw portion or ssb portion of each band
-                            catch (FormatException e)
+                            catch (FormatException )
                             {
                                 DX_Freq[DX_Index1] = 0;
                                 DX_Mode[DX_Index1] = 0; // ssb mode
                             }
-                            catch (ArgumentOutOfRangeException e)
+                            catch (ArgumentOutOfRangeException)
                             {
                                 DX_Freq[DX_Index1] = 0;
                                 DX_Mode[DX_Index1] = 0; // ssb mode
@@ -6887,7 +6890,7 @@ namespace PowerSDR
                             // ISS oribital elements data set
                             //--------------------------------------------------------------------------------------------
 
-                            const double EarthRadEq = 6378.1370; // Declare Earth Equatorial Radius Measurements in km
+                          //  const double EarthRadEq = 6378.1370; // Declare Earth Equatorial Radius Measurements in km
 
                             // data set for ISS in DEG (must be converted to Radians before a SIN or COS or TAN is used)
                             // https://spaceflight.nasa.gov/realdata/elements/
@@ -6907,18 +6910,18 @@ namespace PowerSDR
                             //Checksum: 309
                             // double N = (125.1228 - 0.0529538083 * d);  // for MOON
 
-                            double bc = 0.00016717;     // Ballistic Coefficient derivative of mean motion (daily rate of change in the numbe of revs / day)
-                            double BSTAR = 0.00010270;   // drag Term 
-                            double mm = 15.54189435;    // how many orbits are completed each day
+                          //  double bc = 0.00016717;     // Ballistic Coefficient derivative of mean motion (daily rate of change in the numbe of revs / day)
+                          //  double BSTAR = 0.00010270;   // drag Term 
+                          //  double mm = 15.54189435;    // how many orbits are completed each day
 
-                            double N = (295.8085);     // DEG RA of the long ascending node defines the ascending and descending orbit locations with respect to the earths equatorial plane
-                            double i = 51.6369;         // DEG Inclination to the ecliptic deg  defines the orientation of the orbit with respect to the earths equator <
-                            double w = (94.0665);     // DEG Arg of Perigee (Perihelion) defines the low point,perigee of the orbit is with respect to the earths surface.
-                            double a = 1.06;            //  6777.943 kmeters earth is 6371km radius   Mean distance (Earth equitorial radii) Semi-major axis defines size of the orbit
-                            double e = 0.0006891;       //     Eccentricity defines the shape of the orbit
-                            double M = (266.1275);     // DEG v = true, mean anomaly defines where the satellite is within the orbit with respect to perigee (low point)
+                         //   double N = (295.8085);     // DEG RA of the long ascending node defines the ascending and descending orbit locations with respect to the earths equatorial plane
+                          //  double i = 51.6369;         // DEG Inclination to the ecliptic deg  defines the orientation of the orbit with respect to the earths equator <
+                          //  double w = (94.0665);     // DEG Arg of Perigee (Perihelion) defines the low point,perigee of the orbit is with respect to the earths surface.
+                         //   double a = 1.06;            //  6777.943 kmeters earth is 6371km radius   Mean distance (Earth equitorial radii) Semi-major axis defines size of the orbit
+                          //  double e = 0.0006891;       //     Eccentricity defines the shape of the orbit
+                           // double M = (266.1275);     // DEG v = true, mean anomaly defines where the satellite is within the orbit with respect to perigee (low point)
 
-                            double ecl = 23.43704;      // DEG Angle of the obliquity of the ecliptic plane (this is static)
+                          //  double ecl = 23.43704;      // DEG Angle of the obliquity of the ecliptic plane (this is static)
 
 
                             //--------------------------------------------------------------------------------------------------
@@ -8404,7 +8407,7 @@ namespace PowerSDR
             }
             catch (Exception ex)
             {
-                //   Debug.WriteLine("noaa fault=== " + ex);
+                  Debug.WriteLine("noaa fault=== " + ex);
                 textBox1.Text += "Failed to download Space Weather \r\n";
 
             }
@@ -9268,7 +9271,7 @@ namespace PowerSDR
                             if (tsTime1 >= BandSwitchDelay)    // (beacon6 > 25) // wait for band switching pulse to disapate
                             {
                                 int tempDB = 0;
-                                int tempDB1 = 0;
+                               // int tempDB1 = 0;
 
                                
                                 tempDB = console.ReadAvgStrength(0);    // get beacon CW signal strength, but this does not factor out the noise floor (i.e. S5 signal might just be the noise floor at S5)
@@ -9947,7 +9950,7 @@ namespace PowerSDR
 
                 console.RX1Filter = Filter.VAR1;
 
-                console.UpdateRX1Filters(70, 170);
+                console.UpdateRX1Filters(80, 140);
 
                 textBox1.Text += "Tone detection. Waiting for Start of Minute!\r\n";
 
@@ -9985,7 +9988,7 @@ namespace PowerSDR
       
 
             double BCDAdj = 3;                // % adjustment to what it determined to be the High signal
-            int BCDCount = 0;              // counter for the % adjustment
+          //  int BCDCount = 0;              // counter for the % adjustment
 
             int BCDSignalON1 = 0;         // BCD data steam high dbm signal found while running
             int BCDSignalOFF1 = 0;           // BCD data steam low dbm signal found while running
@@ -10006,7 +10009,7 @@ namespace PowerSDR
             int BCD1 = 0; // false BCD value detected as (0), true BCD value detected as (1)   [for this last second]
 
             bool WWVStart = false; // true = got start of minute frame
-            bool WWVStop = false; // true = got entire 1 minute frame
+           // bool WWVStop = false; // true = got entire 1 minute frame
             bool[] WWVFault = { false, false, false, false, false, false }; // true = bad data bit somewhere in WWV frames
             bool WWVPos = false;  // true = indicates you got a Position indicator frame at least 1 time before you got the HOLE (i.e. before WWVStart == true)
 
@@ -10039,7 +10042,7 @@ namespace PowerSDR
             BCDSignalOFF = 0;         // RESET BCD data steam high dbm signal found while running
             BCDSignalOFF1 = 0;         // RESET BCD data steam high dbm signal found while running
 
-            BCDCount = 0;
+            //BCDCount = 0;
             BCDAdj = 0;
             
             Debug.WriteLine("WWV>>2");
@@ -10082,6 +10085,8 @@ namespace PowerSDR
                     if (BCDSignal > BCDSignalON)
                     {
                         BCDSignalON = BCDSignal;  // get maximum magnitude
+                      //  Debug.WriteLine(">>>>>>WWVTONE: " + BCDSignal + " , " + BCDSignalON + " , " + BCDSignalON1 + " , " + checkBoxTone.Checked + " , " + WWVThreshold);
+
                     }
 
                 }
@@ -10091,7 +10096,7 @@ namespace PowerSDR
 
   
             BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
-            BCDCount = 0;
+            //BCDCount = 0;
 
             BCDAdj = 3.0;
 
@@ -10165,7 +10170,7 @@ namespace PowerSDR
                             indexS = 0;
                             WWVPos = false;
                             WWVStart = false;
-                            WWVStop = false;
+                            // WWVStop = false;
                             WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
                             WTime = false;
                         }
@@ -10189,7 +10194,7 @@ namespace PowerSDR
                     {
                         BCDSignal = console.WWVTone;  // get Magnitude value from audio.cs and Goertzel routine
 
-                      //  Debug.WriteLine("WWVTONE: " + ST2.ElapsedMilliseconds + " , "+BCDSignal);
+                    //  Debug.WriteLine("WWVTONE: " + BCDSignal + " , "+ BCDSignalON + " , " + BCDSignalON1 + " , " + checkBoxTone.Checked + " , " + WWVThreshold);
 
                       //  ST2.Restart();
 
@@ -10204,6 +10209,7 @@ namespace PowerSDR
                     if (BCDSignal > BCDSignalON1)
                     {
                         BCDSignalON1 = BCDSignal;  // get maximum magnitude
+                      
                     }
 
 
@@ -10213,7 +10219,7 @@ namespace PowerSDR
                         BCDSignalON = BCDSignalON1;
 
                         BCDSignalON1 = 0;         // RESET BCD data steam high dbm signal found while running
-                        BCDCount = 0;
+                       // BCDCount = 0;
 
                         ST.Restart();
 
@@ -10237,7 +10243,7 @@ namespace PowerSDR
                             indexS = 0;
                             WWVPos = false;
                             WWVStart = false;
-                            WWVStop = false;
+                            //WWVStop = false;
                             WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
                             WTime = false;
                         }
@@ -10249,7 +10255,7 @@ namespace PowerSDR
                         WWVCF = 0;
                     }
 
-                    BCDAdj = 3.0;
+                    BCDAdj = 3.0; // was 3
                     WWVThreshold = (int)((double)BCDSignalON / BCDAdj);          // 33% of full scale adjust the threshold based on the last seconds ON/OFF dBm values
 
                 } // WWVPitch == true (pitch detection)
@@ -10347,7 +10353,7 @@ namespace PowerSDR
                             BCDAdj = 3;
                             WWVPos = false;
                             WWVStart = false;
-                            WWVStop = false;
+                           // WWVStop = false;
                             WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
                             WWVNewTime.Stop();
 
@@ -10371,7 +10377,7 @@ namespace PowerSDR
                             Debug.WriteLine("UTC Min: " + newMinutes);
                             Debug.WriteLine("UTC Day of year: " + newDay);
 
-                            WWVStop = true;
+                            //WWVStop = true;
                             WTime = false;  // DONE
                             WWVPos = false;
 
@@ -10404,7 +10410,7 @@ namespace PowerSDR
                                 WWVCF = 0;
                                 WWVPos = false;
                                 WWVStart = false;
-                                WWVStop = false;
+                                //WWVStop = false;
                                 WWVFault[0] = WWVFault[1] = WWVFault[2] = WWVFault[3] = WWVFault[4] = WWVFault[5] = false;
                                 goto EXITOUT;
                             }
@@ -10831,6 +10837,9 @@ namespace PowerSDR
    
             normalizedfreq = freq / SIGNAL_SAMPLE_RATE;
             Coeff = 2 * Math.Cos(2 * Math.PI * normalizedfreq);
+
+            Debug.WriteLine("COEFF= " + Coeff + ", freq= " + freq);
+
         }
 
         private void checkBoxTone_CheckedChanged(object sender, EventArgs e)
@@ -11420,7 +11429,7 @@ RT1:
                                     VOA_Index++;
 
                                 }
-                                catch(Exception a)
+                                catch(Exception )
                                 {
                                     Debug.WriteLine("fault> "+ result.ToString());
 
@@ -12363,7 +12372,7 @@ RT1:
 
         //=========================================
         // for F1 help sceen
-        private void SpotControl_KeyDown(object sender, KeyEventArgs e)
+        private void SpotControl_KeyDown(object sender, KeyEventArgs e) // ke9ns keypreview must be TRUE and use MouseIsOverControl(Control c)
         {
             Debug.WriteLine("F1 key0");
 
@@ -12406,11 +12415,25 @@ RT1:
         } // SpotControl_KeyDown
 
 
-        public bool MouseIsOverControl(Control c)
+        public bool MouseIsOverControl(Control c) // ke9ns keypreview must be TRUE and use MouseIsOverControl(Control c)
         {
             return c.ClientRectangle.Contains(c.PointToClient(Control.MousePosition));
         }
 
+        private void btnTrack_MouseEnter(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void SpotControl_MouseEnter(object sender, EventArgs e)
+        {
+            Console.HELPMAP = true;
+        }
+
+        private void btnTrack_MouseLeave(object sender, EventArgs e)
+        {
+            Console.HELPMAP = false;
+        }
     } // Spotcontrol
 
     //============================================================

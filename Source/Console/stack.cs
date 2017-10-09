@@ -400,7 +400,7 @@ namespace PowerSDR
                     console.textBox1.SelectionLength = BSLength;                    // length of each bandstack line
 
 
-                    //   Debug.WriteLine("Value "+ value + " , " + BSLength);
+                       Debug.WriteLine("Value "+ value + " , " + BSLength);
 
                 }
                 else
@@ -911,6 +911,8 @@ namespace PowerSDR
                 {
                     if (freq1[ii] == Math.Round(console.VFOAFreq, 6))
                     {
+                        Debug.WriteLine("BANDSTACK DUP FOUND");
+
                         dupfound = true;
                         break;
                     }
@@ -920,11 +922,14 @@ namespace PowerSDR
                 {
                     DB.AddBandStack(band_list[nnn], console.RX1DSPMode.ToString(), console.RX1Filter.ToString(), Math.Round(console.VFOAFreq, 6)); // take current band, DSP mode, filter, and freq
 
+                    Debug.WriteLine("BANDSTACK add: " + console.RX1DSPMode.ToString());
+
                     console.BandStackUpdate();
                     bandstackupdate();
-                   
 
-                  xxx =  console.band_stacks[nnn] - 1; // go to end of list and highlight it
+                    Debug.WriteLine("BANDSTACK done");
+
+                    xxx =  console.band_stacks[nnn] - 1; // go to end of list and highlight it
 
                     textBox1.SelectionStart = (xxx * BSLength);
                     textBox1.SelectionLength = BSLength;

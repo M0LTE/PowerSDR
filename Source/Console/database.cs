@@ -140,9 +140,9 @@ namespace PowerSDR
                                 4.996001, 4.997999, "61M Short Wave",			false,
                                 4.998001, 4.999999, "61M Short Wave",			false,
                                 5.000001, 5.060000, "61M Short Wave",			false,
-								5.900000, 6.999999, "49M Short Wave",			false,
-								7.300000, 7.350000, "41M Short Wave",			false,
-								7.360000, 9.900000, "31M Short Wave",			false,
+								5.450000, 6.999999, "49M Short Wave",			false,
+								7.300000, 8.999999, "41M Short Wave",			false, // ke9ns mod
+								9.000000, 9.900000, "31M Short Wave",			false, // ke9ns mod
 								11.600000, 12.100000, "25M Short Wave",			false,
 								13.570000, 13.870000, "22M Short Wave",			false,
 								15.100000, 15.800000, "19M Short Wave",			false,
@@ -295,8 +295,8 @@ namespace PowerSDR
                                 4.998001, 4.999999, "61M Short Wave",           false,
                                 5.000001, 5.060000, "61M Short Wave",           false,
                                 5.900000, 6.999999, "49M Short Wave",           false,
-                                7.300000, 7.350000, "41M Short Wave",           false,
-                                7.360000, 9.900000, "31M Short Wave",           false,
+                                7.300000, 8.999999, "41M Short Wave",           false, // ke9ns mod
+                                9.000000, 9.900000, "31M Short Wave",           false, // ke9ns mod
                                 11.600000, 12.100000, "25M Short Wave",         false,
                                 13.570000, 13.870000, "22M Short Wave",         false,
                                 15.100000, 15.800000, "19M Short Wave",         false,
@@ -501,7 +501,7 @@ namespace PowerSDR
 
                                 "16M", "SAM", "F4", 17.500000,
                                 "16M", "SAM", "F4", 17.600000,
-                                "16M", "SAM", "F4", 17.700000,
+                                "16M", "SAM", "F4", 17.700000, 
 
                                 "14M", "SAM", "F4", 18.900000,
                                 "14M", "SAM", "F4", 19.000000,
@@ -1729,18 +1729,37 @@ namespace PowerSDR
             t.Columns.Add("Name", typeof(string));
             t.Columns.Add("TX", typeof(bool));
 
+
+            // FT8 1.84, 3.573, 5.357, 7.074, 10.136, 14.074, 18.1, 21.074, 24.915, 28.074, 50.274? or 50.313
+
             object[] data = {
 								1.800000, 1.809999, "160M CW/Digital Modes",	true,
 								1.810000, 1.810000, "160M CW QRP",				true,
-								1.810001, 1.842999, "160M CW",					true,
-								1.843000, 1.909999, "160M SSB/SSTV/Wide Band",	true,
+								1.810001, 1.837999, "160M CW",					true, // was 1.842999,
+
+                                1.838000, 1.838000, "160M PSK/JT65 Dial",       true, // ke9ns add
+                                1.838001, 1.839999, "160M PSK/JT65 USB",       true, // ke9ns add
+
+                                1.840000, 1.840000, "160M FT8 Dial",            true, // ke9ns add  1.84
+                                1.840001, 1.842500, "160M FT8 USB",            true, // ke9ns add
+                                1.842501, 1.842999, "160M FT8 USB",            true,
+
+                                1.843000, 1.909999, "160M SSB/SSTV/Wide Band",	true,
 								1.910000, 1.910000, "160M SSB QRP",				true,
 								1.910001, 1.994999, "160M SSB/SSTV/Wide Band",	true,
 								1.995000, 1.999999, "160M Experimental",		true,
 
+
 								3.500000, 3.524999, "80M Extra CW",				true,
 								3.525000, 3.579999, "80M CW",					true,
-								3.580000, 3.589999, "80M RTTY",					true,
+
+                                3.573000, 3.573000, "80M FT8 Dial",            true, // ke9ns add  3.573
+                                3.573001, 3.575500, "80M FT8 USB",            true, // ke9ns add
+
+                                3.576000, 3.576000, "80M JT65 Dial",            true, // ke9ns add
+                                3.576001, 3.578999, "80M JT65 USB",            true, // ke9ns add
+                               
+								3.579000, 3.589999, "80M PSK",					true,
 								3.590000, 3.590000, "80M RTTY DX",				true,
 								3.590001, 3.599999, "80M RTTY",					true,
 								3.600000, 3.699999, "75M Extra SSB",			true,
@@ -1768,8 +1787,17 @@ namespace PowerSDR
 								
 								7.000000, 7.024999, "40M Extra CW",				true, // ke9ns mod
 								7.025000, 7.039999, "40M CW",					true,
-								7.040000, 7.040000, "40M RTTY DX",				true,
-								7.040001, 7.099999, "40M RTTY",					true,
+
+								7.040000, 7.042999, "40M PSK",       			true,
+                                7.043000, 7.073999, "40M RTTY",                 true,
+
+                                7.074000, 7.074000, "40M FT8 Dial",            true, // ke9ns add  7.074
+                                7.074001, 7.075999, "40M FT8 USB",             true, // ke9ns add
+
+                                7.076000, 7.076000, "40M JT65 Dial",            true, // ke9ns add
+                                7.076001, 7.078999, "40M JT65 USB",            true, // ke9ns add
+                              
+								7.079000, 7.099999, "40M RTTY",					true,
 								7.100000, 7.124999, "40M CW",					true,
 								7.125000, 7.170999, "40M Ext/Adv SSB",			true,
 								7.171000, 7.171000, "40M SSTV",					true,
@@ -1777,15 +1805,30 @@ namespace PowerSDR
 								7.175000, 7.289999, "40M SSB",					true,
 								7.290000, 7.290000, "40M AM Calling Frequency", true,
 								7.290001, 7.299999, "40M SSB",					true,
-								
+
+							
 								10.100000, 10.129999, "30M CW",					true,
 								10.130000, 10.139999, "30M RTTY",				true,
-								10.140000, 10.149999, "30M Packet",				true,
 
-								14.000000, 14.024999, "20M Extra CW",			true,
+                                10.136000, 10.136000, "30M FT8 Dial",            true, // ke9ns add
+                                10.136001, 10.137999, "30M PSK/FT8 USB",         true, // ke9ns add
+                                10.138000, 10.138000, "30M JT65 Dial",            true, // ke9ns add
+                                10.138001, 10.138999, "30M JT65 USB",            true, // ke9ns add
+                                10.142000, 10.139999, "30M RTTY",               true,
+
+                                14.000000, 14.024999, "20M Extra CW",			true,
 								14.025000, 14.069999, "20M CW",					true,
-								14.070000, 14.094999, "20M RTTY",				true,
-								14.095000, 14.099499, "20M Packet",				true,
+								14.070000, 14.094999, "20M PSK/RTTY",			true,
+
+                                14.074000, 14.074000, "20M FT8 Dial",            true, // ke9ns add
+                                14.074001, 14.075999, "20M FT8 USB",             true, // ke9ns add
+
+                                14.076000, 14.076000, "20M JT65 Dial",            true, // ke9ns add
+                                14.076001, 14.078999, "20M JT65 USB",            true, // ke9ns add
+
+                                14.079000, 14.094999, "20M RTTY",                true,
+
+                                14.095000, 14.099499, "20M Packet",				true,
 								14.099500, 14.099999, "20M CW",					true,
 								14.100000, 14.100000, "20M NCDXF Beacons",	    true,
 								14.100001, 14.100499, "20M CW",					true,
@@ -1799,16 +1842,32 @@ namespace PowerSDR
 								14.286000, 14.286000, "20M AM Calling Frequency", true,
 								14.286001, 14.349999, "20M SSB",				true,
 								
+	
 								18.068000, 18.099999, "17M CW",					true,
-								18.100000, 18.104999, "17M RTTY",				true,
-								18.105000, 18.109999, "17M Packet",				true,
+								18.100000, 18.101999, "17M RTTY",				true,
+
+                                18.100000, 18.100000, "17M FT8 Dial",            true, // ke9ns add
+                                18.100001, 18.102999, "17M FT8 USB",             true, // ke9ns add
+
+                                18.102000, 18.102000, "17M JT65 Dial",            true, // ke9ns add
+                                18.102001, 18.104999, "17M JT65 USB",            true, // ke9ns add
+                              
+                                18.108000, 18.109999, "17M PSK",				true,
 								18.110000, 18.110000, "17M NCDXF Beacons",	    true,
 								18.110001, 18.167999, "17M SSB",				true,
 								
+
 								21.000000, 21.024999, "15M Extra CW",			true,
 								21.025000, 21.069999, "15M CW",					true,
-								21.070000, 21.099999, "15M RTTY",				true,
-								21.100000, 21.109999, "15M Packet",				true,
+								21.070000, 21.073999, "15M RTTY",				true,
+
+                                21.074000, 21.074000, "15M FT8 Dial",            true, // ke9ns add 
+                                21.074001, 21.075999, "15M FT8 USB",             true, // ke9ns add
+                                21.076000, 21.076000, "15M JT65 Dial",            true, // ke9ns add
+                                21.076001, 21.078999, "15M JT65 USB",            true, // ke9ns add
+                                21.079000, 21.099999, "15M RTTY",               true,
+
+                                21.100000, 21.109999, "15M Packet",				true,
 								21.110000, 21.149999, "15M CW",					true,
 								21.150000, 21.150000, "15M NCDXF Beacons",	    true,
 								21.150001, 21.199999, "15M CW",					true,
@@ -1817,15 +1876,30 @@ namespace PowerSDR
 								21.275000, 21.339999, "15M SSB",				true,
 								21.340000, 21.340000, "15M SSTV",				true,
 								21.340001, 21.449999, "15M SSB",				true,
-								
-								24.890000, 24.919999, "12M CW",					true,
-								24.920000, 24.924999, "12M RTTY",				true,
+							   
+								24.890000, 24.914999, "12M CW",					true, 
+
+
+                                24.915000, 21.915000, "12M FT8 Dial",            true, // ke9ns add 
+                                24.915001, 21.917999, "12M FT8 USB",             true, // ke9ns add
+                                24.918000, 21.918000, "12M JT65 Dial",            true, // ke9ns add 
+                                24.918001, 21.919999, "12M JT65 USB",             true, // ke9ns add
+
+
+                                24.920000, 24.924999, "12M RTTY",				true,
 								24.925000, 24.929999, "12M Packet",				true,
 								24.930000, 24.930000, "12M NCDXF Beacons",	    true,
 								24.930001, 24.989999, "12M SSB",				true,
 								
-								28.000000, 28.069999, "10M CW",					true,
-								28.070000, 28.149999, "10M RTTY",				true,
+								28.000000, 28.073999, "10M CW",					true,
+
+                                28.074000, 28.074000, "10M FT8 Dial",            true, // ke9ns add 
+                                28.074001, 28.075999, "10M FT8 USB",             true, // ke9ns add
+                                28.076000, 28.076000, "10M JT65 Dial",            true, // ke9ns add 
+                                28.076001, 28.078999, "10M JT65 USB",             true, // ke9ns add
+
+
+								28.079000, 28.149999, "10M RTTY",				true,
 								28.150000, 28.199999, "10M CW",					true,
 								28.200000, 28.200000, "10M NCDXF Beacons",	    true,
 								28.200001, 28.299999, "10M Beacons",			true,
@@ -1846,9 +1920,21 @@ namespace PowerSDR
 								50.060000, 50.079999, "6M Beacon Sub-Band",		true,
 								50.080000, 50.099999, "6M CW",					true,
 								50.100000, 50.124999, "6M DX Window",			true,
-								50.125000, 50.125000, "6M Calling Frequency",	true,
-								50.125001, 50.299999, "6M SSB",					true,
-								50.300000, 50.599999, "6M All Modes",			true,
+
+								50.125000, 50.125000, "6M Calling Frequency",	true, // calling freq
+
+								50.125001, 50.273999, "6M SSB",					true,
+
+                                50.274000, 50.274000, "6M FT8 Dial",            true, // ke9ns add ?
+                                50.274001, 50.275999, "6M FT8 USB",             true, // ke9ns add
+
+                                50.276000, 50.276000, "6M JT65 Dial",            true, // ke9ns add 
+                                50.276001, 50.278999, "6M JT65 USB",             true, // ke9ns add
+
+                                50.313000, 50.313000, "6M FT8 Dial",            true, // ke9ns add   ?
+                                50.313001, 50.315999, "6M FT8 USB",             true, // ke9ns add
+
+                                50.316000, 50.599999, "6M All Modes",			true,
 								50.600000, 50.619999, "6M Non Voice",			true,
 								50.620000, 50.620000, "6M Digital Packet",      true,
 								50.620001, 50.799999, "6M Non Voice",			true,
@@ -3247,47 +3333,72 @@ namespace PowerSDR
 			t.Columns.Add("Filter", typeof(string));
 			t.Columns.Add("Freq", typeof(double));
 
-			object[] data = {
+
+           
+            // FT8 1.84, 3.573, 5.357, 7.074, 10.136, 14.074, 18.1, 21.074, 24.915, 28.074, 50.274? or 50.313
+
+            object[] data = {
 								"160M", "CWL", "F5", 1.810000,
 								"160M", "CWU", "F1", 1.835000,
+                                "160M", "DIGU","F1", 1.840000, // FT8 3k
 								"160M", "LSB", "F6", 1.845000,
+
 								"80M", "CWL", "F1", 3.501000,
+                                "80M", "DIGU","F1", 3.573000, // FT8 3k
 								"80M", "LSB", "F6", 3.751000,
 								"80M", "LSB", "F6", 3.850000,
 
                                 "60M", "USB", "F6", 5.330500,
 								"60M", "USB", "F6", 5.346500,
-								"60M", "USB", "F6", 5.357000,
+								"60M", "USB", "F6", 5.357000, // FT8/JT65
 								"60M", "USB", "F6", 5.371500,
 								"60M", "USB", "F6", 5.403500,
 
                                 "40M", "CWL", "F1", 7.001000,
-								"40M", "LSB", "F6", 7.152000,
+                                "40M", "DIGU", "F1",7.074000, // FT8 3k
+                                "40M", "LSB", "F6", 7.152000,
 								"40M", "LSB", "F6", 7.255000,
+
 								"30M", "CWU", "F1", 10.120000,
 								"30M", "CWU", "F1", 10.130000,
+                                "30M", "DIGU", "F1",10.136000, // FT8 3k
 								"30M", "CWU", "F5", 10.140000,
+
 								"20M", "CWU", "F1", 14.010000,
+                                "20M", "DIGU", "F1",14.074000, // FT8 3k
 								"20M", "USB", "F6", 14.230000,
 								"20M", "USB", "F6", 14.336000,
+
 								"17M", "CWU", "F1", 18.090000,
+                                "17M", "DIGU", "F1",18.100000, // FT8 3k
 								"17M", "USB", "F6", 18.125000,
 								"17M", "USB", "F6", 18.140000,
+
 								"15M", "CWU", "F1", 21.001000,
+                                "15M", "DIGU", "F1",21.074000, // FT8 3k
 								"15M", "USB", "F6", 21.255000,
 								"15M", "USB", "F6", 21.300000,
+
 								"12M", "CWU", "F1", 24.895000,
 								"12M", "USB", "F6", 24.900000,
-								"12M", "USB", "F6", 24.910000,
-								"10M", "CWU", "F1", 28.010000,
+							    "12M", "DIGU", "F1",24.915000, // FT8 3k ?
+                                "12M", "USB", "F6", 24.970000,
+
+                                "10M", "CWU", "F1", 28.010000,
+                                "10M", "DIGU", "F1",28.074000, // FT8 3k
 								"10M", "USB", "F6", 28.300000,
 								"10M", "USB", "F6", 28.400000,
+
 								"6M", "CWU", "F1", 50.010000,
-								"6M", "USB", "F6", 50.125000,
-								"6M", "USB", "F6", 50.200000,
+								"6M", "USB", "F6", 50.125000, // calling freq
+                                "6M", "USB", "F6", 50.200000,
+                                "6M", "DIGU", "F1",50.274000, // FT8 3k ? JT65?
+								"6M", "DIGU", "F1",50.313000, // FT8 3k ?
+
 								"2M", "CWU", "F1", 144.010000,
 								"2M", "USB", "F6", 144.200000,
 								"2M", "USB", "F6", 144.210000,
+
 								"WWV", "SAM", "F5", 2.500000,
 								"WWV", "SAM", "F5", 5.000000,
 								"WWV", "SAM", "F5", 10.000000,
@@ -3297,6 +3408,7 @@ namespace PowerSDR
                                 "WWV", "USB", "F6", 3.330000,
                                 "WWV", "USB", "F6", 7.850000,
                                 "WWV", "USB", "F6", 14.670000,
+
 								"GEN", "SAM", "F5", 13.845000,
 								"GEN", "SAM", "F5", 9.550000,
                                 "GEN", "SAM", "F5", 5.975000,
@@ -7137,13 +7249,15 @@ namespace PowerSDR
                 } 
             }
             return database_exists;
-		}
 
-		public static void Update()
+		} // init()
+
+		public static void Update()  // ke9ns write database file
 		{
             try
             {
-                ds.WriteXml(file_name, XmlWriteMode.WriteSchema);
+                
+                ds.WriteXml(file_name, XmlWriteMode.WriteSchema); // ds.WriteXml(file_name, XmlWriteMode.WriteSchema);
             }
             catch (Exception ex)
             {                
@@ -7152,9 +7266,10 @@ namespace PowerSDR
                     "ERROR: Database Write Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-		}
 
-		public static void Exit()
+        } // Update()
+
+        public static void Exit()
 		{
 			Update();
 			ds = null;

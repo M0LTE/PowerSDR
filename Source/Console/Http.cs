@@ -47,6 +47,9 @@ using TDxInput;
 using System.Text.RegularExpressions;
 using System.Drawing.Imaging;
 using Microsoft.JScript;
+using System.Net.Http;
+using System.Threading.Tasks;
+
 //using System.Runtime.Remoting.Contexts;
 
 namespace PowerSDR
@@ -73,7 +76,84 @@ namespace PowerSDR
 
         }
 
-     
+
+        //=========================================================
+        public string Weather()
+        {
+            var wthr = WeatherA().Result;
+            return wthr.ToString();
+        }
+
+
+        //=========================================================================================
+        // ke9ns  ASYNC 
+        public async Task<string> WeatherA()
+        {
+
+            Debug.WriteLine("GET Real weather data=========");
+
+           
+            string content1 = " ";
+          
+            if (console.SpotForm != null)
+            {
+                if (((int)console.SpotForm.udDisplayLat.Value > 29) && ((int)console.SpotForm.udDisplayLat.Value < 49))
+                {
+                    if (((int)console.SpotForm.udDisplayLong.Value > -120) && ((int)console.SpotForm.udDisplayLong.Value < -73))
+                    {
+                        Debug.WriteLine("GOOD LAT AND LONG weather data=========");
+
+                        string latitude = console.SpotForm.udDisplayLat.Value.ToString("##0.00").PadLeft(5);   // -90.00
+                        string longitude = console.SpotForm.udDisplayLong.Value.ToString("###0.00").PadLeft(6);  // -180.00 
+
+                        var url = new Uri("http://forecast.weather.gov/MapClick.php?lat=" + latitude + "&lon=" + longitude + "&FcstType=dwml");
+
+                       
+                            HttpClient client = new HttpClient();
+
+                        try
+                        {
+                            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Stackoverflow/1.0");
+                        }
+                        catch(Exception g)
+                        {
+                            Debug.WriteLine("http client user agent fail " + g);
+                        }
+
+                            Debug.WriteLine("GOOD LAT AND LONG weather data1=========" + url);
+                       
+                            try
+                            {
+                                var xml = await client.GetStringAsync(url);
+                                content1 = xml.ToString();
+                                client.Dispose();
+                                return content1;
+
+                            }
+                            catch (Exception g)
+                            {
+                                content1 = "Error " + g.ToString();
+                                client.Dispose();
+                                return content1;
+                            }
+
+                    } // SpotForm.udDisplayLong.Value
+                    else Debug.WriteLine("LAT not good=========");
+                   
+
+                } //   if (((int)SpotForm.udDisplayLong.Value > -120) && ((int)SpotForm.udDisplayLong.Value < -73))
+                else Debug.WriteLine("LONG not good=========");
+                
+
+            } // SpotForm.udDisplayLat.Value > 29)  && ((int)SpotForm.udDisplayLat.Value < 49 ))
+            else Debug.WriteLine("Spotform not open=========");
+
+            console.LOCALWEATHER = false;
+            Console.noaaON = 1;
+          
+            return content1;
+        } // aync weather data
+
 
         //=========================================================================================
         //=========================================================================================

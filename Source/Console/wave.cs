@@ -1398,13 +1398,42 @@ namespace PowerSDR
                 }
 
 
+
+
             }
             else
             {
                 file_name = console.AppDataPath + "SDRQuickAudio.wav";
             }
-        
-           
+
+            if (Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
+            {
+
+                if (File.Exists(file_name))
+                {
+
+                }
+                else
+                {
+                    MessageBox.Show("No wav file found in folder: " + file_name + "\n" +
+                           "Open Wave menu and Click the  button to record your Voice or CW,\n" +
+                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
+                           "Then click  button again, to end the recording", " audio File");
+                    return;
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("No wav file found in folder: " + file_name + "\n" +
+                           "Open Wave menu and Click the  button to record your Voice or CW,\n" +
+                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
+                           "Then click  button again, to end the recording", " audio File");
+
+                return;
+            }
+
+
             if (chkQuickPlay.Checked)
 			{
               

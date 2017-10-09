@@ -92,8 +92,8 @@ Bridgewater, NJ 08807
 #define ONE_OVER_TWOPI  0.159154943091895335       //(0.159154943091895) ke9ns mod
 #endif
 
-#define  FMDataDeviation  7000     // ke9ns add
-#define  FMDataLowHigh 10000      // ke9ns add low = -10000 , high = 10000
+#define  FMDataDeviation  9000     // ke9ns add
+#define  FMDataLowHigh 11000      // ke9ns add low = -10000 , high = 10000
 #define  FMDataLow 0      // ke9ns add 
 #define  FMDataPre 1.5 // ke9ns pre-emphasis
 #define  FMDataDe 1 //

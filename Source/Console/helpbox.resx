@@ -183,6 +183,25 @@ Optionally you can Display Country, or Call sign to DX Spots found in your Pan o
 Shift key to see LAT/LONG grid numbers
 </value>
   </data>
+  <data name="SWRScanner.Text" xml:space="preserve">
+    <value>F1 help: SWR Scanner / Plotter / Logger (For Flex-5000 and Flex-3000 only):
+
+Set Low Freq (no lower than the low end of the band)
+Set High Freq (no higher than the high end of the band)
+Set Step rate: 1.0, 2.0,3.0, or 4.0 khz 
+Set Rate (250 msec or higher)
+
+Click SWR Scan (TX)
+TUNE is automatically set to 10 and the Radio is Transmits using TUNE
+and records the SWR.
+
+Check  Display SWR Plot
+SWR logged data will appear in the Panadapter with a number 
+and a Line representing the SWR in color and proportional length
+(short green = 1:1 to 2:0) (med Yellow = 2.1:1 to 2.9)(long Red = 3.0:1 to 50:1)
+
+All SWR Data is saved by ANT (Flex-5000) &amp; Band in a file called ke9ns_SWR.dat</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

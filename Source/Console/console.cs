@@ -139,6 +139,8 @@ using System.Management;
 using System.Threading;
 using System.Text;
 using System.Media; // ke9ns for system Beep
+using System.Net.Http; // ke9ns add
+using System.Xml.Linq;
 
 //System.Windows.Media.Effects; // ke9ns add
 
@@ -160,8 +162,9 @@ using PortTalk;
 using System.Windows.Media.Imaging;
 
 using FlexCW;
+using System.Linq;
 
-#if(!NO_TNF)
+#if (!NO_TNF)
 using Flex.TNF;
 #endif
 
@@ -218,7 +221,7 @@ namespace PowerSDR
 		RX1TAP,
 		SIG_GEN,
         VHF,
-        UHF,        
+        UHF,  // 9      
 	}
 
     public enum HIDAnt
@@ -561,7 +564,7 @@ namespace PowerSDR
 		B10M,
 		B6M,
 		B2M,
-		WWV,
+		WWV, // 13
 
         VHF0,
 		VHF1,
@@ -591,7 +594,7 @@ namespace PowerSDR
         B16M,
         B14M,
         B13M,
-        B11M,
+        B11M, // 41
 
         LAST,
 	}
@@ -766,7 +769,7 @@ namespace PowerSDR
         private ToolStripMenuItem trackMenuItem1;
         public Button buttonCQ;
         public Button buttonCall;
-        private PrettyTrackBar ptbTune;
+        public PrettyTrackBar ptbTune;
         private LabelTS lblTUNE;
         private LabelTS lblMON;
         public PrettyTrackBar ptbMON;
@@ -783,6 +786,14 @@ namespace PowerSDR
         private ComboBoxTS comboCWTXProfile;
         private Label label6;
         private PictureBox picRX3Meter;
+        public PanelTS panelTS1;
+        public RichTextBox richTextBox1;
+        private RichTextBox richTextBox2;
+        private RichTextBox richTextBox3;
+        private RichTextBox richTextBox5;
+        private RichTextBox richTextBox6;
+        private RichTextBox richTextBox7;
+        private RichTextBox richTextBox8;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -1134,7 +1145,7 @@ namespace PowerSDR
 		public float rx2_filter_size_cal_offset = 3;		// filter offset based on DSP filter size
 
 		private bool meter_data_ready;                      // used to synchronize the new DSP data with the multimeter
-        private bool meter_data_ready2;                      // ke9ns add for using rx2 for extra tx meter
+      //  private bool meter_data_ready2;                      // ke9ns add for using rx2 for extra tx meter
 
          public float new_meter_data;                       // new data for the multimeter from the DSP
         private float new_meter_data2;                       // ke9ns add for using RX2 for extra TX meter
@@ -2786,24 +2797,37 @@ namespace PowerSDR
 
       
 //=============================================================================
+// ke9ns console_closing(), then Dispose(), then ExitConsole(), then back to Displose() to finish
 
         public bool reset_db = false;
 		protected override void Dispose( bool disposing )
 		{
-
+            this.Text += ", dispose";
+            Debug.WriteLine("((((((((ENTER DISPOSE ROUTINE))))))))))))))))");
 
             if (KBON == 1)
             {
                 powerMate.Shutdown(); // ke9ns add 
             }
-          
+
 
 #if (NO_DJ)
             //mod DH1TW
-            if (DJConsoleObj != null) DJConsoleObj.Close();
+            try
+            {
+                if (DJConsoleObj != null) DJConsoleObj.Close(); //DJConsoleObj.Close();
+
+            }
+            catch(Exception)
+            {
+
+            }
 #endif
             USB.Exit();
-			if( disposing )
+            Debug.WriteLine("((((((((DISPOSE 1))))))))))))))))");
+
+            
+            if ( disposing )
 			{
 				if (components != null) 
 				{
@@ -2813,6 +2837,8 @@ namespace PowerSDR
 			base.Dispose( disposing );
 
             ExitConsole();
+
+            this.Text += ", Finish exit";
 
             if (reset_db)
 			{
@@ -2826,7 +2852,10 @@ namespace PowerSDR
                 File.Copy(db_file_name, desktop + "\\PowerSDR_" + file + "_" + datetime + ".xml");
                 File.Delete(db_file_name);
 			}
+
+
             Debug.WriteLine("((((((((TERMINATE PROGRM 3))))))))))))))))");
+            this.Text += ", FINALFINAL";
 
             System.Windows.Forms.Application.Exit();
 
@@ -2847,6 +2876,25 @@ namespace PowerSDR
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox5 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox6 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox7 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox8 = new System.Windows.Forms.RichTextBox();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
+            this.regBox1 = new System.Windows.Forms.TextBoxTS();
+            this.regBox = new System.Windows.Forms.TextBoxTS();
+            this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
+            this.chkFullDuplex = new System.Windows.Forms.CheckBoxTS();
+            this.btnTuneStepChangeLarger = new System.Windows.Forms.ButtonTS();
+            this.btnTuneStepChangeSmaller = new System.Windows.Forms.ButtonTS();
+            this.chkVFOLock = new System.Windows.Forms.CheckBoxTS();
+            this.txtWheelTune = new System.Windows.Forms.TextBoxTS();
+            this.btnMemoryQuickRestore = new System.Windows.Forms.ButtonTS();
+            this.btnMemoryQuickSave = new System.Windows.Forms.ButtonTS();
+            this.txtMemoryQuick = new System.Windows.Forms.TextBoxTS();
             this.radBandGEN = new System.Windows.Forms.RadioButtonTS();
             this.radBandWWV = new System.Windows.Forms.RadioButtonTS();
             this.radBand2 = new System.Windows.Forms.RadioButtonTS();
@@ -2970,19 +3018,10 @@ namespace PowerSDR
             this.radModeDIGL = new System.Windows.Forms.RadioButtonTS();
             this.radModeSPEC = new System.Windows.Forms.RadioButtonTS();
             this.comboRX2Band = new System.Windows.Forms.ComboBoxTS();
-            this.txtWheelTune = new System.Windows.Forms.TextBoxTS();
             this.chkPower = new System.Windows.Forms.CheckBoxTS();
             this.comboMeterTXMode = new System.Windows.Forms.ComboBoxTS();
             this.comboMeterRXMode = new System.Windows.Forms.ComboBoxTS();
             this.chkSquelch = new System.Windows.Forms.CheckBoxTS();
-            this.btnMemoryQuickRestore = new System.Windows.Forms.ButtonTS();
-            this.btnMemoryQuickSave = new System.Windows.Forms.ButtonTS();
-            this.txtMemoryQuick = new System.Windows.Forms.TextBoxTS();
-            this.chkVFOLock = new System.Windows.Forms.CheckBoxTS();
-            this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
-            this.chkFullDuplex = new System.Windows.Forms.CheckBoxTS();
-            this.btnTuneStepChangeLarger = new System.Windows.Forms.ButtonTS();
-            this.btnTuneStepChangeSmaller = new System.Windows.Forms.ButtonTS();
             this.chkBCI = new System.Windows.Forms.CheckBoxTS();
             this.chkSplitDisplay = new System.Windows.Forms.CheckBoxTS();
             this.comboDisplayModeTop = new System.Windows.Forms.ComboBoxTS();
@@ -3029,8 +3068,6 @@ namespace PowerSDR
             this.radBandGN2 = new System.Windows.Forms.RadioButtonTS();
             this.radBandGN1 = new System.Windows.Forms.RadioButtonTS();
             this.radBandGN0 = new System.Windows.Forms.RadioButtonTS();
-            this.regBox1 = new System.Windows.Forms.TextBoxTS();
-            this.regBox = new System.Windows.Forms.TextBoxTS();
             this.lblAntRX2 = new System.Windows.Forms.LabelTS();
             this.lblAntRX1 = new System.Windows.Forms.LabelTS();
             this.lblAntTX = new System.Windows.Forms.LabelTS();
@@ -3065,7 +3102,6 @@ namespace PowerSDR
             this.chkBoxMuteSpk = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxDrive = new System.Windows.Forms.CheckBoxTS();
             this.lblPWR = new System.Windows.Forms.LabelTS();
-            this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonSort = new System.Windows.Forms.Button();
@@ -3128,6 +3164,14 @@ namespace PowerSDR
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.picRX2Squelch = new System.Windows.Forms.PictureBox();
             this.picSquelch = new System.Windows.Forms.PictureBox();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.VFODialA = new System.Windows.Forms.PictureBox();
+            this.VFODialB = new System.Windows.Forms.PictureBox();
+            this.VFODialAA = new System.Windows.Forms.PictureBox();
+            this.VFODialBB = new System.Windows.Forms.PictureBox();
+            this.panelTS1 = new System.Windows.Forms.PanelTS();
+            this.grpVFOBetween = new System.Windows.Forms.PanelTS();
+            this.lblTuneStep = new System.Windows.Forms.LabelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.panelBandVHF = new System.Windows.Forms.PanelTS();
             this.radBandVHF13 = new System.Windows.Forms.RadioButtonTS();
@@ -3255,8 +3299,6 @@ namespace PowerSDR
             this.grpMultimeter = new System.Windows.Forms.PanelTS();
             this.lblMultiSMeter = new System.Windows.Forms.LabelTS();
             this.txtMultiText = new System.Windows.Forms.TextBoxTS();
-            this.lblTuneStep = new System.Windows.Forms.LabelTS();
-            this.grpVFOBetween = new System.Windows.Forms.PanelTS();
             this.lblDisplayModeTop = new System.Windows.Forms.LabelTS();
             this.lblDisplayModeBottom = new System.Windows.Forms.LabelTS();
             this.grpDisplaySplit = new System.Windows.Forms.GroupBoxTS();
@@ -3269,11 +3311,6 @@ namespace PowerSDR
             this.btnBandHF1 = new System.Windows.Forms.ButtonTS();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.ptbSquelch = new PowerSDR.PrettyTrackBar();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.VFODialA = new System.Windows.Forms.PictureBox();
-            this.VFODialB = new System.Windows.Forms.PictureBox();
-            this.VFODialAA = new System.Windows.Forms.PictureBox();
-            this.VFODialBB = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
@@ -3317,6 +3354,12 @@ namespace PowerSDR
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).BeginInit();
+            this.panelTS1.SuspendLayout();
+            this.grpVFOBetween.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.panelBandVHF.SuspendLayout();
             this.grpVFOB.SuspendLayout();
@@ -3351,16 +3394,11 @@ namespace PowerSDR
             this.panelFilter.SuspendLayout();
             this.panelMode.SuspendLayout();
             this.grpMultimeter.SuspendLayout();
-            this.grpVFOBetween.SuspendLayout();
             this.grpDisplaySplit.SuspendLayout();
             this.grpRX2Meter.SuspendLayout();
             this.panelBandGN.SuspendLayout();
             this.panelRX2DSP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialA)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).BeginInit();
             this.SuspendLayout();
             // 
             // timer_cpu_meter
@@ -3373,6 +3411,210 @@ namespace PowerSDR
             // 
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox1, "richTextBox1");
+            this.richTextBox1.ForeColor = System.Drawing.Color.White;
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.richTextBox1, resources.GetString("richTextBox1.ToolTip"));
+            this.richTextBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox2.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox2, "richTextBox2");
+            this.richTextBox2.ForeColor = System.Drawing.Color.White;
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.richTextBox2, resources.GetString("richTextBox2.ToolTip"));
+            this.richTextBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox3.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox3, "richTextBox3");
+            this.richTextBox3.ForeColor = System.Drawing.Color.White;
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.richTextBox3, resources.GetString("richTextBox3.ToolTip"));
+            this.richTextBox3.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox5
+            // 
+            this.richTextBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox5.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox5, "richTextBox5");
+            this.richTextBox5.ForeColor = System.Drawing.Color.White;
+            this.richTextBox5.Name = "richTextBox5";
+            this.toolTip1.SetToolTip(this.richTextBox5, resources.GetString("richTextBox5.ToolTip"));
+            this.richTextBox5.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox6
+            // 
+            this.richTextBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox6.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox6.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox6, "richTextBox6");
+            this.richTextBox6.ForeColor = System.Drawing.Color.White;
+            this.richTextBox6.Name = "richTextBox6";
+            this.richTextBox6.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.richTextBox6, resources.GetString("richTextBox6.ToolTip"));
+            this.richTextBox6.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox7
+            // 
+            this.richTextBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox7.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox7.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox7, "richTextBox7");
+            this.richTextBox7.ForeColor = System.Drawing.Color.White;
+            this.richTextBox7.Name = "richTextBox7";
+            this.richTextBox7.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.richTextBox7, resources.GetString("richTextBox7.ToolTip"));
+            this.richTextBox7.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // richTextBox8
+            // 
+            this.richTextBox8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.richTextBox8.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox8.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.richTextBox8, "richTextBox8");
+            this.richTextBox8.ForeColor = System.Drawing.Color.White;
+            this.richTextBox8.Name = "richTextBox8";
+            this.toolTip1.SetToolTip(this.richTextBox8, resources.GetString("richTextBox8.ToolTip"));
+            this.richTextBox8.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // labelTS5
+            // 
+            this.labelTS5.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.labelTS5, "labelTS5");
+            this.labelTS5.Name = "labelTS5";
+            this.toolTip1.SetToolTip(this.labelTS5, resources.GetString("labelTS5.ToolTip"));
+            this.labelTS5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.labelTS5_MouseUp);
+            // 
+            // regBox1
+            // 
+            this.regBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.regBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.regBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.regBox1, "regBox1");
+            this.regBox1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.regBox1.Name = "regBox1";
+            this.regBox1.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.regBox1, resources.GetString("regBox1.ToolTip"));
+            this.regBox1.TextChanged += new System.EventHandler(this.regBox1_TextChanged);
+            this.regBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.regBox1_MouseDown);
+            this.regBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.regBox_MouseUp);
+            // 
+            // regBox
+            // 
+            this.regBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.regBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.regBox.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.regBox, "regBox");
+            this.regBox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.regBox.Name = "regBox";
+            this.regBox.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.regBox, resources.GetString("regBox.ToolTip"));
+            this.regBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.regBox1_MouseDown);
+            this.regBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.regBox_MouseUp);
+            // 
+            // chkVFOSync
+            // 
+            resources.ApplyResources(this.chkVFOSync, "chkVFOSync");
+            this.chkVFOSync.FlatAppearance.BorderSize = 0;
+            this.chkVFOSync.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVFOSync.Name = "chkVFOSync";
+            this.toolTip1.SetToolTip(this.chkVFOSync, resources.GetString("chkVFOSync.ToolTip"));
+            this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
+            // 
+            // chkFullDuplex
+            // 
+            resources.ApplyResources(this.chkFullDuplex, "chkFullDuplex");
+            this.chkFullDuplex.FlatAppearance.BorderSize = 0;
+            this.chkFullDuplex.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkFullDuplex.Name = "chkFullDuplex";
+            this.toolTip1.SetToolTip(this.chkFullDuplex, resources.GetString("chkFullDuplex.ToolTip"));
+            this.chkFullDuplex.CheckedChanged += new System.EventHandler(this.chkFullDuplex_CheckedChanged);
+            // 
+            // btnTuneStepChangeLarger
+            // 
+            this.btnTuneStepChangeLarger.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnTuneStepChangeLarger, "btnTuneStepChangeLarger");
+            this.btnTuneStepChangeLarger.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnTuneStepChangeLarger.Name = "btnTuneStepChangeLarger";
+            this.toolTip1.SetToolTip(this.btnTuneStepChangeLarger, resources.GetString("btnTuneStepChangeLarger.ToolTip"));
+            this.btnTuneStepChangeLarger.Click += new System.EventHandler(this.btnChangeTuneStepLarger_Click);
+            // 
+            // btnTuneStepChangeSmaller
+            // 
+            this.btnTuneStepChangeSmaller.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnTuneStepChangeSmaller, "btnTuneStepChangeSmaller");
+            this.btnTuneStepChangeSmaller.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnTuneStepChangeSmaller.Name = "btnTuneStepChangeSmaller";
+            this.toolTip1.SetToolTip(this.btnTuneStepChangeSmaller, resources.GetString("btnTuneStepChangeSmaller.ToolTip"));
+            this.btnTuneStepChangeSmaller.Click += new System.EventHandler(this.btnChangeTuneStepSmaller_Click);
+            // 
+            // chkVFOLock
+            // 
+            resources.ApplyResources(this.chkVFOLock, "chkVFOLock");
+            this.chkVFOLock.FlatAppearance.BorderSize = 0;
+            this.chkVFOLock.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVFOLock.Name = "chkVFOLock";
+            this.toolTip1.SetToolTip(this.chkVFOLock, resources.GetString("chkVFOLock.ToolTip"));
+            this.chkVFOLock.CheckedChanged += new System.EventHandler(this.chkVFOLock_CheckedChanged);
+            // 
+            // txtWheelTune
+            // 
+            this.txtWheelTune.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtWheelTune.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtWheelTune.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.txtWheelTune, "txtWheelTune");
+            this.txtWheelTune.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtWheelTune.Name = "txtWheelTune";
+            this.txtWheelTune.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtWheelTune, resources.GetString("txtWheelTune.ToolTip"));
+            this.txtWheelTune.GotFocus += new System.EventHandler(this.HideFocus);
+            this.txtWheelTune.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WheelTune_MouseDown);
+            // 
+            // btnMemoryQuickRestore
+            // 
+            this.btnMemoryQuickRestore.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnMemoryQuickRestore, "btnMemoryQuickRestore");
+            this.btnMemoryQuickRestore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnMemoryQuickRestore.Name = "btnMemoryQuickRestore";
+            this.toolTip1.SetToolTip(this.btnMemoryQuickRestore, resources.GetString("btnMemoryQuickRestore.ToolTip"));
+            this.btnMemoryQuickRestore.Click += new System.EventHandler(this.btnMemoryQuickRestore_Click);
+            // 
+            // btnMemoryQuickSave
+            // 
+            this.btnMemoryQuickSave.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnMemoryQuickSave, "btnMemoryQuickSave");
+            this.btnMemoryQuickSave.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnMemoryQuickSave.Name = "btnMemoryQuickSave";
+            this.toolTip1.SetToolTip(this.btnMemoryQuickSave, resources.GetString("btnMemoryQuickSave.ToolTip"));
+            this.btnMemoryQuickSave.Click += new System.EventHandler(this.btnMemoryQuickSave_Click);
+            // 
+            // txtMemoryQuick
+            // 
+            this.txtMemoryQuick.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.txtMemoryQuick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtMemoryQuick.Cursor = System.Windows.Forms.Cursors.Default;
+            resources.ApplyResources(this.txtMemoryQuick, "txtMemoryQuick");
+            this.txtMemoryQuick.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.txtMemoryQuick.Name = "txtMemoryQuick";
+            this.txtMemoryQuick.ReadOnly = true;
+            this.toolTip1.SetToolTip(this.txtMemoryQuick, resources.GetString("txtMemoryQuick.ToolTip"));
             // 
             // radBandGEN
             // 
@@ -4821,19 +5063,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.comboRX2Band, resources.GetString("comboRX2Band.ToolTip"));
             this.comboRX2Band.SelectedIndexChanged += new System.EventHandler(this.comboRX2Band_SelectedIndexChanged);
             // 
-            // txtWheelTune
-            // 
-            this.txtWheelTune.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.txtWheelTune.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtWheelTune.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtWheelTune, "txtWheelTune");
-            this.txtWheelTune.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtWheelTune.Name = "txtWheelTune";
-            this.txtWheelTune.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.txtWheelTune, resources.GetString("txtWheelTune.ToolTip"));
-            this.txtWheelTune.GotFocus += new System.EventHandler(this.HideFocus);
-            this.txtWheelTune.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WheelTune_MouseDown);
-            // 
             // chkPower
             // 
             resources.ApplyResources(this.chkPower, "chkPower");
@@ -4843,6 +5072,7 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkPower, resources.GetString("chkPower.ToolTip"));
             this.chkPower.UseVisualStyleBackColor = false;
             this.chkPower.CheckedChanged += new System.EventHandler(this.chkPower_CheckedChanged);
+            this.chkPower.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkPower_MouseDown);
             // 
             // comboMeterTXMode
             // 
@@ -4874,80 +5104,6 @@ namespace PowerSDR
             this.chkSquelch.Name = "chkSquelch";
             this.toolTip1.SetToolTip(this.chkSquelch, resources.GetString("chkSquelch.ToolTip"));
             this.chkSquelch.CheckedChanged += new System.EventHandler(this.chkSquelch_CheckedChanged);
-            // 
-            // btnMemoryQuickRestore
-            // 
-            this.btnMemoryQuickRestore.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnMemoryQuickRestore, "btnMemoryQuickRestore");
-            this.btnMemoryQuickRestore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnMemoryQuickRestore.Name = "btnMemoryQuickRestore";
-            this.toolTip1.SetToolTip(this.btnMemoryQuickRestore, resources.GetString("btnMemoryQuickRestore.ToolTip"));
-            this.btnMemoryQuickRestore.Click += new System.EventHandler(this.btnMemoryQuickRestore_Click);
-            // 
-            // btnMemoryQuickSave
-            // 
-            this.btnMemoryQuickSave.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnMemoryQuickSave, "btnMemoryQuickSave");
-            this.btnMemoryQuickSave.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnMemoryQuickSave.Name = "btnMemoryQuickSave";
-            this.toolTip1.SetToolTip(this.btnMemoryQuickSave, resources.GetString("btnMemoryQuickSave.ToolTip"));
-            this.btnMemoryQuickSave.Click += new System.EventHandler(this.btnMemoryQuickSave_Click);
-            // 
-            // txtMemoryQuick
-            // 
-            this.txtMemoryQuick.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.txtMemoryQuick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtMemoryQuick.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.txtMemoryQuick, "txtMemoryQuick");
-            this.txtMemoryQuick.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtMemoryQuick.Name = "txtMemoryQuick";
-            this.txtMemoryQuick.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.txtMemoryQuick, resources.GetString("txtMemoryQuick.ToolTip"));
-            // 
-            // chkVFOLock
-            // 
-            resources.ApplyResources(this.chkVFOLock, "chkVFOLock");
-            this.chkVFOLock.FlatAppearance.BorderSize = 0;
-            this.chkVFOLock.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkVFOLock.Name = "chkVFOLock";
-            this.toolTip1.SetToolTip(this.chkVFOLock, resources.GetString("chkVFOLock.ToolTip"));
-            this.chkVFOLock.CheckedChanged += new System.EventHandler(this.chkVFOLock_CheckedChanged);
-            // 
-            // chkVFOSync
-            // 
-            resources.ApplyResources(this.chkVFOSync, "chkVFOSync");
-            this.chkVFOSync.FlatAppearance.BorderSize = 0;
-            this.chkVFOSync.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkVFOSync.Name = "chkVFOSync";
-            this.toolTip1.SetToolTip(this.chkVFOSync, resources.GetString("chkVFOSync.ToolTip"));
-            this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
-            // 
-            // chkFullDuplex
-            // 
-            resources.ApplyResources(this.chkFullDuplex, "chkFullDuplex");
-            this.chkFullDuplex.FlatAppearance.BorderSize = 0;
-            this.chkFullDuplex.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkFullDuplex.Name = "chkFullDuplex";
-            this.toolTip1.SetToolTip(this.chkFullDuplex, resources.GetString("chkFullDuplex.ToolTip"));
-            this.chkFullDuplex.CheckedChanged += new System.EventHandler(this.chkFullDuplex_CheckedChanged);
-            // 
-            // btnTuneStepChangeLarger
-            // 
-            this.btnTuneStepChangeLarger.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnTuneStepChangeLarger, "btnTuneStepChangeLarger");
-            this.btnTuneStepChangeLarger.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnTuneStepChangeLarger.Name = "btnTuneStepChangeLarger";
-            this.toolTip1.SetToolTip(this.btnTuneStepChangeLarger, resources.GetString("btnTuneStepChangeLarger.ToolTip"));
-            this.btnTuneStepChangeLarger.Click += new System.EventHandler(this.btnChangeTuneStepLarger_Click);
-            // 
-            // btnTuneStepChangeSmaller
-            // 
-            this.btnTuneStepChangeSmaller.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnTuneStepChangeSmaller, "btnTuneStepChangeSmaller");
-            this.btnTuneStepChangeSmaller.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnTuneStepChangeSmaller.Name = "btnTuneStepChangeSmaller";
-            this.toolTip1.SetToolTip(this.btnTuneStepChangeSmaller, resources.GetString("btnTuneStepChangeSmaller.ToolTip"));
-            this.btnTuneStepChangeSmaller.Click += new System.EventHandler(this.btnChangeTuneStepSmaller_Click);
             // 
             // chkBCI
             // 
@@ -5458,33 +5614,6 @@ namespace PowerSDR
             this.radBandGN0.Click += new System.EventHandler(this.radBandGEN0_Click);
             this.radBandGN0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGN0_MouseDown);
             // 
-            // regBox1
-            // 
-            this.regBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.regBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.regBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.regBox1, "regBox1");
-            this.regBox1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.regBox1.Name = "regBox1";
-            this.regBox1.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.regBox1, resources.GetString("regBox1.ToolTip"));
-            this.regBox1.TextChanged += new System.EventHandler(this.regBox1_TextChanged);
-            this.regBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.regBox1_MouseDown);
-            this.regBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.regBox_MouseUp);
-            // 
-            // regBox
-            // 
-            this.regBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.regBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.regBox.Cursor = System.Windows.Forms.Cursors.Default;
-            resources.ApplyResources(this.regBox, "regBox");
-            this.regBox.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.regBox.Name = "regBox";
-            this.regBox.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.regBox, resources.GetString("regBox.ToolTip"));
-            this.regBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.regBox1_MouseDown);
-            this.regBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.regBox_MouseUp);
-            // 
             // lblAntRX2
             // 
             resources.ApplyResources(this.lblAntRX2, "lblAntRX2");
@@ -5936,14 +6065,6 @@ namespace PowerSDR
             this.lblPWR.Name = "lblPWR";
             this.toolTip1.SetToolTip(this.lblPWR, resources.GetString("lblPWR.ToolTip"));
             this.lblPWR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPWR_MouseDown);
-            // 
-            // labelTS5
-            // 
-            this.labelTS5.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.labelTS5, "labelTS5");
-            this.labelTS5.Name = "labelTS5";
-            this.toolTip1.SetToolTip(this.labelTS5, resources.GetString("labelTS5.ToolTip"));
-            this.labelTS5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.labelTS5_MouseUp);
             // 
             // textBox1
             // 
@@ -6494,6 +6615,82 @@ namespace PowerSDR
             this.picSquelch.Name = "picSquelch";
             this.picSquelch.TabStop = false;
             this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            resources.ApplyResources(this.imageList1, "imageList1");
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // VFODialA
+            // 
+            this.VFODialA.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.VFODialA, "VFODialA");
+            this.VFODialA.Name = "VFODialA";
+            this.VFODialA.TabStop = false;
+            // 
+            // VFODialB
+            // 
+            this.VFODialB.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.VFODialB, "VFODialB");
+            this.VFODialB.Name = "VFODialB";
+            this.VFODialB.TabStop = false;
+            // 
+            // VFODialAA
+            // 
+            this.VFODialAA.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.VFODialAA, "VFODialAA");
+            this.VFODialAA.Image = global::PowerSDR.Properties.Resources.arrowA;
+            this.VFODialAA.Name = "VFODialAA";
+            this.VFODialAA.TabStop = false;
+            // 
+            // VFODialBB
+            // 
+            this.VFODialBB.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.VFODialBB, "VFODialBB");
+            this.VFODialBB.Image = global::PowerSDR.Properties.Resources.arrowB;
+            this.VFODialBB.Name = "VFODialBB";
+            this.VFODialBB.TabStop = false;
+            // 
+            // panelTS1
+            // 
+            resources.ApplyResources(this.panelTS1, "panelTS1");
+            this.panelTS1.BackColor = System.Drawing.Color.Transparent;
+            this.panelTS1.Controls.Add(this.richTextBox1);
+            this.panelTS1.Controls.Add(this.richTextBox2);
+            this.panelTS1.Controls.Add(this.richTextBox3);
+            this.panelTS1.Controls.Add(this.richTextBox5);
+            this.panelTS1.Controls.Add(this.richTextBox6);
+            this.panelTS1.Controls.Add(this.richTextBox7);
+            this.panelTS1.Controls.Add(this.richTextBox8);
+            this.panelTS1.Name = "panelTS1";
+            this.panelTS1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panelTS1_MouseClick);
+            // 
+            // grpVFOBetween
+            // 
+            resources.ApplyResources(this.grpVFOBetween, "grpVFOBetween");
+            this.grpVFOBetween.BackColor = System.Drawing.Color.Transparent;
+            this.grpVFOBetween.Controls.Add(this.labelTS5);
+            this.grpVFOBetween.Controls.Add(this.regBox1);
+            this.grpVFOBetween.Controls.Add(this.regBox);
+            this.grpVFOBetween.Controls.Add(this.lblTuneStep);
+            this.grpVFOBetween.Controls.Add(this.chkVFOSync);
+            this.grpVFOBetween.Controls.Add(this.chkFullDuplex);
+            this.grpVFOBetween.Controls.Add(this.btnTuneStepChangeLarger);
+            this.grpVFOBetween.Controls.Add(this.btnTuneStepChangeSmaller);
+            this.grpVFOBetween.Controls.Add(this.chkVFOLock);
+            this.grpVFOBetween.Controls.Add(this.txtWheelTune);
+            this.grpVFOBetween.Controls.Add(this.btnMemoryQuickRestore);
+            this.grpVFOBetween.Controls.Add(this.btnMemoryQuickSave);
+            this.grpVFOBetween.Controls.Add(this.txtMemoryQuick);
+            this.grpVFOBetween.Name = "grpVFOBetween";
+            this.grpVFOBetween.Paint += new System.Windows.Forms.PaintEventHandler(this.grpVFOBetween_Paint);
+            // 
+            // lblTuneStep
+            // 
+            this.lblTuneStep.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            resources.ApplyResources(this.lblTuneStep, "lblTuneStep");
+            this.lblTuneStep.Name = "lblTuneStep";
             // 
             // panelBandHF
             // 
@@ -7820,32 +8017,6 @@ namespace PowerSDR
             this.txtMultiText.ShortcutsEnabled = false;
             this.txtMultiText.GotFocus += new System.EventHandler(this.HideFocus);
             // 
-            // lblTuneStep
-            // 
-            this.lblTuneStep.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            resources.ApplyResources(this.lblTuneStep, "lblTuneStep");
-            this.lblTuneStep.Name = "lblTuneStep";
-            // 
-            // grpVFOBetween
-            // 
-            resources.ApplyResources(this.grpVFOBetween, "grpVFOBetween");
-            this.grpVFOBetween.BackColor = System.Drawing.Color.Transparent;
-            this.grpVFOBetween.Controls.Add(this.labelTS5);
-            this.grpVFOBetween.Controls.Add(this.regBox1);
-            this.grpVFOBetween.Controls.Add(this.regBox);
-            this.grpVFOBetween.Controls.Add(this.lblTuneStep);
-            this.grpVFOBetween.Controls.Add(this.chkVFOSync);
-            this.grpVFOBetween.Controls.Add(this.chkFullDuplex);
-            this.grpVFOBetween.Controls.Add(this.btnTuneStepChangeLarger);
-            this.grpVFOBetween.Controls.Add(this.btnTuneStepChangeSmaller);
-            this.grpVFOBetween.Controls.Add(this.chkVFOLock);
-            this.grpVFOBetween.Controls.Add(this.txtWheelTune);
-            this.grpVFOBetween.Controls.Add(this.btnMemoryQuickRestore);
-            this.grpVFOBetween.Controls.Add(this.btnMemoryQuickSave);
-            this.grpVFOBetween.Controls.Add(this.txtMemoryQuick);
-            this.grpVFOBetween.Name = "grpVFOBetween";
-            this.grpVFOBetween.Paint += new System.Windows.Forms.PaintEventHandler(this.grpVFOBetween_Paint);
-            // 
             // lblDisplayModeTop
             // 
             resources.ApplyResources(this.lblDisplayModeTop, "lblDisplayModeTop");
@@ -7971,46 +8142,11 @@ namespace PowerSDR
             this.ptbSquelch.Value = -150;
             this.ptbSquelch.Scroll += new PowerSDR.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            resources.ApplyResources(this.imageList1, "imageList1");
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // VFODialA
-            // 
-            this.VFODialA.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.VFODialA, "VFODialA");
-            this.VFODialA.Name = "VFODialA";
-            this.VFODialA.TabStop = false;
-            // 
-            // VFODialB
-            // 
-            this.VFODialB.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.VFODialB, "VFODialB");
-            this.VFODialB.Name = "VFODialB";
-            this.VFODialB.TabStop = false;
-            // 
-            // VFODialAA
-            // 
-            this.VFODialAA.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.VFODialAA, "VFODialAA");
-            this.VFODialAA.Image = global::PowerSDR.Properties.Resources.arrowA;
-            this.VFODialAA.Name = "VFODialAA";
-            this.VFODialAA.TabStop = false;
-            // 
-            // VFODialBB
-            // 
-            this.VFODialBB.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.VFODialBB, "VFODialBB");
-            this.VFODialBB.Image = global::PowerSDR.Properties.Resources.arrowB;
-            this.VFODialBB.Name = "VFODialBB";
-            this.VFODialBB.TabStop = false;
-            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.panelTS1);
             this.Controls.Add(this.VFODialBB);
             this.Controls.Add(this.VFODialAA);
             this.Controls.Add(this.grpVFOBetween);
@@ -8112,6 +8248,13 @@ namespace PowerSDR
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).EndInit();
+            this.panelTS1.ResumeLayout(false);
+            this.grpVFOBetween.ResumeLayout(false);
+            this.grpVFOBetween.PerformLayout();
             this.panelBandHF.ResumeLayout(false);
             this.panelBandVHF.ResumeLayout(false);
             this.grpVFOB.ResumeLayout(false);
@@ -8151,18 +8294,12 @@ namespace PowerSDR
             this.panelMode.ResumeLayout(false);
             this.grpMultimeter.ResumeLayout(false);
             this.grpMultimeter.PerformLayout();
-            this.grpVFOBetween.ResumeLayout(false);
-            this.grpVFOBetween.PerformLayout();
             this.grpDisplaySplit.ResumeLayout(false);
             this.grpRX2Meter.ResumeLayout(false);
             this.grpRX2Meter.PerformLayout();
             this.panelBandGN.ResumeLayout(false);
             this.panelRX2DSP.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialA)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).EndInit();
             this.ResumeLayout(false);
 
         } // InitializeComponent()
@@ -9261,9 +9398,14 @@ namespace PowerSDR
             }
         }
 
-		public void ExitConsole()
+
+        //================================================================
+        // ke9ns Console_Closing(),  then Dispose() then ExitConsole();
+
+        public void ExitConsole()
 		{
-           
+            this.Text += " , exit console";
+
             Debug.WriteLine("((((((((TERMINATE PROGRM 1))))))))))))))))");
 
             vfodial = false; // ke9ns add to terminal the dial routine
@@ -9282,51 +9424,263 @@ namespace PowerSDR
 
             }
 
-          
+            this.Text += " , exitconsole";
+
+            chkPower.Checked = false;   // make sure power is off		
+            ckQuickRec.Checked = false; // make sure recording is stopped
+
+            Debug.WriteLine("((((((((SAVETXPROFILEDATA))))))))))))))))");
+
 
             if (SaveTXProfileOnExit == true)    // save the tx profile
             {
                 setupForm.SaveTXProfileData();
             }
 
+            Debug.WriteLine("((((((((SAVEING DATABASE))))))))))))))))");
+
+            DB.Exit();                  // close and save database
+
+
+            Debug.WriteLine("((((((((BEGIN DISPOSING))))))))))))))))");
+
+
+            try
+            {
+                if (setupForm != null) setupForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+            try
+            {
+                if (cwxForm != null) cwxForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+            try
+            {
+                if (eqForm != null) eqForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+            try
+            {
+                if (ucbForm != null) ucbForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flex3000MixerForm != null) flex3000MixerForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (xvtrForm != null) xvtrForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (ProdTestForm != null) ProdTestForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (fwcMixForm != null) fwcMixForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flex1500MixerForm != null) flex1500MixerForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flex5000LLHWForm != null) flex5000LLHWForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flex5000DebugForm != null) flex5000DebugForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flexControlBasicForm != null) flexControlBasicForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (flexControlAdvancedForm != null) flexControlAdvancedForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (memoryForm != null) memoryForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (preSelForm != null) preSelForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (WaveForm != null) WaveForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (SwlForm != null) SwlForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (StackForm != null) StackForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (SpotForm != null) SpotForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (ScanForm != null) ScanForm.Dispose(); // ke9ns add scanner form
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+          
+            try
+            {
+                if (IDBOXForm != null) IDBOXForm.Dispose(); // ke9ns add ID timer box
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (helpboxForm != null) helpboxForm.Dispose(); // ke9ns add help screen
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (StackForm != null) StackForm.Dispose(); // ke9ns add bandstack
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (TOTBOXForm != null) TOTBOXForm.Dispose(); // ke9ns add time out timer
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            try
+            {
+                if (fwcAtuForm != null) fwcAtuForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure " + e);
+            }
+
+            
+
+            Debug.WriteLine("((((((((PA TERMINATE))))))))))))))))");
 
          
-            if (setupForm != null)		// make sure Setup form is deallocated
-				setupForm.Dispose();
-
-            if (IDBOXForm != null)   // ke9ns add
-                IDBOXForm.Dispose();
-
-
-            if (TOTBOXForm != null)  // ke9ns add
-                TOTBOXForm.Dispose();
-
-            // ke9ns add
-            if (SpotForm != null)      // make sure spotter form is deallocated
-                   SpotForm.Dispose();
-
-            // ke9ns add
-             if (ScanForm != null)      // make sure scanner form is deallocated
-                  ScanForm.Dispose();
-
-             //  if (StackForm != null)      // make sure bandstack form is deallocated
-              //    StackForm.Dispose();
-
-          //  if (cwxForm != null)            // make sure CWX form is deallocated
-             //   cwxForm.Dispose();
-
-            chkPower.Checked = false;	// make sure power is off		
-			ckQuickRec.Checked = false; // make sure recording is stopped
-			
-			//			if(draw_display_thread != null)
-			//				draw_display_thread.Abort();
-			
-			//Parallel.ExitPortTalk();	// close parallel port driver
-			PA19.PA_Terminate();		// terminate audio interface
-			DB.Exit();					// close and save database
+            //			if(draw_display_thread != null)
+            //				draw_display_thread.Abort();
+           
+            //Parallel.ExitPortTalk();	// close parallel port driver
+            PA19.PA_Terminate();		// terminate audio interface
 			//Mixer.RestoreState();		// restore initial mixer state
 			DttSP.Exit();				// deallocate DSP variables
-            
+            Debug.WriteLine("((((((((DTTSP EXIT))))))))))))))))");
             // release PowerSDR Mutex from instance that created it
             try
             {
@@ -9343,6 +9697,8 @@ namespace PowerSDR
             //  System.Windows.Forms.Application.Exit();
 
             Debug.WriteLine("((((((((TERMINATE PROGRM 2))))))))))))))))");
+
+            this.Text += " , console exiting";
 
         } // exit console here
 
@@ -9367,9 +9723,59 @@ namespace PowerSDR
             //-------------------------------------------------------------------
             // ke9ns add  create database to store my stuff in
 
+           
+            // ke9ns store SWR PLOTS
+            string file_nameSWR = AppDataPath + "ke9ns_SWR.dat"; // save data for my mods
+
+            Debug.WriteLine("KE9NS_SWR FILE OPEN TO WRITE ");
+
+            FileStream stream3 = new FileStream(file_nameSWR, FileMode.Create); // open   file
+            BinaryWriter writer3 = new BinaryWriter(stream3);
+
+            int i1 = 0; // 1-9
+            int i2 = 0; // 1-41
+            int i3 = 0; // 1-1000
+
+            for ( i1 = 1; i1 < 10 ;i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+            {
+                for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                {
+                    for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                    {
+                        double temp2 = SWR_READ[i1, i2, i3];
+
+                        if (temp2 == 0)
+                        {
+                            temp2 = 999.0;
+                            writer3.Write(temp2);
+                            Debug.WriteLine("WW> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                            break;
+                        }
+                        else
+                        {
+                            writer3.Write(temp2);
+                            Debug.WriteLine("w> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                        }
+
+
+
+                    } // for loop SLOTS
+                } // for loop BANDS
+            } // for loop ANT
+
+
+            writer3.Close();    // close  file
+            stream3.Close();   // close stream
+
+            Debug.WriteLine("KE9NS_SWR FILE CLOSED ");
+
+            //-------------------------------------------------------------------------------
+
             string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
 
-            FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
+            FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open  file
             BinaryWriter writer2 = new BinaryWriter(stream2);
 
         //    if (Audio.MON_PRE == 1) Debug.WriteLine("Saving PRE = 1");
@@ -9413,16 +9819,16 @@ namespace PowerSDR
                                //   Debug.WriteLine("save database file on exit");
 
             PAON = 0;       // shut down PAON thread
-            //--------------------------------------------------------------------
+                            //--------------------------------------------------------------------
 
-         //   Debug.WriteLine("-nameB " + SpotControl.nameB);
-         //   Debug.WriteLine("-portB " + SpotControl.portB);
-          //  Debug.WriteLine("-callB " + SpotControl.callB);
-          //  Debug.WriteLine("-nodeB " + SpotControl.nodeB);
-
-
+            //   Debug.WriteLine("-nameB " + SpotControl.nameB);
+            //   Debug.WriteLine("-portB " + SpotControl.portB);
+            //  Debug.WriteLine("-callB " + SpotControl.callB);
+            //  Debug.WriteLine("-nodeB " + SpotControl.nodeB);
 
 
+
+            Debug.WriteLine("KE9NS FILE CLOSED ");
 
 
             //   Debug.WriteLine("mic " + WaterfallLowThresholdMic);
@@ -9430,7 +9836,7 @@ namespace PowerSDR
             //   Debug.WriteLine("call " + callsign);
             //   Debug.WriteLine("callL " + LastCall);
 
-            ArrayList a = new ArrayList();     // storage for saving everything
+           ArrayList a = new ArrayList();     // storage for saving everything
 
 
 			foreach(Control c in this.Controls)			// For each control
@@ -10004,6 +10410,8 @@ namespace PowerSDR
 
         public static byte moninit = 1;               // ke9ns used for chkMON startup
 
+        public double[,,] SWR_READ = new double[11, 45, 3000]; //ScanControl Ant=1,2,3, band=1-30,freq slot = swr on band
+       
         //=======================================================================================
         //=======================================================================================
         // ke9ns mod  LOAD UP DATABASE into PowerSDR 
@@ -10030,6 +10438,97 @@ namespace PowerSDR
 
             }
 
+
+            //------------------------------------------------------------------
+            // ke9ns RECALL SWR PLOTS
+            string file_nameSWR = AppDataPath + "ke9ns_SWR.dat"; // save data for my mods
+
+
+            if (!File.Exists(file_nameSWR))
+            {
+
+                Debug.WriteLine("Create new SWR database file");
+
+                FileStream stream3 = new FileStream(file_nameSWR, FileMode.Create); // open   file
+                BinaryWriter writer3 = new BinaryWriter(stream3);
+
+                int i1 = 0; // 1-9
+                int i2 = 0; // 1-41
+                int i3 = 0; // 1-1000
+
+                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+                {
+                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                    {
+                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                        {
+                            double temp2 = SWR_READ[i1, i2, i3];
+                            if (temp2 == 0)
+                            {
+                                temp2 = 999.0;
+                                writer3.Write(temp2);
+                                break;
+                            }
+                            else
+                            {
+                                writer3.Write(temp2);
+                            }
+
+                           
+                        } // for loop SLOTS
+                    } // for loop BANDS
+                } // for loop ANT
+
+
+                writer3.Close();    // close  file
+                stream3.Close();   // close stream
+
+                Debug.WriteLine("KE9NS_SWR FILE READ CLOSED ");
+
+            } //   ke9ns_SWR.dat file does NOT exist
+            else //   ke9ns_SWR.dat file exists
+            {
+
+                Debug.WriteLine("READ SWR database file");
+
+                FileStream stream3 = new FileStream(file_nameSWR, FileMode.Open); // open ke9ns file
+                BinaryReader reader3 = new BinaryReader(stream3);
+
+                int i1 = 0; // 1-9
+                int i2 = 0; // 1-41
+                int i3 = 0; // 1-1000
+
+                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+                {
+                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                    {
+                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                        {
+                            double temp2 = reader3.ReadDouble();
+
+                            Debug.WriteLine("RR> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                            if (temp2 == 999.0) break;
+                             SWR_READ[i1, i2, i3] = temp2;
+
+                           
+
+                        } // for loop SLOTS
+                    } // for loop BANDS
+                } // for loop ANT
+
+
+                reader3.Close();    // close  file
+                stream3.Close();   // close stream
+
+                Debug.WriteLine("READ SWR database file DONE");
+
+
+            }  // ke9ns_SWR.dat file exists
+
+
+
+            //----------------------------------------------------------------------------
 
             string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
 
@@ -11454,15 +11953,20 @@ namespace PowerSDR
         // Firmware upate: Flex-3000 2017-07-20 2.1.4.6   
         // Firmware upate: Flex-1500 2017-07-20 0.5.3.15   
 
+        // ke9ns add 9/6/17 From Tim to fix Aus 20m region
+        // Firmware upate: Flex-5000 2017-07-20 2.1.4.7   
+        // Firmware upate: Flex-3000 2017-07-20 2.1.4.7   
+        // Firmware upate: Flex-1500 2017-07-20 0.5.3.16   
+
 
         private uint GetMinVersion(Model m)
         {
             uint MIN_VERSION = 0;
             switch(m)
             {
-                case Model.FLEX5000: MIN_VERSION = 0x02010406; break; // was 0x02010309, was 0x02010404 ,was 0x02010405
-                case Model.FLEX3000: MIN_VERSION = 0x02010406; break; // was 0x02010307, was 0x02010404 ,was 0x02010405
-                case Model.FLEX1500: MIN_VERSION = 0x0005030F; break;  // was 0x0005030A, was 0x0005030D ,was 0x0005030E
+                case Model.FLEX5000: MIN_VERSION = 0x02010407; break; // was 0x02010309, was 0x02010404 ,was 0x02010405, was 0x02010406
+                case Model.FLEX3000: MIN_VERSION = 0x02010407; break; // was 0x02010307, was 0x02010404 ,was 0x02010405, was 0x02010406
+                case Model.FLEX1500: MIN_VERSION = 0x00050310; break;  // was 0x0005030A, was 0x0005030D ,was 0x0005030E, was 0x0005030F
             }
             return MIN_VERSION;
         }
@@ -13773,7 +14277,7 @@ namespace PowerSDR
 			vfo_small_char_space = (int)Math.Round(size.Width-2.0f - 2*float_char_width, 0);
 
 			g.Dispose();
-		}
+		} // GetVFOCharWidth()
 
 		private void GetVFOSubCharWidth()
 		{
@@ -13806,7 +14310,7 @@ namespace PowerSDR
 			vfo_small_char_space = (int)Math.Round(size.Width-2.0f - 2*float_char_width, 0);*/
 
 			g.Dispose();
-		}
+		}  // GetVFOsubcharwidth()
 
         public string[] filter2 = new string[20]; // ke9ns add for bandstack locking
         public int iii = 0;
@@ -14020,7 +14524,7 @@ namespace PowerSDR
                         DB.SaveBandStack("LMF", band_LMF_index, mode, filter, freq);
                     break;
                 case Band.B120M:
-                    if (freq >= 2.30 && freq < 3.0)
+                    if (freq >= 2.0 && freq < 3.0)
                         DB.SaveBandStack("120M", band_120m_index, mode, filter, freq);
                     break;
                 case Band.B90M:
@@ -14048,7 +14552,7 @@ namespace PowerSDR
                         DB.SaveBandStack("25M", band_25m_index, mode, filter, freq);
                     break;
                 case Band.B22M:
-                    if (freq >= 13.57 && freq < 13.87)
+                    if (freq >= 13.57 && freq < 14.00) // was 13.87
                         DB.SaveBandStack("22M", band_22m_index, mode, filter, freq);
                     break;
 
@@ -14282,8 +14786,8 @@ namespace PowerSDR
                     break;
                 case Band.B12M:
                     last_band = "12M";// ke9ns add
-                    SpotControl.VFOLOW = 24800000; // 24.89
-                    SpotControl.VFOHIGH = 21450000; // 24.99
+                    SpotControl.VFOLOW = 24890000; // 24.89
+                    SpotControl.VFOHIGH = 24990000; // 24.99
                     radBand12.Checked = true;
                     regBox.Text = band_12m_register.ToString();
                     regBox1.Text = (band_12m_index + 1).ToString();
@@ -15124,7 +15628,7 @@ namespace PowerSDR
                 }
 
               
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15349,7 +15853,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 1.8 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0) // FRSRegion.US
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15400,7 +15904,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15511,7 +16015,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq > 2.0 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15560,7 +16064,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15670,7 +16174,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq > 2.00 && freq < 3.0)
+                else if (freq >= 2.00 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15719,7 +16223,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -15878,7 +16382,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16038,7 +16542,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16198,7 +16702,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16357,7 +16861,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16515,7 +17019,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16675,7 +17179,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.00)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16833,7 +17337,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -16989,7 +17493,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17152,7 +17656,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17312,7 +17816,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17472,7 +17976,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17632,7 +18136,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17790,7 +18294,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -17949,7 +18453,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18109,7 +18613,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18218,7 +18722,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 2.30 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18267,7 +18771,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18427,7 +18931,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18586,7 +19090,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18745,7 +19249,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -18903,7 +19407,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -19060,7 +19564,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -19218,7 +19722,7 @@ namespace PowerSDR
                     return Band.B25M;
                 }
 
-                else if (freq >= 13.57 && freq < 13.87)
+                else if (freq >= 13.57 && freq < 14.0)
                 {
                     panelBandHF.Visible = false;
                     panelBandGN.Visible = true;
@@ -19579,10 +20083,8 @@ namespace PowerSDR
 
 		private double SWR(int adc_fwd, int adc_rev)
 		{
-			if(adc_fwd == 0 && adc_rev == 0)
-				return 1.0;
-			else if(adc_rev > adc_fwd)
-				return 50.0;
+			if(adc_fwd == 0 && adc_rev == 0)return 1.0;
+			else if(adc_rev > adc_fwd)	return 50.0;
 			
 			double Ef = ScaledVoltage(adc_fwd);
 			double Er = ScaledVoltage(adc_rev);
@@ -19592,20 +20094,32 @@ namespace PowerSDR
 			return swr;
 		}
 
+        //=====================================================================
+       // ke9ns mod
 		public double FWCSWR(int adc_fwd, int adc_rev)
 		{
-			double f = FWCPAPower(adc_fwd);
-			double r = FWCPAPower(adc_rev)*swr_table[(int)tx_band];
-			//Debug.WriteLine("FWCSWR: fwd:"+adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2"));
+            double f = FWCPAPower(adc_fwd)  * swr_table[(int)tx_band];
+            double r = FWCPAPower(adc_rev) * swr_table[(int)tx_band];
+			
+          //  Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === " );
 			
 			if((adc_fwd == 0 && adc_rev == 0) || (f < 1.0 && r < 1.0)) return 1.0;
-			if(adc_rev > adc_fwd) return 50.0;
+			if(adc_rev == adc_fwd) return 50.0;
+            if (r == f) return 50.0;
 
-			double sqrt_r_over_f = Math.Sqrt(r/f);
-			return (1.0+sqrt_r_over_f)/(1.0-sqrt_r_over_f);
-		}
+            double sqrt_r_over_f = Math.Sqrt(r/f);
+            double temp = (1.0 + sqrt_r_over_f) / (1.0 - sqrt_r_over_f);
 
-		private double ScaledVoltage(int adc)
+            if (temp > 50) temp = 50;
+            if (temp < 0) temp = temp * -1;
+
+          //  Debug.WriteLine(temp);
+            return temp;
+
+
+        } // FWCSWR(int adc_fwd, int adc_rev)
+
+        private double ScaledVoltage(int adc)
 		{
 			double v_det = adc * 0.062963;			// scale factor in V/bit including pot ratio
 			double v_out = v_det * 10.39853;		// scale factor in V/V for bridge output to detector voltage
@@ -22525,7 +23039,7 @@ namespace PowerSDR
 					break;
 			}
 
-			for(int i=0; i<num_avg; i++)
+			for(int i=0; i < num_avg; i++)
 			{
 				FWC.ReadPAADC(chan, out val);
 				sum += val;
@@ -22534,9 +23048,10 @@ namespace PowerSDR
 			sum /= num_avg;
 			
 			return FWCPAPower(sum);
-		}
 
-		public float ReadFwdPowerVolts(int num_avg)
+        } //  ReadFwdPower(int num_avg)
+
+        public float ReadFwdPowerVolts(int num_avg)
 		{
 			if(current_model != Model.FLEX5000 && current_model != Model.FLEX3000) return 0.0f;
 			int val;
@@ -22579,14 +23094,14 @@ namespace PowerSDR
 					break;
 			}
 
-			for(int i=0; i<num_avg; i++)
+			for(int i=0; i < num_avg; i++)
 			{
 				FWC.ReadPAADC(chan, out val);
 				sum += val;
 				if(i != num_avg-1) Thread.Sleep(100);
 			}
 			sum /= num_avg;
-			float volts = (float)sum/4096*2.5f;
+			float volts = (float)sum / 4096 * 2.5f;
 			return volts;
 		}
 
@@ -22606,7 +23121,7 @@ namespace PowerSDR
 					break;
 			}
 
-			for(int i=0; i<num_avg; i++)
+			for(int i=0; i < num_avg; i++)
 			{
 				FWC.ReadPAADC(chan, out val);
 				sum += val;
@@ -22614,8 +23129,9 @@ namespace PowerSDR
 			}
 			sum /= num_avg;
 
-			return FWCPAPower(sum)*swr_table[(int)tx_band];
-		}
+			return FWCPAPower(sum) * swr_table[(int)tx_band];
+
+        } // ReadRefPower(int num_avg)
 
         public float tx_carrier_min = float.MaxValue;
 		public float[] min_tx_carrier = new float[(int)Band.LAST];
@@ -29982,6 +30498,8 @@ namespace PowerSDR
                 panelAntenna.Invalidate();
                 panelOptions.Invalidate();
 
+              //  panelTS1.Invalidate(); // local weather
+
                 panelModeSpecificPhone.Invalidate();
                 panelModeSpecificFM.Invalidate();
                 panelModeSpecificCW.Invalidate();
@@ -30325,7 +30843,7 @@ namespace PowerSDR
 
                 if (vfodial == true)
                 {
-
+                  
                     try
                     {
                         Thread t = new Thread(new ThreadStart(DIALA));
@@ -30347,10 +30865,104 @@ namespace PowerSDR
                 }
                 else
                 {
-
+                  
                 }
             }
         } // vfodial
+
+
+        //=====================================================================================
+        // ke9ns add  checkbox in setup for local weather on console
+        private bool localweather = false;
+        private bool localweatherblock = true; // keep off screen until you know there is enough space
+        private bool localweatherupdate = false; // true = new data to update screen
+        private bool CHECKMIN = true;
+
+        public bool LOCALWEATHER // hits this at the screen cpu % update rate
+        {
+            get
+            {
+                if (setupForm != null)
+                {
+                   if (noaaON == 3) localweather = true;
+                    else localweather = false;
+                }
+                return localweather;
+            }
+            set
+            {
+                localweather = value;
+
+              //  Debug.WriteLine("localweatherblock " + localweatherblock);
+             //   Debug.WriteLine("localweatherupdate " + localweatherupdate);
+
+              //  Debug.WriteLine("SIZE " + this.RestoreBounds.Size.Width + ", " + this.Size.Width);
+
+               
+                    if (CHECKMIN == false) // need to check for min window size because when console is minimized it does not report its size anymore.
+                    {
+                        if (this.Size.Width < 1350)
+                        {
+                            if (localweatherblock == false)
+                            {
+                                int h_delta = this.Width - console_basis_size.Width;
+                                int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
+                           //  Debug.WriteLine("was FALSE now TRUeE " + this.RestoreBounds.Size.Width +  ", " + this.Size.Width);
+
+                            if (CHECKMIN == false) ResizeConsole(h_delta, v_delta);
+                            }
+                            localweatherblock = true;
+                        }
+                        else
+                        {
+                            if (localweatherblock == true)
+                            {
+                                int h_delta = this.Width - console_basis_size.Width;
+                                int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
+                             // Debug.WriteLine("was TRUE now FALSE " + this.RestoreBounds.Size.Width);
+
+                            if (CHECKMIN == false) ResizeConsole(h_delta, v_delta);
+                            }
+
+                            localweatherblock = false;
+                        }
+                } // CHECKMIN check
+                else
+                {
+                    Debug.WriteLine("CHECKMIN");
+
+                }
+
+               //----------------------------------------------------
+                if ((localweather == true) && (localweatherblock == false) )
+                {
+                
+                    if (localweatherupdate == true)
+                    {
+                        panelTS1.Visible = true;
+                        panelTS1.Enabled = true;
+                        Debug.WriteLine("WEATHER UPDATE SCREEN");
+                        localweatherupdate = false;
+                        richTextBox7.Text = "Height = " + localheight + "' / " + localheightm + "m"; // station height reported at your lat and long
+                        richTextBox6.Text = "Temp = " + localcurrtemp + "°F / " + localcurrtempC + "°C";
+                        richTextBox3.Text = "Humidity = " + localcurrhum + " %";
+                        richTextBox2.Text = "Barometer = " + localcurrbar + " inHg";
+                        richTextBox8.Text = "Wind= " + localcurrwindM + "mph@" + localcurrwinddir + "° " + localcurrwinddirS;  // + localcurrwinddirS;        //localcurrwinddir + " °";
+                        richTextBox5.Text = localcurrfor;
+                        panelTS1.Invalidate();
+                    }
+                 
+
+                }
+                else
+                {
+                    panelTS1.Visible = false;
+                    panelTS1.Enabled = false;
+                      panelTS1.Invalidate();
+                    Debug.WriteLine("WEATHER  OFF");
+                }
+            }
+        } // LocalWeather
 
 
 
@@ -31531,7 +32143,7 @@ namespace PowerSDR
 				}
 		*/
 
-		private double saved_vfoa_sub_freq = 7.0;
+		private double saved_vfoa_sub_freq = 7.0; 
 
         private double saved_vfob_freq = 7.0;
 		/*		public float SavedVFOBFreq
@@ -33840,143 +34452,238 @@ namespace PowerSDR
                     {
                         ScanControl.freq_Low = 1.8;
                         ScanControl.freq_High = 2.0;
+
+                        ScanControl.freq_Low1 = 1.8;
+                        ScanControl.freq_High1 = 2.0;
+
                     }
                     else if (RX1Band == Band.B80M)
                     {
-                        ScanControl.freq_Low = 3.6;
+                        ScanControl.freq_Low = 3.5;
                         ScanControl.freq_High = 4.0;
+
+                        ScanControl.freq_Low1 = 3.5;
+                        ScanControl.freq_High1 = 4.0;
                     }
                     else if (RX1Band == Band.B60M)
                     {
                         ScanControl.freq_Low = 5.3;
                         ScanControl.freq_High = 5.6;
+
+                        ScanControl.freq_Low1 = 5.3;
+                        ScanControl.freq_High1 = 5.6;
                     }
                     else if (RX1Band == Band.B40M)
                     {
                         ScanControl.freq_Low = 7.0;
                         ScanControl.freq_High = 7.3;
+
+                        ScanControl.freq_Low1 = 7.0;
+                        ScanControl.freq_High1 = 7.3;
+
                     }
                     else if (RX1Band == Band.B30M)
                     {
                         ScanControl.freq_Low = 10.1;
                         ScanControl.freq_High = 10.15;
+
+                        ScanControl.freq_Low1 = 10.1;
+                        ScanControl.freq_High1 = 10.15;
                     }
                     else if (RX1Band == Band.B20M)
                     {
-                        ScanControl.freq_Low = 14.150;
-                        ScanControl.freq_High = 14.35;
+                        ScanControl.freq_Low = 14.000;
+                        ScanControl.freq_High = 14.350;
+
+                        ScanControl.freq_Low1 = 14.000;
+                        ScanControl.freq_High1 = 14.350;
                     }
                     else if (RX1Band == Band.B17M)
                     {
                         ScanControl.freq_Low = 18.11;
                         ScanControl.freq_High = 18.168;
+
+                        ScanControl.freq_Low1 = 18.11;
+                        ScanControl.freq_High1 = 18.168;
+
                     }
                     else if (RX1Band == Band.B15M)
                     {
-                        ScanControl.freq_Low = 21.2;
+                        ScanControl.freq_Low = 21.0;
                         ScanControl.freq_High = 21.45;
+
+                        ScanControl.freq_Low1 = 21.0;
+                        ScanControl.freq_High1 = 21.45;
                     }
                     else if (RX1Band == Band.B12M)
                     {
-                        ScanControl.freq_Low = 24.93;
+                        ScanControl.freq_Low = 24.89;
                         ScanControl.freq_High = 24.990;
+
+                        ScanControl.freq_Low1 = 24.89;
+                        ScanControl.freq_High1 = 24.990;
+
                     }
                     else if (RX1Band == Band.B10M)
                     {
                         ScanControl.freq_Low = 28.0;
                         ScanControl.freq_High = 29.7;
+
+                        ScanControl.freq_Low1 = 28.0;
+                        ScanControl.freq_High1 = 29.7;
                     }
                     else if (RX1Band == Band.B6M)
                     {
                         ScanControl.freq_Low = 50.0;
                         ScanControl.freq_High = 54.0;
+
+                        ScanControl.freq_Low1 = 50.0;
+                        ScanControl.freq_High1 = 54.0;
+
                     }
                     else if (RX1Band == Band.B2M)
                     {
                         ScanControl.freq_Low = 144.0;
                         ScanControl.freq_High = 148.0;
+
+                        ScanControl.freq_Low1 = 144.0;
+                        ScanControl.freq_High1 = 148.0;
                     }
                     else if (RX1Band == Band.VHF0)
                     {
                         ScanControl.freq_Low = 144.0;
                         ScanControl.freq_High = 148.0;
+
+                        ScanControl.freq_Low1 = 144.0;
+                        ScanControl.freq_High1 = 148.0;
                     }
                     else if (RX1Band == Band.VHF1)
                     {
                         ScanControl.freq_Low = 430.0;
                         ScanControl.freq_High = 450.0;
+
+                        ScanControl.freq_Low1 = 430.0;
+                        ScanControl.freq_High1 = 450.0;
+
                     }
                     else if (RX1Band == Band.BLMF)
                     {
-                        ScanControl.freq_Low = 0.2;
+                        ScanControl.freq_Low = 0.4;
                         ScanControl.freq_High = 1.8;
+
+                        ScanControl.freq_Low1 = 0.4;
+                        ScanControl.freq_High1 = 1.8;
+
                     }
                     else if (RX1Band == Band.B120M)
                     {
-                        ScanControl.freq_Low = 2.3;
+                        ScanControl.freq_Low = 2.0;
                         ScanControl.freq_High = 3.0;
+
+                        ScanControl.freq_Low1 = 2.0;
+                        ScanControl.freq_High1 = 3.0;
                     }
                     else if (RX1Band == Band.B90M)
                     {
                         ScanControl.freq_Low = 3.0;
                         ScanControl.freq_High = 3.5;
+
+                        ScanControl.freq_Low1 = 3.0;
+                        ScanControl.freq_High1 = 3.5;
                     }
                     else if (RX1Band == Band.B61M)
                     {
                         ScanControl.freq_Low = 4.0;
                         ScanControl.freq_High = 5.3;
+
+                        ScanControl.freq_Low1 = 4.0;
+                        ScanControl.freq_High1 = 5.3;
                     }
                     else if (RX1Band == Band.B49M)
                     {
                         ScanControl.freq_Low = 5.4;
                         ScanControl.freq_High = 7.0;
+
+                        ScanControl.freq_Low1 = 5.4;
+                        ScanControl.freq_High1 = 7.0;
                     }
                     else if (RX1Band == Band.B41M)
                     {
                         ScanControl.freq_Low = 7.2;
                         ScanControl.freq_High = 9.0;
+
+                        ScanControl.freq_Low1 = 7.2;
+                        ScanControl.freq_High1 = 9.0;
                     }
                     else if (RX1Band == Band.B31M)
                     {
                         ScanControl.freq_Low = 9.0;
                         ScanControl.freq_High = 9.99;
+
+                        ScanControl.freq_Low1 = 9.0;
+                        ScanControl.freq_High1 = 9.99;
+
                     }
                     else if (RX1Band == Band.B25M)
                     {
                         ScanControl.freq_Low = 10.0;
                         ScanControl.freq_High = 13.57;
+
+                        ScanControl.freq_Low1 = 10.0;
+                        ScanControl.freq_High1 = 13.57;
                     }
                     else if (RX1Band == Band.B22M)
                     {
                         ScanControl.freq_Low = 13.57;
-                        ScanControl.freq_High = 13.87;
+                        ScanControl.freq_High = 14.00;
+
+                        ScanControl.freq_Low1 = 13.57;
+                        ScanControl.freq_High1 = 14.00;
                     }
                     else if (RX1Band == Band.B19M)
                     {
                         ScanControl.freq_Low = 15.1;
                         ScanControl.freq_High = 17.0;
+
+                        ScanControl.freq_Low1 = 15.1;
+                        ScanControl.freq_High1 = 17.0;
                     }
                     else if (RX1Band == Band.B16M)
                     {
                         ScanControl.freq_Low = 17.0;
                         ScanControl.freq_High = 18.0;
+                        ScanControl.freq_Low1 = 17.0;
+                        ScanControl.freq_High1 = 18.0;
                     }
                     else if (RX1Band == Band.B14M)
                     {
                         ScanControl.freq_Low = 18.0;
                         ScanControl.freq_High = 21.0;
+                        ScanControl.freq_Low1 = 18.0;
+                        ScanControl.freq_High1 = 21.0;
                     }
                     else if (RX1Band == Band.B13M)
                     {
                         ScanControl.freq_Low = 21.0;
                         ScanControl.freq_High = 25.0;
+                        ScanControl.freq_Low1 = 21.0;
+                        ScanControl.freq_High1 = 25.0;
                     }
                     else if (RX1Band == Band.B11M)
                     {
                         ScanControl.freq_Low = 25.0;
                         ScanControl.freq_High = 28.0;
+                        ScanControl.freq_Low1 = 25.0;
+                        ScanControl.freq_High1 = 28.0;
                     }
+                    else // ke9ns need to add xvtr scanner capability
+                    {
+                        ScanControl.freq_Low = 28.0;
+                        ScanControl.freq_High = 29.0;
 
+                        ScanControl.freq_Low1 = 28.0;
+                        ScanControl.freq_High1 = 29.0;
+                    }
 
                     ScanForm.lowFBox.Text = ScanControl.freq_Low.ToString("f6");
 
@@ -35418,7 +36125,7 @@ namespace PowerSDR
 				catch(Exception)
 				{
                     Debug.WriteLine("VFOAFreq convert string to double failed");
-					return 0;
+					return 7.125;
 				}
 			}
 			set
@@ -37717,14 +38424,14 @@ namespace PowerSDR
 
         static Pen line_pen;
         static Pen line_dark_pen; // edge meter shadow around needle
-        static Pen line_dark_pen1; // ke9ns add analog meter shadow around needle
-        static Pen line_dark_pen2; // ke9ns add analog meter shadow around needle
+      //  static Pen line_dark_pen1; // ke9ns add analog meter shadow around needle
+      //  static Pen line_dark_pen2; // ke9ns add analog meter shadow around needle
 
 
-        static int shadow = 0;   // ke9ns add amount of shadow
+      //  static int shadow = 0;   // ke9ns add amount of shadow
 
 
-        static Pen MBC; // ke9ns meter background color
+     //   static Pen MBC; // ke9ns meter background color
 
         static SolidBrush b;
         static SolidBrush low_brush; // white
@@ -37797,37 +38504,84 @@ namespace PowerSDR
                             case MeterRXMode.SIGNAL_STRENGTH:
                             case MeterRXMode.SIGNAL_AVERAGE:
                             case MeterRXMode.SIGNAL_PEAK:
+
                                 switch ((int)g.DpiX)
                                 {
                                     case 96:
-                                        double s = (num + 127) / 6;
-                                        if (s <= 9.0F)
-                                            pixel_x = (int)((s * 7.5) + 2);
-                                        else
+
+                                        if (FREQA < 30)
                                         {
-                                            double over_s9 = num + 73;
-                                            pixel_x = 69 + (int)(over_s9 * 1.05);
+                                            double s = (num + 127) / 6;
+
+                                            if (s <= 9.0F)
+                                            {
+                                                pixel_x = (int)((s * 7.5) + 2);
+                                            }
+                                            else
+                                            {
+                                                double over_s9 = num + 73;
+                                                pixel_x = 69 + (int)(over_s9 * 1.05);
+                                            }
                                         }
+                                        else // vhf
+                                        {
+
+                                            //  Debug.WriteLine("VHF96====");
+                                            if (num > -93)
+                                            {
+                                                pixel_x = (int)(W * 0.5 + (93 + num) / 63.0 * (W * 0.5 - 3));
+                                                 
+                                            }
+                                            else
+                                            {
+                                                pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
+
+                                            }
+
+
+                                        }
+
+
                                         break;
                                     case 120:
-                                        if (num <= -97.0f)
-                                            pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
-                                        else if (num <= -91.0f)
-                                            pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
-                                        else if (num <= -85.0f)
-                                            pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
-                                        else if (num <= -79.0f)
-                                            pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
-                                        else if (num <= -73.0f)
-                                            pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
-                                        else if (num <= -53.0f)
-                                            pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
-                                        else if (num <= -33.0f)
-                                            pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
-                                        else if (num <= -13.0f)
-                                            pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+
+                                        if (FREQA < 30)
+                                        {
+                                            if (num <= -97.0f)
+                                                pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                            else if (num <= -91.0f)
+                                                pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                            else if (num <= -85.0f)
+                                                pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                            else if (num <= -79.0f)
+                                                pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                            else if (num <= -73.0f)
+                                                pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                            else if (num <= -53.0f)
+                                                pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                            else if (num <= -33.0f)
+                                                pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                            else if (num <= -13.0f)
+                                                pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                            else
+                                                pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+
+                                        }
                                         else
-                                            pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+                                        {
+                                           // Debug.WriteLine("VHF120====");
+
+                                            if (num <= -117.0f)      pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                            else if (num <= -111.0f) pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                            else if (num <= -105.0f) pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                            else if (num <= -99.0f) pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                            else if (num <= -93.0f) pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                            else if (num <= -73.0f) pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                            else if (num <= -53.0f) pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                            else if (num <= -33.0f) pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                            else                    pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+
+                                        }
                                         break;
                                 }
                                 break;
@@ -41360,9 +42114,9 @@ namespace PowerSDR
         static ColorBlend swr_cb = new ColorBlend();
         static int swr_out = 161;
         static double swr_num = 0;
-        static double tx2_meter_current_data_swr = 0;
-        static double tx2_meter_new_data_swr = 0;
-        static double tx2_meter_peak_swr = 0;
+        static float tx2_meter_current_data_swr = 0;
+        static float tx2_meter_new_data_swr = 0;
+        static float tx2_meter_peak_swr = 0;
         static int tx2_meter_peak4_swr = 0;
         static int tx2_meter_peak5_swr = 0;
 
@@ -41405,10 +42159,10 @@ namespace PowerSDR
             int W = picRX3Meter.ClientSize.Width;
             Graphics g = e.Graphics;
 
-            double num;
-            int pixel_x = 0;
-            int pixel_x1 = 0; // ke9ns ADD for new meters
-            string output = "";
+          //  double num;
+         //   int pixel_x = 0;
+          //  int pixel_x1 = 0; // ke9ns ADD for new meters
+          //  string output = "";
 
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -41641,7 +42395,7 @@ namespace PowerSDR
                 if (swr_out < 0) swr_out = swr_out * -1;
 
 
-
+              //  Debug.WriteLine("SWR " + swr_out);
                 g.FillRectangle(swr_Brush, new Rectangle(5, 45, swr_out, 4));
 
 
@@ -41666,6 +42420,10 @@ namespace PowerSDR
                 if (double.IsInfinity(swr_num)) swr_out = (int)(comboW - 2);
 
                 if (swr_out < 0) swr_out = swr_out * -1;
+
+                if (swr_out - 2 < 0) swr_out = 2;
+
+              //  Debug.WriteLine("SWRP " + swr_out);
 
                 g.FillRectangle(swr_Brush, new Rectangle(swr_out-2, 45, 4, 4));
 
@@ -41705,10 +42463,11 @@ namespace PowerSDR
                 spacingW = (comboW * 0.75 - 2.0) / 4.0;
                 alcG_out = (int)(alc_num / 5.0 * spacingW);
 
+                if (alc_out - 2 < 0) alc_out = 2;
 
                 g.FillRectangle(alc_Brush, new Rectangle(alc_out-2, 74, 4, 4));
 
-
+             //   Debug.WriteLine("ALC " + alc_out);
 
                 //-------------------------------------------------------------------------------
                 // MIC
@@ -41738,10 +42497,12 @@ namespace PowerSDR
                     mic_out = (int)((mic_num + 30.0) / 30.0 * (comboW * 0.665 - 1.0));
                 }
 
+                if (mic_out - 2 < 0) mic_out = 2;
+
                 g.FillRectangle(mic_Brush, new Rectangle(mic_out-2, 101, 4, 4));
 
 
-
+              //  Debug.WriteLine("MIC " + mic_out);
 
             } //  if (meterCombo == true)
 
@@ -47716,18 +48477,21 @@ namespace PowerSDR
                     txtTimer.Select(0, 0);
                 }
 
-                if (noaaON == 1)
+                if (noaaON >= 1)
                 {
                     //  Debug.WriteLine("time = "+ DateTime.UtcNow.Minute);
 
-                    if ((DateTime.UtcNow.Minute == 0) || (suncounter == 2))  // =2 only at startup
+                    if (noaaON == 3) LOCALWEATHER = true; // update local weather on screen
+                    else LOCALWEATHER = false;
+
+                    if ((DateTime.UtcNow.Minute == 30) || (DateTime.UtcNow.Minute == 0) || (suncounter == 2))  // =2 only at startup
                     {
                         if ((suncounter == 0) || (suncounter == 2)) // 0=already have weather data from before or 2=startup
                         {
                             Debug.WriteLine("update noaa ");
 
 
-                            Thread t4 = new Thread(new ThreadStart(NOAA));
+                            Thread t4 = new Thread(new ThreadStart(NOAA)); // get space and local weather data here
                             t4.IsBackground = true;
                             t4.Priority = ThreadPriority.Lowest;
                             t4.Name = "NOAA Space Weather Thread";
@@ -48433,6 +49197,7 @@ namespace PowerSDR
         private static byte regBand = 0; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking) 1=CTRL key pressed
         public static bool ALTM = false; // ke9ns add ALT + M key used to add memory
         public static bool HELPMAP = false; // ke9ns add true = mouse over map menuitem button trackmenuitem1
+        public static bool HELPSWR = false; // ke9ns add true = mouse over SWR Scanner button for help
 
         //===============================================================================================================
         //===============================================================================================================
@@ -48441,7 +49206,37 @@ namespace PowerSDR
 		{
             if (e.KeyCode == Keys.F1) // ke9ns add for help messages (F1 help screen)
             {
-            
+
+
+              //  YouTube Video Describing 2.8.0.54(SWR Scanner / Plotter / Logger): https://www.youtube.com/embed/w5j6jh6c0_g
+              //  YouTube Video Describing 2.8.0.52(New Combo TX meter & Weather, and demonstrate setup of PowerSDR to run digital mode programs(like wsjt - x): https://www.youtube.com/embed/VOIve-4hEYQ
+              //  YouTube Video Describing 2.8.0.43(New VFO Font, Time - Out Timer, Enable VAC2, SSB - AM H3E mode, FM data mode, N1MM spectrum, UTC Recording start time): https://www.youtube.com/embed/BayWkcjS3os
+              //  YouTube Video Describing 2.8.0.38(Updates to ID TImer, Pan Spotting, VFO Dials): https://www.youtube.com/embed/y5VLJEBOoZE
+              //  YouTube Video Describing 2.8.0.27(Updates to Scanner, Meters, Time Sync, SWL): https://www.youtube.com/embed/t3AWOG94w1Q
+              //  YouTube Video Describing 2.8.0.18(Scanner and DX Spotting): https://www.youtube.com/embed/YRG6ifwosAo
+              //  YouTube Video Describing 2.8.0.16(TX WaterID images): https://www.youtube.com/embed/Bsoz0c_mo5k
+              //  YouTube Video Describing 2.8.0.2(ID and Wav recording features): https://www.youtube.com/embed/VdzK-H5SXNc
+              //  YouTube Video Describing RevT11(ID Timer): https://www.youtube.com/embed/-KSlMNyN8U0
+              //  YouTube Video Describing RevT11(BandStack): https://www.youtube.com/embed/CQFvdhAtMaE
+              //  YouTube Video Describing RevT11(Pulser): https://www.youtube.com/embed/uruyOtyLRvM
+              // YouTube Video Describing RevT11(VOACAP): https://www.youtube.com/embed/nBkeqs9No2E
+              //  YouTube Video Describing RevT11(NIST Time Sync): https://www.youtube.com/embed/p-5wKRw2xdY
+              //  YouTube Video Describing RevT11(NCDXF Beacon): https://www.youtube.com/embed/tJBvmF5t9zc
+               // YouTube Video Describing RevT10(Rotor Control): https://www.youtube.com/embed/8hAMc_WUa2Q
+              //  YouTube Video Describing RevT10(Beam Heading): https://www.youtube.com/embed/AOEclAFXI0s
+              //  YouTube Video Describing RevT10(Scheduler): https://www.youtube.com/embed/JtKY6lwMTVY
+              //  YouTube Video Describing RevT9(SWL Search): https://www.youtube.com/embed/Cv-Jm2j3jw8
+
+               // YouTube Video Describing RevT8(BandStack): https://www.youtube.com/embed/1JHV_CDQwIU
+              //  YouTube Video Describing RevT8(Space Wthr): https://www.youtube.com/embed/5xjzl5IkiJg
+              //  YouTube Video Describing RevT8(PowerMate):  https://www.youtube.com/watch?v=sEQ2bzZn4bQ
+              //  YouTube Video Describing RevT7(2nd TX meter): https://www.youtube.com/embed/635dur8SoKo
+              //  YouTube Video Describing RevT6 to RevS11: https://www.youtube.com/embed/uPTpZCXCFw0
+                //YouTube Video Describing RevS10 to RevS2: https://www.youtube.com/embed/zninPwfSgJY
+                //YouTube Video Describing RevS1 to RevR4: https://www.youtube.com/embed/fr523IwrApU
+                //YouTube Video Describing RevR3 to RevP2: https://www.youtube.com/embed/mOwYpAMm8S0
+                //YouTube Video Describing RevP1 to Rev A: https://www.youtube.com/embed/aQN9KStSuPI
+
                 if (MouseIsOverControl(txtTimer) == true)
                 {
                     if (helpboxForm == null || helpboxForm.IsDisposed) helpboxForm = new helpbox(this);
@@ -48450,7 +49245,19 @@ namespace PowerSDR
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
 
-                    helpboxForm.helpbox_message.Text = helpboxForm.txttimer_message.Text;
+                    helpboxForm.helpbox_message.Text = helpboxForm.txttimer_message.Text;            // ID TIMER HELP
+
+
+                   // helpboxForm.webBrowser1.ScriptErrorsSuppressed = true;
+
+                   // helpboxForm.webBrowser1.Navigate("http://www.youtube.com/apiplayer?video_id=-KSlMNyN8U0&version=3");//
+                   
+                    //  helpboxForm.webBrowser1.Url = new Uri($"https://www.youtube.com/embed/-KSlMNyN8U0");
+                  //  helpboxForm.webBrowser1.Url = new Uri($"https://www.youtube.com/watch?v=-KSlMNyN8U0"); // works but like a full web browser
+                    //  helpboxForm.webBrowser1.Navigate($"http://youtube.com/v/-KSlMNyN8U0?version=3");
+
+
+
                 }
                 else  if((MouseIsOverControl(txtNOAA) == true) || (MouseIsOverControl(txtNOAA2) == true))
                 {
@@ -48460,7 +49267,7 @@ namespace PowerSDR
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
                   
-                    helpboxForm.helpbox_message.Text = helpboxForm.solar_message.Text;
+                    helpboxForm.helpbox_message.Text = helpboxForm.solar_message.Text;         // SOLOR WEATHER HELP
 
                 }
                 else if (HELPMAP == true) 
@@ -48471,7 +49278,18 @@ namespace PowerSDR
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
 
-                    helpboxForm.helpbox_message.Text = helpboxForm.TRACKMap.Text;
+                    helpboxForm.helpbox_message.Text = helpboxForm.TRACKMap.Text;             // WORLD MAP WITH Propagation, DX Spotting, Grayline, SUN tracking
+
+                }
+                else if (HELPSWR == true)
+                {
+                    if (helpboxForm == null || helpboxForm.IsDisposed) helpboxForm = new helpbox(this);
+
+                    helpboxForm.Show();
+                    helpboxForm.Focus();
+                    helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
+
+                    helpboxForm.helpbox_message.Text = helpboxForm.SWRScanner.Text;             // SWR Scanner Help
 
                 }
 
@@ -51464,7 +52282,9 @@ namespace PowerSDR
 		private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 
-
+        
+            Debug.WriteLine("CONSOLE_CLOSING");
+            chkPower.Checked = false;
 
             Audio.callback_return = 2;
 
@@ -51523,7 +52343,13 @@ namespace PowerSDR
             if (preSelForm != null) preSelForm.Hide();
 
             if (SpotForm != null) SpotForm.Hide(); // ke9ns add
-
+            if (ScanForm != null) ScanForm.Hide(); // ke9ns add scanner form
+            if (WaveForm != null) WaveForm.Hide(); // ke9ns add wave screen
+            if (IDBOXForm != null) IDBOXForm.Hide(); // ke9ns add ID timer box
+            if (helpboxForm != null) helpboxForm.Hide(); // ke9ns add help screen
+            if (StackForm != null) StackForm.Hide(); // ke9ns add bandstack
+            if (TOTBOXForm != null) TOTBOXForm.Hide(); // ke9ns add time out timer
+          
             if (fwcAtuForm != null)
             {
                 fwcAtuForm.Hide();
@@ -51534,14 +52360,21 @@ namespace PowerSDR
 
             DXMemList.Save1(); // ke9ns add
 
-            
+            //   this.Text = TitleBar.GetString(); // ke9ns add
+            this.Text += "-----Memory save ";
+
+
+            Debug.WriteLine("CONSOLE_CLOSING----- SAVE MEMORY DONE");
 
             chkPower.Checked = false;
 			Thread.Sleep(100);
-			this.Hide();
+			
+			SaveState();                // put current settings back into database     DB.SaveVars("State", ref a);		    // save the values to the DB
 
-			SaveState();                // put current settings back into database
+            this.Text += " ,SAVED STATE";
+           
 
+            Debug.WriteLine("CONSOLE_CLOSING----- SAVING STATE TO DATABASE. DONE");
             try
             {
                 switch (current_model)
@@ -51574,10 +52407,22 @@ namespace PowerSDR
             {
 
             }
-            
-			if (cwxForm != null) cwxForm.Close();
-			if (setupForm != null) setupForm.SaveOptions();
-			if (eqForm != null) eqForm.Close();
+
+            /*
+            this.Text += " , Forms closing";
+
+            Debug.WriteLine("CONSOLE_CLOSING----- TURN OFF PA DONE");
+            if (setupForm != null) setupForm.SaveOptions(); //  DB.SaveVars("Options", ref a);	
+            if (cwxForm != null) cwxForm.Close(); // cw panel
+            if (setupForm != null) setupForm.Close();
+            if (SpotForm != null) SpotForm.Close(); // ke9ns add spotter form
+            if (ScanForm != null) ScanForm.Close(); // ke9ns add scanner form
+            if (WaveForm != null) WaveForm.Close(); // ke9ns add wave screen
+            if (IDBOXForm != null) IDBOXForm.Close(); // ke9ns add ID timer box
+            if (helpboxForm != null) helpboxForm.Close(); // ke9ns add help screen
+            if (StackForm != null) StackForm.Close(); // ke9ns add bandstack
+            if (TOTBOXForm != null) TOTBOXForm.Close(); // ke9ns add time out timer
+            if (eqForm != null) eqForm.Close();
 			if (ucbForm != null) ucbForm.Close();
 			if (xvtrForm != null) xvtrForm.Close();
 			if (ProdTestForm != null) ProdTestForm.Close();
@@ -51586,7 +52431,7 @@ namespace PowerSDR
             if (flex1500MixerForm != null) flex1500MixerForm.Close();
 			if (flex5000LLHWForm != null) flex5000LLHWForm.Close();
 			if (flex5000DebugForm != null) flex5000DebugForm.Close();
-			if (fwcAntForm != null) fwcAntForm.Close();
+            if (fwcAntForm != null) fwcAntForm.Close();
             if (hidAntForm != null) hidAntForm.Close();
 			if (fwcAtuForm != null) fwcAtuForm.Close();
             if (flexControlBasicForm != null) flexControlBasicForm.Close();
@@ -51594,11 +52439,22 @@ namespace PowerSDR
             if (memoryForm != null) memoryForm.Close();
             if (preSelForm != null) preSelForm.Close();
 
+            this.Text += " , ALL CLOSED";
+            */
 
-         //   Common.SaveForm(this, "console");
+          //  this.Hide();
 
+            Debug.WriteLine("CONSOLE_CLOSING------ ALL FORMS CLOSED DONE");
+            
+            
+            //   Common.SaveForm(this, "console");
+
+            // jumps to dispose()
 
         } // console_closing
+
+
+
 
         private void comboPreamp_SelectedIndexChanged(object sender, System.EventArgs e)
         {
@@ -52172,7 +53028,7 @@ namespace PowerSDR
 
         //===================================================================
 
-        static Font T1;
+      //  static Font T1;
 
         const float MAX_VU_POWER = 60.0f;
         static float[] vhf_power_map = { 0, 0.2f, 2.9f, 10.8f, 22.8f, 36.6f, 48.2f, 52.5f, 58.3f, 60.8f, 62.4f, 64.2f };
@@ -52635,15 +53491,23 @@ namespace PowerSDR
         // ke9ns mod (link up with CWX panel)
 		private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
 		{
+          //  if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(this); // ke9ns add
+          //  if (cwxForm == null || cwxForm.IsDisposed)     cwxForm = new CWX(this);
+          
             lblCWSpeed.Text = "Speed:  "+ptbCWSpeed.Value.ToString()+" WPM";
 
             if (cwxForm != null ) // if cwx panel open, then use it,otherwise change CWKeyer directly
             {
-                   cwxForm.udWPM.Value = ptbCWSpeed.Value; // cwxForm.WPM = ptbCWSpeed.Value; // ke9ns add
+                Debug.WriteLine("CWX1 " + ptbCWSpeed.Value);
+             
+                
+                cwxForm.WPM = ptbCWSpeed.Value; // cwxForm.WPM = ptbCWSpeed.Value; // ke9ns add
 
             }
             else
             {
+                Debug.WriteLine("CWX0 " + ptbCWSpeed.Value);
+
                 CWKeyer.WPM = ptbCWSpeed.Value;
             }
 
@@ -56078,7 +56942,7 @@ namespace PowerSDR
 
 
 
-        private static double tuned_freq;
+      //  private static double tuned_freq;
 		private void txtVFOAFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
 		{
 
@@ -61259,7 +62123,15 @@ namespace PowerSDR
 			if(rx2_enabled)
 			{
 				if(chkVFOSplit.Checked)
-				{
+                {
+                    
+                    if (saved_vfoa_sub_freq == 7.0)
+                    {
+                        saved_vfoa_sub_freq = VFOAFreq; // saved_vfoa_freq;
+                         Debug.WriteLine("VFOSYNC1");
+                            
+                    }
+
                     txtVFOABand.Font = ff3; // new Font("Swis721 BT", 14.0f,  FontStyle.Italic | FontStyle.Bold); //Microsoft Sans Sarif FontStyle.Regular
                     if (saved_vfoa_sub_freq == Display.CLEAR_FLAG) saved_vfoa_sub_freq = saved_vfoa_freq;
 					txtVFOABand.Text = saved_vfoa_sub_freq.ToString("f6");
@@ -61967,9 +62839,11 @@ namespace PowerSDR
 			xvtrForm.Focus();
             xvtrForm.WindowState = FormWindowState.Normal; // ke9ns add
         }
-
-		private void mnuCWX_Click(object sender, System.EventArgs e)
+/*
+		private void mnuCWX_Click(object sender, System.EventArgs e) // click on CWX button
 		{
+            if (setupForm == null || setupForm.IsDisposed)   setupForm = new Setup(this);
+
             if ((setupForm != null) && (setupForm.chkKeyPoll.Checked == false))
             {
                 if (rx1_dsp_mode == DSPMode.LSB) RX1DSPMode = DSPMode.CWL;
@@ -61977,12 +62851,13 @@ namespace PowerSDR
 
                 if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
                 {
-                    MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
-                        "CWX Control Form.",
-                        "CWX Error: Wrong Mode",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    return;
+                    RX1DSPMode = DSPMode.CWU;
+                    // MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
+                    //    "CWX Control Form.",
+                    //    "CWX Error: Wrong Mode",
+                    //   MessageBoxButtons.OK,
+                    //  MessageBoxIcon.Error);
+                    // return;
                 }
 
             }
@@ -61994,9 +62869,11 @@ namespace PowerSDR
 
 			cwxForm.Show();
 			cwxForm.Focus();
-		}
+            cwxForm.WindowState = FormWindowState.Normal; // ke9ns add
 
-		private void menuItemFilterConfigure_Click(object sender, System.EventArgs e)
+        } // mnuCWX_Click
+*/
+        private void menuItemFilterConfigure_Click(object sender, System.EventArgs e)
 		{
 			if(rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC) return;
 
@@ -62490,6 +63367,8 @@ namespace PowerSDR
             {
                 case WM_QUERYENDSESSION:                   
                     chkPower.Checked = false;
+                    Debug.WriteLine("QUERYENDSESSION");
+
                     ExitConsole();
                     //this.Close();
                     break;
@@ -63066,11 +63945,16 @@ namespace PowerSDR
                 panelModeSpecificFM.Location = new Point(gr_ModeFM_basis_location.X + h_delta - (h_delta / 4), gr_ModeFM_basis_location.Y + v_delta);
 
 				panelVFO.Location = new Point (gr_VFO_basis_location.X+(h_delta/4),gr_VFO_basis_location.Y+v_delta);
-				//grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X+(h_delta/2),gr_vfobetween_basis_location.Y);
+
+                panelTS1.Location = new Point(130, (gr_VFO_basis_location.Y + v_delta)- 10); // ke9ns add
 
 
 
-				btnDisplayPanCenter.Location = new Point(btn_display_pan_center_basis.X+(h_delta),btn_display_pan_center_basis.Y+v_delta);
+                //grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X+(h_delta/2),gr_vfobetween_basis_location.Y);
+
+
+
+                btnDisplayPanCenter.Location = new Point(btn_display_pan_center_basis.X+(h_delta),btn_display_pan_center_basis.Y+v_delta);
 				ptbDisplayPan.Size = new Size(tb_display_pan_size_basis.Width+(h_delta),tb_display_pan_size_basis.Height);
 				radDisplayZoom4x.Location = new Point(btn_display_zoom_4x_basis.X+h_delta,btn_display_zoom_4x_basis.Y+v_delta);
 				radDisplayZoom2x.Location = new Point(btn_display_zoom_2x_basis.X+h_delta,btn_display_zoom_2x_basis.Y+v_delta);
@@ -63115,10 +63999,11 @@ namespace PowerSDR
 				chkBCI.Location = new Point(chk_bci_basis.X,chk_bci_basis.Y+(v_delta/8)+(v_delta/2));
 				//button1.Location = new Point(button1_basis.X,button1_basis.Y+(v_delta/8)+(v_delta/2));
                 panelDateTime.Location = new Point(gr_date_time_basis.X, gr_date_time_basis.Y + (v_delta / 2) + (v_delta / 4)); // ke9ns mod was /2  /4
-				//lblCPUMeter.Location = new Point(lbl_cpu_meter_basis.X,lbl_cpu_meter_basis.Y+(v_delta/8)+(v_delta/2)+(v_delta/4));
-			
-				//panelRX2Divider.Location = new Point(pan_rx2_divider_basis.X, pan_rx2_divider_basis.Y+v_delta);
-				//panelRX2Divider.Size = new Size(pan_rx2_divider_size_basis.Width+h_delta, pan_rx2_divider_size_basis.Height);
+              
+                //lblCPUMeter.Location = new Point(lbl_cpu_meter_basis.X,lbl_cpu_meter_basis.Y+(v_delta/8)+(v_delta/2)+(v_delta/4));
+
+                //panelRX2Divider.Location = new Point(pan_rx2_divider_basis.X, pan_rx2_divider_basis.Y+v_delta);
+                //panelRX2Divider.Size = new Size(pan_rx2_divider_size_basis.Width+h_delta, pan_rx2_divider_size_basis.Height);
 
                 grpDisplaySplit.Location = new Point(gr_display_split_basis.X+(h_delta/2), gr_display_split_basis.Y+v_delta);
 
@@ -63142,7 +64027,47 @@ namespace PowerSDR
 
 
                 //--------------------------------------------------------------------------------------------------------------
-               // ke9ns VFO DIAL option
+                // ke9ns weather option
+
+
+              //  Debug.WriteLine("CHECK WEATHER");
+
+                if ((localweather == false) || (this.Size.Width < 1350)) // normal location of VFOA and B
+                {
+                    panelTS1.Visible = false;
+                    panelTS1.Enabled = false;
+                    Debug.WriteLine("WEATHER TOO SMALL1");
+                    localweatherblock = true;
+                    panelTS1.Invalidate();
+                }
+                else
+                {
+                   
+                    // right edge of panelTS1 = 245
+                    int temp = gr_VFO_basis_location.X + (h_delta / 4); // left edge location of panelVFO (136 wide)
+                    int temp1 = gr_dsp_basis.X + (h_delta / 2); // left edge location of panelDSP
+
+                    int x1 = temp1 - 275;
+                    int x2 = (x1 / 2) + 275;
+                    int x3 = x2 - 68;
+
+                  //  Debug.WriteLine("X1 " + x1 + ", " + x2 + " ," + x3 + " ," + this.Size.Width);
+
+                    
+                        localweatherblock = false;
+
+                        panelTS1.Visible = true;
+                        panelTS1.Enabled = true;
+                        Debug.WriteLine("WEATHER BIG ENOUGH");
+                        panelVFO.Location = new Point(x3, gr_VFO_basis_location.Y + v_delta); // move panelVFO to fill the empy space equally
+                        panelTS1.Invalidate();
+                   
+
+                }
+
+
+                //--------------------------------------------------------------------------------------------------------------
+                // ke9ns VFO DIAL option
                 if ((vfodial == false) || (this.Size.Width < 1400)) // normal location of VFOA and B
                 {
                     VFODialA.Visible = false;
@@ -65344,6 +66269,7 @@ namespace PowerSDR
             if (this.WindowState == FormWindowState.Minimized)
             {
                 N1MM_MINIMIZE = true;
+                CHECKMIN = true; 
 
                 if (N1MM_ON == true) // ke9ns add
                 {
@@ -65362,7 +66288,8 @@ namespace PowerSDR
             } // window is minimized
             else
             {
-                N1MM_MINIMIZE = false; 
+                N1MM_MINIMIZE = false;
+                CHECKMIN = false;
             }
 
 			if(dpi == 0) dpi = (int)picDisplay.CreateGraphics().DpiX;
@@ -65507,15 +66434,31 @@ namespace PowerSDR
 			if(chkVFOSync.Checked)
 			{
 				chkVFOSync.BackColor = button_selected_color;
+
+                // ke9ns add
+
+                if (RX2Enabled == true)
+                {
+                    if (chkVFOSplit.Checked == true)
+                    {
+                        saved_vfoa_sub_freq = VFOAFreq; // saved_vfoa_freq;
+                        Debug.WriteLine("VFOSYNC");
+                        UpdateVFOASub();
+                    }
+                }
+                //
 				txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-			}
+
+               
+            }
 			else
 			{
 				chkVFOSync.BackColor = SystemColors.Control;
 			}
-		}
 
-		private bool mute_rx1_on_vfob_tx = true;
+        } //  chkVFOSync_CheckedChanged
+
+        private bool mute_rx1_on_vfob_tx = true;
 		public bool MuteRX1OnVFOBTX
 		{
 			get { return mute_rx1_on_vfob_tx; }
@@ -66887,22 +67830,28 @@ namespace PowerSDR
             xvtrForm.WindowState = FormWindowState.Normal; // ke9ns add
         }
 
-        private void cWXToolStripMenuItem_Click(object sender, EventArgs e)
+        private void cWXToolStripMenuItem_Click(object sender, EventArgs e) // CWX toolstrip 
         {
+            if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(this);
 
             if ((setupForm != null) && (setupForm.chkKeyPoll.Checked == false))
             {
                 if (rx1_dsp_mode == DSPMode.LSB) RX1DSPMode = DSPMode.CWL;
                 else if (rx1_dsp_mode == DSPMode.USB) RX1DSPMode = DSPMode.CWU;
+                
 
                 if (rx1_dsp_mode != DSPMode.CWL && rx1_dsp_mode != DSPMode.CWU)
                 {
-                    MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
-                        "CWX Control Form.",
-                        "CWX Error: Wrong Mode",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    return;
+                    RX1DSPMode = DSPMode.CWU;
+
+
+
+                //    MessageBox.Show("The radio must be in CWL or CWU mode in order to open the " +
+                 //       "CWX Control Form.",
+                 //       "CWX Error: Wrong Mode",
+                 //       MessageBoxButtons.OK,
+                 //       MessageBoxIcon.Error);
+                 //   return;
                 }
             }
             //	cw_key_mode = true;
@@ -67554,6 +68503,7 @@ namespace PowerSDR
                
                 string filePath = AppDataPath + "ke9ns8.dat";
 
+
                 if (!File.Exists(filePath))
                 {
                     Debug.WriteLine("problem no ke9ns dat file found ");
@@ -67716,6 +68666,7 @@ namespace PowerSDR
             {
                 p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
             }
+
 
           
         } //panelDateTime_Paint
@@ -71126,6 +72077,7 @@ namespace PowerSDR
                             txtTimer.ForeColor = Color.Red;
                             panelDateTime.Invalidate();
                             grpVFOBetween.Invalidate();
+                          
                             flag1 = true;
 
 
@@ -71296,6 +72248,7 @@ namespace PowerSDR
                                     txtTimer.ForeColor = Color.Red;
                                     panelDateTime.Invalidate();
                                     grpVFOBetween.Invalidate();
+                               
                                     flag1 = true;
                                 }
 
@@ -71308,6 +72261,7 @@ namespace PowerSDR
                                     txtTimer.ForeColor = Color.Black;
                                     panelDateTime.Invalidate();
                                     grpVFOBetween.Invalidate();
+                                
                                     flag2 = true;
                                 }
                             }
@@ -71323,6 +72277,7 @@ namespace PowerSDR
                             txtTimer.ForeColor = Color.AntiqueWhite;
 
                             panelDateTime.Invalidate();
+                        
                             if (chkBoxTimer2 == true)
                             {
                                 if (chkBoxTimer1 == 1) txtTimer.Text = "wfID Timer: 10min";
@@ -71381,11 +72336,21 @@ namespace PowerSDR
 
             if (noaaON == 0)
             {
+                LOCALWEATHER = false;
                 noaaON = 1; // turn on space weather
+                btnHidden.Focus();
+            }
+            else if (noaaON == 1)
+            {
+                LOCALWEATHER = true;
+                noaaON = 3; // turn on space weather
                 btnHidden.Focus();
             }
             else
             {
+
+                LOCALWEATHER = false;
+
                 noaaON = 0; // shut down thread
                 suncounter = 2;
                 RadioBlackout = GeoBlackout = " ";
@@ -71396,6 +72361,13 @@ namespace PowerSDR
                 txtNOAA.Text = "Space WX: OFF";
                 txtNOAA2.Text = "Click On";
             }
+
+           int h_delta = this.Width - console_basis_size.Width;
+            int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
+
+            ResizeConsole(h_delta, v_delta); 
+
+         //  Console_Resize(this, e); // ke9ns add used to move panelVFO over when panelTS1 local weather is activated or deactivated
 
             txtNOAA.SelectAll();
             txtNOAA.SelectionAlignment = HorizontalAlignment.Center;
@@ -71428,7 +72400,7 @@ namespace PowerSDR
 
 
         public static int suncounter = 2; // for space weather
-        public static byte noaaON = 0; // for space weather
+        public static byte noaaON = 0; // for space weather 1=space weather, 2=local weather, 3=both
         public static int SFI = 0;       // for Space weather
         public static int SN = 0;        // for Space weather
         public static int Aindex = 0;    // for Space weather
@@ -71442,10 +72414,142 @@ namespace PowerSDR
         private string serverPath2;       // for Space weather  NWRA
 
 
+        public static string localheight; // ke9ns local height (Feet)
+        public static string localheightm; // meters
+        public static string localcurrtemp; // current local temperature F
+        public static string localcurrtempC;
+        public static string localcurrhum; // current local humidity %
+        public static string localcurrfor; // current local forcast
+        public static string localcurrbar; // current local press (merc)
+        public static string localcurrwind; // current local wind (knots)
+        public static string localcurrwindM;
+        public static string localcurrwinddir; // current local wind (knots)
+        public static string localcurrwinddirS;
+
         public void NOAA()
         {
-         
-                        Debug.WriteLine("GET NOAA=========");
+
+            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
+
+            if (((int)SpotForm.udDisplayLat.Value > 29) && ((int)SpotForm.udDisplayLat.Value < 49))
+            {
+                if (((int)SpotForm.udDisplayLong.Value > -120) && ((int)SpotForm.udDisplayLong.Value < -73))
+                {
+                    string currweth = httpFile.Weather(); // get local weather data if in USA
+
+                    Debug.WriteLine(" " + currweth);
+
+                    var xdoc = new XDocument();
+
+                    try
+                    {
+                        xdoc = XDocument.Parse(currweth, LoadOptions.None);
+                    }
+                    catch(Exception g)
+                    {
+                        Debug.WriteLine("Xdocument parse " + g);
+                    }
+
+                    Debug.WriteLine("GOOD LAT AND LONG weather data4=========");
+
+                    try
+                    {
+                        localcurrfor = xdoc.Descendants("wordedForecast").Descendants("text").ElementAt(0).Value; // get todays forcast in text
+                        localweatherupdate = true; // tell screen to update with new weather data
+
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for bad" + h);
+                    }
+
+                    try
+                    {
+                        localcurrwind = xdoc.Descendants("data").Skip(1).Descendants("wind-speed").Skip(1).Descendants("value").ElementAt(0).Value; // KNOTS
+                        localcurrwindM = ((int)(Convert.ToDouble(localcurrwind) * 1.152)).ToString();  // mph = knots * 1.152
+
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for wind" + h);
+                    }
+
+                    try
+                    {
+                        localcurrwinddir = xdoc.Descendants("data").Skip(1).Descendants("direction").Descendants("value").ElementAt(0).Value;
+                        int temp11 =  Convert.ToInt32(localcurrwinddir);
+
+                             if ((temp11 >= 350) || (temp11 < 10)) localcurrwinddirS = "N";
+                        else if ((temp11 >= 10) && (temp11 < 80)) localcurrwinddirS = "NE";
+                        else if ((temp11 >= 80) && (temp11 < 100)) localcurrwinddirS = "E";
+                        else if ((temp11 >= 100) && (temp11 < 170)) localcurrwinddirS = "SE";
+                        else if ((temp11 >= 170) && (temp11 < 190)) localcurrwinddirS = "S";
+                        else if ((temp11 >= 190) && (temp11 < 260)) localcurrwinddirS = "SW";
+                        else if ((temp11 >= 260) && (temp11 < 280)) localcurrwinddirS = "W";
+                        else if ((temp11 >= 280) && (temp11 < 350)) localcurrwinddirS = "NW";
+                        else localcurrwinddirS = "--";
+
+                        if (temp11 < 0 || temp11 > 360) localcurrwinddir = "--";
+
+
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for wind dir" + h);
+                        localcurrwinddir = "--";
+                        localcurrwinddirS = "--";
+                    }
+
+                    try
+                    {
+                        localcurrbar = xdoc.Descendants("data").Skip(1).Descendants("pressure").Descendants("value").ElementAt(0).Value;
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for press" + h);
+                    }
+
+                    try
+                    {
+                        localcurrhum = xdoc.Descendants("data").Skip(1).Descendants("humidity").Descendants("value").ElementAt(0).Value;
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for humidity" + h);
+                    }
+
+                    try
+                    {
+                        localcurrtemp = xdoc.Descendants("data").Skip(1).Descendants("temperature").Descendants("value").ElementAt(0).Value;
+                        localcurrtempC = ((int)((Convert.ToDouble(localcurrtemp) - 32.0) * 5 / 9)).ToString(); // C = (F-32)*5/9
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for temp" + h);
+                    }
+
+                    try
+                    {
+                        localheight = xdoc.Descendants("location").Descendants("height").ElementAt(0).Value; // feet
+                        localheightm = ( (int)( (Convert.ToDouble(localheight) * 0.3048)) ).ToString(); // meters
+
+
+
+                    }
+                    catch (Exception h)
+                    {
+                        Debug.WriteLine("weather for height" + h);
+                    }
+
+                } // long
+            } // lat
+
+            //  Debug.WriteLine("Weather data: " + localheight + "feet,  " + localcurrtemp + "F, " + localcurrhum + "%hum, " + localcurrwind + "knots, " + localcurrbar + "inHg, " + localcurrfor);
+
+
+            //--------------------------------------------------------------------------------
+
+            Debug.WriteLine("GET NOAA=========");
 
                         suncounter = 1;
                         serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
@@ -71719,8 +72823,6 @@ namespace PowerSDR
             }
 
             Debug.WriteLine("endof NWRA thread");
-
-
 
         } // NOAA thread to get space weather
 
@@ -72091,6 +73193,10 @@ namespace PowerSDR
         //================================================================================================
         //================================================================================================
         // ke9ns add to detect single Frequecy tones in a data stream  (audio.cs routine uses for wwv)
+        // spotform.GoertzelCoef to get Coeff value 
+        //  BEACON: GoertzelCoef(600.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
+        //  WWV: GoertzelCoef(100.0, console.SampleRate1);  // comes up with the Coeff values for the freq and sample rate used
+
         public int Goertzel(float[] samples, int start, int end)
         {
             sPrev = 0.0;
@@ -72098,7 +73204,7 @@ namespace PowerSDR
 
             for (int i = start; i < end; i++)   // feedback
             {
-                double s = samples[i] + SpotForm.Coeff * sPrev - sPrev2;
+                double s = samples[i] + SpotForm.Coeff * sPrev - sPrev2; // 
                 sPrev2 = sPrev;
                 sPrev = s;
             }
@@ -72107,8 +73213,28 @@ namespace PowerSDR
 
             return (int)power; // magnitude of frequency in question within the stream
         } //  Goertzel
+        
+    /*
+        public double goertzel(List<double> sngData, long N, float frequency, int samplerate)
+        {
+            double skn, skn1, skn2;
+            skn = skn1 = skn2 = 0;
+            samplerate = this.sampleRate;
+            frequency = this.freq;
 
+            double c = 2 * pi * frequency / samplerate;
+            double cosan = Math.Cos(c);
 
+            for (int i = 0; i < N; i++)
+            {
+                skn2 = skn1;
+                skn1 = skn;
+                skn = 2 * cosan * skn1 - skn2 + sngData[i];
+            }
+
+            return skn - Math.Exp(-c) * skn1;
+        }
+*/
         //==================================================================================
         //==================================================================================
         // ke9ns for precision mSec timer (not used at this time)
@@ -73059,25 +74185,25 @@ namespace PowerSDR
                                 chkMOX.Checked = true;     // key radio 
                                 WaveForm.QuickPlay = true;
                            
-                        }
-                        else
-                        {
-
-                            WaveForm.QuickPlay = false;
-                            chkMOX.Checked = false;     // unkey radio
-                            ckQuickPlay.BackColor = SystemColors.Control;//k6jca 1/13/08
-                            CQCQCALL = false;
-
-                            if (vac1 == 1)
+                            }
+                            else
                             {
-                                vac1 = 0;
-                                Thread.Sleep(100);
-                                chkVAC1.Checked = true;
+
+                                WaveForm.QuickPlay = false;
+                                chkMOX.Checked = false;     // unkey radio
+                                ckQuickPlay.BackColor = SystemColors.Control;//k6jca 1/13/08
+                                CQCQCALL = false;
+
+                                if (vac1 == 1)
+                                {
+                                    vac1 = 0;
+                                    Thread.Sleep(100);
+                                    chkVAC1.Checked = true;
+
+                                }
 
                             }
-
-                        }
-                    } // chkpower
+                        } // chkpower
 
 
                     } //  if (File.Exists(filePath + "\\CQCQ.wav"))
@@ -73091,6 +74217,14 @@ namespace PowerSDR
                     }
 
                 } // if (!Directory.Exists(filePath)) 
+                else
+                {
+                    MessageBox.Show("No folder: " + filePath + "\n" +
+                           "Open Wave menu and Click the CQCQ button to record your Voice or CW,\n" +
+                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
+                           "Then click CQCQ button again, to end the recording", "CQCQ audio File");
+
+                }
 
             } //  if (WaveForm.chkQuickAudioFolder.Checked == true) 
 
@@ -73492,7 +74626,7 @@ namespace PowerSDR
 
 
         Bitmap bitmap; // ke9ns add
-        Bitmap bitmapA; // ke9ns add
+     //   Bitmap bitmapA; // ke9ns add
 
        
 
@@ -73724,20 +74858,64 @@ namespace PowerSDR
 
         } // HTTP_PORT
 
-        // ke9ns add
+        // ke9ns add if you put your mouse over map button
         private void trackMenuItem1_MouseEnter(object sender, EventArgs e)
         {
             HELPMAP = true;
          
         }
 
-       
-
         private void trackMenuItem1_MouseLeave(object sender, EventArgs e)
         {
             HELPMAP = false;
-    
+
         }
+
+     
+        // ke9ns add
+        private void panelTS1_MouseClick(object sender, MouseEventArgs e)
+        {
+            localweather = false;
+            localweatherblock = true;
+            localweatherupdate = false;
+            noaaON = 1;
+            panelTS1.Visible = false;
+            panelTS1.Enabled = false;
+            panelTS1.Invalidate();
+
+            int h_delta = this.Width - console_basis_size.Width;
+            int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
+            ResizeConsole(h_delta, v_delta);
+
+
+        } // panelTS1_MouseClic
+
+
+        // ke9ns add
+        private void chkPower_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right)) // 
+            {
+                if (System.Windows.Forms.Application.MessageLoop)
+                {
+                    // WinForms app
+                    System.Windows.Forms.Application.Exit();
+                }
+                else
+                {
+                    // Console app
+                    System.Environment.Exit(1);
+                }
+
+
+            } // right click
+
+        } // chkPower_MouseDown
+
+       
 
 
         //==========================================================================

@@ -1441,7 +1441,7 @@ namespace PowerSDR
             // CWX
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(725, 287);
+            this.ClientSize = new System.Drawing.Size(725, 298);
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.chkKeyPoll);
             this.Controls.Add(this.udWPM);
@@ -1489,6 +1489,7 @@ namespace PowerSDR
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MaximumSize = new System.Drawing.Size(745, 341);
             this.MinimumSize = new System.Drawing.Size(280, 230);
             this.Name = "CWX";
             this.Text = "   CW Memories and Keyboard ...";
@@ -2487,7 +2488,10 @@ namespace PowerSDR
 
         private void CWX_FormClosing(object sender, FormClosingEventArgs e)
         {
-            stopPoll = false; // shut down cw polling
+            stopPoll = false; // ke9ns add shut down cw polling
+
+            e.Cancel = true; // ke9ns add hide dont actually close
+            this.Hide();
         }
 
         //================================================================================================

@@ -35,7 +35,7 @@ namespace PowerSDR
     class TitleBar
     {
 
-        public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
+      //  public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
 
 #if (NO_DJ)
         //  public const string BUILT_BY = "Mods Compiled by [KE9NS]";
@@ -50,6 +50,7 @@ namespace PowerSDR
         public const string ALPHABETA = ""; // change to "Alpha" or "" as appropriate
 
         public const string SVN = "SVN: " + SVNRev.LATEST_REV; // + "+"; // change to "" for production, remove + for CCNET
+
 
         public static string GetString()
         {

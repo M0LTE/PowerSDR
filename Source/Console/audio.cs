@@ -2299,8 +2299,8 @@ namespace PowerSDR
                 // ke9ns add  comes here every 42msec @ 48kSR with 4096 Buffer size
                 if (console.BeaconSigAvg == true) // true = beacon scan on or wwv time reading
                 {
-
-                    fixed (float* WWVP = &console.WWV_data[0]) // 4096 readings per frame
+                    
+                    fixed (float* WWVP = &console.WWV_data[0]) // set the address of WWVP to WWV_data[0]  (since memcpy wont work on console.wwv_data directly  4096 readings per frame
                     {
                          Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
                       
@@ -4466,6 +4466,7 @@ namespace PowerSDR
 
             //--------------------------------------------------------------
             // ke9ns add  comes here every 10msec @ 192kSR, 21msec @ 96kSR, 42msec @ 48kSR with 2048 Buffer size
+            // GoertzelCoefffreq = 600 for Beacon and 100 for wwv
             if (console.BeaconSigAvg == true)
             {
 
@@ -4502,14 +4503,35 @@ namespace PowerSDR
                 }
                 else // if SR !=192k
                 {
-               
-                
-                    console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
-                    console.WWVReady = true;
-                    console.WWV_Count = 0;
-                    console.WWVframeCount = 0;
 
-               }
+
+                    //   console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+                    //  console.WWVReady = true;
+                    //  console.WWV_Count = 0;
+                    //  console.WWVframeCount = 0;
+
+                    if (console.WWV_Count == 2)
+                    {
+
+                        console.WWVTone = console.Goertzel(console.WWV_data, 0, console.WWVframeCount); // determine the magnitude of the 100hz TONE in the sample
+
+                        console.WWVframeCount = 0;
+                        console.WWVReady = true;
+                        console.WWV_Count = 0;
+
+                    }
+                    else
+                    {
+                        // console.WWV_Count = frameCount;  // double up the 192kSR so you get 20msec of data
+                        console.WWV_Count++;
+                        console.WWVframeCount = (frameCount * console.WWV_Count);  // double up the 192kSR so you get 20msec of data
+
+
+                    }
+
+
+
+                }
 
 
             } //   if (console.BeaconSigAvg == true)

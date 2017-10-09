@@ -1116,6 +1116,7 @@ namespace PowerSDR
         private LabelTS labelTS29;
         public CheckBoxTS chkVFOOpenFont;
         public CheckBoxTS chkBoxIND2;
+        public TextBoxTS textBoxSAVE;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -2401,16 +2402,17 @@ namespace PowerSDR
             this.btnImpulse = new System.Windows.Forms.ButtonTS();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.btnExportDB = new System.Windows.Forms.ButtonTS();
             this.btnImportDB = new System.Windows.Forms.ButtonTS();
             this.btnResetDB = new System.Windows.Forms.ButtonTS();
             this.btnApply = new System.Windows.Forms.ButtonTS();
             this.btnCancel = new System.Windows.Forms.ButtonTS();
             this.btnOK = new System.Windows.Forms.ButtonTS();
-            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.timer_sweep = new System.Windows.Forms.Timer(this.components);
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.textBoxSAVE = new System.Windows.Forms.TextBoxTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2720,7 +2722,7 @@ namespace PowerSDR
             this.tcSetup.Location = new System.Drawing.Point(8, 12);
             this.tcSetup.Name = "tcSetup";
             this.tcSetup.SelectedIndex = 0;
-            this.tcSetup.Size = new System.Drawing.Size(592, 348);
+            this.tcSetup.Size = new System.Drawing.Size(592, 367);
             this.tcSetup.TabIndex = 16;
             // 
             // tpGeneral
@@ -2728,7 +2730,7 @@ namespace PowerSDR
             this.tpGeneral.Controls.Add(this.tcGeneral);
             this.tpGeneral.Location = new System.Drawing.Point(4, 22);
             this.tpGeneral.Name = "tpGeneral";
-            this.tpGeneral.Size = new System.Drawing.Size(584, 322);
+            this.tpGeneral.Size = new System.Drawing.Size(584, 341);
             this.tpGeneral.TabIndex = 3;
             this.tpGeneral.Text = "General";
             // 
@@ -5148,7 +5150,7 @@ namespace PowerSDR
             this.tpAudio.Controls.Add(this.tcAudio);
             this.tpAudio.Location = new System.Drawing.Point(4, 22);
             this.tpAudio.Name = "tpAudio";
-            this.tpAudio.Size = new System.Drawing.Size(584, 322);
+            this.tpAudio.Size = new System.Drawing.Size(584, 341);
             this.tpAudio.TabIndex = 0;
             this.tpAudio.Text = "Audio";
             // 
@@ -6515,7 +6517,7 @@ namespace PowerSDR
             this.tpDisplay.Controls.Add(this.grpDisplaySpectrumGrid);
             this.tpDisplay.Location = new System.Drawing.Point(4, 22);
             this.tpDisplay.Name = "tpDisplay";
-            this.tpDisplay.Size = new System.Drawing.Size(584, 322);
+            this.tpDisplay.Size = new System.Drawing.Size(584, 341);
             this.tpDisplay.TabIndex = 2;
             this.tpDisplay.Text = "Display";
             // 
@@ -7665,7 +7667,7 @@ namespace PowerSDR
             this.tpDSP.Controls.Add(this.tcDSP);
             this.tpDSP.Location = new System.Drawing.Point(4, 22);
             this.tpDSP.Name = "tpDSP";
-            this.tpDSP.Size = new System.Drawing.Size(584, 322);
+            this.tpDSP.Size = new System.Drawing.Size(584, 341);
             this.tpDSP.TabIndex = 1;
             this.tpDSP.Text = "DSP";
             // 
@@ -7675,10 +7677,10 @@ namespace PowerSDR
             this.tcDSP.Controls.Add(this.tpDSPImageReject);
             this.tcDSP.Controls.Add(this.tpDSPKeyer);
             this.tcDSP.Controls.Add(this.tpDSPAGCALC);
-            this.tcDSP.Location = new System.Drawing.Point(0, 0);
+            this.tcDSP.Location = new System.Drawing.Point(-8, 0);
             this.tcDSP.Name = "tcDSP";
             this.tcDSP.SelectedIndex = 0;
-            this.tcDSP.Size = new System.Drawing.Size(600, 344);
+            this.tcDSP.Size = new System.Drawing.Size(608, 344);
             this.tcDSP.TabIndex = 0;
             // 
             // tpDSPOptions
@@ -7699,7 +7701,7 @@ namespace PowerSDR
             this.tpDSPOptions.Controls.Add(this.grpDSPNB2);
             this.tpDSPOptions.Location = new System.Drawing.Point(4, 22);
             this.tpDSPOptions.Name = "tpDSPOptions";
-            this.tpDSPOptions.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPOptions.Size = new System.Drawing.Size(600, 318);
             this.tpDSPOptions.TabIndex = 2;
             this.tpDSPOptions.Text = "Options";
             // 
@@ -8489,7 +8491,7 @@ namespace PowerSDR
             this.tpDSPImageReject.Controls.Add(this.grpDSPImageRejectTX);
             this.tpDSPImageReject.Location = new System.Drawing.Point(4, 22);
             this.tpDSPImageReject.Name = "tpDSPImageReject";
-            this.tpDSPImageReject.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPImageReject.Size = new System.Drawing.Size(600, 318);
             this.tpDSPImageReject.TabIndex = 1;
             this.tpDSPImageReject.Text = "Image Reject";
             // 
@@ -8669,7 +8671,7 @@ namespace PowerSDR
             this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerSemiBreakIn);
             this.tpDSPKeyer.Location = new System.Drawing.Point(4, 22);
             this.tpDSPKeyer.Name = "tpDSPKeyer";
-            this.tpDSPKeyer.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPKeyer.Size = new System.Drawing.Size(600, 318);
             this.tpDSPKeyer.TabIndex = 0;
             this.tpDSPKeyer.Text = "Keyer";
             // 
@@ -9171,7 +9173,7 @@ namespace PowerSDR
             this.tpDSPAGCALC.Controls.Add(this.grpDSPAGC);
             this.tpDSPAGCALC.Location = new System.Drawing.Point(4, 22);
             this.tpDSPAGCALC.Name = "tpDSPAGCALC";
-            this.tpDSPAGCALC.Size = new System.Drawing.Size(592, 318);
+            this.tpDSPAGCALC.Size = new System.Drawing.Size(600, 318);
             this.tpDSPAGCALC.TabIndex = 3;
             this.tpDSPAGCALC.Text = "AGC/ALC";
             // 
@@ -9975,7 +9977,7 @@ namespace PowerSDR
             this.tpTransmit.Controls.Add(this.grpTX1500);
             this.tpTransmit.Location = new System.Drawing.Point(4, 22);
             this.tpTransmit.Name = "tpTransmit";
-            this.tpTransmit.Size = new System.Drawing.Size(584, 322);
+            this.tpTransmit.Size = new System.Drawing.Size(584, 341);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
             // 
@@ -10802,7 +10804,7 @@ namespace PowerSDR
             this.tpPowerAmplifier.Controls.Add(this.grpPAGainByBand);
             this.tpPowerAmplifier.Location = new System.Drawing.Point(4, 22);
             this.tpPowerAmplifier.Name = "tpPowerAmplifier";
-            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 322);
+            this.tpPowerAmplifier.Size = new System.Drawing.Size(584, 341);
             this.tpPowerAmplifier.TabIndex = 8;
             this.tpPowerAmplifier.Text = "PA Settings";
             // 
@@ -11856,7 +11858,7 @@ namespace PowerSDR
             this.tpAppearance.Controls.Add(this.tcAppearance);
             this.tpAppearance.Location = new System.Drawing.Point(4, 22);
             this.tpAppearance.Name = "tpAppearance";
-            this.tpAppearance.Size = new System.Drawing.Size(584, 322);
+            this.tpAppearance.Size = new System.Drawing.Size(584, 341);
             this.tpAppearance.TabIndex = 6;
             this.tpAppearance.Text = "Appearance";
             // 
@@ -13182,7 +13184,7 @@ namespace PowerSDR
             this.tpKeyboard.Controls.Add(this.grpKBCW);
             this.tpKeyboard.Location = new System.Drawing.Point(4, 22);
             this.tpKeyboard.Name = "tpKeyboard";
-            this.tpKeyboard.Size = new System.Drawing.Size(584, 322);
+            this.tpKeyboard.Size = new System.Drawing.Size(584, 341);
             this.tpKeyboard.TabIndex = 4;
             this.tpKeyboard.Text = "Keyboard";
             // 
@@ -13810,7 +13812,7 @@ namespace PowerSDR
             this.tpExtCtrl.Controls.Add(this.grpExtRX);
             this.tpExtCtrl.Location = new System.Drawing.Point(4, 22);
             this.tpExtCtrl.Name = "tpExtCtrl";
-            this.tpExtCtrl.Size = new System.Drawing.Size(584, 322);
+            this.tpExtCtrl.Size = new System.Drawing.Size(584, 341);
             this.tpExtCtrl.TabIndex = 11;
             this.tpExtCtrl.Text = "Ext. Ctrl";
             // 
@@ -15712,7 +15714,7 @@ namespace PowerSDR
             this.tpCAT.Controls.Add(this.grpRTTYOffset);
             this.tpCAT.Location = new System.Drawing.Point(4, 22);
             this.tpCAT.Name = "tpCAT";
-            this.tpCAT.Size = new System.Drawing.Size(584, 322);
+            this.tpCAT.Size = new System.Drawing.Size(584, 341);
             this.tpCAT.TabIndex = 10;
             this.tpCAT.Text = "CAT Control";
             // 
@@ -16157,7 +16159,7 @@ namespace PowerSDR
             this.tpTests.Controls.Add(this.grpImpulseTest);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
-            this.tpTests.Size = new System.Drawing.Size(584, 322);
+            this.tpTests.Size = new System.Drawing.Size(584, 341);
             this.tpTests.TabIndex = 7;
             this.tpTests.Text = "Tests";
             // 
@@ -16897,10 +16899,21 @@ namespace PowerSDR
             // 
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // buttonTS1
+            // 
+            this.buttonTS1.Image = null;
+            this.buttonTS1.Location = new System.Drawing.Point(4, 414);
+            this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Size = new System.Drawing.Size(156, 23);
+            this.buttonTS1.TabIndex = 23;
+            this.buttonTS1.Text = "Check for Software Updates";
+            this.toolTip1.SetToolTip(this.buttonTS1, "Check for Software updates to ke9ns PowerSDR");
+            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
+            // 
             // btnExportDB
             // 
             this.btnExportDB.Image = null;
-            this.btnExportDB.Location = new System.Drawing.Point(224, 366);
+            this.btnExportDB.Location = new System.Drawing.Point(224, 385);
             this.btnExportDB.Name = "btnExportDB";
             this.btnExportDB.Size = new System.Drawing.Size(112, 23);
             this.btnExportDB.TabIndex = 22;
@@ -16911,7 +16924,7 @@ namespace PowerSDR
             // btnImportDB
             // 
             this.btnImportDB.Image = null;
-            this.btnImportDB.Location = new System.Drawing.Point(106, 366);
+            this.btnImportDB.Location = new System.Drawing.Point(106, 385);
             this.btnImportDB.Name = "btnImportDB";
             this.btnImportDB.Size = new System.Drawing.Size(112, 23);
             this.btnImportDB.TabIndex = 21;
@@ -16922,7 +16935,7 @@ namespace PowerSDR
             // btnResetDB
             // 
             this.btnResetDB.Image = null;
-            this.btnResetDB.Location = new System.Drawing.Point(4, 366);
+            this.btnResetDB.Location = new System.Drawing.Point(4, 385);
             this.btnResetDB.Name = "btnResetDB";
             this.btnResetDB.Size = new System.Drawing.Size(96, 23);
             this.btnResetDB.TabIndex = 20;
@@ -16934,7 +16947,7 @@ namespace PowerSDR
             // btnApply
             // 
             this.btnApply.Image = null;
-            this.btnApply.Location = new System.Drawing.Point(523, 366);
+            this.btnApply.Location = new System.Drawing.Point(522, 385);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 19;
@@ -16945,7 +16958,7 @@ namespace PowerSDR
             // btnCancel
             // 
             this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(442, 366);
+            this.btnCancel.Location = new System.Drawing.Point(438, 385);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 18;
@@ -16956,24 +16969,13 @@ namespace PowerSDR
             // btnOK
             // 
             this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(361, 366);
+            this.btnOK.Location = new System.Drawing.Point(357, 384);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 17;
             this.btnOK.Text = "OK";
             this.toolTip1.SetToolTip(this.btnOK, "Keep current settings and close form.");
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
-            // buttonTS1
-            // 
-            this.buttonTS1.Image = null;
-            this.buttonTS1.Location = new System.Drawing.Point(4, 395);
-            this.buttonTS1.Name = "buttonTS1";
-            this.buttonTS1.Size = new System.Drawing.Size(156, 23);
-            this.buttonTS1.TabIndex = 23;
-            this.buttonTS1.Text = "Check for Software Updates";
-            this.toolTip1.SetToolTip(this.buttonTS1, "Check for Software updates to ke9ns PowerSDR");
-            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
             // 
             // timer_sweep
             // 
@@ -16985,10 +16987,19 @@ namespace PowerSDR
             this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
+            // textBoxSAVE
+            // 
+            this.textBoxSAVE.Location = new System.Drawing.Point(204, 417);
+            this.textBoxSAVE.MaxLength = 50;
+            this.textBoxSAVE.Name = "textBoxSAVE";
+            this.textBoxSAVE.Size = new System.Drawing.Size(392, 20);
+            this.textBoxSAVE.TabIndex = 30;
+            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(614, 423);
+            this.ClientSize = new System.Drawing.Size(614, 449);
+            this.Controls.Add(this.textBoxSAVE);
             this.Controls.Add(this.buttonTS1);
             this.Controls.Add(this.btnExportDB);
             this.Controls.Add(this.btnImportDB);
@@ -17003,6 +17014,7 @@ namespace PowerSDR
             this.Name = "Setup";
             this.Text = "PowerSDR Setup";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.Setup_Closing);
+            this.Deactivate += new System.EventHandler(this.Setup_Deactivate);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Setup_KeyDown);
             this.tcSetup.ResumeLayout(false);
             this.tpGeneral.ResumeLayout(false);
@@ -17306,6 +17318,7 @@ namespace PowerSDR
             this.grpImpulseTest.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -17736,27 +17749,18 @@ namespace PowerSDR
 
 			foreach(Control c in temp)				// For each control
 			{
-				if(c.GetType() == typeof(CheckBoxTS))
-					a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
-				else if(c.GetType() == typeof(ComboBoxTS))
-				{
-					//if(((ComboBox)c).SelectedIndex >= 0)
-					a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
-				}
-				else if(c.GetType() == typeof(NumericUpDownTS))
-					a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
-				else if(c.GetType() == typeof(RadioButtonTS))
-					a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
-				else if(c.GetType() == typeof(TextBoxTS))
-					a.Add(c.Name+"/"+((TextBoxTS)c).Text);
-				else if(c.GetType() == typeof(TrackBarTS))
-					a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
+				if(c.GetType() == typeof(CheckBoxTS))           a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
+				else if(c.GetType() == typeof(ComboBoxTS))      a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
+				else if(c.GetType() == typeof(NumericUpDownTS)) a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
+				else if(c.GetType() == typeof(RadioButtonTS))	a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
+				else if(c.GetType() == typeof(TextBoxTS))       a.Add(c.Name+"/"+((TextBoxTS)c).Text);
+				else if(c.GetType() == typeof(TrackBarTS))	    a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
 				else if(c.GetType() == typeof(ColorButton))
 				{
 					Color clr = ((ColorButton)c).Color;
 					a.Add(c.Name+"/"+clr.R+"."+clr.G+"."+clr.B+"."+clr.A);
 				}
-#if(DEBUG)
+#if (DEBUG)
 				else if(c.GetType() == typeof(GroupBox) ||
 					c.GetType() == typeof(CheckBoxTS) ||
 					c.GetType() == typeof(ComboBox) ||
@@ -17766,13 +17770,18 @@ namespace PowerSDR
 					c.GetType() == typeof(TrackBar))
 					Debug.WriteLine(c.Name+" needs to be converted to a Thread Safe control.");
 #endif
-			}
+            } // foreach(Control c in temp)	
 
-			DB.SaveVars("Options", ref a);		// save the values to the DB
+            DB.SaveVars("Options", ref a);		// save the values to the DB
 			saving = false;
-		}
 
-		public void GetOptions()
+        } // SaveOptions()
+
+
+
+
+
+        public void GetOptions()
 		{
 			// Automatically restores all controls from the database in the
 			// tab pages on this form of the following types: CheckBoxTS, ComboBox,
@@ -25629,21 +25638,34 @@ namespace PowerSDR
 
 		public void btnApply_Click(object sender, System.EventArgs e)
 		{
-			Thread t = new Thread(new ThreadStart(ApplyOptions));
+            textBoxSAVE.Text = " ";
+
+            Thread t = new Thread(new ThreadStart(ApplyOptions));
 			t.Name = "Save Options Thread";
 			t.IsBackground = true;
-			t.Priority = ThreadPriority.Lowest;
+			t.Priority = ThreadPriority.AboveNormal; // ke9ns was lowest
 			t.Start();
 		}
 
 		private void ApplyOptions()
 		{
-			if(saving) return;
-			SaveOptions();
-			DB.Update();
-		}
+            Thread.Sleep(10);
 
-		private void udGeneralLPTDelay_ValueChanged(object sender, System.EventArgs e)
+			if(saving) return;
+
+            textBoxSAVE.Text = "Saving Changes";
+
+			SaveOptions(); // save controls
+
+            textBoxSAVE.Text = "Updating Database";
+
+            DB.Update();
+
+            textBoxSAVE.Text = "Save Done.";
+
+        }
+
+        private void udGeneralLPTDelay_ValueChanged(object sender, System.EventArgs e)
 		{
 			console.LatchDelay = (int)udGeneralLPTDelay.Value;
 		}
@@ -28743,8 +28765,24 @@ namespace PowerSDR
 
         } // checkBoxN1MM_CheckedChanged
 
+        private void Setup_Deactivate(object sender, EventArgs e)
+        {
+            textBoxSAVE.Text = " ";
+        }
 
-      
+
+
+        // ke9ns add
+        //    private void chkPHROTEnable_CheckedChanged(object sender, EventArgs e)
+        //   {
+        //  int run;
+        //  if (chkPHROTEnable.Checked) run = 1;
+        //  else run = 0;
+        //  wdsp.SetTXAPHROTRun(wdsp.id(1, 0), run);
+        //   }
+
+
+
 
 
         //===============================================================================
