@@ -678,11 +678,11 @@ namespace PowerSDR
 
     #endregion
 
-  
+
     unsafe public class Console : System.Windows.Forms.Form
-	{
-      
-       
+    {
+
+
         //==================================================================================
         //==================================================================================
         // ke9ns add (copied from cwx precision multimedia msec timer)
@@ -690,7 +690,7 @@ namespace PowerSDR
 
         #region Win32 Multimedia Timer Functions
 
-      //  private int tel;            // time of one element in ms
+        //  private int tel;            // time of one element in ms
 
         // Represents the method that is called by Windows when a timer event occurs.
         private delegate void TimeProc(int id, int msg, int user, int param1, int param2);
@@ -721,7 +721,7 @@ namespace PowerSDR
         [DllImport("winmm.dll")]
         private static extern int timeSetEvent(int delay, int resolution, TimeProc proc, int user, int mode);
 
-  
+
         // Stops and destroys the timer.
         [DllImport("winmm.dll")]
         private static extern int timeKillEvent(int id);
@@ -734,8 +734,8 @@ namespace PowerSDR
 
         private TimeProc timeProcPeriodic;   // ke9ns add to use windows based multimedia timer
 
-    //   Stopwatch WATCH1 = new Stopwatch();
-    //    Stopwatch WATCH2 = new Stopwatch();
+        //   Stopwatch WATCH1 = new Stopwatch();
+        //    Stopwatch WATCH2 = new Stopwatch();
 
 
         #endregion
@@ -752,7 +752,7 @@ namespace PowerSDR
         private RichTextBox txtNOAA2;    // ke9ns add for space weather on main console screen
         private RichTextBox txtNOAA;    // ke9ns add for space weather on main console screen
 
-        
+
         private LabelTS labelTS2;
         private LabelTS labelTS1;
         public NumericUpDownTS udTXFilterLow;
@@ -803,11 +803,11 @@ namespace PowerSDR
         //============================================================================ ke9ns add
         //============================================================================ ke9ns add
         [DllImport("gdi32.dll")]
-            private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
+        private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
                IntPtr pdv, [In] ref uint pcFonts); // this imports the addfont call
-       
-            private static FontFamily S1,S2,S3,S4;    // setup 3 font families
-            private static  Font ff,ff1,ff2,ff3,ff4,ff5,ff6,ff7,ff8, ff9, ff9a;  // 8 different font sizes and styles
+
+        private static FontFamily S1, S2, S3, S4;    // setup 3 font families
+        private static Font ff, ff1, ff2, ff3, ff4, ff5, ff6, ff7, ff8, ff9, ff9a;  // 8 different font sizes and styles
 
 
         //============================================================================ ke9ns ad
@@ -875,19 +875,19 @@ namespace PowerSDR
 
 
         public DSP dsp;
-		private SIOListenerII siolisten = null;
+        private SIOListenerII siolisten = null;
         private SIOListenerIII siolisten1 = null;          // ke9ns add for ant rotor control
 
-        private Thread[] audio_process_thread;				// threads to run DttSP functions
-		private Thread draw_display_thread;					// draws the main display 
-		private Thread multimeter_thread;					// updates the rx1/tx meter data
-		private Thread rx2_meter_thread;					// updates the rx2 meter data
-		private Thread poll_ptt_thread;						// polls the PTT line on the parallel port
-		private Thread poll_pa_pwr_thread;					// polls the FWD and REV power if the PA is installed
-		private Thread sql_update_thread;					// polls the RX signal strength
-		private Thread rx2_sql_update_thread;				// polls the RX2 signal strength
-		private Thread vox_update_thread;					// polls the mic input
-		private Thread noise_gate_update_thread;			// polls the mic input during TX
+        private Thread[] audio_process_thread;              // threads to run DttSP functions
+        private Thread draw_display_thread;                 // draws the main display 
+        private Thread multimeter_thread;                   // updates the rx1/tx meter data
+        private Thread rx2_meter_thread;                    // updates the rx2 meter data
+        private Thread poll_ptt_thread;                     // polls the PTT line on the parallel port
+        private Thread poll_pa_pwr_thread;                  // polls the FWD and REV power if the PA is installed
+        private Thread sql_update_thread;                   // polls the RX signal strength
+        private Thread rx2_sql_update_thread;               // polls the RX2 signal strength
+        private Thread vox_update_thread;                   // polls the mic input
+        private Thread noise_gate_update_thread;			// polls the mic input during TX
         private Thread f3k_temp_thread;				        // polls the temp on the FLEX-3000 to turn fan on/off
         private Thread f3k_mic_function_thread;				// handles the FLEX-3000 mic inputs (Up, Down, Fast)
         //private Thread wbir_thread;
@@ -896,17 +896,17 @@ namespace PowerSDR
         private Thread update_rx2_dds_thread;
         private Thread update_tx_dds_thread;
         private Thread audio_watchdog_thread;
-		//private HiPerfTimer polltimer;
+        //private HiPerfTimer polltimer;
 
-		private bool calibration_running = false;
-		private bool displaydidit = false;
-		//private bool calibrationdidit = false;
-		public Mutex calibration_mutex = new Mutex();
+        private bool calibration_running = false;
+        private bool displaydidit = false;
+        //private bool calibrationdidit = false;
+        public Mutex calibration_mutex = new Mutex();
 
-      
+
         public Http httpFile;                           // ke9ns add
         public HttpServer httpServer = null;           // rn3kk add
-   
+
         public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
         public Skin skin1; // ke9ns add
@@ -924,27 +924,27 @@ namespace PowerSDR
         public helpbox helpboxForm;                         // ke9ns add helpbox form
 
         public CWX cwxForm;
-		public UCBForm ucbForm;
+        public UCBForm ucbForm;
         public XVTRForm xvtrForm;
         public VUForm vuForm;
-		public EQForm eqForm;
-		public FilterForm filterRX1Form;
-		public FilterForm filterRX2Form;
-		public FLEX5000LLHWForm flex5000LLHWForm;
-		public FLEX5000DebugForm flex5000DebugForm;
-		public FWCMixForm fwcMixForm;
-		public FLEX3000MixerForm flex3000MixerForm;
+        public EQForm eqForm;
+        public FilterForm filterRX1Form;
+        public FilterForm filterRX2Form;
+        public FLEX5000LLHWForm flex5000LLHWForm;
+        public FLEX5000DebugForm flex5000DebugForm;
+        public FWCMixForm fwcMixForm;
+        public FLEX3000MixerForm flex3000MixerForm;
         public FLEX1500MixerForm flex1500MixerForm;
-		public FWCAntForm fwcAntForm;
-		public FLEX5000RelayForm flex5000RelayForm;
-		public FWCATUForm fwcAtuForm;
+        public FWCAntForm fwcAntForm;
+        public FLEX5000RelayForm flex5000RelayForm;
+        public FWCATUForm fwcAtuForm;
         public FLEX3000ATUForm flex3000ATUForm;
-		public FWCTestForm fwcTestForm;
-		public FLEX5000LPFForm flex5000LPFForm;
-		public FWCCalForm fwcCalForm;
-		public FLEX5000ProdTestForm flex5000ProdTestForm;
-		public FLEX5000FinalTestForm flex5000FinalTestForm;
-		public FLEX5000RX2CalForm flex5000RX2CalForm;
+        public FWCTestForm fwcTestForm;
+        public FLEX5000LPFForm flex5000LPFForm;
+        public FWCCalForm fwcCalForm;
+        public FLEX5000ProdTestForm flex5000ProdTestForm;
+        public FLEX5000FinalTestForm flex5000FinalTestForm;
+        public FLEX5000RX2CalForm flex5000RX2CalForm;
         public FLEX3000TestForm flex3000TestForm;
         public DSPTestForm dspTestForm;
         public PreSelForm preSelForm;
@@ -957,22 +957,22 @@ namespace PowerSDR
 
         public HIDAntForm hidAntForm;
 
-		public bool fwc_init = false;
-		public int fwc_index = -1;
-		private long fwc_last_cal_date_time = 0;
-		private uint fwc_serial_num = 0;
-		private uint fwc_trx_serial_num = 0;
-		private uint rx2_trx_match_serial = 0;
+        public bool fwc_init = false;
+        public int fwc_index = -1;
+        private long fwc_last_cal_date_time = 0;
+        private uint fwc_serial_num = 0;
+        private uint fwc_trx_serial_num = 0;
+        private uint rx2_trx_match_serial = 0;
 
-        private int rx1_squelch_threshold_scroll = -160;  
+        private int rx1_squelch_threshold_scroll = -160;
         private int rx2_squelch_threshold_scroll = -160;
         private bool rx1_squelch_on = false;
         private bool rx2_squelch_on = false;
-        private int rx1_fm_squelch_threshold_scroll = 0;        
+        private int rx1_fm_squelch_threshold_scroll = 0;
         private int rx2_fm_squelch_threshold_scroll = 0;
 
-		private long rx2_last_cal_date_time = 0;
-		private uint rx2_serial_num = 0;
+        private long rx2_last_cal_date_time = 0;
+        private uint rx2_serial_num = 0;
 
         public bool hid_init = false;
         public int hid_index = -1;
@@ -987,10 +987,10 @@ namespace PowerSDR
         public MemoryList MemoryList
         {
             get { return memoryList; }
-        }
+        } 
 
 
-     
+
         //====================================================================================
         // ke9ns add  dx cluster list
         private DXMemList dxmemList; // ke9ns add
@@ -1001,26 +1001,26 @@ namespace PowerSDR
         }
 
         //=======================================================================================
-      
-
-        private HW hw;										// will eventually be an array of rigs to support multiple radios
 
 
-		public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
+        private HW hw;                                      // will eventually be an array of rigs to support multiple radios
 
-    
+
+        public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
+
+
         public PAQualify PAQualForm;
-		public ProductionTest ProdTestForm;
+        public ProductionTest ProdTestForm;
 
-		private bool run_setup_wizard;						// Used to run the wizard the first time the software comes up
+        private bool run_setup_wizard;						// Used to run the wizard the first time the software comes up
         private bool show_alpha_warning = false;
         private bool show_beta_warning = true;
         private bool show_mobile_warning = true;
 
         //    public int[] band = new int[100];
 
-       //   [StructLayout(LayoutKind.Explicit)]
-       //  public struct UnionTest
+        //   [StructLayout(LayoutKind.Explicit)]
+        //  public struct UnionTest
 
         // {
 
@@ -1035,19 +1035,19 @@ namespace PowerSDR
 
 
         public int band_160m_index;                     // These band indexes are used to keep track of which
-        public int band_80m_index;							// location in the bandstack was last saved/recalled
-		public int band_60m_index;
-		public int band_40m_index;
-		public int band_30m_index;
-		public int band_20m_index;
-		public int band_17m_index;
-		public int band_15m_index;
-		public int band_12m_index;
-		public int band_10m_index;
-		public int band_6m_index;
-		public int band_2m_index;
-		public int band_wwv_index;
-		public int band_gen_index;
+        public int band_80m_index;                          // location in the bandstack was last saved/recalled
+        public int band_60m_index;
+        public int band_40m_index;
+        public int band_30m_index;
+        public int band_20m_index;
+        public int band_17m_index;
+        public int band_15m_index;
+        public int band_12m_index;
+        public int band_10m_index;
+        public int band_6m_index;
+        public int band_2m_index;
+        public int band_wwv_index;
+        public int band_gen_index;
 
         public int band_LMF_index; // ke9ns add
         public int band_120m_index;
@@ -1065,38 +1065,38 @@ namespace PowerSDR
         public int band_11m_index;
 
         public int band_vhf0_index;
-		public int band_vhf1_index;
-		public int band_vhf2_index;
-		public int band_vhf3_index;
-		public int band_vhf4_index;
-		public int band_vhf5_index;
-		public int band_vhf6_index;
-		public int band_vhf7_index;
-		public int band_vhf8_index;
-		public int band_vhf9_index;
-		public int band_vhf10_index;
-		public int band_vhf11_index;
-		public int band_vhf12_index;
-		public int band_vhf13_index;
+        public int band_vhf1_index;
+        public int band_vhf2_index;
+        public int band_vhf3_index;
+        public int band_vhf4_index;
+        public int band_vhf5_index;
+        public int band_vhf6_index;
+        public int band_vhf7_index;
+        public int band_vhf8_index;
+        public int band_vhf9_index;
+        public int band_vhf10_index;
+        public int band_vhf11_index;
+        public int band_vhf12_index;
+        public int band_vhf13_index;
 
 
 
 
-      
-        public int band_160m_register;						// These integers are the number of band stack registers
-		public int band_80m_register;						// found in the database for each band
-		public int band_60m_register;
-		public int band_40m_register;
-		public int band_30m_register;
-		public int band_20m_register;
-		public int band_17m_register;
-		public int band_15m_register;
-		public int band_12m_register;
-		public int band_10m_register;
-		public int band_6m_register;
-		public int band_2m_register;
-		public int band_wwv_register;
-		public int band_gen_register;
+
+        public int band_160m_register;                      // These integers are the number of band stack registers
+        public int band_80m_register;                       // found in the database for each band
+        public int band_60m_register;
+        public int band_40m_register;
+        public int band_30m_register;
+        public int band_20m_register;
+        public int band_17m_register;
+        public int band_15m_register;
+        public int band_12m_register;
+        public int band_10m_register;
+        public int band_6m_register;
+        public int band_2m_register;
+        public int band_wwv_register;
+        public int band_gen_register;
 
         public int band_LMF_register; // ke9ns add
         public int band_120m_register;
@@ -1114,103 +1114,103 @@ namespace PowerSDR
         public int band_11m_register;
 
         public int band_vhf0_register;
-		public int band_vhf1_register;
-		public int band_vhf2_register;
-		public int band_vhf3_register;
-		public int band_vhf4_register;
-		public int band_vhf5_register;
-		public int band_vhf6_register;
-		public int band_vhf7_register;
-		public int band_vhf8_register;
-		public int band_vhf9_register;
-		public int band_vhf10_register;
-		public int band_vhf11_register;
-		public int band_vhf12_register;
+        public int band_vhf1_register;
+        public int band_vhf2_register;
+        public int band_vhf3_register;
+        public int band_vhf4_register;
+        public int band_vhf5_register;
+        public int band_vhf6_register;
+        public int band_vhf7_register;
+        public int band_vhf8_register;
+        public int band_vhf9_register;
+        public int band_vhf10_register;
+        public int band_vhf11_register;
+        public int band_vhf12_register;
         public int band_vhf13_register;
 
-     
+
 
         private RadioButtonTS[] vhf_text;
-     //   private RadioButtonTS[] gen_text; // ke9ns add
+        //   private RadioButtonTS[] gen_text; // ke9ns add
 
 
-		private bool was_panadapter = false;				// used to restore panadater when switching to spectrum DSP mode
-		private bool was_waterfall = false;					// used to restore waterfall when switching to spectrum DSP mode
+        private bool was_panadapter = false;                // used to restore panadater when switching to spectrum DSP mode
+        private bool was_waterfall = false;                 // used to restore waterfall when switching to spectrum DSP mode
 
-		public float[] rx1_preamp_offset;					// offset values for each preamp mode in dB
-		public float[] rx2_preamp_offset;					// offset values for each preamp mode in dB
-		public float rx1_meter_cal_offset;					// multimeter calibration offset per volume setting in dB
-		public float rx2_meter_cal_offset;					// multimeter calibration offset per volume setting in dB
-		public float rx1_filter_size_cal_offset = 3;		// filter offset based on DSP filter size
-		public float rx2_filter_size_cal_offset = 3;		// filter offset based on DSP filter size
+        public float[] rx1_preamp_offset;                   // offset values for each preamp mode in dB
+        public float[] rx2_preamp_offset;                   // offset values for each preamp mode in dB
+        public float rx1_meter_cal_offset;                  // multimeter calibration offset per volume setting in dB
+        public float rx2_meter_cal_offset;                  // multimeter calibration offset per volume setting in dB
+        public float rx1_filter_size_cal_offset = 3;        // filter offset based on DSP filter size
+        public float rx2_filter_size_cal_offset = 3;        // filter offset based on DSP filter size
 
-		private bool meter_data_ready;                      // used to synchronize the new DSP data with the multimeter
-      //  private bool meter_data_ready2;                      // ke9ns add for using rx2 for extra tx meter
+        private bool meter_data_ready;                      // used to synchronize the new DSP data with the multimeter
+                                                            //  private bool meter_data_ready2;                      // ke9ns add for using rx2 for extra tx meter
 
-         public float new_meter_data;                       // new data for the multimeter from the DSP
+        public float new_meter_data;                       // new data for the multimeter from the DSP
         private float new_meter_data2;                       // ke9ns add for using RX2 for extra TX meter
 
-        private float current_meter_data;					// current data for the multimeter
-		private int meter_peak_count;						// Counter for peak hold on multimeter
-		private float meter_peak_value;						// Value for peak hold on multimeter
-		private float[] meter_text_history;					// Array used to output the peak power over a period of time
-		private int meter_text_history_index;				// index used with above variable to do peak power
+        private float current_meter_data;                   // current data for the multimeter
+        private int meter_peak_count;                       // Counter for peak hold on multimeter
+        private float meter_peak_value;                     // Value for peak hold on multimeter
+        private float[] meter_text_history;                 // Array used to output the peak power over a period of time
+        private int meter_text_history_index;               // index used with above variable to do peak power
 
-		private bool rx2_meter_data_ready;					// used to synchronize the new DSP data with the multimeter
-		private float rx2_meter_new_data;					// new data for the multimeter from the DSP
+        private bool rx2_meter_data_ready;                  // used to synchronize the new DSP data with the multimeter
+        private float rx2_meter_new_data;					// new data for the multimeter from the DSP
         private double tx2_meter_new_data;                  // ke9ns add to allow MIC dBm values while in RX mode
-		private float rx2_meter_current_data;				// current data for the multimeter
-		private int rx2_meter_peak_count;					// Counter for peak hold on multimeter
-		private float rx2_meter_peak_value;					// Value for peak hold on multimeter
+        private float rx2_meter_current_data;               // current data for the multimeter
+        private int rx2_meter_peak_count;                   // Counter for peak hold on multimeter
+        private float rx2_meter_peak_value;                 // Value for peak hold on multimeter
 
-		public float[][] power_table;						// table used to store power in new power cal routine
+        public float[][] power_table;						// table used to store power in new power cal routine
         public float[] vhf_power_table;                     // table used to store VHF power (Audio.RadioVolume) in VU cal routine
         public float[] uhf_power_table;                     // table used to store UHF power (Audio.RadioVolume) in VU cal routine
         public double[] freqs_2m = { 144.0, 144.3, 144.6, 144.9, 145.2, 145.5, 145.8, 146.1, 146.4, 146.7, 147.0, 147.3, 147.9, 148.0 };
         public double[] freqs_70cm = { 430.0, 431.5, 433.0, 434.5, 436.0, 437.5, 439.0, 440.5, 442.0, 443.5, 445.0, 445.5, 446.0, 446.5, 447.0, 447.5, 448.0, 448.5, 449.0, 449.5, 449.975, 450.0 };
 
-		public int pa_fwd_power;							// forward power as read by the ADC on the PA
-		public int pa_rev_power;							// reverse power as read by the ADC on the PA
-		public bool tuning;							    	// true when the TUN button is active
-		public bool atu_tuning;		    					// true while the atu is tuning
-		private Band tuned_band;							// last band that the atu was tuned on
+        public int pa_fwd_power;                            // forward power as read by the ADC on the PA
+        public int pa_rev_power;                            // reverse power as read by the ADC on the PA
+        public bool tuning;                                 // true when the TUN button is active
+        public bool atu_tuning;                             // true while the atu is tuning
+        private Band tuned_band;                            // last band that the atu was tuned on
 
-		public float[] rx1_image_gain_table;				// table used to store image cal info
-		public float[] rx1_image_phase_table;				// table used to store image cal info
-		public float[] rx2_image_gain_table;				// table used to store image cal info
-		public float[] rx2_image_phase_table;				// table used to store image cal info
-		public float[] tx_image_gain_table;					// table used to store image cal info
-		public float[] tx_image_phase_table;				// table used to store image cal info
-		public int[][] pa_bias_table;						// table used to store PA Bias settings
-		public float[][] rx1_level_table;					// table used to store RX1 Level cal settings
-		public float[][] rx2_level_table;					// table used to store RX2 Level cal settings
-		public float[][] pa_bridge_table;					// table used to store PA Bridge cal settings
-		public float[] swr_table;							// table used to calibrate SWR
-        public float[] atu_swr_table;						// table used to cal SWR at ATU power
-		public float rx2_res_offset;
+        public float[] rx1_image_gain_table;                // table used to store image cal info
+        public float[] rx1_image_phase_table;               // table used to store image cal info
+        public float[] rx2_image_gain_table;                // table used to store image cal info
+        public float[] rx2_image_phase_table;               // table used to store image cal info
+        public float[] tx_image_gain_table;                 // table used to store image cal info
+        public float[] tx_image_phase_table;                // table used to store image cal info
+        public int[][] pa_bias_table;                       // table used to store PA Bias settings
+        public float[][] rx1_level_table;                   // table used to store RX1 Level cal settings
+        public float[][] rx2_level_table;                   // table used to store RX2 Level cal settings
+        public float[][] pa_bridge_table;                   // table used to store PA Bridge cal settings
+        public float[] swr_table;							// table used to calibrate SWR
+        public float[] atu_swr_table;                       // table used to cal SWR at ATU power
+        public float rx2_res_offset;
         public float[] vhf_level_table;
         public float[] uhf_level_table;
 
         //public int[][] tx_carrier_table;					// table used to store tx carrier cal info
         public SortedDictionary<double, uint> tx_carrier_cal;
 
-		public byte rx1_level_checksum;
-		public byte rx1_image_gain_checksum;
-		public byte rx1_image_phase_checksum;
-		public byte tx_image_gain_checksum;
-		public byte tx_image_phase_checksum;
-		public byte tx_carrier_checksum;
-		public byte pa_bias_checksum;
-		public byte pa_bridge_checksum;
-		public byte pa_power_checksum;
-		public byte pa_swr_checksum;
+        public byte rx1_level_checksum;
+        public byte rx1_image_gain_checksum;
+        public byte rx1_image_phase_checksum;
+        public byte tx_image_gain_checksum;
+        public byte tx_image_phase_checksum;
+        public byte tx_carrier_checksum;
+        public byte pa_bias_checksum;
+        public byte pa_bridge_checksum;
+        public byte pa_power_checksum;
+        public byte pa_swr_checksum;
         public byte atu_swr_checksum;
         public byte vu_level_checksum;
         public byte vu_power_checksum;
 
-		public byte rx2_level_checksum;
-		public byte rx2_image_gain_checksum;
-		public byte rx2_image_phase_checksum;
+        public byte rx2_level_checksum;
+        public byte rx2_image_gain_checksum;
+        public byte rx2_image_phase_checksum;
 
 
         public double[] CTCSS_array =  {
@@ -1221,82 +1221,82 @@ namespace PowerSDR
             206.5, 210.7, 218.1, 225.7, 229.1, 233.6, 241.8, 250.3, 254.1};
 
         public double[] FM_deviation_array = { 5000, 2500 };
-        
-        public bool oldATU = true;
-        
-		private bool shift_down;							// used to modify tuning rate
-		private bool calibrating;							// true if running a calibration routine
-		public bool manual_mox;							// True if the MOX button was clicked on (not PTT)		
 
-		public DSPMode vfob_dsp_mode;						// Saves control pointer for last mode used on VFO B 
-		private Filter vfob_filter;							// Saves control pointer for last filter used on VFO B
-		private int vfo_char_width;							// Used to calibrate mousewheel tuning
-		private int vfo_char_space;							// Used to calibrate mousewheel tuning
-		private int vfo_small_char_width;					// Used to calibrate mousewheel tuning
-		private int vfo_small_char_space;					// Used to calibrate mousewheel tuning
-		private int vfo_decimal_width;						// Used to calibrate mousewheel tuning
-		private int vfo_decimal_space;						// Used to calibrate mousewheel tuning		
-		private int vfo_sub_char_width;						// Used to calibrate mousewheel tuning
-		private int vfo_sub_char_space;						// Used to calibrate mousewheel tuning
-		//private int vfo_sub_small_char_width;				// Used to calibrate mousewheel tuning
-		//private int vfo_sub_small_char_space;				// Used to calibrate mousewheel tuning
-		private int vfo_sub_decimal_width;					// Used to calibrate mousewheel tuning
-		private int vfo_sub_decimal_space;					// Used to calibrate mousewheel tuning	
-		private int vfo_pixel_offset;						// Used to calibrate mousewheel tuning
-		private int vfoa_hover_digit;						// Digit for hover display
-		private int vfo_sub_pixel_offset;
-		private int vfoa_sub_hover_digit;					// Digit for VFOA sub hover display
-		private int vfob_hover_digit;						// Digit for hover display
-		public string last_band;							// Used in bandstacking algorithm
+        public bool oldATU = true;
+
+        private bool shift_down;                            // used to modify tuning rate
+        private bool calibrating;                           // true if running a calibration routine
+        public bool manual_mox;                         // True if the MOX button was clicked on (not PTT)		
+
+        public DSPMode vfob_dsp_mode;                       // Saves control pointer for last mode used on VFO B 
+        private Filter vfob_filter;                         // Saves control pointer for last filter used on VFO B
+        private int vfo_char_width;                         // Used to calibrate mousewheel tuning
+        private int vfo_char_space;                         // Used to calibrate mousewheel tuning
+        private int vfo_small_char_width;                   // Used to calibrate mousewheel tuning
+        private int vfo_small_char_space;                   // Used to calibrate mousewheel tuning
+        private int vfo_decimal_width;                      // Used to calibrate mousewheel tuning
+        private int vfo_decimal_space;                      // Used to calibrate mousewheel tuning		
+        private int vfo_sub_char_width;                     // Used to calibrate mousewheel tuning
+        private int vfo_sub_char_space;                     // Used to calibrate mousewheel tuning
+                                                            //private int vfo_sub_small_char_width;				// Used to calibrate mousewheel tuning
+                                                            //private int vfo_sub_small_char_space;				// Used to calibrate mousewheel tuning
+        private int vfo_sub_decimal_width;                  // Used to calibrate mousewheel tuning
+        private int vfo_sub_decimal_space;                  // Used to calibrate mousewheel tuning	
+        private int vfo_pixel_offset;                       // Used to calibrate mousewheel tuning
+        private int vfoa_hover_digit;                       // Digit for hover display
+        private int vfo_sub_pixel_offset;
+        private int vfoa_sub_hover_digit;                   // Digit for VFOA sub hover display
+        private int vfob_hover_digit;                       // Digit for hover display
+        public string last_band;							// Used in bandstacking algorithm
         public int last_band_index;                         // ke9ns add for display of bandstack frequencies
         public int last_band_index_size;                    // ke9ns add
 
-		private DSPMode quick_save_mode;					// Quick Save Mode
-		private Filter quick_save_filter;					// Quick Save Filter
+        private DSPMode quick_save_mode;                    // Quick Save Mode
+        private Filter quick_save_filter;                   // Quick Save Filter
 
 
-		private string separator;							// contains the locations specific decimal separator
+        private string separator;                           // contains the locations specific decimal separator
 
-		private int last_filter_shift;						// VK6APH
-		private int last_var1_shift;						// VK6APH 
-		private int last_var2_shift;						// VK6APH
+        private int last_filter_shift;                      // VK6APH
+        private int last_var1_shift;                        // VK6APH 
+        private int last_var2_shift;                        // VK6APH
 
-		public string[] CmdLineArgs;
+        public string[] CmdLineArgs;
 
-		private double rx1_avg_last_ddsfreq = 0;				// Used to move the display average when tuning
-		private double rx1_avg_last_dttsp_osc = 0;
-		private double rx1_last_bin_shift_leftover = 0; 
+        private double rx1_avg_last_ddsfreq = 0;                // Used to move the display average when tuning
+        private double rx1_avg_last_dttsp_osc = 0;
+        private double rx1_last_bin_shift_leftover = 0;
 
-		private double rx2_avg_last_ddsfreq = 0;				// Used to move the display average when tuning
-		private double rx2_avg_last_dttsp_osc = 0;
-		private double rx2_last_bin_shift_leftover = 0; 
+        private double rx2_avg_last_ddsfreq = 0;                // Used to move the display average when tuning
+        private double rx2_avg_last_dttsp_osc = 0;
+        private double rx2_last_bin_shift_leftover = 0;
 
-		private HiPerfTimer break_in_timer;
-		public double avg_vox_pwr = 0.0;
+        private HiPerfTimer break_in_timer;
+        public double avg_vox_pwr = 0.0;
 
-		// BT 11/05/2007
-		public PowerSDR.RemoteProfiles ProfileForm;
+        // BT 11/05/2007
+        public PowerSDR.RemoteProfiles ProfileForm;
 
         //EHR 25Mar08
         private TDxInput.Device TDxDevice;
         private TDxInput.Sensor TDxSensor;
 
-		public bool initializing = true;
+        public bool initializing = true;
 
-		private int h_delta = 0;		//k6jca 1/15/08
-		private int v_delta = 0;		//k6jca 1/15/08
+        private int h_delta = 0;        //k6jca 1/15/08
+        private int v_delta = 0;        //k6jca 1/15/08
 
-		private int previous_delta = 0;  //k6jca
+        private int previous_delta = 0;  //k6jca
 
-		private Size console_basis_size = new Size (100,100);		//k6jca
-		private Point gr_filter_basis_location = new Point (100,100);		//k6jca
-		private Point gr_Multimeter_basis_location = new Point (100,100);		//k6jca
-		private Point gr_BandHF_basis_location = new Point (100,100);       //k6jca
+        private Size console_basis_size = new Size(100, 100);       //k6jca
+        private Point gr_filter_basis_location = new Point(100, 100);       //k6jca
+        private Point gr_Multimeter_basis_location = new Point(100, 100);       //k6jca
+        private Point gr_BandHF_basis_location = new Point(100, 100);       //k6jca
         private Point gr_BandGEN_basis_location = new Point(100, 100);       //ke9ns add
-        private Point gr_BandVHF_basis_location = new Point (100,100);		//k6jca
-		private Point gr_Mode_basis_location = new Point (100,100);		//k6jca
-		private Point gr_VFOB_basis_location = new Point (100,100);		//k6jca
-		private Point gr_VFOA_basis_location = new Point (100,100);		//k6jca
+        private Point gr_BandVHF_basis_location = new Point(100, 100);      //k6jca
+        private Point gr_Mode_basis_location = new Point(100, 100);     //k6jca
+        private Point gr_VFOB_basis_location = new Point(100, 100);     //k6jca
+        private Point gr_VFOA_basis_location = new Point(100, 100);		//k6jca
 
         private Point gr_VFODialA_location = new Point(100, 100);     //ke9ns add
         private Point gr_VFODialB_location = new Point(100, 100);     //ke9ns add
@@ -1304,74 +1304,74 @@ namespace PowerSDR
         private Point gr_VFODialAA_location = new Point(100, 100);     //ke9ns add
         private Point gr_VFODialBB_location = new Point(100, 100);     //ke9ns add
 
-        private Point gr_ModePhone_basis_location = new Point (100,100);		//k6jca
-		private Point gr_ModeCW_basis_location = new Point (100,100);		//k6jca
-		private Point gr_ModeDig_basis_location = new Point (100,100);		//k6jca
+        private Point gr_ModePhone_basis_location = new Point(100, 100);        //k6jca
+        private Point gr_ModeCW_basis_location = new Point(100, 100);       //k6jca
+        private Point gr_ModeDig_basis_location = new Point(100, 100);		//k6jca
         private Point gr_ModeFM_basis_location = new Point(100, 100);  // anonymous
-		private Point gr_VFO_basis_location = new Point (100,100);		//k6jca
-		private Point gr_vfobetween_basis_location = new Point (100,100);		//k6jca
-		private Point btn_display_pan_center_basis = new Point (100,100);		//k6jca
-		private Point tb_display_pan_basis = new Point (100,100);		//k6jca
-		private Size tb_display_pan_size_basis = new Size (100,100);		//k6jca
-		private Point btn_display_zoom_4x_basis = new Point (100,100);		//k6jca
-		private Point btn_display_zoom_2x_basis = new Point (100,100);		//k6jca
-		private Point btn_display_zoom_1x_basis = new Point (100,100);		//k6jca
-		private Point btn_display_zoom_05_basis = new Point (100,100);		//k6jca
-		private Point tb_display_zoom_basis = new Point (100,100);		//k6jca
-		private Point txt_display_peak_freq_basis = new Point (100,100);		//k6jca
-		private Point txt_display_peak_power_basis = new Point (100,100);		//k6jca
-		private Point txt_display_peak_offset_basis = new Point (100,100);		//k6jca
+        private Point gr_VFO_basis_location = new Point(100, 100);      //k6jca
+        private Point gr_vfobetween_basis_location = new Point(100, 100);       //k6jca
+        private Point btn_display_pan_center_basis = new Point(100, 100);       //k6jca
+        private Point tb_display_pan_basis = new Point(100, 100);       //k6jca
+        private Size tb_display_pan_size_basis = new Size(100, 100);        //k6jca
+        private Point btn_display_zoom_4x_basis = new Point(100, 100);      //k6jca
+        private Point btn_display_zoom_2x_basis = new Point(100, 100);      //k6jca
+        private Point btn_display_zoom_1x_basis = new Point(100, 100);      //k6jca
+        private Point btn_display_zoom_05_basis = new Point(100, 100);      //k6jca
+        private Point tb_display_zoom_basis = new Point(100, 100);      //k6jca
+        private Point txt_display_peak_freq_basis = new Point(100, 100);        //k6jca
+        private Point txt_display_peak_power_basis = new Point(100, 100);       //k6jca
+        private Point txt_display_peak_offset_basis = new Point(100, 100);		//k6jca
         private Point autobrightbox_basis = new Point(100, 100);               // ke9ns add
-		private Point lbl_display_zoom_basis = new Point (100,100);		//k6jca
-		private Size gr_display_size_basis = new Size (100,100);		//k6jca
-		private Size pic_display_size_basis = new Size (100,100);		//k6jca
-		private Size textbox1_size_basis = new Size (100,100);		//k6jca
-		private Point textbox1_basis = new Point (100,100);		//k6jca
-		private Point gr_display2_basis = new Point (100,100);		//k6jca
-		private Point gr_dsp_basis = new Point (100,100);		//k6jca
-		private Point tb_displaypan_basis = new Point (100,100);		//k6jca
-		private Point lbl_displaypan_basis = new Point (100,100);		//k6jca
-		private Point txt_display_cursor_freq_basis = new Point (100,100);		//k6jca
-		private Point txt_display_cursor_power_basis = new Point (100,100);		//k6jca
-		private Point txt_display_cursor_offset_basis = new Point (100,100);		//k6jca
-		private Point chk_power_basis = new Point (100,100);		//k6jca
-		private Point gr_multirx_basis = new Point (100,100);		//k6jca
+        private Point lbl_display_zoom_basis = new Point(100, 100);     //k6jca
+        private Size gr_display_size_basis = new Size(100, 100);        //k6jca
+        private Size pic_display_size_basis = new Size(100, 100);       //k6jca
+        private Size textbox1_size_basis = new Size(100, 100);      //k6jca
+        private Point textbox1_basis = new Point(100, 100);     //k6jca
+        private Point gr_display2_basis = new Point(100, 100);      //k6jca
+        private Point gr_dsp_basis = new Point(100, 100);       //k6jca
+        private Point tb_displaypan_basis = new Point(100, 100);        //k6jca
+        private Point lbl_displaypan_basis = new Point(100, 100);       //k6jca
+        private Point txt_display_cursor_freq_basis = new Point(100, 100);      //k6jca
+        private Point txt_display_cursor_power_basis = new Point(100, 100);     //k6jca
+        private Point txt_display_cursor_offset_basis = new Point(100, 100);        //k6jca
+        private Point chk_power_basis = new Point(100, 100);        //k6jca
+        private Point gr_multirx_basis = new Point(100, 100);       //k6jca
 
-		private Point pan_rx2_divider_basis = new Point(100, 100);
-		private Size pan_rx2_divider_size_basis = new Size(100, 100);
+        private Point pan_rx2_divider_basis = new Point(100, 100);
+        private Size pan_rx2_divider_size_basis = new Size(100, 100);
 
-		private Point gr_display_split_basis = new Point (100,100); // KE5DTO
-		private Point gr_options_basis = new Point (100,100);		//k6jca
-		private Point gr_sound_controls_basis = new Point (100,100);		//k6jca
-		private Point chk_squelch_basis = new Point (100,100);		//k6jca
-		private Point ud_squelch_basis = new Point (100,100);		//k6jca
-		private Point pic_sql_basis = new Point (100,100);		//k6jca
-		private Point tb_sql_basis = new Point (100,100);		//k6jca
-		private Point gr_antenna_basis = new Point (100,100);		//k6jca
-		private Point chk_bci_basis = new Point (100,100);		//k6jca
-		private Point button1_basis = new Point (100,100);		//k6jca
-		private Point gr_date_time_basis = new Point (100,100);		//k6jca
-		//private Point lbl_cpu_meter_basis = new Point (100,100);		//k6jca
-		
-		private Point gr_rx2_meter_basis = new Point(100, 100);
-		private Point gr_rx2_filter_basis = new Point(100, 100);
-		private Point gr_rx2_mode_basis = new Point(100, 100);
-		private Point gr_rx2_display_basis = new Point(100, 100);
-		private Point gr_rx2_dsp_basis = new Point(100, 100);
-		
-		private Point lbl_rx2_rf_basis = new Point(100, 100);
-		private Point ud_rx2_rf_basis = new Point(100, 100);
-		private Point tb_rx2_rf_basis = new Point(100, 100);
-		private Point chk_rx2_squelch_basis = new Point(100, 100);
-		private Point ud_rx2_squelch_basis = new Point(100, 100);
-		private Point tb_rx2_squelch_basis = new Point(100, 100);
-		private Point pic_rx2_squelch_basis = new Point(100, 100);
+        private Point gr_display_split_basis = new Point(100, 100); // KE5DTO
+        private Point gr_options_basis = new Point(100, 100);       //k6jca
+        private Point gr_sound_controls_basis = new Point(100, 100);        //k6jca
+        private Point chk_squelch_basis = new Point(100, 100);      //k6jca
+        private Point ud_squelch_basis = new Point(100, 100);       //k6jca
+        private Point pic_sql_basis = new Point(100, 100);      //k6jca
+        private Point tb_sql_basis = new Point(100, 100);       //k6jca
+        private Point gr_antenna_basis = new Point(100, 100);       //k6jca
+        private Point chk_bci_basis = new Point(100, 100);      //k6jca
+        private Point button1_basis = new Point(100, 100);      //k6jca
+        private Point gr_date_time_basis = new Point(100, 100);     //k6jca
+                                                                    //private Point lbl_cpu_meter_basis = new Point (100,100);		//k6jca
 
-		private Point gr_rx2_mixer_basis = new Point(100, 100);
-		private Point chk_rx2_enable_basis = new Point(100, 100);
-		private Point chk_rx2_preamp_basis = new Point(100, 100);
-		private Point lbl_rx2_band_basis = new Point(100, 100);
-		private Point combo_rx2_band_basis = new Point(100, 100);
+        private Point gr_rx2_meter_basis = new Point(100, 100);
+        private Point gr_rx2_filter_basis = new Point(100, 100);
+        private Point gr_rx2_mode_basis = new Point(100, 100);
+        private Point gr_rx2_display_basis = new Point(100, 100);
+        private Point gr_rx2_dsp_basis = new Point(100, 100);
+
+        private Point lbl_rx2_rf_basis = new Point(100, 100);
+        private Point ud_rx2_rf_basis = new Point(100, 100);
+        private Point tb_rx2_rf_basis = new Point(100, 100);
+        private Point chk_rx2_squelch_basis = new Point(100, 100);
+        private Point ud_rx2_squelch_basis = new Point(100, 100);
+        private Point tb_rx2_squelch_basis = new Point(100, 100);
+        private Point pic_rx2_squelch_basis = new Point(100, 100);
+
+        private Point gr_rx2_mixer_basis = new Point(100, 100);
+        private Point chk_rx2_enable_basis = new Point(100, 100);
+        private Point chk_rx2_preamp_basis = new Point(100, 100);
+        private Point lbl_rx2_band_basis = new Point(100, 100);
+        private Point combo_rx2_band_basis = new Point(100, 100);
 
         public bool swapping = false;   //used to supress V/U on both RX1/RX2 error while swapping
 
@@ -1387,226 +1387,226 @@ namespace PowerSDR
 
 #endif
 
-#endregion
+        #endregion
 
-#region Windows Form Generated Code
+        #region Windows Form Generated Code
 
         private System.Windows.Forms.ButtonTS btnHidden;
-		public System.Windows.Forms.TextBoxTS txtVFOAFreq;
-		private System.Windows.Forms.TextBoxTS txtVFOABand;
-		private System.Windows.Forms.TextBoxTS txtVFOBFreq;
+        public System.Windows.Forms.TextBoxTS txtVFOAFreq;
+        private System.Windows.Forms.TextBoxTS txtVFOABand;
+        private System.Windows.Forms.TextBoxTS txtVFOBFreq;
         public PictureBox picDisplay;
         private System.Windows.Forms.PanelTS grpVFOA;
-     	private System.Windows.Forms.PanelTS grpVFOB;
+        private System.Windows.Forms.PanelTS grpVFOB;
         private System.Windows.Forms.TextBoxTS txtVFOBBand;
         public CheckBoxTS chkPower;
         private System.Windows.Forms.RichTextBox lblCPUMeter; // ke9ns mod   private System.Windows.Forms.LabelTS lblCPUMeter;
         private System.Windows.Forms.NumericUpDownTS udFilterLow;
-		private System.Windows.Forms.NumericUpDownTS udFilterHigh;
-		private System.Windows.Forms.RadioButtonTS radFilterVar1;
-		private System.Windows.Forms.RadioButtonTS radFilterVar2;
-		private System.Windows.Forms.RadioButtonTS radModeSPEC;
+        private System.Windows.Forms.NumericUpDownTS udFilterHigh;
+        private System.Windows.Forms.RadioButtonTS radFilterVar1;
+        private System.Windows.Forms.RadioButtonTS radFilterVar2;
+        private System.Windows.Forms.RadioButtonTS radModeSPEC;
         public RadioButtonTS radModeLSB;
         private System.Windows.Forms.RadioButtonTS radModeDIGL;
-		private System.Windows.Forms.RadioButtonTS radModeCWU;
-		private System.Windows.Forms.RadioButtonTS radModeDSB;
-		private System.Windows.Forms.RadioButtonTS radModeSAM;
-		private System.Windows.Forms.RadioButtonTS radModeAM;
-		private System.Windows.Forms.RadioButtonTS radModeCWL;
+        private System.Windows.Forms.RadioButtonTS radModeCWU;
+        private System.Windows.Forms.RadioButtonTS radModeDSB;
+        private System.Windows.Forms.RadioButtonTS radModeSAM;
+        private System.Windows.Forms.RadioButtonTS radModeAM;
+        private System.Windows.Forms.RadioButtonTS radModeCWL;
         public RadioButtonTS radModeUSB;
         private System.Windows.Forms.RadioButtonTS radModeFMN;
         private System.Windows.Forms.RadioButtonTS radModeDRM;
-		private System.Windows.Forms.LabelTS lblAGC;
-		private System.Windows.Forms.ComboBoxTS comboAGC;
-		private System.Windows.Forms.CheckBoxTS chkNB;
-		private System.Windows.Forms.CheckBoxTS chkANF;
-		private System.Windows.Forms.CheckBoxTS chkNR;
-		private System.Windows.Forms.CheckBoxTS chkMON;
+        private System.Windows.Forms.LabelTS lblAGC;
+        private System.Windows.Forms.ComboBoxTS comboAGC;
+        private System.Windows.Forms.CheckBoxTS chkNB;
+        private System.Windows.Forms.CheckBoxTS chkANF;
+        private System.Windows.Forms.CheckBoxTS chkNR;
+        private System.Windows.Forms.CheckBoxTS chkMON;
         public CheckBoxTS chkTUN;
         public CheckBoxTS chkMOX;
         private System.Windows.Forms.NumericUpDownTS udXIT;
-		private System.Windows.Forms.NumericUpDownTS udRIT;
-		private System.Windows.Forms.CheckBoxTS chkMUT;
-		private System.Windows.Forms.CheckBoxTS chkXIT;
-		private System.Windows.Forms.CheckBoxTS chkRIT;
+        private System.Windows.Forms.NumericUpDownTS udRIT;
+        private System.Windows.Forms.CheckBoxTS chkMUT;
+        private System.Windows.Forms.CheckBoxTS chkXIT;
+        private System.Windows.Forms.CheckBoxTS chkRIT;
         private System.Windows.Forms.LabelTS lblPWR;
         private System.Windows.Forms.LabelTS lblAF;
         private System.Windows.Forms.LabelTS lblMIC;
-		private System.Windows.Forms.TextBoxTS txtWheelTune;
-		private System.Windows.Forms.CheckBoxTS chkBIN;
-		private System.Windows.Forms.PanelTS grpMultimeter;
-		private System.Windows.Forms.ButtonTS btnVFOSwap;
-		private System.Windows.Forms.ButtonTS btnVFOBtoA;
+        private System.Windows.Forms.TextBoxTS txtWheelTune;
+        private System.Windows.Forms.CheckBoxTS chkBIN;
+        private System.Windows.Forms.PanelTS grpMultimeter;
+        private System.Windows.Forms.ButtonTS btnVFOSwap;
+        private System.Windows.Forms.ButtonTS btnVFOBtoA;
         private System.Windows.Forms.ButtonTS btnVFOAtoB;
         public CheckBoxTS chkVFOSplit;
         private System.Windows.Forms.TextBoxTS txtMultiText;
-		private System.Windows.Forms.Timer timer_cpu_meter;
-		private System.Windows.Forms.LabelTS lblFilterHigh;
-		private System.Windows.Forms.LabelTS lblFilterLow;
+        private System.Windows.Forms.Timer timer_cpu_meter;
+        private System.Windows.Forms.LabelTS lblFilterHigh;
+        private System.Windows.Forms.LabelTS lblFilterLow;
         public LabelTS lblMultiSMeter;
         private PictureBox picMultiMeterDigital;
         private PictureBox picRX2Meter;
         private System.Windows.Forms.CheckBoxTS chkSquelch;
-		private System.Windows.Forms.Timer timer_peak_text;
-		private System.Windows.Forms.TextBoxTS txtMemoryQuick;
-		private System.Windows.Forms.ButtonTS btnMemoryQuickSave;
-		private System.Windows.Forms.ButtonTS btnMemoryQuickRestore;
+        private System.Windows.Forms.Timer timer_peak_text;
+        private System.Windows.Forms.TextBoxTS txtMemoryQuick;
+        private System.Windows.Forms.ButtonTS btnMemoryQuickSave;
+        private System.Windows.Forms.ButtonTS btnMemoryQuickRestore;
         private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.LabelTS lblFilterShift;
-		private System.Windows.Forms.ButtonTS btnFilterShiftReset;
-		private System.Windows.Forms.Timer timer_clock;
-		private System.Windows.Forms.RichTextBox txtDate;   // ke9ns mod (was texboxts)
-  		private System.Windows.Forms.Panel panelVFOAHover;
-		private System.Windows.Forms.Panel panelVFOBHover;
-		private System.Windows.Forms.ComboBoxTS comboMeterRXMode;
+        private System.Windows.Forms.LabelTS lblFilterShift;
+        private System.Windows.Forms.ButtonTS btnFilterShiftReset;
+        private System.Windows.Forms.Timer timer_clock;
+        private System.Windows.Forms.RichTextBox txtDate;   // ke9ns mod (was texboxts)
+        private System.Windows.Forms.Panel panelVFOAHover;
+        private System.Windows.Forms.Panel panelVFOBHover;
+        private System.Windows.Forms.ComboBoxTS comboMeterRXMode;
         private System.Windows.Forms.ComboBoxTS comboMeterTXMode;
-		private System.Windows.Forms.ButtonTS btnXITReset;
-		private System.Windows.Forms.ButtonTS btnRITReset;
-		private System.Windows.Forms.ComboBoxTS comboTuneMode;
-		private System.Windows.Forms.ComboBoxTS comboPreamp;
-		private System.Windows.Forms.LabelTS lblPreamp;
-		private System.Windows.Forms.CheckBoxTS chkDSPNB2;
+        private System.Windows.Forms.ButtonTS btnXITReset;
+        private System.Windows.Forms.ButtonTS btnRITReset;
+        private System.Windows.Forms.ComboBoxTS comboTuneMode;
+        private System.Windows.Forms.ComboBoxTS comboPreamp;
+        private System.Windows.Forms.LabelTS lblPreamp;
+        private System.Windows.Forms.CheckBoxTS chkDSPNB2;
         private System.Windows.Forms.CheckBoxTS chkVFOLock;
         private System.Windows.Forms.LabelTS lblFilterWidth;
-		private System.Windows.Forms.ButtonTS btnBandHF;
+        private System.Windows.Forms.ButtonTS btnBandHF;
         private System.Windows.Forms.ButtonTS btnBandVHF;
         public LabelTS lblCWSpeed;
         private System.Windows.Forms.ButtonTS btnIFtoVFO;
         private System.Windows.Forms.ButtonTS btnZeroBeat;
-		private System.Windows.Forms.RichTextBox txtTime;  // ke9ns mod
+        private System.Windows.Forms.RichTextBox txtTime;  // ke9ns mod
         private System.Windows.Forms.RadioButtonTS radModeDIGU;
-		private System.Windows.Forms.RadioButtonTS radFilter1;
-		private System.Windows.Forms.RadioButtonTS radFilter2;
-		private System.Windows.Forms.RadioButtonTS radFilter3;
-		private System.Windows.Forms.RadioButtonTS radFilter4;
-		private System.Windows.Forms.RadioButtonTS radFilter5;
-		private System.Windows.Forms.RadioButtonTS radFilter6;
-		private System.Windows.Forms.RadioButtonTS radFilter7;
-		private System.Windows.Forms.RadioButtonTS radFilter8;
-		private System.Windows.Forms.RadioButtonTS radFilter9;
+        private System.Windows.Forms.RadioButtonTS radFilter1;
+        private System.Windows.Forms.RadioButtonTS radFilter2;
+        private System.Windows.Forms.RadioButtonTS radFilter3;
+        private System.Windows.Forms.RadioButtonTS radFilter4;
+        private System.Windows.Forms.RadioButtonTS radFilter5;
+        private System.Windows.Forms.RadioButtonTS radFilter6;
+        private System.Windows.Forms.RadioButtonTS radFilter7;
+        private System.Windows.Forms.RadioButtonTS radFilter8;
+        private System.Windows.Forms.RadioButtonTS radFilter9;
         private System.Windows.Forms.RadioButtonTS radFilter10;
         private System.Windows.Forms.LabelTS lblRF;
-		private System.Windows.Forms.LabelTS lblTuneStep;
+        private System.Windows.Forms.LabelTS lblTuneStep;
         private System.Windows.Forms.PanelTS grpVFOBetween; // ke9ns mod
         private System.Windows.Forms.CheckBoxTS chkVOX;
         private System.Windows.Forms.LabelTS lblTXGain;
         private System.Windows.Forms.LabelTS lblRXGain;
         private System.Windows.Forms.PictureBox picVOX;
         private System.Windows.Forms.CheckBoxTS chkNoiseGate;
-		private System.Windows.Forms.PictureBox picNoiseGate;
-        public  System.Windows.Forms.TextBoxTS autoBrightBox;
+        private System.Windows.Forms.PictureBox picNoiseGate;
+        public System.Windows.Forms.TextBoxTS autoBrightBox;
         private System.Windows.Forms.TextBoxTS txtDisplayCursorOffset;
-		private System.Windows.Forms.TextBoxTS txtDisplayCursorPower;
-		private System.Windows.Forms.TextBoxTS txtDisplayCursorFreq;
-		private System.Windows.Forms.TextBoxTS txtDisplayPeakOffset;
-		private System.Windows.Forms.TextBoxTS txtDisplayPeakFreq;
+        private System.Windows.Forms.TextBoxTS txtDisplayCursorPower;
+        private System.Windows.Forms.TextBoxTS txtDisplayCursorFreq;
+        private System.Windows.Forms.TextBoxTS txtDisplayPeakOffset;
+        private System.Windows.Forms.TextBoxTS txtDisplayPeakFreq;
         public TextBoxTS txtDisplayPeakPower;
         private System.Windows.Forms.TextBoxTS txtVFOAMSD;
-		private System.Windows.Forms.TextBoxTS txtVFOBMSD;
-		private System.Windows.Forms.TextBoxTS txtVFOALSD;
+        private System.Windows.Forms.TextBoxTS txtVFOBMSD;
+        private System.Windows.Forms.TextBoxTS txtVFOALSD;
         private System.Windows.Forms.TextBoxTS txtVFOBLSD;
-		private System.Windows.Forms.CheckBoxTS chkSR;
+        private System.Windows.Forms.CheckBoxTS chkSR;
         private System.Windows.Forms.ButtonTS btnTuneStepChangeSmaller;
-		private System.Windows.Forms.ComboBoxTS comboTXProfile;
+        private System.Windows.Forms.ComboBoxTS comboTXProfile;
         private System.Windows.Forms.CheckBoxTS chkShowTXFilter;
         private System.Windows.Forms.CheckBoxTS chkShowDigTXFilter;
-		private System.Windows.Forms.ComboBoxTS comboVACSampleRate;
-		private System.Windows.Forms.GroupBoxTS grpDIGSampleRate;
-		private System.Windows.Forms.GroupBoxTS grpVACStereo;
-		private System.Windows.Forms.CheckBoxTS chkVACStereo;
-		private System.Windows.Forms.CheckBoxTS chkCWSidetone;
-		private System.Windows.Forms.CheckBoxTS chkCWIambic;
-		private System.Windows.Forms.LabelTS lblCWPitchFreq;
+        private System.Windows.Forms.ComboBoxTS comboVACSampleRate;
+        private System.Windows.Forms.GroupBoxTS grpDIGSampleRate;
+        private System.Windows.Forms.GroupBoxTS grpVACStereo;
+        private System.Windows.Forms.CheckBoxTS chkVACStereo;
+        private System.Windows.Forms.CheckBoxTS chkCWSidetone;
+        private System.Windows.Forms.CheckBoxTS chkCWIambic;
+        private System.Windows.Forms.LabelTS lblCWPitchFreq;
         public System.Windows.Forms.NumericUpDownTS udCWPitch;
         public System.Windows.Forms.ButtonTS lblDisplayPan;
         private System.Windows.Forms.ButtonTS btnDisplayPanCenter;
         private System.Windows.Forms.LabelTS lblDisplayZoom;
-		private System.Windows.Forms.LabelTS lblTransmitProfile;
-		private System.Windows.Forms.CheckBoxTS chkX2TR;
+        private System.Windows.Forms.LabelTS lblTransmitProfile;
+        private System.Windows.Forms.CheckBoxTS chkX2TR;
         private System.Windows.Forms.CheckBoxTS chkShowTXCWFreq;
         private System.Windows.Forms.CheckBoxTS chkPanSwap;
-		private System.Windows.Forms.GroupBoxTS grpSemiBreakIn;
-		private System.Windows.Forms.LabelTS lblCWBreakInDelay;
-		private System.Windows.Forms.CheckBoxTS chkCWBreakInEnabled;
-		private System.Windows.Forms.NumericUpDownTS udCWBreakInDelay;
-		private System.Windows.Forms.CheckBoxTS chkVAC1;
-		private System.Windows.Forms.ComboBoxTS comboDigTXProfile;
+        private System.Windows.Forms.GroupBoxTS grpSemiBreakIn;
+        private System.Windows.Forms.LabelTS lblCWBreakInDelay;
+        private System.Windows.Forms.CheckBoxTS chkCWBreakInEnabled;
+        private System.Windows.Forms.NumericUpDownTS udCWBreakInDelay;
+        private System.Windows.Forms.CheckBoxTS chkVAC1;
+        private System.Windows.Forms.ComboBoxTS comboDigTXProfile;
         private System.Windows.Forms.LabelTS lblDigTXProfile;
-		private System.Windows.Forms.CheckBoxTS chkRXEQ;
+        private System.Windows.Forms.CheckBoxTS chkRXEQ;
         private System.Windows.Forms.CheckBoxTS chkTXEQ;
         private System.Windows.Forms.CheckBoxTS chkBCI;
         private System.ComponentModel.IContainer components;
         public CheckBoxTS chkEnableMultiRX;
         private System.Windows.Forms.ButtonTS btnTuneStepChangeLarger;
-		private System.Windows.Forms.LabelTS lblAntRX1;
+        private System.Windows.Forms.LabelTS lblAntRX1;
         private System.Windows.Forms.LabelTS lblAntTX;
-		private System.Windows.Forms.CheckBoxTS chkSplitDisplay;
-		private System.Windows.Forms.ComboBoxTS comboDisplayModeTop;
-		private System.Windows.Forms.ComboBoxTS comboDisplayModeBottom;
-		private System.Windows.Forms.LabelTS lblDisplayModeTop;
+        private System.Windows.Forms.CheckBoxTS chkSplitDisplay;
+        private System.Windows.Forms.ComboBoxTS comboDisplayModeTop;
+        private System.Windows.Forms.ComboBoxTS comboDisplayModeBottom;
+        private System.Windows.Forms.LabelTS lblDisplayModeTop;
         private System.Windows.Forms.LabelTS lblDisplayModeBottom;
         private System.Windows.Forms.CheckBoxTS chkCPDR;
-		private System.Windows.Forms.CheckBoxTS chkDX;
-		private System.Windows.Forms.CheckBoxTS ckQuickPlay;
+        private System.Windows.Forms.CheckBoxTS chkDX;
+        private System.Windows.Forms.CheckBoxTS ckQuickPlay;
         public CheckBoxTS ckQuickRec;
         private System.Windows.Forms.GroupBoxTS grpDisplaySplit;
         public CheckBoxTS chkRX2;
         private System.Windows.Forms.CheckBoxTS chkRX2SR;
-		private System.Windows.Forms.Panel panelVFOASubHover;
+        private System.Windows.Forms.Panel panelVFOASubHover;
         private System.Windows.Forms.LabelTS lblAntRX2;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeAM;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeSAM;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeDSB;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeCWU;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeDIGU;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeDIGL;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeAM;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeSAM;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeDSB;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeCWU;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeDIGU;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeDIGL;
         public RadioButtonTS radRX2ModeLSB;
         private System.Windows.Forms.RadioButtonTS radRX2ModeSPEC;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeDRM;
-		private System.Windows.Forms.RadioButtonTS radRX2ModeFMN;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeDRM;
+        private System.Windows.Forms.RadioButtonTS radRX2ModeFMN;
         public RadioButtonTS radRX2ModeUSB;
         private System.Windows.Forms.RadioButtonTS radRX2ModeCWL;
         private System.Windows.Forms.CheckBoxTS chkRX2BIN;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter1;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter2;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter3;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter4;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter5;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter6;
-		private System.Windows.Forms.RadioButtonTS radRX2Filter7;
-		private System.Windows.Forms.RadioButtonTS radRX2FilterVar1;
-		private System.Windows.Forms.RadioButtonTS radRX2FilterVar2;
-		private System.Windows.Forms.PanelTS grpRX2Meter;
-		private System.Windows.Forms.ComboBoxTS comboRX2MeterMode;
-		private System.Windows.Forms.NumericUpDownTS udRX2FilterLow;
-		private System.Windows.Forms.NumericUpDownTS udRX2FilterHigh;
-		private System.Windows.Forms.LabelTS lblRX2FilterLow;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter1;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter2;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter3;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter4;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter5;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter6;
+        private System.Windows.Forms.RadioButtonTS radRX2Filter7;
+        private System.Windows.Forms.RadioButtonTS radRX2FilterVar1;
+        private System.Windows.Forms.RadioButtonTS radRX2FilterVar2;
+        private System.Windows.Forms.PanelTS grpRX2Meter;
+        private System.Windows.Forms.ComboBoxTS comboRX2MeterMode;
+        private System.Windows.Forms.NumericUpDownTS udRX2FilterLow;
+        private System.Windows.Forms.NumericUpDownTS udRX2FilterHigh;
+        private System.Windows.Forms.LabelTS lblRX2FilterLow;
         private System.Windows.Forms.LabelTS lblRX2FilterHigh;
-		private System.Windows.Forms.CheckBoxTS chkRX2NB2;
-		private System.Windows.Forms.CheckBoxTS chkRX2NB;
-		private System.Windows.Forms.CheckBoxTS chkRX2ANF;
-		private System.Windows.Forms.CheckBoxTS chkRX2NR;
-		
-		private System.Windows.Forms.TextBoxTS txtRX2Meter;
+        private System.Windows.Forms.CheckBoxTS chkRX2NB2;
+        private System.Windows.Forms.CheckBoxTS chkRX2NB;
+        private System.Windows.Forms.CheckBoxTS chkRX2ANF;
+        private System.Windows.Forms.CheckBoxTS chkRX2NR;
+
+        private System.Windows.Forms.TextBoxTS txtRX2Meter;
         public LabelTS lblRX2Meter;
         private System.Windows.Forms.CheckBoxTS chkRX2Preamp;
         private System.Windows.Forms.LabelTS lblRX2RF;
         private System.Windows.Forms.PictureBox picSquelch;
         private System.Windows.Forms.CheckBoxTS chkRX2Squelch;
-		private System.Windows.Forms.PictureBox picRX2Squelch;
+        private System.Windows.Forms.PictureBox picRX2Squelch;
         private System.Windows.Forms.CheckBoxTS chkRX1Preamp;
         private System.Windows.Forms.CheckBoxTS chkRX2Mute;
-		private System.Windows.Forms.CheckBoxTS chkRX2DisplayPeak;
-		private System.Windows.Forms.ComboBoxTS comboRX2DisplayMode;
-		private System.Windows.Forms.CheckBoxTS chkRX2DisplayAVG;   
-		private System.Windows.Forms.Label lblRX2Mute;
-		private System.Windows.Forms.Label lblRX2Pan;
+        private System.Windows.Forms.CheckBoxTS chkRX2DisplayPeak;
+        private System.Windows.Forms.ComboBoxTS comboRX2DisplayMode;
+        private System.Windows.Forms.CheckBoxTS chkRX2DisplayAVG;
+        private System.Windows.Forms.Label lblRX2Mute;
+        private System.Windows.Forms.Label lblRX2Pan;
         private System.Windows.Forms.Label lblRX2Vol;
-		private System.Windows.Forms.ComboBoxTS comboRX2Band;           
+        private System.Windows.Forms.ComboBoxTS comboRX2Band;
         private System.Windows.Forms.LabelTS lblRX2Band;
-		private System.Windows.Forms.ComboBoxTS comboRX2AGC;
-		private System.Windows.Forms.LabelTS lblRX2AGC;
-		private System.Windows.Forms.CheckBoxTS chkVFOSync;
+        private System.Windows.Forms.ComboBoxTS comboRX2AGC;
+        private System.Windows.Forms.LabelTS lblRX2AGC;
+        private System.Windows.Forms.CheckBoxTS chkVFOSync;
         public CheckBoxTS chkVFOATX;
         public CheckBoxTS chkVFOBTX;
         private PanelTS panelBandHF;
@@ -1792,17 +1792,17 @@ namespace PowerSDR
         private ComboBoxTS comboMeterTX1Mode;
         private System.Windows.Forms.CheckBoxTS chkFullDuplex;
 
-#endregion
+        #endregion
 
-#region Constructor and Destructor
+        #region Constructor and Destructor
         // ======================================================
-		// Constructor and Destructor
-		// ======================================================
+        // Constructor and Destructor
+        // ======================================================
 
-		public Console(string[] args)
+        public Console(string[] args)
         {
 
-          
+
 
             //====================================================================================
             //====================================================================================
@@ -1816,7 +1816,7 @@ namespace PowerSDR
             byte[] fontArray = Properties.Resources.swissek;  //  swissek buffer to hold Font file
             int dataLength = Properties.Resources.swissek.Length; //  swissek get length of Font file
 
-           
+
             byte[] fontArray1 = Properties.Resources.swissb;  // swissbi  buffer to hold Font file     SWIS721 Bold
             int dataLength1 = Properties.Resources.swissb.Length; // swissbi  get length of Font file
 
@@ -1827,12 +1827,12 @@ namespace PowerSDR
             byte[] fontArray3 = Properties.Resources.swissbo;  // swisscbo  buffer to hold Font file     SWIS721 OUTLINE FONT
             int dataLength3 = Properties.Resources.swissbo.Length; // swisscbo  get length of Font file
 
-          //  byte[] fontArray3 = Properties.Resources.napoli;  //   buffer to hold Font file
-          //  int dataLength3 = Properties.Resources.napoli.Length; //   get length of Font file
+            //  byte[] fontArray3 = Properties.Resources.napoli;  //   buffer to hold Font file
+            //  int dataLength3 = Properties.Resources.napoli.Length; //   get length of Font file
 
             IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength); //int pointer to a allocated block of unmanaged memory the size of the Font File
             IntPtr ptrData1 = Marshal.AllocCoTaskMem(dataLength1); //int pointer to a allocated block of unmanaged memory the size of the Font File
-           IntPtr ptrData2 = Marshal.AllocCoTaskMem(dataLength2); //int pointer to a allocated block of unmanaged memory the size of the Font File
+            IntPtr ptrData2 = Marshal.AllocCoTaskMem(dataLength2); //int pointer to a allocated block of unmanaged memory the size of the Font File
             IntPtr ptrData3 = Marshal.AllocCoTaskMem(dataLength3); //int pointer to a allocated block of unmanaged memory the size of the Font File
 
 
@@ -1842,11 +1842,11 @@ namespace PowerSDR
             Marshal.Copy(fontArray3, 0, ptrData3, dataLength3); // copy Font File bytes source -> into unmanged memory block
 
             uint cFonts = 0;
-           
+
 
             AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
             AddFontMemResourceEx(ptrData1, (uint)fontArray1.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
-           AddFontMemResourceEx(ptrData2, (uint)fontArray2.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
+            AddFontMemResourceEx(ptrData2, (uint)fontArray2.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
             AddFontMemResourceEx(ptrData3, (uint)fontArray3.Length, IntPtr.Zero, ref cFonts); // class part of gdi32.dll add Font from unmanged memory block
 
             PrivateFontCollection pfc = new PrivateFontCollection();  // class to provide client provided fonts
@@ -1874,9 +1874,9 @@ namespace PowerSDR
             ff1 = new Font(S1, 6.9f, FontStyle.Bold | FontStyle.Italic); // Swis721 BlkEx B // white numbers
             ff2 = new Font(S1, 5.5f, FontStyle.Bold | FontStyle.Italic); // Swis721 BlkEx B // red +numbers
 
-            ff3 = new Font(S2, 14.0f, FontStyle.Bold ); // Swis721 BT // digital meter values
-            ff4 = new Font(S2, 12.0f, FontStyle.Bold ); // Swis721 BT
-            ff5 = new Font(S2, 8.25f, FontStyle.Bold ); // Swis721 BT
+            ff3 = new Font(S2, 14.0f, FontStyle.Bold); // Swis721 BT // digital meter values
+            ff4 = new Font(S2, 12.0f, FontStyle.Bold); // Swis721 BT
+            ff5 = new Font(S2, 8.25f, FontStyle.Bold); // Swis721 BT
 
             ff8 = new Font(S2, 11.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BT  font for meter indication
 
@@ -1890,7 +1890,7 @@ namespace PowerSDR
             ff6 = new Font(S3, 32.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BI for txtVFOAMSD (A and B) its already a Bold and Italic font
             ff7 = new Font(S3, 27.0f, FontStyle.Bold | FontStyle.Italic); // Swis721 BI for txtVFOALSD (A and B)
 
-            ff9 = new Font(S4, 32.5f,  FontStyle.Bold); // Swis721 BO for txtVFOAMSD (A and B) its already a Open and Italic font
+            ff9 = new Font(S4, 32.5f, FontStyle.Bold); // Swis721 BO for txtVFOAMSD (A and B) its already a Open and Italic font
             ff9a = new Font(S4, 27.0f, FontStyle.Bold); // Swis721 BO for txtVFOAMSD (A and B) its already a Open and Italic font
 
 
@@ -1907,17 +1907,17 @@ namespace PowerSDR
 
                     if (!path.EndsWith("\\")) path += "\\";
 
-                    if (Directory.Exists(path))  AppDataPath = path;
+                    if (Directory.Exists(path)) AppDataPath = path;
                     else
                     {
                         DialogResult dr = MessageBox.Show("-datapath: command line option found, but the folder specified was not found.\n" +
                             "Would you like to create this folder?  If not, the default folder will be used.\n\n" +
-                            "("+s+")",
+                            "(" + s + ")",
                             "Command Line Option: Create Folder?",
                             MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question);
 
-                        if(dr == DialogResult.Yes)
+                        if (dr == DialogResult.Yes)
                         {
                             Directory.CreateDirectory(path);
                             AppDataPath = path;
@@ -1936,9 +1936,9 @@ namespace PowerSDR
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 string version = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
 
-            //  AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR" + version + "\\"; // ke9ns original
-               AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.8.0\\"; // keep it the same otherwise everyone starts with a new database
-              //  AppDataPath1 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.7.2\\"; // keep it the same otherwise everyone starts with a new database
+                //  AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR" + version + "\\"; // ke9ns original
+                AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.8.0\\"; // keep it the same otherwise everyone starts with a new database
+                                                                                                                                               //  AppDataPath1 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.7.2\\"; // keep it the same otherwise everyone starts with a new database
 
 
             }
@@ -1949,9 +1949,9 @@ namespace PowerSDR
             // check for existence of master file
             string master_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\";  // %userprofile%\AppData\Roaming\FlexRadio Systems\
 
-            if (File.Exists(master_path + "production"))    production = true;  // ke9ns if an empty file called production is found in the  %userprofile%\AppData\Roaming\FlexRadio Systems\ folder
+            if (File.Exists(master_path + "production")) production = true;  // ke9ns if an empty file called production is found in the  %userprofile%\AppData\Roaming\FlexRadio Systems\ folder
 
-            if (File.Exists(master_path + "test_equip"))    test_equip = true;   // ke9ns if an empty file called test_quip is found in the  %userprofile%\AppData\Roaming\FlexRadio Systems\ folder
+            if (File.Exists(master_path + "test_equip")) test_equip = true;   // ke9ns if an empty file called test_quip is found in the  %userprofile%\AppData\Roaming\FlexRadio Systems\ folder
 
             Master.Init();
 
@@ -1960,8 +1960,8 @@ namespace PowerSDR
             // decide whether to present a choice of radios to the user
             Pal.Init();
             RadiosAvailable.ScanPal(); // gather info on Pal radios
-            
-            if(RadiosAvailable.NumPresent == 0) // handle v1.x firmware
+
+            if (RadiosAvailable.NumPresent == 0) // handle v1.x firmware
             {
                 if (FWCMidi.Open())
                 {
@@ -2036,8 +2036,8 @@ namespace PowerSDR
             Flex1500.Init();
             RadiosAvailable.Scan1500();
 
-           
-      
+
+
 
             int list_det_num = 0;
             int list_undet_num = 0; // ignore demo
@@ -2050,16 +2050,16 @@ namespace PowerSDR
                     case Model.FLEX5000:
                     case Model.FLEX3000:
                     case Model.FLEX1500:
-                        list_det_num++; 
-                        if (r.Present) list_det_present++; 
+                        list_det_num++;
+                        if (r.Present) list_det_present++;
                         break;
-                 //   case Model.SDR1000:
-                  //  case Model.SOFTROCK40:
-                   //     list_undet_num++; break;
+                        //   case Model.SDR1000:
+                        //  case Model.SOFTROCK40:
+                        //     list_undet_num++; break;
                 }
             }
 
-            if ((list_det_num == 1 && list_undet_num == 0) ||  (production && list_det_present == 1)) // skip form
+            if ((list_det_num == 1 && list_undet_num == 0) || (production && list_det_present == 1)) // skip form
             {
                 foreach (Radio r in RadiosAvailable.RadioList)
                 {
@@ -2089,11 +2089,11 @@ namespace PowerSDR
                         //  DBFileName = app_data_path + r.GetDBFilename();  // ke9ns original this line of code
 
                         DBFileName = app_data_path + r.GetDBFilename1();  // ke9ns mod  this tells PowerSDR to look for a databaseRevQ_F5K_1610-2780.xml file
-                     
+
                         DBFileName1 = app_data_path + r.GetDBFilename(); // ke9ns add  this is the old original name database_F5K_1610-2780.xml file that we copy use to copy over to the RevQ when needed
                                                                          //            we do this just in case you need your original database for running an older copy of PowerSDR
 
-                    
+
                         break;
                     }
 
@@ -2112,8 +2112,8 @@ namespace PowerSDR
                 int index = db_file_name.LastIndexOf("_");
                 DBFileName = db_file_name.Substring(0, index) + ".xml";
             }*/
-           
-            if(radio_to_use == null)
+
+            if (radio_to_use == null)
             {
                 RadioChoice choiceForm = new RadioChoice(this);
                 choiceForm.ShowDialog();
@@ -2121,7 +2121,7 @@ namespace PowerSDR
 
             foreach (string s in args)
             {
-                if(s.StartsWith("-dbfilename:"))
+                if (s.StartsWith("-dbfilename:"))
                 {
                     string path = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
 
@@ -2165,9 +2165,9 @@ namespace PowerSDR
                     if (Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
                     {
                         DialogResult dr = MessageBox.Show(
-                            "The Factory Defaults function has been tiggered.  Would you like to Reset to Factory Defaults?\n\n"+
-                            "If so, a copy of the current database will be placed on the desktop with "+
-                            "a date and time stamp in the file name before creating a brand new "+
+                            "The Factory Defaults function has been tiggered.  Would you like to Reset to Factory Defaults?\n\n" +
+                            "If so, a copy of the current database will be placed on the desktop with " +
+                            "a date and time stamp in the file name before creating a brand new " +
                             "database for active use.",
                             "Factory Defaults?",
                             MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -2221,7 +2221,7 @@ namespace PowerSDR
 
             Splash.SetStatus("Enumerating Radio Hardware");     // Set progress point
 
-            if(radio_to_use != null)
+            if (radio_to_use != null)
             {
                 switch (radio_to_use.Model)
                 {
@@ -2261,28 +2261,29 @@ namespace PowerSDR
                             DB.SaveVars("Options", ref list);
                         }
                         break;
-                  /*  case Model.SDR1000:
-                        current_model = Model.SDR1000;
-                        fwc_init = false;
-                        hid_init = false;
-                        if (list.Count == 0)
-                        {
-                            list.Add("radGenModelSDR1000/True");
-                            DB.SaveVars("Options", ref list);
-                        }
-                        run_setup_wizard = true;
-                        break;
-                    case Model.SOFTROCK40:
-                        current_model = Model.SOFTROCK40;
-                        fwc_init = false;
-                        hid_init = false;
-                        if (list.Count == 0)
-                        {
-                            list.Add("radGenModelSoftRock40/True");
-                            DB.SaveVars("Options", ref list);
-                        }
-                        break;
-                  */  default:
+                    /*  case Model.SDR1000:
+                          current_model = Model.SDR1000;
+                          fwc_init = false;
+                          hid_init = false;
+                          if (list.Count == 0)
+                          {
+                              list.Add("radGenModelSDR1000/True");
+                              DB.SaveVars("Options", ref list);
+                          }
+                          run_setup_wizard = true;
+                          break;
+                      case Model.SOFTROCK40:
+                          current_model = Model.SOFTROCK40;
+                          fwc_init = false;
+                          hid_init = false;
+                          if (list.Count == 0)
+                          {
+                              list.Add("radGenModelSoftRock40/True");
+                              DB.SaveVars("Options", ref list);
+                          }
+                          break;
+                    */
+                    default:
                         current_model = Model.DEMO;
                         fwc_init = false;
                         hid_init = false;
@@ -2300,8 +2301,8 @@ namespace PowerSDR
                 FWCEEPROM.Init();
                 current_region = FWCEEPROM.Region;
 
-               
-             //   current_region = FRSRegion.Europe; // ke9ns region test
+
+                //   current_region = FRSRegion.Europe; // ke9ns region test
 
                 if (!db_exists) // modify bandtext and bandstack for non-US regions
                 {
@@ -2358,7 +2359,7 @@ namespace PowerSDR
                 InitFLEX1500();
             }
 
-         
+
             //====================================================================================
             // ke9ns  this is where you determine if you have RX2
             //====================================================================================
@@ -2423,7 +2424,7 @@ namespace PowerSDR
 
             //endmod
 #endif
-          
+
 
             InitConsole();										// Initialize all forms and main variables            
 
@@ -2431,7 +2432,7 @@ namespace PowerSDR
                                                                 // Activates double buffering
                                                                 //SetStyle(ControlStyles.DoubleBuffer, true);
 
-         
+
             //===================================================================================
 
 
@@ -2458,7 +2459,7 @@ namespace PowerSDR
             if (fwc_init && (current_model == Model.FLEX3000 || current_model == Model.FLEX5000))
             {
                 extended = FWC.GetStatus();
-              //  Debug.WriteLine("EXTENDED " + FWC.GetStatus());
+                //  Debug.WriteLine("EXTENDED " + FWC.GetStatus());
 
             }
             else if (hid_init && current_model == Model.FLEX1500) extended = USBHID.GetStatus();
@@ -2516,47 +2517,47 @@ namespace PowerSDR
 
             int titleHeight = screenRectangle.Top - this.Top;
 
-          //  int BorderWidth = (this.Width – this.ClientSize.Width) / 2;
-          //  int TitlebarHeight = this.Height – this.ClientSize.Height – 2 * BorderWidth;
+            //  int BorderWidth = (this.Width – this.ClientSize.Width) / 2;
+            //  int TitlebarHeight = this.Height – this.ClientSize.Height – 2 * BorderWidth;
 
             Debug.WriteLine("titlebar " + titleHeight);
 
 
-            
+
             // update titlebar
-            this.Text = TitleBar.GetString(); 
+            this.Text = TitleBar.GetString();
 
             setupForm.UpdateCustomTitle();
 
-            if(radio_to_use != null)
+            if (radio_to_use != null)
             {
                 string s = "";
-                
-                switch(radio_to_use.Model)
+
+                switch (radio_to_use.Model)
                 {
                     case Model.FLEX5000: s = "FLEX-5000"; break;
                     case Model.FLEX3000: s = "FLEX-3000"; break;
                     case Model.FLEX1500: s = "FLEX-1500"; break;
-                  //  case Model.SDR1000:  s = "SDR-1000";  break;
-                  //  case Model.SOFTROCK40: s = "SoftRock"; break;
-                    case Model.DEMO:     s = "Demo"; break;
+                    //  case Model.SDR1000:  s = "SDR-1000";  break;
+                    //  case Model.SOFTROCK40: s = "SoftRock"; break;
+                    case Model.DEMO: s = "Demo"; break;
                 }
 
-                if(radio_to_use.Nickname == null || radio_to_use.Nickname == "")
+                if (radio_to_use.Nickname == null || radio_to_use.Nickname == "")
                 {
-                    if((radio_to_use.SerialNumber != null) && (radio_to_use.SerialNumber != ""))
+                    if ((radio_to_use.SerialNumber != null) && (radio_to_use.SerialNumber != ""))
                         s += ": " + radio_to_use.SerialNumber;
                 }
                 else
                 {
-                    if((radio_to_use.Nickname != null) && (radio_to_use.Nickname != ""))
+                    if ((radio_to_use.Nickname != null) && (radio_to_use.Nickname != ""))
                         s += ": " + radio_to_use.Nickname;
                 }
-                
+
                 this.Text += "   " + s + " : " + current_region + " ";  // ke9ns mod  added FRSRegion to top line of console window
                 if (extended == true) this.Text += "Extended";
             }
-          
+
             /* not working on some machines
             
             if (LessThan1GBRam() && !production)
@@ -2602,7 +2603,7 @@ namespace PowerSDR
                         VerifyTRXChecksums();
                     }
                     RX1Band = RX2Band = TXBand = rx1_band;
-                   
+
                     switch (current_model)
                     {
                         case Model.FLEX5000:
@@ -2710,7 +2711,7 @@ namespace PowerSDR
                 else if (s.StartsWith("-datapath:"))
                 {
                     string path = s.Substring(s.IndexOf(":") + 1);
-                    if (Directory.Exists(path))  AppDataPath = path;
+                    if (Directory.Exists(path)) AppDataPath = path;
                 }
             }
 
@@ -2787,7 +2788,7 @@ namespace PowerSDR
 
 #if (NO_DJ)
             //mod DH1TW
-        //    this.Text = "PowerSDR-UI 0.997 based on FlexRadio Systems™ PowerSDR™ 2.7.2";
+            //    this.Text = "PowerSDR-UI 0.997 based on FlexRadio Systems™ PowerSDR™ 2.7.2";
             //endmod
 
 #endif
@@ -2795,13 +2796,13 @@ namespace PowerSDR
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
         } // public console
 
-      
-//=============================================================================
-// ke9ns console_closing(), then Dispose(), then ExitConsole(), then back to Displose() to finish
+
+        //=============================================================================
+        // ke9ns console_closing(), then Dispose(), then ExitConsole(), then back to Displose() to finish
 
         public bool reset_db = false;
-		protected override void Dispose( bool disposing )
-		{
+        protected override void Dispose(bool disposing)
+        {
             this.Text += ", dispose";
             Debug.WriteLine("((((((((ENTER DISPOSE ROUTINE))))))))))))))))");
 
@@ -2818,7 +2819,7 @@ namespace PowerSDR
                 if (DJConsoleObj != null) DJConsoleObj.Close(); //DJConsoleObj.Close();
 
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -2826,32 +2827,32 @@ namespace PowerSDR
             USB.Exit();
             Debug.WriteLine("((((((((DISPOSE 1))))))))))))))))");
 
-            
-            if ( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
+
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
 
             ExitConsole();
 
             this.Text += ", Finish exit";
 
             if (reset_db)
-			{
-				string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop); 
-				string datetime = DateTime.Now.ToShortDateString().Replace("/", "-")+"_"+
-					DateTime.Now.ToShortTimeString().Replace(":", ".");
+            {
+                string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string datetime = DateTime.Now.ToShortDateString().Replace("/", "-") + "_" +
+                    DateTime.Now.ToShortTimeString().Replace(":", ".");
 
                 string file = db_file_name.Substring(db_file_name.LastIndexOf("\\") + 1);
                 file = file.Substring(0, file.Length - 4);
 
                 File.Copy(db_file_name, desktop + "\\PowerSDR_" + file + "_" + datetime + ".xml");
                 File.Delete(db_file_name);
-			}
+            }
 
 
             Debug.WriteLine("((((((((TERMINATE PROGRM 3))))))))))))))))");
@@ -8314,7 +8315,7 @@ namespace PowerSDR
         [STAThread]
         static void Main(string[] args)
         {
-       
+
 
 
             string app_data_path = "";
@@ -8362,7 +8363,7 @@ namespace PowerSDR
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 string version = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
-             //   app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  + "\\FlexRadio Systems\\PowerSDR v" + version + "\\"; // ke9ns 2.8.0
+                //   app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  + "\\FlexRadio Systems\\PowerSDR v" + version + "\\"; // ke9ns 2.8.0
                 app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.8.0\\"; // ke9ns add to copy over the old 2.7.2 folder into 2.8.0
                 app_data_path1 = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FlexRadio Systems\\PowerSDR v2.7.2\\"; // ke9ns add to copy over the old 2.7.2 folder into 2.8.0
 
@@ -8371,22 +8372,22 @@ namespace PowerSDR
 #endif
             }
 
-            try 
-			{
-				if(!File.Exists(app_data_path + "wisdom"))  // look for %userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\wisdom
+            try
+            {
+                if (!File.Exists(app_data_path + "wisdom"))  // look for %userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\wisdom
                 {
                     // Need to create the directory in %appdata% before we go run wisdom
 
 
-                    if (!Directory.Exists(app_data_path)) 
+                    if (!Directory.Exists(app_data_path))
                     {
                         Directory.CreateDirectory(app_data_path);   // create the new folder for the database and quickaudio:  %userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\
                     }
 
-                  
+
                     if (Directory.Exists(app_data_path1)) // if 2.7.2 folder exists then copy is contents to new  2.8.0 folder
                     {
-                      //  MessageBox.Show("Found your 2.7.2 database and quickaudio files folder.\nFiles will be copied over so you dont lose anything.");
+                        //  MessageBox.Show("Found your 2.7.2 database and quickaudio files folder.\nFiles will be copied over so you dont lose anything.");
 
                         DialogResult dr = MessageBox.Show("Found your 2.7.2 database and quickaudio files folder.\nFiles will be copied over so you dont lose anything.",
                           "Option:Copy 2.7.2 database and files to 2.8.0 Folder?",
@@ -8411,7 +8412,7 @@ namespace PowerSDR
 
                     }
 
-                
+
                     // ke9ns memory does not need to be copied, its back up 1 folder level in the  %userprofile%\AppData\Roaming\FlexRadio Systems\ folder
 
                     //-------------------------------------------------------------------------------------------
@@ -8424,7 +8425,7 @@ namespace PowerSDR
                     {
                         File.Copy(path + "\\ke9ns\\SWL.csv", app_data_path + "SWL.csv", true);
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
 
                     }
@@ -8485,15 +8486,15 @@ namespace PowerSDR
                     {
 
                     }
-                   
+
 
                     foreach (string dirPath in Directory.GetDirectories(path + "\\itshfbc", "*", SearchOption.AllDirectories))
                         Directory.CreateDirectory(dirPath.Replace(path + "\\itshfbc", app_data_path + "\\itshfbc"));
-                   
+
                     foreach (string newPath in Directory.GetFiles(path + "\\itshfbc", "*.*", SearchOption.AllDirectories))
                         File.Copy(newPath, newPath.Replace(path + "\\itshfbc", app_data_path + "\\itshfbc"), true);
 
-                  
+
                     //-------------------------------------------------------------------------------------------------
 
                     Process p = Process.Start(Application.StartupPath + "\\fftw_wisdom.exe", "\"" + app_data_path);
@@ -8506,40 +8507,40 @@ namespace PowerSDR
 
                     p.WaitForExit();
 
-                /*    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
-                        SearchOption.AllDirectories))
-                        Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+                    /*    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
+                            SearchOption.AllDirectories))
+                            Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
 
-                    //Copy all the files & Replaces any files with the same name
-                    foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
-                        SearchOption.AllDirectories))
-                        File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
-                */
+                        //Copy all the files & Replaces any files with the same name
+                        foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
+                            SearchOption.AllDirectories))
+                            File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+                    */
 
-                } 
-/*				else 
-				{
-					string path = "wisdom";
-					using (StreamReader sr = new StreamReader(path)) 
-					{
-						char [] block = new char[12];
-						sr.ReadBlock(block,0,11);
-						Debug.WriteLine("the block is "+block + "so let's check it");
-						if (block.ToString() != "(fftw-3.2al")
-						{
-							sr.Close();
-							File.Delete(Application.StartupPath+"\\wisdom");
-							Process p = Process.Start(Application.StartupPath+"\\fftw_wisdom.exe");
-							MessageBox.Show("Running one time optimization.  Wisdom is from wrong version. Please wait patiently for "+
-								"this process to finish.\nTypically the optimization takes no more than 3-5 minutes.",
-								"Optimizing...",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Information);
-							p.WaitForExit();
-						}
-					}
+                }
+                /*				else 
+                                {
+                                    string path = "wisdom";
+                                    using (StreamReader sr = new StreamReader(path)) 
+                                    {
+                                        char [] block = new char[12];
+                                        sr.ReadBlock(block,0,11);
+                                        Debug.WriteLine("the block is "+block + "so let's check it");
+                                        if (block.ToString() != "(fftw-3.2al")
+                                        {
+                                            sr.Close();
+                                            File.Delete(Application.StartupPath+"\\wisdom");
+                                            Process p = Process.Start(Application.StartupPath+"\\fftw_wisdom.exe");
+                                            MessageBox.Show("Running one time optimization.  Wisdom is from wrong version. Please wait patiently for "+
+                                                "this process to finish.\nTypically the optimization takes no more than 3-5 minutes.",
+                                                "Optimizing...",
+                                                MessageBoxButtons.OK,
+                                                MessageBoxIcon.Information);
+                                            p.WaitForExit();
+                                        }
+                                    }
 
-				} */
+                                } */
                 try
                 {
                     if (!CheckForOpenProcesses()) // ke9ns check if another powersdr instance is running
@@ -8549,35 +8550,35 @@ namespace PowerSDR
                 {
 
                 }
-				Application.EnableVisualStyles(); 
-				Application.DoEvents(); 
-				
-				//Application.Run(new Console(args));
-				// wjt hacked
-				theConsole = new Console(args);
+                Application.EnableVisualStyles();
+                Application.DoEvents();
 
-				Application.Run(theConsole);
-			}
-			catch(Exception ex)
-			{
-				string msg = ex.Message+"\n\n"+ex.StackTrace.ToString();
-				if(ex.InnerException != null) msg += "\n\n"+ex.InnerException.Message;
-				MessageBox.Show(msg, "Fatal Error",
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		} // main 
+                //Application.Run(new Console(args));
+                // wjt hacked
+                theConsole = new Console(args);
 
-#endregion
+                Application.Run(theConsole);
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message + "\n\n" + ex.StackTrace.ToString();
+                if (ex.InnerException != null) msg += "\n\n" + ex.InnerException.Message;
+                MessageBox.Show(msg, "Fatal Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // main 
 
-#region Misc Routines
-		// ======================================================
-		// Misc Routines
-		// ======================================================
+        #endregion
 
-		private void InitConsole()
-		{
+        #region Misc Routines
+        // ======================================================
+        // Misc Routines
+        // ======================================================
 
-             
+        private void InitConsole()
+        {
+
+
 
 #if (DEBUG)
             uCBToolStripMenuItem.Visible = true;
@@ -8613,17 +8614,17 @@ namespace PowerSDR
             }
             // EHR end
 
-			Thread.Sleep(100);
-			UpdateBandStackRegisters();
+            Thread.Sleep(100);
+            UpdateBandStackRegisters();
 
-			Audio.console = this;
-			//FWCMidi.console = this;
+            Audio.console = this;
+            //FWCMidi.console = this;
             FWC.console = this;
-			Display.console = this;  //
+            Display.console = this;  //
 
             Http.console = this;                   // ke9ns add
 
-           
+
             Setup.console = this;                 // ke9ns add  setup.cs to this console so setup can talk to console
             IDBOX.console = this;                 // ke9ns add IDBOX to this console
             TOTBOX.console = this;                 // ke9ns add TOTBOX to this console
@@ -8638,21 +8639,21 @@ namespace PowerSDR
 
             if (hid_init) Flex1500.Console = this;
 
-			chkDSPNB2.Enabled = true;
+            chkDSPNB2.Enabled = true;
 
-			vfoa_hover_digit = -1;
-			vfob_hover_digit = -1;
+            vfoa_hover_digit = -1;
+            vfob_hover_digit = -1;
 
-			rx1_ant_by_band = new FWCAnt[(int)Band.LAST];
+            rx1_ant_by_band = new FWCAnt[(int)Band.LAST];
 
-			for(int i=0; i<(int)Band.LAST; i++) rx1_ant_by_band[i] = FWCAnt.ANT1;
+            for (int i = 0; i < (int)Band.LAST; i++) rx1_ant_by_band[i] = FWCAnt.ANT1;
 
-			rx2_ant_by_band = new FWCAnt[(int)Band.LAST];
-			for(int i=0; i<(int)Band.LAST; i++) rx2_ant_by_band[i] = FWCAnt.RX2IN;
-			tx_ant_by_band = new FWCAnt[(int)Band.LAST];
-			for(int i=0; i<(int)Band.LAST; i++) tx_ant_by_band[i] = FWCAnt.ANT1;			
-			rx1_loop_by_band = new bool[(int)Band.LAST];
-			rx1_preamp_by_band = new PreampMode[(int)Band.LAST];
+            rx2_ant_by_band = new FWCAnt[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++) rx2_ant_by_band[i] = FWCAnt.RX2IN;
+            tx_ant_by_band = new FWCAnt[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++) tx_ant_by_band[i] = FWCAnt.ANT1;
+            rx1_loop_by_band = new bool[(int)Band.LAST];
+            rx1_preamp_by_band = new PreampMode[(int)Band.LAST];
             rx_ant_1500_by_band = new HIDAnt[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++) rx_ant_1500_by_band[i] = HIDAnt.PA;
             tx_ant_1500_by_band = new HIDAnt[(int)Band.LAST];
@@ -8717,34 +8718,34 @@ namespace PowerSDR
                                 rx1_preamp_by_band[i] = PreampMode.OFF;
                                 break;
                         }
-                        break;						
+                        break;
                     default:
                         rx1_preamp_by_band[i] = PreampMode.HIGH;
                         break;
                 }
             }
-			
+
             rx2_preamp_by_band = new PreampMode[(int)Band.LAST];
-			for(int i=0; i<(int)Band.LAST; i++) rx2_preamp_by_band[i] = PreampMode.HIGH;
-			
+            for (int i = 0; i < (int)Band.LAST; i++) rx2_preamp_by_band[i] = PreampMode.HIGH;
+
             power_by_band = new int[(int)Band.LAST];
-			for(int i=0; i<(int)Band.LAST; i++) power_by_band[i] = 50;
+            for (int i = 0; i < (int)Band.LAST; i++) power_by_band[i] = 50;
 
             fm_tx_offset_by_band_mhz = new double[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++) // setup default FM offsets
             {
                 switch ((Band)i)
                 {
-                    case Band.B6M: fm_tx_offset_by_band_mhz[i]  = 1; break; // 1MHz
-                    case Band.B10M: fm_tx_offset_by_band_mhz[i] = 0.1;  break; // 100kHz
-                    case Band.VHF0: fm_tx_offset_by_band_mhz[i] = 0.6;  break; // 600kHz
+                    case Band.B6M: fm_tx_offset_by_band_mhz[i] = 1; break; // 1MHz
+                    case Band.B10M: fm_tx_offset_by_band_mhz[i] = 0.1; break; // 100kHz
+                    case Band.VHF0: fm_tx_offset_by_band_mhz[i] = 0.6; break; // 600kHz
                     case Band.VHF1: fm_tx_offset_by_band_mhz[i] = 5; break; // 5MHz
                     default: fm_tx_offset_by_band_mhz[i] = 0.1; break; // 100kHz
                 }
             }
 
             rx1_agct_by_band = new int[(int)Band.LAST];
-			rx2_agct_by_band = new int[(int)Band.LAST];
+            rx2_agct_by_band = new int[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++)
             {
                 switch ((Band)i)
@@ -8787,47 +8788,47 @@ namespace PowerSDR
                         break;
                 }
             }
-			tx1_by_band = new bool[(int)Band.LAST];
-			tx2_by_band = new bool[(int)Band.LAST];
-			tx3_by_band = new bool[(int)Band.LAST];
+            tx1_by_band = new bool[(int)Band.LAST];
+            tx2_by_band = new bool[(int)Band.LAST];
+            tx3_by_band = new bool[(int)Band.LAST];
 
             for (int i = 0; i < (int)Band.LAST; i++)
             {
                 tx1_by_band[i] = tx2_by_band[i] = tx3_by_band[i] = true;
             }
 
-			vhf_text = new RadioButtonTS[15];
-			vhf_text[0] = radBandVHF0;
-			vhf_text[1] = radBandVHF1;
-			vhf_text[2] = radBandVHF2;
-			vhf_text[3] = radBandVHF3;
-			vhf_text[4] = radBandVHF4;
-			vhf_text[5] = radBandVHF5;
-			vhf_text[6] = radBandVHF6;
-			vhf_text[7] = radBandVHF7;
-			vhf_text[8] = radBandVHF8;
-			vhf_text[9] = radBandVHF9;
-			vhf_text[10] = radBandVHF10;
-			vhf_text[11] = radBandVHF11;
-			vhf_text[12] = radBandVHF12;
-			vhf_text[13] = radBandVHF13; //  vhf_text[index].Enabled = b;
+            vhf_text = new RadioButtonTS[15];
+            vhf_text[0] = radBandVHF0;
+            vhf_text[1] = radBandVHF1;
+            vhf_text[2] = radBandVHF2;
+            vhf_text[3] = radBandVHF3;
+            vhf_text[4] = radBandVHF4;
+            vhf_text[5] = radBandVHF5;
+            vhf_text[6] = radBandVHF6;
+            vhf_text[7] = radBandVHF7;
+            vhf_text[8] = radBandVHF8;
+            vhf_text[9] = radBandVHF9;
+            vhf_text[10] = radBandVHF10;
+            vhf_text[11] = radBandVHF11;
+            vhf_text[12] = radBandVHF12;
+            vhf_text[13] = radBandVHF13; //  vhf_text[index].Enabled = b;
 
 
-         //   gen_text = new RadioButtonTS[15];  // ke9ns add dont know why yet
-         //   gen_text[0] = radBandGEN0;
-         //   gen_text[1] = radBandGEN1;
-          //  gen_text[2] = radBandGEN2;
-         //   gen_text[3] = radBandGEN3;
-         //   gen_text[4] = radBandGEN4;
-         //   gen_text[5] = radBandGEN5;
-          //  gen_text[6] = radBandGEN6;
-          //  gen_text[7] = radBandGEN7;
-          //  gen_text[8] = radBandGEN8;
-          //  gen_text[9] = radBandGEN9;
-         //   gen_text[10] = radBandGEN10;
-         //   gen_text[11] = radBandGEN11;
-        //    gen_text[12] = radBandGEN12;
-         //   gen_text[13] = radBandGEN13;
+            //   gen_text = new RadioButtonTS[15];  // ke9ns add dont know why yet
+            //   gen_text[0] = radBandGEN0;
+            //   gen_text[1] = radBandGEN1;
+            //  gen_text[2] = radBandGEN2;
+            //   gen_text[3] = radBandGEN3;
+            //   gen_text[4] = radBandGEN4;
+            //   gen_text[5] = radBandGEN5;
+            //  gen_text[6] = radBandGEN6;
+            //  gen_text[7] = radBandGEN7;
+            //  gen_text[8] = radBandGEN8;
+            //  gen_text[9] = radBandGEN9;
+            //   gen_text[10] = radBandGEN10;
+            //   gen_text[11] = radBandGEN11;
+            //    gen_text[12] = radBandGEN12;
+            //   gen_text[13] = radBandGEN13;
 
 
 
@@ -8861,7 +8862,7 @@ namespace PowerSDR
                 uhf_power_table[i] = 0.0f;
             }
 
-			power_table = new float[(int)Band.LAST][];
+            power_table = new float[(int)Band.LAST][];
 
 
             for (int i = 0; i < (int)Band.LAST; i++)
@@ -8869,24 +8870,24 @@ namespace PowerSDR
                 power_table[i] = new float[13];
             }
 
-			rx1_image_gain_table = new float[(int)Band.LAST];
-			rx1_image_phase_table = new float[(int)Band.LAST];
-			rx2_image_gain_table = new float[(int)Band.LAST];
-			rx2_image_phase_table = new float[(int)Band.LAST];
-			tx_image_gain_table = new float[(int)Band.LAST];
-			tx_image_phase_table = new float[(int)Band.LAST];
+            rx1_image_gain_table = new float[(int)Band.LAST];
+            rx1_image_phase_table = new float[(int)Band.LAST];
+            rx2_image_gain_table = new float[(int)Band.LAST];
+            rx2_image_phase_table = new float[(int)Band.LAST];
+            tx_image_gain_table = new float[(int)Band.LAST];
+            tx_image_phase_table = new float[(int)Band.LAST];
 
             tx_carrier_cal = new SortedDictionary<double, uint>();
 
-			pa_bias_table = new int[4][]; // 4 groups of 8 pot settings
-			for(int i=0; i<4; i++)
-			{
-				pa_bias_table[i] = new int[8];
-				for(int j=0; j<8; j++)
-					pa_bias_table[i][j] = 0;
-			}
+            pa_bias_table = new int[4][]; // 4 groups of 8 pot settings
+            for (int i = 0; i < 4; i++)
+            {
+                pa_bias_table[i] = new int[8];
+                for (int j = 0; j < 8; j++)
+                    pa_bias_table[i][j] = 0;
+            }
 
-			rx1_level_table = new float[(int)Band.LAST][]; // 3 settings per band (display_offset, preamp, multimeter offset)
+            rx1_level_table = new float[(int)Band.LAST][]; // 3 settings per band (display_offset, preamp, multimeter offset)
             switch (current_model)
             {
                 case Model.FLEX3000:
@@ -8918,26 +8919,26 @@ namespace PowerSDR
                     break;
             }
 
-			rx2_level_table = new float[(int)Band.LAST][]; // 3 settings per band (display_offset, preamp, multimeter offset)
-			for(int i=0; i<(int)Band.LAST; i++)
-			{
-				rx2_level_table[i] = new float[3];
-				rx2_level_table[i][0] = -59.2f;	// setup defaults;
-				rx2_level_table[i][1] = -13.5f;	
-				rx2_level_table[i][2] = -32.0f;
-			}
+            rx2_level_table = new float[(int)Band.LAST][]; // 3 settings per band (display_offset, preamp, multimeter offset)
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                rx2_level_table[i] = new float[3];
+                rx2_level_table[i][0] = -59.2f; // setup defaults;
+                rx2_level_table[i][1] = -13.5f;
+                rx2_level_table[i][2] = -32.0f;
+            }
 
-			pa_bridge_table = new float[(int)Band.LAST][];
-			for(int i=0; i<(int)Band.LAST; i++)
-			{
-				pa_bridge_table[i] = new float[6]; // 1, 2, 5, 10, 20, 90
-				for(int j=0; j<6; j++)
-					pa_bridge_table[i][j] = 0.0f;
-			}
+            pa_bridge_table = new float[(int)Band.LAST][];
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                pa_bridge_table[i] = new float[6]; // 1, 2, 5, 10, 20, 90
+                for (int j = 0; j < 6; j++)
+                    pa_bridge_table[i][j] = 0.0f;
+            }
 
-			swr_table = new float[(int)Band.LAST];
-			for(int i=0; i<(int)Band.LAST; i++)
-				swr_table[i] = 1.0f;
+            swr_table = new float[(int)Band.LAST];
+            for (int i = 0; i < (int)Band.LAST; i++)
+                swr_table[i] = 1.0f;
 
             atu_swr_table = new float[(int)Band.LAST];
             for (int i = 0; i < (int)Band.LAST; i++)
@@ -8951,14 +8952,14 @@ namespace PowerSDR
             //vhf_level_table[0] = ???
             //vhf_level_table[1] = ???
 
-			atu_tuning = false;
-			tune_power = 10;
-			calibrating = false;
+            atu_tuning = false;
+            tune_power = 10;
+            calibrating = false;
 
-			// get culture specific decimal separator
-			separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            // get culture specific decimal separator
+            separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
-			last_band = "";						// initialize bandstack
+            last_band = "";						// initialize bandstack
 
             tune_step_list = new List<TuneStep>();  // initialize wheel tuning list array
             tune_step_list.Add(new TuneStep(1, "1Hz")); //0
@@ -8988,45 +8989,45 @@ namespace PowerSDR
             tune_step_index = 2;
 
 
-          //  setupForm.tune_step_index2 = 2; // ke9ns add
-             
+            //  setupForm.tune_step_index2 = 2; // ke9ns add
+
 
             meter_text_history = new float[multimeter_text_peak_samples];
 
-			current_meter_data = -200.0f;
+            current_meter_data = -200.0f;
 
-			rx1_preamp_offset = new float[5];
-			rx1_preamp_offset[(int)PreampMode.OFF] = 10.0f;
-			rx1_preamp_offset[(int)PreampMode.LOW] = 0.0f;
-			rx1_preamp_offset[(int)PreampMode.MED] = -16.0f;
-			rx1_preamp_offset[(int)PreampMode.HIGH] = -26.0f;
+            rx1_preamp_offset = new float[5];
+            rx1_preamp_offset[(int)PreampMode.OFF] = 10.0f;
+            rx1_preamp_offset[(int)PreampMode.LOW] = 0.0f;
+            rx1_preamp_offset[(int)PreampMode.MED] = -16.0f;
+            rx1_preamp_offset[(int)PreampMode.HIGH] = -26.0f;
             rx1_preamp_offset[(int)PreampMode.LAST] = -36.0f;
 
-			rx2_preamp_offset = new float[4];
-			rx2_preamp_offset[(int)PreampMode.OFF] = 0.0f;
-			rx2_preamp_offset[(int)PreampMode.HIGH] = -14.0f;            // ke9ns mod  was 14.0f should be -14  not +14
+            rx2_preamp_offset = new float[4];
+            rx2_preamp_offset[(int)PreampMode.OFF] = 0.0f;
+            rx2_preamp_offset[(int)PreampMode.HIGH] = -14.0f;            // ke9ns mod  was 14.0f should be -14  not +14
                                                                          // when set to +14 it would cause the waterfall signal to jump up
 
-			this.ActiveControl = chkPower;		// Power has focus initially
+            this.ActiveControl = chkPower;      // Power has focus initially
 
-			Display.Target = picDisplay;
-			Display.Init();						// Initialize Display variables
-			InitDisplayModes();					// Initialize Display Modes
-			InitAGCModes();						// Initialize AGC Modes
-			InitMultiMeterModes();              // Initialize MultiMeter Modes
+            Display.Target = picDisplay;
+            Display.Init();                     // Initialize Display variables
+            InitDisplayModes();                 // Initialize Display Modes
+            InitAGCModes();                     // Initialize AGC Modes
+            InitMultiMeterModes();              // Initialize MultiMeter Modes
 
             ProcessSampleThreadController[] pstc = new ProcessSampleThreadController[3];
-			audio_process_thread = new Thread[3];
-			for (uint proc_thread=0;proc_thread<3;proc_thread++)
-			{
-				pstc[proc_thread] = new ProcessSampleThreadController(proc_thread);
-				audio_process_thread[proc_thread] = new Thread( new ThreadStart(pstc[proc_thread].ProcessSampleThread));
-				audio_process_thread[proc_thread].Name = "Audio Process Thread "+proc_thread.ToString();
-				audio_process_thread[proc_thread].Priority = ThreadPriority.Highest;
-				audio_process_thread[proc_thread].IsBackground = true;
-				audio_process_thread[proc_thread].Start();
-				
-				/*				DttSP.SetThreadCom(proc_thread);
+            audio_process_thread = new Thread[3];
+            for (uint proc_thread = 0; proc_thread < 3; proc_thread++)
+            {
+                pstc[proc_thread] = new ProcessSampleThreadController(proc_thread);
+                audio_process_thread[proc_thread] = new Thread(new ThreadStart(pstc[proc_thread].ProcessSampleThread));
+                audio_process_thread[proc_thread].Name = "Audio Process Thread " + proc_thread.ToString();
+                audio_process_thread[proc_thread].Priority = ThreadPriority.Highest;
+                audio_process_thread[proc_thread].IsBackground = true;
+                audio_process_thread[proc_thread].Start();
+
+                /*				DttSP.SetThreadCom(proc_thread);
 
 								audio_process_thread = new Thread(	// create audio process thread
 									new ThreadStart(DttSP.ProcessSamplesThread));
@@ -9035,14 +9036,14 @@ namespace PowerSDR
 								audio_process_thread.IsBackground = true;
 								audio_process_thread.Start();
 				*/
-			}
+            }
 
-		//	if(current_model == Model.SDR1000)              hw = new HW(0x378);				// create hardware object
+            //	if(current_model == Model.SDR1000)              hw = new HW(0x378);				// create hardware object
 
             //BT 5/3/10 moved siolistener to last init item to prevent default data
             //being sent via CAT
             //EW 5/20/10 undid this change due to crashes when the secondary Keyer input was set to CAT
-			siolisten = new SIOListenerII(this);
+            siolisten = new SIOListenerII(this);
             siolisten1 = new SIOListenerIII(this); // ke9ns add for rotor control
 
             CWSensorItem.Init();
@@ -9050,11 +9051,11 @@ namespace PowerSDR
             CWPTT.MoxChanged += new CWPTT.MoxCallback(SetConsoleMox);
             CWPTT.MuteChanged += new CWPTT.MuteCallback(SetTRMute);
 
-			eqForm = new EQForm(this);
+            eqForm = new EQForm(this);
 
-			InitFilterPresets();                // Initialize filter values
+            InitFilterPresets();                // Initialize filter values
 
-           
+
             StackForm = new StackControl(this);     // ke9ns add communicate with bandstack controls
             SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
             helpboxForm = new helpbox(this);         // ke9ns add communicate with helpbox list controls
@@ -9062,15 +9063,15 @@ namespace PowerSDR
             httpFile = new Http(this);              // ke9ns add
 
             httpServer = new HttpServer(this);      // rn3kk add
-           
+
             setupForm = new Setup(this);        // ke9ns  create Setup form (needed so you can send data to setup form) Repeat for any form you want to send data too
 
             skin1 = new Skin(this);
-           
-              IDBOXForm = new IDBOX(this);         // ke9ns create id timer message box now
 
-              IDBOXForm.Show();
-              IDBOXForm.Close();
+            IDBOXForm = new IDBOX(this);         // ke9ns create id timer message box now
+
+            IDBOXForm.Show();
+            IDBOXForm.Close();
 
 
 
@@ -9081,53 +9082,53 @@ namespace PowerSDR
 
 
             setupForm.StartPosition = FormStartPosition.Manual;
-			
-			switch(current_model)
-			{
-			//	 case Model.SDR1000:
-				//	Hdw.Init();							// Power down hardware
-				//	Hdw.StandBy();						// initialize hardware device
-				//	break;
-					/*case Model.SDRX:
-						if(fwc_init)
-						{
-							byte mask;
-							FWC.GetRXPresentMask(out mask);
-							for(int i=0; i<8; i++)
-							{
-								if((mask>>i & 1) == 1)
-								{
-									fwc_index = i;
-									break;
-								}
-							}
-						}
-						break;*/
-				case Model.FLEX5000:
-					if(fwc_init)
-						fwcMixForm = new FWCMixForm(this);
-					break;
-				case Model.FLEX3000:
-					if(fwc_init)
-						flex3000MixerForm = new FLEX3000MixerForm(this);
-					break;
+
+            switch (current_model)
+            {
+                //	 case Model.SDR1000:
+                //	Hdw.Init();							// Power down hardware
+                //	Hdw.StandBy();						// initialize hardware device
+                //	break;
+                /*case Model.SDRX:
+                    if(fwc_init)
+                    {
+                        byte mask;
+                        FWC.GetRXPresentMask(out mask);
+                        for(int i=0; i<8; i++)
+                        {
+                            if((mask>>i & 1) == 1)
+                            {
+                                fwc_index = i;
+                                break;
+                            }
+                        }
+                    }
+                    break;*/
+                case Model.FLEX5000:
+                    if (fwc_init)
+                        fwcMixForm = new FWCMixForm(this);
+                    break;
+                case Model.FLEX3000:
+                    if (fwc_init)
+                        flex3000MixerForm = new FLEX3000MixerForm(this);
+                    break;
                 case Model.FLEX1500:
                     if (hid_init)
                         flex1500MixerForm = new FLEX1500MixerForm(this);
                     break;
-			}
+            }
 
-			//SetupForm.GetTxProfiles();
-			UpdateTXProfile(setupForm.TXProfile);
+            //SetupForm.GetTxProfiles();
+            UpdateTXProfile(setupForm.TXProfile);
 
-			Common.RestoreForm(eqForm, "EQForm", false);
+            Common.RestoreForm(eqForm, "EQForm", false);
 
             vuForm = new VUForm(this);
-			xvtrForm = new XVTRForm(this);
+            xvtrForm = new XVTRForm(this);
             ucbForm = new UCBForm(this);
 
-			WaveForm = new WaveControl(this);   // create Wave form
-         
+            WaveForm = new WaveControl(this);   // create Wave form
+
             WaveForm.StartPosition = FormStartPosition.Manual;
 
             ScanForm = new ScanControl(this);   // ke9ns add create Scan form
@@ -9147,78 +9148,78 @@ namespace PowerSDR
 
             InitMemoryFrontPanel();
 
-			//rx1_filter = Filter.F2600;            
+            //rx1_filter = Filter.F2600;            
 
-			//RX1AGCMode = AGCMode.MED;				// Initialize front panel controls
-			comboPreamp.Text = "High";
-			chkRX1Preamp.Checked = true;
-			vfob_dsp_mode = DSPMode.LSB;
-			vfob_filter = Filter.F3;
-			comboDisplayMode.Text = "Panadapter";
-			comboRX2DisplayMode.Text = "Panadapter";
-			comboMeterRXMode.SelectedIndex = 0;
-			comboRX2MeterMode.SelectedIndex = 0;
-			comboTuneMode.SelectedIndex = 0;
-			quick_save_filter = Filter.F3;
-			quick_save_mode = DSPMode.LSB;
-			ptbPWR.Value = 50;
+            //RX1AGCMode = AGCMode.MED;				// Initialize front panel controls
+            comboPreamp.Text = "High";
+            chkRX1Preamp.Checked = true;
+            vfob_dsp_mode = DSPMode.LSB;
+            vfob_filter = Filter.F3;
+            comboDisplayMode.Text = "Panadapter";
+            comboRX2DisplayMode.Text = "Panadapter";
+            comboMeterRXMode.SelectedIndex = 0;
+            comboRX2MeterMode.SelectedIndex = 0;
+            comboTuneMode.SelectedIndex = 0;
+            quick_save_filter = Filter.F3;
+            quick_save_mode = DSPMode.LSB;
+            ptbPWR.Value = 50;
             ptbTune.Value = 10; // ke9ns add
-			btnDisplayPanCenter_Click(this, EventArgs.Empty);
-			comboTXProfile.Text = setupForm.TXProfile;
-			comboDigTXProfile.Text = setupForm.TXProfile;
+            btnDisplayPanCenter_Click(this, EventArgs.Empty);
+            comboTXProfile.Text = setupForm.TXProfile;
+            comboDigTXProfile.Text = setupForm.TXProfile;
             comboFMTXProfile.Text = setupForm.TXProfile;
             comboCWTXProfile.Text = setupForm.TXProfile;  // ke9ns add
             comboFMCTCSS.Text = "100.0";
-			
-			GetState();                         // recall saved state
 
-          
+            GetState();                         // recall saved state
+
+
 
             chkFullDuplex.Checked = false;
-			if(rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST)
-				radModeSAM.Checked = true;
-			if(rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST)
-				radRX2ModeSAM.Checked = true;
-			if(rx1_filter == Filter.FIRST || rx1_filter == Filter.LAST ||
-				(rx1_filter == Filter.NONE && rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC))
-				radFilter3.Checked = true;
-			if(rx2_filter == Filter.FIRST || rx2_filter == Filter.LAST ||
-				(rx2_filter == Filter.NONE && rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC))
-				radRX2Filter3.Checked = true;
+            if (rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST)
+                radModeSAM.Checked = true;
+            if (rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST)
+                radRX2ModeSAM.Checked = true;
+            if (rx1_filter == Filter.FIRST || rx1_filter == Filter.LAST ||
+                (rx1_filter == Filter.NONE && rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC))
+                radFilter3.Checked = true;
+            if (rx2_filter == Filter.FIRST || rx2_filter == Filter.LAST ||
+                (rx2_filter == Filter.NONE && rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC))
+                radRX2Filter3.Checked = true;
 
-			chkVFOATX_CheckedChanged(this, EventArgs.Empty);
-			chkVFOBTX_CheckedChanged(this, EventArgs.Empty);
+            chkVFOATX_CheckedChanged(this, EventArgs.Empty);
+            chkVFOBTX_CheckedChanged(this, EventArgs.Empty);
 
-			txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            txtVFOAFreq_LostFocus(this, EventArgs.Empty);
 
-			if(fwc_init && !run_setup_wizard &&
-				(current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
-			{
-				CheckCalData();
-				if(!FWCEEPROM.TRXChecksumPresent)
-					WriteTRXChecksums();
-				VerifyTRXChecksums();
-				if(fwcAntForm != null && !fwcAntForm.IsDisposed)
-				{
+            if (fwc_init && !run_setup_wizard &&
+                (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
+            {
+                CheckCalData();
+                if (!FWCEEPROM.TRXChecksumPresent)
+                    WriteTRXChecksums();
+                VerifyTRXChecksums();
+                if (fwcAntForm != null && !fwcAntForm.IsDisposed)
+                {
                     Debug.WriteLine("1rx1_band " + rx1_band);
 
                     fwcAntForm.SetBand(rx1_band);
-					fwcAntForm.CurrentAntMode = current_ant_mode;
-					fwcAntForm.RX1Ant = rx1_ant;
-					fwcAntForm.RX1Loop = rx1_loop;
-					fwcAntForm.RX2Ant = rx2_ant;
-					fwcAntForm.TXAnt = tx_ant;
-				}
-				RX1Ant = rx1_ant;
-				if(FWCEEPROM.RX2OK)
-				{
-					CheckRX2CalData();
-					if(!FWCEEPROM.RX2ChecksumPresent)
-						WriteRX2Checksums();
-					VerifyRX2Checksums();
-					RX2Ant = rx2_ant;
-				}
-			}
+                    fwcAntForm.CurrentAntMode = current_ant_mode;
+                    fwcAntForm.RX1Ant = rx1_ant;
+                    fwcAntForm.RX1Loop = rx1_loop;
+                    fwcAntForm.RX2Ant = rx2_ant;
+                    fwcAntForm.TXAnt = tx_ant;
+                }
+                RX1Ant = rx1_ant;
+                if (FWCEEPROM.RX2OK)
+                {
+                    CheckRX2CalData();
+                    if (!FWCEEPROM.RX2ChecksumPresent)
+                        WriteRX2Checksums();
+                    VerifyRX2Checksums();
+                    RX2Ant = rx2_ant;
+                }
+            }
             else if (hid_init && !run_setup_wizard && current_model == Model.FLEX1500)
             {
                 Check1500CalData();
@@ -9236,12 +9237,12 @@ namespace PowerSDR
             }
             else PAPresent = pa_present;
 
-			if(comboAGC.SelectedIndex < 0)
-				RX1AGCMode = AGCMode.MED;
-			if(comboRX2AGC.SelectedIndex < 0)
-				comboRX2AGC.Text = "Med";
-			txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-			txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+            if (comboAGC.SelectedIndex < 0)
+                RX1AGCMode = AGCMode.MED;
+            if (comboRX2AGC.SelectedIndex < 0)
+                comboRX2AGC.Text = "Med";
+            txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+            txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             ptbTune_Scroll(this, EventArgs.Empty); // ke9ns add		
             ptbPWR_Scroll(this, EventArgs.Empty);
 
@@ -9249,7 +9250,7 @@ namespace PowerSDR
 
             ptbAF_Scroll(this, EventArgs.Empty);
             ptbSquelch_Scroll(this, EventArgs.Empty);
-			ptbMic_Scroll(this, EventArgs.Empty);
+            ptbMic_Scroll(this, EventArgs.Empty);
             ptbDX_Scroll(this, EventArgs.Empty);
             ptbCPDR_Scroll(this, EventArgs.Empty);
             ptbVOX_Scroll(this, EventArgs.Empty);
@@ -9260,26 +9261,26 @@ namespace PowerSDR
             ptbRX2RF_Scroll(this, EventArgs.Empty);
             ptbRX2Squelch_Scroll(this, EventArgs.Empty);
             initializing = false;
-			RX1PreampMode = rx1_preamp_mode;
-			RX2PreampMode = rx2_preamp_mode;
+            RX1PreampMode = rx1_preamp_mode;
+            RX2PreampMode = rx2_preamp_mode;
             initializing = true;
-			ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-			ptbRX0Gain_Scroll(this, EventArgs.Empty);
-			ptbRX1Gain_Scroll(this, EventArgs.Empty);
-			ptbPanMainRX_Scroll(this, EventArgs.Empty);
-			ptbPanSubRX_Scroll(this, EventArgs.Empty);
-			ptbRX2Pan_Scroll(this, EventArgs.Empty);
-			ptbRX2Gain_Scroll(this, EventArgs.Empty);
-			chkRX2Preamp_CheckedChanged(this, EventArgs.Empty);
+            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            ptbRX0Gain_Scroll(this, EventArgs.Empty);
+            ptbRX1Gain_Scroll(this, EventArgs.Empty);
+            ptbPanMainRX_Scroll(this, EventArgs.Empty);
+            ptbPanSubRX_Scroll(this, EventArgs.Empty);
+            ptbRX2Pan_Scroll(this, EventArgs.Empty);
+            ptbRX2Gain_Scroll(this, EventArgs.Empty);
+            chkRX2Preamp_CheckedChanged(this, EventArgs.Empty);
             ptbRF_Scroll(this, EventArgs.Empty);
             ptbVACRXGain_Scroll(this, EventArgs.Empty);
             ptbVACTXGain_Scroll(this, EventArgs.Empty);
 
 
-			CalcDisplayFreq();
+            CalcDisplayFreq();
 
-			tune_step_index--;					// Setup wheel tuning
-			ChangeTuneStepUp();
+            tune_step_index--;                  // Setup wheel tuning
+            ChangeTuneStepUp();
 
             setupForm.tune_step_index2--;   // ke9ns add
             setupForm.ChangeTuneStepUp2(); // ke9ns add
@@ -9287,16 +9288,16 @@ namespace PowerSDR
 
             UpdateDisplayOffsets();
 
-			setupForm.initCATandPTTprops();   // wjt added -- get console props setup for cat and ptt 
-			if ( CmdLineArgs != null ) 
-			{ 
-				for ( int i = 0; i < CmdLineArgs.Length; i++ ) 
-				{
+            setupForm.initCATandPTTprops();   // wjt added -- get console props setup for cat and ptt 
+            if (CmdLineArgs != null)
+            {
+                for (int i = 0; i < CmdLineArgs.Length; i++)
+                {
 
-				}
-			}
+                }
+            }
 
-			if(comboMeterTXMode.Items.Count > 0 && comboMeterTXMode.SelectedIndex < 0)	comboMeterTXMode.SelectedIndex = 0;
+            if (comboMeterTXMode.Items.Count > 0 && comboMeterTXMode.SelectedIndex < 0) comboMeterTXMode.SelectedIndex = 0;
 
             if (comboMeterTX1Mode.Items.Count > 0 && comboMeterTX1Mode.SelectedIndex < 0) comboMeterTX1Mode.SelectedIndex = 0; // ke9ns add
 
@@ -9305,8 +9306,8 @@ namespace PowerSDR
 
             //SyncDSP();
 
-			if(this.setupForm.FlexProfilerInstalled)
-				remoteProfilesToolStripMenuItem.Visible = true;
+            if (this.setupForm.FlexProfilerInstalled)
+                remoteProfilesToolStripMenuItem.Visible = true;
 
             //EW 5/20/10 Moved this back up to where it was before to prevent crashes
             //siolisten = new SIOListenerII(this);
@@ -9321,9 +9322,9 @@ namespace PowerSDR
 
             SetCurrentFlexControlMode(null, current_flexcontrol_mode);
 
-            if (flexcontrol_autodetect)  FlexControlScan();
+            if (flexcontrol_autodetect) FlexControlScan();
 
-		} //Initconsole
+        } //Initconsole
 
         private void FlexControlScan()
         {
@@ -9342,10 +9343,10 @@ namespace PowerSDR
             FlexControlManager.Rescan();
 
             if (FlexControlManager.DeviceCount == 0) return;
-            
-            if (flexControlBasicForm.FlexControl == null)    flexControlBasicForm.FlexControl = FlexControlManager.GetFlexControl(0);
-                    
-            if (flexControlAdvancedForm.FlexControl == null)    flexControlAdvancedForm.FlexControl = FlexControlManager.GetFlexControl(0);
+
+            if (flexControlBasicForm.FlexControl == null) flexControlBasicForm.FlexControl = FlexControlManager.GetFlexControl(0);
+
+            if (flexControlAdvancedForm.FlexControl == null) flexControlAdvancedForm.FlexControl = FlexControlManager.GetFlexControl(0);
 
         } // FlexControlScan_ThreadFunction()
 
@@ -9403,7 +9404,7 @@ namespace PowerSDR
         // ke9ns Console_Closing(),  then Dispose() then ExitConsole();
 
         public void ExitConsole()
-		{
+        {
             this.Text += " , exit console";
 
             Debug.WriteLine("((((((((TERMINATE PROGRM 1))))))))))))))))");
@@ -9622,7 +9623,7 @@ namespace PowerSDR
                 Debug.WriteLine("Dispose failure " + e);
             }
 
-          
+
             try
             {
                 if (IDBOXForm != null) IDBOXForm.Dispose(); // ke9ns add ID timer box
@@ -9668,18 +9669,18 @@ namespace PowerSDR
                 Debug.WriteLine("Dispose failure " + e);
             }
 
-            
+
 
             Debug.WriteLine("((((((((PA TERMINATE))))))))))))))))");
 
-         
+
             //			if(draw_display_thread != null)
             //				draw_display_thread.Abort();
-           
+
             //Parallel.ExitPortTalk();	// close parallel port driver
-            PA19.PA_Terminate();		// terminate audio interface
-			//Mixer.RestoreState();		// restore initial mixer state
-			DttSP.Exit();				// deallocate DSP variables
+            PA19.PA_Terminate();        // terminate audio interface
+                                        //Mixer.RestoreState();		// restore initial mixer state
+            DttSP.Exit();				// deallocate DSP variables
             Debug.WriteLine("((((((((DTTSP EXIT))))))))))))))))");
             // release PowerSDR Mutex from instance that created it
             try
@@ -9691,7 +9692,7 @@ namespace PowerSDR
             }
             catch (Exception)
             {
-                
+
             }
 
             //  System.Windows.Forms.Application.Exit();
@@ -9710,66 +9711,21 @@ namespace PowerSDR
         //==============================================================================================
         //==============================================================================================
         public void SaveState()
-		{
+        {
             // Automatically saves all control settings to the database in the tab
             // pages on this form of the following types: CheckBox, ComboBox,
             // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
 
-           
+
 
             string s;
-			chkPower.Checked = false;       // turn off the power first
+            chkPower.Checked = false;       // turn off the power first
 
             //-------------------------------------------------------------------
             // ke9ns add  create database to store my stuff in
 
-           
-            // ke9ns store SWR PLOTS
-            string file_nameSWR = AppDataPath + "ke9ns_SWR.dat"; // save data for my mods
+            SWR_Logger_Write(); // save SWR data
 
-            Debug.WriteLine("KE9NS_SWR FILE OPEN TO WRITE ");
-
-            FileStream stream3 = new FileStream(file_nameSWR, FileMode.Create); // open   file
-            BinaryWriter writer3 = new BinaryWriter(stream3);
-
-            int i1 = 0; // 1-9
-            int i2 = 0; // 1-41
-            int i3 = 0; // 1-1000
-
-            for ( i1 = 1; i1 < 10 ;i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
-            {
-                for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
-                {
-                    for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
-                    {
-                        double temp2 = SWR_READ[i1, i2, i3];
-
-                        if (temp2 == 0)
-                        {
-                            temp2 = 999.0;
-                            writer3.Write(temp2);
-                            Debug.WriteLine("WW> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
-
-                            break;
-                        }
-                        else
-                        {
-                            writer3.Write(temp2);
-                            Debug.WriteLine("w> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
-
-                        }
-
-
-
-                    } // for loop SLOTS
-                } // for loop BANDS
-            } // for loop ANT
-
-
-            writer3.Close();    // close  file
-            stream3.Close();   // close stream
-
-            Debug.WriteLine("KE9NS_SWR FILE CLOSED ");
 
             //-------------------------------------------------------------------------------
 
@@ -9778,8 +9734,8 @@ namespace PowerSDR
             FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open  file
             BinaryWriter writer2 = new BinaryWriter(stream2);
 
-        //    if (Audio.MON_PRE == 1) Debug.WriteLine("Saving PRE = 1");
-        //    else Debug.WriteLine("Saving PRE = 0");
+            //    if (Audio.MON_PRE == 1) Debug.WriteLine("Saving PRE = 1");
+            //    else Debug.WriteLine("Saving PRE = 0");
 
             writer2.Write((double)WaterfallLowThresholdMic);      // TX low level waterfall threshold
             writer2.Write(setupForm.checkWaterMoveSize.Checked);  // large waterfall move
@@ -9836,18 +9792,18 @@ namespace PowerSDR
             //   Debug.WriteLine("call " + callsign);
             //   Debug.WriteLine("callL " + LastCall);
 
-           ArrayList a = new ArrayList();     // storage for saving everything
+            ArrayList a = new ArrayList();     // storage for saving everything
 
 
-			foreach(Control c in this.Controls)			// For each control
-			{
+            foreach (Control c in this.Controls)            // For each control
+            {
                 // if it is a groupbox or panel, check for sub controls
-				if(c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(PanelTS))		
-				{
-					foreach(Control c2 in c.Controls)	// for each sub-control
-					{	// check to see if it is a value type we need to save
-						if(c2.Enabled)
-						{
+                if (c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(PanelTS))
+                {
+                    foreach (Control c2 in c.Controls)  // for each sub-control
+                    {   // check to see if it is a value type we need to save
+                        if (c2.Enabled)
+                        {
                             if (c2.GetType() == typeof(CheckBoxTS))
                                 a.Add(c2.Name + "/" + ((CheckBoxTS)c2).Checked.ToString());
                             else if (c2.GetType() == typeof(ComboBoxTS))
@@ -9878,31 +9834,31 @@ namespace PowerSDR
                                 c2.GetType() == typeof(TrackBar))
                                 Debug.WriteLine(c2.Name + " needs to be converted to a Thread Safe control.");
 #endif
-						}
-					}
-				}
-				else // it is not a group box
-				{	// check to see if it is a value type we need to save
-					if(c.Enabled)
-					{
-						if(c.GetType() == typeof(CheckBoxTS))
-							a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
-						else if(c.GetType() == typeof(ComboBoxTS))
-						{
-							if(((ComboBoxTS)c).SelectedIndex >= 0)
-								a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
-						}
-						else if(c.GetType() == typeof(NumericUpDownTS))
-							a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
-						else if(c.GetType() == typeof(RadioButtonTS))
-							a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
-						else if(c.GetType() == typeof(TextBoxTS))
-						{
-							if(((TextBoxTS)c).ReadOnly == false)
-								a.Add(c.Name+"/"+((TextBoxTS)c).Text);
-						}
-						else if(c.GetType() == typeof(TrackBarTS))
-							a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
+                        }
+                    }
+                }
+                else // it is not a group box
+                {   // check to see if it is a value type we need to save
+                    if (c.Enabled)
+                    {
+                        if (c.GetType() == typeof(CheckBoxTS))
+                            a.Add(c.Name + "/" + ((CheckBoxTS)c).Checked.ToString());
+                        else if (c.GetType() == typeof(ComboBoxTS))
+                        {
+                            if (((ComboBoxTS)c).SelectedIndex >= 0)
+                                a.Add(c.Name + "/" + ((ComboBoxTS)c).Text);
+                        }
+                        else if (c.GetType() == typeof(NumericUpDownTS))
+                            a.Add(c.Name + "/" + ((NumericUpDownTS)c).Value.ToString());
+                        else if (c.GetType() == typeof(RadioButtonTS))
+                            a.Add(c.Name + "/" + ((RadioButtonTS)c).Checked.ToString());
+                        else if (c.GetType() == typeof(TextBoxTS))
+                        {
+                            if (((TextBoxTS)c).ReadOnly == false)
+                                a.Add(c.Name + "/" + ((TextBoxTS)c).Text);
+                        }
+                        else if (c.GetType() == typeof(TrackBarTS))
+                            a.Add(c.Name + "/" + ((TrackBarTS)c).Value.ToString());
                         else if (c.GetType() == typeof(PrettyTrackBar))
                             a.Add(c.Name + "/" + ((PrettyTrackBar)c).Value.ToString());
 #if (DEBUG)
@@ -9915,40 +9871,40 @@ namespace PowerSDR
 							c.GetType() == typeof(TrackBar))
 							Debug.WriteLine(c.Name+" needs to be converted to a Thread Safe control.");
 #endif
-					}
-				}
-			}
+                    }
+                }
+            }
 
             string ver_num = TitleBar.GetVerNum();
 
-			a.Add("current_datetime_mode/"+ (int)current_datetime_mode);
-			a.Add("rx1_display_cal_offset/"+rx1_display_cal_offset.ToString("f3"));
-			a.Add("rx1_meter_cal_offset/"+rx1_meter_cal_offset);
+            a.Add("current_datetime_mode/" + (int)current_datetime_mode);
+            a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString("f3"));
+            a.Add("rx1_meter_cal_offset/" + rx1_meter_cal_offset);
 
-			a.Add("txtMemoryQuick/"+ txtMemoryQuick.Text);		// save quick memory settings
-			a.Add("quick_save_mode/"+(int)quick_save_mode);
-			a.Add("quick_save_filter/"+(int)quick_save_filter);
+            a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);     // save quick memory settings
+            a.Add("quick_save_mode/" + (int)quick_save_mode);
+            a.Add("quick_save_filter/" + (int)quick_save_filter);
 
             a.Add("hid_last_cal_date_time/" + hid_last_cal_date_time);
             a.Add("hid_serial_num/" + hid_serial_num);
             a.Add("hid_trx_serial_num/" + hid_trx_serial_num);
 
-			a.Add("fwc_last_cal_date_time/"+fwc_last_cal_date_time);
-			a.Add("fwc_serial_num/"+fwc_serial_num);
-			a.Add("fwc_trx_serial_num/"+fwc_trx_serial_num);
+            a.Add("fwc_last_cal_date_time/" + fwc_last_cal_date_time);
+            a.Add("fwc_serial_num/" + fwc_serial_num);
+            a.Add("fwc_trx_serial_num/" + fwc_trx_serial_num);
 
-			a.Add("rx2_last_cal_date_time/"+rx2_last_cal_date_time);
-			a.Add("rx2_serial_num/"+rx2_serial_num);
-			a.Add("rx2_trx_match_serial/"+rx2_trx_match_serial);
+            a.Add("rx2_last_cal_date_time/" + rx2_last_cal_date_time);
+            a.Add("rx2_serial_num/" + rx2_serial_num);
+            a.Add("rx2_trx_match_serial/" + rx2_trx_match_serial);
 
             //FM Squelch Save
             a.Add("rx1_squelch_on/" + rx1_squelch_on);
             a.Add("rx1_squelch_threshold_scroll/" + rx1_squelch_threshold_scroll);
             a.Add("rx1_fm_squelch_threshold_scroll/" + rx1_fm_squelch_threshold_scroll);
 
-            a.Add("rx2_squelch_on/" + rx2_squelch_on);            
-            a.Add("rx2_squelch_threshold_scroll/"+rx2_squelch_threshold_scroll);
-            a.Add("rx2_fm_squelch_threshold_scroll/"+rx2_fm_squelch_threshold_scroll);
+            a.Add("rx2_squelch_on/" + rx2_squelch_on);
+            a.Add("rx2_squelch_threshold_scroll/" + rx2_squelch_threshold_scroll);
+            a.Add("rx2_fm_squelch_threshold_scroll/" + rx2_fm_squelch_threshold_scroll);
 
             a.Add("current_flex_control_mode/" + current_flexcontrol_mode.ToString());
             a.Add("flexcontrol_autodetect/" + flexcontrol_autodetect);
@@ -9995,23 +9951,23 @@ namespace PowerSDR
             a.Add("digu_txprofile/" + digu_txprofile);
             a.Add("drm_txprofile/" + drm_txprofile);
 
-			for(int m=(int)DSPMode.FIRST+1; m<(int)DSPMode.LAST; m++)
-			{	// save filter settings per mode
-				for(Filter f=Filter.FIRST+1; f<Filter.LAST; f++)
-				{
-					a.Add("rx1_filters["+m.ToString()+"]["+((int)f).ToString()+"]/"+rx1_filters[m].ToString(f));
-				}
-				a.Add("last_rx1_filter["+m.ToString()+"]/"+rx1_filters[m].LastFilter.ToString());
-			}
+            for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
+            {   // save filter settings per mode
+                for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
+                {
+                    a.Add("rx1_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx1_filters[m].ToString(f));
+                }
+                a.Add("last_rx1_filter[" + m.ToString() + "]/" + rx1_filters[m].LastFilter.ToString());
+            }
 
-			for(int m=(int)DSPMode.FIRST+1; m<(int)DSPMode.LAST; m++)
-			{	// save filter settings per mode
-				for(Filter f=Filter.FIRST+1; f<Filter.LAST; f++)
-				{
-					a.Add("rx2_filters["+m.ToString()+"]["+((int)f).ToString()+"]/"+rx2_filters[m].ToString(f));
-				}
-				a.Add("last_rx2_filter["+m.ToString()+"]/"+rx2_filters[m].LastFilter.ToString());
-			}
+            for (int m = (int)DSPMode.FIRST + 1; m < (int)DSPMode.LAST; m++)
+            {   // save filter settings per mode
+                for (Filter f = Filter.FIRST + 1; f < Filter.LAST; f++)
+                {
+                    a.Add("rx2_filters[" + m.ToString() + "][" + ((int)f).ToString() + "]/" + rx2_filters[m].ToString(f));
+                }
+                a.Add("last_rx2_filter[" + m.ToString() + "]/" + rx2_filters[m].LastFilter.ToString());
+            }
 
 #if (!NO_TNF)
             for (int i = 0; i < NotchList.List.Count; i++)
@@ -10024,15 +9980,15 @@ namespace PowerSDR
             }
 #endif
 
-			for(int i=0; i < (int)Band.LAST; i++)
-			{
-				s = "power_table["+i+"]/";
-				for(int j=0; j<13; j++)
-					s += power_table[i][j].ToString("f4")+"|";
-				s = s.Substring(0, s.Length-1);
-				a.Add(s);
-			}
-            
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                s = "power_table[" + i + "]/";
+                for (int j = 0; j < 13; j++)
+                    s += power_table[i][j].ToString("f4") + "|";
+                s = s.Substring(0, s.Length - 1);
+                a.Add(s);
+            }
+
             s = "vhf_power_table/";
             for (int j = 0; j < vhf_power_table.Length; j++)
                 s += vhf_power_table[j].ToString("f4") + "|";
@@ -10041,7 +9997,7 @@ namespace PowerSDR
 
             s = "uhf_power_table/";
             for (int j = 0; j < uhf_power_table.Length; j++)
-               s += uhf_power_table[j].ToString("f4") + "|";
+                s += uhf_power_table[j].ToString("f4") + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
@@ -10051,53 +10007,53 @@ namespace PowerSDR
             s = s.Substring(0, s.Length - 1); // remove last '|'
             a.Add(s);
 
-			for(int i=0; i<4; i++)
-			{
-				s = "pa_bias_table["+i+"]/";
-				for(int j=0; j<8; j++)
-					s += pa_bias_table[i][j].ToString()+"|";
-				s = s.Substring(0, s.Length-1);
-				a.Add(s);
-			}
+            for (int i = 0; i < 4; i++)
+            {
+                s = "pa_bias_table[" + i + "]/";
+                for (int j = 0; j < 8; j++)
+                    s += pa_bias_table[i][j].ToString() + "|";
+                s = s.Substring(0, s.Length - 1);
+                a.Add(s);
+            }
 
-			for(int i=0; i<(int)Band.LAST; i++)
-			{
-				s = "rx1_level_table["+i+"]/";
-				for(int j=0; j<3; j++)
-					s += rx1_level_table[i][j].ToString("f3")+"|";
-				s = s.Substring(0, s.Length-1);
-				a.Add(s);
-			}
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                s = "rx1_level_table[" + i + "]/";
+                for (int j = 0; j < 3; j++)
+                    s += rx1_level_table[i][j].ToString("f3") + "|";
+                s = s.Substring(0, s.Length - 1);
+                a.Add(s);
+            }
 
-			for(int i=0; i<(int)Band.LAST; i++)
-			{
-				s = "rx2_level_table["+i+"]/";
-				for(int j=0; j<3; j++)
-					s += rx2_level_table[i][j].ToString("f3")+"|";
-				s = s.Substring(0, s.Length-1);
-				a.Add(s);
-			}
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                s = "rx2_level_table[" + i + "]/";
+                for (int j = 0; j < 3; j++)
+                    s += rx2_level_table[i][j].ToString("f3") + "|";
+                s = s.Substring(0, s.Length - 1);
+                a.Add(s);
+            }
 
-			if(FWCEEPROM.RX2OK)
-			{
-				a.Add("rx2_res_offset/"+rx2_res_offset.ToString("f6"));
-			}
+            if (FWCEEPROM.RX2OK)
+            {
+                a.Add("rx2_res_offset/" + rx2_res_offset.ToString("f6"));
+            }
 
-			for(int i=0; i<(int)Band.LAST; i++)
-			{		
-				s = "pa_bridge_table["+i+"]/";
-				for(int j=0; j<6; j++)
-					s += pa_bridge_table[i][j].ToString("f4")+"|";
-				s = s.Substring(0, s.Length-1);
-				a.Add(s);
-			}
-	
-			for(int i=0; i<(int)Band.LAST; i++)
-			{
-				s = "swr_table["+i+"]/";
-				s += swr_table[i].ToString("f4");
-				a.Add(s);
-			}
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                s = "pa_bridge_table[" + i + "]/";
+                for (int j = 0; j < 6; j++)
+                    s += pa_bridge_table[i][j].ToString("f4") + "|";
+                s = s.Substring(0, s.Length - 1);
+                a.Add(s);
+            }
+
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                s = "swr_table[" + i + "]/";
+                s += swr_table[i].ToString("f4");
+                a.Add(s);
+            }
 
             for (int i = 0; i < (int)Band.LAST; i++)
             {
@@ -10118,73 +10074,73 @@ namespace PowerSDR
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-			a.Add("current_ant_mode/"+((int)current_ant_mode).ToString());
-			a.Add("rx1_ant/"+((int)rx1_ant).ToString());
-			s = "rx1_ant_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += ((int)rx1_ant_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-			a.Add("rx1_loop/"+rx1_loop.ToString());
+            a.Add("current_ant_mode/" + ((int)current_ant_mode).ToString());
+            a.Add("rx1_ant/" + ((int)rx1_ant).ToString());
+            s = "rx1_ant_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)rx1_ant_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+            a.Add("rx1_loop/" + rx1_loop.ToString());
 
-			a.Add("rx2_ant/"+((int)rx2_ant).ToString());
-			s = "rx2_ant_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += ((int)rx2_ant_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            a.Add("rx2_ant/" + ((int)rx2_ant).ToString());
+            s = "rx2_ant_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)rx2_ant_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
-			a.Add("tx_ant/"+((int)tx_ant).ToString());
-			s = "tx_ant_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += ((int)tx_ant_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            a.Add("tx_ant/" + ((int)tx_ant).ToString());
+            s = "tx_ant_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)tx_ant_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
-            a.Add("rx_ant_1500/"+((int)rx_ant_1500).ToString());
+            a.Add("rx_ant_1500/" + ((int)rx_ant_1500).ToString());
             s = "rx_ant_1500_by_band/";
-            for(int i=0; i<(int)Band.LAST; i++)
-                s += ((int)rx_ant_1500_by_band[i]).ToString()+"|";
-            s = s.Substring(0, s.Length-1);
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)rx_ant_1500_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-            a.Add("tx_ant_1500/"+((int)tx_ant_1500).ToString());
+            a.Add("tx_ant_1500/" + ((int)tx_ant_1500).ToString());
             s = "tx_ant_1500_by_band/";
-            for(int i=0; i<(int)Band.LAST; i++)
-                s += ((int)tx_ant_1500_by_band[i]).ToString()+"|";
-            s = s.Substring(0, s.Length-1);
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)tx_ant_1500_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-			s = "rx1_loop_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += Convert.ToUInt16(rx1_loop_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            s = "rx1_loop_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += Convert.ToUInt16(rx1_loop_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
-			rx1_preamp_by_band[(int)rx1_band] = rx1_preamp_mode;
+            rx1_preamp_by_band[(int)rx1_band] = rx1_preamp_mode;
             for (int i = 0; i < (int)Band.LAST; i++)
             {
                 if (rx1_preamp_by_band[i] == PreampMode.FIRST)
                     rx1_preamp_by_band[i] = PreampMode.OFF;
             }
-			s = "rx1_preamp_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += ((int)rx1_preamp_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            s = "rx1_preamp_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)rx1_preamp_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
-			rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
-			s = "rx2_preamp_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += ((int)rx2_preamp_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            rx2_preamp_by_band[(int)rx2_band] = rx2_preamp_mode;
+            s = "rx2_preamp_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += ((int)rx2_preamp_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
-			s = "power_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += power_by_band[i].ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
+            s = "power_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += power_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
 
             s = "fm_tx_offset_by_band_mhz/";
             for (int i = 0; i < (int)Band.LAST; i++)
@@ -10192,114 +10148,114 @@ namespace PowerSDR
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-			s = "rx1_agct_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += rx1_agct_by_band[i].ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "rx2_agct_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += rx2_agct_by_band[i].ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "tx1_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += Convert.ToUInt16(tx1_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "tx2_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += Convert.ToUInt16(tx2_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "tx3_by_band/";
-			for(int i=0; i<(int)Band.LAST; i++)
-				s += Convert.ToUInt16(tx3_by_band[i]).ToString()+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "rx1_image_gain_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += rx1_image_gain_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "rx1_image_phase_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += rx1_image_phase_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "rx2_image_gain_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += rx2_image_gain_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "rx2_image_phase_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += rx2_image_phase_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "tx_image_gain_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += tx_image_gain_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
-			a.Add(s);
-
-			s = "tx_image_phase_table/";
-			for(int i=0; i<=(int)Band.B6M; i++)
-				s += tx_image_phase_table[i].ToString("R")+"|";
-			s = s.Substring(0, s.Length-1);
+            s = "rx1_agct_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += rx1_agct_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
-			a.Add("rx1_level_checksum/"+rx1_level_checksum.ToString());
-			a.Add("rx1_image_gain_checksum/"+rx1_image_gain_checksum.ToString());
-			a.Add("rx1_image_phase_checksum/"+rx1_image_phase_checksum.ToString());
-			a.Add("tx_image_gain_checksum/"+tx_image_gain_checksum.ToString());
-			a.Add("tx_image_phase_checksum/"+tx_image_phase_checksum.ToString());
-			a.Add("tx_carrier_checksum/"+tx_carrier_checksum.ToString());
-			a.Add("pa_bias_checksum/"+pa_bias_checksum.ToString());
-			a.Add("pa_bridge_checksum/"+pa_bridge_checksum.ToString());
-			a.Add("pa_power_checksum/"+pa_power_checksum.ToString());
-			a.Add("pa_swr_checksum/"+pa_swr_checksum.ToString());
+            s = "rx2_agct_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += rx2_agct_by_band[i].ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tx1_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += Convert.ToUInt16(tx1_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tx2_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += Convert.ToUInt16(tx2_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tx3_by_band/";
+            for (int i = 0; i < (int)Band.LAST; i++)
+                s += Convert.ToUInt16(tx3_by_band[i]).ToString() + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "rx1_image_gain_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += rx1_image_gain_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "rx1_image_phase_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += rx1_image_phase_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "rx2_image_gain_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += rx2_image_gain_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "rx2_image_phase_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += rx2_image_phase_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tx_image_gain_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += tx_image_gain_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            s = "tx_image_phase_table/";
+            for (int i = 0; i <= (int)Band.B6M; i++)
+                s += tx_image_phase_table[i].ToString("R") + "|";
+            s = s.Substring(0, s.Length - 1);
+            a.Add(s);
+
+            a.Add("rx1_level_checksum/" + rx1_level_checksum.ToString());
+            a.Add("rx1_image_gain_checksum/" + rx1_image_gain_checksum.ToString());
+            a.Add("rx1_image_phase_checksum/" + rx1_image_phase_checksum.ToString());
+            a.Add("tx_image_gain_checksum/" + tx_image_gain_checksum.ToString());
+            a.Add("tx_image_phase_checksum/" + tx_image_phase_checksum.ToString());
+            a.Add("tx_carrier_checksum/" + tx_carrier_checksum.ToString());
+            a.Add("pa_bias_checksum/" + pa_bias_checksum.ToString());
+            a.Add("pa_bridge_checksum/" + pa_bridge_checksum.ToString());
+            a.Add("pa_power_checksum/" + pa_power_checksum.ToString());
+            a.Add("pa_swr_checksum/" + pa_swr_checksum.ToString());
             a.Add("atu_swr_checksum/" + atu_swr_checksum.ToString());
-			a.Add("rx2_level_checksum/"+rx2_level_checksum.ToString());
-			a.Add("rx2_image_gain_checksum/"+rx2_image_gain_checksum.ToString());
-			a.Add("rx2_image_phase_checksum/"+rx2_image_phase_checksum.ToString());
-            
+            a.Add("rx2_level_checksum/" + rx2_level_checksum.ToString());
+            a.Add("rx2_image_gain_checksum/" + rx2_image_gain_checksum.ToString());
+            a.Add("rx2_image_phase_checksum/" + rx2_image_phase_checksum.ToString());
+
 
             //------------------------------------------------------------------------
             // ke9ns      this saves the stuff here
-			try
-			{
-				StreamWriter writer = new StreamWriter(app_data_path + "power.csv"); // "\\power.csv"
+            try
+            {
+                StreamWriter writer = new StreamWriter(app_data_path + "power.csv"); // "\\power.csv"
 
                 writer.WriteLine("Band, 1, 2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100");
 
-                for (int i=1; i <= (int)Band.B6M; i++)
-				{
-					writer.Write(((Band)i).ToString()+",");
-					for(int j=0; j < 13; j++)
-						writer.Write(power_table[i][j].ToString("f4")+",");
-					writer.WriteLine("");
-				}
-				writer.Close();
-			}
-			catch(Exception)
-			{
-				MessageBox.Show("Error writing power.csv file.  Please make sure this file is not open and try again.",
-					"Error writing power.csv",
-					MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
-			}
+                for (int i = 1; i <= (int)Band.B6M; i++)
+                {
+                    writer.Write(((Band)i).ToString() + ",");
+                    for (int j = 0; j < 13; j++)
+                        writer.Write(power_table[i][j].ToString("f4") + ",");
+                    writer.WriteLine("");
+                }
+                writer.Close();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error writing power.csv file.  Please make sure this file is not open and try again.",
+                    "Error writing power.csv",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
 
-			/*try
+            /*try
 			{
 				StreamWriter writer = new StreamWriter(app_data_path+"\\rx1_level.csv");
 				writer.WriteLine("Band, 0, 1, 2");
@@ -10320,23 +10276,23 @@ namespace PowerSDR
 					MessageBoxIcon.Error);
 			}*/
 
-			a.Add("rx2_fixed_gain/"+rx2_fixed_gain.ToString());
-			a.Add("rx2_max_gain/"+rx2_max_gain.ToString());
+            a.Add("rx2_fixed_gain/" + rx2_fixed_gain.ToString());
+            a.Add("rx2_max_gain/" + rx2_max_gain.ToString());
 
-			a.Add("band_160m_index/"+band_160m_index.ToString());
-			a.Add("band_80m_index/"+band_80m_index.ToString());
-			a.Add("band_60m_index/"+band_60m_index.ToString());
-			a.Add("band_40m_index/"+band_40m_index.ToString());
-			a.Add("band_30m_index/"+band_30m_index.ToString());
-			a.Add("band_20m_index/"+band_20m_index.ToString());
-			a.Add("band_17m_index/"+band_17m_index.ToString());
-			a.Add("band_15m_index/"+band_15m_index.ToString());
-			a.Add("band_12m_index/"+band_12m_index.ToString());
-			a.Add("band_10m_index/"+band_10m_index.ToString());
-			a.Add("band_6m_index/"+band_6m_index.ToString());
-			a.Add("band_2m_index/"+band_2m_index.ToString());
-			a.Add("band_wwv_index/"+band_wwv_index.ToString());
-			a.Add("band_gen_index/"+band_gen_index.ToString());
+            a.Add("band_160m_index/" + band_160m_index.ToString());
+            a.Add("band_80m_index/" + band_80m_index.ToString());
+            a.Add("band_60m_index/" + band_60m_index.ToString());
+            a.Add("band_40m_index/" + band_40m_index.ToString());
+            a.Add("band_30m_index/" + band_30m_index.ToString());
+            a.Add("band_20m_index/" + band_20m_index.ToString());
+            a.Add("band_17m_index/" + band_17m_index.ToString());
+            a.Add("band_15m_index/" + band_15m_index.ToString());
+            a.Add("band_12m_index/" + band_12m_index.ToString());
+            a.Add("band_10m_index/" + band_10m_index.ToString());
+            a.Add("band_6m_index/" + band_6m_index.ToString());
+            a.Add("band_2m_index/" + band_2m_index.ToString());
+            a.Add("band_wwv_index/" + band_wwv_index.ToString());
+            a.Add("band_gen_index/" + band_gen_index.ToString());
 
 
             a.Add("band_LMF_index/" + band_LMF_index.ToString()); // ke9ns add
@@ -10354,64 +10310,77 @@ namespace PowerSDR
             a.Add("band_13m_index/" + band_13m_index.ToString());
             a.Add("band_11m_index/" + band_11m_index.ToString());
 
-            a.Add("band_vhf0_index/"+band_vhf0_index.ToString());
-			a.Add("band_vhf1_index/"+band_vhf1_index.ToString());
-			a.Add("band_vhf2_index/"+band_vhf2_index.ToString());
-			a.Add("band_vhf3_index/"+band_vhf3_index.ToString());
-			a.Add("band_vhf4_index/"+band_vhf4_index.ToString());
-			a.Add("band_vhf5_index/"+band_vhf5_index.ToString());
-			a.Add("band_vhf6_index/"+band_vhf6_index.ToString());
-			a.Add("band_vhf7_index/"+band_vhf7_index.ToString());
-			a.Add("band_vhf8_index/"+band_vhf8_index.ToString());
-			a.Add("band_vhf9_index/"+band_vhf9_index.ToString());
-			a.Add("band_vhf10_index/"+band_vhf10_index.ToString());
-			a.Add("band_vhf11_index/"+band_vhf11_index.ToString());
-			a.Add("band_vhf12_index/"+band_vhf12_index.ToString());
-			a.Add("band_vhf13_index/"+band_vhf13_index.ToString());
+            a.Add("band_vhf0_index/" + band_vhf0_index.ToString());
+            a.Add("band_vhf1_index/" + band_vhf1_index.ToString());
+            a.Add("band_vhf2_index/" + band_vhf2_index.ToString());
+            a.Add("band_vhf3_index/" + band_vhf3_index.ToString());
+            a.Add("band_vhf4_index/" + band_vhf4_index.ToString());
+            a.Add("band_vhf5_index/" + band_vhf5_index.ToString());
+            a.Add("band_vhf6_index/" + band_vhf6_index.ToString());
+            a.Add("band_vhf7_index/" + band_vhf7_index.ToString());
+            a.Add("band_vhf8_index/" + band_vhf8_index.ToString());
+            a.Add("band_vhf9_index/" + band_vhf9_index.ToString());
+            a.Add("band_vhf10_index/" + band_vhf10_index.ToString());
+            a.Add("band_vhf11_index/" + band_vhf11_index.ToString());
+            a.Add("band_vhf12_index/" + band_vhf12_index.ToString());
+            a.Add("band_vhf13_index/" + band_vhf13_index.ToString());
 
 
 
-            for (int i=(int)PreampMode.FIRST+1; i < (int)PreampMode.LAST; i++)
-				a.Add("rx1_preamp_offset["+i.ToString()+"]/"+rx1_preamp_offset[i].ToString("f3"));
+            for (int i = (int)PreampMode.FIRST + 1; i < (int)PreampMode.LAST; i++)
+                a.Add("rx1_preamp_offset[" + i.ToString() + "]/" + rx1_preamp_offset[i].ToString("f3"));
 
-			//a.Add("fwc_preamp_offset/"+fwc_preamp_offset.ToString());
-			/*for(int i=0; i<32; i++)
+            //a.Add("fwc_preamp_offset/"+fwc_preamp_offset.ToString());
+            /*for(int i=0; i<32; i++)
 				a.Add("fwc_att_offset["+i.ToString()+"]/"+fwc_att_offset[i].ToString());*/
 
-			a.Add("wheel_tune_index/"+tune_step_index.ToString());      // Save wheel tune value
+            a.Add("wheel_tune_index/" + tune_step_index.ToString());      // Save wheel tune value
 
-          
 
-            a.Add("vfob_dsp_mode/"+((int)vfob_dsp_mode).ToString());	// Save VFO B values
-			a.Add("vfob_filter/"+((int)vfob_filter).ToString());
-			
-            a.Add("console_zaximize/" +this.WindowState.ToString()); // ke9ns add for max detectino
 
-            a.Add("console_top/"+this.Top.ToString());		            // save form positions
-			a.Add("console_left/"+this.Left.ToString());
-			a.Add("console_width/"+this.Width.ToString());
-			a.Add("console_height/"+this.Height.ToString());
-			a.Add("setup_top/"+setupForm.Top.ToString());
-			a.Add("setup_left/"+setupForm.Left.ToString());
+            a.Add("vfob_dsp_mode/" + ((int)vfob_dsp_mode).ToString());  // Save VFO B values
+            a.Add("vfob_filter/" + ((int)vfob_filter).ToString());
+
+            a.Add("console_zaximize/" + this.WindowState.ToString()); // ke9ns add for max detectino
+
+            a.Add("console_top/" + this.Top.ToString());                    // save form positions
+            a.Add("console_left/" + this.Left.ToString());
+            a.Add("console_width/" + this.Width.ToString());
+            a.Add("console_height/" + this.Height.ToString());
+            a.Add("setup_top/" + setupForm.Top.ToString());
+            a.Add("setup_left/" + setupForm.Left.ToString());
             a.Add("saved_rx_only/" + saved_rx_only.ToString());
             a.Add("mon_recall/" + mon_recall.ToString());
 
-			a.Add("Version/"+this.Text);		    // save the current title bar string
+            a.Add("Version/" + this.Text);		    // save the current title bar string
             a.Add("VersionNumber/" + ver_num);      // PowerSDR version number in a.b.c format
             a.Add("RadioType/" + CurrentModel);     // radio model string (ex. FLEX1500)
             a.Add("BandTextID/" + current_region);  // TURF Region
             a.Add("Opened/" + extended);            // has the radio been opened?
 
             DB.PurgeNotches();                      // remove old notches from DB
-			DB.SaveVars("State", ref a);		    // save the values to the DB
+            DB.SaveVars("State", ref a);            // save the values to the DB
 
-		}  // end of save state here
+        }  // end of save state here
 
 
         public static byte moninit = 1;               // ke9ns used for chkMON startup
 
-        public double[,,] SWR_READ = new double[11, 45, 3000]; //ScanControl Ant=1,2,3, band=1-30,freq slot = swr on band
-       
+        public double[,,,] SWR_READ = new double[7, 11, 45, 3000]; //ScanControl Test# 1-5, Ant=1,2,3, band=1-30,freq slot = swr on band
+        public int swr_testrun = 1;
+
+        public int SWR_TESTRUN  // ke9ns SWR scanner
+        {
+            get
+            {
+                return swr_testrun;
+            }
+            set
+            {
+                swr_testrun = value;
+            }
+        } // TESTRUN
+
         //=======================================================================================
         //=======================================================================================
         // ke9ns mod  LOAD UP DATABASE into PowerSDR 
@@ -10441,7 +10410,7 @@ namespace PowerSDR
 
             //------------------------------------------------------------------
             // ke9ns RECALL SWR PLOTS
-            string file_nameSWR = AppDataPath + "ke9ns_SWR.dat"; // save data for my mods
+            string file_nameSWR = AppDataPath + "ke9ns_SWR1.dat"; // save data for my mods
 
 
             if (!File.Exists(file_nameSWR))
@@ -10449,41 +10418,7 @@ namespace PowerSDR
 
                 Debug.WriteLine("Create new SWR database file");
 
-                FileStream stream3 = new FileStream(file_nameSWR, FileMode.Create); // open   file
-                BinaryWriter writer3 = new BinaryWriter(stream3);
-
-                int i1 = 0; // 1-9
-                int i2 = 0; // 1-41
-                int i3 = 0; // 1-1000
-
-                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
-                {
-                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
-                    {
-                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
-                        {
-                            double temp2 = SWR_READ[i1, i2, i3];
-                            if (temp2 == 0)
-                            {
-                                temp2 = 999.0;
-                                writer3.Write(temp2);
-                                break;
-                            }
-                            else
-                            {
-                                writer3.Write(temp2);
-                            }
-
-                           
-                        } // for loop SLOTS
-                    } // for loop BANDS
-                } // for loop ANT
-
-
-                writer3.Close();    // close  file
-                stream3.Close();   // close stream
-
-                Debug.WriteLine("KE9NS_SWR FILE READ CLOSED ");
+               SWR_Logger_Write();
 
             } //   ke9ns_SWR.dat file does NOT exist
             else //   ke9ns_SWR.dat file exists
@@ -10491,38 +10426,7 @@ namespace PowerSDR
 
                 Debug.WriteLine("READ SWR database file");
 
-                FileStream stream3 = new FileStream(file_nameSWR, FileMode.Open); // open ke9ns file
-                BinaryReader reader3 = new BinaryReader(stream3);
-
-                int i1 = 0; // 1-9
-                int i2 = 0; // 1-41
-                int i3 = 0; // 1-1000
-
-                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
-                {
-                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
-                    {
-                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
-                        {
-                            double temp2 = reader3.ReadDouble();
-
-                            Debug.WriteLine("RR> " + i1 + "," + i2 + "," + i3 + ", " + temp2);
-
-                            if (temp2 == 999.0) break;
-                             SWR_READ[i1, i2, i3] = temp2;
-
-                           
-
-                        } // for loop SLOTS
-                    } // for loop BANDS
-                } // for loop ANT
-
-
-                reader3.Close();    // close  file
-                stream3.Close();   // close stream
-
-                Debug.WriteLine("READ SWR database file DONE");
-
+                SWR_Logger_Read();
 
             }  // ke9ns_SWR.dat file exists
 
@@ -20098,19 +20002,19 @@ namespace PowerSDR
        // ke9ns mod
 		public double FWCSWR(int adc_fwd, int adc_rev)
 		{
-            double f = FWCPAPower(adc_fwd)  * swr_table[(int)tx_band];
+            double f = FWCPAPower(adc_fwd)  * swr_table[(int)tx_band]; // ke9ns mod (swr_table[] calibration factor was not in this line originaly but was causing -swr values and rather crazy high values)
             double r = FWCPAPower(adc_rev) * swr_table[(int)tx_band];
 			
           //  Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === " );
 			
 			if((adc_fwd == 0 && adc_rev == 0) || (f < 1.0 && r < 1.0)) return 1.0;
-			if(adc_rev == adc_fwd) return 50.0;
-            if (r == f) return 50.0;
+			if(adc_rev == adc_fwd) return 25.0;
+            if (r == f) return 25.0;
 
             double sqrt_r_over_f = Math.Sqrt(r/f);
             double temp = (1.0 + sqrt_r_over_f) / (1.0 - sqrt_r_over_f);
 
-            if (temp > 50) temp = 50;
+            if (temp > 25) temp = 25;
             if (temp < 0) temp = temp * -1;
 
           //  Debug.WriteLine(temp);
@@ -48484,7 +48388,7 @@ namespace PowerSDR
                     if (noaaON == 3) LOCALWEATHER = true; // update local weather on screen
                     else LOCALWEATHER = false;
 
-                    if ((DateTime.UtcNow.Minute == 30) || (DateTime.UtcNow.Minute == 0) || (suncounter == 2))  // =2 only at startup
+                    if ((DateTime.UtcNow.Second == 0) && ((DateTime.UtcNow.Minute == 30) || (DateTime.UtcNow.Minute == 0)) || (suncounter == 2))  // =2 only at startup
                     {
                         if ((suncounter == 0) || (suncounter == 2)) // 0=already have weather data from before or 2=startup
                         {
@@ -75150,6 +75054,110 @@ namespace PowerSDR
             server.Close(); // shut down N1MM
 
         } // N1MM_SPECTRUM()
+
+
+//===============================================================================
+// ke9ns add
+        public void SWR_Logger_Write()
+        {
+
+            // ke9ns store SWR PLOTS
+            string file_nameSWR = AppDataPath + "ke9ns_SWR1.dat"; // save data for my mods
+
+            Debug.WriteLine("KE9NS_SWR FILE OPEN TO WRITE ");
+
+            FileStream stream3 = new FileStream(file_nameSWR, FileMode.Create); // open   file
+            BinaryWriter writer3 = new BinaryWriter(stream3);
+
+            int i0 = 0; // 1-5 Test #
+            int i1 = 0; // 1-9 Ant #
+            int i2 = 0; // 1-41 Band# 
+            int i3 = 0; // 1-3000 SWR data Slot
+
+
+            for (i0 = 1; i0 < 6; i0++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+            {
+                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+                {
+                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                    {
+                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                        {
+                            double temp2 = SWR_READ[i0, i1, i2, i3];
+
+                            if (temp2 == 0)
+                            {
+                                temp2 = 999.0;
+                                writer3.Write(temp2);
+                                Debug.WriteLine("WW> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                                break;
+                            }
+                            else
+                            {
+                                writer3.Write(temp2);
+                                Debug.WriteLine("w> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                            }
+
+
+
+                        } // for loop SLOTS
+                    } // for loop BANDS
+                } // for loop ANT
+            } // for loop TEST#
+
+            writer3.Close();    // close  file
+            stream3.Close();   // close stream
+
+            Debug.WriteLine("KE9NS_SWR FILE CLOSED ");
+
+        } // SWR_Logger_Write()
+
+
+        public void SWR_Logger_Read()
+        {
+            Debug.WriteLine("READ SWR database file Start");
+
+            string file_nameSWR = AppDataPath + "ke9ns_SWR1.dat"; // save data for my mods
+
+            FileStream stream3 = new FileStream(file_nameSWR, FileMode.Open); // open ke9ns file
+            BinaryReader reader3 = new BinaryReader(stream3);
+
+            int i0 = 0; // 1-5 Test #
+            int i1 = 0; // 1-9 Ant #
+            int i2 = 0; // 1-41 Band# 
+            int i3 = 0; // 1-3000 SWR data Slot
+
+            for (i0 = 1; i0 < 6; i0++) // 5 different TEST runs 
+            {
+                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+                {
+                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                    {
+                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                        {
+                            double temp2 = reader3.ReadDouble();
+
+                            Debug.WriteLine("RR> "+ i0 + "," +i1 + "," + i2 + "," + i3 + ", " + temp2);
+
+                            if (temp2 == 999.0) break;
+                            SWR_READ[i0, i1, i2, i3] = temp2;
+
+
+
+                        } // for loop SLOTS
+                    } // for loop BANDS
+                } // for loop ANT
+            } // for loop TEST#
+
+            reader3.Close();    // close  file
+            stream3.Close();   // close stream
+
+            Debug.WriteLine("READ SWR database file DONE");
+
+
+        } // SWR_Logger_Read()
 
 
 

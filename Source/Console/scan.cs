@@ -64,7 +64,6 @@ namespace PowerSDR
         public TextBox lowFBox;
         private TextBox textBox3;
         private Label label2;
-        private Label label1;
         public TextBox highFBox;
         private Label label4;
         private Label label5;
@@ -100,6 +99,9 @@ namespace PowerSDR
         public NumericUpDownTS udIDThres;
         public Button button2;
         public CheckBoxTS checkBoxSWR;
+        private Label label14;
+        public NumericUpDownTS numericSWRTest;
+        private Label label15;
         private IContainer components;
 
 
@@ -139,9 +141,9 @@ namespace PowerSDR
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanControl));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.currFBox = new System.Windows.Forms.TextBox();
@@ -167,7 +169,9 @@ namespace PowerSDR
             this.comboMemGroupName = new System.Windows.Forms.ComboBoxTS();
             this.chkBoxSQLBRK = new System.Windows.Forms.CheckBoxTS();
             this.grpGenCustomTitleText = new System.Windows.Forms.GroupBoxTS();
-            this.checkBoxSWR = new System.Windows.Forms.CheckBoxTS();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.numericSWRTest = new System.Windows.Forms.NumericUpDownTS();
             this.button2 = new System.Windows.Forms.Button();
             this.udspeedBox = new System.Windows.Forms.NumericUpDownTS();
             this.udstepBox = new System.Windows.Forms.NumericUpDownTS();
@@ -178,8 +182,8 @@ namespace PowerSDR
             this.label4 = new System.Windows.Forms.Label();
             this.highFBox = new System.Windows.Forms.TextBox();
             this.btnCustomList = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.btnBandstack = new System.Windows.Forms.Button();
+            this.checkBoxSWR = new System.Windows.Forms.CheckBoxTS();
             this.label2 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.lowFBox = new System.Windows.Forms.TextBox();
@@ -192,6 +196,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udIDTimer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPauseLength)).BeginInit();
             this.grpGenCustomTitleText.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericSWRTest)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udspeedBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udstepBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udspeedBox1)).BeginInit();
@@ -216,34 +221,34 @@ namespace PowerSDR
             this.dataGridView2.AllowUserToResizeColumns = false;
             this.dataGridView2.AllowUserToResizeRows = false;
             this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.OliveDrab;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.OliveDrab;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView2.Location = new System.Drawing.Point(385, 153);
             this.dataGridView2.MultiSelect = false;
             this.dataGridView2.Name = "dataGridView2";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView2.Size = new System.Drawing.Size(254, 94);
             this.dataGridView2.TabIndex = 76;
             this.dataGridView2.Visible = false;
@@ -330,7 +335,7 @@ namespace PowerSDR
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label11.Location = new System.Drawing.Point(115, 527);
+            this.label11.Location = new System.Drawing.Point(115, 530);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(101, 13);
             this.label11.TabIndex = 92;
@@ -430,7 +435,7 @@ namespace PowerSDR
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(300, 40);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(300, 42);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
             this.chkAlwaysOnTop.TabIndex = 59;
@@ -558,16 +563,18 @@ namespace PowerSDR
             this.chkBoxSQLBRK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkBoxSQLBRK.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.chkBoxSQLBRK.Image = null;
-            this.chkBoxSQLBRK.Location = new System.Drawing.Point(18, 510);
+            this.chkBoxSQLBRK.Location = new System.Drawing.Point(12, 517);
             this.chkBoxSQLBRK.Name = "chkBoxSQLBRK";
-            this.chkBoxSQLBRK.Size = new System.Drawing.Size(104, 33);
+            this.chkBoxSQLBRK.Size = new System.Drawing.Size(104, 31);
             this.chkBoxSQLBRK.TabIndex = 62;
             this.chkBoxSQLBRK.Text = "Pause on Squelch Break";
             // 
             // grpGenCustomTitleText
             // 
             this.grpGenCustomTitleText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpGenCustomTitleText.Controls.Add(this.checkBoxSWR);
+            this.grpGenCustomTitleText.Controls.Add(this.label15);
+            this.grpGenCustomTitleText.Controls.Add(this.label14);
+            this.grpGenCustomTitleText.Controls.Add(this.numericSWRTest);
             this.grpGenCustomTitleText.Controls.Add(this.button2);
             this.grpGenCustomTitleText.Controls.Add(this.udspeedBox);
             this.grpGenCustomTitleText.Controls.Add(this.udstepBox);
@@ -578,8 +585,8 @@ namespace PowerSDR
             this.grpGenCustomTitleText.Controls.Add(this.label4);
             this.grpGenCustomTitleText.Controls.Add(this.highFBox);
             this.grpGenCustomTitleText.Controls.Add(this.btnCustomList);
-            this.grpGenCustomTitleText.Controls.Add(this.label1);
             this.grpGenCustomTitleText.Controls.Add(this.btnBandstack);
+            this.grpGenCustomTitleText.Controls.Add(this.checkBoxSWR);
             this.grpGenCustomTitleText.Controls.Add(this.label2);
             this.grpGenCustomTitleText.Controls.Add(this.label5);
             this.grpGenCustomTitleText.Controls.Add(this.lowFBox);
@@ -593,31 +600,69 @@ namespace PowerSDR
             this.grpGenCustomTitleText.TabStop = false;
             this.grpGenCustomTitleText.Text = "Scan Type";
             // 
-            // checkBoxSWR
+            // label15
             // 
-            this.checkBoxSWR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBoxSWR.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.checkBoxSWR.Image = null;
-            this.checkBoxSWR.Location = new System.Drawing.Point(5, 104);
-            this.checkBoxSWR.Name = "checkBoxSWR";
-            this.checkBoxSWR.Size = new System.Drawing.Size(82, 33);
-            this.checkBoxSWR.TabIndex = 95;
-            this.checkBoxSWR.Text = "Display SWR Plot";
-            this.toolTip1.SetToolTip(this.checkBoxSWR, "Hit F1 for more HELP\r\n\r\nDisplay SWR Plot to Panadapter display area");
-            this.checkBoxSWR.MouseEnter += new System.EventHandler(this.checkBoxSWR_MouseEnter);
-            this.checkBoxSWR.MouseLeave += new System.EventHandler(this.checkBoxSWR_MouseLeave);
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(11, 88);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(34, 13);
+            this.label15.TabIndex = 101;
+            this.label15.Text = "Run#";
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(549, 90);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(40, 13);
+            this.label14.TabIndex = 99;
+            this.label14.Text = "(mSec)";
+            // 
+            // numericSWRTest
+            // 
+            this.numericSWRTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.numericSWRTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.numericSWRTest.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericSWRTest.Location = new System.Drawing.Point(11, 104);
+            this.numericSWRTest.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericSWRTest.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericSWRTest.Name = "numericSWRTest";
+            this.numericSWRTest.Size = new System.Drawing.Size(34, 22);
+            this.numericSWRTest.TabIndex = 98;
+            this.toolTip1.SetToolTip(this.numericSWRTest, "Record up to (5) SWR plots on the same ANT and same Band\r\nand visually compare re" +
+        "sults.\r\n\r\nPanadapter:  You can view up to 5 RUN\'s at one time.\r\nPanafall: You ca" +
+        "n only view 1 RUN at a time. \r\n\r\n");
+            this.numericSWRTest.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericSWRTest.ValueChanged += new System.EventHandler(this.numericSWRTest_ValueChanged);
             // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button2.Location = new System.Drawing.Point(16, 62);
+            this.button2.Location = new System.Drawing.Point(52, 80);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(71, 38);
+            this.button2.Size = new System.Drawing.Size(52, 48);
             this.button2.TabIndex = 92;
             this.button2.Text = "SWR Scan (TX)";
-            this.toolTip1.SetToolTip(this.button2, "Hit F1 for More HELP\r\n\r\nClick here to start scanning from Low Freq to High Freq.\r" +
-        "\n\r\nThis will create and store a SWR plot (per ANT and BAND)");
+            this.toolTip1.SetToolTip(this.button2, resources.GetString("button2.ToolTip"));
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -630,7 +675,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udspeedBox.Location = new System.Drawing.Point(382, 32);
+            this.udspeedBox.Location = new System.Drawing.Point(392, 16);
             this.udspeedBox.Maximum = new decimal(new int[] {
             30000,
             0,
@@ -660,7 +705,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udstepBox.Location = new System.Drawing.Point(439, 103);
+            this.udstepBox.Location = new System.Drawing.Point(470, 106);
             this.udstepBox.Maximum = new decimal(new int[] {
             999,
             0,
@@ -689,7 +734,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udspeedBox1.Location = new System.Drawing.Point(521, 103);
+            this.udspeedBox1.Location = new System.Drawing.Point(538, 106);
             this.udspeedBox1.Maximum = new decimal(new int[] {
             30000,
             0,
@@ -701,7 +746,7 @@ namespace PowerSDR
             0,
             0});
             this.udspeedBox1.Name = "udspeedBox1";
-            this.udspeedBox1.Size = new System.Drawing.Size(80, 22);
+            this.udspeedBox1.Size = new System.Drawing.Size(63, 22);
             this.udspeedBox1.TabIndex = 90;
             this.udspeedBox1.Value = new decimal(new int[] {
             350,
@@ -714,7 +759,7 @@ namespace PowerSDR
             this.comboBoxTS1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBoxTS1.DropDownWidth = 112;
             this.comboBoxTS1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.comboBoxTS1.Location = new System.Drawing.Point(139, 32);
+            this.comboBoxTS1.Location = new System.Drawing.Point(139, 16);
             this.comboBoxTS1.Name = "comboBoxTS1";
             this.comboBoxTS1.Size = new System.Drawing.Size(234, 21);
             this.comboBoxTS1.TabIndex = 65;
@@ -725,18 +770,18 @@ namespace PowerSDR
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(198, 16);
+            this.label6.Location = new System.Drawing.Point(198, 40);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(116, 13);
+            this.label6.Size = new System.Drawing.Size(126, 13);
             this.label6.TabIndex = 62;
-            this.label6.Text = "Memory Group to Scan";
+            this.label6.Text = "\"Memory\" Group to Scan";
             // 
             // btnGroupMemory
             // 
             this.btnGroupMemory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGroupMemory.Enabled = false;
             this.btnGroupMemory.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnGroupMemory.Location = new System.Drawing.Point(16, 30);
+            this.btnGroupMemory.Location = new System.Drawing.Point(14, 16);
             this.btnGroupMemory.Name = "btnGroupMemory";
             this.btnGroupMemory.Size = new System.Drawing.Size(115, 23);
             this.btnGroupMemory.TabIndex = 5;
@@ -750,7 +795,7 @@ namespace PowerSDR
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(436, 87);
+            this.label4.Location = new System.Drawing.Point(471, 90);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(61, 13);
             this.label4.TabIndex = 24;
@@ -761,13 +806,14 @@ namespace PowerSDR
             this.highFBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.highFBox.BackColor = System.Drawing.Color.LightYellow;
             this.highFBox.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.highFBox.Location = new System.Drawing.Point(295, 101);
+            this.highFBox.Location = new System.Drawing.Point(324, 104);
             this.highFBox.Name = "highFBox";
             this.highFBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.highFBox.Size = new System.Drawing.Size(138, 24);
             this.highFBox.TabIndex = 21;
             this.highFBox.Click += new System.EventHandler(this.highFBox_Click);
             this.highFBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.highFBox_KeyDown);
+            this.highFBox.MouseLeave += new System.EventHandler(this.highFBox_MouseLeave);
             // 
             // btnCustomList
             // 
@@ -782,16 +828,6 @@ namespace PowerSDR
             this.btnCustomList.UseVisualStyleBackColor = true;
             this.btnCustomList.Click += new System.EventHandler(this.btnCustomList_Click);
             // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(292, 85);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(110, 13);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "High Edge Frequency\r\n";
-            // 
             // btnBandstack
             // 
             this.btnBandstack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -805,21 +841,35 @@ namespace PowerSDR
             this.btnBandstack.UseVisualStyleBackColor = true;
             this.btnBandstack.Click += new System.EventHandler(this.btnBandstack_Click);
             // 
+            // checkBoxSWR
+            // 
+            this.checkBoxSWR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxSWR.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.checkBoxSWR.Image = null;
+            this.checkBoxSWR.Location = new System.Drawing.Point(11, 57);
+            this.checkBoxSWR.Name = "checkBoxSWR";
+            this.checkBoxSWR.Size = new System.Drawing.Size(214, 17);
+            this.checkBoxSWR.TabIndex = 95;
+            this.checkBoxSWR.Text = "Display Recorded SWR Plot(s) to Pan";
+            this.toolTip1.SetToolTip(this.checkBoxSWR, "Hit F1 for more HELP\r\n\r\nDisplay SWR Plot(s) to Panadapter display area");
+            this.checkBoxSWR.MouseEnter += new System.EventHandler(this.checkBoxSWR_MouseEnter);
+            this.checkBoxSWR.MouseLeave += new System.EventHandler(this.checkBoxSWR_MouseLeave);
+            // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(147, 85);
+            this.label2.Location = new System.Drawing.Point(241, 88);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 13);
+            this.label2.Size = new System.Drawing.Size(166, 13);
             this.label2.TabIndex = 19;
-            this.label2.Text = "Low Edge Frequency";
+            this.label2.Text = "Low Edge --  (MHz)  --  High Edge";
             // 
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(370, 16);
+            this.label5.Location = new System.Drawing.Point(376, 41);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 13);
             this.label5.TabIndex = 25;
@@ -830,21 +880,22 @@ namespace PowerSDR
             this.lowFBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lowFBox.BackColor = System.Drawing.Color.LightYellow;
             this.lowFBox.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lowFBox.Location = new System.Drawing.Point(150, 101);
+            this.lowFBox.Location = new System.Drawing.Point(175, 104);
             this.lowFBox.Name = "lowFBox";
             this.lowFBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.lowFBox.Size = new System.Drawing.Size(139, 24);
             this.lowFBox.TabIndex = 6;
             this.lowFBox.Click += new System.EventHandler(this.lowFBox_Click);
             this.lowFBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lowFBox_KeyDown);
+            this.lowFBox.MouseLeave += new System.EventHandler(this.lowFBox_MouseLeave);
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button1.Location = new System.Drawing.Point(93, 62);
+            this.button1.Location = new System.Drawing.Point(115, 80);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 64);
+            this.button1.Size = new System.Drawing.Size(54, 48);
             this.button1.TabIndex = 0;
             this.button1.Text = "Low-Hi Scan (RX)";
             this.toolTip1.SetToolTip(this.button1, "Click here to start scanning from Low Freq to High Freq.\r\n\r\nYou can manually chan" +
@@ -856,11 +907,11 @@ namespace PowerSDR
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(501, 87);
+            this.label10.Location = new System.Drawing.Point(538, 77);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(113, 13);
+            this.label10.Size = new System.Drawing.Size(66, 13);
             this.label10.TabIndex = 90;
-            this.label10.Text = "Scan Speed (in mSec)";
+            this.label10.Text = "Scan Speed";
             // 
             // ScanControl
             // 
@@ -900,6 +951,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.udPauseLength)).EndInit();
             this.grpGenCustomTitleText.ResumeLayout(false);
             this.grpGenCustomTitleText.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericSWRTest)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udspeedBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udstepBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udspeedBox1)).EndInit();
@@ -2175,6 +2227,8 @@ RT2:
         {
 
             Stopwatch x1 = new Stopwatch();
+            // TEST
+            int TestRun = 0; // numericSWRTest = 1- 5
 
             // Band
             Band BAND1 = console.RX1Band; // B160M = 1, B80M = 2,B60M = 3,
@@ -2192,8 +2246,23 @@ RT2:
             //lblTUNE.Text = "Tune: " + ptbTune.Value.ToString();
             var OLD_TUNE_LEVEL = console.TunePower;
             console.TunePower = 10;
-           // console.ptbTune.Value = 10; // set power level to 10watts
+            // console.ptbTune.Value = 10; // set power level to 10watts
 
+            try
+            {
+                TestRun = (int)numericSWRTest.Value;
+
+            }
+            catch (Exception)
+            {
+                TestRun = 1;
+            }
+
+            if (TestRun > 5)
+            {
+                TestRun = 1;
+                numericSWRTest.Value = 1;
+            }
 
             try
             {
@@ -2219,7 +2288,7 @@ RT2:
                
             }
 
-            Debug.WriteLine("SWR_Scanner STEP " + step + " ,SPEED " + speed + " ,LOW " + freq_Low + " ,HIGH " + freq_High + " ,RST " + ScanRST + " ,LAST " + freq_Last);
+            Debug.WriteLine("SWR_Scanner STEP " + step + " ,SPEED " + speed + " ,LOW " + freq_Low + " ,HIGH " + freq_High + " ,RST " + ScanRST + " ,LAST " + freq_Last + ", Test: "+ TestRun);
 
 
             double ii = freq_Low;
@@ -2231,17 +2300,17 @@ RT2:
             }
 
            
-            console.SWR_READ[(int)ANT1, (int)BAND1, 0] = Math.Round(freq_Low1,3); // first entry is LOW freq of this SWR PLOT (SLOT size is always 1khz)
-            console.SWR_READ[(int)ANT1, (int)BAND1, 1] = Math.Round(freq_High1,3); // 2nd entry is HIGH freq of this SWR PLOT (SLOT size is always 1khz)
-            console.SWR_READ[(int)ANT1, (int)BAND1, 2] = Math.Round(step,3); // .001 = 1khz first entry is LOW freq of this SWR PLOT (SLOT size is always 1khz)
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 0] = Math.Round(freq_Low1,3); // first entry is LOW freq of this SWR PLOT (SLOT size is always 1khz)
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 1] = Math.Round(freq_High1,3); // 2nd entry is HIGH freq of this SWR PLOT (SLOT size is always 1khz)
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 2] = Math.Round(step,3); // .001 = 1khz first entry is LOW freq of this SWR PLOT (SLOT size is always 1khz)
 
-            console.SWR_READ[(int)ANT1, (int)BAND1, 3] = 3;  // reserved
-            console.SWR_READ[(int)ANT1, (int)BAND1, 4] = 4;
-            console.SWR_READ[(int)ANT1, (int)BAND1, 5] = 5;
-            console.SWR_READ[(int)ANT1, (int)BAND1, 6] = 6;
-            console.SWR_READ[(int)ANT1, (int)BAND1, 7] = 7;
-            console.SWR_READ[(int)ANT1, (int)BAND1, 8] = 8;
-            console.SWR_READ[(int)ANT1, (int)BAND1, 9] = 9;
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 3] = TestRun;  //TEST#
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 4] = 4; // reserved
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 5] = 5; // reserved
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 6] = 6; // reserved
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 7] = 7; // reserved
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 8] = 8; // reserved
+            console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, 9] = 9; // reserved
 
             SWR_SLOT = (int)(((decimal)ii - (decimal)freq_Low1) * 1000) + 10; // find first SLOT in current LOW freq (example 3.5 - 4.0, but LOW = 3.6, so SLOT = 100 for 3.6 (1khz = 1 slot)
 
@@ -2251,7 +2320,7 @@ RT2:
 
             for (int x = 10;x < SWR_SLOT;x++) // fill low end of SWR plot
             {
-                console.SWR_READ[(int)ANT1, (int)BAND1, x] = .5;
+                if (console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, x] < 1)  console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, x] = .5; // this is so the storage file will see the data gap and not ignore data after the gap
               //  Debug.WriteLine("SWR FILL " + x);
 
             }
@@ -2319,7 +2388,7 @@ RT2:
 
                 x1.Stop();
                 double SWR1 = console.FWCSWR(console.pa_fwd_power, console.pa_rev_power);
-               // Debug.WriteLine("Freq & SWR " + ii +  " , " +swr);
+                Debug.WriteLine("Freq & SWR " + ii +  " , " +SWR1);
 
                 if (SWR1 >= 50) // try 1 more time before displaying SWR
                 {
@@ -2339,14 +2408,14 @@ RT2:
 
                 double temp9 = (Math.Round(SWR1, 1));
 
-             //   Debug.WriteLine("SLOT= " + SWR_SLOT + " , " + ii.ToString("###0.000") + " , " + temp9.ToString() + " , " + (int)ANT1 + " , " + (int)BAND1);
+                Debug.WriteLine("SLOT= " + SWR_SLOT + " , " + ii.ToString("###0.000") + " , " + temp9.ToString() + " , " + (int)ANT1 + " , " + (int)BAND1);
 
 
-                console.SWR_READ[(int)ANT1, (int)BAND1, SWR_SLOT] = temp9;
+                console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, SWR_SLOT] = temp9;
 
                 for (int i=1;i < SWR_STEP;i++) // fill in empty slots with identical data to the last valid slot SWR
                 {
-                    console.SWR_READ[(int)ANT1, (int)BAND1, SWR_SLOT+i] = temp9;
+                    console.SWR_READ[TestRun, (int)ANT1, (int)BAND1, SWR_SLOT + i] = temp9;
 
                 } // if (SWR_STEP > 1)
 
@@ -2361,7 +2430,7 @@ RT2:
             console.chkTUN.Checked = false; // TX OFF 
             console.TunePower = OLD_TUNE_LEVEL;
 
-            currFBox.AppendText("ABOVE ^ Antenna = " + ANT1 + " , Band= " + BAND1 + "\r\n");
+            currFBox.AppendText("ABOVE ^ # " + TestRun + ", Antenna = " + ANT1 + " , Band= " + BAND1 + "\r\n");
 
             Debug.WriteLine("SWR_Scanner STOPPED");
 
@@ -2583,6 +2652,29 @@ RT2:
             lowFBox.Text = freq_Low.ToString("f6");
         }
 
+        private void lowFBox_MouseLeave(object sender, EventArgs e)
+        {
+            double freq2 = 0.0;
+            ScanRST = 0;
+            try
+            {
+                freq2 = Convert.ToDouble(lowFBox.Text);
+
+                if (freq2 < freq_Low1) freq2 = freq_Low1;
+
+            }
+            catch (Exception)
+            {
+                freq2 = freq_Low1;
+
+
+            }
+
+
+            freq_Low = freq2;
+            lowFBox.Text = freq_Low.ToString("f6");
+        }
+
         private void highFBox_Click(object sender, EventArgs e)
         {
             double freq3 = 0.0;
@@ -2602,6 +2694,26 @@ RT2:
             freq_High = freq3;
             highFBox.Text = freq_High.ToString("f6");
 
+        }
+
+        private void highFBox_MouseLeave(object sender, EventArgs e)
+        {
+            double freq3 = 0.0;
+            ScanRST = 0;
+            try
+            {
+                freq3 = Convert.ToDouble(highFBox.Text);
+                if (freq3 > freq_High1) freq3 = freq_High1;
+            }
+            catch (Exception)
+            {
+                freq3 = freq_High1;
+
+
+            }
+
+            freq_High = freq3;
+            highFBox.Text = freq_High.ToString("f6");
         }
 
         private void lowFBox_KeyDown(object sender, KeyEventArgs e)
@@ -3325,6 +3437,14 @@ RT2:
         {
             Console.HELPSWR = false;
         }
+
+        private void numericSWRTest_ValueChanged(object sender, EventArgs e)
+        {
+            console.SWR_TESTRUN = (int)numericSWRTest.Value;
+
+        } // numericSWRTest_ValueChanged
+
+       
     } // scancontrol
 
 

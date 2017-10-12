@@ -25651,6 +25651,8 @@ namespace PowerSDR
 		{
             Thread.Sleep(10);
 
+            console.SWR_Logger_Write(); // save SWR file now
+
 			if(saving) return;
 
             textBoxSAVE.Text = "Saving Changes";

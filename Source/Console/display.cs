@@ -2620,7 +2620,7 @@ namespace PowerSDR
 
         // ke9ns ADD BELOW for Display of SWR PLOT INFO
 
-        // using console.SWR_READ[ANT,BAND,SLOT] = SWR
+        // using console.SWR_READ[TEST,ANT,BAND,SLOT] = SWR
         // SLOT0 = LOW FREQ OF THE FOLLOWING SWR SLOTS
         // SLOT1 = HIGH FREQ OF THE FOLLOWING SWR SLOTS
         // SLOT2 = STEP RATE (in khz) OF THE FOLLOWING SWR SLOTS (.001 = 1khz)
@@ -2633,6 +2633,7 @@ namespace PowerSDR
         //  VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
         //  VFODiff = VFOHigh - VFOLow;       // diff in hz
 
+        static int TESTRUN = 1; // Test# to display
         static Band BAND1; // Band place holder
         static FWCAnt ANT1;// Ant place holder (only used for the 5000)
         static int SLOT;// Freq Slot place holder (SLOT = 1khz steps)
@@ -2648,24 +2649,45 @@ namespace PowerSDR
         static SolidBrush SWR_Brush_green = new SolidBrush(Color.LawnGreen); // SWR <= 2
         static SolidBrush SWR_Brush_red = new SolidBrush(Color.Red);//SWR >= 3
         static SolidBrush SWR_Brush_yellow = new SolidBrush(Color.Yellow); // 2 < SWR < 3
-        static double SWRLINE = 20; // length of SWR graphics line 
+       
         static double SWR_HIGH =3.0; // Red Color SWR  
         static double SWR_MED = 2.0; // Yellow Color SWR, otherwise Green
-       
 
+        static double SWRLINE = 20; // length of SWR graphics line 
 
+        static int SWR_Y = 25; // position of SWR Plot
+        static int SWR_YS = 15; // position of SWR Plot
+        static int SWR_Step = 55; // y between each SWR plot
+
+        static bool SWR_Multi = false; // true = Panadapter screen only (no waterfall) will display up to 5 SWR plots simultaneously
+        static int SWR_Count = 1; //
+        static int SWR_C = 1; //
 
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
         {
 
+            // ke9ns add for SWR plotting)
             if (console.ScanForm.checkBoxSWR.Checked)
             { 
                 BAND1 = console.RX1Band; // B160M = 1, B80M = 2,B60M = 3,
                 ANT1 = console.GetRX1Ant(BAND1); //ANT1 = 1, ANT2 = 2, ANT3 = 3, RX1IN=4, RX2IN=5, RX1TAP=6, SIG_GEN=7, VHF=8, UHF=9,
+                TESTRUN = console.SWR_TESTRUN; // select which swr scan test to display 1-5  (4= display 1 through 4)
 
-                Freq_Low = console.SWR_READ[(int)ANT1, (int)BAND1, 0];  // low freq of SWR plot data (3.500)
-                Freq_High = console.SWR_READ[(int)ANT1, (int)BAND1, 1]; // high freq of SWR plot data (4.00)
-                Freq_Step = console.SWR_READ[(int)ANT1, (int)BAND1, 2]; // .001=1khz, 002=2khz value 1,2,3
+
+                Freq_Low = console.SWR_READ[TESTRUN,(int)ANT1, (int)BAND1, 0];  // low freq of SWR plot data (3.500)
+                Freq_High = console.SWR_READ[TESTRUN, (int)ANT1, (int)BAND1, 1]; // high freq of SWR plot data (4.00)
+                Freq_Step = console.SWR_READ[TESTRUN, (int)ANT1, (int)BAND1, 2]; // .001=1khz, 002=2khz value 1,2,3
+
+                if ((current_display_mode == DisplayMode.PANADAPTER) && (TESTRUN > 1) && (console.RX2Enabled == false))
+                {
+                    SWR_Multi = true;
+                    SWRLINE = 10; // reduce size of SWR plot since you have up to 5 to display
+                    Debug.WriteLine("SWR MULTI");
+                }
+                else
+                {
+                    SWR_Multi = false;
+                }
 
             //   Debug.WriteLine(" SWR STARTUP: " + VFOLow + " , " + VFOHigh + " , " + ANT1 + " , " + BAND1 + " , " + Freq_Low + " , " + Freq_High + " , " + Freq_Step);
 
@@ -2693,7 +2715,7 @@ namespace PowerSDR
             int step_power = 1;
             int step_index = 0;
             int freq_step_size = 50;
-            int inbetweenies = 5;
+            int inbetweenies = 5; // ke9ns number of lines from 1 freq label to the next (a line every 2khz)
 
             int grid_step = 0;  // 
 
@@ -3628,36 +3650,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+                                         
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                  
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
-                                            {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
-  
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        } // if (SWRF > 0.6)
+                                        for (SWR_Count = TESTRUN,SWR_Y = 0, SWR_YS = 0 ; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
+                                            {
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
+
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -3687,34 +3717,40 @@ namespace PowerSDR
                                         if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
-                                             //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                             //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -3756,34 +3792,42 @@ namespace PowerSDR
 
                                             SLOT = SLOT + 2*j; // 2khz per line
 
-                                          // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+                                            // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -3813,36 +3857,42 @@ namespace PowerSDR
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low ) * 1000 ); // convert difference in freq to 1 khz SLOT value
-                                       // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                                                                                                // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -3966,6 +4016,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 || // ke9ns fix from 50.08
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -3987,36 +4039,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4047,33 +4107,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4116,33 +4182,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -4173,35 +4247,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -4234,7 +4314,7 @@ namespace PowerSDR
                         }
                     } // for loop f_steps
 
-
+                    // end of FRSRegion common block
 
                     // draw band edge markers for bands not 60m
                     int[] band_edge_list_r3 = { 18068000, 18168000, 1810000, 2000000, 3500000, 3800000, 5250000,5450000,
@@ -4368,6 +4448,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.03 || actual_fgrid == 51.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -4389,36 +4471,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4449,33 +4539,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4518,33 +4614,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -4575,35 +4679,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -4636,6 +4746,7 @@ namespace PowerSDR
                         }
                     } // for loop f_steps
 
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU00
@@ -4782,6 +4893,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -4803,36 +4916,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4863,33 +4984,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -4932,33 +5059,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -4989,35 +5124,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -5049,6 +5190,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU01 and EU12
@@ -5190,6 +5333,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -5211,36 +5356,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -5271,33 +5424,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -5340,33 +5499,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -5397,35 +5564,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -5457,6 +5630,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU03 and EU14
@@ -5594,6 +5769,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -5615,36 +5792,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -5675,33 +5860,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -5744,33 +5935,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -5801,35 +6000,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -5861,6 +6066,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU04
@@ -5999,6 +6206,8 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -6020,36 +6229,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6080,33 +6297,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6149,33 +6372,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -6206,35 +6437,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -6266,6 +6503,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU05
@@ -6404,6 +6643,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -6425,36 +6665,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6485,33 +6733,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6554,33 +6808,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -6611,35 +6873,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -6671,6 +6939,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
 
@@ -6811,6 +7081,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.05 || actual_fgrid == 50.2 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -6832,36 +7103,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6892,33 +7171,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -6961,33 +7246,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -7018,35 +7311,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -7078,6 +7377,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------EU07
@@ -7218,6 +7519,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 51.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -7239,36 +7541,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -7299,33 +7609,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -7368,33 +7684,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -7425,35 +7749,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -7485,6 +7815,9 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
+
 
 
                     //---------------------------------------------------------------------------------------------------EU08
@@ -7623,6 +7956,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -7644,36 +7978,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -7704,33 +8046,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -7773,33 +8121,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -7830,35 +8186,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -7891,6 +8253,7 @@ namespace PowerSDR
                         }
                     } // for loop f_steps
 
+                    // end of FRSRegion common block
 
                     //--------------------------------------------------------------------------------------------------- EU09
                     //---------------------------------------------------------------------------------------------------
@@ -8027,6 +8390,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 51.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -8048,36 +8412,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8108,33 +8480,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8177,33 +8555,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -8234,35 +8620,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -8294,6 +8686,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     // EU10
@@ -8425,6 +8819,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 51.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -8446,36 +8841,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8506,33 +8909,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8575,33 +8984,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -8632,35 +9049,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -8692,6 +9115,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     // EU11
@@ -8825,6 +9250,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -8846,36 +9272,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8906,33 +9340,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -8975,33 +9415,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -9032,35 +9480,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -9092,6 +9546,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
 
@@ -9187,6 +9643,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -9208,36 +9665,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -9268,33 +9733,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -9337,33 +9808,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -9394,35 +9873,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -9454,6 +9939,9 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
+
 
 
                     //---------------------------------------------------------------------------------------------------
@@ -9591,6 +10079,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -9612,36 +10101,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -9672,33 +10169,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -9741,33 +10244,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -9798,35 +10309,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -9858,6 +10375,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
 
@@ -9994,6 +10513,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 147.975)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -10015,36 +10535,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10075,33 +10603,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10144,33 +10678,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -10201,35 +10743,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -10261,6 +10809,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
                     //---------------------------------------------------------------------------------------------------IARU2
@@ -10400,6 +10950,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 146.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -10421,36 +10972,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10481,33 +11040,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10550,33 +11115,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -10607,35 +11180,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -10667,6 +11246,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
 
@@ -10808,6 +11389,7 @@ namespace PowerSDR
                                 actual_fgrid == 50.0 || actual_fgrid == 54.0 ||
                                 actual_fgrid == 144.0 || actual_fgrid == 148.0)
                             {
+                                // BEGIN of FRSRegion common block
                                 if (bottom) g.DrawLine(new Pen(band_edge_color), vgrid, H + top, vgrid, H + H); // draw vertical scale lines
                                 else g.DrawLine(new Pen(band_edge_color), vgrid, top, vgrid, H);
 
@@ -10829,36 +11411,44 @@ namespace PowerSDR
                                 {
                                     if ((Freq_Low > 0) && (Freq_High > 0) && (Freq_Step > 0) && (Freq_Low <= Math.Round(actual_fgrid, 4)) && (Freq_High >= Math.Round(actual_fgrid, 4))) // 3.5 < 3.9 (example)
                                     {
+
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
-                                                                                                                              // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                        if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
-                                        {
-                                            //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
+
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
+                                        {                                                                                       // Debug.WriteLine("=DISPLAY SWR SLOT: " + SLOT + " , " + Math.Round(actual_fgrid, 4));
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > 0.6) // values of 0.5 are place in the SWR_READ[] array as filler for empty data areas of the ke9ns_SWR file, so ignore, but keep going until you get to actual SWR data
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //  Debug.WriteLine("=DISPLAY SWR: " + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } // if (SWRF > 0.6)
+                                            } // if (SWRF > 0.6)
+
+                                        } // SWR_Multi
 
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10889,33 +11479,39 @@ namespace PowerSDR
                                         {
                                             SLOT = SLOT + 2; // 2khz per line
                                                              //   Debug.WriteLine(">DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
 
-                                            if (SWRF > .6)
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (SWRF > .6)
+                                                {
+                                                    // Debug.WriteLine(">DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF);
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } // if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } // if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0) 
 
@@ -10958,33 +11554,41 @@ namespace PowerSDR
                                             SLOT = SLOT + 2 * j; // 2khz per line
 
                                             // Debug.WriteLine("#DISPLAY SWR SLOT: " + SLOT);
-                                            SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
-                                            if (SWRF > .6)
+
+                                            if (SWR_Multi == false) SWR_C = TESTRUN;
+                                            else SWR_C = 1;
+
+                                            for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                             {
-                                                //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
-                                                if (SWRF >= SWR_HIGH)
-                                                {
-                                                    SWR_Brush = SWR_Brush_red;
-                                                    SWR_pen = SWR_pen_red;
-                                                }
-                                                else if (SWRF > SWR_MED)
-                                                {
-                                                    SWR_Brush = SWR_Brush_yellow;
-                                                    SWR_pen = SWR_pen_yellow;
-                                                }
-                                                else
-                                                {
-                                                    SWR_Brush = SWR_Brush_green;
-                                                    SWR_pen = SWR_pen_green;
-                                                }
 
-                                                if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + top + 25, x3, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                                g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25, x3, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                                if (SWRF > .6)
+                                                {
+                                                    //  Debug.WriteLine("#DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF );
+                                                    if (SWRF >= SWR_HIGH)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_red;
+                                                        SWR_pen = SWR_pen_red;
+                                                    }
+                                                    else if (SWRF > SWR_MED)
+                                                    {
+                                                        SWR_Brush = SWR_Brush_yellow;
+                                                        SWR_pen = SWR_pen_yellow;
+                                                    }
+                                                    else
+                                                    {
+                                                        SWR_Brush = SWR_Brush_green;
+                                                        SWR_pen = SWR_pen_green;
+                                                    }
 
-                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 11);
-                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15);
+                                                    if (bottom) g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                    g.DrawLine(SWR_pen, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y, x3, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            } //  if (SWRF > .6)
+                                                    if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                    g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, x3 - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
+
+                                                } //  if (SWRF > .6)
+                                            } // SWR_MULTI
 
                                         } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
@@ -11015,35 +11619,41 @@ namespace PowerSDR
                                     {
                                         SLOT = 10 + (int)(((decimal)Math.Round(actual_fgrid, 4) - (decimal)Freq_Low) * 1000); // convert difference in freq to 1 khz SLOT value
                                                                                                                               // Debug.WriteLine("DISPLAY SWR SLOT: " + SLOT + " , " + actual_fgrid_label.ToString() + " , " + Freq_Low.ToString() );
-                                        SWRF = console.SWR_READ[(int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+                                        if (SWR_Multi == false) SWR_C = TESTRUN;
+                                        else SWR_C = 1;
 
-                                        if (SWRF > .6)
+                                        for (SWR_Count = TESTRUN, SWR_Y = 0, SWR_YS = 0; SWR_C <= SWR_Count; SWR_C++, SWR_Y += SWR_Step, SWR_YS += SWR_Step)
                                         {
-                                            //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
-                                            if (SWRF >= SWR_HIGH)
+
+                                            SWRF = console.SWR_READ[SWR_C, (int)ANT1, (int)BAND1, SLOT]; // grab SWR value for current antenna and band at this particular slot
+
+                                            if (SWRF > .6)
                                             {
-                                                SWR_Brush = SWR_Brush_red;
-                                                SWR_pen = SWR_pen_red;
-                                            }
-                                            else if (SWRF > SWR_MED)
-                                            {
-                                                SWR_Brush = SWR_Brush_yellow;
-                                                SWR_pen = SWR_pen_yellow;
-                                            }
-                                            else
-                                            {
-                                                SWR_Brush = SWR_Brush_green;
-                                                SWR_pen = SWR_pen_green;
-                                            }
+                                                //   Debug.WriteLine("DISPLAY SWR: "  + Math.Round(actual_fgrid, 4) + " , " + SWRF + " , " + vgrid + " , " + offsetL);
+                                                if (SWRF >= SWR_HIGH)
+                                                {
+                                                    SWR_Brush = SWR_Brush_red;
+                                                    SWR_pen = SWR_pen_red;
+                                                }
+                                                else if (SWRF > SWR_MED)
+                                                {
+                                                    SWR_Brush = SWR_Brush_yellow;
+                                                    SWR_pen = SWR_pen_yellow;
+                                                }
+                                                else
+                                                {
+                                                    SWR_Brush = SWR_Brush_green;
+                                                    SWR_pen = SWR_pen_green;
+                                                }
 
-                                            if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + top + 25, vgrid, (float)Math.Floor(H * .01) + top + 25 + (int)(SWRF * SWRLINE));
-                                            g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25, vgrid, (float)Math.Floor(H * .01) + 25 + (int)(SWRF * SWRLINE));
+                                                if (bottom) g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + H + 25 + SWR_Y + (int)(SWRF * SWRLINE));
+                                                g.DrawLine(SWR_pen, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y, vgrid, (float)Math.Floor(H * .01) + 25 + SWR_Y + (int)(SWRF * SWRLINE));
 
-                                            if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 11);
-                                            g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15);
+                                                if (bottom) g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, H + (float)Math.Floor(H * .01) + 15 + SWR_YS);
+                                                g.DrawString(SWRF.ToString("#0.0"), font, SWR_Brush, vgrid - 10, (float)Math.Floor(H * .01) + 15 + SWR_YS);
 
-                                        } //  if (SWRF > .6) 
-
+                                            } //  if (SWRF > .6) 
+                                        } // SWR_MULTI
                                     } //  if ((Freq_Low > 0) && (Freq_High > 0)
 
                                 } //  if (console.ScanForm.checkBoxSWR.Checked)
@@ -11075,6 +11685,8 @@ namespace PowerSDR
                             }
                         }
                     } // for loop f_steps
+
+                    // end of FRSRegion common block
 
 
 

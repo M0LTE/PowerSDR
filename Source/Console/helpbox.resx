@@ -191,16 +191,25 @@ Set High Freq (no higher than the high end of the band)
 Set Step rate: 1.0, 2.0,3.0, or 4.0 khz 
 Set Rate (250 msec or higher)
 
+Set Run# 1-5 (up to 5 runs can be recorded, if you want to compare antenna adjustments between Run's)
+
 Click SWR Scan (TX)
 TUNE is automatically set to 10 and the Radio is Transmits using TUNE
 and records the SWR.
 
-Check  Display SWR Plot
+PLOTTING:
+Check  Display SWR Plot(s)
 SWR logged data will appear in the Panadapter with a number 
 and a Line representing the SWR in color and proportional length
-(short green = 1:1 to 2:0) (med Yellow = 2.1:1 to 2.9)(long Red = 3.0:1 to 50:1)
+(short green = 1:1 to 2:0) (med Yellow = 2.1:1 to 2.9)(long Red = 3.0:1 to 25:1)
 
-All SWR Data is saved by ANT (Flex-5000) &amp; Band in a file called ke9ns_SWR.dat</value>
+Panadapter: You can view up to 5 Runs at the same time.
+Panafall: You can view any 1 of 5 Runs.
+
+LOGGING:
+All SWR Data is recorded by Run#, ANT (Flex-5000) &amp; Band in a file called ke9ns_SWR1.dat
+And automatically saved when you close PowerSDR, or Click setup-&gt;Save
+</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

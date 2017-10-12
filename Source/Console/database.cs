@@ -1751,15 +1751,15 @@ namespace PowerSDR
 
 
 								3.500000, 3.524999, "80M Extra CW",				true,
-								3.525000, 3.579999, "80M CW",					true,
+								3.525000, 3.569999, "80M CW",					true,
 
+                                3.570000, 3.570000, "80M JT65 Dial",            true, // ke9ns add
+                                3.570001, 3.572999, "80M JT65 USB",            true, // ke9ns add
+                               
                                 3.573000, 3.573000, "80M FT8 Dial",            true, // ke9ns add  3.573
                                 3.573001, 3.575500, "80M FT8 USB",            true, // ke9ns add
-
-                                3.576000, 3.576000, "80M JT65 Dial",            true, // ke9ns add
-                                3.576001, 3.578999, "80M JT65 USB",            true, // ke9ns add
-                               
-								3.579000, 3.589999, "80M PSK",					true,
+                              
+								3.575501, 3.589999, "80M PSK",					true,
 								3.590000, 3.590000, "80M RTTY DX",				true,
 								3.590001, 3.599999, "80M RTTY",					true,
 								3.600000, 3.699999, "75M Extra SSB",			true,
@@ -1812,6 +1812,7 @@ namespace PowerSDR
 
                                 10.136000, 10.136000, "30M FT8 Dial",            true, // ke9ns add
                                 10.136001, 10.137999, "30M PSK/FT8 USB",         true, // ke9ns add
+
                                 10.138000, 10.138000, "30M JT65 Dial",            true, // ke9ns add
                                 10.138001, 10.138999, "30M JT65 USB",            true, // ke9ns add
                                 10.142000, 10.139999, "30M RTTY",               true,
@@ -1863,6 +1864,7 @@ namespace PowerSDR
 
                                 21.074000, 21.074000, "15M FT8 Dial",            true, // ke9ns add 
                                 21.074001, 21.075999, "15M FT8 USB",             true, // ke9ns add
+
                                 21.076000, 21.076000, "15M JT65 Dial",            true, // ke9ns add
                                 21.076001, 21.078999, "15M JT65 USB",            true, // ke9ns add
                                 21.079000, 21.099999, "15M RTTY",               true,
@@ -1878,12 +1880,11 @@ namespace PowerSDR
 								21.340001, 21.449999, "15M SSB",				true,
 							   
 								24.890000, 24.914999, "12M CW",					true, 
+                                24.915000, 24.915000, "12M FT8 Dial",            true, // ke9ns add 
+                                24.915001, 24.916999, "12M FT8 USB",             true, // ke9ns add
 
-
-                                24.915000, 21.915000, "12M FT8 Dial",            true, // ke9ns add 
-                                24.915001, 21.917999, "12M FT8 USB",             true, // ke9ns add
-                                24.918000, 21.918000, "12M JT65 Dial",            true, // ke9ns add 
-                                24.918001, 21.919999, "12M JT65 USB",             true, // ke9ns add
+                                24.917000, 24.917000, "12M JT65 Dial",            true, // ke9ns add 
+                                24.917001, 24.919999, "12M JT65 USB",             true, // ke9ns add
 
 
                                 24.920000, 24.924999, "12M RTTY",				true,
@@ -1925,11 +1926,11 @@ namespace PowerSDR
 
 								50.125001, 50.273999, "6M SSB",					true,
 
-                                50.274000, 50.274000, "6M FT8 Dial",            true, // ke9ns add ?
-                                50.274001, 50.275999, "6M FT8 USB",             true, // ke9ns add
-
                                 50.276000, 50.276000, "6M JT65 Dial",            true, // ke9ns add 
                                 50.276001, 50.278999, "6M JT65 USB",             true, // ke9ns add
+                                50.279000, 50.309999, "6M All Modes",          true,
+                                50.310000, 50.310000, "6M JT65 Dial",            true, // ke9ns add 
+                                50.310001, 50.312999, "6M JT65 USB",             true, // ke9ns add
 
                                 50.313000, 50.313000, "6M FT8 Dial",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 USB",             true, // ke9ns add
