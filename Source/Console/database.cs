@@ -1737,12 +1737,12 @@ namespace PowerSDR
 								1.810000, 1.810000, "160M CW QRP",				true,
 								1.810001, 1.837999, "160M CW",					true, // was 1.842999,
 
-                                1.838000, 1.838000, "160M PSK/JT65 Dial",       true, // ke9ns add
-                                1.838001, 1.839999, "160M PSK/JT65 USB",       true, // ke9ns add
+                                1.838000, 1.838000, "160M PSK/JT65 DIGU",       true, // ke9ns add
+                                1.838001, 1.839999, "160M PSK/JT65 DIGU",       true, // ke9ns add
 
-                                1.840000, 1.840000, "160M FT8 Dial",            true, // ke9ns add  1.84
-                                1.840001, 1.842500, "160M FT8 USB",            true, // ke9ns add
-                                1.842501, 1.842999, "160M FT8 USB",            true,
+                                1.840000, 1.840000, "160M FT8 DIGU",            true, // ke9ns add  1.84
+                                1.840001, 1.842500, "160M FT8 DIGU",            true, // ke9ns add
+                                1.842501, 1.842999, "160M FT8 DIGU",            true,
 
                                 1.843000, 1.909999, "160M SSB/SSTV/Wide Band",	true,
 								1.910000, 1.910000, "160M SSB QRP",				true,
@@ -1753,11 +1753,11 @@ namespace PowerSDR
 								3.500000, 3.524999, "80M Extra CW",				true,
 								3.525000, 3.569999, "80M CW",					true,
 
-                                3.570000, 3.570000, "80M JT65 Dial",            true, // ke9ns add
-                                3.570001, 3.572999, "80M JT65 USB",            true, // ke9ns add
+                                3.570000, 3.570000, "80M JT65 DIGU",            true, // ke9ns add
+                                3.570001, 3.572999, "80M JT65 DIGU",            true, // ke9ns add
                                
-                                3.573000, 3.573000, "80M FT8 Dial",            true, // ke9ns add  3.573
-                                3.573001, 3.575500, "80M FT8 USB",            true, // ke9ns add
+                                3.573000, 3.573000, "80M FT8 DIGU",            true, // ke9ns add  3.573
+                                3.573001, 3.575500, "80M FT8 DIGU",            true, // ke9ns add
                               
 								3.575501, 3.589999, "80M PSK",					true,
 								3.590000, 3.590000, "80M RTTY DX",				true,
@@ -1791,11 +1791,11 @@ namespace PowerSDR
 								7.040000, 7.042999, "40M PSK",       			true,
                                 7.043000, 7.073999, "40M RTTY",                 true,
 
-                                7.074000, 7.074000, "40M FT8 Dial",            true, // ke9ns add  7.074
-                                7.074001, 7.075999, "40M FT8 USB",             true, // ke9ns add
+                                7.074000, 7.074000, "40M FT8 DIGU",            true, // ke9ns add  7.074
+                                7.074001, 7.075999, "40M FT8 DIGU",             true, // ke9ns add
 
-                                7.076000, 7.076000, "40M JT65 Dial",            true, // ke9ns add
-                                7.076001, 7.078999, "40M JT65 USB",            true, // ke9ns add
+                                7.076000, 7.076000, "40M JT65 DIGU",            true, // ke9ns add
+                                7.076001, 7.078999, "40M JT65 DIGU",            true, // ke9ns add
                               
 								7.079000, 7.099999, "40M RTTY",					true,
 								7.100000, 7.124999, "40M CW",					true,
@@ -1810,22 +1810,22 @@ namespace PowerSDR
 								10.100000, 10.129999, "30M CW",					true,
 								10.130000, 10.139999, "30M RTTY",				true,
 
-                                10.136000, 10.136000, "30M FT8 Dial",            true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 USB",         true, // ke9ns add
+                                10.136000, 10.136000, "30M FT8 DIGU",            true, // ke9ns add
+                                10.136001, 10.137999, "30M PSK/FT8 DIGU",         true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 Dial",            true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 USB",            true, // ke9ns add
+                                10.138000, 10.138000, "30M JT65 DIGU",            true, // ke9ns add
+                                10.138001, 10.138999, "30M JT65 DIGU",            true, // ke9ns add
                                 10.142000, 10.139999, "30M RTTY",               true,
 
                                 14.000000, 14.024999, "20M Extra CW",			true,
 								14.025000, 14.069999, "20M CW",					true,
-								14.070000, 14.094999, "20M PSK/RTTY",			true,
+								14.070000, 14.073999, "20M PSK/RTTY",			true,
 
-                                14.074000, 14.074000, "20M FT8 Dial",            true, // ke9ns add
-                                14.074001, 14.075999, "20M FT8 USB",             true, // ke9ns add
+                                14.074000, 14.074000, "20M FT8 DIGU",            true, // ke9ns add
+                                14.074001, 14.075999, "20M FT8 DIGU",             true, // ke9ns add
 
-                                14.076000, 14.076000, "20M JT65 Dial",            true, // ke9ns add
-                                14.076001, 14.078999, "20M JT65 USB",            true, // ke9ns add
+                                14.076000, 14.076000, "20M JT65 DIGU",            true, // ke9ns add
+                                14.076001, 14.078999, "20M JT65 DIGU",            true, // ke9ns add
 
                                 14.079000, 14.094999, "20M RTTY",                true,
 
@@ -1847,11 +1847,11 @@ namespace PowerSDR
 								18.068000, 18.099999, "17M CW",					true,
 								18.100000, 18.101999, "17M RTTY",				true,
 
-                                18.100000, 18.100000, "17M FT8 Dial",            true, // ke9ns add
-                                18.100001, 18.102999, "17M FT8 USB",             true, // ke9ns add
+                                18.100000, 18.100000, "17M FT8 DIGU",            true, // ke9ns add
+                                18.100001, 18.102999, "17M FT8 DIGU",             true, // ke9ns add
 
-                                18.102000, 18.102000, "17M JT65 Dial",            true, // ke9ns add
-                                18.102001, 18.104999, "17M JT65 USB",            true, // ke9ns add
+                                18.102000, 18.102000, "17M JT65 DIGU",            true, // ke9ns add
+                                18.102001, 18.104999, "17M JT65 DIGU",            true, // ke9ns add
                               
                                 18.108000, 18.109999, "17M PSK",				true,
 								18.110000, 18.110000, "17M NCDXF Beacons",	    true,
@@ -1862,11 +1862,11 @@ namespace PowerSDR
 								21.025000, 21.069999, "15M CW",					true,
 								21.070000, 21.073999, "15M RTTY",				true,
 
-                                21.074000, 21.074000, "15M FT8 Dial",            true, // ke9ns add 
-                                21.074001, 21.075999, "15M FT8 USB",             true, // ke9ns add
+                                21.074000, 21.074000, "15M FT8 DIGU",            true, // ke9ns add 
+                                21.074001, 21.075999, "15M FT8 DIGU",             true, // ke9ns add
 
-                                21.076000, 21.076000, "15M JT65 Dial",            true, // ke9ns add
-                                21.076001, 21.078999, "15M JT65 USB",            true, // ke9ns add
+                                21.076000, 21.076000, "15M JT65 DIGU",            true, // ke9ns add
+                                21.076001, 21.078999, "15M JT65 DIGU",            true, // ke9ns add
                                 21.079000, 21.099999, "15M RTTY",               true,
 
                                 21.100000, 21.109999, "15M Packet",				true,
@@ -1880,11 +1880,11 @@ namespace PowerSDR
 								21.340001, 21.449999, "15M SSB",				true,
 							   
 								24.890000, 24.914999, "12M CW",					true, 
-                                24.915000, 24.915000, "12M FT8 Dial",            true, // ke9ns add 
-                                24.915001, 24.916999, "12M FT8 USB",             true, // ke9ns add
+                                24.915000, 24.915000, "12M FT8 DIGU",            true, // ke9ns add 
+                                24.915001, 24.916999, "12M FT8 DIGU",             true, // ke9ns add
 
-                                24.917000, 24.917000, "12M JT65 Dial",            true, // ke9ns add 
-                                24.917001, 24.919999, "12M JT65 USB",             true, // ke9ns add
+                                24.917000, 24.917000, "12M JT65 DIGU",            true, // ke9ns add 
+                                24.917001, 24.919999, "12M JT65 DIGU",             true, // ke9ns add
 
 
                                 24.920000, 24.924999, "12M RTTY",				true,
@@ -1894,10 +1894,10 @@ namespace PowerSDR
 								
 								28.000000, 28.073999, "10M CW",					true,
 
-                                28.074000, 28.074000, "10M FT8 Dial",            true, // ke9ns add 
-                                28.074001, 28.075999, "10M FT8 USB",             true, // ke9ns add
-                                28.076000, 28.076000, "10M JT65 Dial",            true, // ke9ns add 
-                                28.076001, 28.078999, "10M JT65 USB",             true, // ke9ns add
+                                28.074000, 28.074000, "10M FT8 DIGU",            true, // ke9ns add 
+                                28.074001, 28.075999, "10M FT8 DIGU",             true, // ke9ns add
+                                28.076000, 28.076000, "10M JT65 DIGU",            true, // ke9ns add 
+                                28.076001, 28.078999, "10M JT65 DIGU",             true, // ke9ns add
 
 
 								28.079000, 28.149999, "10M RTTY",				true,
@@ -1926,14 +1926,14 @@ namespace PowerSDR
 
 								50.125001, 50.273999, "6M SSB",					true,
 
-                                50.276000, 50.276000, "6M JT65 Dial",            true, // ke9ns add 
-                                50.276001, 50.278999, "6M JT65 USB",             true, // ke9ns add
+                                50.276000, 50.276000, "6M JT65 DIGU",            true, // ke9ns add 
+                                50.276001, 50.278999, "6M JT65 DIGU",             true, // ke9ns add
                                 50.279000, 50.309999, "6M All Modes",          true,
-                                50.310000, 50.310000, "6M JT65 Dial",            true, // ke9ns add 
-                                50.310001, 50.312999, "6M JT65 USB",             true, // ke9ns add
+                                50.310000, 50.310000, "6M JT65 DIGU",            true, // ke9ns add 
+                                50.310001, 50.312999, "6M JT65 DIGU",             true, // ke9ns add
 
-                                50.313000, 50.313000, "6M FT8 Dial",            true, // ke9ns add   ?
-                                50.313001, 50.315999, "6M FT8 USB",             true, // ke9ns add
+                                50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
+                                50.313001, 50.315999, "6M FT8 DIGU",             true, // ke9ns add
 
                                 50.316000, 50.599999, "6M All Modes",			true,
 								50.600000, 50.619999, "6M Non Voice",			true,
