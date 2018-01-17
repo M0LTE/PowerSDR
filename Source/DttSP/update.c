@@ -1744,13 +1744,16 @@ DttSP_EXP void Process_Scope (unsigned int thread, float *results, int numpoints
 		memset(results,0,numpoints * sizeof (float));
 		return;
 	}
+
 	//sem_wait (&top[thread].sync.upd.sem);
 	uni[thread].spec.type = SPEC_POST_AGC;
 	uni[thread].spec.scale = SPEC_PWR;
 	uni[thread].spec.rxk = 0;
 
 	snap_scope (&uni[thread].spec, uni[thread].spec.type);
+
 	//sem_post (&top[thread].sync.upd.sem);
+
 	for (i = 0; i < numpoints; i++)
 	{
 		results[i] = (float) CXBreal (uni[thread].spec.timebuf, i);

@@ -28,6 +28,10 @@
 
 // ke9ns things to remember
 //
+//  txtVFOAFreq_LostFocus(this, EventArgs.Empty);    (ke9ns this is how to generate an event programatically)
+//
+// ke9ns console_closing(), then Dispose(), then ExitConsole(), then back to Displose() to finish
+//
 // console.Console_Resize(this, e);
 // Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  ==   %userprofile%\AppData\Roaming
 //
@@ -163,6 +167,8 @@ using System.Windows.Media.Imaging;
 
 using FlexCW;
 using System.Linq;
+using NAudio.Wave;
+using NAudio.Lame;
 
 #if (!NO_TNF)
 using Flex.TNF;
@@ -170,6 +176,8 @@ using Flex.TNF;
 
 using Flex.Control;
 
+ //using CefSharp;            // ke9ns add to allow embedded chrome browser (for help videos)
+ //using CefSharp.WinForms;
 
 
 namespace PowerSDR
@@ -421,7 +429,7 @@ namespace PowerSDR
 		UTC,
 		LAST,
 	}
-
+     
     //================================================================================
     // w4tme modify Regions to match SmartSDR March 2017
     public enum FRSRegion
@@ -432,8 +440,8 @@ namespace PowerSDR
         Europe = 2,       // EU00 Germany, European Union, IARU1
         UK_Plus = 3,      // EU02 UK+ (adds 60m band)
         Italy = 4,        // EU10 
-        Norway = 5,       // EU03 Norway, Denmark, Czech Rep.
-        Denmark = 6,      // EU03 Norway, Denmark, Czech Rep.
+        Norway = 5,       // EU03 Norway, Czech Rep.
+        Denmark = 6,      // EU03  Denmark, Czech Rep.
         Latvia = 7,       // EU08 
         Slovakia = 8,     // EU01 UK, Slovakia, France, Malta (UK,SK,FR,MT)
         Bulgaria = 9,     // EU07 
@@ -766,7 +774,7 @@ namespace PowerSDR
         private Button buttonSort;
         public TextBox textBox1;
         public RichTextBox txtTimer;
-        private ToolStripMenuItem trackMenuItem1;
+        private ToolStripMenuItem MapMenuItem;
         public Button buttonCQ;
         public Button buttonCall;
         public PrettyTrackBar ptbTune;
@@ -794,6 +802,9 @@ namespace PowerSDR
         private RichTextBox richTextBox6;
         private RichTextBox richTextBox7;
         private RichTextBox richTextBox8;
+        private ToolStripMenuItem SWLMenuItem;
+        private PictureBox ScreenCap;
+        private PictureBox ScreenCap1;
         SpeechSynthesizer speaker = new SpeechSynthesizer(); // ke9ns add 
 
         //============================================================================ ke9ns add
@@ -838,6 +849,7 @@ namespace PowerSDR
         public static Stream Yellow_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.yell2.png");// ke9ns add yellow needle analog meter
         public static Stream White_image = myAssembly.GetManifestResourceStream("PowerSDR.Resources.white2.png");// ke9ns add yellow needle analog meter
 
+        public static Stream Map_image2 = myAssembly.GetManifestResourceStream("PowerSDR.Resources.Wmap1.jpg");     // MAP with lat / long on it
 
 
         Image TR7 = new Bitmap(meter_image);         // pre-can the images 
@@ -852,6 +864,8 @@ namespace PowerSDR
         Image dial1 = new Bitmap(dialpic); // image of vfo b
         Image vfoA = new Bitmap(vfoApic); // image of vfo a
         Image vfoB = new Bitmap(vfoBpic); // image of vfo b
+
+        public Image Wmap1 = new Bitmap(Map_image2); // image of world map
 
 
         int yell = 1;
@@ -883,6 +897,7 @@ namespace PowerSDR
         private Thread multimeter_thread;                   // updates the rx1/tx meter data
         private Thread rx2_meter_thread;                    // updates the rx2 meter data
         private Thread poll_ptt_thread;                     // polls the PTT line on the parallel port
+        private Thread poll_RXOnly_thread;  // ke9ns add
         private Thread poll_pa_pwr_thread;                  // polls the FWD and REV power if the PA is installed
         private Thread sql_update_thread;                   // polls the RX signal strength
         private Thread rx2_sql_update_thread;               // polls the RX2 signal strength
@@ -916,12 +931,15 @@ namespace PowerSDR
         public IDBOX IDBOXForm;                          // ke9ns add ID Timer function function (idtimer)
         public TOTBOX TOTBOXForm;                          // ke9ns add Timeout Timer function function (tottimer)
 
-
+      
         public SpotControl SpotForm;                       // ke9ns add DX spotter function
+        public SpotDecoder SpotDecoderForm;                // ke9ns add decoder function
+
         public ScanControl ScanForm;                       // ke9ns add freq Scanner function
         public StackControl StackForm;                     // ke9ns add band stack form
         public SwlControl SwlForm;                         // ke9ns add band swl form
         public helpbox helpboxForm;                         // ke9ns add helpbox form
+        public helpbox1 helpbox1Form;                         // ke9ns add helpbox1 form
 
         public CWX cwxForm;
         public UCBForm ucbForm;
@@ -1334,6 +1352,8 @@ namespace PowerSDR
         private Point txt_display_cursor_freq_basis = new Point(100, 100);      //k6jca
         private Point txt_display_cursor_power_basis = new Point(100, 100);     //k6jca
         private Point txt_display_cursor_offset_basis = new Point(100, 100);        //k6jca
+        private Point txt_screen_save_offset_basis = new Point(100, 100);        //ke9ns add
+
         private Point chk_power_basis = new Point(100, 100);        //k6jca
         private Point gr_multirx_basis = new Point(100, 100);       //k6jca
 
@@ -1505,7 +1525,7 @@ namespace PowerSDR
         private System.Windows.Forms.TextBoxTS txtVFOBMSD;
         private System.Windows.Forms.TextBoxTS txtVFOALSD;
         private System.Windows.Forms.TextBoxTS txtVFOBLSD;
-        private System.Windows.Forms.CheckBoxTS chkSR;
+        public CheckBoxTS chkSR;
         private System.Windows.Forms.ButtonTS btnTuneStepChangeSmaller;
         private System.Windows.Forms.ComboBoxTS comboTXProfile;
         private System.Windows.Forms.CheckBoxTS chkShowTXFilter;
@@ -1547,7 +1567,7 @@ namespace PowerSDR
         private System.Windows.Forms.LabelTS lblDisplayModeBottom;
         private System.Windows.Forms.CheckBoxTS chkCPDR;
         private System.Windows.Forms.CheckBoxTS chkDX;
-        private System.Windows.Forms.CheckBoxTS ckQuickPlay;
+        public CheckBoxTS ckQuickPlay;
         public CheckBoxTS ckQuickRec;
         private System.Windows.Forms.GroupBoxTS grpDisplaySplit;
         public CheckBoxTS chkRX2;
@@ -1930,7 +1950,7 @@ namespace PowerSDR
             //---------------------------------------------------------------------------------
             // ke9ns info:    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)  ==   %userprofile%\AppData\Roaming
 
-            if (app_data_path == "")
+            if (app_data_path == "") // %userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -2149,7 +2169,7 @@ namespace PowerSDR
 #endif
             if (!Directory.Exists(app_data_path))
             {
-                Directory.CreateDirectory(app_data_path);
+                Directory.CreateDirectory(app_data_path); //%userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\wisdom
             }
 
             if (db_file_name == "")
@@ -2203,6 +2223,8 @@ namespace PowerSDR
             Splash.SetStatus("Initializing Components");        // Set progress point
 
             InitializeComponent();								// Windows Forms Generated Code
+
+
 
             // for resizing
             GrabConsoleSizeBasis();
@@ -2306,7 +2328,7 @@ namespace PowerSDR
 
                 if (!db_exists) // modify bandtext and bandstack for non-US regions
                 {
-                    if (current_region != FRSRegion.US)
+                    if (current_region != FRSRegion.US) // for Flex-3000 and 5000
                     {
                         Splash.SetStatus("Harmonizing BandText");
                         DB.UpdateRegion(current_region);
@@ -2344,7 +2366,7 @@ namespace PowerSDR
 
                 if (!db_exists) // modify bandtext and bandstack for non-US regions
                 {
-                    if (current_region != FRSRegion.US)
+                    if (current_region != FRSRegion.US) // for Flex-1500
                     {
                         Splash.SetStatus("Harmonizing BandText");
                         DB.UpdateRegion(current_region);
@@ -2803,30 +2825,10 @@ namespace PowerSDR
         public bool reset_db = false;
         protected override void Dispose(bool disposing)
         {
-            this.Text += ", dispose";
+           
             Debug.WriteLine("((((((((ENTER DISPOSE ROUTINE))))))))))))))))");
 
-            if (KBON == 1)
-            {
-                powerMate.Shutdown(); // ke9ns add 
-            }
-
-
-#if (NO_DJ)
-            //mod DH1TW
-            try
-            {
-                if (DJConsoleObj != null) DJConsoleObj.Close(); //DJConsoleObj.Close();
-
-            }
-            catch (Exception)
-            {
-
-            }
-#endif
-            USB.Exit();
-            Debug.WriteLine("((((((((DISPOSE 1))))))))))))))))");
-
+            USB.Exit(); // for 1500
 
             if (disposing)
             {
@@ -2837,10 +2839,30 @@ namespace PowerSDR
             }
             base.Dispose(disposing);
 
-            ExitConsole();
+            tot_onoff = false; // ke9ns shut down any tot timer
 
-            this.Text += ", Finish exit";
+#if (NO_DJ)
+            //mod DH1TW
+            try
+            {
+                if (DJConsoleObj != null) DJConsoleObj.Close(); //DJConsoleObj.Close();
 
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("DJ exit fail " + e);
+            }
+#endif
+           
+            Debug.WriteLine("((((((((Go to EXITCONSOLE here))))))))))))))))");
+       
+            ExitConsole();   // ke9ns (DB exit, DTTSP exit, and .Dispose of forms)
+
+            Debug.WriteLine("((((((((return from EXITCONSOLE here))))))))))))))))");
+
+
+            //-------------------------------------------------------------------------
+            // ke9ns for a setup->factory defaults (reset the database)
             if (reset_db)
             {
                 string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -2854,11 +2876,8 @@ namespace PowerSDR
                 File.Delete(db_file_name);
             }
 
-
-            Debug.WriteLine("((((((((TERMINATE PROGRM 3))))))))))))))))");
-            this.Text += ", FINALFINAL";
-
-            System.Windows.Forms.Application.Exit();
+            Debug.WriteLine("((((((((TERMINATE PROGRM .......EXIT HERE.....))))))))))))))))");
+           
 
         } // dispose
 
@@ -2877,6 +2896,20 @@ namespace PowerSDR
             this.timer_cpu_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chkVAC2 = new System.Windows.Forms.CheckBoxTS();
+            this.btnZeroBeat = new System.Windows.Forms.ButtonTS();
+            this.chkVFOSplit = new System.Windows.Forms.CheckBoxTS();
+            this.btnRITReset = new System.Windows.Forms.ButtonTS();
+            this.btnXITReset = new System.Windows.Forms.ButtonTS();
+            this.udRIT = new System.Windows.Forms.NumericUpDownTS();
+            this.btnIFtoVFO = new System.Windows.Forms.ButtonTS();
+            this.chkRIT = new System.Windows.Forms.CheckBoxTS();
+            this.btnVFOSwap = new System.Windows.Forms.ButtonTS();
+            this.chkXIT = new System.Windows.Forms.CheckBoxTS();
+            this.btnVFOBtoA = new System.Windows.Forms.ButtonTS();
+            this.udXIT = new System.Windows.Forms.NumericUpDownTS();
+            this.btnVFOAtoB = new System.Windows.Forms.ButtonTS();
+            this.chkVAC1 = new System.Windows.Forms.CheckBoxTS();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
@@ -2954,7 +2987,6 @@ namespace PowerSDR
             this.comboTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.chkRXEQ = new System.Windows.Forms.CheckBoxTS();
             this.chkCPDR = new System.Windows.Forms.CheckBoxTS();
-            this.chkVAC1 = new System.Windows.Forms.CheckBoxTS();
             this.chkVOX = new System.Windows.Forms.CheckBoxTS();
             this.chkNoiseGate = new System.Windows.Forms.CheckBoxTS();
             this.udRX2FilterHigh = new System.Windows.Forms.NumericUpDownTS();
@@ -2982,18 +3014,6 @@ namespace PowerSDR
             this.chkBIN = new System.Windows.Forms.CheckBoxTS();
             this.chkNB = new System.Windows.Forms.CheckBoxTS();
             this.chkANF = new System.Windows.Forms.CheckBoxTS();
-            this.btnZeroBeat = new System.Windows.Forms.ButtonTS();
-            this.chkVFOSplit = new System.Windows.Forms.CheckBoxTS();
-            this.btnRITReset = new System.Windows.Forms.ButtonTS();
-            this.btnXITReset = new System.Windows.Forms.ButtonTS();
-            this.udRIT = new System.Windows.Forms.NumericUpDownTS();
-            this.btnIFtoVFO = new System.Windows.Forms.ButtonTS();
-            this.chkRIT = new System.Windows.Forms.CheckBoxTS();
-            this.btnVFOSwap = new System.Windows.Forms.ButtonTS();
-            this.chkXIT = new System.Windows.Forms.CheckBoxTS();
-            this.btnVFOBtoA = new System.Windows.Forms.ButtonTS();
-            this.udXIT = new System.Windows.Forms.NumericUpDownTS();
-            this.btnVFOAtoB = new System.Windows.Forms.ButtonTS();
             this.chkRX1Preamp = new System.Windows.Forms.CheckBoxTS();
             this.comboAGC = new System.Windows.Forms.ComboBoxTS();
             this.lblAGC = new System.Windows.Forms.LabelTS();
@@ -3047,7 +3067,6 @@ namespace PowerSDR
             this.btnFMMemory = new System.Windows.Forms.ButtonTS();
             this.btnFMMemoryUp = new System.Windows.Forms.ButtonTS();
             this.btnFMMemoryDown = new System.Windows.Forms.ButtonTS();
-            this.chkVAC2 = new System.Windows.Forms.CheckBoxTS();
             this.txtDisplayPeakOffset = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayCursorOffset = new System.Windows.Forms.TextBoxTS();
             this.txtDisplayCursorPower = new System.Windows.Forms.TextBoxTS();
@@ -3121,6 +3140,8 @@ namespace PowerSDR
             this.ptbDX = new PowerSDR.PrettyTrackBar();
             this.comboCWTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.picRX3Meter = new System.Windows.Forms.PictureBox();
+            this.ScreenCap = new System.Windows.Forms.PictureBox();
+            this.ScreenCap1 = new System.Windows.Forms.PictureBox();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -3157,7 +3178,8 @@ namespace PowerSDR
             this.callsignTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.ScanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.trackMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MapMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SWLMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.herosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteProfilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -3170,6 +3192,7 @@ namespace PowerSDR
             this.VFODialB = new System.Windows.Forms.PictureBox();
             this.VFODialAA = new System.Windows.Forms.PictureBox();
             this.VFODialBB = new System.Windows.Forms.PictureBox();
+            this.panelVFO = new System.Windows.Forms.PanelTS();
             this.panelTS1 = new System.Windows.Forms.PanelTS();
             this.grpVFOBetween = new System.Windows.Forms.PanelTS();
             this.lblTuneStep = new System.Windows.Forms.LabelTS();
@@ -3262,7 +3285,6 @@ namespace PowerSDR
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panelDSP = new System.Windows.Forms.PanelTS();
-            this.panelVFO = new System.Windows.Forms.PanelTS();
             this.lblCPUMeter = new System.Windows.Forms.RichTextBox();
             this.panelDateTime = new System.Windows.Forms.PanelTS();
             this.txtTime = new System.Windows.Forms.RichTextBox();
@@ -3312,14 +3334,14 @@ namespace PowerSDR
             this.btnBandHF1 = new System.Windows.Forms.ButtonTS();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.ptbSquelch = new PowerSDR.PrettyTrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.udRIT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udXIT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterLow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRIT)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udXIT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
@@ -3349,6 +3371,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX3Meter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ScreenCap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ScreenCap1)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
@@ -3359,6 +3383,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).BeginInit();
+            this.panelVFO.SuspendLayout();
             this.panelTS1.SuspendLayout();
             this.grpVFOBetween.SuspendLayout();
             this.panelBandHF.SuspendLayout();
@@ -3384,7 +3409,6 @@ namespace PowerSDR
             this.panelRX2Mixer.SuspendLayout();
             this.panelMultiRX.SuspendLayout();
             this.panelDSP.SuspendLayout();
-            this.panelVFO.SuspendLayout();
             this.panelDateTime.SuspendLayout();
             this.panelSoundControls.SuspendLayout();
             this.panelModeSpecificDigital.SuspendLayout();
@@ -3412,6 +3436,174 @@ namespace PowerSDR
             // 
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
+            // 
+            // chkVAC2
+            // 
+            resources.ApplyResources(this.chkVAC2, "chkVAC2");
+            this.chkVAC2.FlatAppearance.BorderSize = 0;
+            this.chkVAC2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVAC2.Name = "chkVAC2";
+            this.toolTip1.SetToolTip(this.chkVAC2, resources.GetString("chkVAC2.ToolTip"));
+            this.chkVAC2.CheckedChanged += new System.EventHandler(this.chkVAC2_CheckedChanged);
+            this.chkVAC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVAC2_MouseDown);
+            // 
+            // btnZeroBeat
+            // 
+            resources.ApplyResources(this.btnZeroBeat, "btnZeroBeat");
+            this.btnZeroBeat.FlatAppearance.BorderSize = 0;
+            this.btnZeroBeat.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnZeroBeat.Name = "btnZeroBeat";
+            this.toolTip1.SetToolTip(this.btnZeroBeat, resources.GetString("btnZeroBeat.ToolTip"));
+            this.btnZeroBeat.Click += new System.EventHandler(this.btnZeroBeat_Click);
+            // 
+            // chkVFOSplit
+            // 
+            resources.ApplyResources(this.chkVFOSplit, "chkVFOSplit");
+            this.chkVFOSplit.FlatAppearance.BorderSize = 0;
+            this.chkVFOSplit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVFOSplit.Name = "chkVFOSplit";
+            this.toolTip1.SetToolTip(this.chkVFOSplit, resources.GetString("chkVFOSplit.ToolTip"));
+            this.chkVFOSplit.CheckedChanged += new System.EventHandler(this.chkVFOSplit_CheckedChanged);
+            // 
+            // btnRITReset
+            // 
+            this.btnRITReset.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnRITReset, "btnRITReset");
+            this.btnRITReset.Name = "btnRITReset";
+            this.toolTip1.SetToolTip(this.btnRITReset, resources.GetString("btnRITReset.ToolTip"));
+            this.btnRITReset.Click += new System.EventHandler(this.btnRITReset_Click);
+            // 
+            // btnXITReset
+            // 
+            this.btnXITReset.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnXITReset, "btnXITReset");
+            this.btnXITReset.Name = "btnXITReset";
+            this.toolTip1.SetToolTip(this.btnXITReset, resources.GetString("btnXITReset.ToolTip"));
+            this.btnXITReset.Click += new System.EventHandler(this.btnXITReset_Click);
+            // 
+            // udRIT
+            // 
+            this.udRIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.udRIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.udRIT.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.udRIT, "udRIT");
+            this.udRIT.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.udRIT.Minimum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            -2147483648});
+            this.udRIT.Name = "udRIT";
+            this.toolTip1.SetToolTip(this.udRIT, resources.GetString("udRIT.ToolTip"));
+            this.udRIT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udRIT.ValueChanged += new System.EventHandler(this.udRIT_ValueChanged);
+            this.udRIT.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udRIT.LostFocus += new System.EventHandler(this.udRIT_LostFocus);
+            // 
+            // btnIFtoVFO
+            // 
+            this.btnIFtoVFO.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnIFtoVFO, "btnIFtoVFO");
+            this.btnIFtoVFO.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnIFtoVFO.Name = "btnIFtoVFO";
+            this.toolTip1.SetToolTip(this.btnIFtoVFO, resources.GetString("btnIFtoVFO.ToolTip"));
+            this.btnIFtoVFO.Click += new System.EventHandler(this.btnIFtoVFO_Click);
+            // 
+            // chkRIT
+            // 
+            resources.ApplyResources(this.chkRIT, "chkRIT");
+            this.chkRIT.FlatAppearance.BorderSize = 0;
+            this.chkRIT.Name = "chkRIT";
+            this.toolTip1.SetToolTip(this.chkRIT, resources.GetString("chkRIT.ToolTip"));
+            this.chkRIT.CheckedChanged += new System.EventHandler(this.chkRIT_CheckedChanged);
+            // 
+            // btnVFOSwap
+            // 
+            this.btnVFOSwap.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnVFOSwap, "btnVFOSwap");
+            this.btnVFOSwap.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnVFOSwap.Name = "btnVFOSwap";
+            this.toolTip1.SetToolTip(this.btnVFOSwap, resources.GetString("btnVFOSwap.ToolTip"));
+            this.btnVFOSwap.Click += new System.EventHandler(this.btnVFOSwap_Click);
+            // 
+            // chkXIT
+            // 
+            resources.ApplyResources(this.chkXIT, "chkXIT");
+            this.chkXIT.FlatAppearance.BorderSize = 0;
+            this.chkXIT.Name = "chkXIT";
+            this.toolTip1.SetToolTip(this.chkXIT, resources.GetString("chkXIT.ToolTip"));
+            this.chkXIT.CheckedChanged += new System.EventHandler(this.chkXIT_CheckedChanged);
+            // 
+            // btnVFOBtoA
+            // 
+            this.btnVFOBtoA.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnVFOBtoA, "btnVFOBtoA");
+            this.btnVFOBtoA.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnVFOBtoA.Name = "btnVFOBtoA";
+            this.toolTip1.SetToolTip(this.btnVFOBtoA, resources.GetString("btnVFOBtoA.ToolTip"));
+            this.btnVFOBtoA.Click += new System.EventHandler(this.btnVFOBtoA_Click);
+            // 
+            // udXIT
+            // 
+            this.udXIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.udXIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.udXIT.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.udXIT, "udXIT");
+            this.udXIT.Maximum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            0});
+            this.udXIT.Minimum = new decimal(new int[] {
+            99999,
+            0,
+            0,
+            -2147483648});
+            this.udXIT.Name = "udXIT";
+            this.toolTip1.SetToolTip(this.udXIT, resources.GetString("udXIT.ToolTip"));
+            this.udXIT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udXIT.ValueChanged += new System.EventHandler(this.udXIT_ValueChanged);
+            this.udXIT.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udXIT.LostFocus += new System.EventHandler(this.udXIT_LostFocus);
+            // 
+            // btnVFOAtoB
+            // 
+            this.btnVFOAtoB.FlatAppearance.BorderSize = 0;
+            resources.ApplyResources(this.btnVFOAtoB, "btnVFOAtoB");
+            this.btnVFOAtoB.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnVFOAtoB.Name = "btnVFOAtoB";
+            this.toolTip1.SetToolTip(this.btnVFOAtoB, resources.GetString("btnVFOAtoB.ToolTip"));
+            this.btnVFOAtoB.Click += new System.EventHandler(this.btnVFOAtoB_Click);
+            // 
+            // chkVAC1
+            // 
+            resources.ApplyResources(this.chkVAC1, "chkVAC1");
+            this.chkVAC1.FlatAppearance.BorderSize = 0;
+            this.chkVAC1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkVAC1.Name = "chkVAC1";
+            this.toolTip1.SetToolTip(this.chkVAC1, resources.GetString("chkVAC1.ToolTip"));
+            this.chkVAC1.CheckedChanged += new System.EventHandler(this.chkVAC1_CheckedChanged);
+            this.chkVAC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVAC1_MouseDown);
             // 
             // richTextBox1
             // 
@@ -3513,7 +3705,6 @@ namespace PowerSDR
             this.regBox1.Name = "regBox1";
             this.regBox1.ReadOnly = true;
             this.toolTip1.SetToolTip(this.regBox1, resources.GetString("regBox1.ToolTip"));
-            this.regBox1.TextChanged += new System.EventHandler(this.regBox1_TextChanged);
             this.regBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.regBox1_MouseDown);
             this.regBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.regBox_MouseUp);
             // 
@@ -3920,7 +4111,6 @@ namespace PowerSDR
             this.ckQuickPlay.Name = "ckQuickPlay";
             this.toolTip1.SetToolTip(this.ckQuickPlay, resources.GetString("ckQuickPlay.ToolTip"));
             this.ckQuickPlay.CheckedChanged += new System.EventHandler(this.ckQuickPlay_CheckedChanged);
-            this.ckQuickPlay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ckQuickPlay_MouseUp);
             this.ckQuickPlay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ckQuickPlay_MouseDown);
             // 
             // chkMON
@@ -4279,16 +4469,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkCPDR, resources.GetString("chkCPDR.ToolTip"));
             this.chkCPDR.CheckedChanged += new System.EventHandler(this.chkCPDR_CheckedChanged);
             // 
-            // chkVAC1
-            // 
-            resources.ApplyResources(this.chkVAC1, "chkVAC1");
-            this.chkVAC1.FlatAppearance.BorderSize = 0;
-            this.chkVAC1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkVAC1.Name = "chkVAC1";
-            this.toolTip1.SetToolTip(this.chkVAC1, resources.GetString("chkVAC1.ToolTip"));
-            this.chkVAC1.CheckedChanged += new System.EventHandler(this.chkVAC1_CheckedChanged);
-            this.chkVAC1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVAC1_MouseDown);
-            // 
             // chkVOX
             // 
             resources.ApplyResources(this.chkVOX, "chkVOX");
@@ -4587,154 +4767,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkANF, resources.GetString("chkANF.ToolTip"));
             this.chkANF.CheckedChanged += new System.EventHandler(this.chkANF_CheckedChanged);
             this.chkANF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkANF_MouseDown);
-            // 
-            // btnZeroBeat
-            // 
-            resources.ApplyResources(this.btnZeroBeat, "btnZeroBeat");
-            this.btnZeroBeat.FlatAppearance.BorderSize = 0;
-            this.btnZeroBeat.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnZeroBeat.Name = "btnZeroBeat";
-            this.toolTip1.SetToolTip(this.btnZeroBeat, resources.GetString("btnZeroBeat.ToolTip"));
-            this.btnZeroBeat.Click += new System.EventHandler(this.btnZeroBeat_Click);
-            // 
-            // chkVFOSplit
-            // 
-            resources.ApplyResources(this.chkVFOSplit, "chkVFOSplit");
-            this.chkVFOSplit.FlatAppearance.BorderSize = 0;
-            this.chkVFOSplit.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkVFOSplit.Name = "chkVFOSplit";
-            this.toolTip1.SetToolTip(this.chkVFOSplit, resources.GetString("chkVFOSplit.ToolTip"));
-            this.chkVFOSplit.CheckedChanged += new System.EventHandler(this.chkVFOSplit_CheckedChanged);
-            // 
-            // btnRITReset
-            // 
-            this.btnRITReset.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnRITReset, "btnRITReset");
-            this.btnRITReset.Name = "btnRITReset";
-            this.toolTip1.SetToolTip(this.btnRITReset, resources.GetString("btnRITReset.ToolTip"));
-            this.btnRITReset.Click += new System.EventHandler(this.btnRITReset_Click);
-            // 
-            // btnXITReset
-            // 
-            this.btnXITReset.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnXITReset, "btnXITReset");
-            this.btnXITReset.Name = "btnXITReset";
-            this.toolTip1.SetToolTip(this.btnXITReset, resources.GetString("btnXITReset.ToolTip"));
-            this.btnXITReset.Click += new System.EventHandler(this.btnXITReset_Click);
-            // 
-            // udRIT
-            // 
-            this.udRIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.udRIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.udRIT.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            resources.ApplyResources(this.udRIT, "udRIT");
-            this.udRIT.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-            this.udRIT.Minimum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            -2147483648});
-            this.udRIT.Name = "udRIT";
-            this.toolTip1.SetToolTip(this.udRIT, resources.GetString("udRIT.ToolTip"));
-            this.udRIT.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udRIT.ValueChanged += new System.EventHandler(this.udRIT_ValueChanged);
-            this.udRIT.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
-            this.udRIT.LostFocus += new System.EventHandler(this.udRIT_LostFocus);
-            // 
-            // btnIFtoVFO
-            // 
-            this.btnIFtoVFO.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnIFtoVFO, "btnIFtoVFO");
-            this.btnIFtoVFO.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnIFtoVFO.Name = "btnIFtoVFO";
-            this.toolTip1.SetToolTip(this.btnIFtoVFO, resources.GetString("btnIFtoVFO.ToolTip"));
-            this.btnIFtoVFO.Click += new System.EventHandler(this.btnIFtoVFO_Click);
-            // 
-            // chkRIT
-            // 
-            resources.ApplyResources(this.chkRIT, "chkRIT");
-            this.chkRIT.FlatAppearance.BorderSize = 0;
-            this.chkRIT.Name = "chkRIT";
-            this.toolTip1.SetToolTip(this.chkRIT, resources.GetString("chkRIT.ToolTip"));
-            this.chkRIT.CheckedChanged += new System.EventHandler(this.chkRIT_CheckedChanged);
-            // 
-            // btnVFOSwap
-            // 
-            this.btnVFOSwap.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnVFOSwap, "btnVFOSwap");
-            this.btnVFOSwap.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnVFOSwap.Name = "btnVFOSwap";
-            this.toolTip1.SetToolTip(this.btnVFOSwap, resources.GetString("btnVFOSwap.ToolTip"));
-            this.btnVFOSwap.Click += new System.EventHandler(this.btnVFOSwap_Click);
-            // 
-            // chkXIT
-            // 
-            resources.ApplyResources(this.chkXIT, "chkXIT");
-            this.chkXIT.FlatAppearance.BorderSize = 0;
-            this.chkXIT.Name = "chkXIT";
-            this.toolTip1.SetToolTip(this.chkXIT, resources.GetString("chkXIT.ToolTip"));
-            this.chkXIT.CheckedChanged += new System.EventHandler(this.chkXIT_CheckedChanged);
-            // 
-            // btnVFOBtoA
-            // 
-            this.btnVFOBtoA.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnVFOBtoA, "btnVFOBtoA");
-            this.btnVFOBtoA.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnVFOBtoA.Name = "btnVFOBtoA";
-            this.toolTip1.SetToolTip(this.btnVFOBtoA, resources.GetString("btnVFOBtoA.ToolTip"));
-            this.btnVFOBtoA.Click += new System.EventHandler(this.btnVFOBtoA_Click);
-            // 
-            // udXIT
-            // 
-            this.udXIT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.udXIT.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.udXIT.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            resources.ApplyResources(this.udXIT, "udXIT");
-            this.udXIT.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-            this.udXIT.Minimum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            -2147483648});
-            this.udXIT.Name = "udXIT";
-            this.toolTip1.SetToolTip(this.udXIT, resources.GetString("udXIT.ToolTip"));
-            this.udXIT.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udXIT.ValueChanged += new System.EventHandler(this.udXIT_ValueChanged);
-            this.udXIT.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
-            this.udXIT.LostFocus += new System.EventHandler(this.udXIT_LostFocus);
-            // 
-            // btnVFOAtoB
-            // 
-            this.btnVFOAtoB.FlatAppearance.BorderSize = 0;
-            resources.ApplyResources(this.btnVFOAtoB, "btnVFOAtoB");
-            this.btnVFOAtoB.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnVFOAtoB.Name = "btnVFOAtoB";
-            this.toolTip1.SetToolTip(this.btnVFOAtoB, resources.GetString("btnVFOAtoB.ToolTip"));
-            this.btnVFOAtoB.Click += new System.EventHandler(this.btnVFOAtoB_Click);
             // 
             // chkRX1Preamp
             // 
@@ -5351,16 +5383,6 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.btnFMMemoryDown, resources.GetString("btnFMMemoryDown.ToolTip"));
             this.btnFMMemoryDown.Click += new System.EventHandler(this.btnFMMemoryDown_Click);
             // 
-            // chkVAC2
-            // 
-            resources.ApplyResources(this.chkVAC2, "chkVAC2");
-            this.chkVAC2.FlatAppearance.BorderSize = 0;
-            this.chkVAC2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkVAC2.Name = "chkVAC2";
-            this.toolTip1.SetToolTip(this.chkVAC2, resources.GetString("chkVAC2.ToolTip"));
-            this.chkVAC2.CheckedChanged += new System.EventHandler(this.chkVAC2_CheckedChanged);
-            this.chkVAC2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVAC2_MouseDown);
-            // 
             // txtDisplayPeakOffset
             // 
             this.txtDisplayPeakOffset.BackColor = System.Drawing.Color.Black;
@@ -5383,6 +5405,7 @@ namespace PowerSDR
             this.txtDisplayCursorOffset.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayCursorOffset.Name = "txtDisplayCursorOffset";
             this.txtDisplayCursorOffset.ReadOnly = true;
+            this.txtDisplayCursorOffset.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayCursorOffset, resources.GetString("txtDisplayCursorOffset.ToolTip"));
             this.txtDisplayCursorOffset.GotFocus += new System.EventHandler(this.HideFocus);
             // 
@@ -5395,6 +5418,7 @@ namespace PowerSDR
             this.txtDisplayCursorPower.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayCursorPower.Name = "txtDisplayCursorPower";
             this.txtDisplayCursorPower.ReadOnly = true;
+            this.txtDisplayCursorPower.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayCursorPower, resources.GetString("txtDisplayCursorPower.ToolTip"));
             // 
             // txtDisplayCursorFreq
@@ -5434,13 +5458,14 @@ namespace PowerSDR
             // 
             // autoBrightBox
             // 
-            this.autoBrightBox.BackColor = System.Drawing.Color.Black;
+            this.autoBrightBox.BackColor = System.Drawing.Color.DarkBlue;
             resources.ApplyResources(this.autoBrightBox, "autoBrightBox");
             this.autoBrightBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.autoBrightBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.autoBrightBox.ForeColor = System.Drawing.SystemColors.Info;
             this.autoBrightBox.Name = "autoBrightBox";
             this.autoBrightBox.ReadOnly = true;
+            this.autoBrightBox.ShortcutsEnabled = false;
             this.autoBrightBox.TabStop = false;
             this.toolTip1.SetToolTip(this.autoBrightBox, resources.GetString("autoBrightBox.ToolTip"));
             this.autoBrightBox.Click += new System.EventHandler(this.autoBrightBox_Click);
@@ -6286,6 +6311,24 @@ namespace PowerSDR
             this.picRX3Meter.Click += new System.EventHandler(this.picRX3Meter_Click);
             this.picRX3Meter.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX3Meter_Paint);
             // 
+            // ScreenCap
+            // 
+            this.ScreenCap.Image = global::PowerSDR.Properties.Resources.SC;
+            resources.ApplyResources(this.ScreenCap, "ScreenCap");
+            this.ScreenCap.Name = "ScreenCap";
+            this.ScreenCap.TabStop = false;
+            this.toolTip1.SetToolTip(this.ScreenCap, resources.GetString("ScreenCap.ToolTip"));
+            this.ScreenCap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ScreenCap_MouseDown);
+            this.ScreenCap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ScreenCap_MouseUp);
+            // 
+            // ScreenCap1
+            // 
+            this.ScreenCap1.Image = global::PowerSDR.Properties.Resources.SCB;
+            resources.ApplyResources(this.ScreenCap1, "ScreenCap1");
+            this.ScreenCap1.Name = "ScreenCap1";
+            this.ScreenCap1.TabStop = false;
+            this.toolTip1.SetToolTip(this.ScreenCap1, resources.GetString("ScreenCap1.ToolTip"));
+            // 
             // timer_clock
             // 
             this.timer_clock.Enabled = true;
@@ -6417,7 +6460,8 @@ namespace PowerSDR
             this.callsignTextBox,
             this.ScanMenuItem,
             this.spotterMenu,
-            this.trackMenuItem1,
+            this.MapMenuItem,
+            this.SWLMenuItem,
             this.herosToolStripMenuItem,
             this.aboutToolStripMenuItem,
             this.remoteProfilesToolStripMenuItem,
@@ -6546,9 +6590,9 @@ namespace PowerSDR
             // 
             // ScanMenuItem
             // 
+            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
             this.ScanMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.ScanMenuItem.Name = "ScanMenuItem";
-            resources.ApplyResources(this.ScanMenuItem, "ScanMenuItem");
             this.ScanMenuItem.Click += new System.EventHandler(this.ScanMenuItem_Click);
             // 
             // spotterMenu
@@ -6560,14 +6604,22 @@ namespace PowerSDR
             this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
             this.spotterMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.spotterMenu_MouseDown);
             // 
-            // trackMenuItem1
+            // MapMenuItem
             // 
-            resources.ApplyResources(this.trackMenuItem1, "trackMenuItem1");
-            this.trackMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.trackMenuItem1.Name = "trackMenuItem1";
-            this.trackMenuItem1.Click += new System.EventHandler(this.trackMenuItem1_Click);
-            this.trackMenuItem1.MouseEnter += new System.EventHandler(this.trackMenuItem1_MouseEnter);
-            this.trackMenuItem1.MouseLeave += new System.EventHandler(this.trackMenuItem1_MouseLeave);
+            resources.ApplyResources(this.MapMenuItem, "MapMenuItem");
+            this.MapMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.MapMenuItem.Name = "MapMenuItem";
+            this.MapMenuItem.Click += new System.EventHandler(this.trackMenuItem1_Click);
+            this.MapMenuItem.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MapMenuItem_MouseDown);
+            this.MapMenuItem.MouseEnter += new System.EventHandler(this.trackMenuItem1_MouseEnter);
+            this.MapMenuItem.MouseLeave += new System.EventHandler(this.trackMenuItem1_MouseLeave);
+            // 
+            // SWLMenuItem
+            // 
+            resources.ApplyResources(this.SWLMenuItem, "SWLMenuItem");
+            this.SWLMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.SWLMenuItem.Name = "SWLMenuItem";
+            this.SWLMenuItem.Click += new System.EventHandler(this.SWLMenuItem_Click);
             // 
             // herosToolStripMenuItem
             // 
@@ -6652,6 +6704,27 @@ namespace PowerSDR
             this.VFODialBB.Image = global::PowerSDR.Properties.Resources.arrowB;
             this.VFODialBB.Name = "VFODialBB";
             this.VFODialBB.TabStop = false;
+            // 
+            // panelVFO
+            // 
+            resources.ApplyResources(this.panelVFO, "panelVFO");
+            this.panelVFO.BackColor = System.Drawing.Color.Transparent;
+            this.panelVFO.Controls.Add(this.chkVAC2);
+            this.panelVFO.Controls.Add(this.btnZeroBeat);
+            this.panelVFO.Controls.Add(this.chkVFOSplit);
+            this.panelVFO.Controls.Add(this.btnRITReset);
+            this.panelVFO.Controls.Add(this.btnXITReset);
+            this.panelVFO.Controls.Add(this.udRIT);
+            this.panelVFO.Controls.Add(this.btnIFtoVFO);
+            this.panelVFO.Controls.Add(this.chkRIT);
+            this.panelVFO.Controls.Add(this.btnVFOSwap);
+            this.panelVFO.Controls.Add(this.chkXIT);
+            this.panelVFO.Controls.Add(this.btnVFOBtoA);
+            this.panelVFO.Controls.Add(this.udXIT);
+            this.panelVFO.Controls.Add(this.btnVFOAtoB);
+            this.panelVFO.Controls.Add(this.chkVAC1);
+            this.panelVFO.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panelVFO.Name = "panelVFO";
             // 
             // panelTS1
             // 
@@ -7612,27 +7685,6 @@ namespace PowerSDR
             this.panelDSP.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelDSP.Name = "panelDSP";
             // 
-            // panelVFO
-            // 
-            resources.ApplyResources(this.panelVFO, "panelVFO");
-            this.panelVFO.BackColor = System.Drawing.Color.Transparent;
-            this.panelVFO.Controls.Add(this.chkVAC2);
-            this.panelVFO.Controls.Add(this.btnZeroBeat);
-            this.panelVFO.Controls.Add(this.chkVFOSplit);
-            this.panelVFO.Controls.Add(this.btnRITReset);
-            this.panelVFO.Controls.Add(this.btnXITReset);
-            this.panelVFO.Controls.Add(this.udRIT);
-            this.panelVFO.Controls.Add(this.btnIFtoVFO);
-            this.panelVFO.Controls.Add(this.chkRIT);
-            this.panelVFO.Controls.Add(this.btnVFOSwap);
-            this.panelVFO.Controls.Add(this.chkXIT);
-            this.panelVFO.Controls.Add(this.btnVFOBtoA);
-            this.panelVFO.Controls.Add(this.udXIT);
-            this.panelVFO.Controls.Add(this.btnVFOAtoB);
-            this.panelVFO.Controls.Add(this.chkVAC1);
-            this.panelVFO.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panelVFO.Name = "panelVFO";
-            // 
             // lblCPUMeter
             // 
             this.lblCPUMeter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
@@ -7801,6 +7853,8 @@ namespace PowerSDR
             this.panelDisplay.Controls.Add(this.txtDisplayPeakFreq);
             this.panelDisplay.Controls.Add(this.lblDisplayPan);
             this.panelDisplay.Controls.Add(this.buttonCQ);
+            this.panelDisplay.Controls.Add(this.ScreenCap);
+            this.panelDisplay.Controls.Add(this.ScreenCap1);
             this.panelDisplay.Name = "panelDisplay";
             // 
             // picDisplay
@@ -8147,6 +8201,7 @@ namespace PowerSDR
             // 
             resources.ApplyResources(this, "$this");
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.panelVFO);
             this.Controls.Add(this.panelTS1);
             this.Controls.Add(this.VFODialBB);
             this.Controls.Add(this.VFODialAA);
@@ -8171,7 +8226,6 @@ namespace PowerSDR
             this.Controls.Add(this.panelRX2Mixer);
             this.Controls.Add(this.panelMultiRX);
             this.Controls.Add(this.panelDSP);
-            this.Controls.Add(this.panelVFO);
             this.Controls.Add(this.panelDateTime);
             this.Controls.Add(this.panelSoundControls);
             this.Controls.Add(this.comboRX2Band);
@@ -8205,14 +8259,14 @@ namespace PowerSDR
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Console_MouseWheel);
             this.Resize += new System.EventHandler(this.Console_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.udRIT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udXIT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWBreakInDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterLow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udRIT)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udXIT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
@@ -8242,6 +8296,8 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.ptbCPDR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRX3Meter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ScreenCap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ScreenCap1)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
@@ -8253,6 +8309,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.VFODialB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VFODialAA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VFODialBB)).EndInit();
+            this.panelVFO.ResumeLayout(false);
             this.panelTS1.ResumeLayout(false);
             this.grpVFOBetween.ResumeLayout(false);
             this.grpVFOBetween.PerformLayout();
@@ -8282,7 +8339,6 @@ namespace PowerSDR
             this.panelRX2Mixer.ResumeLayout(false);
             this.panelMultiRX.ResumeLayout(false);
             this.panelDSP.ResumeLayout(false);
-            this.panelVFO.ResumeLayout(false);
             this.panelDateTime.ResumeLayout(false);
             this.panelSoundControls.ResumeLayout(false);
             this.panelModeSpecificDigital.ResumeLayout(false);
@@ -8497,7 +8553,9 @@ namespace PowerSDR
 
                     //-------------------------------------------------------------------------------------------------
 
-                    Process p = Process.Start(Application.StartupPath + "\\fftw_wisdom.exe", "\"" + app_data_path);
+                    Process p = Process.Start(Application.StartupPath + "\\fftw_wisdom.exe", "\"" + app_data_path);  //ke9ns  C:\Program Files (x86)\FlexRadio Systems\PowerSDR v2.8.0
+
+                    // ke9ns creates wisdom file. used by sdr.c file
 
                     MessageBox.Show("Running one time optimization.  Please wait patiently for " +
                         "this process to finish.\nTypically the optimization takes no more than 3-5 minutes.",
@@ -8631,11 +8689,13 @@ namespace PowerSDR
 
 
             SpotControl.console = this;           // ke9ns add  spot.cs to this console so spot can talk to console
+           
             ScanControl.console = this;           // ke9ns add  scan.cs to this console so scan can talk to console
             StackControl.console = this;          // ke9ns add  stack.cs to this console so stack can talk to console
             SwlControl.console = this;            // ke9ns add  swl.cs to this console so stack can talk to console
 
             helpbox.console = this;            // ke9ns add  helpbox.cs to this console so stack can talk to console
+            helpbox1.console = this;            // ke9ns add  helpbox1.cs to this console so stack can talk to console
 
             if (hid_init) Flex1500.Console = this;
 
@@ -9059,6 +9119,7 @@ namespace PowerSDR
             StackForm = new StackControl(this);     // ke9ns add communicate with bandstack controls
             SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
             helpboxForm = new helpbox(this);         // ke9ns add communicate with helpbox list controls
+            helpbox1Form = new helpbox1(this);         // ke9ns add communicate with helpbox1 list controls
 
             httpFile = new Http(this);              // ke9ns add
 
@@ -9172,6 +9233,7 @@ namespace PowerSDR
             comboFMCTCSS.Text = "100.0";
 
             GetState();                         // recall saved state
+
 
 
 
@@ -9324,8 +9386,18 @@ namespace PowerSDR
 
             if (flexcontrol_autodetect) FlexControlScan();
 
-        } //Initconsole
+            Debug.WriteLine("SWLLOAD1");
 
+            
+            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
+            
+            SpotForm.SWLLoad(); // ke9ns add preload up the SWL listin
+
+
+            } //Initconsole
+
+
+        //==================================================================
         private void FlexControlScan()
         {
             Thread t = new Thread(new ThreadStart(FlexControlScan_ThreadFunction));
@@ -9397,7 +9469,7 @@ namespace PowerSDR
                 dsp_tx.Update = true;
                 dsp_tx.Force = false;
             }
-        }
+        } // SYNCDSP()
 
 
         //================================================================
@@ -9405,13 +9477,10 @@ namespace PowerSDR
 
         public void ExitConsole()
         {
-            this.Text += " , exit console";
+          
+            Debug.WriteLine("((((((((EXIT CONSOLE ENTER))))))))))))))))");
 
-            Debug.WriteLine("((((((((TERMINATE PROGRM 1))))))))))))))))");
-
-            vfodial = false; // ke9ns add to terminal the dial routine
-            N1MM_ON = false; // ke9ns add to shut off N1MM
-
+         
             try
             {   // always close Pal as it was open to detect radios
                 //if (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)
@@ -9420,43 +9489,117 @@ namespace PowerSDR
                     FWCMidi.Close();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Debug.WriteLine("PAL exit fail " + e);
             }
 
-            this.Text += " , exitconsole";
-
-            chkPower.Checked = false;   // make sure power is off		
-            ckQuickRec.Checked = false; // make sure recording is stopped
-
+           //----------------------------------------------------------------------------------
+         
             Debug.WriteLine("((((((((SAVETXPROFILEDATA))))))))))))))))");
 
-
-            if (SaveTXProfileOnExit == true)    // save the tx profile
+            if (setupForm != null)
             {
-                setupForm.SaveTXProfileData();
+                if (SaveTXProfileOnExit == true)    // save the tx profile
+                {
+                    setupForm.SaveTXProfileData();
+                }
             }
 
-            Debug.WriteLine("((((((((SAVEING DATABASE))))))))))))))))");
+            Debug.WriteLine("((((((((SAVING DATABASE))))))))))))))))");
 
             DB.Exit();                  // close and save database
 
 
-            Debug.WriteLine("((((((((BEGIN DISPOSING))))))))))))))))");
+            //----------------------------------------------------------------
 
+            Debug.WriteLine("((((((((BEGIN DISPOSING FORMS))))))))))))))))");
 
             try
             {
                 if (setupForm != null) setupForm.Dispose();
+                
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure1 " + e);
             }
+
+            try
+            {
+                if (memoryForm != null) memoryForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure14 " + e);
+            }
+
             try
             {
                 if (cwxForm != null) cwxForm.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure2 " + e);
+            }
+
+            try
+            {
+                if (StackForm != null) StackForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure18 " + e);
+            }
+
+            try
+            {
+                if (SpotForm != null) SpotForm.Dispose(); // ke9ns add
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure19 " + e);
+            }
+
+            try
+            {
+                if (ScanForm != null) ScanForm.Dispose(); // ke9ns add scanner form
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure20 " + e);
+            }
+
+
+            try
+            {
+                if (IDBOXForm != null) IDBOXForm.Dispose(); // ke9ns add ID timer box
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure21 " + e);
+            }
+
+            try
+            {
+                if (helpboxForm != null) helpboxForm.Dispose(); // ke9ns add help screen
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure22 " + e);
+            }
+            try
+            {
+                if (helpbox1Form != null) helpbox1Form.Dispose(); // ke9ns add help screen
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Dispose failure22a " + e);
+            }
+
+            try
+            {
+                if (TOTBOXForm != null) TOTBOXForm.Dispose(); // ke9ns add time out timer
             }
             catch (Exception e)
             {
@@ -9468,7 +9611,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure3 " + e);
             }
             try
             {
@@ -9476,7 +9619,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure4 " + e);
             }
 
             try
@@ -9485,7 +9628,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure5 " + e);
             }
 
             try
@@ -9494,7 +9637,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure6 " + e);
             }
 
             try
@@ -9503,7 +9646,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure7 " + e);
             }
 
             try
@@ -9512,7 +9655,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure8 " + e);
             }
 
             try
@@ -9521,7 +9664,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure9 " + e);
             }
 
             try
@@ -9530,7 +9673,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure10 " + e);
             }
 
             try
@@ -9539,7 +9682,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure11 " + e);
             }
 
             try
@@ -9548,7 +9691,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure12 " + e);
             }
 
             try
@@ -9557,25 +9700,17 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure13 " + e);
             }
 
-            try
-            {
-                if (memoryForm != null) memoryForm.Dispose();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
+           
             try
             {
                 if (preSelForm != null) preSelForm.Dispose();
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure15 " + e);
             }
 
             try
@@ -9584,7 +9719,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure16 " + e);
             }
 
             try
@@ -9593,71 +9728,7 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (StackForm != null) StackForm.Dispose(); // ke9ns add
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (SpotForm != null) SpotForm.Dispose(); // ke9ns add
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (ScanForm != null) ScanForm.Dispose(); // ke9ns add scanner form
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-
-            try
-            {
-                if (IDBOXForm != null) IDBOXForm.Dispose(); // ke9ns add ID timer box
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (helpboxForm != null) helpboxForm.Dispose(); // ke9ns add help screen
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (StackForm != null) StackForm.Dispose(); // ke9ns add bandstack
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
-            }
-
-            try
-            {
-                if (TOTBOXForm != null) TOTBOXForm.Dispose(); // ke9ns add time out timer
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure17 " + e);
             }
 
             try
@@ -9666,10 +9737,12 @@ namespace PowerSDR
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Dispose failure " + e);
+                Debug.WriteLine("Dispose failure30 " + e);
             }
 
-
+            //-------------------------------------------------------------------
+            chkPower.Checked = false;   // make sure power is off		
+            ckQuickRec.Checked = false; // make sure recording is stopped
 
             Debug.WriteLine("((((((((PA TERMINATE))))))))))))))))");
 
@@ -9677,11 +9750,15 @@ namespace PowerSDR
             //			if(draw_display_thread != null)
             //				draw_display_thread.Abort();
 
-            //Parallel.ExitPortTalk();	// close parallel port driver
+            //Parallel.ExitPortTalk();	// close parallel port driver (SDR-1000 ?)
             PA19.PA_Terminate();        // terminate audio interface
                                         //Mixer.RestoreState();		// restore initial mixer state
-            DttSP.Exit();				// deallocate DSP variables
+            DttSP.Exit();               // deallocate DSP variables
+
+
             Debug.WriteLine("((((((((DTTSP EXIT))))))))))))))))");
+           
+            //-----------------------------------------------------------------------------------
             // release PowerSDR Mutex from instance that created it
             try
             {
@@ -9690,18 +9767,15 @@ namespace PowerSDR
                     psdr2_mutex.ReleaseMutex();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine("Mutex exit fail " + e);
 
             }
+           
+           // ke9ns return back to dispose()
 
-            //  System.Windows.Forms.Application.Exit();
-
-            Debug.WriteLine("((((((((TERMINATE PROGRM 2))))))))))))))))");
-
-            this.Text += " , console exiting";
-
-        } // exit console here
+        } // ExitConsole()
 
 
 
@@ -9764,6 +9838,7 @@ namespace PowerSDR
 
             writer2.Write((byte)setupForm.tune_step_index2);      // save Powermate knob index
 
+           
             writer2.Write("end");
 
             //  writer2.Write(callsign);                  // callsign test
@@ -10386,6 +10461,10 @@ namespace PowerSDR
         // ke9ns mod  LOAD UP DATABASE into PowerSDR 
         //=======================================================================================
         //=======================================================================================
+       
+       
+       
+
         public void GetState()
         {
             // Automatically restores all controls from the database in the
@@ -10517,6 +10596,8 @@ namespace PowerSDR
 
 
                 }
+
+              
 
                 reader2.Close();    // close  file
                 stream2.Close();   // close stream
@@ -11804,7 +11885,10 @@ namespace PowerSDR
 			Common.ForceFormOnScreen(setupForm);
 
             tempVFOAFreq = VFOAFreq; // ke9ns add get CTUN ready quickly
-          
+
+           
+           
+
         } // getstate
 
         private string VerToString(uint ver)
@@ -14056,7 +14140,7 @@ namespace PowerSDR
             foreach (Control c in panelBandGN.Controls) // ke9ns add
             {
                 RadioButtonTS b = c as RadioButtonTS;
-                Debug.WriteLine("enableallbands");
+             //   Debug.WriteLine("enableallbands");
 
                 if (b != null)
                 {
@@ -14350,7 +14434,7 @@ namespace PowerSDR
 						DB.SaveBandStack("6M", band_6m_index, mode, filter, freq);
 					break;
 				case Band.B2M:
-					if(freq >= 144.0 && freq < 146.0) // ke9ns test was 144.0 and 146.0
+					if(freq >= 144.0 && freq < 148.0) // ke9ns test was 144.0 and 146.0
 						DB.SaveBandStack("2M", band_2m_index, mode, filter, freq);
 					break;
 				case Band.WWV:
@@ -14461,7 +14545,7 @@ namespace PowerSDR
                     break;
 
                 case Band.B19M:
-                    if (freq >= 15.1 && freq < 17.0)
+                    if (freq >= 14.350 && freq < 17.0)
                         DB.SaveBandStack("19M", band_19m_index, mode, filter, freq);
                     break;
 
@@ -15483,19 +15567,25 @@ namespace PowerSDR
         //=====================================================================================
 		private Band BandByFreq(double freq, int xvtr_index, bool tx, FRSRegion region)
 		{
-          
+
+            // ke9ns add A because both VFOA and VFOB call this routine, but panelBandGN,HF, and VHF are only for VFOA
+
+            bool A = false;
+            if (freq == VFOAFreq) A = true;
+
+
             if (xvtr_index >= 0)
             {
-                panelBandGN.Visible = false;
-                panelBandHF.Visible = false;
-                panelBandVHF.Visible = true; // ke9ns add keep VHF panel open when VHF button selected
+                if (A) panelBandGN.Visible = false;
+                if (A) panelBandHF.Visible = false;
+                if (A) panelBandVHF.Visible = true; // ke9ns add keep VHF panel open when VHF button selected
 
               //  Debug.WriteLine("VHF HERE======" + xvtr_index);
 
                 return (Band)(Band.VHF0 + xvtr_index);
             }
 
-        //   Debug.WriteLine("REGION=========================== " + region+ " freq "+freq);
+         //  Debug.WriteLine("REGION=========================== " + region+ " freq " + freq + " ,VFOA:" + A);
 
             if(extended && tx) // ke9ns this is for Flex radios with extended MARS capability
             {
@@ -15520,86 +15610,88 @@ namespace PowerSDR
                 // ke9ns add
                 if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                   //  return Band.B160M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                        freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.WWV;
                 }
 
               
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                   //  return Band.B160M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                    // return Band.B80M;
                 }
 
                 else if (freq > 4.00 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                   //  return Band.B80M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00) 
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                   //  return Band.B60M;
                 }
 
                 else if (freq >= 7.30 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                   //  return Band.B40M;
                 }
 
                 else if (freq >= 9.0 && freq < 10.1)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                    // return Band.B30M;
                 }
 
                 else if (freq >= 10.16 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                   //  return Band.B20M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                   //  return Band.B20M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                     // return Band.B17M;
                 }
@@ -15607,31 +15699,31 @@ namespace PowerSDR
                 else if (freq >= 17.0 && freq < 18.068)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                     //return Band.B17M;
                 }
 
                 else if (freq >= 18.168 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                   //  return Band.B15M;
                 }
                 else if (freq >= 21.450 && freq < 24.89)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                   //  return Band.B12M;
                 }
 
                 else if (freq >= 24.99 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                    if (A) panelBandHF.Visible = false;
+                    if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                    // return Band.B10M;
                 }
@@ -15639,51 +15731,75 @@ namespace PowerSDR
                 // original code below 
                 else if (freq >= 0.0 && freq <= 2.75)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B160M;
                 }
                 else if (freq > 2.75 && freq < 5.3305)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                    if (A) panelBandHF.Visible = true;
+                     if (A) panelBandGN.Visible = false;
+                    return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 8.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B40M;
                 }
                 else if (freq >= 8.7 && freq <= 12.075)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B30M;
                 }
                 else if (freq >= 12.075 && freq <= 16.209)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B20M;
                 }
                 else if (freq >= 16.209 && freq <= 19.584)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B17M;
                 }
                 else if (freq >= 19.584 && freq <= 23.17)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B15M;
                 }
                 else if (freq >= 23.17 && freq <= 26.495)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B12M;
                 }
                 else if (freq >= 26.495 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0) // ke9ns test was 144.0 and 148.0
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                    if (A) panelBandHF.Visible = true;
+                    if (A) panelBandGN.Visible = false;
+                    return Band.B2M;
                 }
                
 
@@ -15697,156 +15813,156 @@ namespace PowerSDR
 
                 if (freq >= 1.8 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 4.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.25 && freq <= 5.45) // else if (freq >= 5.1 && freq <= 5.5)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.3)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.450)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0) // ke9ns test was 144.0 148.0
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0) // FRSRegion.US
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.5)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 4.00 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
                  //   Debug.WriteLine("bandbyfreq 49");
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
                   //  Debug.WriteLine("bandbyfreq 41");
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 11.6)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 13.87 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -15859,154 +15975,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16018,154 +16134,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns                             // else if (freq >= 5.3515 && freq < 5.3665) // w4tme - matches region allocation
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.03 && freq <= 51.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16177,154 +16293,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16337,154 +16453,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.83 && freq <= 1.85)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.00 && freq <= 51.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.83) // italy
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.85 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16497,154 +16613,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81) // norway
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16656,154 +16772,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16815,153 +16931,153 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 51.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -16974,154 +17090,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17133,153 +17249,153 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 1.85)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.05 && freq <= 50.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.85 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17292,150 +17408,150 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 1.85)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.850 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.20)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17450,155 +17566,155 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.1)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.10 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17611,154 +17727,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 1.88)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0) // Tim wanted     else if (freq >= 5.350 && freq < 5.450)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81) // Belgium
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.88 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17771,154 +17887,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -17931,154 +18047,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; 
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; 
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 25.14)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 26.97 && freq <= 27.86)
                 {
-                    panelBandHF.Visible = false; panelBandGN.Visible = true; return Band.B11M; // ke9ns add  return Band.B11M;
+                   if (A) panelBandHF.Visible = false;if (A) panelBandGN.Visible = true; return Band.B11M; // ke9ns add  return Band.B11M;
                 }
                 else if (freq >= 28.00 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18090,153 +18206,153 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81) // sweden
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18248,154 +18364,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.8 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.9)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; // ke9ns add An interim bandplan was adopted by IARU Region 1 in April 2016, for the WRC-15 allocation (5351.5 - 5366.5 kHz)
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; // ke9ns add An interim bandplan was adopted by IARU Region 1 in April 2016, for the WRC-15 allocation (5351.5 - 5366.5 kHz)
                 }
                 else if (freq >= 7.0 && freq <= 7.3)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80) // IARU3
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.9 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.30 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18408,154 +18524,154 @@ namespace PowerSDR
                 {
                 if (freq >= 1.81 && freq <= 1.9125)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.805)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0) //else if (freq >= 4.629995 && freq <= 4.630005)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
-                else if (freq >= 144.0 && freq <= 146.0)
+                else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.912 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.805 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18567,153 +18683,153 @@ namespace PowerSDR
                 {
                 if (freq >= 1.83 && freq <= 1.85)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;  
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;  
                 }
                 else if (freq >= 6.975 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.00 && freq <= 51.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.83)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 6.975)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18727,153 +18843,153 @@ namespace PowerSDR
             {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.3515 && freq < 5.3665) // w4tme - matches region allocation
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.80 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -18885,154 +19001,154 @@ namespace PowerSDR
             {
                 if (freq >= 1.81 && freq <= 1.88)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.350 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0), w4tme changed lower freq to 5.350
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M; // ke9ns
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M; // ke9ns
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.88 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -19044,154 +19160,154 @@ namespace PowerSDR
             {
                 if (freq >= 1.80 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
 
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80) // EU travel
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -19203,153 +19319,153 @@ namespace PowerSDR
             {
                 if (freq >= 1.81 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.3515 && freq < 5.3665) // w4tme - matches region allocation
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.2)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.45)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 52.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.81)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.0 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.20 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -19360,153 +19476,153 @@ namespace PowerSDR
             {
                 if (freq >= 1.8 && freq <= 2.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 4.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.25 && freq <= 5.45) // else if (freq >= 5.1 && freq <= 5.5)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.3)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.450)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0) // ke9ns test was 144.0 148.0
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 2.00 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq >= 4.00 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.30 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -19518,153 +19634,153 @@ namespace PowerSDR
             {
                 if (freq >= 1.8 && freq <= 1.875)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B160M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
                 else if (freq >= 3.5 && freq <= 3.8)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B80M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
                 else if (freq >= 5.25 && freq <= 5.45) // else if (freq >= 5.1 && freq <= 5.5)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B60M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B60M;
                 }
                 else if (freq >= 7.0 && freq <= 7.3)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B40M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B40M;
                 }
                 else if (freq >= 10.1 && freq <= 10.15)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B30M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B30M;
                 }
                 else if (freq >= 14.0 && freq <= 14.35)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B20M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B20M;
                 }
                 else if (freq >= 18.068 && freq <= 18.168)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B17M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B17M;
                 }
                 else if (freq >= 21.0 && freq <= 21.450)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B15M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B15M;
                 }
                 else if (freq >= 24.89 && freq <= 24.99)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B12M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B12M;
                 }
                 else if (freq >= 28.0 && freq <= 29.7)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B10M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B10M;
                 }
                 else if (freq >= 50.0 && freq <= 54.0)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B6M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B6M;
                 }
                 else if (freq >= 144.0 && freq <= 148.0) // ke9ns 
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.B2M;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.B2M;
                 }
                 else if (freq == 2.5 || freq == 5.0 || freq == 10.0 || freq == 15.0 ||
                         freq == 20.0 || freq == 25.0 || freq == 3.33 || freq == 7.85 || freq == 14.67)
                 {
-                    panelBandHF.Visible = true; panelBandGN.Visible = false; return Band.WWV;
+                   if (A) panelBandHF.Visible = true;if (A) panelBandGN.Visible = false; return Band.WWV;
                 }
                 // ke9ns add
                 else if (freq >= 0.20 && freq < 1.80)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.BLMF;
                 }
 
                 else if (freq >= 1.875 && freq < 3.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B120M;
                 }
 
                 else if (freq >= 3.0 && freq < 3.50)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B90M;
                 }
 
                 else if (freq > 3.8 && freq < 5.25)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B61M;
                 }
 
                 else if (freq >= 5.45 && freq < 7.00)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B49M;
                 }
 
                 else if (freq >= 7.30 && freq < 9.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B41M;
                 }
 
                 else if (freq >= 9.0 && freq < 9.99)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B31M;
                 }
 
                 else if (freq >= 11.6 && freq < 13.57)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B25M;
                 }
 
                 else if (freq >= 13.57 && freq < 14.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B22M;
                 }
 
-                else if (freq >= 15.1 && freq < 17.0)
+                else if (freq >= 14.350 && freq < 17.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B19M;
                 }
 
                 else if (freq >= 17.0 && freq < 18.0)
                 {
 
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B16M;
                 }
 
                 else if (freq >= 18.0 && freq < 21.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B14M;
                 }
                 else if (freq >= 21.00 && freq < 25.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B13M;
                 }
 
                 else if (freq >= 25.0 && freq < 28.0)
                 {
-                    panelBandHF.Visible = false;
-                    panelBandGN.Visible = true;
+                   if (A) panelBandHF.Visible = false;
+                   if (A) panelBandGN.Visible = true;
                     return Band.B11M;
                 }
 
@@ -19999,29 +20115,66 @@ namespace PowerSDR
 		}
 
         //=====================================================================
-       // ke9ns mod
+        // ke9ns mod
+
+        int swrF = 0;
+        double lastswr = 0.0;
+
 		public double FWCSWR(int adc_fwd, int adc_rev)
 		{
-            double f = FWCPAPower(adc_fwd)  * swr_table[(int)tx_band]; // ke9ns mod (swr_table[] calibration factor was not in this line originaly but was causing -swr values and rather crazy high values)
-            double r = FWCPAPower(adc_rev) * swr_table[(int)tx_band];
-			
-          //  Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === " );
-			
-			if((adc_fwd == 0 && adc_rev == 0) || (f < 1.0 && r < 1.0)) return 1.0;
-			if(adc_rev == adc_fwd) return 25.0;
-            if (r == f) return 25.0;
+          //  double f = FWCPAPower(adc_fwd);   // ke9ns using this line allows r to get bigger then f and therefore produce neg swr readings????? very strange, but Flex Radio does not remember why?
+            double f = FWCPAPower(adc_fwd) * swr_table[(int)tx_band]; // ke9ns version
+            double r = FWCPAPower(adc_rev) * swr_table[(int)tx_band]; // swr_table[(int)tx_band] = 2.10=3mhz  1.64=7mhz  1.095=10mhz
 
-            double sqrt_r_over_f = Math.Sqrt(r/f);
-            double temp = (1.0 + sqrt_r_over_f) / (1.0 - sqrt_r_over_f);
+               Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === "  + swr_table[(int)tx_band].ToString());
 
-            if (temp > 25) temp = 25;
-            if (temp < 0) temp = temp * -1;
+            if ((adc_fwd == 0 && adc_rev == 0) || (f <= 1.0 && r <= 1.0))  //(f <= 0.0002 && r <= 0.0002))
+            {
+                swrF = 0;
+                return 0.0001;
+            }
 
-          //  Debug.WriteLine(temp);
+
+            //  if ((f < 1.0 && r < 1.0)) return 1.0;
+            if ((adc_rev == adc_fwd) || (r >= f))
+            {
+
+                if (swrF > 1) // prevent jumpy swr operation on switchover from RX to TX and back
+                {
+                    lastswr = 0.0001;
+                    return 25.0;
+                }
+                else
+                {
+                    swrF++;
+                    return lastswr;
+                }
+
+            }
+            else
+            {
+                swrF = 0;
+            }
+           
+            double sqrt_r_over_f = Math.Sqrt(r/f); // ke9ns standard SWR routine
+            double temp = (1.0 + sqrt_r_over_f) / (1.0 - sqrt_r_over_f); // ke9ns standard SWR routine
+
+            if (temp > 25)
+            {
+               temp = 25; // ke9ns if SWR over 25:1 then just make it 25:1
+            }
+
+            if (temp < 0) temp = temp * -1; // ke9ns if SWR neg then make it positive
+
+            lastswr = temp;
+
+          //  Debug.WriteLine("swr temp" + temp);
             return temp;
 
-
         } // FWCSWR(int adc_fwd, int adc_rev)
+
+
+
 
         private double ScaledVoltage(int adc)
 		{
@@ -20067,6 +20220,7 @@ namespace PowerSDR
 		public double FWCPAPower(int adc) // adc in, watts out
 		{
 			if(adc < 2) return 0.0;
+
 			double[] table = { 1.0, 2.0, 5.0, 10.0, 20.0, 90.0 };
 
 			double watts = 0.0;
@@ -20074,7 +20228,7 @@ namespace PowerSDR
 			double v2 = Math.Pow(volts, 2);
 
 			int high_index = 0;
-			for(int i=0; i<6; i++)
+			for(int i=0; i < 6; i++)
 			{				
 				if(volts < pa_bridge_table[(int)tx_band][i])
 				{
@@ -20200,7 +20354,7 @@ namespace PowerSDR
 
         private bool CheckValidTXFreq_Private(FRSRegion r, double f)
         {
-            if (extended || (tx_xvtr_index > -1 && current_model != Model.FLEX1500))
+            if ( (extended) || ((tx_xvtr_index > -1) && (current_model != Model.FLEX1500) ) )
                 return true;
 
             bool ret_val = false;
@@ -20228,7 +20382,7 @@ namespace PowerSDR
                     else if (f >= 25.0 && f <= 29.7) ret_val = true;     // change
                     else if (f >= 50.0 && f <= 54.0) ret_val = true;
 
-                    else if (FWCEEPROM.VUOK && f >= 144.0 && f <= 146.0) ret_val = true;  // ke9ns test was 144.0 and 146.0
+                    else if (FWCEEPROM.VUOK && f >= 144.0 && f <= 148.0) ret_val = true;  // ke9ns test was 144.0 and 146.0
                     else if (FWCEEPROM.VUOK && f >= 430.0 && f <= 450.0) ret_val = true;
                     // {
                     //     if (xvtr_present)
@@ -20292,6 +20446,8 @@ namespace PowerSDR
                     else if (f >= 24.89 && f <= 24.99) ret_val = true;
                     else if (f >= 28.0 && f <= 29.7) ret_val = true;
                     else if (f >= 50.0 && f <= 52.0) ret_val = true;
+
+
                     else ret_val = false;
                     break;
                 case FRSRegion.Italy: // 4
@@ -28394,6 +28550,8 @@ namespace PowerSDR
                 {
                     db_file_name1 = value;
                     DB.FileName1 = value;
+                   
+
                 }
             }
         }
@@ -28777,7 +28935,9 @@ namespace PowerSDR
 				{
 					CurrentMeterTXMode = value;
 					comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
-				}
+
+                    comboMeterTX1Mode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add for lblrx2meter
+                }
 			}
 		}
 
@@ -29292,18 +29452,51 @@ namespace PowerSDR
 		}
 
 
+        // ke9ns add
+        bool rtty = false; // value passed from spotdecoder
+        public bool RTTY // display checks this
+        {
+            get
+            {
+                return rtty;
+
+            }
+            set
+            {
+                rtty = value;
+            }
+        } // rtty
+
+        // ke9ns add
+        bool rxcw = false; // true= enabled
+        public bool RXCW // display checks this
+        {
+            get
+            {
+                return rxcw;
+            }
+            set
+            {
+                rxcw = value;
+            }
+        } // rxcw
+
         //=========================================================
         // ke9ns add for display to check if Beacon needs an freq avg signal strength reading
         public bool BeaconSigAvg
         {
             get
             {
-                if (SpotForm != null)
+                
+                if ((SpotForm != null) )
                 {  
                     if ((SpotForm.beacon5 > 0) || (SpotForm.beacon11 > 0) || (SpotForm.WTime == true)) return true;  // if Fast or Slow Beacon scanning is enabled or WWV checking
-                    else return false;
+
+                   // Debug.WriteLine("BEACON SIG AVG");
+                 
                 }
-                else return false;
+
+                return false;
 
             }
 
@@ -30349,7 +30542,9 @@ namespace PowerSDR
 				txtDisplayPeakPower.BackColor = value;
 				txtDisplayPeakFreq.BackColor = value;
 
-				autoBrightBox.BackColor = value;
+				autoBrightBox.BackColor = value; // ke9ns add
+                ScreenCap.BackColor = value; // ke9ns add
+                ScreenCap1.BackColor = value;
 			}
 		}
 
@@ -30863,7 +31058,7 @@ namespace PowerSDR
                     panelTS1.Visible = false;
                     panelTS1.Enabled = false;
                       panelTS1.Invalidate();
-                    Debug.WriteLine("WEATHER  OFF");
+                   // Debug.WriteLine("WEATHER  OFF");
                 }
             }
         } // LocalWeather
@@ -31612,12 +31807,41 @@ namespace PowerSDR
             }
 		}
 
-		private double vox_hang_time = 250.0;
+        // ke9ns add
+        private double pttht_hang_time = 250.0;
+        public double PTTHT
+        {
+            get
+            {
+                double temp = pttht_hang_time;
+                if (pttht_active == false) temp = 0;
+
+                return temp;
+            }
+            set
+            {
+                if (pttht_active == false) pttht_hang_time = 0;
+                else pttht_hang_time = value;
+            }
+        }
+
+        // ke9ns add
+        private bool pttht_active = false;
+        public bool PTTHTActive
+        {
+            get { return pttht_active; }
+            set { pttht_active = value; }
+        }
+
+
+        private double vox_hang_time = 250.0;
 		public double VOXHangTime
 		{
 			get { return vox_hang_time; }
 			set	{ vox_hang_time = value; }
 		}
+
+
 
 		private bool vox_active = false;
 		public bool VOXActive
@@ -32528,8 +32752,31 @@ namespace PowerSDR
                     if (setupForm.RXOnly != rx_only)
                         setupForm.RXOnly = rx_only;
                 }
-			}
-		}
+
+                // ke9ns add below to allow PTT to pause the Radio while another radio transmits
+                if (rx_only == true)
+                {
+                    if (poll_RXOnly_thread == null || !poll_RXOnly_thread.IsAlive)
+                    {
+                        poll_RXOnly_thread = new Thread(new ThreadStart(PollRXOnly));
+                        poll_RXOnly_thread.Name = "Poll RXOnly Thread";
+                        poll_RXOnly_thread.Priority = ThreadPriority.Normal;
+                        poll_RXOnly_thread.IsBackground = true;
+                        poll_RXOnly_thread.Start();
+
+
+                    }
+                }
+                else
+                {
+                    if ((poll_RXOnly_thread != null)) // ke9ns mod
+                    {
+                        if (!poll_RXOnly_thread.Join(500))  poll_RXOnly_thread.Abort();
+                    }
+                }
+
+            } // set
+		} // RXOnly
 
 		private XVTRTRMode current_xvtr_tr_mode = XVTRTRMode.NEGATIVE;
 		public XVTRTRMode CurrentXVTRTRMode
@@ -34388,10 +34635,10 @@ namespace PowerSDR
                     }
                     else if (RX1Band == Band.B30M)
                     {
-                        ScanControl.freq_Low = 10.1;
+                        ScanControl.freq_Low = 10.10;
                         ScanControl.freq_High = 10.15;
 
-                        ScanControl.freq_Low1 = 10.1;
+                        ScanControl.freq_Low1 = 10.10;
                         ScanControl.freq_High1 = 10.15;
                     }
                     else if (RX1Band == Band.B20M)
@@ -34404,10 +34651,10 @@ namespace PowerSDR
                     }
                     else if (RX1Band == Band.B17M)
                     {
-                        ScanControl.freq_Low = 18.11;
+                        ScanControl.freq_Low = 18.068;
                         ScanControl.freq_High = 18.168;
 
-                        ScanControl.freq_Low1 = 18.11;
+                        ScanControl.freq_Low1 = 18.068;
                         ScanControl.freq_High1 = 18.168;
 
                     }
@@ -34546,10 +34793,10 @@ namespace PowerSDR
                     }
                     else if (RX1Band == Band.B19M)
                     {
-                        ScanControl.freq_Low = 15.1;
+                        ScanControl.freq_Low = 14.350; // was 15.1
                         ScanControl.freq_High = 17.0;
 
-                        ScanControl.freq_Low1 = 15.1;
+                        ScanControl.freq_Low1 = 14.350;
                         ScanControl.freq_High1 = 17.0;
                     }
                     else if (RX1Band == Band.B16M)
@@ -34860,8 +35107,7 @@ namespace PowerSDR
                 //btnHidden.Focus();
 
 				Band lo_band = Band.FIRST;
-				if(rx2_xvtr_index >= 0)
-                    lo_band = BandByFreq(xvtrForm.TranslateFreq(VFOBFreq), -1, false, current_region);
+				if(rx2_xvtr_index >= 0)  lo_band = BandByFreq(xvtrForm.TranslateFreq(VFOBFreq), -1, false, current_region);
 
 				rx2_preamp_by_band[(int)old_band] = rx2_preamp_mode;
 
@@ -35278,6 +35524,7 @@ namespace PowerSDR
         public int WWV_Count = 0;
 
         public int WWVTone = 0;                             // ke9ns add   Magnetude of the Tone received in audio.cs routine
+        public int WWVTone2 = 0;                             // ke9ns add   Magnetude of the Tone received in audio.cs routine
 
         public bool WWVReady = false;                       // ke9ns add  let you know when a new magnetude is updated
         public  Stopwatch WWVST = new Stopwatch();           // ke9ns add 
@@ -36028,7 +36275,7 @@ namespace PowerSDR
 				}
 				catch(Exception)
 				{
-                    Debug.WriteLine("VFOAFreq convert string to double failed");
+                    Debug.WriteLine("VFOAFreq convert string to double failed " + txtVFOAFreq.Text);
 					return 7.125;
 				}
 			}
@@ -38391,7 +38638,6 @@ namespace PowerSDR
 
                 case MultiMeterDisplayMode.Bar:  // lblRX2Meter is the text for RX2 bar graph (lblMultiSMeter is for RX1)
                     #region Bar
-
                   
                     if (meter_data_ready)
                     {
@@ -38749,11 +38995,12 @@ namespace PowerSDR
                             {
                                 case MeterRXMode.SIGNAL_STRENGTH:
                                 case MeterRXMode.SIGNAL_AVERAGE:
-                                    output = num.ToString(format) + " dBm";
+                                case MeterRXMode.SIGNAL_PEAK:
+                                    output = num.ToString(format) + " dBm ";
                                     break;
                                 case MeterRXMode.ADC_L:
                                 case MeterRXMode.ADC_R:
-                                    output = num.ToString("f1") + " dBFS";
+                                    output = num.ToString("f1") + " dBFS ";
                                     break;
                                 case MeterRXMode.OFF:
                                     output = "";
@@ -38773,7 +39020,8 @@ namespace PowerSDR
                                 case MeterTXMode.CPDR:
                                 case MeterTXMode.ALC:
                                 case MeterTXMode.ALC_G:
-                                    output = num.ToString(format) + " dB";
+                                    if (!mox) output = "-30 dB ";
+                                   else  output = num.ToString(format) + " dB ";
                                     break;
                                 case MeterTXMode.FORWARD_POWER:
                                 case MeterTXMode.REVERSE_POWER:
@@ -38786,15 +39034,21 @@ namespace PowerSDR
                                             break;
                                         case Model.FLEX5000:
                                         case Model.FLEX3000:
-                                            output = num.ToString("f0") + " W";
+                                            if (num < 0) num = 0;
+                                            if (!mox) output = "0 W ";
+                                            else output = num.ToString("f0") + " W ";
                                             break;
                                         case Model.FLEX1500:
-                                            output = num.ToString("f0") + " %";
+                                            if (num < 0) num = 0;
+                                            if (!mox) output = "0 % ";
+                                           else  output = num.ToString("f0") + " % ";
                                             break;
                                     }
                                     break;
                                 case MeterTXMode.SWR:
-                                    output = num.ToString("f1") + " : 1";
+                                    if (num < 0) num = 0;
+                                    if (!mox) output = "0 : 1 ";
+                                    else output = num.ToString("f1") + " : 1 ";
                                     break;
                                 case MeterTXMode.OFF:
                                     output = "";
@@ -40258,7 +40512,7 @@ namespace PowerSDR
                                 spacing = (W*0.75-2.0)/4.0;
 								string_height = 0;
 								string[] swr_list = {"1.5", "2", "5", "10", "20"};
-								for(int i=1; i<5; i++)
+								for(int i=1; i < 5; i++)
 								{
 									g.FillRectangle(low_brush, (int)(i*spacing-spacing*0.5), H-8-3-3, 1, 6);
 									g.FillRectangle(low_brush, (int)(i*spacing), H-8-6-6, 2, 12);
@@ -40276,17 +40530,16 @@ namespace PowerSDR
 									//g.SmoothingMode = SmoothingMode.None;
 								}
 								spacing = (W*0.25-2.0-9.0)/1.0;
-								for(int i=1; i<2; i++)
+								for(int i=1; i < 2; i++)
 								{
 									g.FillRectangle(high_brush, (int)((double)W*0.75+i*spacing-spacing*0.5), H-8-3-3, 1, 6);
 									g.FillRectangle(high_brush, (int)((double)W*0.75+i*spacing), H-8-6-6, 2, 12);
 
-                                 //   Font f = new Font("swis721blkexbt", 7.0f, FontStyle.Bold | FontStyle.Italic); // was 7
-
+                                
                                     SizeF size = g.MeasureString("0", ff, 3, StringFormat.GenericTypographic);
 									double string_width = size.Width-2.0;
 									
-									//g.TextRenderingHint = TextRenderingHint.SystemDefault;
+									
 									g.DrawString("20+", ff, high_brush, (int)(W*0.75+i*spacing-(int)2.5*string_width), (int)(H-8-12-3-string_height));
 								}
 								
@@ -41990,7 +42243,7 @@ namespace PowerSDR
         //=============================================================
         //=============================================================
         //=============================================================
-        // COMBO meter routine fake like its a 3rd meter, instead of the 2nd
+        // ke9ns COMBO meter routine fake like its a 3rd meter, instead of the 2nd
 
         private void picRX3Meter_Click(object sender, EventArgs e)
         {
@@ -42056,6 +42309,7 @@ namespace PowerSDR
         private double tx2_avg_alc_num = -130.0;
         private double tx2_avg_mic_num = -130.0;
 
+        // ke9ns add (for combo meter of 2nd meter only)
         private void picRX3Meter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
 
@@ -42078,37 +42332,13 @@ namespace PowerSDR
                         (edge_avg_color.B + edge_meter_background_color.B) / 2)); // blue
 
 
-/*
-            //---------------------------------------------------------------------------------------------
-            bool mox2 = false; // ke9ns add  false = rx    true = 2nd tx meter active
 
-            if ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
-            {
-                if ((!FWCEEPROM.RX2OK) || (FWCEEPROM.RX2OK && chkRX2.Checked == false)) mox2 = true; // ke9ns keep meter set for the TX type you wanted all the time
-                else mox2 = false; // receiving on RX2 or dont want 2nd tX meter
-
-                //  Debug.WriteLine("wwwwwwwwwwwwwwwwwwwwwwww " + mox2);
-
-
-                if ((mox2 == true) && (current_meter_tx1_mode == MeterTXMode.MIC))
-                {
-                    rx2_meter_new_data = (float)tx2_meter_new_data;
-                }
-            }
-            else
-            {
-                mox2 = true; // transmitting and want 2nd tx meter to function
-            }
-
-*/
             //---------------------------------------------------------------------------------------------
             // ke9ns combo
 
             if (meterCombo == true)
             {
-              
-       
-                g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
+                 g.DrawRectangle(new Pen(edge_meter_background_color), 0, 0, W, H);
 
               //  low_brush = new SolidBrush(edge_low_color);
               //  high_brush = new SolidBrush(edge_high_color);
@@ -42150,11 +42380,12 @@ namespace PowerSDR
                         pwr_num = tx2_avg_pwr_num = tx2_meter_current_data_pwr * 0.8 + tx2_avg_pwr_num * 0.2; // slow decay
                 }
 
-
+                // ke9nsSWR
                 //--------------------------------------------------------------
                 // SWR
                 //  LinearGradientBrush swr_Brush = new LinearGradientBrush(new Rectangle(0, 0, 160, 5), Color.Black, Color.Black, 0, false);
                 //   ColorBlend swr_cb = new ColorBlend();
+
                 swr_cb.Positions = new[] { 0, 0.4f, 0.45f, 0.50f, 1 };
                 swr_cb.Colors = new[] { Color.Green, Color.Yellow, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
                 swr_Brush.InterpolationColors = swr_cb;
@@ -42171,6 +42402,8 @@ namespace PowerSDR
                     else
                         swr_num = tx2_avg_swr_num = tx2_meter_current_data_swr * 0.8 + tx2_avg_swr_num * 0.2; // slow decay
                 }
+
+            //    Debug.WriteLine("1SWR COMBO " + tx2_meter_current_data_swr + " , " + swr_num);
 
 
                 //--------------------------------------------------------------
@@ -42274,26 +42507,33 @@ namespace PowerSDR
 
                 g.FillRectangle(pwr_Brush, new Rectangle(pwr_out-2, 17, 4, 4));     // x,y, width,height
 
-               
+
 
                 //-------------------------------------------------------------------------------
                 // SWR
 
-
+              
                 if (swr_num < 10.0) // low area
                 {
-                    spacingW = (comboW * 0.75 - 2.0) / 4.0;
+                   
+                    spacingW = (comboW * 0.75 - 2.0) / 4.0; // comboW = 160
 
                     if (swr_num <= 1.5)       swr_out = (int)((swr_num - 1.0) / 0.5 * spacingW);
                     else if (swr_num <= 2.0)  swr_out = (int)(spacingW + (swr_num - 1.5) / 0.5 * spacingW);
                     else if (swr_num <= 5.0)  swr_out = (int)(2 * spacingW + (swr_num - 2.0) / 3.0 * spacingW);
                     else                      swr_out = (int)(3 * spacingW + (swr_num - 5.0) / 5.0 * spacingW);
+
+                  
                 }
                 else
                 {
                     spacingW = (comboW * 0.25 - 2.0 - 9.0) / 1.0;
                     swr_out = (int)(comboW * 0.75 + (swr_num - 10.0) / 10.0 * spacingW);
+                  
                 }
+
+               
+
                 if (double.IsInfinity(swr_num)) swr_out = (int)(comboW - 2);
 
                 if (swr_out < 0) swr_out = swr_out * -1;
@@ -42424,8 +42664,8 @@ namespace PowerSDR
         //========================================================
         //========================================================
         private double rx2_avg_num = -130.0;
-
-		private void picRX2Meter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+      
+        private void picRX2Meter_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			int H = picRX2Meter.ClientSize.Height;
 			int W = picRX2Meter.ClientSize.Width;
@@ -42446,38 +42686,32 @@ namespace PowerSDR
                         (edge_avg_color.B + edge_meter_background_color.B) / 2)); // blue
 
 
-
-           
-
             //---------------------------------------------------------------------------------------------
             bool mox2 = false; // ke9ns add  false = rx    true = 2nd tx meter active
 
-            if ((setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
+            //---------------------------
+            // ke9ns add
+            if ((setupForm != null) && (setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
             {
                 if ((!FWCEEPROM.RX2OK) || (FWCEEPROM.RX2OK && chkRX2.Checked == false)) mox2 = true; // ke9ns keep meter set for the TX type you wanted all the time
                 else mox2 = false; // receiving on RX2 or dont want 2nd tX meter
 
-              //  Debug.WriteLine("wwwwwwwwwwwwwwwwwwwwwwww " + mox2);
-
-               
                 if ((mox2 == true) && (current_meter_tx1_mode == MeterTXMode.MIC))
-                { 
-                        rx2_meter_new_data = (float)tx2_meter_new_data;
+                {
+                    rx2_meter_new_data = (float)tx2_meter_new_data;
                 }
             }
             else
             {
                 mox2 = true; // transmitting and want 2nd tx meter to function
             }
-
-
+          
             //---------------------------------------------------------------------------------------------
             // ke9ns combo
 
 
-           
-           switch (current_meter_display_mode) // ke9ns which meter type is selected
-                {
+            switch (current_meter_display_mode) // ke9ns which meter type is selected
+            {
 
 
                 //=============================================================
@@ -42495,75 +42729,298 @@ namespace PowerSDR
                         rx2_meter_data_ready = false;
                     }
 
-                    num = rx2_meter_current_data;
-
-                    switch (rx2_meter_mode)
+              
+                    if (!mox2) // if RX2 is ON and running and in RX mode
                     {
-                        case MeterRXMode.SIGNAL_STRENGTH:
-                        case MeterRXMode.SIGNAL_AVERAGE:
-                        case MeterRXMode.SIGNAL_PEAK:
-                            switch ((int)g.DpiX)
-                            {
-                                case 96:
-                                    double s = (num + 127) / 6;
-                                    if (s <= 9.0F)
-                                        pixel_x = (int)((s * 7.5) + 2);
-                                    else
-                                    {
-                                        double over_s9 = num + 73;
-                                        pixel_x = 69 + (int)(over_s9 * 1.05);
-                                    }
-                                    break;
-                                case 120:
-                                    if (num <= -97.0f)
-                                        pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
-                                    else if (num <= -91.0f)
-                                        pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
-                                    else if (num <= -85.0f)
-                                        pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
-                                    else if (num <= -79.0f)
-                                        pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
-                                    else if (num <= -73.0f)
-                                        pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
-                                    else if (num <= -53.0f)
-                                        pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
-                                    else if (num <= -33.0f)
-                                        pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
-                                    else if (num <= -13.0f)
-                                        pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
-                                    else
-                                        pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
-                                    break;
-                            }
-                            break;
-                        case MeterRXMode.ADC_L:
-                        case MeterRXMode.ADC_R:
-                            switch ((int)g.DpiX)
-                            {
-                                case 96:
-                                    pixel_x = (int)(((num + 100) * 1.2) + 12);
-                                    break;
-                                case 120:
-                                    if (num <= -100.0f)
-                                        pixel_x = (int)(0 + (num + 110.0) / 10.0 * 14);
-                                    else if (num <= -80.0f)
-                                        pixel_x = (int)(14 + (num + 100.0) / 20.0 * 27);
-                                    else if (num <= -60.0f)
-                                        pixel_x = (int)(41 + (num + 80.0) / 20.0 * 28);
-                                    else if (num <= -40.0f)
-                                        pixel_x = (int)(69 + (num + 60.0) / 20.0 * 28);
-                                    else if (num <= -20.0f)
-                                        pixel_x = (int)(97 + (num + 40.0) / 20.0 * 27);
-                                    else if (num <= 0.0f)
-                                        pixel_x = (int)(124 + (num + 20.0) / 20.0 * 24);
-                                    else
-                                        pixel_x = (int)(148 + (num - 0.0) / 10.0 * 19);
-                                    break;
-                            }
-                            break;
-                        case MeterRXMode.OFF:
-                            break;
-                    }
+                        num = rx2_meter_current_data;
+
+                        switch (rx2_meter_mode)
+                        {
+                            case MeterRXMode.SIGNAL_STRENGTH:
+                            case MeterRXMode.SIGNAL_AVERAGE:
+                            case MeterRXMode.SIGNAL_PEAK:
+
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+
+                                        if (FREQA < 30)
+                                        {
+                                            double s = (num + 127) / 6;
+
+                                            if (s <= 9.0F)
+                                            {
+                                                pixel_x = (int)((s * 7.5) + 2);
+                                            }
+                                            else
+                                            {
+                                                double over_s9 = num + 73;
+                                                pixel_x = 69 + (int)(over_s9 * 1.05);
+                                            }
+                                        }
+                                        else // vhf
+                                        {
+                                            //  Debug.WriteLine("VHF96====");
+                                            if (num > -93)
+                                            {
+                                                pixel_x = (int)(W * 0.5 + (93 + num) / 63.0 * (W * 0.5 - 3));
+
+                                            }
+                                            else
+                                            {
+                                                pixel_x = (int)((num + 133.0) / 40.0 * (W * 0.5));
+
+                                            }
+                                        } // vhf
+                                        break;
+                                    case 120:
+                                        if (FREQA < 30)
+                                        {
+                                            if (num <= -97.0f)
+                                                pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                            else if (num <= -91.0f)
+                                                pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                            else if (num <= -85.0f)
+                                                pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                            else if (num <= -79.0f)
+                                                pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                            else if (num <= -73.0f)
+                                                pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                            else if (num <= -53.0f)
+                                                pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                            else if (num <= -33.0f)
+                                                pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                            else if (num <= -13.0f)
+                                                pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                            else
+                                                pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+
+                                        }
+                                        else
+                                        {
+                                            // Debug.WriteLine("VHF120====");
+
+                                            if (num <= -117.0f) pixel_x = (int)(0 + (num + 100.0) / 3.0 * 10);
+                                            else if (num <= -111.0f) pixel_x = (int)(10 + (num + 97.0) / 6.0 * 17);
+                                            else if (num <= -105.0f) pixel_x = (int)(27 + (num + 91.0) / 6.0 * 16);
+                                            else if (num <= -99.0f) pixel_x = (int)(43 + (num + 85.0) / 6.0 * 17);
+                                            else if (num <= -93.0f) pixel_x = (int)(60 + (num + 79.0) / 6.0 * 16);
+                                            else if (num <= -73.0f) pixel_x = (int)(76 + (num + 73.0) / 20.0 * 24);
+                                            else if (num <= -53.0f) pixel_x = (int)(100 + (num + 53.0) / 20.0 * 24);
+                                            else if (num <= -33.0f) pixel_x = (int)(124 + (num + 33.0) / 20.0 * 24);
+                                            else pixel_x = (int)(148 + (num + 13.0) / 20.0 * 19);
+
+                                        }
+                                        break;
+                                }
+                                break;
+                            case MeterRXMode.ADC_L:
+                            case MeterRXMode.ADC_R:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        pixel_x = (int)(((num + 100) * 1.2) + 12);
+                                        break;
+                                    case 120:
+                                        if (num <= -100.0f)
+                                            pixel_x = (int)(0 + (num + 110.0) / 10.0 * 14);
+                                        else if (num <= -80.0f)
+                                            pixel_x = (int)(14 + (num + 100.0) / 20.0 * 27);
+                                        else if (num <= -60.0f)
+                                            pixel_x = (int)(41 + (num + 80.0) / 20.0 * 28);
+                                        else if (num <= -40.0f)
+                                            pixel_x = (int)(69 + (num + 60.0) / 20.0 * 28);
+                                        else if (num <= -20.0f)
+                                            pixel_x = (int)(97 + (num + 40.0) / 20.0 * 27);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(124 + (num + 20.0) / 20.0 * 24);
+                                        else
+                                            pixel_x = (int)(148 + (num - 0.0) / 10.0 * 19);
+                                        break;
+                                }
+                                break;
+                            case MeterRXMode.OFF:
+                                break;
+
+                        } //  switch (rx2_meter_mode)
+
+                    } // !MOX2
+                    else
+                    {
+
+                        num = rx2_meter_current_data;
+
+                        MeterTXMode mode = current_meter_tx1_mode;
+                        if (chkTUN.Checked) mode = tune_meter_tx_mode;
+
+                        switch (mode)
+                        {
+                            case MeterTXMode.MIC:
+                            case MeterTXMode.EQ:
+                            case MeterTXMode.LEVELER:
+                            case MeterTXMode.CPDR:
+                            case MeterTXMode.ALC:
+                                //num += 3.0;  // number no longer has fudge factor added in the dsp, must be remove
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= -20.0f)
+                                            pixel_x = (int)(0 + (num + 25.0) / 5.0 * 9);
+                                        else if (num <= -10.0f)
+                                            pixel_x = (int)(9 + (num + 20.0) / 10.0 * 27);
+                                        else if (num <= -5.0f)
+                                            pixel_x = (int)(36 + (num + 10.0) / 5.0 * 27);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(63 + (num + 5.0) / 5.0 * 24);
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(87 + (num - 0.0) / 1.0 * 15);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(102 + (num - 1.0) / 1.0 * 15);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(117 + (num - 2.0) / 1.0 * 15);
+                                        else
+                                            pixel_x = (int)(132 + (num - 3.0) / 0.5 * 8);
+                                        break;
+                                    case 120:
+                                        if (num <= -20.0f)
+                                            pixel_x = (int)(0 + (num + 25.0) / 5.0 * 10);
+                                        else if (num <= -10.0f)
+                                            pixel_x = (int)(10 + (num + 20.0) / 10.0 * 30);
+                                        else if (num <= -5.0f)
+                                            pixel_x = (int)(40 + (num + 10.0) / 5.0 * 30);
+                                        else if (num <= 0.0f)
+                                            pixel_x = (int)(70 + (num + 5.0) / 5.0 * 27);
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(97 + (num - 0.0) / 1.0 * 17);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(114 + (num - 1.0) / 1.0 * 17);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(131 + (num - 2.0) / 1.0 * 17);
+                                        else
+                                            pixel_x = (int)(148 + (num - 3.0) / 0.5 * 23);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.FORWARD_POWER:
+                            case MeterTXMode.REVERSE_POWER:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 2);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(2 + (num - 1) / 4 * 24);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(26 + (num - 5) / 5 * 24);
+                                        else if (num <= 50.0f)
+                                            pixel_x = (int)(50 + (num - 10) / 40 * 24);
+                                        else if (num <= 100.0f)
+                                            pixel_x = (int)(74 + (num - 50) / 50 * 24);
+                                        else if (num <= 120.0f)
+                                            pixel_x = (int)(98 + (num - 100) / 20 * 24);
+                                        else
+                                            pixel_x = (int)(122 + (num - 120) / 20 * 16);
+                                        break;
+                                    case 120:
+                                        if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 1) / 4 * 26);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(29 + (num - 5) / 5 * 26);
+                                        else if (num <= 50.0f)
+                                            pixel_x = (int)(55 + (num - 10) / 40 * 27);
+                                        else if (num <= 100.0f)
+                                            pixel_x = (int)(82 + (num - 50) / 50 * 28);
+                                        else if (num <= 120.0f)
+                                            pixel_x = (int)(110 + (num - 100) / 20 * 27);
+                                        else
+                                            pixel_x = (int)(137 + (num - 120) / 20 * 30);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.SWR:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (double.IsInfinity(num))
+                                            pixel_x = 200;
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 1.5f)
+                                            pixel_x = (int)(3 + (num - 1.0) / 0.5 * 27);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(30 + (num - 1.5) / 0.5 * 20);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(50 + (num - 2.0) / 1.0 * 21);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(71 + (num - 3.0) / 2.0 * 21);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(92 + (num - 5.0) / 5.0 * 21);
+                                        else
+                                            pixel_x = (int)(113 + (num - 10.0) / 15.0 * 26);
+                                        break;
+                                    case 120:
+                                        if (double.IsInfinity(num))
+                                            pixel_x = 200;
+                                        else if (num <= 1.0f)
+                                            pixel_x = (int)(0 + num * 3);
+                                        else if (num <= 1.5f)
+                                            pixel_x = (int)(3 + (num - 1.0) / 0.5 * 31);
+                                        else if (num <= 2.0f)
+                                            pixel_x = (int)(34 + (num - 1.5) / 0.5 * 22);
+                                        else if (num <= 3.0f)
+                                            pixel_x = (int)(56 + (num - 2.0) / 1.0 * 22);
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(78 + (num - 3.0) / 2.0 * 23);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(101 + (num - 5.0) / 5.0 * 23);
+                                        else
+                                            pixel_x = (int)(124 + (num - 10.0) / 15.0 * 43);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.ALC_G:
+                            case MeterTXMode.LVL_G:
+                                switch ((int)g.DpiX)
+                                {
+                                    case 96:
+                                        if (num <= 0.0f)
+                                            pixel_x = 3;
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 0.0) / 5.0 * 28);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(31 + (num - 5.0) / 5.0 * 29);
+                                        else if (num <= 15.0f)
+                                            pixel_x = (int)(60 + (num - 10.0) / 5.0 * 30);
+                                        else if (num <= 20.0f)
+                                            pixel_x = (int)(90 + (num - 15.0) / 5.0 * 31);
+                                        else
+                                            pixel_x = (int)(121 + (num - 20.0) / 5.0 * 29);
+                                        break;
+                                    case 120:
+                                        if (num <= 0.0f)
+                                            pixel_x = 3;
+                                        else if (num <= 5.0f)
+                                            pixel_x = (int)(3 + (num - 0.0) / 5.0 * 31);
+                                        else if (num <= 10.0f)
+                                            pixel_x = (int)(34 + (num - 5.0) / 5.0 * 33);
+                                        else if (num <= 15.0f)
+                                            pixel_x = (int)(77 + (num - 10.0) / 5.0 * 33);
+                                        else if (num <= 20.0f)
+                                            pixel_x = (int)(110 + (num - 15.0) / 5.0 * 35);
+                                        else
+                                            pixel_x = (int)(145 + (num - 20.0) / 5.0 * 32);
+                                        break;
+                                }
+                                break;
+                            case MeterTXMode.OFF:
+                                break;
+                        } // SWITCH (MODE)
+
+                    } // MOX2
+
+
 
                     switch ((int)g.DpiX)
                     {
@@ -42574,8 +43031,9 @@ namespace PowerSDR
                             if (pixel_x > 167) pixel_x = 167;
                             break;
                     }
-
-                    if (rx2_meter_mode != MeterRXMode.OFF)
+                   
+                //------------------------------------------------------
+                    if (((!mox2) && (rx2_meter_mode != MeterRXMode.OFF)) ||  ((mox2) && (current_meter_tx1_mode != MeterTXMode.OFF)))
                     {
                         if (pixel_x <= 0) pixel_x = 1;
 
@@ -42608,29 +43066,91 @@ namespace PowerSDR
                                 g.DrawLine(new Pen(Color.Red), rx2_meter_peak_value - 1, 0, rx2_meter_peak_value - 1, H);
                             }
                         }
-                    }
+                    } //  if (rx2_meter_mode != MeterRXMode.OFF)
 
                     rx2_meter_timer.Stop();
 
                     string format = "f0";
                     if (meter_detail) format = "f1";
 
+                    //---------------------------------------------------------ke9ns RX2 BAR graph digital meter here
+                    
                     if (rx2_meter_timer.DurationMsec >= meter_dig_delay)
                     {
-                        switch (rx2_meter_mode)
+                     
+                        if (!mox2)
                         {
-                            case MeterRXMode.SIGNAL_STRENGTH:
-                            case MeterRXMode.SIGNAL_AVERAGE:
-                                output = num.ToString(format) + " dBm";
-                                break;
-                            case MeterRXMode.ADC_L:
-                            case MeterRXMode.ADC_R:
-                                output = num.ToString("f1") + " dBFS";
-                                break;
-                            case MeterRXMode.OFF:
-                                output = "";
-                                break;
-                        }
+                            switch (rx2_meter_mode)
+                            {
+                                case MeterRXMode.SIGNAL_STRENGTH:
+                                case MeterRXMode.SIGNAL_AVERAGE:
+                                case MeterRXMode.SIGNAL_PEAK:
+                                    output = num.ToString(format) + " dBm ";
+
+                                 
+                                    break;
+                                case MeterRXMode.ADC_L:
+                                case MeterRXMode.ADC_R:
+                                    output = num.ToString("f1") + " dBFS ";
+                                    break;
+                                case MeterRXMode.OFF:
+                                    output = "";
+                                    break;
+                            }
+                        } // !MOX2
+                        else
+                        {
+                            MeterTXMode mode = current_meter_tx1_mode;
+                           // if (chkTUN.Checked) mode = tune_meter_tx_mode;
+                            switch (mode)
+                            {
+                                case MeterTXMode.MIC:
+                                case MeterTXMode.LEVELER:
+                                case MeterTXMode.LVL_G:
+                                case MeterTXMode.EQ:
+                                case MeterTXMode.CPDR:
+                                case MeterTXMode.ALC:
+                                case MeterTXMode.ALC_G:
+                                    if (!mox) output = "-30 dB ";
+                                    else output = num.ToString(format) + " dB ";
+                                    break;
+                                case MeterTXMode.FORWARD_POWER:
+                                case MeterTXMode.REVERSE_POWER:
+                                    switch (current_model)
+                                    {
+                                        case Model.SDR1000:
+                                            if (pa_present && VFOAFreq < 30.0)
+                                                output = num.ToString("f0") + " W";
+                                            else output = (num * 1000).ToString("f0") + " mW";
+                                            break;
+                                        case Model.FLEX5000:
+                                        case Model.FLEX3000:
+                                            if (num < 0) num = 0;
+
+                                            if (!mox) output = "0 W ";
+                                            else  output = num.ToString("f0") + " W ";
+                                            break;
+                                        case Model.FLEX1500:
+                                            if (num < 0) num = 0;
+                                            if (!mox) output = "0 % ";
+                                            else output = num.ToString("f0") + " % ";
+                                            break;
+                                    }
+                                    break;
+                                case MeterTXMode.SWR: // bar graph
+                                    if (num < 0) num = 0;
+                                    if (!mox) output = "0 : 1 ";
+                                    else  output = num.ToString("f1") + " : 1 ";
+                                    break;
+                                case MeterTXMode.OFF:
+                                    output = "";
+                                    break;
+
+                            } // switch(MODE)
+
+
+                        } // MOX2
+                        
                         txtRX2Meter.Text = output;
                         rx2_meter_timer.Start();
                     }
@@ -42640,9 +43160,9 @@ namespace PowerSDR
                         rx2_meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
                     }
                     break; // BAR RX2
-                #endregion
 
 
+                #endregion // BAR
 
 
                 //=============================================================
@@ -44327,8 +44847,7 @@ namespace PowerSDR
                         {
                             if (!mox2) // rx
                             {
-
-
+                            
                                 switch (rx2_meter_mode)
                                 {
                                     case MeterRXMode.SIGNAL_STRENGTH:
@@ -46354,15 +46873,15 @@ namespace PowerSDR
 							case DisplayMode.SCOPE:
                                 Debug.WriteLine("===GET SCOPE NW"); // this only called 1 time when you select this view mode
 								fixed(float *ptr = &Display.new_display_data[0])
-                                   DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));  // ke9ns does not look like this is necessary since the scope display uses audio.doscope instead
-								break;
+                                   DttSP.GetScope(top_thread, ptr, (int)(scope_time * 48));  // ke9ns  audio.doscope uses this
+                                break;
 							case DisplayMode.PHASE:
 								fixed(float *ptr = &Display.new_display_data[0])
                                     DttSP.GetPhase(top_thread, ptr, Display.PhaseNumPts);
 								break;
 							case DisplayMode.PHASE2:
 								//Audio.phase_mutex.WaitOne();
-								for(int i=0; i<Display.PhaseNumPts; i++)
+								for(int i=0; i < Display.PhaseNumPts; i++)
 								{
 									Display.new_display_data[i*2]   = Audio.phase_buf_l[i];
 									Display.new_display_data[i*2+1] = Audio.phase_buf_r[i];
@@ -46496,9 +47015,8 @@ namespace PowerSDR
                         }
                         float num = 0f;
 
-                        if (meterCombo == true)
+                        if (meterCombo == true) // if in RX mode (clear out PWR,SWR, use only live MIC)
                         {
-
                          
                             //combo meter
                             // fwd power, swr, alc, mic
@@ -46536,8 +47054,9 @@ namespace PowerSDR
 
                             }
 
+                            // ke9nsSWR
                             //-----------------------------------------------
-                            // SWR
+                            // SWR this is in RX mode
 
 
                             tx2_meter_new_data_swr = num = 1;
@@ -47228,7 +47747,7 @@ namespace PowerSDR
                                             break;
                                     }
                                     break;
-                                case MeterTXMode.SWR:
+                                case MeterTXMode.SWR: // ke9ns swr for 2nd TX meter if not using RX2
                                     double swr = 0.0;
                                   //  if (chkTUN.Checked) // ke9ns removed to allow SWR during AM or FM modes as well as tune
                                    // {
@@ -47254,7 +47773,7 @@ namespace PowerSDR
                                     rx2_meter_new_data = (float)swr;
                                     break;
 
-                               case MeterTXMode.Combo:
+                               case MeterTXMode.Combo: // ke9ns 2nd tx meter 
                                     //combo meter
                                     // fwd power, swr, alc, mic
 
@@ -47308,9 +47827,9 @@ namespace PowerSDR
 
 
 
-
+                                    // ke9nsswr  combo meter UpdateMultimeter()
                                     //-----------------------------------------------
-                                    // SWR
+                                    // SWR // this is in TX mode
                                     swr = 0.0;
                                    
                                     switch (current_model)
@@ -47322,9 +47841,10 @@ namespace PowerSDR
                                             break;
                                            
                                     }
-                                   
-                                    tx2_meter_new_data_swr = num = (float)swr;
+                                    if (swr < 1.0 && swr > -1.0) swr = 1; // to prevent -swr numbers 
 
+
+                                    tx2_meter_new_data_swr = num = (float)swr; // // .0001 dead key with no power
 
                                     if (tx2_meter_peak_swr == Display.CLEAR_FLAG) tx2_meter_peak_swr = num;
 
@@ -47345,7 +47865,8 @@ namespace PowerSDR
                                   
 
                                     }
-
+                                    
+                                  //  Debug.WriteLine("SWR COMBO " + swr + " , " + tx2_meter_peak_swr); 
 
                                     //-----------------------------------------------
                                     // ALC
@@ -47405,16 +47926,10 @@ namespace PowerSDR
                                         }
                                         else tx2_meter_peak5_mic++;
 
-
                                     }
 
+                                    break;   // MeterTXMode.Combo (above)
 
-
-
-
-                                    //combo meter
-                                    break;
-                            
                                 case MeterTXMode.OFF:
                                     //output = "";
                                     rx2_meter_new_data = -200.0f;
@@ -47728,270 +48243,436 @@ namespace PowerSDR
 			}
 		}
 
+        //=======================================================================================
+        // ke9ns RX ONLY thread
+        private void PollRXOnly()
+        {
 
+            while ((rx_only)) // ke9ns do only below if not in manual mox mode, and PTT is not disabled, and not just in RX mode
+            {
+                
+                if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
+                {
+                    if (fwc_rca_ptt == true) chkPower.Checked = false;
+                    else chkPower.Checked = true;
+
+                }
+                else if (hid_init && current_model == Model.FLEX1500)
+                {
+                    if (hid_ptt_in == true) chkPower.Checked = false;
+                    else chkPower.Checked = true;
+                }
+
+                Thread.Sleep(5);
+
+            } // if ((rx_only))
+
+        } // PollRXONLY()
 
         //=======================================================================================
         // ke9ns PTT thread
 
-		private bool mon_recall = false;
+        DSPMode AMSSBmodeAM = DSPMode.FIRST; // ke9ns add  this is the mode you were in before AMSSBmodemodeON = true
+        DSPMode AMSSBmodeSSB = DSPMode.FIRST; // ke9ns add
+        bool AMSSBmodeON = false; // ke9ns add false = not in alternate mode, true = you moved the low or high RX filter so you are in an alternate SSB mode from AM
+        bool AMSSBmodeFILT = false; // ke9ns add  false at start of setRX1Mode, true = end of setRX1 filter
+
+        private bool mon_recall = false;
         private byte mon2_recall = 0; // ke9ns to hold mon_pre for going into out of CW mode
 
         private static HiPerfTimer vox_timer = new HiPerfTimer();
-		private void PollPTT()
+        private static HiPerfTimer pttht_timer = new HiPerfTimer(); // ke9ns add for PTT hang time (for PTT, MIC, CAT)
+
+        private void PollPTT()
 		{
-			//HiPerfTimer cwpolltimer = new HiPerfTimer();
-			//cwpolltimer.Start();
+            //HiPerfTimer cwpolltimer = new HiPerfTimer();
+            //cwpolltimer.Start();
 
             /*HiPerfTimer polltimer = new HiPerfTimer();
             polltimer.Start();
             double msecs = 0.0;
             int pollcount = 0;*/
 
-			while(chkPower.Checked)
+            while (chkPower.Checked)
 			{
-				DSPMode tx_mode = rx1_dsp_mode;
-				if(chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
-				/*// reset the CW ring buffers every 5000ms when not in use
-				if(current_ptt_mode != PTTMode.NONE)
-				{
-					switch(tx_mode)
-					{
-						case DSPMode.CWL:
-						case DSPMode.CWU:
-							cwpolltimer.Start(); // start over since key is in use
-							break;
-					}
-				}
-				else
-				{
-					switch(tx_mode)
-					{
-						case DSPMode.CWL:
-						case DSPMode.CWU:
-							cwpolltimer.Stop(); // check how long since last reset
-							if(cwpolltimer.DurationMsec > 5000 + break_in_delay && !mox)
-							{
-								// if more than 5 sec + break in delay, reset timer and ring buffer
-								cwpolltimer.Start();
-								DttSP.CWRingRestart();
-							}
-							break;
-					}
-				}*/
 
-				if((!manual_mox) && (!disable_ptt) && (!rx_only))
-				{
-					bool mic_ptt = false, x2_ptt = false, cat_ptt_local = false, vox_ptt = false;
-
-					if(fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
-					{
-						mic_ptt = fwc_mic_ptt;
-
-						x2_ptt = fwc_rca_ptt;
-
-						vox_ptt = Audio.VOXActive;
-
-						cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt; 
-					}
-                    else if (hid_init && current_model == Model.FLEX1500)
+                //---------------------------------------------------------------------------------
+                // ke9ns add  allows you to use SSB for RX, while AM for TX
+                if (!MOX) // if in RX mode
+                {
+                    if ((AMSSBmodeON == false) && (AMSSBmodeFILT == true) && ((rx1_dsp_mode == DSPMode.AM) || (rx1_dsp_mode == DSPMode.SAM))) // and in AM mode
                     {
-                        mic_ptt = hid_mic_ptt;
-                        x2_ptt = hid_ptt_in;
-                        vox_ptt = Audio.VOXActive;
-                        cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt; 
+
+                        if ((udFilterLow.Value >= 20) && (udFilterHigh.Value >= 500)) // and the filter is shifted into USB  mode
+                        {
+                            if (AMSSBmodeON == false)  // do only 1 time
+                            {
+                                AMSSBmodeON = true;
+                                AMSSBmodeAM = rx1_dsp_mode; // save original mode (to go back to during TX)
+                                Debug.WriteLine("TO uuu MODE");
+                                SetRX1Mode(DSPMode.USB);
+                                AMSSBmodeSSB = DSPMode.USB;
+                                Debug.WriteLine("TO UUU MODE");
+
+                            }
+                        } //shifted to Right side
+                        else if ((udFilterLow.Value <= -500) && (udFilterHigh.Value <= 20)) // and the filter is shifted into LSB mode
+                        {
+                            if (AMSSBmodeON == false)  // do only 1 time
+                            {
+                                AMSSBmodeON = true;
+                                AMSSBmodeAM = rx1_dsp_mode; // save original mode (to go back to during TX)
+                                SetRX1Mode(DSPMode.LSB);
+                                AMSSBmodeSSB = DSPMode.LSB;
+
+                                Debug.WriteLine("TO LLL MODE");
+
+                            }
+                        } //shifted to Left side
+
+
+                    } // AM or SAM mode only above
+                    else if ((AMSSBmodeON == true) && (AMSSBmodeFILT == true) && ((rx1_dsp_mode == DSPMode.USB) || (rx1_dsp_mode == DSPMode.LSB))) // if now in SSB mode (but you were in AM)
+                    {
+
+                        if (((udFilterLow.Value <= -10) && (udFilterHigh.Value >= 10))) // back in AM mode
+                        {
+                            if (AMSSBmodeON == true)
+                            {
+                                SetRX1Mode(AMSSBmodeAM);
+                                AMSSBmodeON = false;
+                                Debug.WriteLine("TO AAA MODE");
+
+                            }
+                        }
+
+                    } // AMSSBmodeAM = true
+
+                } // !MOX
+
+
+
+
+                //----------------------------------------------------------------------------
+                // ke9ns allows you to use SSB for RX while TX = AM mode
+                if (AMSSBmodeON == true )
+                {
+                    if ((!MOX)) // RX mode
+                    {
+                        if (rx1_dsp_mode == AMSSBmodeAM)
+                        {
+                            SetRX1Mode(AMSSBmodeSSB); //SSB
+                            Debug.WriteLine("TO SSB MODE");
+                        }
+                    }
+                    else if ((MOX)) // TX mode
+                    {
+                        if (rx1_dsp_mode == AMSSBmodeSSB)
+                        {
+                            SetRX1Mode(AMSSBmodeAM);               //put back original AM mode while transmitting
+                            Debug.WriteLine("TO AM MODE");
+                        }
+                    }
+                }
+                    //----------------------------------------------------------------------------
+
+
+                    DSPMode tx_mode = rx1_dsp_mode;
+
+                    if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
+
+                    /*// reset the CW ring buffers every 5000ms when not in use
+                    if(current_ptt_mode != PTTMode.NONE)
+                    {
+                        switch(tx_mode)
+                        {
+                            case DSPMode.CWL:
+                            case DSPMode.CWU:
+                                cwpolltimer.Start(); // start over since key is in use
+                                break;
+                        }
                     }
                     else
-					{
-						byte b = 0;
-                     //   if(current_model == Model.SDR1000)  b = Hdw.StatusPort();
-
-
-						mic_ptt = (b & (byte)StatusPin.Dot) != 0;
-						x2_ptt = (b & (byte)StatusPin.PIN_11) != 0;
-
-						if(usb_present) x2_ptt = !x2_ptt;
-
-						vox_ptt = Audio.VOXActive;
-
-						cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt; 
-
-						if(auto_mute)
-						{
-							bool mute = !((b & (byte)StatusPin.PIN_12) != 0);
-							if(chkMUT.Checked != mute) chkMUT.Checked = mute;
-						}
-					}
-
-					/*Debug.WriteLine(cw_ptt.ToString().PadRight(6, ' ')+
-						mic_ptt.ToString().PadRight(6, ' ')+
-						x2_ptt.ToString().PadRight(6, ' ')+
-						vox_ptt.ToString().PadRight(6, ' ')+
-						cat_ptt_local.ToString().PadRight(6, ' ')+
-						current_ptt_mode.ToString());*/
-
-					if(!mox) // if in receive
-					{
-						if(x2_ptt)
-						{
-							current_ptt_mode = PTTMode.X2;
-							switch(tx_mode)
-							{
-								case DSPMode.LSB:
-								case DSPMode.USB:
-								case DSPMode.DSB:
-								case DSPMode.AM:
-								case DSPMode.SAM:
-								case DSPMode.FM:
-								case DSPMode.DIGL:
-								case DSPMode.DIGU:
-									if(chkVAC1.Checked && allow_vac_bypass)		Audio.VACBypass = true;
-									break;
-							}
-
-							chkMOX.Checked = true;
-							if(!mox)
-							{
-								chkPower.Checked = false;
-								return;
-							}
-                        } // if(x2_ptt)
-
-                        if (cat_ptt_local)
+                    {
+                        switch(tx_mode)
                         {
-                            current_ptt_mode = PTTMode.CAT;
+                            case DSPMode.CWL:
+                            case DSPMode.CWU:
+                                cwpolltimer.Stop(); // check how long since last reset
+                                if(cwpolltimer.DurationMsec > 5000 + break_in_delay && !mox)
+                                {
+                                    // if more than 5 sec + break in delay, reset timer and ring buffer
+                                    cwpolltimer.Start();
+                                    DttSP.CWRingRestart();
+                                }
+                                break;
+                        }
+                    }*/
 
-                            chkMOX.Checked = true;
-                            if (!mox)
+
+
+                    if ((!manual_mox) && (!disable_ptt) && (!rx_only)) // ke9ns do only below if not in manual mox mode, and PTT is not disabled, and not just in RX mode
+                    {
+                        bool mic_ptt = false, x2_ptt = false, cat_ptt_local = false, vox_ptt = false; // ke9ns various forms of external PTT operation: MIC, back of Flex, CAT, or VOX
+
+                        if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
+                        {
+                            mic_ptt = fwc_mic_ptt;
+
+                            x2_ptt = fwc_rca_ptt;
+
+                            vox_ptt = Audio.VOXActive;
+
+                            cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt;
+                        }
+                        else if (hid_init && current_model == Model.FLEX1500)
+                        {
+                            mic_ptt = hid_mic_ptt;
+                            x2_ptt = hid_ptt_in;
+                            vox_ptt = Audio.VOXActive;
+                            cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt;
+                        }
+                        else
+                        {
+                            byte b = 0;
+                            //   if(current_model == Model.SDR1000)  b = Hdw.StatusPort();
+
+
+                            mic_ptt = (b & (byte)StatusPin.Dot) != 0;
+                            x2_ptt = (b & (byte)StatusPin.PIN_11) != 0;
+
+                            if (usb_present) x2_ptt = !x2_ptt;
+
+                            vox_ptt = Audio.VOXActive;
+
+                            cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | cat_ptt;
+
+                            if (auto_mute)
                             {
-                                chkPower.Checked = false;
-                                return;
+                                bool mute = !((b & (byte)StatusPin.PIN_12) != 0);
+                                if (chkMUT.Checked != mute) chkMUT.Checked = mute;
                             }
-                        } //  if (cat_ptt_local)					
+                        }
 
-                        if ( (tx_mode == DSPMode.LSB ||
-							tx_mode == DSPMode.USB ||
-							tx_mode == DSPMode.DSB ||
-							tx_mode == DSPMode.AM  ||
-							tx_mode == DSPMode.SAM ||
-							tx_mode == DSPMode.DIGU ||
-							tx_mode == DSPMode.DIGL ||
-							tx_mode == DSPMode.FM ||
-							all_mode_mic_ptt) &&
-							mic_ptt )
-						{
-							current_ptt_mode = PTTMode.MIC;
+                        /*Debug.WriteLine(cw_ptt.ToString().PadRight(6, ' ')+
+                            mic_ptt.ToString().PadRight(6, ' ')+
+                            x2_ptt.ToString().PadRight(6, ' ')+
+                            vox_ptt.ToString().PadRight(6, ' ')+
+                            cat_ptt_local.ToString().PadRight(6, ' ')+
+                            current_ptt_mode.ToString());*/
 
-                            if (chkVAC1.Checked && allow_vac_bypass)
+                        if (!mox) // if in receive
+                        {
+
+                            //--------------------------------------RCA ptt
+                            if (x2_ptt)
                             {
-                                Audio.VACBypass = true;
+                                current_ptt_mode = PTTMode.X2;
+                                switch (tx_mode)
+                                {
+                                    case DSPMode.LSB:
+                                    case DSPMode.USB:
+                                    case DSPMode.DSB:
+                                    case DSPMode.AM:
+                                    case DSPMode.SAM:
+                                    case DSPMode.FM:
+                                    case DSPMode.DIGL:
+                                    case DSPMode.DIGU:
+                                        if (chkVAC1.Checked && allow_vac_bypass) Audio.VACBypass = true;
+                                        break;
+                                }
+
+                                chkMOX.Checked = true;
+                                pttht_timer.Start(); // ke9ns add
+
+                                if (!mox)
+                                {
+                                    chkPower.Checked = false;
+                                    return;
+                                }
+                            } // if(x2_ptt)
+
+
+                            //--------------------------------------cat_ptt
+                            if (cat_ptt_local)
+                            {
+                                current_ptt_mode = PTTMode.CAT;
+
+                                chkMOX.Checked = true;
+                                if (!mox)
+                                {
+                                    chkPower.Checked = false;
+                                    return;
+                                }
+                            } //  if (cat_ptt_local)					
+
+
+                            //----------------------------------------mic_ptt
+                            if ((tx_mode == DSPMode.LSB ||
+                                tx_mode == DSPMode.USB ||
+                                tx_mode == DSPMode.DSB ||
+                                tx_mode == DSPMode.AM ||
+                                tx_mode == DSPMode.SAM ||
+                                tx_mode == DSPMode.DIGU ||
+                                tx_mode == DSPMode.DIGL ||
+                                tx_mode == DSPMode.FM ||
+                                all_mode_mic_ptt) &&
+                                mic_ptt)
+                            {
+                                current_ptt_mode = PTTMode.MIC;
+
+                                pttht_timer.Start(); // ke9ns add
+
+                                if (chkVAC1.Checked && allow_vac_bypass)
+                                {
+                                    Audio.VACBypass = true;
+                                }
+
+                                chkMOX.Checked = true;
+                                if (!mox)
+                                {
+                                    chkPower.Checked = false;
+                                    return;
+                                }
                             }
 
-							chkMOX.Checked = true;
-							if(!mox)
-							{
-								chkPower.Checked = false;
-								return;
-							}
-						}
+                            //--------------------------------------vox_ptt
+                            if ((tx_mode == DSPMode.LSB ||
+                                tx_mode == DSPMode.USB ||
+                                tx_mode == DSPMode.DSB ||
+                                tx_mode == DSPMode.AM ||
+                                tx_mode == DSPMode.SAM ||
+                                tx_mode == DSPMode.DIGU ||
+                                tx_mode == DSPMode.DIGL ||
+                                tx_mode == DSPMode.FM) &&
+                                vox_ptt)
+                            {
+                                current_ptt_mode = PTTMode.VOX;
+                                vox_timer.Start();
 
-						if((tx_mode == DSPMode.LSB ||
-							tx_mode == DSPMode.USB ||
-							tx_mode == DSPMode.DSB ||
-							tx_mode == DSPMode.AM  ||
-							tx_mode == DSPMode.SAM ||
-							tx_mode == DSPMode.DIGU ||
-							tx_mode == DSPMode.DIGL ||
-							tx_mode == DSPMode.FM) &&
-							vox_ptt)
-						{
-							current_ptt_mode = PTTMode.VOX;
-							vox_timer.Start();
-							chkMOX.Checked = true;
-							/*if(!mox)
-							{
-								chkPower.Checked = false;
-								return;
-							}*/
-						}
-					}
-					else // else if(mox)
-					{
-						switch(current_ptt_mode)
-						{
-							case PTTMode.X2:
-								if(!x2_ptt)
-								{
-									chkMOX.Checked = false;
-									switch(tx_mode)
-									{
-										/*case DSPMode.CWL:
-										case DSPMode.CWU:
-											if(!cw_disable_monitor)
-												chkMON.Checked = mon_recall;
-											break;*/
-										case DSPMode.LSB:
-										case DSPMode.USB:
-										case DSPMode.DSB:
-										case DSPMode.AM:
-										case DSPMode.SAM:
-										case DSPMode.FM:
-										case DSPMode.DIGL:
-										case DSPMode.DIGU:
-											if(chkVAC1.Checked && Audio.VACBypass)
-												Audio.VACBypass = false;
-											break;
-									}
-								}
-								break;
-							case PTTMode.CAT:
-								if(!cat_ptt_local)
-								{
-									chkMOX.Checked = false;
-									/*if((tx_mode == DSPMode.CWL ||
-										tx_mode == DSPMode.CWU) &&
-										!cw_disable_monitor)
-										chkMON.Checked = mon_recall;*/
-								}
-								break;
-							case PTTMode.MIC:
-								if(!mic_ptt)
-								{
-									chkMOX.Checked = false;
-									if(chkVAC1.Checked && Audio.VACBypass)
-										Audio.VACBypass = false;
-								}
-								break;							
-							case PTTMode.VOX:
-								if(!vox_ptt)
-								{
-									vox_timer.Stop();
-									if(vox_timer.DurationMsec > vox_hang_time)
-										chkMOX.Checked = false;
-								}
-								else vox_timer.Start();
-								break;
-						}
-					}	
-				}
-				Thread.Sleep(2);
-				
-				/*if (++pollcount == 1000) 
-				{
-                    polltimer.Stop();
-                    msecs = polltimer.DurationMsec;
-                    polltimer.Start();
-					msecs *= 0.001;
-					Debug.WriteLine("timer average = " +msecs.ToString());	
-					pollcount = 0;
-				}*/
-			}
-			//			poll_ptt_running = false;
+                                chkMOX.Checked = true;
+                                /*if(!mox)
+                                {
+                                    chkPower.Checked = false;
+                                    return;
+                                }*/
+                            }
 
-		} // pollPTT() thread
+                        } // if (!MOX)
+                        else // else if(mox)
+                        {
+                            switch (current_ptt_mode)
+                            {
+                                case PTTMode.X2:
+                                    if (!x2_ptt)
+                                    {
+                                        // ke9ns mod 
+                                        pttht_timer.Stop();
+                                        if (pttht_timer.DurationMsec > PTTHT)
+                                        {
+
+                                            chkMOX.Checked = false;
+                                            switch (tx_mode)
+                                            {
+
+                                                case DSPMode.LSB:
+                                                case DSPMode.USB:
+                                                case DSPMode.DSB:
+                                                case DSPMode.AM:
+                                                case DSPMode.SAM:
+                                                case DSPMode.FM:
+                                                case DSPMode.DIGL:
+                                                case DSPMode.DIGU:
+                                                    if (chkVAC1.Checked && Audio.VACBypass) Audio.VACBypass = false;
+                                                    break;
+                                            }
+
+                                        }
+                                    }
+                                    else pttht_timer.Start(); // // ke9ns mod 
+                                    break;
+                                case PTTMode.CAT:
+                                    if (!cat_ptt_local)
+                                    {
+
+                                        // ke9ns mod 
+                                        pttht_timer.Stop();
+                                        if (pttht_timer.DurationMsec > PTTHT)
+                                        {
+                                            chkMOX.Checked = false;
+
+                                        }
+
+                                        //  chkMOX.Checked = false;  // ke9ns original code
+
+                                        /*if((tx_mode == DSPMode.CWL ||
+                                            tx_mode == DSPMode.CWU) &&
+                                            !cw_disable_monitor)
+                                            chkMON.Checked = mon_recall;*/
 
 
+                                    }
+                                    else pttht_timer.Start(); // // ke9ns mod 
 
-		private void PollFWCPAPWR()
+                                    break;
+                                case PTTMode.MIC:
+                                    if (!mic_ptt)
+                                    {
+                                        //  chkMOX.Checked = false;  // ke9ns original code
+                                        //  if (chkVAC1.Checked && Audio.VACBypass)  Audio.VACBypass = false;
+
+                                        // ke9ns mod 
+                                        pttht_timer.Stop();
+                                        if (pttht_timer.DurationMsec > PTTHT)
+                                        {
+                                            chkMOX.Checked = false;
+                                            if (chkVAC1.Checked && Audio.VACBypass) Audio.VACBypass = false;
+                                        }
+
+                                    }
+                                    else pttht_timer.Start();  // ke9ns mod 
+
+                                    break;
+                                case PTTMode.VOX:
+                                    if (!vox_ptt)
+                                    {
+                                        vox_timer.Stop();
+                                        if (vox_timer.DurationMsec > vox_hang_time) chkMOX.Checked = false;
+                                    }
+                                    else vox_timer.Start();
+                                    break;
+                            } // switch
+
+                        } // we are in MOX (above)
+
+                    } // do above if PTT is allowed to TX radio
+
+
+                    Thread.Sleep(2);
+
+                    /*if (++pollcount == 1000) 
+                    {
+                        polltimer.Stop();
+                        msecs = polltimer.DurationMsec;
+                        polltimer.Start();
+                        msecs *= 0.001;
+                        Debug.WriteLine("timer average = " +msecs.ToString());	
+                        pollcount = 0;
+                    }*/
+
+
+                } // while(chkPower.Checked)
+
+
+            //			poll_ptt_running = false;
+
+           
+
+        } // pollPTT() thread
+
+
+
+        private void PollFWCPAPWR()
 		{
 			if(!fwc_init || (current_model != Model.FLEX5000 && current_model != Model.FLEX3000) || !FWCEEPROM.PAOK) return;
 			//int count = 0;
@@ -49102,12 +49783,16 @@ namespace PowerSDR
         public static bool ALTM = false; // ke9ns add ALT + M key used to add memory
         public static bool HELPMAP = false; // ke9ns add true = mouse over map menuitem button trackmenuitem1
         public static bool HELPSWR = false; // ke9ns add true = mouse over SWR Scanner button for help
+        public bool INIT1 = false; // ke9ns for chrome
+
 
         //===============================================================================================================
         //===============================================================================================================
         //===============================================================================================================
         private void Console_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e )
 		{
+          //  Debug.WriteLine("KEY CODE: " + e.KeyCode);
+
             if (e.KeyCode == Keys.F1) // ke9ns add for help messages (F1 help screen)
             {
 
@@ -49148,20 +49833,11 @@ namespace PowerSDR
                     helpboxForm.Show();
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
-
+                    
+                    helpboxForm.youtube_embed = @"https://www.youtube.com/embed/-KSlMNyN8U0?rel=0&amp";
                     helpboxForm.helpbox_message.Text = helpboxForm.txttimer_message.Text;            // ID TIMER HELP
 
-
-                   // helpboxForm.webBrowser1.ScriptErrorsSuppressed = true;
-
-                   // helpboxForm.webBrowser1.Navigate("http://www.youtube.com/apiplayer?video_id=-KSlMNyN8U0&version=3");//
-                   
-                    //  helpboxForm.webBrowser1.Url = new Uri($"https://www.youtube.com/embed/-KSlMNyN8U0");
-                  //  helpboxForm.webBrowser1.Url = new Uri($"https://www.youtube.com/watch?v=-KSlMNyN8U0"); // works but like a full web browser
-                    //  helpboxForm.webBrowser1.Navigate($"http://youtube.com/v/-KSlMNyN8U0?version=3");
-
-
-
+              
                 }
                 else  if((MouseIsOverControl(txtNOAA) == true) || (MouseIsOverControl(txtNOAA2) == true))
                 {
@@ -49170,7 +49846,7 @@ namespace PowerSDR
                     helpboxForm.Show();
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
-                  
+                    helpboxForm.youtube_embed = @"https://www.youtube.com/embed/5xjzl5IkiJg?rel=0&amp";
                     helpboxForm.helpbox_message.Text = helpboxForm.solar_message.Text;         // SOLOR WEATHER HELP
 
                 }
@@ -49181,7 +49857,7 @@ namespace PowerSDR
                     helpboxForm.Show();
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
-
+                    helpboxForm.youtube_embed = @"https://www.youtube.com/embed/zninPwfSgJY?rel=0&amp";
                     helpboxForm.helpbox_message.Text = helpboxForm.TRACKMap.Text;             // WORLD MAP WITH Propagation, DX Spotting, Grayline, SUN tracking
 
                 }
@@ -49192,7 +49868,7 @@ namespace PowerSDR
                     helpboxForm.Show();
                     helpboxForm.Focus();
                     helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
-
+                    helpboxForm.youtube_embed = @"https://www.youtube.com/embed/w5j6jh6c0_g?rel=0&amp";
                     helpboxForm.helpbox_message.Text = helpboxForm.SWRScanner.Text;             // SWR Scanner Help
 
                 }
@@ -49217,7 +49893,7 @@ namespace PowerSDR
             {
                 switch (e.KeyCode)
                 {
-                    case Keys.M: // add to memory list
+                    case Keys.M: // ke9ns add  add to memory list
 
                         // Debug.WriteLine("ALT + M key ");
 
@@ -49229,6 +49905,8 @@ namespace PowerSDR
                         memoryForm.MemoryRecordAdd_Click(memoryForm.MemoryRecordAdd, EventArgs.Empty); // 
 
                         break;
+
+                  
 
                 }
 
@@ -49942,7 +50620,7 @@ namespace PowerSDR
 			{
 				return; // dont go any further if shortcuts are not enabled in setup general
 			}
-			else if(e.Control && !e.Alt)		// CTRL key is pressed ALONE
+			else if(e.Control && !e.Alt)		// CTRL key is pressed, ALT key NOT PRESSED
 			{
 
                 switch (e.KeyCode)
@@ -50069,11 +50747,21 @@ namespace PowerSDR
                             ptbCWSpeed_Scroll(this, EventArgs.Empty);
                         }
 						break;
-				}
+                    case Keys.Z: // ke9ns add show world map in window CTRL Z
+
+                        if (helpbox1Form == null || helpbox1Form.IsDisposed) helpbox1Form = new helpbox1(this);
+
+                        helpbox1Form.Show();
+                        helpbox1Form.Focus();
+                        helpbox1Form.WindowState = FormWindowState.Normal; // ke9ns add
+
+
+                        break;
+                }
             } // if(e.Control && !e.Alt)		// CTRL key is pressed
 
-            else if(e.Alt && !e.Control)    // Alt key is pressed
-			{
+            else if(e.Alt && !e.Control)   //  ALT key is pressed, CTRL NOT PRESSED
+            {
 				switch(e.KeyCode)
 				{
                     case Keys.Up:
@@ -50183,15 +50871,15 @@ namespace PowerSDR
 							btnZeroBeat_Click(this, EventArgs.Empty);
 						break;
 				}
-            } // if(!e.Control && e.Alt)		//  ALT key is pressed
-            else if(!e.Alt && !e.Control)
+            } // if(!e.Control && e.Alt)		//  ALT key is pressed, CTRL NOT PRESSED
+            else if(!e.Alt && !e.Control) // ALT and CTRL NOT PRESSED
 			{
                
              
                 if (this.ActiveControl is TextBoxTS) return;
 				if(this.ActiveControl is NumericUpDownTS) return;
 
-                Debug.WriteLine("1keypressedCODE " + e.KeyCode);
+             //   Debug.WriteLine("1keypressedCODE " + e.KeyCode);
 
                 switch (e.KeyCode)
 				{
@@ -50255,7 +50943,9 @@ namespace PowerSDR
 								tbFilterShift.Value++;
 							tbFilterShift_Scroll(this, EventArgs.Empty);*/
 						break;
-				}
+
+                  
+                } // e.keycode
 				
 				if(e.KeyCode == key_tune_up_1)
 				{
@@ -51312,7 +52002,7 @@ namespace PowerSDR
 				}
 
 
-                Debug.WriteLine("5KEYPRESS================= " + e.KeyCode);
+             //   Debug.WriteLine("5KEYPRESS================= " + e.KeyCode);
                     
 
 			} // NO ALT and NO CTRL key pressed
@@ -51511,6 +52201,8 @@ namespace PowerSDR
                     poll_ptt_thread.Priority = ThreadPriority.Normal;
                     poll_ptt_thread.IsBackground = true;
                     poll_ptt_thread.Start();
+
+                  
                 }
 
                 if (fwc_init && current_model == Model.FLEX3000)
@@ -51811,7 +52503,8 @@ namespace PowerSDR
                     if (!vox_update_thread.Join(500))
                         vox_update_thread.Abort();
                 }
-                if (poll_ptt_thread != null)
+
+                if ((poll_ptt_thread != null)) // ke9ns mod
                 {
                     if (!poll_ptt_thread.Join(500))
                         poll_ptt_thread.Abort();
@@ -52185,36 +52878,26 @@ namespace PowerSDR
         //==========================================================================================================
 		private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-
         
             Debug.WriteLine("CONSOLE_CLOSING");
-            chkPower.Checked = false;
-
+          
             Audio.callback_return = 2;
+            CATEnabled = false;
+            ROTOREnabled = false; // ke9ns add
 
+            vfodial = false; // ke9ns add to terminal the dial routine
+            N1MM_ON = false; // ke9ns add to shut off N1MM
+            chkPower.Checked = false;   // make sure power is off		
+            ckQuickRec.Checked = false; // make sure recording is stopped
 
-         //   if (WindowState == FormWindowState.Maximized)
-          //  {
-            //    Properties.Settings.Default.Location = RestoreBounds.Location;
-            //    Properties.Settings.Default.Size = RestoreBounds.Size;
-             //   Properties.Settings.Default.Maximised = true;
-              //  Properties.Settings.Default.Minimised = false;
-          //  }
-
+            if (KBON == 1) powerMate.Shutdown(); // ke9ns add 
 
             if (cwxForm != null) cwxForm.stopPoll = false; // ke9ns add
            
-
-            if (timerID != 0) // ke9ns add
-            {
-                timeKillEvent(timerID);     // kill the mmtimer
-            }
-
-            if (timerID1 != 0)  // ke9ns add
-            {
-                timeKillEvent(timerID1);
-            }
-
+            if (timerID != 0)  timeKillEvent(timerID);     // kill the mmtimer
+         
+            if (timerID1 != 0)  timeKillEvent(timerID1);
+           
 
             if (SpotForm != null)
             {
@@ -52222,11 +52905,8 @@ namespace PowerSDR
                 SpotForm.checkBoxMUF.Checked = false;   // ke9ns add
             }
 
-          
-            CATEnabled = false;
-            ROTOREnabled = false; // ke9ns add
-
-
+            //--------------------------------------------------------------
+            // hide all open forms
             if (setupForm != null) setupForm.Hide();
             if (cwxForm != null) cwxForm.Hide();
 			if (eqForm != null) eqForm.Hide();
@@ -52259,26 +52939,21 @@ namespace PowerSDR
                 fwcAtuForm.Hide();
                 fwcAtuForm.DoBypass();
             }
+            //--------------------------------------------------------------
 
             MemoryList.Save();
-
             DXMemList.Save1(); // ke9ns add
-
-            //   this.Text = TitleBar.GetString(); // ke9ns add
-            this.Text += "-----Memory save ";
-
 
             Debug.WriteLine("CONSOLE_CLOSING----- SAVE MEMORY DONE");
 
             chkPower.Checked = false;
 			Thread.Sleep(100);
-			
-			SaveState();                // put current settings back into database     DB.SaveVars("State", ref a);		    // save the values to the DB
-
-            this.Text += " ,SAVED STATE";
+   
+            this.Hide();
            
-
-            Debug.WriteLine("CONSOLE_CLOSING----- SAVING STATE TO DATABASE. DONE");
+            SaveState();                // put current settings back into database     DB.SaveVars("State", ref a);		    // save the values to the DB
+           
+            //--------------------------------------------------------------
             try
             {
                 switch (current_model)
@@ -52291,7 +52966,7 @@ namespace PowerSDR
                         }
                         break;
                     case Model.FLEX3000:
-                        if(fwc_init) 
+                        if (fwc_init)
                         {
                             FWC.SetPABias(false);
                             FWC.SetFanSpeed(0.0f);
@@ -52312,48 +52987,39 @@ namespace PowerSDR
 
             }
 
-            /*
-            this.Text += " , Forms closing";
+            //-------------------------------------------------------------
+            Debug.WriteLine("CONSOLE_CLOSING----- SAVING STATE TO DATABASE. DONE");
 
-            Debug.WriteLine("CONSOLE_CLOSING----- TURN OFF PA DONE");
-            if (setupForm != null) setupForm.SaveOptions(); //  DB.SaveVars("Options", ref a);	
-            if (cwxForm != null) cwxForm.Close(); // cw panel
-            if (setupForm != null) setupForm.Close();
-            if (SpotForm != null) SpotForm.Close(); // ke9ns add spotter form
-            if (ScanForm != null) ScanForm.Close(); // ke9ns add scanner form
-            if (WaveForm != null) WaveForm.Close(); // ke9ns add wave screen
-            if (IDBOXForm != null) IDBOXForm.Close(); // ke9ns add ID timer box
-            if (helpboxForm != null) helpboxForm.Close(); // ke9ns add help screen
-            if (StackForm != null) StackForm.Close(); // ke9ns add bandstack
-            if (TOTBOXForm != null) TOTBOXForm.Close(); // ke9ns add time out timer
+            if (cwxForm != null)
+            {
+              
+                cwxForm.Close();
+            }
+
+            if (setupForm != null) setupForm.SaveOptions();
             if (eqForm != null) eqForm.Close();
-			if (ucbForm != null) ucbForm.Close();
-			if (xvtrForm != null) xvtrForm.Close();
-			if (ProdTestForm != null) ProdTestForm.Close();
-			if (fwcMixForm != null) fwcMixForm.Close();
-			if (flex3000MixerForm != null) flex3000MixerForm.Close();
+            if (ucbForm != null) ucbForm.Close();
+            if (xvtrForm != null) xvtrForm.Close();
+            if (ProdTestForm != null) ProdTestForm.Close();
+            if (fwcMixForm != null) fwcMixForm.Close();
+            if (flex3000MixerForm != null) flex3000MixerForm.Close();
             if (flex1500MixerForm != null) flex1500MixerForm.Close();
-			if (flex5000LLHWForm != null) flex5000LLHWForm.Close();
-			if (flex5000DebugForm != null) flex5000DebugForm.Close();
+            if (flex5000LLHWForm != null) flex5000LLHWForm.Close();
+            if (flex5000DebugForm != null) flex5000DebugForm.Close();
             if (fwcAntForm != null) fwcAntForm.Close();
             if (hidAntForm != null) hidAntForm.Close();
-			if (fwcAtuForm != null) fwcAtuForm.Close();
+            if (fwcAtuForm != null) fwcAtuForm.Close();
             if (flexControlBasicForm != null) flexControlBasicForm.Close();
             if (flexControlAdvancedForm != null) flexControlAdvancedForm.Close();
             if (memoryForm != null) memoryForm.Close();
             if (preSelForm != null) preSelForm.Close();
 
-            this.Text += " , ALL CLOSED";
-            */
-
-          //  this.Hide();
-
+          
             Debug.WriteLine("CONSOLE_CLOSING------ ALL FORMS CLOSED DONE");
-            
-            
-            //   Common.SaveForm(this, "console");
 
-            // jumps to dispose()
+
+           // ke9ns console_closing(), then Dispose(), then ExitConsole(), then back to Displose() to finish
+
 
         } // console_closing
 
@@ -53403,8 +54069,7 @@ namespace PowerSDR
             if (cwxForm != null ) // if cwx panel open, then use it,otherwise change CWKeyer directly
             {
                 Debug.WriteLine("CWX1 " + ptbCWSpeed.Value);
-             
-                
+                             
                 cwxForm.WPM = ptbCWSpeed.Value; // cwxForm.WPM = ptbCWSpeed.Value; // ke9ns add
 
             }
@@ -53981,7 +54646,7 @@ namespace PowerSDR
 			comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
 
             comboMeterTX1Mode.ForeColor = Color.White; // ke9ns add
-            comboMeterTX1Mode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add
+            comboMeterTX1Mode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add for lblrx2meter
 
 
             if (!disable_ui_mox_changes)
@@ -54035,20 +54700,24 @@ namespace PowerSDR
                 btnVFOBtoA.Enabled = true;
                 btnVFOSwap.Enabled = true;
             }
+
 			if(chkPower.Checked) chkPower.BackColor = button_selected_color;
 			comboMeterTXMode.ForeColor = Color.Gray;
             comboMeterTX1Mode.ForeColor = Color.Gray; // ke9ns add
 
             comboMeterRXMode.ForeColor = Color.White;
-			comboMeterRXMode_SelectedIndexChanged(this, EventArgs.Empty);
+			comboMeterRXMode_SelectedIndexChanged(this, EventArgs.Empty); //
 
-			pa_fwd_power = 0;
+            comboRX2MeterMode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add to update lblrx2meter text
+
+
+            pa_fwd_power = 0;
 			pa_rev_power = 0;
 
 			Audio.HighSWRScale = 1.0;
 			HighSWR = false;
 
-			for(int i=0; i<meter_text_history.Length; i++)
+			for(int i=0; i < meter_text_history.Length; i++)
 				meter_text_history[i] = 0.0f;
 
 			if(!fwc_init) // || current_model == Model.SDR1000)
@@ -54431,41 +55100,7 @@ namespace PowerSDR
             } // NO TX
 
 
-            /*if (tx)
-            {
-                t1.Stop();
-                timer6 += t1.DurationMsec;
-                count6++;
-
-                switch (current_model)
-                {
-                    case Model.FLEX5000:
-                    case Model.FLEX3000:
-                        if (poll_pa_pwr_thread == null || !poll_pa_pwr_thread.IsAlive)
-                        {
-                            poll_pa_pwr_thread = new Thread(new ThreadStart(PollFWCPAPWR));
-                            poll_pa_pwr_thread.Name = "Poll FWC PA PWR Thread";
-                            poll_pa_pwr_thread.Priority = ThreadPriority.BelowNormal;
-                            poll_pa_pwr_thread.IsBackground = true;
-                            poll_pa_pwr_thread.Start();
-                        }
-                        break;
-                    default:
-                        if (pa_present)
-                        {
-                            if (poll_pa_pwr_thread == null || !poll_pa_pwr_thread.IsAlive)
-                            {
-                                poll_pa_pwr_thread = new Thread(new ThreadStart(PollPAPWR));
-                                poll_pa_pwr_thread.Name = "Poll PA PWR Thread";
-                                poll_pa_pwr_thread.Priority = ThreadPriority.BelowNormal;
-                                poll_pa_pwr_thread.IsBackground = true;
-                                poll_pa_pwr_thread.Start();
-                            }
-                        }
-                        break;
-                }
-            }*/
-
+         
             if (!tx) // in RX zero out PA
             {
                 pa_fwd_power = 0;
@@ -54500,6 +55135,8 @@ namespace PowerSDR
                     " 8: " + timer8.ToString("f1").PadLeft(4, '0'));*/
 
         } // chkMOX_CHeckchanged2
+
+
 
 		//private Thread mox_update_thread;
 	//============================================================================	
@@ -54849,9 +55486,12 @@ namespace PowerSDR
 					old_tune_meter_tx_mode = current_meter_tx_mode;
 					CurrentMeterTXMode = tune_meter_tx_mode;
 					comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
-				}
 
-                    switch (Audio.TXDSPMode)
+                    comboMeterTX1Mode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add
+
+                }
+
+                switch (Audio.TXDSPMode)
                     {
                         case DSPMode.USB:
                         case DSPMode.CWU:
@@ -54944,10 +55584,12 @@ namespace PowerSDR
                             Audio.TXDSPMode = DSPMode.DIGU;
                             break;
                     }
-           
 
-		
-				if((atu_present) && (tx_band != Band.B2M) && ((ATUTuneMode)comboTuneMode.SelectedIndex != ATUTuneMode.BYPASS))
+                 if (setupForm.chkBoxTNTX3.Checked == true) FWC.SetRCATX3(chkTUN.Checked); // ke9ns add use TX3 for external TUN tuner feature
+
+
+
+                if ((atu_present) && (tx_band != Band.B2M) && ((ATUTuneMode)comboTuneMode.SelectedIndex != ATUTuneMode.BYPASS))
 				{
                     Debug.WriteLine("TUNNING in TUN mode");
 
@@ -54986,7 +55628,7 @@ namespace PowerSDR
                 if ((setupForm != null) && (setupForm.chkBoxPulser.Checked == true) && (PulseON == false))
                 {
 
-                    PulseON = true;   // set 1 time
+                    PulseON = true;   // set 1 time (now calls audio.cs rouine and pulser())
                 
                     Last_PR = 0.0;
                  
@@ -55009,7 +55651,8 @@ namespace PowerSDR
 			{
                 setupForm.chkBoxPulser.Enabled = true; // ke9ns add 
 
-            
+                if (setupForm.chkBoxTNTX3.Checked == true)  FWC.SetRCATX3(chkTUN.Checked); // ke9ns add use TX3 for external TUN tuner feature
+
 
                 if (timerID != 0)  // ke9ns add
                 {
@@ -57637,7 +58280,7 @@ namespace PowerSDR
             //if (old_rx2_xvtr_index != rx2_xvtr_index)
                 //last_rx2_xvtr_index = old_rx2_xvtr_index;
 
-            SetRX2Band(BandByFreq(freq, rx2_xvtr_index, false, current_region));
+            SetRX2Band(BandByFreq(freq, rx2_xvtr_index, false, current_region)); //why?
 
             if(rx2_xvtr_index >= 0) freq = xvtrForm.TranslateFreq(freq);
 
@@ -58057,17 +58700,20 @@ namespace PowerSDR
             }
             else if (Display.K9 == 7) // special panafall mode for grayline tracking
             {
-                H7 = picDisplay.Height * 5 / 6; // size of panadapter area
+                H7 = picDisplay.Height * 5 / 6; // size of panadapter area 83%
                 H8 = picDisplay.Height * 5 / 6;
-                H9 = 6.0f / 5.0f;
+                H9 = 6.0f / 5.0f; // 1.2
                
             }
-            else if (Display.K9 == 5) // 
+            else if (Display.K9 == 5) // RX2 OFF, RX1 Panafall
             {
                 H7 = picDisplay.Height / 2;
                 H8 = picDisplay.Height / 2;
                 H9 = 2.0f;
                 
+
+
+
             }
             else
             {
@@ -60151,6 +60797,8 @@ namespace PowerSDR
 
 		private void SetRX1Mode(DSPMode new_mode)
 		{
+            Debug.WriteLine("SETRX1MODE HERE " + new_mode );
+            AMSSBmodeFILT = false; // ke9ns add (only SetRX1Filter() can set it to true)
 
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
 
@@ -60425,8 +61073,8 @@ namespace PowerSDR
                         comboTXProfile.Text = lsb_txprofile;
 
                     //grpMode.Text = "Mode - LSB";
-					if(!rx_only && chkPower.Checked)
-						chkMOX.Enabled = true;
+					if(!rx_only && chkPower.Checked) chkMOX.Enabled = true;
+
                     if (chkVFOATX.Checked || !rx2_enabled)
 					{
 						SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
@@ -60801,7 +61449,7 @@ namespace PowerSDR
 
 			if(rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM && rx1_dsp_mode != DSPMode.DRM)
 			{
-				RX1Filter = rx1_filters[(int)new_mode].LastFilter;
+				RX1Filter = rx1_filters[(int)new_mode].LastFilter; // ke9ns pull up RX filter and choose the button to press
 			}
 			else
 			{
@@ -60825,7 +61473,7 @@ namespace PowerSDR
 				//grpFilter.Text = "Filter - "+(sample_rate1/1000).ToString("f0")+"kHz";
 			}
 
-			tbFilterWidthScroll_newMode(); // wjt 
+			tbFilterWidthScroll_newMode(); // wjt determine if your allowed to change the filter width or now.
 
 			//Display.DrawBackground();
 
@@ -60837,9 +61485,9 @@ namespace PowerSDR
 
 			if(fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
 			{
-				if(chkVFOSplit.Checked || full_duplex)
-					txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-				bool tx1, tx2, tx3;
+				if(chkVFOSplit.Checked || full_duplex) txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+
+                bool tx1, tx2, tx3;
 				if(flex5000RelayForm != null)	flex5000RelayForm.UpdateRelayState(out tx1, out tx2, out tx3);
 			}
 
@@ -60851,53 +61499,79 @@ namespace PowerSDR
 
 		private void radModeLSB_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeLSB.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+           
+            if (radModeLSB.Checked)
 			{
-				SetRX1Mode(DSPMode.LSB);
+                Debug.WriteLine("call LSB MODE ");
+                SetRX1Mode(DSPMode.LSB);
+              
 			}
 		}
 
 		private void radModeUSB_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeUSB.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+           
+            if (radModeUSB.Checked)
 			{
-				SetRX1Mode(DSPMode.USB);
-			}
+                Debug.WriteLine("call USB MODE ");
+                SetRX1Mode(DSPMode.USB);
+               
+            }
 		}
 
 		private void radModeDSB_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeDSB.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+           
+            if (radModeDSB.Checked)
 			{
 				SetRX1Mode(DSPMode.DSB);
-			}
+              
+            }
 		}
 
 		private void radModeCWL_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeCWL.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+          
+            if (radModeCWL.Checked)
 			{
                 chkANF.Checked = false;
                 SetRX1Mode(DSPMode.CWL);
-			}
+              
+            }
 
 		}
 
 		private void radModeCWU_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeCWU.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+           
+            if (radModeCWU.Checked)
 			{
                 chkANF.Checked = false;
                 SetRX1Mode(DSPMode.CWU);
-			}
+                
+            }
 		}
 
 		private void radModeFMN_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeFMN.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+          
+            if (radModeFMN.Checked)
 			{
 				SetRX1Mode(DSPMode.FM);
-			}
+              
+            }
             else
             {
                 FMRESET = false;
@@ -60962,12 +61636,15 @@ namespace PowerSDR
 
         private void radModeAM_CheckedChanged(object sender, System.EventArgs e)
 		{
-
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = true; // ke9ns add am mode
+           
             if (radModeAM.Checked)
 			{
-                
+                Debug.WriteLine("call AM MODE ");
                 SetRX1Mode(DSPMode.AM);
-              //  AMMODE = DSPISB.FIRST;
+               
+                                    //  AMMODE = DSPISB.FIRST;
             }
             else
             {
@@ -61040,8 +61717,9 @@ namespace PowerSDR
                     SAMMODE = DSPISB.FIRST;
                     radModeSAM.Text = "SAM";
                 }
-               
+                Debug.WriteLine("MOUSE SAM MODE SELECTED ");
                 SetRX1Mode(DSPMode.SAM);
+               
 
             } // if(radModeSAM.Checked)
             else
@@ -61049,43 +61727,54 @@ namespace PowerSDR
                 SAMRESET = true;
             }
 
-            Debug.WriteLine("1SAM MODE " + SAMMODE);
+          //  Debug.WriteLine("1SAM MODE " + SAMMODE);
 
         } // radModeSAM_MouseUp
 
        
         private void radModeSAM_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeSAM.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = true; // ke9ns add am mode
+          
+            if (radModeSAM.Checked)
 			{
-				SetRX1Mode(DSPMode.SAM);
-        
+                Debug.WriteLine("call SAM MODE ");
+                SetRX1Mode(DSPMode.SAM);
+              
             } // if(radModeSAM.Checked)
             else
             {
                 SAMRESET = false;
             }
 
-            Debug.WriteLine("SAM MODE " + SAMMODE);
+            Debug.WriteLine("SAM MODE: " + SAMMODE);
 
 
         } //radModeSAM_CheckedChanged
 
         private void radModeDIGU_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeDIGU.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+          
+            if (radModeDIGU.Checked)
 			{
                 chkANF.Checked = false;
                 chkNR.Checked = false;
                 chkNB.Checked = false;
                 chkDSPNB2.Checked = false;
                 SetRX1Mode(DSPMode.DIGU);
-			}
+               
+            }
 		}
 
 		private void radModeSPEC_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeSPEC.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+          
+            if (radModeSPEC.Checked)
 			{
 				SetRX1Mode(DSPMode.SPEC);
 			}
@@ -61093,22 +61782,31 @@ namespace PowerSDR
 
 		private void radModeDIGL_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeDIGL.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+            
+
+            if (radModeDIGL.Checked)
 			{
                 chkANF.Checked = false;
                 chkNR.Checked = false;
                 chkNB.Checked = false;
                 chkDSPNB2.Checked = false;
                 SetRX1Mode(DSPMode.DIGL);
-			}
+              
+            }
 		}
 
 		private void radModeDRM_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(radModeDRM.Checked)
+            AMSSBmodeON = false; // ke9ns add
+            AMSSBmodeFILT = false; // ke9ns add 
+           
+            if (radModeDRM.Checked)
 			{
 				SetRX1Mode(DSPMode.DRM);
-			}
+                
+            }
 		}
 
 #endregion
@@ -61170,9 +61868,9 @@ namespace PowerSDR
 					udFilterLow.Enabled = false;
 					udFilterHigh.Enabled = false;
 					break;
-			}
+            } // switch(rx1_filter)
 
-			rx1_filter = new_filter;
+            rx1_filter = new_filter;
 			
 			low = rx1_filters[(int)rx1_dsp_mode].GetLow(new_filter);
 			high = rx1_filters[(int)rx1_dsp_mode].GetHigh(new_filter);
@@ -61238,10 +61936,14 @@ namespace PowerSDR
 						}
 					}
 					return;
-			}
+            } // switch(new_filter)
 
-			UpdateRX1Filters(low, high);
-		}
+            UpdateRX1Filters(low, high);
+
+            AMSSBmodeFILT = true; // ke9ns add to signal RX filter updated
+
+
+		} // SetRX1Filter()
 
 		private void radFilter1_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -61317,35 +62019,36 @@ namespace PowerSDR
 				SetRX1Filter(Filter.VAR2);
 		}
 
-		private void udFilterLow_ValueChanged(object sender, System.EventArgs e)
-		{
-			if(udFilterLow.Focused)
-			{
-				if(udFilterLow.Value >= udFilterHigh.Value-10)
-				{
-					udFilterLow.Value = udFilterHigh.Value-10;
-					return;
-				}
+        private void udFilterLow_ValueChanged(object sender, System.EventArgs e)
+        {
 
-				UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
+            if (udFilterLow.Focused)
+            {
+                if (udFilterLow.Value >= udFilterHigh.Value - 10)
+                {
+                    udFilterLow.Value = udFilterHigh.Value - 10;
+                    return;
+                }
 
-				if(!save_filter_changes)
-					rx1_filters[(int)rx1_dsp_mode].SetLow(rx1_filter, (int)udFilterLow.Value);
-			}
+                UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
 
-			if(save_filter_changes && rx1_filter >= Filter.F1 && rx1_filter <= Filter.VAR2)
-				rx1_filters[(int)rx1_dsp_mode].SetLow(rx1_filter, (int)udFilterLow.Value);
+                if (!save_filter_changes)
+                    rx1_filters[(int)rx1_dsp_mode].SetLow(rx1_filter, (int)udFilterLow.Value);
+            }
 
-			/*if(udFilterLow.Focused)
-				btnHidden.Focus();*/
-		}
-		
+            if (save_filter_changes && rx1_filter >= Filter.F1 && rx1_filter <= Filter.VAR2)
+                rx1_filters[(int)rx1_dsp_mode].SetLow(rx1_filter, (int)udFilterLow.Value);
+
+
+
+
+        } // udFilterLow_ValueChanged
+
+
 
         //=========================================================================================
-		private void udFilterHigh_ValueChanged(object sender, System.EventArgs e)
+        private void udFilterHigh_ValueChanged(object sender, System.EventArgs e)
 		{
-           
-
             if (udFilterHigh.Focused)
 			{
 				if(udFilterHigh.Value <= udFilterLow.Value + 10)
@@ -61354,21 +62057,17 @@ namespace PowerSDR
 					return;
 				}
 
-              
 				UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
 
-
-                if (!save_filter_changes)
-					rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
+                if (!save_filter_changes)	rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
 			}
 
             if (save_filter_changes && rx1_filter >= Filter.F1 && rx1_filter <= Filter.VAR2)
-				rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
+            {
+                rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
+            }
 
-            /*if(udFilterHigh.Focused)
-				btnHidden.Focus();*/
 
-          
         } // udFilterHigh_ValueChanged
 
 
@@ -61945,6 +62644,7 @@ namespace PowerSDR
             btnVFOSwap_Click(this, EventArgs.Empty);
         }
 
+        // A <> B swap
 		private void btnVFOSwap_Click(object sender, System.EventArgs e)
 		{
             swapping = true;
@@ -61965,14 +62665,18 @@ namespace PowerSDR
 			
 				txtVFOAFreq.Text = txtVFOBFreq.Text;
 				txtVFOBFreq.Text = temp;
+
 				txtVFOAFreq_LostFocus(this, EventArgs.Empty);
 				txtVFOBFreq_LostFocus(this, EventArgs.Empty);
 			}
-			else
+			else // if RX2 ON
 			{
-				string a_freq = txtVFOAFreq.Text;
-				DSPMode a_mode = rx1_dsp_mode;
+				string a_freq = txtVFOAFreq.Text;      // STORE VFOA info
+                string b_freq = txtVFOBFreq.Text;      // ke9ns add STORE VFOB info 
+
+                DSPMode a_mode = rx1_dsp_mode;
 				Filter a_filter = rx1_filter;
+
 				int a_filter_low = 0, a_filter_high = 0;
 				if(a_filter == Filter.VAR1 || a_filter==Filter.VAR2)
 				{
@@ -61980,13 +62684,18 @@ namespace PowerSDR
 					a_filter_high = RX1FilterHigh;
 				}
 
-				RX1DSPMode = rx2_dsp_mode;
+				RX1DSPMode = rx2_dsp_mode;              // put VFOB into VFOA
 				VFOAFreq = VFOBFreq;
 				RX1Filter = rx2_filter;
 
 				RX2DSPMode = a_mode;
-				txtVFOBFreq.Text = a_freq;
-				txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+
+                txtVFOAFreq.Text = b_freq;
+                txtVFOBFreq.Text = a_freq;
+
+                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+
 				switch(a_filter)
 				{
 					case Filter.F8:
@@ -62012,7 +62721,10 @@ namespace PowerSDR
 				string agc = comboAGC.Text;
 				comboAGC.Text = comboRX2AGC.Text;
 				comboRX2AGC.Text = agc;
-			}
+
+               
+
+			} // if RX2 ON
 
             swapping = false; // to handle VU swapping
 
@@ -62020,7 +62732,7 @@ namespace PowerSDR
             {
                 SetVURXPath();
             }            
-		}
+		} // A <> B
 
 		private void UpdateVFOASub()
 		{
@@ -63456,43 +64168,31 @@ namespace PowerSDR
 					Display.CurrentDisplayModeBottom = DisplayMode.OFF;
 					break;
 			}
-		}
+		} //combodisplaymodebottom
 
 
         //=============================================================================================
-        // ke9ns mod
-        private void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
+        // ke9ns mod  PLAY button
+        public void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
             if ((checkBoxID.Checked != true) && (!mox)) // ke9ns checkboxID is the REC/PLAY ID box
             {
                 ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
-
-                MessageBox.Show("You need to be Transmitting First,\n OR, check the Rec/Play ID box",
-                   "Not Transmitting",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
-
+               
+                MessageBox.Show(new Form() { TopMost = true }, "You need to be Transmitting First,\n OR, check the Rec/Play ID box");
                 return;
             }
 
             string file_name2 = AppDataPath + "SDRQuickAudio.wav"; // ke9ns save data for my mods
 
-
+            //---------------------------------------------------------------------
             if (WaveForm.chkQuickAudioFolder.Checked == true)  // ke9ns add
             {
-
                 string filePath = AppDataPath + "QuickAudio\\";
 
                 if (!Directory.Exists(filePath))
                 {
-                    // create PowerSDR audio folder if it does not exist
-                    //  Directory.CreateDirectory(wave_folder);
-                    Debug.WriteLine("problem no ke9ns dat file found");
-
-                    MessageBox.Show("QuickAudio Folder missing",
-                 "QuickAudio Folder missing",
-                 MessageBoxButtons.OK,
-                 MessageBoxIcon.Information);
+                    MessageBox.Show(new Form() { TopMost = true }, "QuickAudio Folder missing, Make a recording first");
                     return;
 
                 }
@@ -63500,24 +64200,18 @@ namespace PowerSDR
             else if (!File.Exists(file_name2)) // ke9ns add
             {
                 ckQuickPlay.Checked = false; // if file does not exist then dont do anything and return.
-                MessageBox.Show("You need to Record a File First\n Missing the SDRQuickAudio.wav file\nUncheck Wave->QuickAudio Save Folder\nMake a recording.\n Now you can Reselect Wave->QuickAudio Save Folder",
-                 "No File Selected",
-                 MessageBoxButtons.OK,
-                 MessageBoxIcon.Information);
+                MessageBox.Show(new Form() { TopMost = true }, "You need to Record a File First\n Missing the SDRQuickAudio.wav file\nUncheck Wave->QuickAudio Save Folder\nMake a recording.\n Now you can Reselect Wave->QuickAudio Save Folder");
                 return;
             }
 
-
-             AudioMOXChanged(mox); // ke9ns add  change the slider to MON from AF if transmitting. Needed becuase of other changes made for use with cross band work.
+            AudioMOXChanged(mox); // ke9ns add  change the slider to MON from AF if transmitting. Needed becuase of other changes made for use with cross band work.
 
             ptbAF_Scroll(this, EventArgs.Empty); // update AF to MON slider now
 
-         
             if ((checkBoxID.Checked == true) && (chkPower.Checked)) // ke9ns add allow tx on play directly so you dont need to mox and play
             {
                 if ((ckQuickPlay.Checked))
                 {
-
                     if (chkVAC1.Checked)
                     {
                          vac1 = 1;
@@ -63527,11 +64221,9 @@ namespace PowerSDR
                     chkMOX.Checked = true;     // key radio 
                     WaveForm.QuickPlay = true;
                     ckQuickPlay.BackColor = button_selected_color;
-
                 }
                 else
                 {
-
                     WaveForm.QuickPlay = false;
                     chkMOX.Checked = false;     // unkey radio
                     ckQuickPlay.BackColor = SystemColors.Control;//k6jca 1/13/08
@@ -63541,11 +64233,9 @@ namespace PowerSDR
                          vac1 = 0;
                          Thread.Sleep(100);
                          chkVAC1.Checked = true;
-
                       }
-                   
-
-                }
+             
+                } // unkey radio
 
                 ckQuickRec.Enabled = !ckQuickPlay.Checked;
 
@@ -63554,10 +64244,8 @@ namespace PowerSDR
             {
                 if (ckQuickPlay.Checked)  
                 {
-
                     WaveForm.QuickPlay = true;
                     ckQuickPlay.BackColor = button_selected_color;
-             
                 }
                 else
                 {
@@ -63571,22 +64259,26 @@ namespace PowerSDR
         } // ckQuickPlay_CheckedChanged
 
 
-        private static int temp_PWR = 0; // ke9ns add to remember the original power output value to put it back when done
 
+        private static int temp_PWR = 0; // ke9ns add to remember the original power output value to put it back when done
+        DSPMode oldmode = DSPMode.FIRST;
         //==========================================================================================
         public void ckQuickRec_CheckedChanged(object sender, System.EventArgs e)
 		{
-
-          
             if ((checkBoxID.Checked == true)) // ke9ns add (Rec/Play ID box checked) allow tx on play directly so you dont need to mox and play
             {
+               
                 if ((ckQuickRec.Checked)) // if enabled (recording)
                 {
+                    oldmode = RX1DSPMode;
+                    if ((oldmode == DSPMode.FM) || (oldmode == DSPMode.AM) || (oldmode == DSPMode.SAM) || (oldmode == DSPMode.DSB)) RX1DSPMode = DSPMode.USB; // record only in SSB mode
+
                     if (chkVAC1.Checked)
-                     {
+                    {
                          vac1 = 1;
                          chkVAC1.Checked = false;
-                     }
+                    }
+
                     chkMOX.Checked = true;     // key radio 
                     WaveForm.QuickRec = true;
                     ckQuickPlay.Enabled = true;
@@ -63604,12 +64296,17 @@ namespace PowerSDR
                                                                 //ptbPWR.Value
                     PWR = temp_PWR; // turn drive level back up to prior setting
 
-                      if (vac1 == 1)
+                    if (oldmode != DSPMode.FIRST)
+                    {
+                        RX1DSPMode = oldmode;
+                        oldmode = DSPMode.FIRST;
+                    }
+
+                    if (vac1 == 1)
                       {
                          vac1 = 0;
                           Thread.Sleep(100);
                           chkVAC1.Checked = true;
-
                       }
                    
                 }
@@ -63890,6 +64587,9 @@ namespace PowerSDR
 				txtDisplayCursorPower.Location = new Point(txt_display_cursor_power_basis.X,txt_display_cursor_power_basis.Y+v_delta);
 				txtDisplayCursorOffset.Location = new Point(txt_display_cursor_offset_basis.X,txt_display_cursor_offset_basis.Y+v_delta);
 
+                ScreenCap.Location = new Point(txt_screen_save_offset_basis.X, txt_screen_save_offset_basis.Y + v_delta);
+                ScreenCap1.Location = new Point(txt_screen_save_offset_basis.X, txt_screen_save_offset_basis.Y + v_delta);
+
                 chkPower.Location = new Point(chk_power_basis.X,chk_power_basis.Y + (v_delta / 8));
 				panelOptions.Location = new Point(gr_options_basis.X,gr_options_basis.Y + (v_delta / 4));
 
@@ -64114,7 +64814,9 @@ namespace PowerSDR
 			txt_display_cursor_freq_basis = this.txtDisplayCursorFreq.Location;
 			txt_display_cursor_power_basis = this.txtDisplayCursorPower.Location;
 			txt_display_cursor_offset_basis = this.txtDisplayCursorOffset.Location;
-			chk_power_basis = this.chkPower.Location;
+            txt_screen_save_offset_basis = this.ScreenCap.Location;
+
+            chk_power_basis = this.chkPower.Location;
 			gr_options_basis = this.panelOptions.Location;
 			gr_sound_controls_basis = this.panelSoundControls.Location;
 			chk_squelch_basis = this.chkSquelch.Location;
@@ -64318,10 +65020,13 @@ namespace PowerSDR
                 chkRX1MUTE.Visible = true;
             }
 
-		}  // RX2 ON/OFF button
+            comboRX2MeterMode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add to update lblrx2meter text
+            comboMeterTX1Mode_SelectedIndexChanged(this, EventArgs.Empty); // ke9ns add to update lblrx2meter text
+
+        }  // RX2 ON/OFF button
 
 
-		private void chkRX2SR_CheckedChanged(object sender, System.EventArgs e)
+        private void chkRX2SR_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(chkRX2SR.Checked) chkRX2SR.BackColor = button_selected_color;
 			else chkRX2SR.BackColor = SystemColors.Control;
@@ -65260,11 +65965,20 @@ namespace PowerSDR
 			dsp.GetDSPRX(1, 1).BinOn = chkRX2BIN.Checked;	
 		}
 
+        //==============================================================================
+        // ke9ns add for 2nd meter with a 2nd receiver
+
+      
+      
+
+
+
+        //============================================================
 		private void comboRX2MeterMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(!FWCEEPROM.RX2OK) return;
-			if(comboRX2MeterMode.Items.Count == 0 ||
-				comboRX2MeterMode.SelectedIndex < 0)
+
+			if(comboRX2MeterMode.Items.Count == 0 || comboRX2MeterMode.SelectedIndex < 0)
 			{
 				rx2_meter_mode = MeterRXMode.FIRST;
 			}
@@ -65302,23 +66016,41 @@ namespace PowerSDR
 				}
 				rx2_meter_mode = mode;
 
-				switch(mode)
-				{
-					case MeterRXMode.SIGNAL_STRENGTH:
-                    case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
-					case MeterRXMode.SIGNAL_AVERAGE:
-						lblRX2Meter.Text = "  1   3   5   7   9  +20 +40 +60";
-						break;
+                bool mox2 = false; // ke9ns add  false = rx    true = 2nd tx meter active
 
-					case MeterRXMode.ADC_L:
-					case MeterRXMode.ADC_R:
-						lblRX2Meter.Text = "-100  -80   -60   -40   -20    0";
-						break;
-					case MeterRXMode.OFF:
-						lblRX2Meter.Text = "";
-						break;
-				}
-				ResetRX2MeterPeak();
+                //---------------------------
+                // ke9ns add
+                if ((setupForm != null) && (setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
+                {
+                    if ((!FWCEEPROM.RX2OK) || (FWCEEPROM.RX2OK && chkRX2.Checked == false)) mox2 = true; // ke9ns keep meter set for the TX type you wanted all the time
+                    else mox2 = false; // receiving on RX2 or dont want 2nd tX meter
+
+                }
+                else
+                {
+                    mox2 = true; // transmitting and want 2nd tx meter to function
+                }
+             
+                if (!mox2)
+                {
+                    switch (mode)
+                    {
+                        case MeterRXMode.SIGNAL_STRENGTH:
+                        case MeterRXMode.SIGNAL_PEAK:  // ke9ns ADD
+                        case MeterRXMode.SIGNAL_AVERAGE:
+                            lblRX2Meter.Text = "  1   3   5   7   9  +20 +40 +60";
+                            break;
+
+                        case MeterRXMode.ADC_L:
+                        case MeterRXMode.ADC_R:
+                            lblRX2Meter.Text = "-100  -80   -60   -40   -20    0";
+                            break;
+                        case MeterRXMode.OFF:
+                            lblRX2Meter.Text = "";
+                            break;
+                    }
+                    ResetRX2MeterPeak();
+                }
 			}
 
             if (meterCombo == true ) picRX3Meter.Invalidate(); // ke9ns12 add
@@ -65327,6 +66059,9 @@ namespace PowerSDR
 
             if (comboRX2MeterMode.Focused)	btnHidden.Focus();
 		} //comboRx2metermode_selectedindexchanged
+
+
+
 
 		private void chkRX2Preamp_CheckedChanged(object sender, System.EventArgs e)
 		{
@@ -66806,7 +67541,7 @@ namespace PowerSDR
             return version;
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void timer2_Tick(object sender, EventArgs e) // 200msec just calls this 1 timer at start
         {
             timer2.Enabled = false;
             switch (dsp.GetDSPTX(0).CurrentDSPMode)
@@ -67736,7 +68471,10 @@ namespace PowerSDR
 
         private void cWXToolStripMenuItem_Click(object sender, EventArgs e) // CWX toolstrip 
         {
-            if (setupForm == null || setupForm.IsDisposed) setupForm = new Setup(this);
+            if (setupForm == null || setupForm.IsDisposed)
+            {
+                setupForm = new Setup(this);
+            }
 
             if ((setupForm != null) && (setupForm.chkKeyPoll.Checked == false))
             {
@@ -67761,6 +68499,8 @@ namespace PowerSDR
             //	cw_key_mode = true;
             if (cwxForm == null || cwxForm.IsDisposed)
             {
+                Debug.WriteLine("CWX CREATE1");
+
                 cwxForm = new CWX(this);
             }
 
@@ -68149,32 +68889,27 @@ namespace PowerSDR
                 switch (current_meter_display_mode)
                 {
 
-
-                    case MultiMeterDisplayMode.Bar: // if edge switch to analog
+                    case MultiMeterDisplayMode.Bar:   // if BAR switch to EDGE
                         meterLMB = false;
                         meterDMB = false;
-
                        
-                        lblMultiSMeter.Visible = false;
-
-                        
+                        lblMultiSMeter.Visible = false; // turn off labels since we are switching off Bar meter
                         lblRX2Meter.Visible = false;
 
                         if (setupForm != null)
                         {
                             setupForm.chkBoxLMB.Checked = false;
                             setupForm.chkBoxDMB.Checked = false;
-
                         }
 
                         current_meter_display_mode = MultiMeterDisplayMode.Edge; // switch to analog
                         CurrentMeterDisplayMode = current_meter_display_mode;
-                        // setupForm.MTRSet = "Analog";  // comboMeterType update
-                        //  AnalogMeterBackgroundColor = analog_meter_background_color;
+                        setupForm.MTRSet = "Edge";  // comboMeterType update
+                        EdgeMeterBackgroundColor = edge_meter_background_color;
 
                         break;
 
-                    case MultiMeterDisplayMode.Edge: // if edge switch to analog
+                    case MultiMeterDisplayMode.Edge: // if Edge switch to Analog
                         meterLMB = false;
                         meterDMB = false;
 
@@ -68182,7 +68917,6 @@ namespace PowerSDR
                         {
                             setupForm.chkBoxLMB.Checked = false;
                             setupForm.chkBoxDMB.Checked = false;
-
                         }
 
                         current_meter_display_mode = MultiMeterDisplayMode.Analog; // switch to analog
@@ -68192,9 +68926,9 @@ namespace PowerSDR
 
                         break;
 
-                    case MultiMeterDisplayMode.Analog: // if analog switch to TR7
+                    case MultiMeterDisplayMode.Analog: // if Analog switch from Standard Analog -> light -> dark -> to TR7 meter
 
-                        if ((meterDMB == false) && (meterLMB == false))
+                        if ((meterDMB == false) && (meterLMB == false)) // Standard Analog background
                         {
                             meterLMB = true;
                             meterDMB = false;
@@ -68202,12 +68936,12 @@ namespace PowerSDR
                             {
                                 setupForm.chkBoxLMB.Checked = true;
                                 setupForm.chkBoxDMB.Checked = false;
-
                             }
+
                             CurrentMeterDisplayMode = current_meter_display_mode;
                             AnalogMeterBackgroundColor = analog_meter_background_color;
                         }
-                        else if (meterLMB == true)
+                        else if (meterLMB == true) // light background Analog
                         {
                             meterLMB = false;
                             meterDMB = true;
@@ -68220,7 +68954,7 @@ namespace PowerSDR
                             CurrentMeterDisplayMode = current_meter_display_mode;
                             AnalogMeterBackgroundColor = analog_meter_background_color;
                         }
-                        else if (meterDMB == true)
+                        else if (meterDMB == true) // dark background Analog
                         {
                             meterLMB = false;
                             meterDMB = false;
@@ -68229,7 +68963,6 @@ namespace PowerSDR
                             {
                                 setupForm.chkBoxDMB.Checked = false;
                                 setupForm.chkBoxLMB.Checked = false;
-
                             }
 
                             CurrentMeterDisplayMode = current_meter_display_mode;
@@ -68237,30 +68970,25 @@ namespace PowerSDR
                             AnalogMeterBackgroundColor = analog_meter_background_color;
                         }
 
-                        break;
-                    case MultiMeterDisplayMode.Original: // if already TR7 switch to EDGE
+                        break; // Analog
+
+                    case MultiMeterDisplayMode.Original: // if TR7 switch to BAR
 
                         current_meter_display_mode = MultiMeterDisplayMode.Bar;
                         CurrentMeterDisplayMode = current_meter_display_mode;
                         setupForm.MTRSet = "Bar";
                         EdgeMeterBackgroundColor = edge_meter_background_color;
-
                        
-                        lblMultiSMeter.Visible = true;
+                        lblMultiSMeter.Visible = true; // turn on text labels for BAR meter
 
                         if (meterCombo != true) //MeterTXMode.Combo)
                         {
                             lblRX2Meter.Visible = true;
                         }
 
-                        //  current_meter_display_mode = MultiMeterDisplayMode.Edge;
-                        //  CurrentMeterDisplayMode = current_meter_display_mode;
-                        //  setupForm.MTRSet = "Edge";
-                        //  EdgeMeterBackgroundColor = edge_meter_background_color;
+                        break; // Original
 
-                        break;
-
-                } // check which meter you current display and change to the next one
+                } // switch (current_meter_display_mode)     check which meter you current display and change to the next one
 
 
                 UpdateDisplay(); // ke9ns add
@@ -70105,8 +70833,12 @@ namespace PowerSDR
         private void spotterMenu_Click(object sender, EventArgs e)
         {
 
-            if (SpotForm == null || SpotForm.IsDisposed)  SpotForm = new SpotControl(this);
+            if (SpotForm == null || SpotForm.IsDisposed)
+            {
+                SpotForm = new SpotControl(this);
+            }
          
+
            SpotForm.Show();
            SpotForm.Focus();
            SpotForm.WindowState = FormWindowState.Normal; // ke9ns add
@@ -70141,6 +70873,40 @@ namespace PowerSDR
 
         } // trackMenuItem1_Click
 
+
+        // ke9ns add for pulling up World Map
+        private void MapMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right)) // 
+            {
+
+                if (helpbox1Form == null || helpbox1Form.IsDisposed) helpbox1Form = new helpbox1(this);
+
+                helpbox1Form.Show();
+                helpbox1Form.Focus();
+                helpbox1Form.WindowState = FormWindowState.Normal; // ke9ns add
+
+            } // right click
+
+        } // MapMenuItem_MouseDown(
+
+
+        // ke9ns add if you put your mouse over map button
+        private void trackMenuItem1_MouseEnter(object sender, EventArgs e)
+        {
+            HELPMAP = true;
+
+        }
+
+        private void trackMenuItem1_MouseLeave(object sender, EventArgs e)
+        {
+            HELPMAP = false;
+
+        }
+
+
         //====================================================================================================
         // ke9ns add 
         private void dxspotMenuItem1_Click(object sender, EventArgs e)
@@ -70170,42 +70936,7 @@ namespace PowerSDR
 
         } // spotterMenuItem1_Click
 
-      
-        //====================================================================================================
-        // ke9ns add 
-        private void swlMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
-
-            SpotForm.SWLbutton_Click(this, EventArgs.Empty);
-
-         //   swlsearchMenuItem1.Enabled = true;
-
-        } // swlMenuItem1_Click
-
-        //====================================================================================================
-        // ke9ns add 
-        private void swlsearchMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
-
-           
-            if (SpotControl.SP1_Active == 0) // if swl list not loaded up, do it now.
-            {
-                SpotForm.SWLbutton_Click(this, EventArgs.Empty);
-            }
-
-            if (SwlForm == null || SwlForm.IsDisposed) SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
-
-            if (SpotControl.SP3_Active == 1) // if swl list not loaded up, do it now.
-            {
-                SwlForm.Show();
-                SwlForm.Focus();
-                SwlForm.WindowState = FormWindowState.Normal; // ke9ns add
-            }
-
-        } // swlsearchMenuItem1_Click
-
+    
         //====================================================================================================
         // ke9ns add 
         private void trackMenuItem2_Click(object sender, EventArgs e)
@@ -71109,11 +71840,7 @@ namespace PowerSDR
                     case "Combo":
                         meterCombo = true;
                         mode = MeterTXMode.Combo;
-
-
-                       
                         break;
-
 
                     case "Off":
                         mode = MeterTXMode.OFF;
@@ -71143,9 +71870,24 @@ namespace PowerSDR
 
                 current_meter_tx1_mode = mode;
 
-            } 
+            }
 
-            if (mox)
+            //---------------------------
+            // ke9ns add
+            bool mox2 = false; // ke9ns add  false = rx    true = 2nd tx meter active
+
+            if ( (setupForm != null) && (setupForm.chkRX2AutoMuteRX2OnVFOATX.Checked == false) || (TXMeter2 == false) || ((TXMeter2 == true) && (!MOX))) // ke9ns do RX2 if in duplex mode and not in special 2nd TX meter mode
+            {
+                if ((!FWCEEPROM.RX2OK) || (FWCEEPROM.RX2OK && chkRX2.Checked == false)) mox2 = true; // ke9ns keep meter set for the TX type you wanted all the time
+                else mox2 = false; // receiving on RX2 or dont want 2nd tX meter
+
+            }
+            else
+            {
+                mox2 = true; // transmitting and want 2nd tx meter to function
+            }
+          
+            if (mox2)
             {
                 switch (mode)
                 {
@@ -71186,7 +71928,8 @@ namespace PowerSDR
 
             if (meterCombo == true ) picRX3Meter.Invalidate(); // ke9ns12 add
             else picRX2Meter.Invalidate(); // ke9ns12 add
-           // picRX2Meter.Invalidate();
+          
+            // picRX2Meter.Invalidate();
 
             if (comboMeterTX1Mode.Focused)  btnHidden.Focus();
 
@@ -71206,12 +71949,9 @@ namespace PowerSDR
 
             if (me.Button == System.Windows.Forms.MouseButtons.Right)
             {
-
                 if (WaveForm.chkQuickAudioFolder.Checked == true)
                 {
-                  
-
-                    string filePath = AppDataPath + "QuickAudio\\";
+                   string filePath = AppDataPath + "QuickAudio\\";
 
                     if (!Directory.Exists(filePath))
                     {
@@ -71219,7 +71959,6 @@ namespace PowerSDR
                         //  Directory.CreateDirectory(wave_folder);
                         Debug.WriteLine("problem no ke9ns dat file found");
                         return;
-
                     }
 
                     openFileDialog1.InitialDirectory = String.Empty;
@@ -71432,6 +72171,7 @@ namespace PowerSDR
 
             set
             {
+                
                 tot_onoff = value;
 
                 if (tot_onoff == true)
@@ -72302,7 +73042,8 @@ namespace PowerSDR
         } //checkBoxID_CheckedChanged
 
 
-
+        // ke9ns add below
+    
         public static int suncounter = 2; // for space weather
         public static byte noaaON = 0; // for space weather 1=space weather, 2=local weather, 3=both
         public static int SFI = 0;       // for Space weather
@@ -72455,8 +73196,27 @@ namespace PowerSDR
 
             Debug.WriteLine("GET NOAA=========");
 
-                        suncounter = 1;
-                        serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt";
+            suncounter = 1;
+            serverPath1 = "http://services.swpc.noaa.gov/text/wwv.txt"; // this gets SF, A, K and storm data,    SIDC gets SS,  nwra gets Effective sun spot number "https://spawx.nwra.com/spawx/env_latest.html";
+
+            try
+            {
+
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(serverPath1);
+                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+
+                Stream responseStream1 = webResponse.GetResponseStream();
+                StreamReader streamReader1 = new StreamReader(responseStream1);
+
+                string noaa = streamReader1.ReadToEnd();
+
+                responseStream1.Close();
+                streamReader1.Close();
+
+
+
+                /*  ftp site turned off on Dec 9th, 2017
+                       serverPath = "ftp://ftp.swpc.noaa.gov/pub/latest/wwv.txt"; 
 
                         FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverPath);
 
@@ -72486,6 +73246,9 @@ namespace PowerSDR
                             //   Debug.WriteLine("noaa=== " + noaa);
 
                             //   textBox1.Text += "NOAA Download complete \r\n";
+
+
+                */
 
 
 
@@ -72754,13 +73517,6 @@ namespace PowerSDR
         private void autoBrightBox_MouseUp(object sender, MouseEventArgs e)
         {
             autoBrightBox.ForeColor = Color.White;
-        }
-
-        private void ckQuickPlay_MouseUp(object sender, MouseEventArgs e)
-        {
-          //  ckQuickPlay.ContextMenu = null;
-          //  ckQuickPlay.ContextMenuStrip = null;
-
         }
 
 
@@ -73103,42 +73859,67 @@ namespace PowerSDR
 
         public int Goertzel(float[] samples, int start, int end)
         {
+         
             sPrev = 0.0;
             sPrev2 = 0.0;
-
+                      
             for (int i = start; i < end; i++)   // feedback
             {
                 double s = samples[i] + SpotForm.Coeff * sPrev - sPrev2; // 
                 sPrev2 = sPrev;
                 sPrev = s;
-            }
+
+            } // for loop
 
             double power = (sPrev2 * sPrev2) + (sPrev * sPrev) - ((SpotForm.Coeff * sPrev) * sPrev2);  // feedforward
 
-            return (int)power; // magnitude of frequency in question within the stream
+             return (int)power; // magnitude of frequency in question within the stream
+          
+
         } //  Goertzel
-        
-    /*
-        public double goertzel(List<double> sngData, long N, float frequency, int samplerate)
+
+
+        //----------------------------------------------------------------------
+        public int Goertzel2(float[] samples, int start, int end)
         {
-            double skn, skn1, skn2;
-            skn = skn1 = skn2 = 0;
-            samplerate = this.sampleRate;
-            frequency = this.freq;
+            sPrev = 0.0;
+            sPrev2 = 0.0;
 
-            double c = 2 * pi * frequency / samplerate;
-            double cosan = Math.Cos(c);
-
-            for (int i = 0; i < N; i++)
+            for (int i = start; i < end; i++)   // feedback
             {
-                skn2 = skn1;
-                skn1 = skn;
-                skn = 2 * cosan * skn1 - skn2 + sngData[i];
+                double s = samples[i] + SpotForm.Coeff2 * sPrev - sPrev2; // 
+                sPrev2 = sPrev;
+                sPrev = s;
             }
 
-            return skn - Math.Exp(-c) * skn1;
-        }
-*/
+            double power = (sPrev2 * sPrev2) + (sPrev * sPrev) - ((SpotForm.Coeff2 * sPrev) * sPrev2);  // feedforward
+
+            return (int)power; // magnitude of frequency in question within the stream
+        } //  Goertzel
+
+
+
+        /*
+            public double goertzel(List<double> sngData, long N, float frequency, int samplerate)
+            {
+                double skn, skn1, skn2;
+                skn = skn1 = skn2 = 0;
+                samplerate = this.sampleRate;
+                frequency = this.freq;
+
+                double c = 2 * pi * frequency / samplerate;
+                double cosan = Math.Cos(c);
+
+                for (int i = 0; i < N; i++)
+                {
+                    skn2 = skn1;
+                    skn1 = skn;
+                    skn = 2 * cosan * skn1 - skn2 + sngData[i];
+                }
+
+                return skn - Math.Exp(-c) * skn1;
+            }
+    */
         //==================================================================================
         //==================================================================================
         // ke9ns for precision mSec timer (not used at this time)
@@ -74042,21 +74823,15 @@ namespace PowerSDR
         } // labelTS4_MouseWheel
 
 
+
+        //===============================================================================================================
+        // ke9ns add CQCQ calling button when trying to become a DX spot by called CQ
+
         public bool CQCQCALL = false; // ke9ns add true = wave plays CQCQ.wav file
 
-        //==================================================================
-        // ke9ns add
-        private void checkBoxCallCQ_CheckedChanged(object sender, EventArgs e)
-        {
-           
-
-        } // checkBoxCallCQ_CheckedChanged
-
-        //==================================================================
-        // ke9ns add CQCQ button when trying to become a DX spot by called CQ
         private void btnTrack_Click(object sender, EventArgs e)
         {
-         //   btnHidden.Focus();
+            Debug.WriteLine("CQCQ button pushed");
 
             string filePath = AppDataPath + "QuickAudio\\";
 
@@ -74064,35 +74839,27 @@ namespace PowerSDR
 
             if (WaveForm.chkQuickAudioFolder.Checked == true)  // ke9ns add
             {
-
-                if (Directory.Exists(filePath)) // need to see the quickaudio folder
+                if (Directory.Exists(filePath))    // need to see the quickaudio folder
                 {
-
                     if (File.Exists(filePath + "CQCQ.wav"))
                     {
-
-                        if ((chkPower.Checked)) // ke9ns add allow tx on play directly so you dont need to mox and play
+                        if ((chkPower.Checked))     // ke9ns add allow tx on play directly so you dont need to mox and play
                         {
-
                             if (WaveForm.QuickPlay == false)
                             {
-                                if (chkVAC1.Checked)
+                                if (chkVAC1.Checked) // turn OFF VAC while transmitting (override it)
                                 {
                                     vac1 = 1;
                                     chkVAC1.Checked = false;
                                 }
 
-                                CQCQCALL = true;// let wave: chkQuickPlay_CheckedChanged know you want to play CQCQ.WAV file only
-
-                                checkBoxID.Checked = true;
-                                ckQuickPlay.Checked = true;
-                                chkMOX.Checked = true;     // key radio 
-                                WaveForm.QuickPlay = true;
-                           
+                                CQCQCALL = true;                // let wave: chkQuickPlay_CheckedChanged know you want to play CQCQ.WAV file only
+                                checkBoxID.Checked = true;     // REC/PLAY ID box
+                                ckQuickPlay.Checked = true;     //  PLAY button (which keys the radio because checkboxID = true
+                            
                             }
                             else
                             {
-
                                 WaveForm.QuickPlay = false;
                                 chkMOX.Checked = false;     // unkey radio
                                 ckQuickPlay.BackColor = SystemColors.Control;//k6jca 1/13/08
@@ -74103,89 +74870,63 @@ namespace PowerSDR
                                     vac1 = 0;
                                     Thread.Sleep(100);
                                     chkVAC1.Checked = true;
-
                                 }
-
                             }
                         } // chkpower
-
 
                     } //  if (File.Exists(filePath + "\\CQCQ.wav"))
                     else
                     {
-                        MessageBox.Show("No CQCQ.wav file found in folder: " + filePath + "\n" +
-                             "Open Wave menu and Click the CQCQ button to record your Voice or CW,\n" +
-                             "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
-                             "Then click CQCQ button again, to end the recording", "CQCQ audio File");
-
+                        MessageBox.Show(new Form() { TopMost = true }, "Console: Could not Find file CQCQ.wav in QuickAudio folder");
                     }
 
                 } // if (!Directory.Exists(filePath)) 
                 else
                 {
-                    MessageBox.Show("No folder: " + filePath + "\n" +
-                           "Open Wave menu and Click the CQCQ button to record your Voice or CW,\n" +
-                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
-                           "Then click CQCQ button again, to end the recording", "CQCQ audio File");
-
+                    MessageBox.Show(new Form() { TopMost = true }, "Console: Could not find QuickAudio Folder");
                 }
 
             } //  if (WaveForm.chkQuickAudioFolder.Checked == true) 
 
           //  btnHidden.Focus();
 
-        } // btnTrack_Click
+        } // CQCQ btnTrack_Click
 
-        private void regBox1_TextChanged(object sender, EventArgs e)
-        {
 
-        }
 
         public bool CALLCALL = false; // ke9ns add true = wave plays CALL.wav file
 
         //=======================================================================
-        // ke9ns add  CALL button This button is used when trying to make a contact with a station
+        // ke9ns add  REPLY button This button is used when trying to make a contact with a station
         private void buttonCall_Click(object sender, EventArgs e)
         {
-          //  btnHidden.Focus();
-
             string filePath = AppDataPath + "QuickAudio\\";
 
             if (WaveForm.chkQuickAudioFolder.Checked == false) WaveForm.chkQuickAudioFolder.Checked = true;
 
             if (WaveForm.chkQuickAudioFolder.Checked == true)  // ke9ns add
             {
-
                 if (Directory.Exists(filePath)) // need to see the quickaudio folder
                 {
-
                     if (File.Exists(filePath + "CALL.wav"))
                     {
-
                         if ((chkPower.Checked)) // ke9ns add allow tx on play directly so you dont need to mox and play
                         {
-
                             if (WaveForm.QuickPlay == false)
                             {
-
                                 if (chkVAC1.Checked)
                                 {
                                     vac1 = 1;
                                     chkVAC1.Checked = false;
                                 }
 
-                                CALLCALL = true;// let wave: chkQuickPlay_CheckedChanged know you want to play CALL.WAV file only
-
+                                CALLCALL = true;      // let wave: chkQuickPlay_CheckedChanged know you want to play CALL.WAV file only
                                 checkBoxID.Checked = true;
                                 ckQuickPlay.Checked = true;
-                                chkMOX.Checked = true;     // key radio 
-                                WaveForm.QuickPlay = true;
-                                //   ckQuickPlay.BackColor = button_selected_color;
-                                // TIMETOID = false; this is set false by chkQuickPlay_CheckedChanged
+                               
                             }
                             else
                             {
-
                                 WaveForm.QuickPlay = false;
                                 chkMOX.Checked = false;     // unkey radio
                                 ckQuickPlay.BackColor = SystemColors.Control;//k6jca 1/13/08
@@ -74196,35 +74937,29 @@ namespace PowerSDR
                                     vac1 = 0;
                                     Thread.Sleep(100);
                                     chkVAC1.Checked = true;
-
                                 }
 
                             }
 
-
                         } // chkpower
-
 
                     } //  if (File.Exists(filePath + "\\CALL.wav"))
                     else
                     {
-                        MessageBox.Show("No REPLY CALL.wav file found in folder: " + filePath + "\n" +
-                           "Open Wave menu and Click the REPLY button to record your Voice or CW,\n" +
-                           "Speak or CW your Callsign as you would when trying to contact a DX station.\n" +
-                           "Then click REPLY button again, to end the recording" , "REPLY audio File");
+                         MessageBox.Show(new Form() { TopMost = true }, "Console: Could not Find file CALL.wav in QuickAudio folder");
 
                     }
 
                 } // if (!Directory.Exists(filePath)) 
+                else
+                {
+                    MessageBox.Show(new Form() { TopMost = true }, "Console: Could not find QuickAudio Folder");
+                }
 
             } //  if (WaveForm.chkQuickAudioFolder.Checked == true) 
+  
 
-          //  btnHidden.Focus();
-
-
-        } // buttonCall_Click
-
-
+        } // CALL REPLY buttonCall_Click
 
 
         //=======================================================================================================
@@ -74345,6 +75080,9 @@ namespace PowerSDR
                         case DSPMode.CWU:
                             Audio.TXDSPMode = DSPMode.DIGU;
                             break;
+                    default:
+                        break;
+
                     }
            
 	
@@ -74397,7 +75135,13 @@ namespace PowerSDR
 					case DSPMode.CWU:
 						Audio.TXDSPMode = mode;
 						break;
-				}
+
+                    default:
+                        Audio.SineFreq1 = cw_pitch; // ke9ns add default
+                        break;
+
+
+                }
 
 				DttSP.SetTXFilter(1, dsp.GetDSPTX(0).TXFilterLow, dsp.GetDSPTX(0).TXFilterHigh);
 
@@ -74586,19 +75330,14 @@ namespace PowerSDR
 
 
 
-
-
-
-
-
-
+       
 
         //======================================================================================================
         // ke9ns add  used by HTTP routine to send graphic image of either PAN or full console window to internet
         public byte[] getImage()
         {
 
-            if ((setupForm != null) && (setupForm.checkBoxHTTP1.Checked == true))
+            if ((setupForm != null) && (setupForm.checkBoxHTTP1.Checked == true)) // full console below
             {
                
                 Graphics myGraphics = this.CreateGraphics();
@@ -74629,7 +75368,7 @@ namespace PowerSDR
 
 
             }
-            else
+            else // just display (not console) below
             {
 
                 bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
@@ -74649,29 +75388,79 @@ namespace PowerSDR
         } // getImage()
 
         byte[] audioOutput; // ke9ns add
+        public float[] HTTPAudio_data = new float[16384];          // ke9ns add    used to get out_l_ptr1 audio stream in 2048 pieces at a time
 
+        public bool HTTPAudio = false;
+        public bool HTTPAudio_ON = false;
+
+        string HTTP_Audio;
+        string HTTP_Audio1;
         //======================================================================================================
         // ke9ns add  used by HTTP routine to send graphic image of either PAN or full console window to internet
         public byte[] getAudio()
         {
+/*
+            if (HTTPAudio == false)
+            {
+              //  Audio.wave_file_writer.Stop();
+                string temp = "test";
+                string wave_folder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "\\PowerSDR";
+
+                temp = wave_folder + "\\" + temp;
+
+                HTTP_Audio = temp + ".wav";  // ke9ns this is the file created
+                HTTP_Audio1 = temp + ".mp3";  // ke9ns this is the file created
+
+                Audio.wave_file_writer = new WaveFileWriter(BlockSize1, 2, SampleRate1, HTTP_Audio);  // open up new test.wav file in PowerSDR folder
+
+            } //  if (HTTPAudio == false)
+*/
+            HTTPAudio = true; // activate audio stream
+
+
+            using (var reader = new WaveFileReader(HTTP_Audio))    // Open a reader for test.wav file
+            {
+                 IWaveProvider stream32 = new Wave16ToFloatProvider(reader); // interface to convert wav file to floating stream
+
+
+                using (var converted = new LameMP3FileWriter(HTTP_Audio1, reader.WaveFormat, LAMEPreset.VBR_90)) // open test.wav and convert to mp3 and save in test.mp3
+               {
+                    //  reader.CopyTo(converted);  // create MP3 file
+
+                  
+                    int bytesRead;
+                    do
+                    {
+                        bytesRead = stream32.Read(audioOutput, 0, audioOutput.Length);
+                        converted.Write(audioOutput, 0, bytesRead);
+                   
                     
-             //   bitmap = new Bitmap(picDisplay.Width, picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-              //  picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
+                    } while (bytesRead != 0 && converted.Length < reader.Length);
 
-              //  using (memstream = new MemoryStream())
-               // {
-                 //   bitmap.Save(memstream, ImageFormat.Jpeg);
-                  //  picDisplayOutput = memstream.ToArray();
-              //  }
+              }
+            }
 
-                using (memstream = new MemoryStream())
+  /*
+            using (WaveFileReader reader = new WaveFileReader(HTTP_Audio))
+            {
+
+                IWaveProvider stream32 = new Wave16ToFloatProvider(reader);
+                
+                using (WaveFileWriter converted = new WaveFileWriter(temp.wav, stream32.WaveFormat))
                 {
-             //   WWV_data;
-                    audioOutput = memstream.ToArray();
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    do
+                    {
+                        bytesRead = stream32.Read(buffer, 0, buffer.Length);
+                        converted.Write(buffer, 0, bytesRead);
+                    } while (bytesRead != 0 && converted.Length < reader.Length);
                 }
+            }
+*/
 
 
-            return audioOutput;  // return byte array of jpeg
+            return audioOutput;  // return byte array of audio
 
 
         } // getAudio()
@@ -74762,20 +75551,27 @@ namespace PowerSDR
 
         } // HTTP_PORT
 
-        // ke9ns add if you put your mouse over map button
-        private void trackMenuItem1_MouseEnter(object sender, EventArgs e)
+      
+
+       
+        private void SWLMenuItem_Click(object sender, EventArgs e)
         {
-            HELPMAP = true;
-         
-        }
+            if (SpotForm != null)
+            {
+                SWLFORM = true; // open up SWL search window
+                SpotControl.SP1_Active = 1; // make sure SWL is actually turned ON
 
-        private void trackMenuItem1_MouseLeave(object sender, EventArgs e)
-        {
-            HELPMAP = false;
+                if (SpotControl.SP_Active == 0)
+                {
+                    spotterMenu.ForeColor = Color.Yellow;
+                    spotterMenu.Text = "SWL Spot";
+                }
 
-        }
+            } //  if (SpotForm != null)
 
-     
+
+        } // SWLMenuItem_Click
+
         // ke9ns add
         private void panelTS1_MouseClick(object sender, MouseEventArgs e)
         {
@@ -74819,12 +75615,101 @@ namespace PowerSDR
 
         } // chkPower_MouseDown
 
-       
+
+
+        IPEndPoint RemoteEndPoint; // ke9ns add
+
+
+        //=============================================================================
+        // ke9ns add Camera Screen Shot JPEG Save in QuickScreen folder
+
+        private void ScreenCap_MouseDown(object sender, MouseEventArgs e)
+        {
+            ScreenCap1.Visible = true;
+            ScreenCap1.Enabled = true;
+
+            ScreenCap.Visible = false;
+          
+
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right)) // 
+            {
+                string filePath = AppDataPath + "QuickScreen";
+
+
+                if (!Directory.Exists(filePath))
+                {
+                    Debug.WriteLine("problem QuickScreen folder not found. Create a file first: " + filePath);
+                    //    return;
+                }
+
+                System.Diagnostics.Process.Start("explorer.exe", filePath); // open folder
+
+            } // right click
+            else
+            {
+                Screen_Save(); // left click performs a screen display capture and save as JPEG
+            }
+
+            btnHidden.Focus();
+        } // ScreenCap_MouseDown
+
+
+        //======================================================================================================
+        // ke9ns add  screen save
+        public void Screen_Save()
+        {
+
+            string temp = "__" + RX1DSPMode.ToString() + "_";   // DSP mode
+            temp += VFOAFreq.ToString("f6") + "MHz_";    // Freq
+            temp += DateTime.Now.ToString();                     // Date and time
+            temp = temp.Replace("/", "-");
+            temp = temp.Replace(":", "_");
+
+            System.IO.Directory.CreateDirectory(AppDataPath + "QuickScreen");                   // create sub directory if it does not exist
+            string file_name = AppDataPath + "QuickScreen" + "\\SDRScreenSave" + temp + ".jpg"; // place to save jpeg screen shots
+
+
+            if ((setupForm != null) && (setupForm.checkBoxHTTP1.Checked == true)) // full console below
+            {
+
+                Graphics myGraphics = this.CreateGraphics(); // graphics control for the full PSDR console
+                Size s = this.Size;                          // current size of the PSDR console
+
+                bitmap = new Bitmap(s.Width, s.Height, myGraphics);                                 // create bitmap the exact size of the full console screen
+                Graphics memGraph = Graphics.FromImage(bitmap);                                     // make graphic the size of the PSDR console
+                memGraph.CopyFromScreen(this.Location.X, this.Location.Y, 0, 0, s);                 // copy the full console screen to memGraph
+
+                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);                           // create JPEG format
+                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;  // create JPEG encoder
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);                   // parameters
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, 99L);         // 99% quality  (reduction to reduce byte size since this is the entire console screen)
+                myEncoderParameters.Param[0] = myEncoderParameter;                                  // set paramaters
+
+                bitmap.Save(file_name, jpgEncoder, myEncoderParameters);                            // save FILE as JPEG using Parameters
+
+            }
+            else // just display (not console) below
+            {
+
+                bitmap = new Bitmap(picDisplay.Width, picDisplay.Height);                           // set bitmap size to size of picDisplay since it gets resized with your screen
+                picDisplay.DrawToBitmap(bitmap, picDisplay.ClientRectangle);                        // Draw picDisplay to bitmap
+              
+                bitmap.Save(file_name, ImageFormat.Jpeg);                                           // Save File as JPEG (as a Full RES JPEG, no compression)
+      
+
+            } // Just Display area
+
+
+
+        } //  Screen_Save()
+
 
 
         //==========================================================================
-        // ke9ns add
-        public bool N1MM
+        // ke9ns add  to send spectrum data to n1mm+ program (but requires PowerSDR to not be minimized)
+        public bool N1MM // called when setup.cs checkboxn1mm is changed
         {
             get
             {
@@ -74853,9 +75738,16 @@ namespace PowerSDR
 
         } //  N1MM
 
+        private void ScreenCap_MouseUp(object sender, MouseEventArgs e)
+        {
+            ScreenCap.Visible = true;
+            ScreenCap1.Visible = false;
+
+        }
+
 
         // ke9ns n1mm
-       
+
 
 
         //=========================================================================================
@@ -74881,7 +75773,6 @@ namespace PowerSDR
          */
 
 
-        IPEndPoint RemoteEndPoint; // ke9ns add
         Socket server; // ke9ns add
 
         public bool N1MM_ON = false; // ke9ns add setupform turns this ON
@@ -74907,8 +75798,8 @@ namespace PowerSDR
 
             if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
 
-              RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 13064);
-               server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+              RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), (int)setupForm.udN1MMport.Value  );  // standard n1mm port is 13064
+              server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
           
             //    IPEndPoint RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 13064);
@@ -74923,6 +75814,8 @@ namespace PowerSDR
 
                 if (!mox)
                 {
+
+                    // ke9ns  THE ISSUE IS DISPLAY.CS DOES NOT FUNCTION WHEN POWERSDR IS MINIMIZED, SO I CANNOT USE THE DISPLAY ROUTINES AND i AM TOO LAZY TO RETYPE THEM ALL FOR USE WHILE MINIMIZED
                  
 /*
                     // check if picDisplay_Paint() is firing, that is that it is not minimized
@@ -75025,6 +75918,7 @@ namespace PowerSDR
 
                          N1MM_Data_String +
 
+                         // SAME DATA FRAME
                          //  "0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,\n" +
                          // "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,\n" +
                          //  "0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,19,25,0,0,0,0,0,0,0,4,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,\n" +
@@ -75042,7 +75936,7 @@ namespace PowerSDR
 
                     byte[] data = Encoding.ASCII.GetBytes(welcome);
 
-                    server.SendTo(data, data.Length, SocketFlags.None, RemoteEndPoint);
+                    server.SendTo(data, data.Length, SocketFlags.None, RemoteEndPoint); // SEND TO N1MM+ PROGRAM VIA 127.0.0.1 IP
 
                 } // !mox
 
@@ -75057,7 +75951,9 @@ namespace PowerSDR
 
 
 //===============================================================================
-// ke9ns add
+// ke9ns add (these 2 functions are called from the scanner routine
+
+
         public void SWR_Logger_Write()
         {
 
@@ -75089,14 +75985,14 @@ namespace PowerSDR
                             {
                                 temp2 = 999.0;
                                 writer3.Write(temp2);
-                                Debug.WriteLine("WW> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+                              //  Debug.WriteLine("WW> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
 
                                 break;
                             }
                             else
                             {
                                 writer3.Write(temp2);
-                                Debug.WriteLine("w> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+                              //  Debug.WriteLine("w> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
 
                             }
 
@@ -75129,35 +76025,91 @@ namespace PowerSDR
             int i2 = 0; // 1-41 Band# 
             int i3 = 0; // 1-3000 SWR data Slot
 
-            for (i0 = 1; i0 < 6; i0++) // 5 different TEST runs 
+            try
             {
-                for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
+                for (i0 = 1; i0 < 6; i0++) // 5 different TEST runs 
                 {
-                    for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
+                    for (i1 = 1; i1 < 10; i1++) // 9 different ant sources for the Flex-5000 (ANT1 = 1)
                     {
-                        for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                        for (i2 = 1; i2 < 42; i2++) // 41 different bands(160m = 1)
                         {
-                            double temp2 = reader3.ReadDouble();
+                            for (i3 = 0; i3 < 3000; i3++) // 1000 Slots max per band (1khz = 1 slot)
+                            {
+                                double temp2 = reader3.ReadDouble();
 
-                            Debug.WriteLine("RR> "+ i0 + "," +i1 + "," + i2 + "," + i3 + ", " + temp2);
+                                //  Debug.WriteLine("RR> "+ i0 + "," +i1 + "," + i2 + "," + i3 + ", " + temp2);
 
-                            if (temp2 == 999.0) break;
-                            SWR_READ[i0, i1, i2, i3] = temp2;
+                                if (temp2 == 999.0) break;
+                                SWR_READ[i0, i1, i2, i3] = temp2;
 
 
 
-                        } // for loop SLOTS
-                    } // for loop BANDS
-                } // for loop ANT
-            } // for loop TEST#
+                            } // for loop SLOTS
+                        } // for loop BANDS
+                    } // for loop ANT
+                } // for loop TEST#
 
-            reader3.Close();    // close  file
-            stream3.Close();   // close stream
+                reader3.Close();    // close  file
+                stream3.Close();   // close stream
+
+            }
+            catch (Exception)
+            {
+                reader3.Close();    // close  file
+                stream3.Close();   // close stream
+
+                MessageBox.Show("Your SWR Plot file has become corrupted. Will create a new file. ", "SWR Plot FIle",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                SWR_Logger_Write();
+            }
+
+
 
             Debug.WriteLine("READ SWR database file DONE");
 
 
         } // SWR_Logger_Read()
+
+
+        //==========================================================================================
+        // ke9ns add come here from from SETUP.cs (Update BandText)
+        public void Refresh_Tables()
+        {
+            
+            if (db_exists) // modify bandtext and bandstack for non-US regions
+            {
+                Debug.WriteLine("Refesh Tables0 ");
+               
+                    DB.BandTextRefresh = true; // let database know that this is an update not the initial
+
+                    DB.BandStackRefresh = setupForm.chkBoxBandStack.Checked; // let database know that its OK to reset and update band stack
+                    
+                    Debug.WriteLine("Refesh Tables " + current_region);
+
+                    DB.RefreshTables(current_region); // allow setup.cs to issue an update to the database when bandtext changes
+
+                    if (setupForm.chkBoxBandStack.Checked == true)
+                    {
+                        MessageBox.Show("Band Text and Stack Update to your Database file ", "Band Text and Stack Update",
+                                   MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Band Text Update to your Database file ", "Band Text Update",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
+
+            } //  if (db_exists)
+
+            DB.BandStackRefresh = true; // reset back to defaults
+            DB.BandTextRefresh = false;
+
+        } //  public void Refresh_Tables()
+
+
+     
 
 
 

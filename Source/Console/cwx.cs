@@ -1507,7 +1507,9 @@ namespace PowerSDR
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+		} //Initialize components
+
+
 		#endregion
 
 		#region event handlers and callbacks
@@ -1647,6 +1649,8 @@ namespace PowerSDR
 
         } // keyButton_Click
 
+
+
         private void CWX_Load(object sender, System.EventArgs e)
 		{		
 #if(CWX_DEBUG)
@@ -1655,8 +1659,13 @@ namespace PowerSDR
 
 
 		}
-		private void CWX_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
+
+
+        //====================================================================================
+        // ke9ns this event is called (event manually added to initialization at top of this code) but now turned off
+        private void CWX_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+               
             stopPoll = false; // ke9ns kill cw poll thread
 
 			quitshut();
@@ -1675,13 +1684,16 @@ namespace PowerSDR
 			//SaveSettings();
 			Common.SaveForm(this, "CWX");
 
-		//	Debug.WriteLine("CWX_Closing()");
+            	Debug.WriteLine("CWX_Closing2");
 
-			// don't do next two lines so we will shut down the form completely
+            // don't do next two lines so we will shut down the form completely
 
-		//	this.Hide();
-		//	e.Cancel = true;
-		}
+            
+        } //  CWX_Closing
+
+
+
+
         // Callback method called by the Win32 multimedia timer when a timer
         // periodic event occurs.
 
@@ -1955,9 +1967,9 @@ namespace PowerSDR
 				grayBrush.Dispose();
 				formGraphics.Dispose();
 			}
-		}
+        } // show_keys()
 
-		private void clearButton_Click(object sender, System.EventArgs e)
+        private void clearButton_Click(object sender, System.EventArgs e)
 		{
 			clear_show();
 		}
@@ -2486,12 +2498,16 @@ namespace PowerSDR
            
         }
 
+        //==========================================================
+        // called after CWX_Closing
         private void CWX_FormClosing(object sender, FormClosingEventArgs e)
         {
-            stopPoll = false; // ke9ns add shut down cw polling
-
-            e.Cancel = true; // ke9ns add hide dont actually close
-            this.Hide();
+            //  stopPoll = false; // ke9ns add shut down cw polling
+            Debug.WriteLine("CWX_FORMCLOSING");
+          //  e.Cancel = true; // ke9ns add hide dont actually close
+         //   this.Hide();
+           
+         //   Common.SaveForm(this, "CWX");
         }
 
         //================================================================================================

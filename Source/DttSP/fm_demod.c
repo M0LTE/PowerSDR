@@ -242,13 +242,14 @@ newFMD (REAL samprate,
 	fm->demod_comp_filter = new_IIR_1P1Z(fm->obuf, samprate, 24000, 1500);		// compensate for 1500 Hz low pass in PLL
 
 	// fm standard mode
-	fm->k_deemphasis = (REAL)(1.0f + samprate / (TWOPI * 250.0f));
+	fm->k_deemphasis = (REAL)(1.0f + samprate / (TWOPI * 250.0f));  //  62.14 @ 96k SR   122.29 @ 192k SR
+
 	fm->input_HPF1 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 0.765f);		//300 Hz high-pass butterworth to allow CTCSS tones
 	fm->input_HPF2 = new_IIR_HPF_2P(fm->obuf, samprate, 250.0f, 1.848f);		//300 Hz high-pass butterworth
 	fm->input_LPF1 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 0.25f);	//3000 Hz low-pass butterworth
 	fm->input_LPF2 = new_IIR_LPF_2P(fm->obuf, samprate, 3500.0f, 1.75f);	//3000 Hz low-pass butterworth
 
-	// ke9ns add fm data mode
+	// ke9ns add fm data mode RX (see SDR.c for TX mode)
 	fm->k_deemphasis1 = FMDataDe;  // (REAL)(1.0f + samprate / (TWOPI * 250.0f)); // turn off deemphasis FMDataDe = 1
 	fm->input_HPF3 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 0.765f); // FMDataLow = 0
 	fm->input_HPF4 = new_IIR_HPF_2P(fm->obuf, samprate, FMDataLow, 1.848f);	 // 	

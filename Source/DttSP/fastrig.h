@@ -94,9 +94,9 @@ Bridgewater, NJ 08807
 
 #define  FMDataDeviation  9000     // ke9ns add
 #define  FMDataLowHigh 11000      // ke9ns add low = -10000 , high = 10000
-#define  FMDataLow 0      // ke9ns add 
+#define  FMDataLow 10      // ke9ns add 
 #define  FMDataPre 1.5 // ke9ns pre-emphasis
-#define  FMDataDe 1 //
+#define  FMDataDe 1 // ke9ns de-emphasis  standard de-emph 62 = 96k SR  122 = 192k SR  30 = 48k SR
 
 extern void InitSPEEDTRIG (void);
 extern REAL fast_sin (REAL);

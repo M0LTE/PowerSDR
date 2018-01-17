@@ -1120,10 +1120,8 @@ namespace PowerSDR
 						break;
 					case SignalSource.SINE:
 
-
                         SineWave(in_l, frameCount, phase_accumulator1, sine_freq1);
 						phase_accumulator1 = CosineWave(in_r, frameCount, phase_accumulator1, sine_freq1);
-
 
                         ScaleBuffer(in_l, in_l, frameCount, (float)source_scale);
 						ScaleBuffer(in_r, in_r, frameCount, (float)source_scale);
@@ -1159,7 +1157,10 @@ namespace PowerSDR
 						ClearBuffer(in_l, frameCount);
 						ClearBuffer(in_r, frameCount);
 						break;
-				}
+
+                    default:
+                        break;
+				} // switch
 			}
 			else
 			{
@@ -1208,7 +1209,10 @@ namespace PowerSDR
 						ClearBuffer(in_l, frameCount);
 						ClearBuffer(in_r, frameCount);
 						break;
-				}
+
+                    default:
+                        break;
+                }
 			}
 
 			#endregion
@@ -3680,8 +3684,9 @@ namespace PowerSDR
 //#if NO_WIDETX
             if (wave_playback)                 
             {
-           
-               wave_file_reader.GetPlayBuffer(in_l, in_r); // WAV file audio streamed into in_l and in_r 
+              //  Debug.WriteLine("8888===========");
+
+               wave_file_reader.GetPlayBuffer(in_l, in_r); // WAV file audio streamed into in_l and in_r (IQ)
              
                 if (rx2_enabled)
                 {
@@ -3697,15 +3702,31 @@ namespace PowerSDR
                 }
 
             } // audio file playback
-//#endif
-            //-------------------------------------------------------------------------------------
-            // ke9ns PRE AUDIO PROCESSING WAVE RECORDING
-            if (wave_record)                          
+              //#endif
+              //-------------------------------------------------------------------------------------
+              // ke9ns PRE AUDIO PROCESSING WAVE RECORDING 
+
+            if (console.HTTPAudio == true)
+            {
+
+                //   fixed (float* WWVP = &console.HTTPAudio_data[0]) // 2048 readings per frame (console.Blocksize1 = main audio,  Blocksize2 = vac)
+                //  {
+                //     Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest, source  # of bytes to copy 2048 float sized bytes
+                //  }
+                wave_file_writer.AddWriteBuffer(rx1_in_l, rx1_in_r);// just like when doing a recording, but I am streaming to a web site.
+
+
+               // console.HTTPAudio = false; // let console know you have new data ready
+            }
+
+
+            if (wave_record)   // ke9ns true=you are currently recording                       
             {
                 if (!localmox)   // ke9ns record receiving audio 
                 {
-                    if (record_rx_preprocessed)
+                    if (record_rx_preprocessed) // ke9ns for IQ recordings here
                     {
+                       
                         wave_file_writer.AddWriteBuffer(rx1_in_l, rx1_in_r);
 
                         if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_in_l, rx2_in_r);
@@ -3713,7 +3734,8 @@ namespace PowerSDR
                 }
                 else // ke9ns record transmitting audio (mic)
                 {
-                    if (record_tx_preprocessed) // ke9ns capture preprocessed transmitting audio
+                  
+                    if (record_tx_preprocessed) // ke9ns capture preprocessed transmitting audio (IQ)
                     {
                         wave_file_writer.AddWriteBuffer(tx_in_l, tx_in_r); // ke9ns this audio is still real pre processed audio , where the section further down is post processed and AM mode is in AM mode
                          //   Trace.Write("pretest====");
@@ -3723,8 +3745,7 @@ namespace PowerSDR
 
             if (phase)
             {
-                Debug.WriteLine("phase ===================="); // ke9ns testdsp
-
+              
                 //phase_mutex.WaitOne();
                 Marshal.Copy(new IntPtr(in_l), phase_buf_l, 0, frameCount);
                 Marshal.Copy(new IntPtr(in_r), phase_buf_r, 0, frameCount);
@@ -3846,6 +3867,8 @@ namespace PowerSDR
 
 
             //-----------------------------------------------------------------------------------
+            // ke9ns WAVE PLAYBACK HERE
+
             // scale input with mic preamp
             if ((!vac_enabled &&  (tx_dsp_mode == DSPMode.LSB ||
                 tx_dsp_mode == DSPMode.USB ||
@@ -3873,8 +3896,10 @@ namespace PowerSDR
 //#if NO_WIDETX
                       ScaleBuffer(tx_in_l, tx_in_l, frameCount, (float)wave_preamp);
                       ScaleBuffer(tx_in_r, tx_in_r, frameCount, (float)wave_preamp);
-//#endif
-                    
+
+                 
+                   
+
                 }
                 else
                 {
@@ -4467,50 +4492,67 @@ namespace PowerSDR
             //--------------------------------------------------------------
             // ke9ns add  comes here every 10msec @ 192kSR, 21msec @ 96kSR, 42msec @ 48kSR with 2048 Buffer size
             // GoertzelCoefffreq = 600 for Beacon and 100 for wwv
-            if (console.BeaconSigAvg == true)
+
+
+           
+
+            if (console.RTTY == true)
             {
-
-         
-
-                fixed (float* WWVP = &console.WWV_data[console.WWVframeCount]) // 2048 readings per frame
+                // first make a copy of the audio stream into WWVP buffer
+                fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame (console.Blocksize1 = main audio,  Blocksize2 = vac)
                 {
-                      Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest,source  # of bytes to copy 2048 float sized bytes
-        
+                    Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest, source  # of bytes to copy 2048 float sized bytes
+                }
+
+                console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // console.WWVframeCount   determine the magnitude of the 100hz TONE in the sample
+                console.WWVTone2 = console.Goertzel2(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
+                console.WWVReady = true;
+
+            } // if (console.RTTY == true)
+           
+            else if (console.RXCW == true)
+            {
+                // first make a copy of the audio stream into WWVP buffer
+                fixed (float* WWVP = &console.WWV_data[0]) // 2048 readings per frame (console.Blocksize1 = main audio,  Blocksize2 = vac)
+                {
+                    Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest, source  # of bytes to copy 2048 float sized bytes
+                }
+
+                console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // console.WWVframeCount   determine the magnitude of the 100hz TONE in the sample
+                console.WWVReady = true;
+
+            } // if (console.RXCW== true)
+
+            else if ((console.BeaconSigAvg == true) ) // BEACON and WWV, but also run for RTTY and CW decoders
+            {
+               
+                // first make a copy of the audio stream into WWVP buffer
+                fixed (float* WWVP = &console.WWV_data[console.WWVframeCount]) // 2048 readings per frame (console.Blocksize1 = main audio,  Blocksize2 = vac)
+                {
+                      Win32.memcpy(WWVP, out_l_ptr1, frameCount * sizeof(float));  // dest, source  # of bytes to copy 2048 float sized bytes
                 }
 
 
                 if (console.SampleRate1 == 192000) 
                 {
-                   
-                    if (console.WWV_Count == 5) 
-                    {
-                      
-                        console.WWVTone = console.Goertzel(console.WWV_data, 0, console.WWVframeCount); // determine the magnitude of the 100hz TONE in the sample
-
-                        console.WWVframeCount = 0;
-                        console.WWVReady = true;
-                        console.WWV_Count = 0;
-                    
-                    }
-                   else
-                    {
-                        // console.WWV_Count = frameCount;  // double up the 192kSR so you get 20msec of data
-                        console.WWV_Count++;
-                        console.WWVframeCount = (frameCount * console.WWV_Count);  // double up the 192kSR so you get 20msec of data
+                    // 1024 buffer @ 192k = 0.0000053 sec per scan (5mSec) or at 2048 (10mSec)
+                    console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // console.WWVframeCount   determine the magnitude of the 100hz TONE in the sample
+                    console.WWVReady = true;
 
 
-                    }
                 }
                 else // if SR !=192k
                 {
-
-
+                    //  CWKeyer.AudioLatency = Math.Max(10.0, new_size / (double)console.SampleRate1 * 1e3); // found in setup.cs program
+                   
+                    // 1024 buffer @ 96k = 0.0000106 sec per scan (10mSec)  or at 2048  (20mSec)
+                   
                     //   console.WWVTone = console.Goertzel(console.WWV_data, 0, frameCount); // determine the magnitude of the 100hz TONE in the sample
                     //  console.WWVReady = true;
                     //  console.WWV_Count = 0;
                     //  console.WWVframeCount = 0;
 
-                    if (console.WWV_Count == 2)
+                    if (console.WWV_Count == 1) // WWV sets buffer to 2048 and SR to 96k = 21mSec * 3 = 65mSec)
                     {
 
                         console.WWVTone = console.Goertzel(console.WWV_data, 0, console.WWVframeCount); // determine the magnitude of the 100hz TONE in the sample
@@ -4522,10 +4564,9 @@ namespace PowerSDR
                     }
                     else
                     {
-                        // console.WWV_Count = frameCount;  // double up the 192kSR so you get 20msec of data
+                       
                         console.WWV_Count++;
-                        console.WWVframeCount = (frameCount * console.WWV_Count);  // double up the 192kSR so you get 20msec of data
-
+                        console.WWVframeCount = (frameCount * console.WWV_Count);  // keep increasing the size of the wwvframecount to give Goertzel a larger sample size
 
                     }
 
@@ -4546,9 +4587,7 @@ namespace PowerSDR
 					{
 						wave_file_writer.AddWriteBuffer(out_l_ptr1, out_r_ptr1);    // record RX1:  rx1_out_l & rx1_out_r,   out_l1 & out_r1
 
-
-
-                       //     Debug.WriteLine("2===========testing"); // ke9ns testdsp
+                        //   Debug.WriteLine("2===========testing"); // ke9ns testdsp
 
                         if (wave_file_writer2 != null)  wave_file_writer2.AddWriteBuffer(rx2_out_l, rx2_out_r);  // record RX2
 					}
@@ -4559,7 +4598,7 @@ namespace PowerSDR
 					{
 						wave_file_writer.AddWriteBuffer(out_l_ptr2, out_r_ptr2); // ke9ns post process audio and so AM mode is modulated here (above wave_record section is pre process so its not modulated)
                     
-                      //  Trace.Write("test9===============");
+                     //  Debug.WriteLine("test9===============");
 
                     }
 				}
@@ -6859,7 +6898,7 @@ namespace PowerSDR
 
         private static float[] scope_min;
 
-		public static float[] ScopeMin
+		public static float[] ScopeMin // used by display routine
 		{
 			set { scope_min = value; }
 		}
@@ -6900,13 +6939,15 @@ namespace PowerSDR
 				scope_max = Display.ScopeMax;
 			}
 
+            //------------------------------------------------------------------------------
+
 			for(int i=0; i < frameCount; i++) // ke9ns 0 to 2048
 			{
-				if(buf[i] < scope_pixel_min) scope_pixel_min = buf[i]; // ke9ns find the mininum value of this frame
+				if(buf[i] < scope_pixel_min) scope_pixel_min = buf[i]; // ke9ns fill the array as long as its a valid value (buffer value < valid biggest pos value)
 
-				if(buf[i] > scope_pixel_max) scope_pixel_max = buf[i]; // ke9ns find the max value of this frame
+				if(buf[i] > scope_pixel_max) scope_pixel_max = buf[i]; // ke9ns fill the array as long as its a valid value (buffer value > valid biggest neg value)
 
-				scope_sample_index++;
+                scope_sample_index++;
 
 				if(scope_sample_index >= scope_samples_per_pixel)
 				{
@@ -6916,16 +6957,17 @@ namespace PowerSDR
 
 					scope_max[scope_pixel_index] = scope_pixel_max;
 
-					scope_pixel_min = float.MaxValue;
-					scope_pixel_max = float.MinValue;
+					scope_pixel_min = float.MaxValue;  // huge pos value
+					scope_pixel_max = float.MinValue;  // huge neg value
 
 					scope_pixel_index++;
 
 					if(scope_pixel_index >= scope_display_width) scope_pixel_index = 0;
 				}
-			}
 
-		} // doscope
+            } // for(int i=0; i < frameCount; i++) //
+
+        } // doscope
 
 #endregion
 

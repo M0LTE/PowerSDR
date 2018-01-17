@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace PowerSDR
 {
@@ -57,9 +58,12 @@ namespace PowerSDR
         private TextBox textBox3;
         private CheckBoxTS chkAlwaysOnTop;
         private Button button1;
-        private RichTextBox richTextBox1;
+        public RichTextBox richTextBox1;
         private Button button2;
         public RichTextBox richTextBox2;
+        private Label label5;
+        private RichTextBox richTextBox3;
+        private TextBox textBox1;
         private IContainer components;
 
      //   public DXMemList dxmemlist;
@@ -111,6 +115,9 @@ namespace PowerSDR
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.label5 = new System.Windows.Forms.Label();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox3
@@ -178,17 +185,54 @@ namespace PowerSDR
             // 
             this.chkAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkAlwaysOnTop.Image = null;
-            this.chkAlwaysOnTop.Location = new System.Drawing.Point(302, 509);
+            this.chkAlwaysOnTop.Location = new System.Drawing.Point(385, 506);
             this.chkAlwaysOnTop.Name = "chkAlwaysOnTop";
             this.chkAlwaysOnTop.Size = new System.Drawing.Size(104, 24);
             this.chkAlwaysOnTop.TabIndex = 59;
             this.chkAlwaysOnTop.Text = "Always On Top";
             this.chkAlwaysOnTop.CheckedChanged += new System.EventHandler(this.chkAlwaysOnTop_CheckedChanged);
             // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.label5.Location = new System.Drawing.Point(94, 514);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(278, 13);
+            this.label5.TabIndex = 85;
+            this.label5.Text = "<< Click often as stations go OFF/ON air as time changes";
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.Location = new System.Drawing.Point(413, 12);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.Size = new System.Drawing.Size(76, 327);
+            this.richTextBox3.TabIndex = 86;
+            this.richTextBox3.Text = "Examples searches to Click:\n\nALE\nTIME\nVOLMET\nHFDL\nDIGITAL\nSTANAG\nFAX\nDSC\nNAVY\nNAV" +
+    "TEX\nMOBILE\nMARITIME\nBEACON\nHabana\nDRM\n\n\nClear Search field to show all Stations." +
+    "";
+            this.richTextBox3.MouseClick += new System.Windows.Forms.MouseEventHandler(this.richTextBox3_MouseClick);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(412, 345);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(76, 149);
+            this.textBox1.TabIndex = 87;
+            this.textBox1.TabStop = false;
+            this.textBox1.Text = "For Signal Identification download the Artemis Project\r\n http://markslab.tk/proje" +
+    "ct-artemis/";
+            // 
             // SwlControl
             // 
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(418, 542);
+            this.ClientSize = new System.Drawing.Size(500, 542);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.richTextBox3);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.richTextBox1);
@@ -196,7 +240,7 @@ namespace PowerSDR
             this.Controls.Add(this.chkAlwaysOnTop);
             this.Controls.Add(this.textBox3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(434, 200);
+            this.MinimumSize = new System.Drawing.Size(516, 200);
             this.Name = "SwlControl";
             this.Text = "SWL";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SwlControl_FormClosing);
@@ -256,7 +300,7 @@ namespace PowerSDR
 
             int iii = 0;
 
-            string bigmessage = null; // full textbox string (combine 1 and 2)
+            string bigmessage = ""; // full textbox string (combine 1 and 2)
         
             Debug.WriteLine("swl index size= "+ SpotControl.SWL_Index1);
 
@@ -266,17 +310,24 @@ namespace PowerSDR
 
             SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
-         // Debug.WriteLine("Day: " + SpotControl.UTCDD);
-          //  Debug.WriteLine("Day1: " + (byte)UTCD.DayOfWeek);
+           //  Debug.WriteLine("Day: " + SpotControl.UTCDD);
+          //    Debug.WriteLine("Day1: " + (byte)UTCD.DayOfWeek);
 
+         //   Debug.WriteLine("richtext " + richTextBox1.Text + " ,");
 
-            for (int ii = 0; ii < SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
+            iii = 0;
+
+           
+            for (int ii = 0; ii <= SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
             {
               
                 // station check 
                 if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
                 {
-                
+
+                 //   Debug.WriteLine("1SWL FREQ " + SpotControl.SWL_Freq[ii] + " , " + ii);
+
+
                     // station check days on air and time on air
                     if (
                         ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && ( ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
@@ -284,7 +335,7 @@ namespace PowerSDR
                          )
                     {
 
-                    //    Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
+                     //  Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
 
 
                         swl_index[iii++] = ii; // keep track of frequencies on at the moment
@@ -404,11 +455,14 @@ namespace PowerSDR
                         {
                             SpotControl.SWL_Mode[ii] = "DIGU";
                         }
-                        else if ((SpotControl.SWL_Freq[ii] / 1000000) == 8) SpotControl.SWL_Mode[ii] = "USB";
+                        else if ((SpotControl.SWL_Station[ii].IndexOf("FT8", StringComparison.OrdinalIgnoreCase) >= 0))
+                        {
+                            SpotControl.SWL_Mode[ii] = "DIGU";
+                        }
+                        else if ((SpotControl.SWL_Freq[ii] / 1000000) >= 29) SpotControl.SWL_Mode[ii] = "USB";
 
                         else SpotControl.SWL_Mode[ii] = "SAM";
-
-
+    
                         bigmessage += (String.Format("{0:00.000000}", (double)(SpotControl.SWL_Freq[ii]) / 1000000.0) +
                             "  " + SpotControl.SWL_Station[ii].PadRight(25, ' ') + " " + SpotControl.SWL_Loc[ii].PadRight(3, ' ') +
                             " " + SpotControl.SWL_TimeN[ii].ToString().PadLeft(4, '0') + ":" + SpotControl.SWL_TimeF[ii].ToString().PadLeft(4, '0') +
@@ -418,13 +472,13 @@ namespace PowerSDR
                     } // check time
                 } // text search to narrow down
 
+              
             } // for loop through SWL_Index
 
 
             Debug.WriteLine("SWL DONE");
 
-
-            
+  
             richTextBox2.Text = bigmessage; // update screen
 
                                        
@@ -448,7 +502,7 @@ namespace PowerSDR
 
         private void button1_Click(object sender, EventArgs e)
         {
-          
+           
             bandSwlupdate();
             richTextBox2.Focus();
         }
@@ -537,6 +591,31 @@ namespace PowerSDR
 
           //  button1.Focus();
         }
+
+        private void richTextBox3_MouseClick(object sender, MouseEventArgs e)
+        {
+
+            string word = getWordAtIndex(richTextBox3, richTextBox3.SelectionStart);
+
+            richTextBox1.Text = word;
+            bandSwlupdate();
+
+        } //richTextBox3_MouseClick
+
+
+        string getWordAtIndex(RichTextBox RTB, int index)
+        {
+            string wordSeparators = " .,;-!?\r\n\"";
+            int cp0 = index;
+            int cp2 = RTB.Find(wordSeparators.ToCharArray(), index);
+            for (int c = index; c > 0; c--)
+            { if (wordSeparators.Contains(RTB.Text[c])) { cp0 = c + 1; break; } }
+            int l = cp2 - cp0;
+            if (l > 0) return RTB.Text.Substring(cp0, l); else return "";
+        }
+
+
+
     } // Swlcontrol
 
 

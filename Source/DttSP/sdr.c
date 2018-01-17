@@ -375,8 +375,8 @@ PRIVATE void setup_tx (unsigned int thread)
 	tx[thread].fm.output_LPF2 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, 3500.0f, 1.75f);	//4 pole butterworth Q = 0.76537, 1.84776	
 
     // DaTA FM mode	
-	tx[thread].fm.k_preemphasis1 = FMDataPre; // (REAL)(1.0f + uni[thread].samplerate / (TWOPI * 3000.0f));  // FMDATA MODE
-	tx[thread].fm.k_deemphasis1 = FMDataDe; // (REAL)(1.0f + uni[thread].samplerate / (TWOPI * 250.0f));  // 
+	tx[thread].fm.k_preemphasis1 = FMDataPre; // ke9ns (REAL)(1.0f + uni[thread].samplerate / (TWOPI * 3000.0f));  // FMDATA MODE 5= 96k SR
+	tx[thread].fm.k_deemphasis1 = FMDataDe; // ke9ns (REAL)(1.0f + uni[thread].samplerate / (TWOPI * 250.0f));  // 
 
 	tx[thread].fm.input_LPF3 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 0.25f);	//4 pole butterworth Q = 0.76537, 1.84776	
 	tx[thread].fm.input_LPF4 = new_IIR_LPF_2P(tx[thread].buf.i, uni[thread].samplerate, FMDataLowHigh, 1.75f);	//4 pole butterworth Q = 0.76537, 1.84776
@@ -1447,12 +1447,13 @@ PRIVATE void do_tx_FM (unsigned int thread) // ke9ns called from do_tx above
 	REAL mag = 0;
 	REAL deemphasis_in = 0;
 	REAL preemphasis_in = 0;
+
 	REAL k_preemphasis = tx[thread].fm.k_preemphasis; // (REAL)(1.0f + uni[thread].samplerate/(TWOPI * 3000.0f));  //11.19
 	REAL k_deemphasis = tx[thread].fm.k_deemphasis;
 
 	
-	if (tx[thread].fm.fmdata == TRUE) // ke9ns at this point cvtmod2freq = 10000
-	{
+	if (tx[thread].fm.fmdata == TRUE) // ke9ns at this point cvtmod2freq = 10000  (see fm_demod for RX FM mode)
+	{ 
 		k_preemphasis = tx[thread].fm.k_preemphasis1; // (REAL)(1.0f + uni[thread].samplerate/(TWOPI * 3000.0f));  //11.19
 	    k_deemphasis = tx[thread].fm.k_deemphasis1;
 		
@@ -1536,8 +1537,9 @@ PRIVATE void do_tx_FM (unsigned int thread) // ke9ns called from do_tx above
 
 } // do_tx_FM
 
-PRIVATE void
-do_tx_NIL (thread)
+
+
+PRIVATE void do_tx_NIL (thread)
 {
 	int i, n = min (CXBhave (tx[thread].buf.i), uni[thread].buflen);
 	for (i = 0; i < n; i++)

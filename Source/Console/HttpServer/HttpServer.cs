@@ -97,7 +97,11 @@ namespace PowerSDR
                 {
                     Debug.WriteLine("get TCP RECEIVE fault " + e);
                 }
-            }
-        }
-    }
-}
+
+            } // while
+
+        } // loop
+
+    } // Class HttpServer
+
+} // PowerSDR

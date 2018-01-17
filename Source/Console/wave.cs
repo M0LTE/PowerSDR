@@ -330,8 +330,8 @@ namespace PowerSDR
             this.checkBoxVoice.TabIndex = 61;
             this.checkBoxVoice.Text = "Voice ID";
             this.checkBoxVoice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.checkBoxVoice, "Record a Voice ID of your callsign.\r\nUsed by the voID Timer feature on the main c" +
-        "onsole.\r\n\r\nClick to Start/Stop record a CW ID File: IDTIMER.wav\r\n");
+            this.toolTip1.SetToolTip(this.checkBoxVoice, "Record a Voice ID of your callsign (in SSB).\r\nUsed by the voID Timer feature on t" +
+        "he main console.\r\n\r\nClick to Start/Stop record a CW ID File: IDTIMER.wav\r\n");
             this.checkBoxVoice.CheckedChanged += new System.EventHandler(this.checkBoxVoice_CheckedChanged);
             // 
             // checkBoxCQ
@@ -998,11 +998,26 @@ namespace PowerSDR
                     checkBoxPlay.Checked = false;
                 }
 			}
+
             //k6jca added code...
-            if (chkQuickPlay.Checked)
+            if (chkQuickPlay.Checked) // ke9ns this is false if you ended the PLAY by releasing the MOX yourself
             {
-                 chkQuickPlay.Checked = false;
+                 chkQuickPlay.Checked = false;    // ke9ns only comes here is PLAY finishes on its own
+
+             //   Debug.WriteLine("here DONE WITH PLAY0");
             }
+
+            bool temp = console.chkSR.Checked;
+            
+            console.chkSR.Checked = !console.chkSR.Checked; // ke9ns add
+
+            do
+            {
+                // wait
+                Thread.Sleep(100);
+
+            } while (temp == console.chkSR.Checked);
+
 
             //=========================================================================
             //ke9ns add comes here when playback has ended
@@ -1011,13 +1026,23 @@ namespace PowerSDR
                  TXIDBoxTS.Checked = false;  // tell Waterfall ID routine to turn off since the wave file is done
             }
 
+            console.chkSR.Checked = !console.chkSR.Checked; // ke9ns add toggles SR to force the RX audio to work correctly 
+
+            do
+            {
+                // wait
+                Thread.Sleep(100);
+
+            } while (temp != console.chkSR.Checked);
+
+
         } // next()
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
+        #region Event Handlers
 
-		private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			foreach(string s in openFileDialog1.FileNames)
 			{
@@ -1029,6 +1054,8 @@ namespace PowerSDR
 		}
 
 //=========================================================================================
+// ke9ns PLAY button (for playback of standard recordings or IQ recordings
+
 		private void checkBoxPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(checkBoxPlay.Checked)
@@ -1043,7 +1070,7 @@ namespace PowerSDR
 					return;
 				}
 
-                if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
+                if ((console.CurrentModel == Model.FLEX5000) && ( FWCEEPROM.RX2OK )&& (console.RX2Enabled))
                 {
                     string filename2 = filename+"-rx2";
                     if(File.Exists(filename2))  OpenWaveFile(filename2, true);
@@ -1347,96 +1374,105 @@ namespace PowerSDR
         // ke9ns  mod needed since MON now toggle pre and post audio. quickplay should always be post 
         private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
+            Debug.WriteLine("WAVE: chkQuickPlay checkchanged");
             string file_name;
-          
             if (chkQuickAudioFolder.Checked == true) // ke9ns add to allow subfolder with different names to play
             {
                 System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudio"); // ke9ns create sub directory
 
-
                 if (console.TIMETOID == true) // ke9ns add
                 {
                     console.TIMETOID = false; // reset ID 
-
                     file_name = console.AppDataPath + "QuickAudio" + "\\IDTIMER.wav";            // ke9ns 
-
                 }
                 else if (console.TIMETOID1 == true) // ke9ns add
                 {
                     console.TIMETOID1 = false; // reset ID 
-
                     file_name = console.AppDataPath + "QuickAudio" + "\\IDTIMERCW.wav";            // ke9ns 
-
                 }
                 else if (console.CQCQCALL == true) // ke9ns add
                 {
-                    console.CQCQCALL = false; // reset ID 
-
+                     console.CQCQCALL = false; // reset ID 
                     file_name = console.AppDataPath + "QuickAudio" + "\\CQCQ.wav";            // ke9ns 
-
                 }
                 else if (console.CALLCALL == true) // ke9ns add
                 {
                     console.CALLCALL = false; // reset ID 
-
                     file_name = console.AppDataPath + "QuickAudio" + "\\CALL.wav";            // ke9ns 
-
                 }
                 else if (QPFile != null)
                 {
                     file_name = QPFile; // ke9ns check file name passed from console play button
-                    
+                   
                 }
+                else if (chkQuickPlay.Checked) 
+                {
+                    
+                    // ke9ns add to keep a missing file name from crashing powersdr
+                    try
+                    {
+                        //  file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + QAName() + ".wav";
+                        string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // ke9ns ignore extra part of name
+                        file_name = files[0];
+                    }
+                    catch(Exception )
+                    {
+                        console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
+                     
+                        if (Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
+                        {
+                            MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find QuickAudio folder");
+                            return;
+                        }
+                        else
+                        {
+                            MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find file " + QAC.ToString() + " in QuickAudio folder");
+                            return;
+                        }
+                    }
+
+                } // else 
                 else
                 {
-
-                  //  file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + QAName() + ".wav";
-                    string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // ke9ns ignore extra part of name
-
-                    file_name = files[0];
-
+                    file_name = console.AppDataPath + "SDRQuickAudio.wav";
+                    console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
                 }
 
-
-
-
-            }
+            } // quickqudiofolder enabled
             else
             {
                 file_name = console.AppDataPath + "SDRQuickAudio.wav";
             }
 
-            if (Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
+            //--------------------------------------------------------------------
+
+            if (chkQuickPlay.Checked == true)
             {
-
-                if (File.Exists(file_name))
+                if (Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
                 {
-
+                    if (File.Exists(file_name))
+                    {
+                        Debug.WriteLine("found file name " + file_name);
+                    }
+                    else
+                    {
+                        console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
+                        MessageBox.Show(new Form() { TopMost = true }, "Wave: Could not Find file: " + file_name + " in QuickAudio folder");
+                        return;
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("No wav file found in folder: " + file_name + "\n" +
-                           "Open Wave menu and Click the  button to record your Voice or CW,\n" +
-                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
-                           "Then click  button again, to end the recording", " audio File");
+                    console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
+                    MessageBox.Show(new Form() { TopMost = true }, "Wave: could not Find QuickAudio folder");
                     return;
-
                 }
             }
-            else
-            {
-                MessageBox.Show("No wav file found in folder: " + file_name + "\n" +
-                           "Open Wave menu and Click the  button to record your Voice or CW,\n" +
-                           "Speak or CW your CQ message including your Callsign as you would when trying to make a contact.\n" +
-                           "Then click  button again, to end the recording", " audio File");
 
-                return;
-            }
-
-
-            if (chkQuickPlay.Checked)
+            //----------------------------------------------------------------------------------
+            if (chkQuickPlay.Checked) // do at the start of playing audio file
 			{
-              
+               
                 temp_txeq = console.TXEQ;
 				console.TXEQ = false;               // set TX Eq temporarily to OFF
 
@@ -1481,6 +1517,7 @@ namespace PowerSDR
               
                 if (!OpenWaveFile(file_name, false))
 				{
+                  
                     chkQuickPlay.Checked = false;
                     Audio.MON_PRE = temp_pre;  // ke9ns add
 
@@ -1508,10 +1545,11 @@ namespace PowerSDR
 
                 chkQuickPlay.BackColor = console.ButtonSelectedColor;
 
-			} // quickplay checked
-			else
+			} // quickplay checked and playing audio
+			else // quickplay DONE, over, finished
 			{
-				if(Audio.wave_file_reader != null)	Audio.wave_file_reader.Stop();
+             
+                if (Audio.wave_file_reader != null)	Audio.wave_file_reader.Stop();
 
                 /*if (Audio.wave_file_reader2 != null)
                     Audio.wave_file_reader2.Stop();*/
@@ -1539,11 +1577,12 @@ namespace PowerSDR
 			}
 
 			Audio.wave_playback = chkQuickPlay.Checked;  // PLAY AUDIO FILE HERE
-
 			console.WavePlayback = chkQuickPlay.Checked;
 
          
-        }// quickplay changed
+        }// chkQuickPlay changed
+
+
 
 
         public static string quickmp3SR; // ke9ns add
@@ -1576,22 +1615,25 @@ namespace PowerSDR
                     System.IO.Directory.CreateDirectory(console.AppDataPath + "QuickAudioMP3"); // ke9ns add create sub directory
 
                     file_name = console.AppDataPath + "QuickAudio"+ "\\SDRQuickAudio" + QAC.ToString() + QAName() + ".wav";
-
                     quickmp3 = console.AppDataPath + "QuickAudioMP3" + "\\SDRQuickAudio" + QAC.ToString() + QAName() +".mp3"; // ke9ns add mp3
-                    
+
+
                     //   Debug.WriteLine("qac" + QAC);
 
                 }
-                else
+                else // ke9ns old way quickaudio
                 {
 
                     file_name = console.AppDataPath + "SDRQuickAudio.wav";
-
                     quickmp3 = console.AppDataPath + "SDRQuickAudio.mp3"; // ke9ns add mp3
 
                 }
 
-				Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, WaveOptions.SampleRate, file_name);
+
+              
+
+
+                Audio.wave_file_writer = new WaveFileWriter(console.BlockSize1, 2, WaveOptions.SampleRate, file_name);
 
                 /*if (console.CurrentModel == Model.FLEX5000 && FWCEEPROM.RX2OK && console.RX2Enabled)
                 {
@@ -1619,6 +1661,7 @@ namespace PowerSDR
                 {
                     MessageBox.Show("The 'Over the Air' Quick audio recording has been successfully created.\n" +
                         "Key the radio with either PTT or MOX and click on the Play button to play back the Quick audio recording over the air.");
+                   
                     // MessageBox.Show("The file has been written to the following location:\n"+file_name);
                 }
 
@@ -1629,14 +1672,13 @@ namespace PowerSDR
                 // ke9ns add save an MP3 to go along with the WAV file (NAudio.Lame)
                 if (chkBoxMP3.Checked == true)
                 {
-                 
-                    
+                                     
                     try
                     {
                         using (var reader = new WaveFileReader(file_name)) // closes reader when done using
                         using (var writer = new LameMP3FileWriter(quickmp3, reader.WaveFormat, LAMEPreset.VBR_90)) // closes writer when done using (90=90% quality variable bit rate)
                         {
-                            reader.CopyTo(writer);
+                            reader.CopyTo(writer);  // create MP3 file
                         }
                     }
                     catch (Exception)
@@ -1659,11 +1701,12 @@ namespace PowerSDR
 
 		public bool QuickPlay
 		{
-			get {
-             
+			get
+            {
                 return chkQuickPlay.Checked;
             }
-			set	{
+			set
+            {
                    chkQuickPlay.Checked = value;
             }
 		}
@@ -2434,19 +2477,29 @@ namespace PowerSDR
             chkQuickAudioFolder.Checked = true;
             console.checkBoxID.Checked = true;
 
-           
+            if (checkBoxVoice.Checked == true)
+            {
+                oldmode = console.RX1DSPMode;
+                if ((oldmode == DSPMode.FM) || (oldmode == DSPMode.AM) || (oldmode == DSPMode.SAM) || (oldmode == DSPMode.DSB)) console.RX1DSPMode = DSPMode.USB; // record only in SSB mode
+            }
+
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString(); // + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMER.wav";
 
                 string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() +"*.wav"); // ke9ns find file but ignore extra information about file
 
-                MessageBox.Show("Done Recording.\nIDTIMER.wav file will be created." );
+                MessageBox.Show(new Form() { TopMost = true }, "Done Recording.\nIDTIMER.wav file will be created.");
 
-               // System.IO.File.Copy(file_name, file_name1,true);
-                System.IO.File.Copy(files[0], file_name1, true);
+                console.RX1DSPMode = oldmode;
+
+                if (!File.Exists((file_name1)))                                      // ke9ns check if file name works
+                {
+                    System.IO.File.Delete(file_name1);  // delete the IDTIMER file first
+                }
+
+                System.IO.File.Copy(files[0], file_name1, true); // copy quickaudio file to IDTIMER file
             }
             else
             {
@@ -2457,24 +2510,36 @@ namespace PowerSDR
         } // checkBoxVoice_CheckedChanged
 
 
+        //==================================================================================================================
         // ke9ns add
         private void checkBoxCW_CheckedChanged(object sender, EventArgs e)
         {
             chkQuickAudioFolder.Checked = true;
             console.checkBoxID.Checked = true;
 
+            if (checkBoxCW.Checked == true)
+            {
+                oldmode = console.RX1DSPMode;
+                if ((oldmode == DSPMode.FM) || (oldmode == DSPMode.AM) || (oldmode == DSPMode.SAM) || (oldmode == DSPMode.DSB)) console.RX1DSPMode = DSPMode.USB; // record only in SSB mode
+            }
+
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\IDTIMERCW.wav";
 
                 string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
 
-                MessageBox.Show("Done Recording.\nIDTIMERCW.wav file will be created.");
+                MessageBox.Show(new Form() { TopMost = true }, "Done Recording.\nIDTIMERCW.wav file will be created.");
 
-                System.IO.File.Copy(files[0], file_name1, true);
+                console.RX1DSPMode = oldmode;
+             
+                if (!File.Exists((file_name1)))                                      // ke9ns check if file name works
+                {
+                    System.IO.File.Delete(file_name1);  // delete the IDTIMERCW file first
+                }
 
+                System.IO.File.Copy(files[0], file_name1, true); // copy quickaudio file to IDTIMERCW file
             }
             else
             {
@@ -2485,23 +2550,39 @@ namespace PowerSDR
         } // checkBoxCW_CheckedChanged
 
 
-        // ke9ns add
+
+        DSPMode oldmode = DSPMode.FIRST;
+
+        //==================================================================================================================
+        // ke9ns add IDVOICE
         private void checkBoxCQ_CheckedChanged(object sender, EventArgs e)
         {
             chkQuickAudioFolder.Checked = true;
-            console.checkBoxID.Checked = true;
+            console.checkBoxID.Checked = true;  // REC/PLAY ID checkbox in console
+
+            if (checkBoxCQ.Checked == true)
+            {
+                oldmode = console.RX1DSPMode;
+                if ((oldmode == DSPMode.FM) || (oldmode == DSPMode.AM) || (oldmode == DSPMode.SAM) || (oldmode == DSPMode.DSB)) console.RX1DSPMode = DSPMode.USB; // record only in SSB mode
+            }
 
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
-              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\CQCQ.wav";
 
                 string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
+             
+                MessageBox.Show(new Form() { TopMost = true }, "Done Recording.\nCQCQ.wav file will be created.");
 
-                MessageBox.Show("Done Recording.\nCQCQ.wav file will be created.");
+                console.RX1DSPMode = oldmode;
+              
+                if (!File.Exists((file_name1)))                                      // ke9ns check if file name works
+                {
+                    System.IO.File.Delete(file_name1);  // delete the cqcq file first
+                }
 
-                System.IO.File.Copy(files[0], file_name1, true);
+                System.IO.File.Copy(files[0], file_name1, true); // copy quickaudio file to cqcq file
 
             }
             else
@@ -2512,34 +2593,6 @@ namespace PowerSDR
         } //checkBoxCQ_CheckedChanged
 
 
-        //=================================================================================
-        // ke9ns add  open MP3 folder
-        private void checkBoxTS1_CheckedChanged(object sender, EventArgs e)
-        {
-            if ((chkQuickAudioFolder.Checked == true)&& (chkBoxMP3.Checked == true))
-            {
-
-                string filePath = console.AppDataPath + "QuickAudioMP3";
-
-                Debug.WriteLine("mp3 path: " + filePath);
-
-                if (!Directory.Exists(filePath))
-                {
-                  
-                    Debug.WriteLine("no mp3 folder found");
-                    return;
-
-                }
-
-                string argument = @filePath;                     //@"/select, " + filePath;
-
-                System.Diagnostics.Process.Start("explorer.exe", argument);
-                
-
-            } // 
-
-
-        } // checkBoxTS1_CheckedChanged
 
         //==================================================================================
         // ke9ns add REPLY
@@ -2548,19 +2601,33 @@ namespace PowerSDR
             chkQuickAudioFolder.Checked = true;
             console.checkBoxID.Checked = true;
 
+            if (checkBoxTS2.Checked == true)
+            {
+                oldmode = console.RX1DSPMode;
+                if ((oldmode == DSPMode.FM) || (oldmode == DSPMode.AM) || (oldmode == DSPMode.SAM) || (oldmode == DSPMode.DSB))
+                {
+                    console.RX1DSPMode = DSPMode.USB; // record only in SSB mode
+                }
+            }
+
             if (console.ckQuickRec.Checked == true) // recorder already running
             {
                 console.ckQuickRec.Checked = false;
 
-              //  string file_name = console.AppDataPath + "QuickAudio" + "\\SDRQuickAudio" + QAC.ToString() + ".wav";
                 string file_name1 = console.AppDataPath + "QuickAudio" + "\\CALL.wav";
 
                 string[] files = Directory.GetFiles(console.AppDataPath + "QuickAudio" + "\\", "SDRQuickAudio" + QAC.ToString() + "*.wav"); // 
+              
+                MessageBox.Show(new Form() { TopMost = true }, "Done Recording.\nCALL.wav file will be created.");
 
-                MessageBox.Show("Done Recording.\nCALL.wav file will be created.");
+                console.RX1DSPMode = oldmode;
+              
+                if (!File.Exists((file_name1)))                                      // ke9ns check if file name works
+                {
+                    System.IO.File.Delete(file_name1);  // delete the call file first
+                }
 
-                System.IO.File.Copy(files[0], file_name1, true);
-
+                System.IO.File.Copy(files[0], file_name1, true); // copy quickaudio file to call file
             }
             else
             {
@@ -2568,6 +2635,35 @@ namespace PowerSDR
             }
 
         } // checkBoxTS2_CheckedChanged
+
+
+
+        //=================================================================================
+        // ke9ns add  open MP3 folder
+        private void checkBoxTS1_CheckedChanged(object sender, EventArgs e)
+        {
+            if ((chkQuickAudioFolder.Checked == true) && (chkBoxMP3.Checked == true))
+            {
+                string filePath = console.AppDataPath + "QuickAudioMP3";
+
+                Debug.WriteLine("mp3 path: " + filePath);
+
+                if (!Directory.Exists(filePath))
+                {
+                    Debug.WriteLine("no mp3 folder found");
+                    return;
+                }
+
+                string argument = @filePath;                     //@"/select, " + filePath;
+
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+
+
+            } // 
+
+
+        } // checkBoxTS1_CheckedChanged
+
 
         private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e)
         {
@@ -3265,10 +3361,11 @@ namespace PowerSDR
 
 
 //=====================================================================================================
+// ke9ns play wav files back
 		unsafe public void GetPlayBuffer(float *left, float *right)
 		{
 
-           //  Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
+          // Debug.WriteLine("GetPlayBuffer ("+rb_l.ReadSpace()+")");
             int count = rb_l.ReadSpace();
 
 			if(count == 0) return;

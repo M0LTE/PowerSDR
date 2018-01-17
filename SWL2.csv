@@ -1,4 +1,6 @@
 kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35;Start:60;Stop:60;
+0490;0000-2400;;Wld;NAVTEX;;Wld;;1;;
+0518;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 2182;0000-2400;;DSC;Martime Distress;;DSC;;1;;
 2187.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
 2944;0000-2400;;USA;HFDL-Barrow;;AK;;1;;
@@ -15,6 +17,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 3996;0000-2400;;Wld;ALE-World;;Wld;;1;;
 4125;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
 4207.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
+4209.5;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 4654;0000-2400;;USA;HFDL-Barrow;;AK;;1;;
 4660;0000-2400;;BOL;HFDL-Santa Cruz;;BOL;;1;;
 4681;0000-2400;;AFS;HFDL-Johannesburg;;AFS;;1;;
@@ -44,11 +47,13 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 5655;0000-2400;;THA;HFDL-Hat Yai;;THA;;1;;
 5720;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
 6312;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
+6314;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 6315;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
 6529;0000-2400;;CNR;HFDL-Telde Canarias;;CNR;;1;;
 6532;0000-2400;;IRL;HFDL-Shannon;;IRL;;1;;
 6535;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;
 6535;0000-2400;;THA;HFDL-Hat Yai;;THA;;1;;
+6348;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 6559;0000-2400;;USA;HFDL-San Francisco;;CA;;1;;
 6565;0000-2400;;USA;HFDL-Molokai;;HWA;;1;;
 6589;0000-2400;;PNR;HFDL-Albrook;;PNR;;1;;
@@ -69,6 +74,8 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 8291;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
 8294;0000-2400;;DSC;Maritime Exclusive;;DSC;;1;;
 8414.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
+8416.5;0000-2400;;Wld;NAVTEX;;Wld;;1;;
+8580;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 8825;0000-2400;;THA;HFDL-Hat Yai;;THA;;1;;
 8834;0000-2400;;AFS;HFDL-Johannesburg;;AFS;;1;;
 8843;0000-2400;;IRL;HFDL-Shannon;;IRL;;1;;
@@ -113,6 +120,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 11460;0000-2400;;USN;Stanag 75l USN;USN;;1;;
 12290;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
 12577;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
+12579;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 13047;0000-2400;;JFC;Fax-JFC;;JFC;;1;;
 13264;0000-2400;;PNR;HFDL-Albrook;;PNR;;1;;
 13270;0000-2400;;THA;HFDL-Hat Yai;;THA;;1;;
@@ -134,6 +142,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 14346;0000-2400;;Wld;ALE-World;;Wld;;1;;
 15034;0000-2400;;CFB;Trenton Mil Volmet;;CFB;;1;;
 16420;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
+16806.5;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 16804.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
 15025;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
 17901;0000-2400;;PNR;HFDL-Albrook;;PNR;;1;;
@@ -171,6 +180,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 21990;0000-2400;;RUS;HFDL-Krasnoyarsk;;RUS;;1;;
 21997;0000-2400;;BOL;HFDL-Santa Cruz;;BOL;;1;;
 22159;0000-2400;;DSC;Maritime Exclusive;;DSC;;1;;
+22376;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 24926;0000-2400;;Wld;ALE-World;;Wld;;1;;
 24930;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 24932;0000-2400;;Wld;ALE-World;;Wld;;1;;
@@ -265,5 +275,9 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 27885;0000-2400;;Wld;CB Ch 88;;Wld;;1;;
 27895;0000-2400;;Wld;CB Ch 89;;Wld;;1;;
 28146;0000-2400;;Wld;ALE400;;Wld;;1;;
+28074;0000-2400;;Wld;10m FT8 USB;;Wld;;1;;
 28200;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 28312.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
+50125;0000-2400;;Wld;6m Calling Freq;;Wld;;1;;
+50313;0000-2400;;Wld;6m FT8 USB;;Wld;;1;;
+

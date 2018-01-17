@@ -216,6 +216,7 @@ namespace PowerSDR
         private ButtonTS btnIOUpdate;
         private ButtonTS btnEEPROMRead1;
         private ButtonTS buttonTS1;
+        private ButtonTS buttonTS2;
 
         /// <summary>
         /// Required designer variable.
@@ -461,6 +462,7 @@ namespace PowerSDR
             this.comboMuxChan = new System.Windows.Forms.ComboBoxTS();
             this.lblMuxChannel = new System.Windows.Forms.LabelTS();
             this.buttonTS1 = new System.Windows.Forms.ButtonTS();
+            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
             ((System.ComponentModel.ISupportInitialize)(this.udATUL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udATUC)).BeginInit();
             this.grpATURelays.SuspendLayout();
@@ -2208,10 +2210,21 @@ namespace PowerSDR
             this.buttonTS1.Text = "MARS";
             this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click);
             // 
+            // buttonTS2
+            // 
+            this.buttonTS2.Image = null;
+            this.buttonTS2.Location = new System.Drawing.Point(272, 625);
+            this.buttonTS2.Name = "buttonTS2";
+            this.buttonTS2.Size = new System.Drawing.Size(58, 23);
+            this.buttonTS2.TabIndex = 46;
+            this.buttonTS2.Text = "Normal";
+            this.buttonTS2.Click += new System.EventHandler(this.buttonTS2_Click);
+            // 
             // FLEX5000LLHWForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(640, 508);
+            this.ClientSize = new System.Drawing.Size(640, 495);
+            this.Controls.Add(this.buttonTS2);
             this.Controls.Add(this.buttonTS1);
             this.Controls.Add(this.btnEEPROMRead1);
             this.Controls.Add(this.lblATUC);
@@ -2578,9 +2591,8 @@ namespace PowerSDR
        // ke9ns add change 3000 or 5000 radio to Extended
         private void buttonTS1_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("Warning: You must have Authorization as an offical MARS Licensed Operator\n",
-                         
-                           "Do you have authorization?",
+            DialogResult dr = MessageBox.Show("Warning: You must have Authorization as a MARS Licensed Operator.\n",
+                                             "Do you have authorization?",
                            MessageBoxButtons.YesNo,
                            MessageBoxIcon.Question);
 
@@ -3130,6 +3142,47 @@ namespace PowerSDR
 
         }
 
-      
+        private void buttonTS2_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("This will reset any MARS operate back to Normal Standard Operation\n",
+
+                         "Yes?",
+                         MessageBoxButtons.YesNo,
+                         MessageBoxIcon.Question);
+
+            if (dr == DialogResult.Yes)
+            {
+
+                if (FWC.WriteTRXEEPROMByte(0x0034, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 34");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0035, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 35");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0036, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 36");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0037, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 37");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0038, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 38");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x0039, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 39");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003A, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3a");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003B, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3b");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+                if (FWC.WriteTRXEEPROMByte(0x003C, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3c");
+                txtEEPROMWrite.BackColor = SystemColors.Window;
+                btnEEPROMRead_Click(this, EventArgs.Empty);
+
+            }
+
+        }
     }
 }

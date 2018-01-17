@@ -54,8 +54,7 @@ void snap_spectrum (SpecBlock * sb, int label)
 	{
 		for (i = 0; i < sb->size; i++)
 		{
-			CXBdata (sb->timebuf, i) =
-				Cscl (CXBdata (sb->accum, j), sb->window[i]);
+			CXBdata (sb->timebuf, i) = Cscl (CXBdata (sb->accum, j), sb->window[i]);
 			j = (++j & sb->mask);
 		}
 	}
@@ -66,24 +65,27 @@ void snap_spectrum (SpecBlock * sb, int label)
 		{
 			CXBreal (sb->timebuf, i) = CXBreal (sb->accum, j) * sb->window[i];
 			CXBimag (sb->timebuf, i) = CXBimag (sb->accum, j) * sb->window[i];
+
 			for (k = 1; k < 8; k++)
 			{
 				int accumidx = (j + k * sb->size) & sb->mask;
 				int winidx = i + k * sb->size;
-				CXBreal (sb->timebuf, i) +=
-					CXBreal (sb->accum, accumidx) * sb->window[winidx];
-				CXBimag (sb->timebuf, i) +=
-					CXBimag (sb->accum, accumidx) * sb->window[winidx];
+
+				CXBreal (sb->timebuf, i) += CXBreal (sb->accum, accumidx) * sb->window[winidx];
+				CXBimag (sb->timebuf, i) += CXBimag (sb->accum, accumidx) * sb->window[winidx];
 			}
+
 			j = (++j & sb->mask);
 		}
 
 	}
 	sb->label = label;
-}
 
-void
-snap_scope (SpecBlock * sb, int label)
+} // void snap_spectrum (SpecBlock * sb, int label)
+
+
+//================================================================
+void snap_scope (SpecBlock * sb, int label)
 {
 	int i, j;
 
@@ -93,15 +95,16 @@ snap_scope (SpecBlock * sb, int label)
 	// copy starting from there in circular fashion
 	for (i = 0; i < sb->size; i++)
 	{
-		CXBdata (sb->timebuf, i) = CXBdata (sb->accum, j);
+		CXBdata (sb->timebuf, i) = CXBdata (sb->accum, j); // ke9ns ( ((p)->data)[(i)] )   
 		j = (++j & sb->mask);
 	}
 
 	sb->label = label;
-}
+} // void snap_scope (SpecBlock * sb, int label)
 
-void
-compute_complex_spectrum(SpecBlock * sb)
+
+//================================================================
+void compute_complex_spectrum(SpecBlock * sb)
 {
 	int i, j, half = sb->size / 2;
 
@@ -109,15 +112,17 @@ compute_complex_spectrum(SpecBlock * sb)
 
 	fftwf_execute (sb->plan);
 
-	for (i = 0, j = half; i < half; i++, j++) {
+	for (i = 0, j = half; i < half; i++, j++)
+	{
 		sb->coutput[i] = CXBdata (sb->freqbuf, j);
 		sb->coutput[j] = CXBdata (sb->freqbuf, i);
 	}	
-}
 
+} // void compute_complex_spectrum(SpecBlock * sb)
+
+//=======================================================
 // snapshot -> frequency domain
-void
-compute_spectrum (SpecBlock * sb)
+void compute_spectrum (SpecBlock * sb)
 {
 	int i, j, half = sb->size / 2;
 

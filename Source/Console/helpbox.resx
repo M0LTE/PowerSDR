@@ -143,6 +143,7 @@ WaterFall: Type your Callsign in the TX WaterID callsign box, found at the top o
 
 NOAA.com&gt;&gt; WWV Solar Flux Index, A and K index values
 sidc.oma.be&gt;&gt;  Estimated SunSpot#: Official Sun Spot # updated hourly.
+
 NWRA.com&gt;&gt; Effective SunSpot# based on ionospheric measurements, updated hourly.
 Effective SSN# is a more accurate SSN# since it takes time for actual SunSpots to effect the ionoshere. 
 </value>
@@ -211,6 +212,62 @@ All SWR Data is recorded by Run#, ANT (Flex-5000) &amp; Band in a file called ke
 And automatically saved when you close PowerSDR, or Click setup-&gt;Save
 </value>
   </data>
+  <data name="AntennaDelay.Text" xml:space="preserve">
+    <value>Antenna TR Delay:
+
+On the Flex-1500 the Antenna TR delay is located under the ANT panel.
+On the Flex-3000 the Antenna TR delay is located under Setup-&gt;General-&gt;Options.
+On the Flex-5000 the Antenna TR delay is located under the ANT panel.
+
+On the Flex-1500 and Flex-3000 the TR delay operation:
+1) PTT ON: Radio goes into TX but no Output.
+2) After the DELAY, the TX (PA) ON and TX Out Jack activates.
+3) PTT OFF: Radio back into Receive and TX OUT jack shuts OFF immediately
+
+------------------------------------------------------------------------------
+On the Flex-5000 you have 3 TX OUT &amp; Delay Jacks to allow Sequential Switching:
+Each TX OUT jack (1,2,3) works like the Flex-1500/3000 when used individually.
+But when you use TX1 and TX2 at the same time,
+ the Delay on TX2 comes after the Delay on TX1 (TX3 will start after the first 2 delays)
+
+But there are effects beyond the simple Sequential Delays:
+
+1) If you use the TX3 (yellow RCA and enable it) to key your amp (do not enable TX2 delay 
+or TX3 delay), BUT enable TX1 and set the TX1 delay. The Flex and AMP key up together (on 
+a PTT) after the TX1 delay, and no delay on the release of PTT
+
+2) If you use the TX1 (Red RCA) to key your amp and select just the TX1 delay, then the 
+Amp keys up immediately, and the Flex delays transmit, and no delay on the release of PTT
+
+3) If you use the TX1 (Red RCA) to key your amp BUT select only the TX3 delay, then the 
+Amp keys up immediately, and the Flex delays transmit, AND the AMP delays release when 
+you release the PTT</value>
+  </data>
+  <data name="HTTPSERVER.Text" xml:space="preserve">
+    <value>Http Server information:
+
+Basic: Display area is transmitted (Panadapter and Waterfall)
+
+Full Console: When Basic is ON, you can transmit the full Console window 
+(and any window you place on top of the PowerSDR Console window)
+
+--------------------------------------------------------------
+Below is what you can insert on your own web page for others to see your Flex Pan:
+ 
+&lt;style&gt;
+#wrap { width: 1400px; height: 600px; padding: 0; overflow: hidden; }
+#frame { width: 1400px; height: 600px; border: 1px solid black; }
+#frame { zoom: 1.00; -moz-transform: scale(1.00); -moz-transform-origin: 0 0; }
+&lt;/style&gt;
+
+ &lt;div id="wrap"&gt;
+    &lt;iframe id="frame" src="http://YOUR_IP_ADDRESS_HERE.net:8081"&gt;&lt;/iframe&gt;  
+ &lt;/div&gt;
+</value>
+  </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>41</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

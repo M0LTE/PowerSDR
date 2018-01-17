@@ -50,6 +50,7 @@ using Microsoft.JScript;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+
 //using System.Runtime.Remoting.Contexts;
 
 namespace PowerSDR
@@ -92,9 +93,9 @@ namespace PowerSDR
 
             Debug.WriteLine("GET Real weather data=========");
 
-           
+
             string content1 = " ";
-          
+
             if (console.SpotForm != null)
             {
                 if (((int)console.SpotForm.udDisplayLat.Value > 29) && ((int)console.SpotForm.udDisplayLat.Value < 49))
@@ -108,49 +109,49 @@ namespace PowerSDR
 
                         var url = new Uri("http://forecast.weather.gov/MapClick.php?lat=" + latitude + "&lon=" + longitude + "&FcstType=dwml");
 
-                       
-                            HttpClient client = new HttpClient();
+
+                        HttpClient client = new HttpClient();
 
                         try
                         {
                             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Stackoverflow/1.0");
                         }
-                        catch(Exception g)
+                        catch (Exception g)
                         {
                             Debug.WriteLine("http client user agent fail " + g);
                         }
 
-                            Debug.WriteLine("GOOD LAT AND LONG weather data1=========" + url);
-                       
-                            try
-                            {
-                                var xml = await client.GetStringAsync(url);
-                                content1 = xml.ToString();
-                                client.Dispose();
-                                return content1;
+                        Debug.WriteLine("GOOD LAT AND LONG weather data1=========" + url);
 
-                            }
-                            catch (Exception g)
-                            {
-                                content1 = "Error " + g.ToString();
-                                client.Dispose();
-                                return content1;
-                            }
+                        try
+                        {
+                            var xml = await client.GetStringAsync(url);
+                            content1 = xml.ToString();
+                            client.Dispose();
+                            return content1;
+
+                        }
+                        catch (Exception g)
+                        {
+                            content1 = "Error " + g.ToString();
+                            client.Dispose();
+                            return content1;
+                        }
 
                     } // SpotForm.udDisplayLong.Value
                     else Debug.WriteLine("LAT not good=========");
-                   
+
 
                 } //   if (((int)SpotForm.udDisplayLong.Value > -120) && ((int)SpotForm.udDisplayLong.Value < -73))
                 else Debug.WriteLine("LONG not good=========");
-                
+
 
             } // SpotForm.udDisplayLat.Value > 29)  && ((int)SpotForm.udDisplayLat.Value < 49 ))
             else Debug.WriteLine("Spotform not open=========");
 
             console.LOCALWEATHER = false;
             Console.noaaON = 1;
-          
+
             return content1;
         } // aync weather data
 
@@ -162,11 +163,11 @@ namespace PowerSDR
         //=========================================================================================
         public void HttpServer1()
         {
-          
+
             try
             {
                 m_listener = new TcpListener(IPAddress.Any, console.HTTP_PORT);
-              
+
             }
             catch (Exception e)
             {
@@ -176,7 +177,7 @@ namespace PowerSDR
 
             }
 
-         
+
             Console.m_terminated = false;
 
             Thread t = new Thread(new ThreadStart(TCPSERVER));
@@ -187,7 +188,7 @@ namespace PowerSDR
 
         } // httpserver()
 
-       
+
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
@@ -201,7 +202,7 @@ namespace PowerSDR
             {
                 m_listener.Start();
 
-         
+
             }
             catch (Exception e)
             {
@@ -212,27 +213,28 @@ namespace PowerSDR
 
             Debug.WriteLine("LISTENER STARTED");
 
-          
+
             while (!Console.m_terminated)
             {
-    
+
                 try
                 {
                     Thread.Sleep(50);
 
-                 
+
                     TcpClient tempClient = getHandler(m_listener.AcceptTcpClient());
 
                     //   TcpClient client = m_listener.AcceptTcpClient();
                     //   string ip = ((IPEndPoint)m_listener.Server.LocalEndPoint).Address.ToString();
                     //    TcpClient tempClient = getHandler(client);
 
-                    if ( TcpType != 0)
+                    if (TcpType != 0)
                     {
                         if (TcpType == 1)
                         {
-                         
+
                             ImageRequest(tempClient);
+                          //  AudioRequest(tempClient);
                         }
                         else if (TcpType == 2)
                         {
@@ -260,14 +262,14 @@ namespace PowerSDR
                         break;
                     }
 
-                   
+
                 }
 
                 Thread.Sleep(50);
 
             } //while (!m_terminated)
 
-            
+
             console.URLPRESENT = false;
 
         } // TCPSERVER() THREAD
@@ -312,7 +314,7 @@ namespace PowerSDR
                 case RequestType.GET_HTML_INDEX_PAGE: //  WebPageRequest(tempClient);
                     TcpType = 2;
                     return tcpClient;
-                 case RequestType.UNKNOWN: //  UnknownRequest(tempClient);
+                case RequestType.UNKNOWN: //  UnknownRequest(tempClient);
                     TcpType = 3;
                     return tcpClient;
             }
@@ -371,9 +373,9 @@ namespace PowerSDR
 
             else if (RequestUri.CompareTo("/") == 0)
             {
-              // return RequestType.GET_IMAGE;
+                // return RequestType.GET_IMAGE;
 
-             return RequestType.GET_HTML_INDEX_PAGE;
+                return RequestType.GET_HTML_INDEX_PAGE;
             }
 
             return RequestType.UNKNOWN;
@@ -387,19 +389,21 @@ namespace PowerSDR
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
-      
+
 
         public void ImageRequest(TcpClient m_tcpClient)
         {
-                     
+
             if (m_tcpClient == null) return;
 
             Debug.WriteLine("IMAGEREQUEST1");
 
             if (console.URLPRESENT == false) console.URLPRESENT = true; // ke9ns let the setup HTTP server know that someone is requesting an image
-            
-         
+
+
             byte[] imageArray = console.getImage(); // ke9ns this gets either the Spectral Display or the entire Console widow and puts it into a jpeg byte array
+
+         
 
             if (imageArray == null) // if we dont have an image, let the requestor know we dont have an image to send.
             {
@@ -418,7 +422,7 @@ namespace PowerSDR
 
             //  "<meta http-equiv= \"refresh\" content= \"500\" > \r\n" +
 
-            string responseHeaders =   "HTTP/1.1 200 The file is coming right up!\r\n" +
+            string responseHeaders = "HTTP/1.1 200 The file is coming right up!\r\n" +
                                        "Server: MyOwnServer\r\n" +
                                        "Content-Length: " + imageArray.Length + "\r\n" +
                                        "Content-Type: image/jpeg\r\n" +
@@ -426,7 +430,7 @@ namespace PowerSDR
                                        "\r\n";
 
 
-          
+
             byte[] headerArray = Encoding.ASCII.GetBytes(responseHeaders); // convert responseheader into byte array
 
 
@@ -454,7 +458,7 @@ namespace PowerSDR
             if (console.URLPRESENT == false) console.URLPRESENT = true; // ke9ns let the setup HTTP server know that someone is requesting an image
 
             byte[] audioArray = console.getAudio(); // ke9ns gets audio stream
-
+                                                   
 
             if (audioArray == null) // if we dont have an image, let the requestor know we dont have an image to send.
             {
@@ -476,8 +480,8 @@ namespace PowerSDR
             string responseHeaders = "HTTP/1.1 200 The file is coming right up!\r\n" +
                                        "Server: MyOwnServer\r\n" +
                                        "Content-Length: " + audioArray.Length + "\r\n" +
-                                       "Content-Type: audio/wav\r\n" +
-                                     //  "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
+                                       "Content-Type: audio/mpeg\r\n" +
+                                       //  "Content-Disposition: inline;filename=\"picDisplay.jpg;\"\r\n" +
                                        "\r\n";
 
 
@@ -504,21 +508,21 @@ namespace PowerSDR
         {
             byte[] bytes = new byte[0];
 
-           // using (The_FactoryDBContext db = new The_FactoryDBContext())
-          //  {
+            // using (The_FactoryDBContext db = new The_FactoryDBContext())
+            //  {
             //    if (db.Words.FirstOrDefault(word => word.wordID == id).engAudio != null)
-              //  {
+            //  {
             //        bytes = db.Words.FirstOrDefault(word => word.wordID == id).engAudio;
-            
-              //  }
-           // }
 
-         //  Context.Response.Clear();
-          //  Context.Response.ClearHeaders();
-          //  Context.Response.ContentType = "audio/wav"; //  "audio/mpeg";
-           // Context.Response.AddHeader("Content-Length", bytes.Length.ToString());
-           // Context.Response.OutputStream.Write(bytes, 0, bytes.Length);
-           // Context.Response.End();
+            //  }
+            // }
+
+            //  Context.Response.Clear();
+            //  Context.Response.ClearHeaders();
+            //  Context.Response.ContentType = "audio/wav"; //  "audio/mpeg";
+            // Context.Response.AddHeader("Content-Length", bytes.Length.ToString());
+            // Context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+            // Context.Response.End();
         }
 
         //=========================================================================================
@@ -603,7 +607,7 @@ namespace PowerSDR
 
         }
 
-       
+
 
         //=========================================================================================
         //=========================================================================================
@@ -615,67 +619,181 @@ namespace PowerSDR
         byte[] picDisplayOutput;
         MemoryStream memstream;
 
-      
-        private byte[] getImage()
-        {
 
-                bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
-                console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-
-                using (memstream = new MemoryStream())
-                {
-                    bitmap.Save(memstream, ImageFormat.Jpeg);
-                    picDisplayOutput = memstream.ToArray();
-                }
-
-
-            return picDisplayOutput;
-          
-        } // getImage()
-
-
-    
-
-
-/*     // ke9ns if you want to save image as a file and then read file
         private byte[] getImage()
         {
 
             bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
             console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
-            bitmap.Save(console.AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
-          
-            FileInfo picDisplayFile = new FileInfo(console.AppDataPath + "picDisplay.jpg");
-            FileStream picDisplayStream = new FileStream(console.AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
-            BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
 
-            picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
+            using (memstream = new MemoryStream())
+            {
+                bitmap.Save(memstream, ImageFormat.Jpeg);
+                picDisplayOutput = memstream.ToArray();
+            }
 
-            picDisplayReader.Close();
-            picDisplayStream.Close();
-                       
+
             return picDisplayOutput;
-
 
         } // getImage()
 
-    */
+
+
+
+
+        /*     // ke9ns if you want to save image as a file and then read file
+                private byte[] getImage()
+                {
+
+                    bitmap = new Bitmap(console.picDisplay.Width, console.picDisplay.Height); // ke9ns set bitmap size to size of picDisplay since it gets resized with your screen
+                    console.picDisplay.DrawToBitmap(bitmap, console.picDisplay.ClientRectangle); // ke9ns grab picDisplay and convert to bitmap
+                    bitmap.Save(console.AppDataPath + "picDisplay.jpg", ImageFormat.Jpeg); // ke9ns save image into database folder
+
+                    FileInfo picDisplayFile = new FileInfo(console.AppDataPath + "picDisplay.jpg");
+                    FileStream picDisplayStream = new FileStream(console.AppDataPath + "picDisplay.jpg", FileMode.Open, FileAccess.Read); // open file  stream 
+                    BinaryReader picDisplayReader = new BinaryReader(picDisplayStream); // open stream for binary reading
+
+                    picDisplayOutput = picDisplayReader.ReadBytes((int)picDisplayFile.Length); // create array of bytes to transmit
+
+                    picDisplayReader.Close();
+                    picDisplayStream.Close();
+
+                    return picDisplayOutput;
+
+
+                } // getImage()
+
+            */
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
         //=========================================================================================
-    private static void SendError(TcpClient Client, int Code)
+        private static void SendError(TcpClient Client, int Code)
+        {
+            string CodeStr = Code.ToString() + " " + ((HttpStatusCode)Code).ToString();
+            string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";
+            string Str = "HTTP/1.1 " + CodeStr + "\nContent-type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
+            byte[] Buffer = Encoding.ASCII.GetBytes(Str);
+            Client.GetStream().Write(Buffer, 0, Buffer.Length);
+            Client.Close();
+        }
+
+
+      
+
+    } // class http
+
+    public class Server
     {
-        string CodeStr = Code.ToString() + " " + ((HttpStatusCode)Code).ToString();
-        string Html = "<html><body><h1>" + CodeStr + "</h1></body></html>";
-        string Str = "HTTP/1.1 " + CodeStr + "\nContent-type: text/html\nContent-Length:" + Html.Length.ToString() + "\n\n" + Html;
-        byte[] Buffer = Encoding.ASCII.GetBytes(Str);
-        Client.GetStream().Write(Buffer, 0, Buffer.Length);
-        Client.Close();
-    }
 
-} // class http
 
+        private Socket sock;
+
+        private int port = 8080;
+
+        private IPAddress addr = IPAddress.Any;
+
+        private int backlog;
+
+
+        //------------------------------------------------
+        public void Start() //  // This is the method that starts the server listening.
+        {
+            this.sock = new Socket(addr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            sock.Bind(new IPEndPoint(this.addr, this.port));
+
+            this.sock.Listen(this.backlog); // places socket in listen state
+
+            this.sock.BeginAccept(this.OnConnectRequest, sock); // accepts incoming connection attemp
+
+
+        } // Start()
+
+
+        //------------------------------------------------
+        public void OnConnectRequest(IAsyncResult result)  // This is the method that is called when the socket receives a request for a new connection.
+        {
+
+            Socket sock = (Socket)result.AsyncState;  // get socket 
+
+            Connection newConn = new Connection(sock.EndAccept(result)); // create new connection
+
+            sock.BeginAccept(this.OnConnectRequest, sock); // tell listener socket to start listening again
+
+
+        } //  public void OnConnectRequest(IAsyncResult result)
+
+
+
+
+
+    } //  public class Server
+    
+
+
+
+    public class Connection
+    {
+
+        private Socket sock;
+        byte[] dataRcvBuf;
+
+        private Encoding encoding = Encoding.UTF8;
+
+        //--------------------------------------
+        public Connection(Socket s)
+        {
+            this.sock = s;
+            this.BeginReceive(); // start listening for incoming data (this could be in a thread
+
+        } //AsyncResult result)
+
+
+        //--------------------------------------
+        private void BeginReceive()  //  // Call this method to set this connection's socket up to receive data.
+        {
+            this.sock.BeginReceive(this.dataRcvBuf, 0, this.dataRcvBuf.Length, SocketFlags.None, new AsyncCallback(this.OnBytesReceived), this);
+
+
+        } // private void BeginReceive()
+
+
+        //--------------------------------------
+         protected void OnBytesReceived(IAsyncResult result)   // This is the method that is called whenever the socket receives incoming bytes.
+        {
+
+            int nBytesRec = this.sock.EndReceive(result);   // End the data receiving that the socket has done and get the number of bytes read.
+
+            if (nBytesRec <= 0)                            // If no bytes were received, the connection is closed (at least as far as we're concerned).
+            {
+                this.sock.Close();
+                return;
+            }
+
+            string strReceived = this.encoding.GetString(this.dataRcvBuf, 0, nBytesRec);   // Convert the data we have to a string.
+
+            Debug.WriteLine("!!!!!!GOT BYTES" + strReceived);
+
+
+            // ...Now, do whatever works best with the string data.
+            // You could, for example, look at each character in the string
+            // one-at-a-time and check for characters like the "end of text"
+            // character ('\u0003') from a client indicating that they've finished
+            // sending the current message.  It's totally up to you how you want
+            // the protocol to work.
+
+            // Whenever you decide the connection should be closed, call 
+            // sock.Close() and don't call sock.BeginReceive() again.  But as long 
+            // as you want to keep processing incoming data...
+
+
+            this.sock.BeginReceive(this.dataRcvBuf, 0, this.dataRcvBuf.Length, SocketFlags.None, new AsyncCallback(this.OnBytesReceived), this);  // Set up again to get the next chunk of data.
+
+        } //  protected void OnBytesReceived(IAsyncResult result)
+
+
+    } //  public class Connection
 
 } // namespace powersdr

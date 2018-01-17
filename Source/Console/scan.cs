@@ -3397,6 +3397,7 @@ RT2:
 
                     console.helpboxForm.Show();
                     console.helpboxForm.Focus();
+                    console.helpboxForm.youtube_embed = @"https://www.youtube.com/embed/w5j6jh6c0_g?rel=0&amp"; 
                     console.helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
 
                     console.helpboxForm.helpbox_message.Text = console.helpboxForm.SWRScanner.Text;
@@ -3407,6 +3408,7 @@ RT2:
 
                     console.helpboxForm.Show();
                     console.helpboxForm.Focus();
+                    console.helpboxForm.youtube_embed = @"https://www.youtube.com/embed/w5j6jh6c0_g?rel=0&amp"; 
                     console.helpboxForm.WindowState = FormWindowState.Normal; // ke9ns add
 
                     console.helpboxForm.helpbox_message.Text = console.helpboxForm.SWRScanner.Text;

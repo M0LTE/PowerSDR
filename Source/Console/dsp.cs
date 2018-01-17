@@ -82,6 +82,7 @@ namespace PowerSDR
 
 		public DSPRX GetDSPRX(int thread, int subrx)
 		{
+        
 			return dsp_rx[thread][subrx];
 		}
 

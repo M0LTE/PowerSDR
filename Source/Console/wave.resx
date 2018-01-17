@@ -127,14 +127,14 @@
     <value>264, 17</value>
   </metadata>
   <data name="checkBoxTS2.ToolTip" xml:space="preserve">
-    <value>Click the REPLY button to record your Voice or CW,
+    <value>Click the REPLY button to record your Voice (in SSB) or CW,
 Speak, or CW your Callsign as you would when trying to contact a DX station.
 Then click REPLY button again, to end the recording.
 
 Use the REPLY button, found on the main console screen.</value>
   </data>
   <data name="checkBoxCQ.ToolTip" xml:space="preserve">
-    <value>Click the CQCQ button to record your Voice or CW,
+    <value>Click the CQCQ button to record your Voice (in SSB) or CW,
 Speak, or CW a "CQ DE &lt;your callsign&gt;" as you would when trying to make a CQ contact.
 Then click CQCQ button again, to end the recording.
 

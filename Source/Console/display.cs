@@ -60,6 +60,7 @@ namespace PowerSDR
         public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
 
         public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
+        public static SpotDecoder spotDecoder;
         public ScanControl ScanForm;                            // ke9ns add freq Scanner function
 
         //private static Mutex background_image_mutex;			// used to lock the base display image
@@ -108,65 +109,8 @@ namespace PowerSDR
         }
 
 
-        public static int[] band_edge_list_r77 =
-                  {          26965000,26965100,  26975000,26975100,   26985000,26985100,  // channels 1-3
-                             27005000,27005100,  27015000,27015100,   27025000,27025100,  // channels 4-6
-                             27035000,27035100,  27055000,27055100,   27065000,27065100,  // channels 7-9
-                             27075000,27075100,  27085000,27085100,   27105000,27105100,  // channels 10-12
-                             27115000,27115100,  27125000,27125100,   27135000,27135100,  // channels 13-15
-                             27155000,27155100,  27165000,27165100,   27175000,27175100,  // channels 16-18
-                             27185000,27185100,  27205000,27205100,   27215000,27215100,  // channels 19-21
-                             27225000,27225100,  27255000,27255100,   27235000,27235100,  // channels 22-24
-                             27245000,27245100,  27265000,27265100,   27275000,27275100,  // channels 25-27
-                             27285000,27285100,  27295000,27295100,   27305000,27305100,  // channels 28-30
-                             27315000,27315100,  27325000,27325100,   27335000,27335100,  // channels 31-33
-                             27345000,27345100,  27355000,27355100,   27365000,27365100,  // channels 34-36
-                             27375000,27375100,  27385000,27385100,   27395000,27395100,  // channels 37-39
-                             27405000,27405100,   // channel 40
-
-                             27415000,27415100,  27425000,27425100,  27435000,27435100,  // channel 41-43
-                             27445000,27445100,  27455000,27455100,  27465000,27465100,  // channel 44-46
-                             27475000,27475100,  27485000,27485100,  27495000,27495100, // channel 47-49
-                             27505000,27505100,  27515000,27515100,  27525000,27525100, // channel 50-52
-                             27535000,27535100,  27545000,27545100,  27555000,27555100, // channel 53-55
-                             27565000,27565100,  27575000,27575100,  27585000,27585100, // channel 56-58
-                             27595000,27595100,  27605000,27605100,  27615000,27615100, // channel 59-61
-                             27625000,27625100,  27635000,27635100,  27645000,27645100, // channel 62-64
-                             27655000,27655100,  27665000,27665100,  27675000,27675100, // channel 65-67
-                             27685000,27685100,  27695000,27695100,  27705000,27705100, // channel 68-70
-                             27715000,27715100,  27725000,27725100,  27735000,27735100, // channel 71-73
-                          
-                             27745000,27745100,  27755000,27755100,  27765000,27765100, // channel 74-76
-                             27775000,27775100,  27785000,27785100,  27795000,27795100, // channel 77-79
-                             27805000,27805100
-
-
-
-                    };
-        /*
-                public static int[] band_edge_list_r77 =
-                                {          26962200,26965000,26965000,26967800,   26972200, 26975000, 26975000, 26977800,   26982200, 26985000, 26985000, 26987800, // channels 1-3
-                                     27002200,27005000,27005000,27007800,  27012200,27015000,27015000,27017800,   27022200,27025000,27025000,27027800,  // channels 4-6
-                                     27032200,27035000,27035000,27037800,  27052200,27055000,27055000,27057800,   27062200,27065000,27065000,27067800,  // channels 7-9
-                                     27072200,27075000,27075000,27077800,  27082200,27085000,27085000,27087800,   27102200,27105000,27105000,27107800,  // channels 10-12
-                                     27112200,27115000,27115000,27117800,  27122200,27125000,27125000,27127800,   27132200,27135000,27135000,27137800,  // channels 13-15
-                                     27152200,27155000,27155000,27157800,  27162200,27165000,27165000,27167800,   27172200,27175000,27175000,27177800,  // channels 16-18
-                                     27182200,27185000,27185000,27187800,  27202200,27205000,27205000,27207800,   27212200,27215000,27215000,27217800,  // channels 19-21
-                                     27222200,27225000,27225000,27227800, 27252200,27255000,27255000,27257800,   27232200,27235000,27235000,27237800,  // channels 22-24
-                                     27242200,27245000,27245000,27247800,  27262200,27265000,27265000,27267800,   27272200,27275000,27275000,27277800,  // channels 25-27
-                                     27282200,27285000,27285000,27287800,  27292200,27295000,27295000,27297800,   27302200,27305000,27305000,27307800,  // channels 28-30
-                                     27312200,27315000,27315000,27317800,  27322200,27325000,27325000,27327800,   27332200,27335000,27335000,27337800,  // channels 31-33
-                                     27342200,27345000,27345000,27347800,  27352200,27355000,27355000,27357800,   27362200,27365000,27365000,27367800,  // channels 34-36
-                                     27372200,27375000,27375000,27377800,  27382200,27385000,27385000,27387800,   27392200,27395000,27395000,27397800,  // channels 37-39
-                                     27402200,27405000,27405000,27407800,   // channel 40
-
-                                     27412200,27415000,27415000,27417800,  27422200,27425000,27425000,27427800,  27432200,27435000,27435000,27437800,  // channel 41-43
-                                     27442200,27445000,27445000,27447800,  27452200,27455000,27455000,27457800,  27462200,27465000,27465000,27467800  // channel 44-46
-
-
-                            };
-
-                    */
+      
+      
         private static bool tnf_zoom = false;
         public static bool TNFZoom
         {
@@ -1444,7 +1388,7 @@ namespace PowerSDR
 
                 case FRSRegion.US:
 
-                    // list center of channel (stupid)
+
                     channels_60m.Add(new Channel(5.1690, 2800)); // ke9ns emergency only   5.1675
 
                     channels_60m.Add(new Channel(5.3320, 2800)); // channel 1   5.3305
@@ -1452,7 +1396,6 @@ namespace PowerSDR
                     channels_60m.Add(new Channel(5.3585, 2800)); // channel 3   5.3570 
                     channels_60m.Add(new Channel(5.3730, 2800)); // channel 4   5.3715
                     channels_60m.Add(new Channel(5.4050, 2800)); // channel 5   5.4035
-
 
 
 
@@ -1468,8 +1411,60 @@ namespace PowerSDR
                     channels_60m.Add(new Channel(5.4050, 2800));
                      */
                     break;
-            }
+            } //  switch (console.CurrentRegion)
 
+
+
+            // draw channels for all regions for common are
+            
+            channels_60m.Add(new Channel(26.9650, 6000)); // channel 1 cb
+            channels_60m.Add(new Channel(26.9750, 6000)); // channel 2 cb
+            channels_60m.Add(new Channel(26.9850, 6000)); // channel 3 cb
+            channels_60m.Add(new Channel(27.0050, 6000)); // channel 4 cb
+            channels_60m.Add(new Channel(27.0150, 6000)); // channel 5 cb
+            channels_60m.Add(new Channel(27.0250, 6000)); // channel 6 cb
+            channels_60m.Add(new Channel(27.0350, 6000)); // channel 7 cb
+            channels_60m.Add(new Channel(27.0550, 6000)); // channel 8 cb
+            channels_60m.Add(new Channel(27.0650, 6000)); // channel 9 cb
+
+            channels_60m.Add(new Channel(27.0750, 6000)); // channel 10 cb
+            channels_60m.Add(new Channel(27.0850, 6000)); // channel 11 cb
+            channels_60m.Add(new Channel(27.1050, 6000)); // channel 12 cb
+            channels_60m.Add(new Channel(27.1150, 6000)); // channel 13 cb
+            channels_60m.Add(new Channel(27.1250, 6000)); // channel 14 cb
+            channels_60m.Add(new Channel(27.1350, 6000)); // channel 15 cb
+
+            channels_60m.Add(new Channel(27.1550, 6000)); // channel 16 cb
+            channels_60m.Add(new Channel(27.1650, 6000)); // channel 17 cb
+            channels_60m.Add(new Channel(27.1750, 6000)); // channel 18 cb
+            channels_60m.Add(new Channel(27.1850, 6000)); // channel 19 cb
+            channels_60m.Add(new Channel(27.2050, 6000)); // channel 20 cb
+            channels_60m.Add(new Channel(27.2150, 6000)); // channel 21 cb
+
+            channels_60m.Add(new Channel(27.2250, 6000)); // channel 22 cb
+           
+            channels_60m.Add(new Channel(27.2350, 6000)); // channel 24 cb
+            channels_60m.Add(new Channel(27.2450, 6000)); // channel 25 cb
+
+            channels_60m.Add(new Channel(27.2550, 6000)); // channel 23 cb
+
+            channels_60m.Add(new Channel(27.2650, 6000)); // channel 26 cb
+            channels_60m.Add(new Channel(27.2750, 6000)); // channel 27 cb
+
+            channels_60m.Add(new Channel(27.2850, 6000)); // channel 28 cb
+            channels_60m.Add(new Channel(27.2950, 6000)); // channel 29 cb
+            channels_60m.Add(new Channel(27.3050, 6000)); // channel 30 cb
+            channels_60m.Add(new Channel(27.3150, 6000)); // channel 31 cb
+            channels_60m.Add(new Channel(27.3250, 6000)); // channel 32 cb
+            channels_60m.Add(new Channel(27.3350, 6000)); // channel 33 cb
+
+            channels_60m.Add(new Channel(27.3450, 6000)); // channel 34 cb
+            channels_60m.Add(new Channel(27.3550, 6000)); // channel 35 cb
+            channels_60m.Add(new Channel(27.3650, 6000)); // channel 36 cb
+            channels_60m.Add(new Channel(27.3750, 6000)); // channel 37 cb
+            channels_60m.Add(new Channel(27.3850, 6000)); // channel 38 cb
+            channels_60m.Add(new Channel(27.3950, 6000)); // channel 39 cb
+            channels_60m.Add(new Channel(27.4050, 6000)); // channel 40 cb
 
 
         } // init()
@@ -1697,7 +1692,7 @@ namespace PowerSDR
         /// <param name="off">color for notch off</param>
         /// <param name="highlight">highlight color to draw highlights on bar</param>
         /// <param name="active">true if notches are turned on</param>
-        static void drawChannelBar(Graphics g, Channel chan, int left, int right, int top, int height, Color c, Color h)
+        static void drawChannelBar(Graphics g, Channel chan, int left, int right, int center, int top, int height, Color c, Color h)
         {
             int width = right - left;
 
@@ -1713,6 +1708,9 @@ namespace PowerSDR
                 //g.DrawLine(p, left - 1, top, left - 1, top + height - 1);
                 g.DrawLine(p, left, top, left, top + height - 1);
                 g.DrawLine(p, right, top, right, top + height - 1);
+
+                if (center > 0) g.DrawLine(p, center, top, center, top + (height/4) - 1);
+
                 //g.DrawLine(p, right+1, top, right+1, top + height - 1);
             }
         }
@@ -3298,9 +3296,14 @@ namespace PowerSDR
 
                     int chan_left_x = (int)((float)(c.Freq * 1e6 - rf_freq - c.BW / 2 - Low - rit) / (High - Low) * W);
                     int chan_right_x = (int)((float)(c.Freq * 1e6 - rf_freq + c.BW / 2 - Low - rit) / (High - Low) * W);
+                          
+                    int chan_center_x = ((chan_right_x - chan_left_x) / 2) + chan_left_x; // ke9ns add
 
-                    if (chan_right_x == chan_left_x)
-                        chan_right_x = chan_left_x + 1;
+                    if (rf_freq < 25000000) chan_center_x = 0;
+
+                    if (chan_right_x == chan_left_x) chan_right_x = chan_left_x + 1;
+
+                 
 
                     // decide colors to draw notch
                     c1 = channel_background_off;
@@ -3312,9 +3315,9 @@ namespace PowerSDR
                     }
 
                     if (bottom)
-                        drawChannelBar(g, c, chan_left_x, chan_right_x, H + top, H - top, c1, c2);
+                        drawChannelBar(g, c, chan_left_x, chan_right_x, chan_center_x, H + top, H - top, c1, c2); // draw box and lines on RX2
                     else
-                        drawChannelBar(g, c, chan_left_x, chan_right_x, top, H - top, c1, c2);
+                        drawChannelBar(g, c, chan_left_x, chan_right_x, chan_center_x, top, H - top, c1, c2);// draw box and lines on RX1
 
                     //if (bottom)
                     //    drawNotchStatus(g, n, (notch_left_x + notch_right_x) / 2, H + top + 75, W, H);
@@ -3942,48 +3945,7 @@ namespace PowerSDR
 
                     } // for (int i = 0; i < f_steps + 1; i++)
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
 
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-                   
-#endif
                     break; // case FRSRegion.US:
 
                 //============================================================================================================
@@ -4014,7 +3976,7 @@ namespace PowerSDR
                                 actual_fgrid == 24.89 || actual_fgrid == 24.99 ||
                                 actual_fgrid == 28.0 || actual_fgrid == 29.7 ||
                                 actual_fgrid == 50.0 || actual_fgrid == 52.0 || // ke9ns fix from 50.08
-                                actual_fgrid == 144.0 || actual_fgrid == 146.0)
+                                actual_fgrid == 144.0  || actual_fgrid == 147.0) // 147 is an experimental portion of 2m
                             {
 
                                 // BEGIN of FRSRegion common block
@@ -4319,7 +4281,7 @@ namespace PowerSDR
                     // draw band edge markers for bands not 60m
                     int[] band_edge_list_r3 = { 18068000, 18168000, 1810000, 2000000, 3500000, 3800000, 5250000,5450000,
                                                 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 21000000, 21450000,
-                                                24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 }; // ke9ns fix 50080000
+                                                24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 147000000 }; // ke9ns fix 50080000
 
                     for (int i = 0; i < band_edge_list_r3.Length; i++)
                     {
@@ -4373,45 +4335,7 @@ namespace PowerSDR
                             }
                         }
                     } //  for (int i = 0; i < band_edge_list_r4.Length; i++)
-#if (!NO_KE9NS)
-                   // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif                 
+
                     break; //   case FRSRegion.UK_Plus:
 
 
@@ -4813,45 +4737,7 @@ namespace PowerSDR
 
 
                     } // 60m europe
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif                 
+
                     break; // EU00
 
 
@@ -5256,45 +5142,7 @@ namespace PowerSDR
 
 
                     } // 60m uk 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU01, EU12
 
 
@@ -5695,45 +5543,7 @@ namespace PowerSDR
 
 
                     } // 60m uk 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU03, EU14
 
 
@@ -6132,45 +5942,7 @@ namespace PowerSDR
 
 
                     } // 60m  
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU04
 
 
@@ -6569,45 +6341,7 @@ namespace PowerSDR
 
 
                     } // 60m  
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU05
 
 
@@ -7007,45 +6741,7 @@ namespace PowerSDR
 
                     } // 60m 
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU06
 
 
@@ -7443,45 +7139,7 @@ namespace PowerSDR
 
 
                     } // 60m 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU07
 
 
@@ -7882,45 +7540,7 @@ namespace PowerSDR
 
 
                     } // 60m 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU08
 
 
@@ -8317,45 +7937,7 @@ namespace PowerSDR
 
 
                     } // 60m 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU09
 
 
@@ -8747,45 +8329,7 @@ namespace PowerSDR
                             }
                         }
                     } // for loop for 60m
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; //EU10
 
 
@@ -9176,45 +8720,7 @@ namespace PowerSDR
                             }
                         }
                     } // for loop for 60m
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; //EU11
 
 
@@ -9569,45 +9075,7 @@ namespace PowerSDR
                     }
 
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // EU13
 
 
@@ -10005,45 +9473,7 @@ namespace PowerSDR
                         }
                     } // for loop for 60m
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; //EU15
 
 
@@ -10441,45 +9871,7 @@ namespace PowerSDR
                         }
                     } // for loop for 60m
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // IARU 2
 
                 //============================================================================================================
@@ -10874,45 +10266,7 @@ namespace PowerSDR
                         }
                     } // for loop for 60m
 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; // Australia
 
 
@@ -11313,45 +10667,7 @@ namespace PowerSDR
 
 
                     } // 60m uk 
-#if (!NO_KE9NS)
-                    // ke9ns add CB 11m band channels 1 - 40
-                    for (int i = 0; i < band_edge_list_r77.Length; i++)
-                    {
-                        double band_edge_offset = band_edge_list_r77[i] - vfo;
-                        if (bottom)
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = H + top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = (H + H) - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                        else
-                        {
-                            if (is_first)
-                            {
-                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
-                                _y = top;
-                                is_first = false;
-                            }
-                            else
-                            {
-                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
-                                _height = H - _y;
-                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
-                                is_first = true;
-                            }
-                        }
-                    } // for loop for 11m
-#endif
+
                     break; //RUSS
 
 
@@ -11827,20 +11143,54 @@ namespace PowerSDR
 
                 if ((console.BeaconSigAvg == true)) // ke9ns add draw blue line to show 0 and 1 threshold for BCD time signal from WWV
                 {
-                    if ((bottom == false) && (SpotForm.WTime == true) && (SpotForm.WWVPitch == false))
+
+
+                    if ((bottom == false))
                     {
-                        int thres = (int)((double)(spectrum_grid_max - SpotForm.WWVThreshold) * H / y_range);
+                        if ((SpotForm.WTime == true) && (SpotForm.WWVPitch == false))
+                        {
+                            int thres = (int)((double)(spectrum_grid_max - SpotForm.WWVThreshold) * H / y_range);
 
-                        g.DrawLine(p3, 100, thres, W - 100, thres);
+                            g.DrawLine(p3, 100, thres, W - 100, thres);
 
-                        string temp = IndexS.ToString(); // SpotForm.IndexS
+                            string temp = IndexS.ToString(); // SpotForm.IndexS
 
-                        g.DrawString(temp, font, grid_text_brush, 600, thres - 15);
+                            g.DrawString(temp, font, grid_text_brush, 600, thres - 15);
 
+                            // g.DrawLine(p3, 100, thres, W - 100, thres);
+                        }
+                       
+                       
+                    } // if bottom = false
 
-                        // g.DrawLine(p3, 100, thres, W - 100, thres);
+                } //  if ((console.BeaconSigAvg == true)) 
+                else if ((console.RTTY == true)) // draw Mark and Space lines for RTTY decoding
+                {
+
+                    // int center_line_x = (int)(-(double)low / (high - low) * W); // ke9ns 885 full screen (shrunk 643) =(97370/(176741))*1607
+                    // g.DrawLine(new Pen(grid_zero_color), center_line_x, top, center_line_x, H); // 0hz line position on screen, Mark = 1000hz Space = 1170hz
+                    // filter_left_x = (int)((float)(tx_filter_low - Low + xit_hz - rit_hz) / (High - Low) * W); //original
+
+                    if ((bottom == false))
+                    {
+
+                        int Mark = (int)((float)(SpotForm.RTTYBASE - Low + xit_hz - rit_hz) / (High - Low) * W); // 
+                        int Space = (int)((float)((SpotForm.RTTYBASE + SpotForm.RTTYSHIFT) - Low + xit_hz - rit_hz) / (High - Low) * W); // 
+
+                        g.DrawLine(new Pen(Color.Orange, 1.0f), Mark, H, Mark, top); // Mark = 1000hz
+                        g.DrawLine(new Pen(Color.Orange, 1.0f), Space, H, Space, top); // Mark = 1000hz
                     }
-                }
+
+                } // RTTY
+                else if ((console.RXCW == true)) // draw Mark and Space lines for RTTY decoding
+                {
+                    if ((bottom == false))
+                    {
+                        int Mark = (int)((float)(SpotForm.CWBase - Low + xit_hz - rit_hz) / (High - Low) * W); // 
+                        g.DrawLine(new Pen(Color.Orange, 1.0f), Mark, H, Mark, top); // Mark = 600hz usually
+                    }
+
+                } // CW
 
                 //   if (bottom) Debug.WriteLine("bottom..H " + H + " hpstep " + h_pixel_step + " hstep "+ h_steps + " top " + top + " num "+num + " gstep "+ grid_step + " Y "+ y + " yrange " + y_range);
                 //   else Debug.WriteLine("top..H " + H + " hpstep " + h_pixel_step + " hstep " + h_steps + " top " + top + " num " + num + " gstep " + grid_step + " Y " + y + " yrange " + y_range);
@@ -12171,21 +11521,27 @@ namespace PowerSDR
                 byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek));   // this is the day. Sun = 0, Mon = 1
                 SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
 
-                if ((!bottom) && (vfoa_hz < 30000000))// do SWL spot if active and not transmitting
+                if ((!bottom) && (vfoa_hz < 54000000))// do SWL spot if active and not transmitting
                 {
-
-                    VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
+                  
+                   VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
                     VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
                     VFODiff = VFOHigh - VFOLow; // diff in hz
 
                     byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
                     byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
 
-                    int iii = 0; // stairstep the swl stations on the screen
+                 //   Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB);
+
+
+                   int iii = 0; // stairstep the swl stations on the screen
 
                     int L_index = 0;                                              // 0Mhz in index
                     if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB - 1]; // Left side  index position corresponding to the Left side Mhz
                     int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
+
+                  //  Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB + " , " + L_index + " , " + H_index);
+
 
                     float XPOS = (float)W / (float)VFODiff;
 
@@ -12219,7 +11575,7 @@ namespace PowerSDR
                             {
                                 if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
 
-                                //   Debug.Write(" FREQ-SWL " + ii);
+                                 //  Debug.Write(" FREQ-SWL " + ii);
 
 
                                 // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
@@ -12326,7 +11682,7 @@ namespace PowerSDR
                         iii = 0;
                         for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
                         {
-                            //  Debug.Write(" drawSWL " + ii);
+                           //   Debug.Write(" drawSWL " + ii);
 
                             if (
                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
@@ -12378,7 +11734,7 @@ namespace PowerSDR
                 //======================================================
                 //ke9ns add SWL spots to RX2
 
-                if ((bottom) && (vfob_hz < 30000000))// do SWL spot if active and not transmitting
+                if ((bottom) && (vfob_hz < 60000000))// do SWL spot if active and not transmitting
                 {
 
                     VFOLow = (int)vfob_hz + RXDisplayLow; // low freq (left side) in hz
@@ -16446,9 +15802,10 @@ namespace PowerSDR
             if (bottom) g.FillRectangle(new SolidBrush(display_background_color), 0, H, W, H);
             else g.FillRectangle(new SolidBrush(display_background_color), 0, 0, W, H);
 
-            if (high_swr && !bottom)
-                g.DrawString("High SWR", new System.Drawing.Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Red), 245, 20);
+            if (high_swr && !bottom) g.DrawString("High SWR", new System.Drawing.Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Red), 245, 20);
         }
+
+
 
         private static float[] scope_min = new float[W];
         public static float[] ScopeMin
@@ -16474,23 +15831,27 @@ namespace PowerSDR
         // ke9ns time vs amplitude using audio.doscope() routine
 		unsafe private static bool DrawScope(Graphics g, int W, int H, bool bottom)
 		{
-			if(scope_min.Length < W) 
+ 
+            if (scope_min.Length < W)  // call the routine if it hasnt been called yet
 			{
 				scope_min = new float[W];
-				Audio.ScopeMin = scope_min;  // ke9ns from DoScope() routine
+				Audio.ScopeMin = scope_min;  // ke9ns get array of Float data (from DoScope() routine)
+              //  Debug.WriteLine("SCOPE MIN");
+
 			}
 
 			if(scope_max.Length < W)
 			{
 				scope_max = new float[W];
 				Audio.ScopeMax = scope_max;
-			}
+              //  Debug.WriteLine("MAX SCOPE");
+            }
 
 			DrawScopeGrid(ref g, W, H, bottom);
 
 			Point[] points = new Point[W*2];            // create Point array
 
-          //  Debug.WriteLine("scope");
+          //  ---------------------------------------------------------------------------------
 
             for (int i=0; i < W; i++)						// fill point array
 			{	
@@ -16502,34 +15863,38 @@ namespace PowerSDR
 				int y = H/2 - pixel;  // ke9ns this is the actual data moved to the part of the display being used
 
 				points[i].X = i;
-				points[i].Y = y;
+				points[i].Y = y; // max value
+
 				if(bottom) points[i].Y += H;
 
 				if(bottom) pixel = (int)(H/2 * scope_min[i]);
 				else pixel = (int)(H/2 * scope_min[i]);
 
 				y = H/2 - pixel;
-				points[W*2-1-i].X = i;
-				points[W*2-1-i].Y = y;
+				points[W*2-1-i].X = i; // for loop is X
 
-				if(bottom)points[W*2-1-i].Y += H;
-				//if(points[W*2-1-i].Y == points[i].Y)
-				//	points[W*2-1-i].Y += 1;
+				points[W*2-1-i].Y = y; // min value
+
+				if(bottom) points[W*2-1-i].Y += H;
+
+				//if(points[W*2-1-i].Y == points[i].Y)	points[W*2-1-i].Y += 1;
 			}
 
 			// draw the connected points
 			g.DrawLines(data_line_pen, points);
-			g.FillPolygon(new SolidBrush(data_line_pen.Color), points);
+
+			g.FillPolygon(new SolidBrush(data_line_pen.Color), points); // ke9ns fill in the area between the min max areas
 
 			// draw long cursor
 			if(current_click_tune_mode != ClickTuneMode.Off)
 			{
 				Pen p;
-				if(current_click_tune_mode == ClickTuneMode.VFOA)
-					p = new Pen(grid_text_color);
+				if(current_click_tune_mode == ClickTuneMode.VFOA) p = new Pen(grid_text_color);
 				else p = new Pen(Color.Red);
+
 				if(bottom) g.DrawLine(p, display_cursor_x, 0, display_cursor_x, H+H);
 				else g.DrawLine(p, display_cursor_x, 0, display_cursor_x, H);
+
 				g.DrawLine(p, 0, display_cursor_y, W, display_cursor_y);
 			}
 
