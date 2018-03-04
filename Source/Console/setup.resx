@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="chkDSPRX2.ToolTip" xml:space="preserve">
-    <value>When Checked, all the settings for Noise Reduction, Automatic Notch Filter, and Noise Blanker will apply to RX2
-If you then UN-Check the box, RX2 settings will keep to the last setting even if NR, ANF, or NB settings are changed afterward.
-
-NOTE: This is for Flex-5000 2nd receiver only.</value>
-  </data>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
@@ -203,6 +197,12 @@ if you find it too light, decrease this slider.</value>
     <value>Use this to shift the Panadapter Signal up to 20db UP or DOWN the Pandapater from the "Automatic" avg finding
 If you find the Panadapter signal too high up in the window, decrease the slider.
 If you find the Panadapter signal too low in the window, increase the slider.</value>
+  </data>
+  <data name="chkDSPRX2.ToolTip" xml:space="preserve">
+    <value>When Checked, all the settings for Noise Reduction, Automatic Notch Filter, and Noise Blanker will apply to RX2
+If you then UN-Check the box, RX2 settings will keep to the last setting even if NR, ANF, or NB settings are changed afterward.
+
+NOTE: This is for Flex-5000 2nd receiver only.</value>
   </data>
   <data name="grpDSPLeveler.ToolTip" xml:space="preserve">
     <value>Stage 1: MIXER slider

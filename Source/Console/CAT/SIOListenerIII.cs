@@ -1,7 +1,8 @@
 //=================================================================
 // SIOListenerIII.cs
-// clone of CAT serial port SIOListenerII
+// ke9ns add clone of CAT serial port SIOListenerII
 // used to communicate with ANT rotor port of DDUtil program
+// along with SDRSerialPortIII.cs
 //=================================================================
 // Copyright (C) 2005  Bob Tracy
 //
@@ -46,8 +47,9 @@ namespace PowerSDR
 			console.Closing += new System.ComponentModel.CancelEventHandler(console_Closing);
 			parser = new CATParser(console);
 
-			//event handler for Serial RX Events
-		//	SDRSerialPort.serial_rx_event += new SerialRXEventHandler(SerialRXEventHandler);
+            //event handler for Serial RX Events
+
+            SDRSerialPort1.serial_rx_event1 += new SerialRXEventHandler(SerialRXEventHandler1);
 		
 			if ( console.ROTOREnabled)  // if CAT is on, fire it up 
 			{ 
@@ -71,10 +73,10 @@ namespace PowerSDR
 			}
 
 
-		}
+        } // SIOListenerIII(Console c)
 
 
-		public void enableROTOR() 
+        public void enableROTOR() 
 		{
             if (console.ROTORPort == 0) return;
 
@@ -90,15 +92,16 @@ namespace PowerSDR
 
             Debug.WriteLine("==============ROTOR PORT OPEN: " +port_num);
 
-            SIO = new SDRSerialPort(port_num);
-		/*	SIO.setCommParms(console.CATBaudRate, 
+            SIO1 = new SDRSerialPort1(port_num);
+
+		/*	SIO1.setCommParms(console.CATBaudRate, 
 							console.CATParity, 
 							console.CATDataBits, 
 							console.CATStopBits,
                             console.CATHandshake);
                             */
 
-            SIO.setCommParms(9600,                            // ant rotor port is always 9600
+            SIO1.setCommParms(9600,                            // ant rotor port is always 9600
                                 console.CATParity,
                                 console.CATDataBits,
                                 console.CATStopBits,
@@ -106,61 +109,7 @@ namespace PowerSDR
 
             Initialize();	
 		}
-/*
-        public bool UseForKeyPTT
-        {
-            set
-            {
-                if(SIO != null)
-                    SIO.UseForKeyPTT = value;
-            }
-        }
 
-        public bool UseForPaddles
-        {
-            set
-            { 
-                if (SIO != null) 
-                    SIO.UseForPaddles = value; 
-            }
-        }
-
-        public bool PTTOnDTR
-        {
-            set
-            {
-                if (SIO != null) 
-                    SIO.PTTOnDTR = value;
-            }
-        }
-
-        public bool PTTOnRTS
-        {
-            set
-            { 
-                if (SIO != null) 
-                    SIO.PTTOnRTS = value; 
-            }
-        }
-
-        public bool KeyOnDTR
-        {
-            set
-            { 
-                if (SIO != null) 
-                    SIO.KeyOnDTR = value;
-            }
-        }
-
-        public bool KeyOnRTS
-        {
-            set 
-            { 
-                if (SIO != null) 
-                    SIO.KeyOnRTS = value; 
-            }
-        }
-*/
 
 		// typically called when the end user has disabled CAT control through a UI element ... this 
 		// closes the serial port and neutralized the listeners we have in place
@@ -174,10 +123,10 @@ namespace PowerSDR
 
             Debug.WriteLine("==============ROTOR PORT CLOSED");
 
-            if ( SIO != null ) 
+            if ( SIO1 != null ) 
 			{
-				SIO.Destroy(); 
-				SIO = null; 
+				SIO1.Destroy(); 
+				SIO1 = null; 
 			}
 			Fpass = true; // reset init flag 
 			return; 									
@@ -189,7 +138,8 @@ namespace PowerSDR
 
         //HiPerfTimer testTimer1 = new HiPerfTimer();
         //HiPerfTimer testTimer2 = new HiPerfTimer();
-		public SDRSerialPort SIO; 
+		public SDRSerialPort1 SIO1; 
+
 		Console console;
 		ASCIIEncoding AE = new ASCIIEncoding();
 		private bool Fpass = true;
@@ -214,7 +164,7 @@ namespace PowerSDR
 		{	
 			if(Fpass)
 			{
-				SIO.Create();
+				SIO1.Create();
 				Fpass = false;
 			}
 		}		
@@ -249,7 +199,7 @@ namespace PowerSDR
 					// BT 06/08
 					string answer = parser.Get(cmdword);
 					byte[] out_string = AE.GetBytes(answer);
-					uint result = SIO.put(out_string, (uint) out_string.Length);
+					uint result = SIO1.put(out_string, (uint) out_string.Length);
 
 					cmd_char_count = 0; // reset word counter 
 				}
@@ -282,9 +232,9 @@ namespace PowerSDR
 
 		private void console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if ( SIO != null ) 
+			if ( SIO1 != null ) 
 			{ 
-				SIO.Destroy(); 
+				SIO1.Destroy(); 
 			}
 		}
 
@@ -298,55 +248,37 @@ namespace PowerSDR
 		}
 
 		StringBuilder CommBuffer = new StringBuilder();//"";				//holds incoming serial data from the port
-		private void SerialRXEventHandler(object source, SerialRXEvent e)
+		private void SerialRXEventHandler1(object source, SerialRXEvent e)
 		{
-//			SIOMonitor.Interval = 5000;		// set the timer for 5 seconds
-//			SIOMonitor.Enabled = true;		// start or restart the timer
+           
+           CommBuffer.Append(e.buffer);                                        // put the data in the string
 
-            //double T0 = 0.00;
-            //double T1 = 0.00;
-            //int bufferLen = 0;
+            if (CommBuffer.Length >= 4)
+            {
+                
+                try
+                {
+  
+                    console.RotorAngle = CommBuffer.ToString().TrimStart(';');
+                 
+                    
+                    //  Debug.WriteLine("COMBUFFER2: " + console.RotorAngle);
 
-            CommBuffer.Append(e.buffer);                                		// put the data in the string
-			if(parser != null)													// is the parser instantiated
-			{
-                //bufferLen = CommBuffer.Length;
-				try
-				{
-					Regex rex = new Regex(".*?;");										//accept any string ending in ;
-					string answer;
-					uint result;
+                    console.RotorAngleRdy = true;
 
-					for(Match m = rex.Match(CommBuffer.ToString()); m.Success; m = m.NextMatch())	//loop thru the buffer and find matches
-					{
-                        //testTimer1.Start();
-                        answer = parser.Get(m.Value);                                   //send the match to the parser
-                        //testTimer1.Stop();
-                        //T0 = testTimer1.DurationMsec;
-                        //testTimer2.Start();
-                        if(answer.Length > 0)
-    						result = SIO.put(answer);                           		//send the answer to the serial port
-                        //testTimer2.Stop();
-                        //T1 = testTimer2.DurationMsec;
-						CommBuffer = CommBuffer.Replace(m.Value, "", 0, m.Length);                   //remove the match from the buffer
-                        //Debug.WriteLine("Parser decode time for "+m.Value.ToString()+":  "+T0.ToString()+ "ms");
-                        //Debug.WriteLine("SIO send answer time:  " + T1.ToString() + "ms");
-                        //Debug.WriteLine("CommBuffer Length:  " + bufferLen.ToString());
-                        //if (bufferLen > 100)
-                            //Debug.WriteLine("Buffer contents:  "+CommBuffer.ToString());
-                    }
-				}
-				catch(Exception)
-				{
-					//Add ex name to exception above to enable
-					//Debug.WriteLine("RX Event:  "+ex.Message);
-					//Debug.WriteLine("RX Event:  "+ex.StackTrace);
-				}
-			}
-		}
+                    CommBuffer.Clear();
+
+                }
+                catch (Exception)
+                {
+                   
+                }
+            }
+
+        } // SerialRXEventHandler1
 
 
-		#endregion Events
-	}
+        #endregion Events
+    }
 }
 

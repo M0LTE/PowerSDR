@@ -193,8 +193,7 @@ namespace PowerSDR
 
 		private void CheckText()
 		{
-			if(!txtInput.Text.EndsWith(";"))
-				txtInput.Text += ";";
+			if(!txtInput.Text.EndsWith(";")) txtInput.Text += ";";
 			ExecuteCommand();
 		}
 

@@ -55,7 +55,7 @@ using System.Threading.Tasks;
 
 namespace PowerSDR
 {
-    public class Http
+    sealed public class Http
     {
         public static Console console;   // ke9ns mod  to allow console to pass back values to setup screen
         public static Setup setupForm;          // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
@@ -81,14 +81,14 @@ namespace PowerSDR
         //=========================================================
         public string Weather()
         {
-            var wthr = WeatherA().Result;
+            var wthr = WeatherAAsync().Result;
             return wthr.ToString();
         }
 
 
         //=========================================================================================
         // ke9ns  ASYNC 
-        public async Task<string> WeatherA()
+        public async Task<string> WeatherAAsync()
         {
 
             Debug.WriteLine("GET Real weather data=========");
@@ -98,7 +98,7 @@ namespace PowerSDR
 
             if (console.SpotForm != null)
             {
-                if (((int)console.SpotForm.udDisplayLat.Value > 29) && ((int)console.SpotForm.udDisplayLat.Value < 49))
+                if (((int)console.SpotForm.udDisplayLat.Value > 25) && ((int)console.SpotForm.udDisplayLat.Value < 51))
                 {
                     if (((int)console.SpotForm.udDisplayLong.Value > -120) && ((int)console.SpotForm.udDisplayLong.Value < -73))
                     {
@@ -125,7 +125,7 @@ namespace PowerSDR
 
                         try
                         {
-                            var xml = await client.GetStringAsync(url);
+                            var xml = await client.GetStringAsync(url).ConfigureAwait(false);
                             content1 = xml.ToString();
                             client.Dispose();
                             return content1;
@@ -684,7 +684,7 @@ namespace PowerSDR
 
     } // class http
 
-    public class Server
+    sealed public class Server
     {
 
 

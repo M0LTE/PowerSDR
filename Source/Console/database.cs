@@ -667,6 +667,7 @@ namespace PowerSDR
 
                                // 3.580000, 3.599999, "80M Narrow Band Modes",	true,
 								3.600000, 3.689999, "80M All Modes",			true,
+                             
                                 3.690000, 3.690000, "80M SSB QRP",			    true,
                                 3.690001, 3.759999, "80M All Modes",			true,
                                 3.760000, 3.760000, "80M SSB Emergency",        true,
@@ -935,13 +936,17 @@ namespace PowerSDR
                                 7.043000, 7.059999, "40M RTTY",                 true,
 
                                 7.060000, 7.060000, "40M SSB Emergency",        true,
-                                7.060001, 7.073999, "40M All Modes",            true,
+                                7.060001, 7.069999, "40M All Modes",            true,
+
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU / ALL",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU / ALL",             true, // ke9ns add
 
                                 7.076000, 7.076000, "40M JT65 DIGU",            true, // ke9ns add
                                 7.076001, 7.078999, "40M JT65 DIGU",            true, // ke9ns add
+                               
                                 7.079000, 7.089999, "40M RTTY",                 true,
 							
                                 //	7.035000, 7.039999, "40M Narrow Band Modes",	true,
@@ -979,10 +984,10 @@ namespace PowerSDR
                                 10.130000, 10.135999, "30M RTTY",               true,
 
                                 10.136000, 10.136000, "30M FT8 DIGU",           true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 DIGU",       true, // ke9ns add
+                                10.136001, 10.137999, "30M FT8 DIGU",       true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 DIGU",          true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 DIGU",          true, // ke9ns add
+                                10.138000, 10.138000, "30M PSK/JT65 DIGU",          true, // ke9ns add
+                                10.138001, 10.138999, "30M PSK/JT65 DIGU",          true, // ke9ns add
                                 10.139000, 10.139999, "30M RTTY",               true,
 
                                 10.140000, 10.149999, "30M Narrow Band Modes",	true,
@@ -1011,10 +1016,10 @@ namespace PowerSDR
 
                                 14.070000, 14.073999, "20M PSK",                true,
 
-                                14.074000, 14.074000, "20M FT8 DIGU",           true, // ke9ns add
+                                14.074000, 14.074000, "20M FT8 DIGU Freq",      true, // ke9ns add
                                 14.074001, 14.075999, "20M FT8 DIGU",           true, // ke9ns add
 
-                                14.076000, 14.076000, "20M JT65 DIGU",          true, // ke9ns add
+                                14.076000, 14.076000, "20M JT65 DIGU Freq",     true, // ke9ns add
                                 14.076001, 14.078999, "20M JT65 DIGU",          true, // ke9ns add
 
                                 14.079000, 14.094999, "20M RTTY",               true,
@@ -1029,10 +1034,19 @@ namespace PowerSDR
                                 14.112000, 14.129999, "20M All Mode",           true,
                                 14.130000, 14.130000, "20M Digital Voice",      true,
                                 14.130001, 14.229999, "20M All Modes",          true,
-                                14.230000, 14.230000, "20M SSTV",				true,
-                                14.230001, 14.284999, "20M All Modes",          true,
-                                14.285000, 14.285000, "20M SSB QRP",			true,
-                                14.285001, 14.299999, "20M All Modes",          true,
+
+                                14.230000, 14.230000, "20M SSTV",          true,
+                                14.230001, 14.232999, "20M SSTV",               true,
+
+                                14.233000, 14.233000, "20M EasyPal",        true,
+                                14.233001, 14.235999, "20M EasyPal",        true,
+
+                                14.236000, 14.284999, "20M All Modes",           true,
+                                14.285000, 14.285000, "20M SSB QRP",           true,
+                                14.285001, 14.295999, "20M All Modes",          true,
+                                14.286000, 14.286000, "20M AM Calling Freq", true,
+                              
+                                14.286001, 14.299999, "20M All Modes",          true,
                                 14.300000, 14.300000, "20M SSB Emergency",      true,
                                 14.300001, 14.349999, "20M All Modes",          true,
 
@@ -1778,7 +1792,11 @@ namespace PowerSDR
 								7.035000, 7.039999, "40M Narrow Band Modes",	true,
 								7.040000, 7.059999, "40M All Modes",			true,
                                 7.060000, 7.060000, "40M SSB Emergency",        true,
-                                7.060001, 7.073999, "40M All Modes",           true,
+                                7.060001, 7.069999, "40M All Modes",          true,
+
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
+
 
                                 7.074000, 7.074000, "40M FT8 DIGU / ALL",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU / ALL",             true, // ke9ns add
@@ -1813,7 +1831,10 @@ namespace PowerSDR
 								7.035000, 7.039999, "40M Narrow Band Modes",	true,
 								7.040000, 7.059999, "40M All Modes",			true,
                                 7.060000, 7.060000, "40M SSB Emergency",        true,
-                                7.060001, 7.073999, "40M All Modes",			true,
+                                7.060001, 7.069999, "40M All Modes",			true,
+
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU",             true, // ke9ns add
@@ -1821,7 +1842,7 @@ namespace PowerSDR
                                 7.076000, 7.076000, "40M JT65 DIGU",            true, // ke9ns add
                                 7.076001, 7.078999, "40M JT65 DIGU",            true, // ke9ns add
                               
-                                7.079000, 7.089999, "40M All Modes",           true,
+                                7.079000, 7.089999, "40M All Modes",            true,
 
                                 7.090000, 7.090000, "40M SSB QRP",              true,
                                 7.090001, 7.199999, "40M All Modes",            true,
@@ -2082,7 +2103,8 @@ namespace PowerSDR
             // FT8 1.84, 3.573, 5.357, 7.074, 10.136, 14.074, 18.1, 21.074, 24.915, 28.074, 50.274? or 50.313
 
             object[] data = {
-								1.800000, 1.809999, "160M CW/Digital Modes",	true,
+				     	 //------------------------------------------------------------------
+                                1.800000, 1.809999, "160M CW/Digital Modes",	true,
 								1.810000, 1.810000, "160M CW QRP",				true,
 								1.810001, 1.837999, "160M CW",					true, // was 1.842999,
 
@@ -2093,13 +2115,22 @@ namespace PowerSDR
                                 1.840001, 1.842500, "160M FT8 DIGU",            true, // ke9ns add
                                 1.842501, 1.842999, "160M FT8 DIGU",            true,
 
-                                1.843000, 1.909999, "160M SSB/SSTV/Wide Band",	true,
-								1.910000, 1.910000, "160M SSB QRP",				true,
-								1.910001, 1.994999, "160M SSB/SSTV/Wide Band",	true,
-								1.995000, 1.999999, "160M Experimental",		true,
+                                1.843000, 1.889999, "160M SSB / Wide Band",	true,
+                                1.890000, 1.890000, "160M SSB SSTV",    true,
+                                1.890001, 1.907499, "160M SSB / Wide Band",    true,
 
-                                
-								3.500000, 3.524999, "80M Extra CW",				true,
+                                1.907500, 1.907999, "160M SSB/Data (Japan Data)",    true, // ke9ns add
+                                1.908000, 1.909999, "160M SSB/Data (Japan FT8)",     true, // ke9ns add
+                                1.910000, 1.910000, "160M SSB QRP (Japan Data/FT8)",             true,
+                                1.910001, 1.912500, "160M SSB QRP (Japan Data/FT8)",             true,
+                              
+                                1.912501, 1.994999, "160M SSB / Wide Band",  true,
+                               
+								1.995000, 1.999998, "160M Experimental",		true,
+                                1.999999, 1.999999, "160M Beacon",              true, // ke9ns add
+
+                            //------------------------------------------------------------------
+                                3.500000, 3.524999, "80M Extra CW",				true,
 								3.525000, 3.569999, "80M CW",					true,
 
                                 3.570000, 3.570000, "80M JT65 DIGU",            true, // ke9ns add
@@ -2111,15 +2142,23 @@ namespace PowerSDR
 								3.575501, 3.589999, "80M PSK",					true,
 								3.590000, 3.590000, "80M RTTY DX",				true,
 								3.590001, 3.599999, "80M RTTY",					true,
-								3.600000, 3.699999, "75M Extra SSB",			true,
-								3.700000, 3.789999, "75M Ext/Adv SSB",			true,
-								3.790000, 3.799999, "75M Ext/Adv DX Window",	true,
+
+                                3.600000, 3.623999, "80M Extra SSB",            true,
+                                3.624000, 3.629999, "80M Extra eSSB",            true, // ke9ns  
+                                3.630000, 3.630000, "80M Extra eSSB",            true, // ke9ns 
+                                3.630001, 3.699999, "80M Extra SSB",            true,
+
+                                3.700000, 3.789999, "80M Ext/Adv SSB",			true,
+								3.790000, 3.799999, "80M Ext/Adv DX Window",	true,
+
 								3.800000, 3.844999, "75M SSB",					true,
 								3.845000, 3.845000, "75M SSTV",					true,
 								3.845001, 3.884999, "75M SSB",					true,
 								3.885000, 3.885000, "75M AM Calling Frequency", true,
 								3.885001, 3.999999, "75M SSB",					true,
 
+                             //------------------------------------------------------------------
+                           
                                 5.167500, 5.167500, "60M Emergency Channel",    true, // ke9ns add
 
                                 5.250000, 5.331999, "60M General",              false,
@@ -2133,12 +2172,17 @@ namespace PowerSDR
                                 5.373001, 5.404999, "60M General",              false,
 								5.405000, 5.405000, "60M Channel 5",			true,
                                 5.405001, 5.449999, "60M General",              false,
-								
+
+                            //------------------------------------------------------------------
+ 								
 								7.000000, 7.024999, "40M Extra CW",				true, // ke9ns mod
 								7.025000, 7.039999, "40M CW",					true,
                                
 								7.040000, 7.042999, "40M PSK",       			true,
-                                7.043000, 7.073999, "40M RTTY",                 true,
+                                7.043000, 7.069999, "40M RTTY",                 true,
+                              
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU",             true, // ke9ns add
@@ -2150,22 +2194,25 @@ namespace PowerSDR
 								7.100000, 7.124999, "40M CW",					true,
 								7.125000, 7.170999, "40M Ext/Adv SSB",			true,
 								7.171000, 7.171000, "40M SSTV",					true,
-								7.171001, 7.174999, "40M Ext/Adv SSB",			true,
+                              
+                                7.171001, 7.174999, "40M Ext/Adv SSB",			true,
 								7.175000, 7.289999, "40M SSB",					true,
 								7.290000, 7.290000, "40M AM Calling Frequency", true,
 								7.290001, 7.299999, "40M SSB",					true,
-
+                            //------------------------------------------------------------------
+ 
 							
 								10.100000, 10.129999, "30M CW",					true,
 								10.130000, 10.135999, "30M RTTY",				true,
 
                                 10.136000, 10.136000, "30M FT8 DIGU",           true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 DIGU",       true, // ke9ns add
+                                10.136001, 10.137999, "30M FT8 DIGU",       true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 DIGU",          true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 DIGU",          true, // ke9ns add
+                                10.138000, 10.138000, "30M PSK/JT65 DIGU",          true, // ke9ns add
+                                10.138001, 10.138999, "30M PSK/JT65 DIGU",          true, // ke9ns add
                                 10.139000, 10.139999, "30M RTTY",               true,
                                 10.140000, 10.149999, "30M Narrow Band Modes",	true,
+                            //------------------------------------------------------------------
 
                                 14.000000, 14.024999, "20M Extra CW",			true,
 								14.025000, 14.069999, "20M CW",					true,
@@ -2188,10 +2235,19 @@ namespace PowerSDR
 								14.150000, 14.174999, "20M Extra SSB",			true,
 								14.175000, 14.224999, "20M Ext/Adv SSB",		true,
 								14.225000, 14.229999, "20M SSB",				true,
-								14.230000, 14.230000, "20M SSTV",				true,
-								14.230001, 14.285999, "20M SSB",				true,
-								14.286000, 14.286000, "20M AM Calling Frequency", true,
-								14.286001, 14.349999, "20M SSB",				true,
+
+                                14.230000, 14.230000, "20M SSTV",               true,
+                                14.230001, 14.232999, "20M SSTV",               true,
+
+                                14.233000, 14.233000, "20M EasyPal",            true, // ke9ns add
+                                14.233001, 14.235999, "20M EasyPal",            true,
+     
+                                14.236000, 14.282999, "20M SSB",				true,
+                                14.283000, 14.285999, "20M AM ",                true,
+                                14.286000, 14.286000, "20M AM Calling Freq",    true,
+                                14.286001, 14.288999, "20M AM ",                true,
+                                14.289000, 14.349999, "20M SSB",				true,
+                            //------------------------------------------------------------------
 								
 	
 								18.068000, 18.099999, "17M CW",					true,
@@ -2207,6 +2263,7 @@ namespace PowerSDR
 								18.110000, 18.110000, "17M NCDXF Beacons",	    true,
 								18.110001, 18.167999, "17M SSB",				true,
 								
+                            //------------------------------------------------------------------
 
 								21.000000, 21.024999, "15M Extra CW",			true,
 								21.025000, 21.069999, "15M CW",					true,
@@ -2228,6 +2285,7 @@ namespace PowerSDR
 								21.275000, 21.339999, "15M SSB",				true,
 								21.340000, 21.340000, "15M SSTV",				true,
 								21.340001, 21.449999, "15M SSB",				true,
+                            //------------------------------------------------------------------
 							   
 								24.890000, 24.914999, "12M CW",					true, 
                                 24.915000, 24.915000, "12M FT8 DIGU",           true, // ke9ns add 
@@ -2241,7 +2299,8 @@ namespace PowerSDR
 								24.925000, 24.929999, "12M Packet",				true,
 								24.930000, 24.930000, "12M NCDXF Beacons",	    true,
 								24.930001, 24.989999, "12M SSB",				true,
-								
+	                            //------------------------------------------------------------------
+							
 								28.000000, 28.073999, "10M CW",					true,
 
                                 28.074000, 28.074000, "10M FT8 DIGU",           true, // ke9ns add 
@@ -2266,6 +2325,7 @@ namespace PowerSDR
 								29.600000, 29.600000, "10M FM Simplex",			true,
 								29.600001, 29.609999, "10M Deadband",			true,
 								29.610000, 29.699999, "10M Repeater Outputs",	true,
+                            //------------------------------------------------------------------
 								
 								50.000000, 50.059999, "6M CW",					true,
 								50.060000, 50.079999, "6M Beacon Sub-Band",		true,
@@ -2530,9 +2590,14 @@ namespace PowerSDR
 								3.575501, 3.589999, "80M PSK",                  true,
                                 3.590000, 3.590000, "80M RTTY DX",              true,
                                 3.590001, 3.599999, "80M RTTY",                 true,
-                                3.600000, 3.699999, "75M Extra SSB",            true,
-                                3.700000, 3.789999, "75M Ext/Adv SSB",          true,
-                                3.790000, 3.799999, "75M Ext/Adv DX Window",    true,
+
+                                3.600000, 3.629999, "80M Extra SSB",            true,
+                                3.630000, 3.630000, "80M Extra eSSB",            true, // ke9ns
+                                3.630001, 3.699999, "80M Extra SSB",            true,
+
+
+                                3.700000, 3.789999, "80M Ext/Adv SSB",          true,
+                                3.790000, 3.799999, "80M Ext/Adv DX Window",    true,
                                 3.800000, 3.844999, "75M SSB",                  true,
                                 3.845000, 3.845000, "75M SSTV",                 true,
                                 3.845001, 3.884999, "75M SSB",                  true,
@@ -2557,7 +2622,10 @@ namespace PowerSDR
 								7.025000, 7.039999, "40M CW",                   true,
 
                                 7.040000, 7.042999, "40M PSK",                  true,
-                                7.043000, 7.073999, "40M RTTY",                 true,
+                                7.043000, 7.069999, "40M RTTY",                 true,
+                           
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU",             true, // ke9ns add
@@ -2579,10 +2647,10 @@ namespace PowerSDR
                                 10.130000, 10.135999, "30M RTTY",               true,
 
                                 10.136000, 10.136000, "30M FT8 DIGU",           true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 DIGU",       true, // ke9ns add
+                                10.136001, 10.137999, "30M FT8 DIGU",       true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 DIGU",          true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 DIGU",          true, // ke9ns add
+                                10.138000, 10.138000, "30M PSK/JT65 DIGU",          true, // ke9ns add
+                                10.138001, 10.138999, "30M PSK/JT65 DIGU",          true, // ke9ns add
                                 10.139000, 10.139999, "30M RTTY",               true,
                                 10.140000, 10.149999, "30M Narrow Band Modes",  true,
 
@@ -2607,10 +2675,18 @@ namespace PowerSDR
                                 14.150000, 14.174999, "20M Extra SSB",          true,
                                 14.175000, 14.224999, "20M Ext/Adv SSB",        true,
                                 14.225000, 14.229999, "20M SSB",                true,
-                                14.230000, 14.230000, "20M SSTV",               true,
-                                14.230001, 14.285999, "20M SSB",                true,
-                                14.286000, 14.286000, "20M AM Calling Frequency", true,
-                                14.286001, 14.349999, "20M SSB",                true,
+
+                                14.230000, 14.230000, "20M SSTV",          true,
+                                14.230001, 14.232999, "20M SSTV",               true,
+
+                                14.233000, 14.233000, "20M EasyPal",        true,
+                                14.233001, 14.235999, "20M EasyPal",        true,
+
+                                14.236000, 14.282999, "20M SSB",                true,
+                                14.283000, 14.285999, "20M AM ", true,
+                                14.286000, 14.286000, "20M AM Calling Freq", true,
+                                14.286001, 14.288999, "20M AM ", true,
+                                14.289000, 14.349999, "20M SSB",                true,
 
 
                                 18.068000, 18.099999, "17M CW",                 true,
@@ -2950,9 +3026,13 @@ namespace PowerSDR
                                 3.590000, 3.590000, "80M RTTY DX",              true,
                                 3.590001, 3.599999, "80M RTTY",                 true,
 
-                                3.600000, 3.699999, "75M Extra SSB",            true,
-                                3.700000, 3.789999, "75M Ext/Adv SSB",          true,
-                                3.790000, 3.799999, "75M Ext/Adv DX Window",    true,
+                                3.600000, 3.629999, "80M Extra SSB",            true,
+                                3.630000, 3.630000, "80M Extra eSSB",            true, // ke9ns
+                                3.630001, 3.699999, "80M Extra SSB",            true,
+
+
+                                3.700000, 3.789999, "80M Ext/Adv SSB",          true,
+                                3.790000, 3.799999, "80M Ext/Adv DX Window",    true,
                                 3.800000, 3.844999, "75M SSB",                  true,
                                 3.845000, 3.845000, "75M SSTV",                 true,
                                 3.845001, 3.884999, "75M SSB",                  true,
@@ -2962,8 +3042,12 @@ namespace PowerSDR
                            
                                 7.000000, 7.024999, "40M Extra CW",             true, // ke9ns mod
 								7.025000, 7.039999, "40M CW",                   true,
+
                                 7.040000, 7.040000, "40M RTTY DX",              true,
-                                7.040001, 7.073999, "40M RTTY",                 true,
+                                7.040001, 7.069999, "40M RTTY",                 true,
+                                
+                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU",             true, // ke9ns add  7.074
                                 7.074001, 7.075999, "40M FT8 DIGU",             true, // ke9ns add
@@ -2984,10 +3068,10 @@ namespace PowerSDR
                                 10.130000, 10.135999, "30M RTTY",               true,
 
                                 10.136000, 10.136000, "30M FT8 DIGU",           true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 DIGU",       true, // ke9ns add
+                                10.136001, 10.137999, "30M FT8 DIGU",       true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 DIGU",          true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 DIGU",          true, // ke9ns add
+                                10.138000, 10.138000, "30M PSK/JT65 DIGU",          true, // ke9ns add
+                                10.138001, 10.138999, "30M PSK/JT65 DIGU",          true, // ke9ns add
                                 10.139000, 10.139999, "30M RTTY",               true,
                                 10.140000, 10.149999, "30M Narrow Band Modes",  true,
 
@@ -3012,10 +3096,20 @@ namespace PowerSDR
                                 14.150000, 14.174999, "20M Extra SSB",          true,
                                 14.175000, 14.224999, "20M Ext/Adv SSB",        true,
                                 14.225000, 14.229999, "20M SSB",                true,
-                                14.230000, 14.230000, "20M SSTV",               true,
-                                14.230001, 14.285999, "20M SSB",                true,
-                                14.286000, 14.286000, "20M AM Calling Frequency", true,
-                                14.286001, 14.349999, "20M SSB",                true,
+
+
+                                14.230000, 14.230000, "20M SSTV",          true,
+                                14.230001, 14.232999, "20M SSTV",               true,
+
+                                14.233000, 14.233000, "20M EasyPal",        true,
+                                14.233001, 14.235999, "20M EasyPal",        true,
+
+                                14.236000, 14.282999, "20M SSB",                true,
+                                14.283000, 14.285999, "20M AM ", true,
+                                14.286000, 14.286000, "20M AM Calling Freq", true,
+                                14.286001, 14.288999, "20M AM ", true,
+                                14.289000, 14.349999, "20M SSB",                true,
+
 
                                 18.068000, 18.099999, "17M CW",                 true,
                                 18.100000, 18.100000, "17M FT8 DIGU",           true, // ke9ns add
@@ -3355,9 +3449,15 @@ namespace PowerSDR
                                 3.575501, 3.599999, "80M Phone & CW",          true,
 
                                 3.600000, 3.600000, "80M IARU Emergency",       true,
-                                3.600001, 3.774999, "80M Phone & CW",	    	true,
+
+                                3.600001, 3.629999, "80M Phone & CW",            true,
+                                3.630000, 3.630000, "80M eSSB",                  true, //ke9ns add
+                                3.630001, 3.699999, "80M Phone & CW",            true,
+
+                                3.700000, 3.774999, "80M Phone & CW",	    	true,
 								3.775000, 3.799999, "80M DX Phone & CW",	    true,
 								3.800000, 3.899999, "80M Phone & CW",			true,
+
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -3409,7 +3509,11 @@ namespace PowerSDR
 								7.000000, 7.024999, "40M CW",			    	true,
                                 7.025000, 7.029999, "40M CW & NB Digital",		true,
                                 7.030000, 7.039999, "40M All Modes",	        true,
-								7.040000, 7.042999, "40M Phone & CW",       	true,
+                          
+                                7.035000, 7.035000, "40m PSK",                  true,            // ke9ns add
+                                7.035001, 7.039999, "40m PSK",                  true,
+
+                                7.040000, 7.042999, "40M Phone & CW",       	true,
 
                                 7.043000, 7.073999, "40M RTTY",                 true,
 
@@ -3443,10 +3547,10 @@ namespace PowerSDR
 								10.100000, 10.135999, "30M CW",					true,
 
                                 10.136000, 10.136000, "30M FT8 DIGU",           true, // ke9ns add
-                                10.136001, 10.137999, "30M PSK/FT8 DIGU",       true, // ke9ns add
+                                10.136001, 10.137999, "30M FT8 DIGU",       true, // ke9ns add
 
-                                10.138000, 10.138000, "30M JT65 DIGU",          true, // ke9ns add
-                                10.138001, 10.138999, "30M JT65 DIGU",          true, // ke9ns add
+                                10.138000, 10.138000, "30M PSK/JT65 DIGU",          true, // ke9ns add
+                                10.138001, 10.138999, "30M PSK/JT65 DIGU",          true, // ke9ns add
                                 10.139000, 10.139999, "30M RTTY",               true,
                                 10.140000, 10.149999, "30M CW & NB Digital",	true,
                             };
@@ -3483,8 +3587,19 @@ namespace PowerSDR
                                 14.100001, 14.100499, "20M Beacons",		    true,
                                 14.100500, 14.111999, "20M Data & Packet",      true,
                                 14.112000, 14.229999, "20M Phone & CW",         true,
-                                14.230000, 14.230000, "20M SSTV",				true,
-                                14.230001, 14.299999, "20M Phone & CW",         true,
+
+                                14.230000, 14.230000, "20M SSTV",          true,
+                                14.230001, 14.232999, "20M SSTV",               true,
+
+                                14.233000, 14.233000, "20M EasyPal",        true,
+                                14.233001, 14.235999, "20M EasyPal",        true,
+
+                                14.236000, 14.282999, "20M SSB",                true,
+                                14.283000, 14.285999, "20M AM ", true,
+                                14.286000, 14.286000, "20M AM Calling Freq", true,
+                                14.286001, 14.288999, "20M AM ", true,
+                              
+                                14.289000, 14.299999, "20M Phone & CW",         true,
                                 14.300000, 14.300000, "20M IARU Emergency",     true,
                                 14.300001, 14.349999, "20M All Modes",          true,
                             };
@@ -3798,7 +3913,7 @@ namespace PowerSDR
 
 
                                 1.825000, 1.907499, "160M Band RX",             false,
-                                1.907500, 1.912499, "160M CW & NB Digital",     true,
+                                1.907500, 1.912499, "160M CW & NB Digital (FT8)",     true,
                                 1.912500, 1.999999, "160M Band RX",             false,
                             };
 

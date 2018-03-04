@@ -638,7 +638,7 @@
 "266","LN","Norway","EU","60.00N","10.42E","14","18","A","11-15-45","LA,LB,LG,LE,LF,LH,LC,LD,LI,LJ,LK,LL,LN,LM","",""
 "266","LM","Norway","EU","60.00N","10.42E","14","18","A","11-15-45","LA,LB,LG,LE,LF,LH,LC,LD,LI,LJ,LK,LL,LN,LM","",""
 "267","P2/G","Terr. New Guinea","OC","5.12S","145.36E","28","51","D","09-16-75","P2/G,VK9/G","",""
-"268","AC4","Tibet","AS","29.48N","106.30E","23","41","D","05-31-74","AC4","",""
+"268","BA","Tibet","AS","29.48N","106.30E","23","41","D","05-31-74","AC4","",""
 "269","SP","Poland","EU","50.00N","20.00E","15","28","A","11-15-45","SN,SQ,SP,3Z,SO,SR,HF","",""
 "269","SN","Poland","EU","50.00N","20.00E","15","28","A","11-15-45","SN,SQ,SP,3Z,SO,SR,HF","",""
 "269","SQ","Poland","EU","50.00N","20.00E","15","28","A","11-15-45","SN,SQ,SP,3Z,SO,SR,HF","",""
@@ -1117,4 +1117,5 @@
 "001","C/7","British Col.","NA","54.54N","124.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
 "001","C/8","NW Ter.","NA","63.54N","119.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
 "001","C/9","NB","NA","46.54N","66.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
+"001","Z6","Kosovo","EU","42.57N","20.93E","5","2","A","11-15-45","","",""
 

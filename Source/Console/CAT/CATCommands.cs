@@ -2497,6 +2497,7 @@ namespace PowerSDR
 		public string ZZFM()
 		{
 			string radio = console.CurrentModel.ToString();
+          
             if (radio == "SDR1000")
                 return "0";
             else if (radio == "FLEX5000")
@@ -2506,7 +2507,10 @@ namespace PowerSDR
             else if (radio == "FLEX1500")
                 return "3";
             else
+            {
+              
                 return parser.Error1;
+            }
 
 		}
 

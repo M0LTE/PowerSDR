@@ -166,9 +166,12 @@ using PortTalk;
 using System.Windows.Media.Imaging;
 
 using FlexCW;
-using System.Linq;
-using NAudio.Wave;
-using NAudio.Lame;
+using System.Linq; // ke9ns add
+using NAudio.Wave; // ke9ns add
+using NAudio.Lame; // ke9ns add
+
+//using MahApps.Metro.Controls; // ke9ns add
+
 
 #if (!NO_TNF)
 using Flex.TNF;
@@ -344,7 +347,8 @@ namespace PowerSDR
 	{
 		FIRST = -1,
         PANADAPTER,
-        PANAFALL,        
+        PANAFALL, 
+        PANAFALL8020,
         WATERFALL,
         PANASCOPE,
         SPECTRUM,
@@ -559,8 +563,8 @@ namespace PowerSDR
 	public enum Band
 	{
 		FIRST = -1,
-		GEN,
-		B160M,
+		GEN, // 0
+		B160M, // 1
 		B80M,
 		B60M,
 		B40M,
@@ -587,9 +591,9 @@ namespace PowerSDR
 		VHF10,
 		VHF11,
 		VHF12,
-		VHF13,
+		VHF13, // 27
 
-        BLMF, // ke9ns move down below vhf
+        BLMF, // 28 ke9ns move down below vhf
         B120M,
         B90M,
         B61M,
@@ -687,7 +691,7 @@ namespace PowerSDR
     #endregion
 
 
-    unsafe public class Console : System.Windows.Forms.Form
+    sealed unsafe public class Console : System.Windows.Forms.Form
     {
 
 
@@ -778,7 +782,7 @@ namespace PowerSDR
         public Button buttonCQ;
         public Button buttonCall;
         public PrettyTrackBar ptbTune;
-        private LabelTS lblTUNE;
+        public LabelTS lblTUNE;
         private LabelTS lblMON;
         public PrettyTrackBar ptbMON;
         private Label label5;
@@ -923,6 +927,7 @@ namespace PowerSDR
         public HttpServer httpServer = null;           // rn3kk add
 
         public Setup setupForm;                        // ke9ns communications with setupform  (i.e. allow combometertype.text update from inside console.cs) 
+        public SwlControl SwlForm;                         // ke9ns add band swl form
 
         public Skin skin1; // ke9ns add
 
@@ -931,13 +936,14 @@ namespace PowerSDR
         public IDBOX IDBOXForm;                          // ke9ns add ID Timer function function (idtimer)
         public TOTBOX TOTBOXForm;                          // ke9ns add Timeout Timer function function (tottimer)
 
-      
+        private CATParser parser; // ke9ns add to allow serial port
+
         public SpotControl SpotForm;                       // ke9ns add DX spotter function
         public SpotDecoder SpotDecoderForm;                // ke9ns add decoder function
 
         public ScanControl ScanForm;                       // ke9ns add freq Scanner function
         public StackControl StackForm;                     // ke9ns add band stack form
-        public SwlControl SwlForm;                         // ke9ns add band swl form
+     
         public helpbox helpboxForm;                         // ke9ns add helpbox form
         public helpbox1 helpbox1Form;                         // ke9ns add helpbox1 form
 
@@ -1449,7 +1455,7 @@ namespace PowerSDR
         private System.Windows.Forms.CheckBoxTS chkMUT;
         private System.Windows.Forms.CheckBoxTS chkXIT;
         private System.Windows.Forms.CheckBoxTS chkRIT;
-        private System.Windows.Forms.LabelTS lblPWR;
+        public LabelTS lblPWR;
         private System.Windows.Forms.LabelTS lblAF;
         private System.Windows.Forms.LabelTS lblMIC;
         private System.Windows.Forms.TextBoxTS txtWheelTune;
@@ -1701,7 +1707,7 @@ namespace PowerSDR
         public PrettyTrackBar ptbDisplayZoom;
         public PrettyTrackBar ptbAF;
         private PrettyTrackBar ptbRF;
-        private PrettyTrackBar ptbPWR;
+        public PrettyTrackBar ptbPWR;
         private PrettyTrackBar ptbSquelch;
         private PrettyTrackBar ptbMic;
         private LabelTS lblMicVal;
@@ -1751,7 +1757,7 @@ namespace PowerSDR
         private ButtonTS btnTNFAdd;
         private CheckBoxTS chkTNF;
         private CheckBoxTS chkDisplayPeak;
-        private ComboBoxTS comboDisplayMode;
+        public ComboBoxTS comboDisplayMode;
         private CheckBoxTS chkDisplayAVG;
         private PanelTS panelModeSpecificFM;
         private LabelTS lblMicValFM;
@@ -2073,9 +2079,9 @@ namespace PowerSDR
                         list_det_num++;
                         if (r.Present) list_det_present++;
                         break;
-                        //   case Model.SDR1000:
+                           case Model.SDR1000:
                         //  case Model.SOFTROCK40:
-                        //     list_undet_num++; break;
+                            list_undet_num++; break;
                 }
             }
 
@@ -2283,7 +2289,7 @@ namespace PowerSDR
                             DB.SaveVars("Options", ref list);
                         }
                         break;
-                    /*  case Model.SDR1000:
+                     case Model.SDR1000:
                           current_model = Model.SDR1000;
                           fwc_init = false;
                           hid_init = false;
@@ -2304,7 +2310,7 @@ namespace PowerSDR
                               DB.SaveVars("Options", ref list);
                           }
                           break;
-                    */
+                   
                     default:
                         current_model = Model.DEMO;
                         fwc_init = false;
@@ -2560,7 +2566,7 @@ namespace PowerSDR
                     case Model.FLEX5000: s = "FLEX-5000"; break;
                     case Model.FLEX3000: s = "FLEX-3000"; break;
                     case Model.FLEX1500: s = "FLEX-1500"; break;
-                    //  case Model.SDR1000:  s = "SDR-1000";  break;
+                     case Model.SDR1000:  s = "SDR-1000";  break;
                     //  case Model.SOFTROCK40: s = "SoftRock"; break;
                     case Model.DEMO: s = "Demo"; break;
                 }
@@ -2946,6 +2952,7 @@ namespace PowerSDR
             this.btnBandVHF = new System.Windows.Forms.ButtonTS();
             this.chkVFOBTX = new System.Windows.Forms.CheckBoxTS();
             this.chkVFOATX = new System.Windows.Forms.CheckBoxTS();
+            this.txtVFOABand = new System.Windows.Forms.TextBoxTS();
             this.btnTNFAdd = new System.Windows.Forms.ButtonTS();
             this.chkTNF = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayPeak = new System.Windows.Forms.CheckBoxTS();
@@ -3223,7 +3230,6 @@ namespace PowerSDR
             this.panelVFOASubHover = new System.Windows.Forms.Panel();
             this.panelVFOAHover = new System.Windows.Forms.Panel();
             this.txtVFOALSD = new System.Windows.Forms.TextBoxTS();
-            this.txtVFOABand = new System.Windows.Forms.TextBoxTS();
             this.txtVFOAMSD = new System.Windows.Forms.TextBoxTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
@@ -4003,6 +4009,22 @@ namespace PowerSDR
             this.toolTip1.SetToolTip(this.chkVFOATX, resources.GetString("chkVFOATX.ToolTip"));
             this.chkVFOATX.UseVisualStyleBackColor = false;
             this.chkVFOATX.CheckedChanged += new System.EventHandler(this.chkVFOATX_CheckedChanged);
+            // 
+            // txtVFOABand
+            // 
+            this.txtVFOABand.BackColor = System.Drawing.Color.Black;
+            this.txtVFOABand.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            resources.ApplyResources(this.txtVFOABand, "txtVFOABand");
+            this.txtVFOABand.ForeColor = System.Drawing.Color.Green;
+            this.txtVFOABand.Name = "txtVFOABand";
+            this.txtVFOABand.ReadOnly = true;
+            this.txtVFOABand.ShortcutsEnabled = false;
+            this.toolTip1.SetToolTip(this.txtVFOABand, resources.GetString("txtVFOABand.ToolTip"));
+            this.txtVFOABand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtVFOABand_KeyPress);
+            this.txtVFOABand.LostFocus += new System.EventHandler(this.txtVFOABand_LostFocus);
+            this.txtVFOABand.MouseLeave += new System.EventHandler(this.txtVFOABand_MouseLeave);
+            this.txtVFOABand.MouseMove += new System.Windows.Forms.MouseEventHandler(this.txtVFOABand_MouseMove);
+            this.txtVFOABand.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtVFOABand_MouseUp);
             // 
             // btnTNFAdd
             // 
@@ -5112,8 +5134,8 @@ namespace PowerSDR
             this.comboMeterTXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterTXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterTXMode.DropDownWidth = 72;
-            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterTXMode, "comboMeterTXMode");
+            this.comboMeterTXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.comboMeterTXMode.Name = "comboMeterTXMode";
             this.toolTip1.SetToolTip(this.comboMeterTXMode, resources.GetString("comboMeterTXMode.ToolTip"));
             this.comboMeterTXMode.SelectedIndexChanged += new System.EventHandler(this.comboMeterTXMode_SelectedIndexChanged);
@@ -5123,8 +5145,8 @@ namespace PowerSDR
             this.comboMeterRXMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.comboMeterRXMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboMeterRXMode.DropDownWidth = 72;
-            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             resources.ApplyResources(this.comboMeterRXMode, "comboMeterRXMode");
+            this.comboMeterRXMode.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.comboMeterRXMode.Name = "comboMeterRXMode";
             this.toolTip1.SetToolTip(this.comboMeterRXMode, resources.GetString("comboMeterRXMode.ToolTip"));
             this.comboMeterRXMode.SelectedIndexChanged += new System.EventHandler(this.comboMeterRXMode_SelectedIndexChanged);
@@ -5392,6 +5414,7 @@ namespace PowerSDR
             this.txtDisplayPeakOffset.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayPeakOffset.Name = "txtDisplayPeakOffset";
             this.txtDisplayPeakOffset.ReadOnly = true;
+            this.txtDisplayPeakOffset.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayPeakOffset, resources.GetString("txtDisplayPeakOffset.ToolTip"));
             this.txtDisplayPeakOffset.Click += new System.EventHandler(this.txtDisplayPeakOffset_TextChanged);
             this.txtDisplayPeakOffset.GotFocus += new System.EventHandler(this.HideFocus);
@@ -5430,6 +5453,7 @@ namespace PowerSDR
             this.txtDisplayCursorFreq.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayCursorFreq.Name = "txtDisplayCursorFreq";
             this.txtDisplayCursorFreq.ReadOnly = true;
+            this.txtDisplayCursorFreq.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayCursorFreq, resources.GetString("txtDisplayCursorFreq.ToolTip"));
             // 
             // txtDisplayPeakPower
@@ -5441,6 +5465,7 @@ namespace PowerSDR
             this.txtDisplayPeakPower.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayPeakPower.Name = "txtDisplayPeakPower";
             this.txtDisplayPeakPower.ReadOnly = true;
+            this.txtDisplayPeakPower.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayPeakPower, resources.GetString("txtDisplayPeakPower.ToolTip"));
             this.txtDisplayPeakPower.Click += new System.EventHandler(this.txtDisplayPeakPower_TextChanged);
             // 
@@ -5453,6 +5478,7 @@ namespace PowerSDR
             this.txtDisplayPeakFreq.ForeColor = System.Drawing.Color.DodgerBlue;
             this.txtDisplayPeakFreq.Name = "txtDisplayPeakFreq";
             this.txtDisplayPeakFreq.ReadOnly = true;
+            this.txtDisplayPeakFreq.ShortcutsEnabled = false;
             this.toolTip1.SetToolTip(this.txtDisplayPeakFreq, resources.GetString("txtDisplayPeakFreq.ToolTip"));
             this.txtDisplayPeakFreq.Click += new System.EventHandler(this.txtDisplayPeakFreq_TextChanged);
             // 
@@ -7031,7 +7057,9 @@ namespace PowerSDR
             this.txtVFOBBand.ForeColor = System.Drawing.Color.Green;
             this.txtVFOBBand.Name = "txtVFOBBand";
             this.txtVFOBBand.ReadOnly = true;
+            this.txtVFOBBand.ShortcutsEnabled = false;
             this.txtVFOBBand.GotFocus += new System.EventHandler(this.HideFocus);
+            this.txtVFOBBand.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtVFOBBand_MouseUp);
             // 
             // txtVFOBFreq
             // 
@@ -7090,19 +7118,6 @@ namespace PowerSDR
             this.txtVFOALSD.Name = "txtVFOALSD";
             this.txtVFOALSD.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtVFOALSD_MouseDown);
             this.txtVFOALSD.MouseMove += new System.Windows.Forms.MouseEventHandler(this.txtVFOALSD_MouseMove);
-            // 
-            // txtVFOABand
-            // 
-            this.txtVFOABand.BackColor = System.Drawing.Color.Black;
-            this.txtVFOABand.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            resources.ApplyResources(this.txtVFOABand, "txtVFOABand");
-            this.txtVFOABand.ForeColor = System.Drawing.Color.Green;
-            this.txtVFOABand.Name = "txtVFOABand";
-            this.txtVFOABand.ReadOnly = true;
-            this.txtVFOABand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtVFOABand_KeyPress);
-            this.txtVFOABand.LostFocus += new System.EventHandler(this.txtVFOABand_LostFocus);
-            this.txtVFOABand.MouseLeave += new System.EventHandler(this.txtVFOABand_MouseLeave);
-            this.txtVFOABand.MouseMove += new System.Windows.Forms.MouseEventHandler(this.txtVFOABand_MouseMove);
             // 
             // txtVFOAMSD
             // 
@@ -9115,9 +9130,10 @@ namespace PowerSDR
 
             InitFilterPresets();                // Initialize filter values
 
+            SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
+           
 
             StackForm = new StackControl(this);     // ke9ns add communicate with bandstack controls
-            SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
             helpboxForm = new helpbox(this);         // ke9ns add communicate with helpbox list controls
             helpbox1Form = new helpbox1(this);         // ke9ns add communicate with helpbox1 list controls
 
@@ -9143,13 +9159,14 @@ namespace PowerSDR
 
 
             setupForm.StartPosition = FormStartPosition.Manual;
+            SwlForm.StartPosition = FormStartPosition.Manual;
 
             switch (current_model)
             {
-                //	 case Model.SDR1000:
-                //	Hdw.Init();							// Power down hardware
-                //	Hdw.StandBy();						// initialize hardware device
-                //	break;
+                 case Model.SDR1000:
+                	Hdw.Init();							// Power down hardware
+               	Hdw.StandBy();						// initialize hardware device
+               	break;
                 /*case Model.SDRX:
                     if(fwc_init)
                     {
@@ -20126,7 +20143,7 @@ namespace PowerSDR
             double f = FWCPAPower(adc_fwd) * swr_table[(int)tx_band]; // ke9ns version
             double r = FWCPAPower(adc_rev) * swr_table[(int)tx_band]; // swr_table[(int)tx_band] = 2.10=3mhz  1.64=7mhz  1.095=10mhz
 
-               Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === "  + swr_table[(int)tx_band].ToString());
+            //   Debug.Write("FWCSWR: fwd:" + adc_fwd+" rev:"+adc_rev+" f:"+f.ToString("f2")+" r:"+r.ToString("f2") + " === "  + swr_table[(int)tx_band].ToString());
 
             if ((adc_fwd == 0 && adc_rev == 0) || (f <= 1.0 && r <= 1.0))  //(f <= 0.0002 && r <= 0.0002))
             {
@@ -21661,9 +21678,9 @@ namespace PowerSDR
 			double spur_tune_width = 0;
             switch (current_model)
             {
-              //  case Model.SDR1000:
-              //      spur_tune_width = 200e6 / Math.Pow(2, 16);
-              //      break;
+                case Model.SDR1000:
+                   spur_tune_width = 200e6 / Math.Pow(2, 16);
+                   break;
                 case Model.FLEX5000:
                     spur_tune_width = 7629.39453125;   // 500e6 / Math.Pow(2, 16); // ke9ns 500mhz / 65536 = 7629.39453125
                     break;
@@ -24266,7 +24283,7 @@ namespace PowerSDR
             float[] a = new float[Display.BUFFER_SIZE];
             switch (current_model)
             {
-              //  case Model.SDR1000:
+               case Model.SDR1000:
                 case Model.DEMO:
               //  case Model.SOFTROCK40:
                     //bool rx_only = SetupForm.RXOnly;					// Save RX Only Setting
@@ -26046,7 +26063,7 @@ namespace PowerSDR
             PreampMode preamp = rx1_preamp_mode;		// save current preamp setting
             switch (current_model)
             {
-              //  case Model.SDR1000:
+              case Model.SDR1000:
                 case Model.FLEX5000:
                     RX1PreampMode = PreampMode.HIGH;			// set preamp to high
                     break;
@@ -32169,7 +32186,7 @@ namespace PowerSDR
                             chkPower.Enabled = false;
                         }
                         break;
-                 /*   case Model.SDR1000:
+                   case Model.SDR1000:
                         MinFreq = Math.Max(if_freq, 0.000001);
                         if (XVTRPresent)
                             MaxFreq = 146.0;
@@ -32205,7 +32222,7 @@ namespace PowerSDR
                         chkFWCATU.Visible = false;
                         chkFWCATUBypass.Visible = false;
                         break;
-                 */   case Model.DEMO:
+                   case Model.DEMO:
                         MinFreq = Math.Max(if_freq, 0.000001);
                         if (XVTRPresent)
                             MaxFreq = 146.0;
@@ -32738,14 +32755,11 @@ namespace PowerSDR
 			set
 			{
 				rx_only = value;
-				if(rx1_dsp_mode != DSPMode.SPEC &&
-					rx1_dsp_mode != DSPMode.DRM &&
-					chkPower.Checked)
-					chkMOX.Enabled = !rx_only;
+				if(rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.DRM && chkPower.Checked)	chkMOX.Enabled = !rx_only;
+
 				chkTUN.Enabled = !rx_only;
 				chkVOX.Enabled = !rx_only;
-				if(rx_only && chkMOX.Checked)
-					chkMOX.Checked = false;
+				if(rx_only && chkMOX.Checked) chkMOX.Checked = false;
 
                 if (setupForm != null)
                 {
@@ -32776,6 +32790,7 @@ namespace PowerSDR
                 }
 
             } // set
+
 		} // RXOnly
 
 		private XVTRTRMode current_xvtr_tr_mode = XVTRTRMode.NEGATIVE;
@@ -32920,9 +32935,9 @@ namespace PowerSDR
 			long tw = 0;
 			switch(current_model)
 			{
-				//case Model.SDR1000:
-				//	tw = (long)(0xFFFFFFFFFFFF*freq/corrected_dds_clock);
-				//	break;
+				case Model.SDR1000:
+					tw = (long)(0xFFFFFFFFFFFF*freq/corrected_dds_clock);
+					break;
 				case Model.FLEX3000:
 				case Model.FLEX5000:
 					tw = (long)(0xFFFFFFFF*freq/fwc_corrected_dds_clock);
@@ -32939,9 +32954,9 @@ namespace PowerSDR
 			double freq = 0.0;
 			switch(current_model)
 			{
-				//case Model.SDR1000:
-				//	freq = tw*corrected_dds_clock/0xFFFFFFFFFFFF;
-				//	break;
+				case Model.SDR1000:
+					freq = tw*corrected_dds_clock/0xFFFFFFFFFFFF;
+					break;
 				case Model.FLEX3000:
 				case Model.FLEX5000:
 					freq = tw*fwc_corrected_dds_clock/0xFFFFFFFF;
@@ -33260,7 +33275,7 @@ namespace PowerSDR
 					tuning_word = sr_tuning_word;
 				}
 
-             /*   if (current_model == Model.SDR1000)
+               if (current_model == Model.SDR1000)
                 {
                     if (Hdw.DDSTuningWord != tuning_word)
                         WBIRRX1Holdoff();
@@ -33268,7 +33283,7 @@ namespace PowerSDR
                     Hdw.DDSTuningWord = tuning_word;
                     SetHWFilters(dds_freq);
                 }
-			*/	if(!mox) dsp.GetDSPRX(0, 0).RXOsc = dsp_osc_freq;
+				if(!mox) dsp.GetDSPRX(0, 0).RXOsc = dsp_osc_freq;
 			}
 		} // DDSfreq
 
@@ -33385,12 +33400,12 @@ namespace PowerSDR
 			{
 				x2_enabled = value;
 				X2TR = value;
-              //  if (current_model == Model.SDR1000)
-              //  {
-                 //   if (value && mox)
-                  //      Hdw.X2 |= 0x40;
-                 //   else Hdw.X2 &= 0xBF;
-               // }
+                if (current_model == Model.SDR1000)
+              {
+                    if (value && mox)
+                        Hdw.X2 |= 0x40;
+                    else Hdw.X2 &= 0xBF;
+               }
 			}
 		}
 
@@ -34259,6 +34274,10 @@ namespace PowerSDR
         private bool rotor_enabled;
         public bool ROTOREnabled
         {
+            get
+            {
+                return rotor_enabled;
+            }
             set
             {
                 try
@@ -34271,12 +34290,44 @@ namespace PowerSDR
                         if (rotor_enabled)
                         {
                             Siolisten1.enableROTOR();
-                           
+
+                            if (SpotForm != null)
+                            {
+                                SpotForm.RotorHead.Visible = true;
+                                SpotForm.button3.Visible = true;
+                                SpotForm.numBeamHeading.Visible = true;
+
+                                string answer = spotDDUtil_Rotor1; // get rotor angle current position
+                                SpotForm.RotorHead.Text = answer + "°";
+
+                                int temp1 = 0;
+
+                                try
+                                {
+                                    temp1 = Convert.ToInt16(answer);
+                                }
+                                catch
+                                {
+                                    temp1 = 0;
+                                }
+
+                                SpotForm.numBeamHeading.Value = temp1;
+
+                                SpotForm.RotorUpdate(); // start up thread to read position of rotor
+
+                            } //  if (SpotForm != null)
+
                         }
                         else
                         {
                             Siolisten1.disableROTOR();
-                           
+
+                            if (SpotForm != null)
+                            {
+                                SpotForm.RotorHead.Visible = false;
+                                SpotForm.button3.Visible = false;
+                                SpotForm.numBeamHeading.Visible = false;
+                            }
                         }
                     }
                 }
@@ -34303,7 +34354,7 @@ namespace PowerSDR
                     if (setupForm != null) setupForm.ROTOREnabled = false;
                 }
             }
-            get { return rotor_enabled; }
+           
 
         } // ROTOREnabled
 
@@ -34388,7 +34439,15 @@ namespace PowerSDR
 			get { return tune_power; }
 			set
 			{
-				tune_power = value;
+                if (setupForm != null)
+                {
+                    if (setupForm.udTXDriveMax.Value < setupForm.udTXTunePower.Value) // ke9ns add for drive max 
+                    {
+                        value = (int)setupForm.udTXDriveMax.Value;
+                        setupForm.udTXTunePower.Value = setupForm.udTXDriveMax.Value;
+                    }
+                }
+                tune_power = value;
 
                 ptbTune.Value = value; // ke9ns add
                 lblTUNE.Text = "Tune: " + ptbTune.Value.ToString(); // ke9ns add
@@ -34446,149 +34505,85 @@ namespace PowerSDR
                     lo_band = BandByFreq(xvtrForm.TranslateFreq(VFOAFreq), -1, false, current_region);
                 }
 
-                if (rx1_band != old_band && flex_wire_ucb)
+                if ((rx1_band != old_band)) // ke9ns if bands changed
                 {
-                    if (ucbForm != null && !ucbForm.IsDisposed)
+                    if ((flex_wire_ucb)) // ke9ns if using the UCB form
                     {
-                        ushort val = 0;
-                        byte b1 = 0;
-                        byte b2 = 0;
-
-                        if(rx1_xvtr_index >= 0)
+                        if (ucbForm != null && !ucbForm.IsDisposed)
                         {
-                            val = ucbForm.GetLine(rx1_xvtr_index);
-                            b1 = (byte)val;
-                            b2 = (byte)(val >> 8);
-                        }
+                            ushort val = 0;
+                            byte b1 = 0;
+                            byte b2 = 0;
 
-                        switch (current_model)
+                            if (rx1_xvtr_index >= 0)
+                            {
+                                val = ucbForm.GetLine(rx1_xvtr_index);
+                                b1 = (byte)val;
+                                b2 = (byte)(val >> 8);
+                            }
+
+                            switch (current_model)
+                            {
+                                case Model.FLEX5000:
+                                case Model.FLEX3000:
+                                    if (fwc_init)
+                                    {
+                                        FWC.FlexWire_Write2Value(0x4C, 0x06, 0x00);
+                                        FWC.FlexWire_Write2Value(0x4C, 0x07, 0x00);
+                                        FWC.FlexWire_Write2Value(0x4C, 0x02, b1);
+                                        FWC.FlexWire_Write2Value(0x4C, 0x03, b2);
+                                    }
+                                    break;
+                                case Model.FLEX1500:
+                                    if (hid_init)
+                                    {
+                                        USBHID.FlexWire_Write2Value(0x4C, 0x06, 0x00);
+                                        USBHID.FlexWire_Write2Value(0x4C, 0x07, 0x00);
+                                        USBHID.FlexWire_Write2Value(0x4C, 0x02, b1);
+                                        USBHID.FlexWire_Write2Value(0x4C, 0x03, b2);
+                                    }
+                                    break;
+
+                            } // switch
+                        }
+                    } //  if ((flex_wire_ucb))
+
+                    byte reg0 = 0;
+                    byte reg1 = 0;
+
+                    reg0 = (byte)rx1_band; // Band 0=GEN, 160m=1, WWV = 13, etc.
+                    reg1 = (byte)rx1_ant;
+
+                    Debug.WriteLine("IIC 0x55 transmit: " + reg0 + " , " + reg1);
+
+
+                        switch (CurrentModel)
                         {
                             case Model.FLEX5000:
                             case Model.FLEX3000:
                                 if (fwc_init)
-                                {
-                                    FWC.FlexWire_Write2Value(0x4C, 0x06, 0x00);
-                                    FWC.FlexWire_Write2Value(0x4C, 0x07, 0x00);
-                                    FWC.FlexWire_Write2Value(0x4C, 0x02, b1);
-                                    FWC.FlexWire_Write2Value(0x4C, 0x03, b2);
-                                }
+                                    FWC.FlexWire_Write2Value(0x55, reg0, reg1);
+
+
                                 break;
                             case Model.FLEX1500:
                                 if (hid_init)
-                                {
-                                    USBHID.FlexWire_Write2Value(0x4C, 0x06, 0x00);
-                                    USBHID.FlexWire_Write2Value(0x4C, 0x07, 0x00);
-                                    USBHID.FlexWire_Write2Value(0x4C, 0x02, b1);
-                                    USBHID.FlexWire_Write2Value(0x4C, 0x03, b2);
-                                }
+                                    USBHID.FlexWire_Write2Value(0x55, reg0, reg1);
                                 break;
                         }
-                    }
-                }
 
-                if(rx1_preamp_mode > PreampMode.FIRST)    rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
 
-                /*                  moved logic to txtVFOAFreq_LostFocus
-                if (fwc_init)
-                {
-                    switch (current_model)
-                    {
-                        case Model.FLEX5000:
-                            double freq = VFOAFreq;
-                            if (freq < 2.0)
-                            {
-                                if (chkRX1Preamp.Enabled) chkRX1Preamp.Enabled = false;
-                                if (chkRX1Preamp.Checked) chkRX1Preamp.Checked = false;
-                            }
-                            else if (freq >= 28.0 && rx1_xvtr_index < 0 && !enable_6m_preamp)
-                            {
-                                if (chkRX1Preamp.Enabled) chkRX1Preamp.Enabled = false;
-                                if (!chkRX1Preamp.Checked) chkRX1Preamp.Checked = true;
-                            }
-                            else if (!chkRX1Preamp.Enabled) chkRX1Preamp.Enabled = true;
-                            break;
-                        case Model.FLEX3000:
-                            freq = VFOAFreq;
-                            if (FWCEEPROM.TRXRev >> 8 < 6) // before rev G
-                            {
-                                if (freq < 2.0)
-                                {
-                                    if (!comboPreamp.Items.Contains("Attn"))
-                                        comboPreamp.Items.Insert(0, "Attn");
-                                    if (!comboPreamp.Items.Contains("Off"))
-                                        comboPreamp.Items.Insert(1, "Off");
-                                    if (comboPreamp.Items.Contains("Pre1"))
-                                        comboPreamp.Items.Remove("Pre1");
-                                    if (comboPreamp.Items.Contains("Pre2"))
-                                        comboPreamp.Items.Remove("Pre2");
+                } //   if ((rx1_band != old_band))
 
-                                    if (comboPreamp.SelectedIndex < 0 || comboPreamp.SelectedIndex > comboPreamp.Items.Count - 1)
-                                        comboPreamp.SelectedIndex = 1; // Off
-                                }
-                                else
-                                {
-                                    if (!comboPreamp.Items.Contains("Attn"))
-                                        comboPreamp.Items.Insert(0, "Attn");
-                                    if (!comboPreamp.Items.Contains("Off"))
-                                        comboPreamp.Items.Insert(1, "Off");
-                                    if (!comboPreamp.Items.Contains("Pre1"))
-                                        comboPreamp.Items.Insert(2, "Pre1");
-                                    if (!comboPreamp.Items.Contains("Pre2"))
-                                        comboPreamp.Items.Insert(3, "Pre2");
 
-                                    if (comboPreamp.SelectedIndex < 0 || comboPreamp.SelectedIndex > comboPreamp.Items.Count - 1)
-                                        comboPreamp.SelectedIndex = 3; // Pre2
-                                }
-                            }
-                            else // revs G+
-                            {                               
-                                if (freq < 7.0)
-                                {
-                                    if (!comboPreamp.Items.Contains("Attn"))
-                                        comboPreamp.Items.Insert(0, "Attn");
-                                    if (!comboPreamp.Items.Contains("Off"))
-                                        comboPreamp.Items.Insert(1, "Off");
-                                    if (comboPreamp.Items.Contains("Pre1"))
-                                        comboPreamp.Items.Remove("Pre1");
-                                    if (comboPreamp.Items.Contains("Pre2"))
-                                        comboPreamp.Items.Remove("Pre2");
 
-                                    if (comboPreamp.SelectedIndex < 0 || comboPreamp.SelectedIndex > comboPreamp.Items.Count - 1)
-                                        comboPreamp.SelectedIndex = 1; // Off
-                                }
-                                else if (freq < 13.0)
-                                {
-                                    if (!comboPreamp.Items.Contains("Attn"))
-                                        comboPreamp.Items.Insert(0, "Attn");
-                                    if (!comboPreamp.Items.Contains("Off"))
-                                        comboPreamp.Items.Insert(1, "Off");
-                                    if (!comboPreamp.Items.Contains("Pre1"))
-                                        comboPreamp.Items.Insert(2, "Pre1");
-                                    if (comboPreamp.Items.Contains("Pre2"))
-                                        comboPreamp.Items.Remove("Pre2");
 
-                                    if (comboPreamp.SelectedIndex < 0 || comboPreamp.SelectedIndex > comboPreamp.Items.Count - 1)
-                                        comboPreamp.SelectedIndex = 1; // Off
-                                }
-                                else
-                                {
-                                    if (!comboPreamp.Items.Contains("Attn"))
-                                        comboPreamp.Items.Insert(0, "Attn");
-                                    if (!comboPreamp.Items.Contains("Off"))
-                                        comboPreamp.Items.Insert(1, "Off");
-                                    if (!comboPreamp.Items.Contains("Pre1"))
-                                        comboPreamp.Items.Insert(2, "Pre1");
-                                    if (!comboPreamp.Items.Contains("Pre2"))
-                                        comboPreamp.Items.Insert(3, "Pre2");
+                if (rx1_preamp_mode > PreampMode.FIRST)    rx1_preamp_by_band[(int)old_band] = rx1_preamp_mode;
 
-                                    if (comboPreamp.SelectedIndex < 0 || comboPreamp.SelectedIndex > comboPreamp.Items.Count - 1)
-                                        comboPreamp.SelectedIndex = 1; // Off
-                                }                                
-                            }
-                            break;
-                    }
-                }
-                */
+
+                // moved logic for preamp stuff to txtVFOAFreq_LostFocus
+
+               
 
                 if (rx1_band != old_band || initializing)
                 {
@@ -35643,7 +35638,7 @@ namespace PowerSDR
 			float num = 0f;
             switch(current_model)
             {
-              /*  case Model.SDR1000:            
+                case Model.SDR1000:            
                     if (pa_present && VFOAFreq < 30.0)
                     {
                         //pa_power_mutex.WaitOne();
@@ -35659,7 +35654,7 @@ namespace PowerSDR
                         ret_val = num.ToString("f2") + " W";
                     }
                     break;
-              */  case Model.FLEX5000:
+               case Model.FLEX5000:
                 case Model.FLEX3000:          
                     power = FWCPAPower(pa_fwd_power);
                     ret_val = power.ToString("f0") + " W";
@@ -35708,9 +35703,9 @@ namespace PowerSDR
 			double power = 0.0;
             switch (current_model)
             {
-              //  case Model.SDR1000:
-               //     power = PAPower(pa_rev_power);
-             //       break;
+               case Model.SDR1000:
+                    power = PAPower(pa_rev_power);
+                    break;
                 case Model.FLEX5000:
                 case Model.FLEX3000:
                     power = FWCPAPower(pa_rev_power);
@@ -35729,9 +35724,9 @@ namespace PowerSDR
 
             switch (current_model)
             {
-              //  case Model.SDR1000:
-              //      swr = SWR(pa_fwd_power, pa_rev_power);
-             //       break;
+               case Model.SDR1000:
+                    swr = SWR(pa_fwd_power, pa_rev_power);
+                    break;
                 case Model.FLEX5000:
                 case Model.FLEX3000:
                     swr = FWCSWR(pa_fwd_power, pa_rev_power);
@@ -36361,9 +36356,11 @@ namespace PowerSDR
 			set
 			{
 				value = Math.Max(0, value);			// lower bound
-				value = Math.Min(100, value);		// upper bound
+				
+                if (setupForm != null)  value = Math.Min((int)setupForm.udTXDriveMax.Value, value);       // upper bound ke9ns drive max
+                else  value = Math.Min(100, value);       // upper bound
 
-				ptbPWR.Value = value;
+                ptbPWR.Value = value;
                 ptbPWR_Scroll(this, EventArgs.Empty);
 			}
 		}
@@ -36783,7 +36780,7 @@ namespace PowerSDR
                         if (!hid_init) return;
                         USBHID.SetPreamp((FLEX1500PreampMode)rx1_preamp_mode);
                         break;
-                /*    case Model.SDR1000:
+                   case Model.SDR1000:
                         switch (rx1_preamp_mode)
                         {
                             case PreampMode.OFF:
@@ -36803,7 +36800,7 @@ namespace PowerSDR
                                 Hdw.GainRelay = false;
                                 break;
                         }
-                        break; */
+                        break;
                 }
 
                 switch (current_model)
@@ -40144,12 +40141,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                       /* case Model.SDR1000:
+                                       case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                      */  case Model.FLEX5000:
+                                       case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -40701,12 +40698,12 @@ namespace PowerSDR
 								case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                      /*  case Model.SDR1000:
+                                       case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                      */  case Model.FLEX5000:
+                                        case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -42195,12 +42192,12 @@ namespace PowerSDR
                                 case MeterTXMode.REVERSE_POWER:
                                     switch (current_model)
                                     {
-                                      /*  case Model.SDR1000:
+                                      case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 output = num.ToString("f0") + " W ";
                                             else output = (num * 1000).ToString("f0") + " mW ";
                                             break;
-                                      */  case Model.FLEX5000:
+                                        case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             output = num.ToString("f0") + " W ";
                                             break;
@@ -42411,7 +42408,7 @@ namespace PowerSDR
                 //  LinearGradientBrush alc_Brush = new LinearGradientBrush(new Rectangle(0, 0, 160, 5), Color.Black, Color.Black, 0, false);
                 //   ColorBlend alc_cb = new ColorBlend();
                 alc_cb.Positions = new[] { 0, 0.5f, 0.75f, 0.8f, 1 };
-                alc_cb.Colors = new[] { Color.Yellow, Color.Green, Color.Orange, Color.Red, Color.DarkRed }; // 4 colors
+                alc_cb.Colors = new[] { Color.Yellow, Color.Green, Color.Orange, Color.Red, Color.DarkRed }; // 5 colors
                 alc_Brush.InterpolationColors = alc_cb;
 
 
@@ -42451,6 +42448,50 @@ namespace PowerSDR
                     else
                         mic_num = tx2_avg_mic_num = tx2_meter_current_data_mic * 0.8 + tx2_avg_mic_num * 0.2; // slow decay
                 }
+
+              //  Debug.WriteLine("POWER, SWR, ALC, MIC : " + pwr_num + " , " + swr_num + " , " + alc_num + " , " + mic_num);
+
+                if (pwr_num < 0)
+                {
+                    pwr_num = 0;
+
+                }
+                else if (pwr_num > 200)
+                {
+                    pwr_num = 200;
+                }
+
+                if (swr_num < 0)
+                {
+                    swr_num = 0;
+
+                }
+                else if (swr_num > 50)
+                {
+                    swr_num = 50;
+                }
+
+
+                if (alc_num < -60)
+                {
+                    alc_num = -60;
+
+                }
+                else if (alc_num > 60)
+                {
+                    alc_num = 60;
+                }
+
+                if (mic_num < -60)
+                {
+                    mic_num = -60;
+
+                }
+                else if (mic_num > 60)
+                {
+                    mic_num = 60;
+                }
+
 
 
                 //----------------------------------------------------------------
@@ -47546,7 +47587,7 @@ namespace PowerSDR
 							case MeterTXMode.FORWARD_POWER:
 								switch(current_model)
 								{
-                                   /* case Model.SDR1000:
+                                   case Model.SDR1000:
                                         if (pa_present && VFOAFreq < 30.0)
                                         {
                                             power = PAPower(pa_fwd_power);
@@ -47561,7 +47602,7 @@ namespace PowerSDR
                                             new_meter_data = num;
                                         }
                                         break;
-								*/	case Model.FLEX5000:
+									case Model.FLEX5000:
 									case Model.FLEX3000:
 										//output = ((double)pa_fwd_power/4096*2.5).ToString("f3")+" V";
 										power = FWCPAPower(pa_fwd_power);
@@ -47588,14 +47629,14 @@ namespace PowerSDR
 										//output = power.ToString("f0")+" W";
 										new_meter_data = (float)power;
 										break;
-                                 /*  case Model.SDR1000:
+                                   case Model.SDR1000:
                                         if (pa_present && VFOAFreq < 30.0)
                                             power = PAPower(pa_rev_power);
                                         else power = 0.0;
                                         //output = power.ToString("f0")+" W";
                                         new_meter_data = (float)power;
                                         break;
-								*/	default:
+									default:
 										power = 0.0;
 										//output = power.ToString("f0")+" W";
 										new_meter_data = (float)power;
@@ -47613,12 +47654,12 @@ namespace PowerSDR
 											swr = FWCSWR(pa_fwd_power, pa_rev_power);
 											//output = swr.ToString("f1")+" : 1 ";	
 											break;
-									/*	case Model.SDR1000:
+										case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 swr = SWR(pa_fwd_power, pa_rev_power);
                                             else swr = 1.0;
 											//output = swr.ToString("f1")+" : 1 ";
-											break; */
+											break;
 									}
 							//	}
 							//	else
@@ -47690,7 +47731,7 @@ namespace PowerSDR
                                 case MeterTXMode.FORWARD_POWER:
                                     switch (current_model)
                                     {
-                                        /*   case Model.SDR1000:
+                                          case Model.SDR1000:
                                                if (pa_present && VFOAFreq < 30.0)
                                                {
                                                    power = PAPower(pa_fwd_power);
@@ -47705,7 +47746,7 @@ namespace PowerSDR
                                                    rx2_meter_new_data = num;
                                                }
                                                break;
-                                        */
+                                       
                                         case Model.FLEX5000:
                                         case Model.FLEX3000:
                                             //output = ((double)pa_fwd_power/4096*2.5).ToString("f3")+" V";
@@ -47733,13 +47774,13 @@ namespace PowerSDR
                                             //output = power.ToString("f0")+" W";
                                             rx2_meter_new_data = (float)power;
                                             break;
-                                    /*    case Model.SDR1000:
+                                        case Model.SDR1000:
                                             if (pa_present && VFOAFreq < 30.0)
                                                 power = PAPower(pa_rev_power);
                                             else power = 0.0;
                                             //output = power.ToString("f0")+" W";
                                             rx2_meter_new_data = (float)power;
-                                            break; */
+                                            break; 
                                         default:
                                             power = 0.0;
                                             //output = power.ToString("f0")+" W";
@@ -47758,12 +47799,12 @@ namespace PowerSDR
                                                 swr = FWCSWR(pa_fwd_power, pa_rev_power);
                                                 //output = swr.ToString("f1")+" : 1 ";	
                                                 break;
-                                         /*   case Model.SDR1000:
+                                            case Model.SDR1000:
                                                 if (pa_present && VFOAFreq < 30.0)
                                                     swr = SWR(pa_fwd_power, pa_rev_power);
                                                 else swr = 1.0;
                                                 //output = swr.ToString("f1")+" : 1 ";
-                                                break; */
+                                                break; 
                                         }
                                   //  }
                                    // else
@@ -48247,20 +48288,35 @@ namespace PowerSDR
         // ke9ns RX ONLY thread
         private void PollRXOnly()
         {
+            bool doOnce = false;
 
             while ((rx_only)) // ke9ns do only below if not in manual mox mode, and PTT is not disabled, and not just in RX mode
             {
                 
                 if (fwc_init && (current_model == Model.FLEX5000 || current_model == Model.FLEX3000))
                 {
-                    if (fwc_rca_ptt == true) chkPower.Checked = false;
-                    else chkPower.Checked = true;
+                    if (fwc_rca_ptt == true)
+                    {
+                        chkPower.Checked = false;
+                        doOnce = true;
+                    }
+                    else
+                    {
+                        if (doOnce == true)   chkPower.Checked = true;
+                    }
 
                 }
                 else if (hid_init && current_model == Model.FLEX1500)
                 {
-                    if (hid_ptt_in == true) chkPower.Checked = false;
-                    else chkPower.Checked = true;
+                    if (hid_ptt_in == true)
+                    {
+                        chkPower.Checked = false;
+                        doOnce = true;
+                    }
+                    else
+                    {
+                        if (doOnce == true) chkPower.Checked = true;
+                    }
                 }
 
                 Thread.Sleep(5);
@@ -50045,6 +50101,9 @@ namespace PowerSDR
                                         else if (SpotControl.DX_Mode[iii] == 12) RX1DSPMode = DSPMode.LSB;
                                         else if (SpotControl.DX_Mode[iii] == 13) RX1DSPMode = DSPMode.DIGL;
                                         else if (SpotControl.DX_Mode[iii] == 14) RX1DSPMode = DSPMode.SAM;
+                                        else if (SpotControl.DX_Mode[iii] == 15) RX1DSPMode = DSPMode.DIGU; // FT8
+                                        else if (SpotControl.DX_Mode[iii] == 16) RX1DSPMode = DSPMode.DIGL;
+                                        else if (SpotControl.DX_Mode[iii] == 17) RX1DSPMode = DSPMode.DIGL;
                                         else RX1DSPMode = DSPMode.LSB;
 
                                     }
@@ -50074,6 +50133,9 @@ namespace PowerSDR
                                         else if (SpotControl.DX_Mode[iii] == 12) RX1DSPMode = DSPMode.USB;
                                         else if (SpotControl.DX_Mode[iii] == 13) RX1DSPMode = DSPMode.DIGU;
                                         else if (SpotControl.DX_Mode[iii] == 14) RX1DSPMode = DSPMode.SAM;
+                                        else if (SpotControl.DX_Mode[iii] == 15) RX1DSPMode = DSPMode.DIGU; // FT8
+                                        else if (SpotControl.DX_Mode[iii] == 16) RX1DSPMode = DSPMode.DIGU;
+                                        else if (SpotControl.DX_Mode[iii] == 17) RX1DSPMode = DSPMode.DIGU;
                                         else RX1DSPMode = DSPMode.USB;
 
                                     }
@@ -50509,13 +50571,13 @@ namespace PowerSDR
                                     flex5000ProdTestForm.WindowState = FormWindowState.Normal; // ke9ns add
                                 }
                                 break;
-                         /*   case Model.SDR1000:
+                           case Model.SDR1000:
                                 if (ProdTestForm == null || ProdTestForm.IsDisposed)
                                     ProdTestForm = new ProductionTest(this);
                                 ProdTestForm.Show();
                                 ProdTestForm.Focus();
                                 ProdTestForm.WindowState = FormWindowState.Normal; // ke9ns add
-                                break; */
+                                break; 
                         }
                         break;
 					case Keys.R:
@@ -52036,11 +52098,11 @@ namespace PowerSDR
 
                 switch (current_model)
                 {
-                   /* case Model.SDR1000:
+                   case Model.SDR1000:
                         Hdw.PowerOn();
                         Hdw.DDSTuningWord = 0;
                         break;
-*/
+
                     case Model.FLEX5000:
                         if (fwc_init) FWC.SetStandby(false);
                         fwc_dds_freq = 0.0f;
@@ -52106,7 +52168,7 @@ namespace PowerSDR
                 {
                     case Model.FLEX5000:
                     case Model.FLEX3000:
-                  //  case Model.SDR1000:
+                   case Model.SDR1000:
                     case Model.DEMO:
                   //  case Model.SOFTROCK40:
                         if (!Audio.Start())
@@ -52452,7 +52514,7 @@ namespace PowerSDR
 
                 switch (current_model)
                 {
-                  //  case Model.SDR1000:
+                  case Model.SDR1000:
                     case Model.FLEX5000:
                     case Model.FLEX3000:
                   //  case Model.SOFTROCK40:
@@ -52533,8 +52595,8 @@ namespace PowerSDR
         public void comboDisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			DisplayMode old_mode = Display.CurrentDisplayMode;
-			
-			switch(comboDisplayMode.Text)  // ke9ns  list of display modes is populated for a list at the top of the code Displaymodes
+           
+            switch (comboDisplayMode.Text)  // ke9ns  list of display modes is populated for a list at the top of the code Displaymodes
 			{
 				case "Spectrum":
 					Display.CurrentDisplayMode = DisplayMode.SPECTRUM;
@@ -52567,9 +52629,15 @@ namespace PowerSDR
                     CTUN1 = false;
                     break;
 				case "Panafall":
-					Display.CurrentDisplayMode = DisplayMode.PANAFALL;
+                    Display.map = 0;
+                    Display.CurrentDisplayMode = DisplayMode.PANAFALL;
                     CalcDisplayFreq();
 					break;
+                case "Panafall8020":                                    // ke9ns add special panfall size 80%pan 20% water
+                    Display.map = 1;
+                    Display.CurrentDisplayMode = DisplayMode.PANAFALL;
+                    CalcDisplayFreq();
+                    break;
                 case "Panascope":
 					Display.CurrentDisplayMode = DisplayMode.PANASCOPE;
 					CalcDisplayFreq();
@@ -53033,7 +53101,7 @@ namespace PowerSDR
             bool exit = false;
             switch (current_model)
             {
-              /*  case Model.SDR1000:
+              case Model.SDR1000:
                     switch (comboPreamp.Text)
                     {
                         case "Off":
@@ -53054,7 +53122,7 @@ namespace PowerSDR
                             break;
                     }
                     break;
-              */  case Model.FLEX1500:
+                case Model.FLEX1500:
                     switch (comboPreamp.Text)
                     {
                         case "-10":
@@ -53460,6 +53528,18 @@ namespace PowerSDR
         {
 
             MouseEventArgs me = (MouseEventArgs)e;
+            if (setupForm != null)
+            {
+                if (setupForm.udTXDriveMax.Value < ptbPWR.Value)
+                {
+                    ptbPWR.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+
+                if (setupForm.udTXDriveMax.Value < ptbTune.Value)
+                {
+                    ptbTune.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+            }
 
             lblPWR.Text = "Drive: " + ptbPWR.Value.ToString();
             lblTUNE.Text = "Tune: " + ptbTune.Value.ToString();
@@ -53508,6 +53588,18 @@ namespace PowerSDR
         private void chkBoxDrive_CheckedChanged(object sender, EventArgs e)
         {
 
+            if (setupForm != null)
+            {
+                if (setupForm.udTXDriveMax.Value < ptbPWR.Value)
+                {
+                    ptbPWR.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+
+                if (setupForm.udTXDriveMax.Value < ptbTune.Value)
+                {
+                    ptbTune.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+            }
             lblPWR.Text = "Drive: " + ptbPWR.Value.ToString();
             lblTUNE.Text = "Tune: " + ptbTune.Value.ToString();
 
@@ -53569,6 +53661,24 @@ namespace PowerSDR
         // ke9ns add to show TUNE slider value on console
         private void ptbTune_Scroll(object sender, EventArgs e)
         {
+
+
+            if (setupForm != null)
+            {
+                if (setupForm.udTXDriveMax.Value < ptbPWR.Value)
+                {
+                    ptbPWR.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+
+                if (setupForm.udTXDriveMax.Value < ptbTune.Value)
+                {
+                    ptbTune.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+            }
+
+
+
+
             TunePower = ptbTune.Value; // ke9ns this is the TUNE power value and NOT the Driver ptbPWR value
 
           
@@ -53607,7 +53717,24 @@ namespace PowerSDR
 
         private void ptbPWR_Scroll(object sender, System.EventArgs e)
         {
-           
+
+            if (setupForm != null)
+            {
+                if (setupForm.udTXDriveMax.Value < ptbPWR.Value)
+                {
+                    ptbPWR.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+
+                if (setupForm.udTXDriveMax.Value < ptbTune.Value)
+                {
+                    ptbTune.Value = (int)setupForm.udTXDriveMax.Value;
+                }
+            }
+
+
+
+
+
             lblPWR.Text = "Drive: " + ptbPWR.Value.ToString();
 
             if (chkBoxTune == false)
@@ -56683,6 +56810,7 @@ namespace PowerSDR
         //================================================================================ 
         //================================================================================ 
         //================================================================================   
+      
         private void txtVFOAFreq_LostFocus(object sender, System.EventArgs e)
 		{
 
@@ -56911,10 +57039,10 @@ namespace PowerSDR
                             FWC.SetXVTRRXOn(true);
                             FWC.SetXVTRSplit(xvtrForm.GetXVTRRF(rx1_xvtr_index));
                             break;
-                      //  case Model.SDR1000:
-                        //    if (chkPower.Checked)
-                        //        Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
-                        //    break;
+                       case Model.SDR1000:
+                            if (chkPower.Checked)
+                               Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
+                           break;
                         default:
                             break;
                     }
@@ -56934,10 +57062,10 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRRXOn(false);
                             break;
-                      //  case Model.SDR1000:
-                       //     if (chkPower.Checked)
-                       //         Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
-                        //    break;
+                       case Model.SDR1000:
+                           if (chkPower.Checked)
+                                Hdw.X2 = (byte)((Hdw.X2 & 0xF0) | xvtrForm.GetXVTRAddr(rx1_xvtr_index));
+                            break;
                         default:
                             break;
                     }   
@@ -56955,8 +57083,8 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRTXOn(true);
                             break;
-                      //  case Model.SDR1000:
-                        //    break;
+                        case Model.SDR1000:
+                           break;
                         default:
                             break;
                     }
@@ -56973,8 +57101,8 @@ namespace PowerSDR
                         case Model.FLEX5000:
                             FWC.SetXVTRTXOn(false);
                             break;
-                      //  case Model.SDR1000:
-                      //      break;
+                        case Model.SDR1000:
+                            break;
                         default:
                             break;
                     }
@@ -56986,15 +57114,19 @@ namespace PowerSDR
             }
 
             if (fwc_init && current_model == Model.FLEX5000 && FWCEEPROM.VUOK &&
-                    (tx_xvtr_index == 0 || tx_xvtr_index == 1) &&
-                     chkVFOATX.Checked)
+                    (tx_xvtr_index == 0 || tx_xvtr_index == 1) && chkVFOATX.Checked)
+            {
                 ptbPWR_Scroll(this, EventArgs.Empty);
+            }
 
 			// update BandText Info
 			string bandInfo;
-            double db_freq = freq;
+            double db_freq = freq; // ke9ns in mhz  (=7.128)
+
+          
             if (RX1IsOn60mChannel()) db_freq -= ModeFreqOffset(rx1_dsp_mode);
-			bool transmit_allowed = DB.BandText(db_freq, out bandInfo);
+
+            bool transmit_allowed = DB.BandText(db_freq, out bandInfo);
 
             if (!transmit_allowed)
 			{
@@ -57004,16 +57136,18 @@ namespace PowerSDR
 			}
 			else txtVFOABand.BackColor = band_background_color;
 
-			if(!(rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked)))
-				txtVFOABand.Text = bandInfo;
+            if (!(rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked)))
+            {
+              //  Debug.WriteLine("Band text "+ db_freq);
+
+                txtVFOABand.Text = bandInfo; // ke9ns  display bandtext into the vfo text area here
+            }
 
             Band b = BandByFreq(freq, rx1_xvtr_index, false, current_region);
 
             if (b != rx1_band)
             {
                 SetRX1Band(b);
-
-               
             }
 
             // Set preamp options based on frequency - used to be in SetRX1Band()
@@ -57418,7 +57552,7 @@ namespace PowerSDR
 				{
 					switch(current_model)
 					{
-					//	case Model.SDR1000:
+						case Model.SDR1000:
 						case Model.DEMO:
 							if(Audio.wave_playback)
 							{
@@ -57710,8 +57844,8 @@ namespace PowerSDR
                             case Model.FLEX5000:
                                 FWC.SetXVTRTXOn(true);
                                 break;
-                         //   case Model.SDR1000:
-                         //       break;
+                            case Model.SDR1000:
+                               break;
                             default:
                                 break;
                         }
@@ -57724,8 +57858,8 @@ namespace PowerSDR
                             case Model.FLEX5000:
                                 FWC.SetXVTRTXOn(false);
                                 break;
-                          //  case Model.SDR1000:
-                            //    break;
+                          case Model.SDR1000:
+                               break;
                             default:
                                 break;
                         }
@@ -60650,6 +60784,8 @@ namespace PowerSDR
 
             return; // ke9ns add
 
+            // ke9ns original code below
+/*
             SaveBand();
 
             if (last_band == "GEN")
@@ -60670,6 +60806,8 @@ namespace PowerSDR
                 SetBand(mode, filter, freq);
             }
             UpdateWaterfallLevelValues();
+
+*/
         }
 
         /*
@@ -64344,7 +64482,7 @@ namespace PowerSDR
         //==========================================================================================================
         //==========================================================================================================
         //==========================================================================================================
-       public void ResizeConsole (int h_delta, int v_delta)		//k6jca 1/15/08
+       public void ResizeConsole (int h_delta1, int v_delta)		//k6jca 1/15/08
 		{
 
             // This routine captures the size and location parameters *after* windows
@@ -64354,7 +64492,7 @@ namespace PowerSDR
            
             if (setupForm != null) TXMeter2 = setupForm.chkTXMeter2.Checked; // update 2nd tx meter
 
-            if ((h_delta == 0) && (v_delta == 0) && (previous_delta == 0)) 
+            if ((h_delta1 == 0) && (v_delta == 0) && (previous_delta == 0)) 
 			{
 				// do nothing - this only occurs for my first call to Resize with both deltas zero during init
 				// and at that time windows hasn't resized the display if in 120 dpi mode.
@@ -64364,11 +64502,11 @@ namespace PowerSDR
 			else
 			{
 
-                //this.Size = new Size (console_basis_size.Width + h_delta,console_basis_size.Height + v_delta);
-                //this.Width = console_basis_size.Width + h_delta;
+                //this.Size = new Size (console_basis_size.Width + h_delta1,console_basis_size.Height + v_delta);
+                //this.Width = console_basis_size.Width + h_delta1;
                 //this.Height = console_basis_size.Height + v_delta;
 
-                grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X + (h_delta / 2), gr_vfobetween_basis_location.Y); // ke9ns move here from below
+                grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X + (h_delta1 / 2), gr_vfobetween_basis_location.Y); // ke9ns move here from below
 
                
                 // Debug.WriteLine("console size " + this.Size.Height);
@@ -64381,25 +64519,25 @@ namespace PowerSDR
                     if (FWCEEPROM.RX2OK) // if you have RX2 installed
                     {
                         // ke9ns 1st
-                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
+                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
 
 
                         if ((setupForm != null) && (setupForm.chk2ndMeter.Checked == true))
                         {
 
                             // ke9ns 2nd
-                            grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y - 2 + grpMultimeter.Height + 6);
+                            grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y - 2 + grpMultimeter.Height + 6);
 
                             // ke9ns 3nd
-                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
-                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, grpMultimeter.Height  + gr_BandGEN_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
-                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, grpMultimeter.Height+ gr_BandVHF_basis_location.Y + (v_delta / 8));
+                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
+                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, grpMultimeter.Height  + gr_BandGEN_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
+                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, grpMultimeter.Height+ gr_BandVHF_basis_location.Y + (v_delta / 8));
 
                             // ke9ns 4rd
-                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, grpMultimeter.Height  + gr_Mode_basis_location.Y + (v_delta / 6)); // ke9ns have it stay close to band
+                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, grpMultimeter.Height  + gr_Mode_basis_location.Y + (v_delta / 6)); // ke9ns have it stay close to band
 
                             // ke9ns 5th
-                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, grpMultimeter.Height  + gr_filter_basis_location.Y + (v_delta / 5)); // ke9ns have it stay close to mode
+                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, grpMultimeter.Height  + gr_filter_basis_location.Y + (v_delta / 5)); // ke9ns have it stay close to mode
 
 
                           
@@ -64408,18 +64546,18 @@ namespace PowerSDR
                         {
 
                             // ke9ns 2nd
-                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
-                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, gr_BandGEN_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
-                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 8));
+                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, gr_BandHF_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
+                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, gr_BandGEN_basis_location.Y + (v_delta / 8));  // ke9ns have it stay close to rx1 meter
+                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, gr_BandVHF_basis_location.Y + (v_delta / 8));
 
                             // ke9ns 3rd
-                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 6)); // ke9ns have it stay close to band
+                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, gr_Mode_basis_location.Y + (v_delta / 6)); // ke9ns have it stay close to band
 
                             // ke9ns 4th
-                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, gr_filter_basis_location.Y + (v_delta / 5)); // ke9ns have it stay close to mode
+                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, gr_filter_basis_location.Y + (v_delta / 5)); // ke9ns have it stay close to mode
 
                             // ke9ns 5th
-                            grpRX2Meter.Location = new Point(gr_rx2_meter_basis.X + h_delta, gr_rx2_meter_basis.Y + v_delta);
+                            grpRX2Meter.Location = new Point(gr_rx2_meter_basis.X + h_delta1, gr_rx2_meter_basis.Y + v_delta);
 
                         } // 2nd meter in original bottom location
 
@@ -64430,42 +64568,42 @@ namespace PowerSDR
                         if ((setupForm != null) && (setupForm.chk2ndMeter.Checked == true) && (setupForm.chkTXMeter2.Checked) )
                         {
                             // ke9ns 1st
-                            grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
+                            grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
 
                             // ke9ns 2th
-                            grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, grpMultimeter.Height + gr_Multimeter_basis_location.Y - 2); // ke9ns have it stay close to mode
+                            grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, grpMultimeter.Height + gr_Multimeter_basis_location.Y - 2); // ke9ns have it stay close to mode
 
                             // ke9ns 3nd
-                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
-                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, grpMultimeter.Height + gr_BandGEN_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
-                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, grpMultimeter.Height + gr_BandVHF_basis_location.Y + (v_delta / 24));
+                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
+                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandGEN_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
+                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandVHF_basis_location.Y + (v_delta / 24));
 
                             // ke9ns 4rd
-                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, grpMultimeter.Height + gr_Mode_basis_location.Y + (v_delta / 12)); // ke9ns have it stay close to band
+                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, grpMultimeter.Height + gr_Mode_basis_location.Y + (v_delta / 12)); // ke9ns have it stay close to band
 
                             // ke9ns 5th
-                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, grpMultimeter.Height  + gr_filter_basis_location.Y + (v_delta / 9)); // ke9ns have it stay close to mode
+                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, grpMultimeter.Height  + gr_filter_basis_location.Y + (v_delta / 9)); // ke9ns have it stay close to mode
 
                           
                         } // 2nd meter on top
                         else
                         {
                             // ke9ns 1st
-                            grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
+                            grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y - 2); // RX1/TX meter
 
                             // ke9ns 2nd
-                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
-                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, gr_BandGEN_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
-                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 24));
+                            panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, gr_BandHF_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
+                            panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, gr_BandGEN_basis_location.Y + (v_delta / 24));  // ke9ns have it stay close to rx1 meter
+                            panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, gr_BandVHF_basis_location.Y + (v_delta / 24));
 
                             // ke9ns 3rd
-                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 12)); // ke9ns have it stay close to band
+                            panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, gr_Mode_basis_location.Y + (v_delta / 12)); // ke9ns have it stay close to band
 
                             // ke9ns 4th
-                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, gr_filter_basis_location.Y + (v_delta / 9)); // ke9ns have it stay close to mode
+                            panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, gr_filter_basis_location.Y + (v_delta / 9)); // ke9ns have it stay close to mode
 
                             // ke9ns 5th
-                            grpRX2Meter.Location = new Point(gr_filter_basis_location.X + h_delta, gr_filter_basis_location.Y + (v_delta / 9) + 180); // ke9ns have it stay close to mode
+                            grpRX2Meter.Location = new Point(gr_filter_basis_location.X + h_delta1, gr_filter_basis_location.Y + (v_delta / 9) + 180); // ke9ns have it stay close to mode
 
                         } // 2nd meter on bottom
 
@@ -64483,23 +64621,23 @@ namespace PowerSDR
  
                         //-------------------------------------------------------------------
                         // ke9ns 1st
-                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y); // RX1/TX meter
+                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y); // RX1/TX meter
 
                         // ke9ns 2th
 
-                        grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y + grpMultimeter.Height + 6);
+                        grpRX2Meter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y + grpMultimeter.Height + 6);
 
 
                         // ke9ns 3nd
-                        panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
-                        panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, grpMultimeter.Height + gr_BandGEN_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
-                        panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, grpMultimeter.Height + gr_BandVHF_basis_location.Y + (v_delta / 6));
+                        panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandHF_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
+                        panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandGEN_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
+                        panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, grpMultimeter.Height + gr_BandVHF_basis_location.Y + (v_delta / 6));
 
                         // ke9ns 4rd
-                        panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, grpMultimeter.Height + gr_Mode_basis_location.Y + (v_delta / 4)); // ke9ns have it stay close to band
+                        panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, grpMultimeter.Height + gr_Mode_basis_location.Y + (v_delta / 4)); // ke9ns have it stay close to band
 
                         // ke9ns 5th
-                        panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, grpMultimeter.Height + gr_filter_basis_location.Y + (v_delta / 3)); // ke9ns have it stay close to mode
+                        panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, grpMultimeter.Height + gr_filter_basis_location.Y + (v_delta / 3)); // ke9ns have it stay close to mode
 
 
 
@@ -64509,27 +64647,27 @@ namespace PowerSDR
 
                         //-------------------------------------------------------------------
                         // ke9ns 1st
-                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta, gr_Multimeter_basis_location.Y); // RX1/TX meter
+                        grpMultimeter.Location = new Point(gr_Multimeter_basis_location.X + h_delta1, gr_Multimeter_basis_location.Y); // RX1/TX meter
 
                         // ke9ns 2nd
-                        panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
-                        panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta, gr_BandGEN_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
-                        panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta, gr_BandVHF_basis_location.Y + (v_delta / 6));
+                        panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta1, gr_BandHF_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
+                        panelBandGN.Location = new Point(gr_BandGEN_basis_location.X + h_delta1, gr_BandGEN_basis_location.Y + (v_delta / 6));  // ke9ns have it stay close to rx1 meter
+                        panelBandVHF.Location = new Point(gr_BandVHF_basis_location.X + h_delta1, gr_BandVHF_basis_location.Y + (v_delta / 6));
 
                         // ke9ns 3rd
-                        panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta, gr_Mode_basis_location.Y + (v_delta / 4)); // ke9ns have it stay close to band
+                        panelMode.Location = new Point(gr_Mode_basis_location.X + h_delta1, gr_Mode_basis_location.Y + (v_delta / 4)); // ke9ns have it stay close to band
 
                         // ke9ns 4th
-                        panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta, gr_filter_basis_location.Y + (v_delta / 3)); // ke9ns have it stay close to mode
+                        panelFilter.Location = new Point(gr_filter_basis_location.X + h_delta1, gr_filter_basis_location.Y + (v_delta / 3)); // ke9ns have it stay close to mode
 
                         // ke9ns 5th
                         if (!FWCEEPROM.RX2OK)
                         {
-                            grpRX2Meter.Location = new Point(gr_filter_basis_location.X + h_delta, gr_filter_basis_location.Y + (v_delta / 3) + 200); // ke9ns have it stay close to mode
+                            grpRX2Meter.Location = new Point(gr_filter_basis_location.X + h_delta1, gr_filter_basis_location.Y + (v_delta / 3) + 200); // ke9ns have it stay close to mode
                         }
                         else
                         {
-                            grpRX2Meter.Location = new Point(gr_rx2_meter_basis.X + h_delta, gr_rx2_meter_basis.Y + v_delta - 10);
+                            grpRX2Meter.Location = new Point(gr_rx2_meter_basis.X + h_delta1, gr_rx2_meter_basis.Y + v_delta - 10);
                         }
 
                     } // 2nd meter original location on bottom
@@ -64540,46 +64678,46 @@ namespace PowerSDR
                 } // if height of this is > 850
                 //-------------------------------------------------------------------------------
 
-                panelModeSpecificPhone.Location = new Point(gr_ModePhone_basis_location.X + h_delta - (h_delta / 4), gr_ModePhone_basis_location.Y + v_delta);
-                panelModeSpecificCW.Location = new Point(gr_ModeCW_basis_location.X + h_delta - (h_delta / 4), gr_ModeCW_basis_location.Y + v_delta);
-                panelModeSpecificDigital.Location = new Point(gr_ModeDig_basis_location.X + h_delta - (h_delta / 4), gr_ModeDig_basis_location.Y + v_delta);
-                panelModeSpecificFM.Location = new Point(gr_ModeFM_basis_location.X + h_delta - (h_delta / 4), gr_ModeFM_basis_location.Y + v_delta);
+                panelModeSpecificPhone.Location = new Point(gr_ModePhone_basis_location.X + h_delta1 - (h_delta1 / 4), gr_ModePhone_basis_location.Y + v_delta);
+                panelModeSpecificCW.Location = new Point(gr_ModeCW_basis_location.X + h_delta1 - (h_delta1 / 4), gr_ModeCW_basis_location.Y + v_delta);
+                panelModeSpecificDigital.Location = new Point(gr_ModeDig_basis_location.X + h_delta1 - (h_delta1 / 4), gr_ModeDig_basis_location.Y + v_delta);
+                panelModeSpecificFM.Location = new Point(gr_ModeFM_basis_location.X + h_delta1 - (h_delta1 / 4), gr_ModeFM_basis_location.Y + v_delta);
 
-				panelVFO.Location = new Point (gr_VFO_basis_location.X+(h_delta/4),gr_VFO_basis_location.Y+v_delta);
+				panelVFO.Location = new Point (gr_VFO_basis_location.X+(h_delta1/4),gr_VFO_basis_location.Y+v_delta);
 
                 panelTS1.Location = new Point(130, (gr_VFO_basis_location.Y + v_delta)- 10); // ke9ns add
 
 
 
-                //grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X+(h_delta/2),gr_vfobetween_basis_location.Y);
+                //grpVFOBetween.Location = new Point(gr_vfobetween_basis_location.X+(h_delta1/2),gr_vfobetween_basis_location.Y);
 
 
 
-                btnDisplayPanCenter.Location = new Point(btn_display_pan_center_basis.X+(h_delta),btn_display_pan_center_basis.Y+v_delta);
-				ptbDisplayPan.Size = new Size(tb_display_pan_size_basis.Width+(h_delta),tb_display_pan_size_basis.Height);
-				radDisplayZoom4x.Location = new Point(btn_display_zoom_4x_basis.X+h_delta,btn_display_zoom_4x_basis.Y+v_delta);
-				radDisplayZoom2x.Location = new Point(btn_display_zoom_2x_basis.X+h_delta,btn_display_zoom_2x_basis.Y+v_delta);
-				radDisplayZoom1x.Location = new Point(btn_display_zoom_1x_basis.X+h_delta,btn_display_zoom_1x_basis.Y+v_delta);
-				radDisplayZoom05.Location = new Point(btn_display_zoom_05_basis.X+h_delta,btn_display_zoom_05_basis.Y+v_delta);
-				ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X+h_delta,tb_display_zoom_basis.Y+v_delta);
+                btnDisplayPanCenter.Location = new Point(btn_display_pan_center_basis.X+(h_delta1),btn_display_pan_center_basis.Y+v_delta);
+				ptbDisplayPan.Size = new Size(tb_display_pan_size_basis.Width+(h_delta1),tb_display_pan_size_basis.Height);
+				radDisplayZoom4x.Location = new Point(btn_display_zoom_4x_basis.X+h_delta1,btn_display_zoom_4x_basis.Y+v_delta);
+				radDisplayZoom2x.Location = new Point(btn_display_zoom_2x_basis.X+h_delta1,btn_display_zoom_2x_basis.Y+v_delta);
+				radDisplayZoom1x.Location = new Point(btn_display_zoom_1x_basis.X+h_delta1,btn_display_zoom_1x_basis.Y+v_delta);
+				radDisplayZoom05.Location = new Point(btn_display_zoom_05_basis.X+h_delta1,btn_display_zoom_05_basis.Y+v_delta);
+				ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X+h_delta1,tb_display_zoom_basis.Y+v_delta);
 
-                txtDisplayPeakFreq.Location = new Point(txt_display_peak_freq_basis.X+h_delta,txt_display_peak_freq_basis.Y+v_delta);
-				txtDisplayPeakPower.Location = new Point(txt_display_peak_power_basis.X+h_delta,txt_display_peak_power_basis.Y+v_delta);
-         		txtDisplayPeakOffset.Location = new Point(txt_display_peak_offset_basis.X+h_delta,txt_display_peak_offset_basis.Y+v_delta);
+                txtDisplayPeakFreq.Location = new Point(txt_display_peak_freq_basis.X+h_delta1,txt_display_peak_freq_basis.Y+v_delta);
+				txtDisplayPeakPower.Location = new Point(txt_display_peak_power_basis.X+h_delta1,txt_display_peak_power_basis.Y+v_delta);
+         		txtDisplayPeakOffset.Location = new Point(txt_display_peak_offset_basis.X+h_delta1,txt_display_peak_offset_basis.Y+v_delta);
 
-                lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X+h_delta,lbl_display_zoom_basis.Y+v_delta);
+                lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X+h_delta1,lbl_display_zoom_basis.Y+v_delta);
 
-                panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
-				picDisplay.Size = new Size(pic_display_size_basis.Width+h_delta,pic_display_size_basis.Height+v_delta);
+                panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta1, gr_display_size_basis.Height + v_delta);
+				picDisplay.Size = new Size(pic_display_size_basis.Width+h_delta1,pic_display_size_basis.Height+v_delta);
 
             
-                autoBrightBox.Size = new Size(textbox1_size_basis.Width+h_delta,textbox1_size_basis.Height);
+                autoBrightBox.Size = new Size(textbox1_size_basis.Width+h_delta1,textbox1_size_basis.Height);
 				autoBrightBox.Location = new Point(textbox1_basis.X,textbox1_basis.Y+v_delta);
 
-                panelDisplay2.Location = new Point(gr_display2_basis.X+(h_delta/2),gr_display2_basis.Y+v_delta);
-				panelDSP.Location = new Point(gr_dsp_basis.X+(h_delta/2),gr_dsp_basis.Y+v_delta);
+                panelDisplay2.Location = new Point(gr_display2_basis.X+(h_delta1/2),gr_display2_basis.Y+v_delta);
+				panelDSP.Location = new Point(gr_dsp_basis.X+(h_delta1/2),gr_dsp_basis.Y+v_delta);
 
-				panelMultiRX.Location = new Point(gr_multirx_basis.X+(h_delta/2),gr_multirx_basis.Y+v_delta);
+				panelMultiRX.Location = new Point(gr_multirx_basis.X+(h_delta1/2),gr_multirx_basis.Y+v_delta);
 				ptbDisplayPan.Location = new Point(tb_displaypan_basis.X,tb_displaypan_basis.Y+v_delta);
 				lblDisplayPan.Location = new Point(lbl_displaypan_basis.X,lbl_displaypan_basis.Y+v_delta);
 
@@ -64607,23 +64745,23 @@ namespace PowerSDR
                 //lblCPUMeter.Location = new Point(lbl_cpu_meter_basis.X,lbl_cpu_meter_basis.Y+(v_delta/8)+(v_delta/2)+(v_delta/4));
 
                 //panelRX2Divider.Location = new Point(pan_rx2_divider_basis.X, pan_rx2_divider_basis.Y+v_delta);
-                //panelRX2Divider.Size = new Size(pan_rx2_divider_size_basis.Width+h_delta, pan_rx2_divider_size_basis.Height);
+                //panelRX2Divider.Size = new Size(pan_rx2_divider_size_basis.Width+h_delta1, pan_rx2_divider_size_basis.Height);
 
-                grpDisplaySplit.Location = new Point(gr_display_split_basis.X+(h_delta/2), gr_display_split_basis.Y+v_delta);
+                grpDisplaySplit.Location = new Point(gr_display_split_basis.X+(h_delta1/2), gr_display_split_basis.Y+v_delta);
 
 
-                panelRX2Filter.Location = new Point(gr_rx2_filter_basis.X + (int)(h_delta * 0.66), gr_rx2_filter_basis.Y + v_delta);
-				panelRX2Mode.Location = new Point(gr_rx2_mode_basis.X+(int)(h_delta*0.492), gr_rx2_mode_basis.Y+v_delta);
-                panelRX2Display.Location = new Point(gr_rx2_display_basis.X + (int)(h_delta * 0.383), gr_rx2_display_basis.Y + v_delta);
-                panelRX2DSP.Location = new Point(gr_rx2_dsp_basis.X + (int)(h_delta * 0.258), gr_rx2_dsp_basis.Y + v_delta);
+                panelRX2Filter.Location = new Point(gr_rx2_filter_basis.X + (int)(h_delta1 * 0.66), gr_rx2_filter_basis.Y + v_delta);
+				panelRX2Mode.Location = new Point(gr_rx2_mode_basis.X+(int)(h_delta1*0.492), gr_rx2_mode_basis.Y+v_delta);
+                panelRX2Display.Location = new Point(gr_rx2_display_basis.X + (int)(h_delta1 * 0.383), gr_rx2_display_basis.Y + v_delta);
+                panelRX2DSP.Location = new Point(gr_rx2_dsp_basis.X + (int)(h_delta1 * 0.258), gr_rx2_dsp_basis.Y + v_delta);
 
-				lblRX2RF.Location = new Point(lbl_rx2_rf_basis.X+(int)(h_delta*0.164), lbl_rx2_rf_basis.Y+v_delta);
-				ptbRX2RF.Location = new Point(tb_rx2_rf_basis.X+(int)(h_delta*0.164), tb_rx2_rf_basis.Y+v_delta);
-				chkRX2Squelch.Location = new Point(chk_rx2_squelch_basis.X+(int)(h_delta*0.164), chk_rx2_squelch_basis.Y+v_delta);
-				ptbRX2Squelch.Location = new Point(tb_rx2_squelch_basis.X+(int)(h_delta*0.164), tb_rx2_squelch_basis.Y+v_delta);
-                picRX2Squelch.Location = new Point(pic_rx2_squelch_basis.X+(int)(h_delta*0.164), pic_rx2_squelch_basis.Y+v_delta);
+				lblRX2RF.Location = new Point(lbl_rx2_rf_basis.X+(int)(h_delta1*0.164), lbl_rx2_rf_basis.Y+v_delta);
+				ptbRX2RF.Location = new Point(tb_rx2_rf_basis.X+(int)(h_delta1*0.164), tb_rx2_rf_basis.Y+v_delta);
+				chkRX2Squelch.Location = new Point(chk_rx2_squelch_basis.X+(int)(h_delta1*0.164), chk_rx2_squelch_basis.Y+v_delta);
+				ptbRX2Squelch.Location = new Point(tb_rx2_squelch_basis.X+(int)(h_delta1*0.164), tb_rx2_squelch_basis.Y+v_delta);
+                picRX2Squelch.Location = new Point(pic_rx2_squelch_basis.X+(int)(h_delta1*0.164), pic_rx2_squelch_basis.Y+v_delta);
 
-				panelRX2Mixer.Location = new Point(gr_rx2_mixer_basis.X+(int)(h_delta*0.078), gr_rx2_mixer_basis.Y+v_delta);
+				panelRX2Mixer.Location = new Point(gr_rx2_mixer_basis.X+(int)(h_delta1*0.078), gr_rx2_mixer_basis.Y+v_delta);
 				chkRX2.Location = new Point(chk_rx2_enable_basis.X, chk_rx2_enable_basis.Y+v_delta);
 				chkRX2Preamp.Location = new Point(chk_rx2_preamp_basis.X, chk_rx2_preamp_basis.Y+v_delta);
 				lblRX2Band.Location = new Point(lbl_rx2_band_basis.X, lbl_rx2_band_basis.Y+v_delta);
@@ -64648,8 +64786,8 @@ namespace PowerSDR
                 {
                    
                     // right edge of panelTS1 = 245
-                    int temp = gr_VFO_basis_location.X + (h_delta / 4); // left edge location of panelVFO (136 wide)
-                    int temp1 = gr_dsp_basis.X + (h_delta / 2); // left edge location of panelDSP
+                    int temp = gr_VFO_basis_location.X + (h_delta1 / 4); // left edge location of panelVFO (136 wide)
+                    int temp1 = gr_dsp_basis.X + (h_delta1 / 2); // left edge location of panelDSP
 
                     int x1 = temp1 - 275;
                     int x2 = (x1 / 2) + 275;
@@ -64679,8 +64817,8 @@ namespace PowerSDR
                     VFODialAA.Visible = false;
                     VFODialBB.Visible = false;
 
-                    grpVFOA.Location = new Point(gr_VFOA_basis_location.X + (h_delta / 4), gr_VFOA_basis_location.Y);  // ke9ns was 4
-                    grpVFOB.Location = new Point(gr_VFOB_basis_location.X + h_delta - (h_delta / 4), gr_VFOB_basis_location.Y); // ke9ns was 4
+                    grpVFOA.Location = new Point(gr_VFOA_basis_location.X + (h_delta1 / 4), gr_VFOA_basis_location.Y);  // ke9ns was 4
+                    grpVFOB.Location = new Point(gr_VFOB_basis_location.X + h_delta1 - (h_delta1 / 4), gr_VFOB_basis_location.Y); // ke9ns was 4
 
                   
                 }
@@ -64732,7 +64870,7 @@ namespace PowerSDR
                 }
 
             }
-            previous_delta = h_delta+v_delta; //we'll check this next time through...
+            previous_delta = h_delta1+v_delta; //we'll check this next time through...
 
 		} // resizeconsole
 
@@ -67006,13 +67144,15 @@ namespace PowerSDR
 			ResizeConsole(h_delta, v_delta);
 
             Display.Power = 1;
-           // Debug.WriteLine("RESIZE1");
+            // Debug.WriteLine("RESIZE1");
+
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // ke9ns add set new Gradient color scheme
 
         } // control resize
 
 
 
-		private int rx2_fixed_gain = 20;
+        private int rx2_fixed_gain = 20;
 		private int rx2_max_gain = 90;
 		private void comboRX2AGC_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
@@ -67566,7 +67706,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-              //  case Model.SDR1000:
+                case Model.SDR1000:
                     switch(rx1_preamp_mode)
                     {
                         case PreampMode.OFF:
@@ -69278,25 +69418,25 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void panelDateTime_Paint(object sender, PaintEventArgs p)
+        private void panelDateTime_Paint(object sender, PaintEventArgs p4)
         {
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p4.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p4.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p4.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p4.Graphics.FillPath(new SolidBrush(BackGround), gPath);
 
             if (txtTimer.ForeColor == Color.Red)
             {
-                p.Graphics.DrawPath(new Pen(Color.Yellow, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p4.Graphics.DrawPath(new Pen(Color.Yellow, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             }
             else
             {
-                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p4.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
             }
 
 
@@ -69305,70 +69445,70 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void grpVFOBetween_Paint(object sender, PaintEventArgs p)
+        private void grpVFOBetween_Paint(object sender, PaintEventArgs p8)
         {
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p8.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p8.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p8.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p8.Graphics.FillPath(new SolidBrush(BackGround), gPath);
 
 
             if (txtTimer.ForeColor == Color.Red)
             {
-                p.Graphics.DrawPath(new Pen(Color.Yellow, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p8.Graphics.DrawPath(new Pen(Color.Yellow, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             }
             else
             {
-                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p8.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
             }
 
         } // grpVFOBetween_Paint
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void panelAntenna_Paint(object sender, PaintEventArgs p)
+        private void panelAntenna_Paint(object sender, PaintEventArgs p5)
         {
            
             PanelTS box = (PanelTS)sender; // this is the box we are currently repainting
 
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p5.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p5.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p5.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p5.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p5.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
            
             int HS = (int)(((float)box.Height / 2.0F) - ((float)box.Height ) * 0.2F);
             int HF = (int)(((float)box.Height / 2.0F) * 0.8F);
 
-            p.Graphics.DrawImage(ant2, new Rectangle(7, HS, 20, HF));
+            p5.Graphics.DrawImage(ant2, new Rectangle(7, HS, 20, HF));
 
 
         } // panelAntenna_Paint
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void panelRing_Paint(object sender, PaintEventArgs p)
+        private void panelRing_Paint(object sender, PaintEventArgs p2)
         {
 
             PanelTS box = (PanelTS)sender; // this is the box we are currently repainting
 
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p2.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p2.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p2.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p2.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p2.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
 
            
@@ -69379,18 +69519,18 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void panelOptions_Paint(object sender, PaintEventArgs p)
+        private void panelOptions_Paint(object sender, PaintEventArgs p3)
         {
 
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p3.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p3.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p3.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p3.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p3.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
 
         } // panelOptions
@@ -69399,26 +69539,26 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void panelTSBandStack_Paint(object sender, PaintEventArgs p)
+        private void panelTSBandStack_Paint(object sender, PaintEventArgs p1)
         {
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p1.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p1.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p1.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(BackGround), gPath);
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p1.Graphics.FillPath(new SolidBrush(BackGround), gPath);
+            p1.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
-            p.Graphics.DrawString("BandStack", box.Font, Brushes.White, 8, 0);
+            p1.Graphics.DrawString("BandStack", box.Font, Brushes.White, 8, 0);
 
         } // panelTSBandStack_Paint
 
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void grpVFOA_Paint(object sender, PaintEventArgs p)  // ke9ns ADD
+        private void grpVFOA_Paint(object sender, PaintEventArgs p9)  // ke9ns ADD
         {
 
             //   Debug.WriteLine("z layer for VFOA1 " + grpVFOA.Parent.Controls.GetChildIndex(grpVFOA));  //7
@@ -69442,25 +69582,25 @@ namespace PowerSDR
 
 
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p9.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p9.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p9.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width  - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
          
-            p.Graphics.FillPath(new SolidBrush(VFOBackgroundColor), gPath); // VFOBackgroundColor
+            p9.Graphics.FillPath(new SolidBrush(VFOBackgroundColor), gPath); // VFOBackgroundColor
 
             if ((MOX) && (chkVFOATX.Checked == true))
             {
-                p.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p9.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             }
             else
             {
-                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p9.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
             }
 
-             p.Graphics.DrawString("VFO A", box.Font, Brushes.White, 8, 0);
+             p9.Graphics.DrawString("VFO A", box.Font, Brushes.White, 8, 0);
             //  p.Graphics.DrawImage(vfoa, new Rectangle(-8,-9, 50, 40));
 
 
@@ -69581,7 +69721,7 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void grpVFOB_Paint(object sender, PaintEventArgs p)
+        private void grpVFOB_Paint(object sender, PaintEventArgs p7)
         {
             if ((setupForm != null))
             {
@@ -69595,25 +69735,25 @@ namespace PowerSDR
             }
 
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p7.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p7.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p7.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 8, true, true, true, true); //
 
-            p.Graphics.FillPath(new SolidBrush(VFOBackgroundColor), gPath); // VFOBackgroundColor
+            p7.Graphics.FillPath(new SolidBrush(VFOBackgroundColor), gPath); // VFOBackgroundColor
 
             if ((MOX) && (chkVFOBTX.Checked == true))
             {
-                p.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p7.Graphics.DrawPath(new Pen(Color.Red, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
             }
             else
             {
-                p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+                p7.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
             }
 
-            p.Graphics.DrawString("VFO B", box.Font, Brushes.White, 8, 0);
+            p7.Graphics.DrawString("VFO B", box.Font, Brushes.White, 8, 0);
 
         } //grpVFOB_Paint
 
@@ -69627,12 +69767,12 @@ namespace PowerSDR
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void grpMultimeter_Paint(object sender, PaintEventArgs p)
+        private void grpMultimeter_Paint(object sender, PaintEventArgs p11)
         {
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p11.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p11.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p11.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
@@ -69642,22 +69782,22 @@ namespace PowerSDR
                 LinearGradientBrush P = new LinearGradientBrush(box.ClientRectangle, Color.FromArgb(218,218,189), Color.FromArgb(243,244,211), LinearGradientMode.Horizontal);
 
                
-                p.Graphics.FillPath(P, gPath); // new SolidBrush(Color.FromArgb(0xff,0xff,0xe4))
-                p.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.Black, 8, 2);
+                p11.Graphics.FillPath(P, gPath); // new SolidBrush(Color.FromArgb(0xff,0xff,0xe4))
+                p11.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.Black, 8, 2);
 
                 txtMultiText.ForeColor = Color.Black;
-               txtMultiText.BackColor = Color.FromArgb(0xff, 0xff, 0xe4);
+                txtMultiText.BackColor = Color.FromArgb(0xff, 0xff, 0xe4);
               
 
             }
             else if (meterDMB == true)  // ke9ns (dark colored meter)
             {
 
-               LinearGradientBrush P = new LinearGradientBrush(box.ClientRectangle, Color.FromArgb(64, 64, 55), Color.FromArgb(139, 139, 125), LinearGradientMode.Horizontal);
+               LinearGradientBrush Pp = new LinearGradientBrush(box.ClientRectangle, Color.FromArgb(64, 64, 55), Color.FromArgb(139, 139, 125), LinearGradientMode.Horizontal);
 
 
-                p.Graphics.FillPath(P, gPath); // new SolidBrush(Color.FromArgb(146, 146, 140))
-                p.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.White, 8, 2);
+                p11.Graphics.FillPath(Pp, gPath); // new SolidBrush(Color.FromArgb(146, 146, 140))
+                p11.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.White, 8, 2);
 
                 txtMultiText.ForeColor = Color.Black;
                txtMultiText.BackColor = Color.FromArgb(139,139,125);
@@ -69668,26 +69808,26 @@ namespace PowerSDR
             {
 
 
-                p.Graphics.FillPath(new SolidBrush(AnalogMeterBackgroundColor), gPath);
-                p.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.White, 8, 2);
+                p11.Graphics.FillPath(new SolidBrush(AnalogMeterBackgroundColor), gPath);
+                p11.Graphics.DrawString("RX1 Meter          TX Meter", box.Font, Brushes.White, 8, 2);
 
                 txtMultiText.ForeColor = MeterDigitalTextColor;
                 txtMultiText.BackColor = MeterDigitalBackgroundColor;
             }
 
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p11.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
 
         } // grpMultimeter_Paint
 
         //=================================================================================
         // ke9ns add to draw curved colored line around groupbox
-        private void grpRX2Meter_Paint(object sender, PaintEventArgs p)
+        private void grpRX2Meter_Paint(object sender, PaintEventArgs p10)
         {
             PanelTS box = (PanelTS)sender;
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p10.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p10.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p10.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
             GraphicsPath gPath = CreatePath(1, 1, box.Width - BorderThk, box.Height - BorderThk, 4, true, true, true, true); //
     
@@ -69696,15 +69836,15 @@ namespace PowerSDR
             {
                 LinearGradientBrush P = new LinearGradientBrush(box.ClientRectangle, Color.FromArgb(218, 218, 189), Color.FromArgb(243, 244, 211), LinearGradientMode.Horizontal);
 
-                p.Graphics.FillPath(P, gPath); // color of the light meter background  new SolidBrush(Color.FromArgb(0xff, 0xff, 0xe4))
+                p10.Graphics.FillPath(P, gPath); // color of the light meter background  new SolidBrush(Color.FromArgb(0xff, 0xff, 0xe4))
 
                 if (FWCEEPROM.RX2OK)  // if no 2nd receiver then make the 2nd meter visable
                 {
-                    p.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.Black, 8, 2);
+                    p10.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.Black, 8, 2);
                 }
                 else
                 {
-                    p.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.Black, 88, 2);
+                    p10.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.Black, 88, 2);
                 }
               
                 
@@ -69717,14 +69857,14 @@ namespace PowerSDR
             {
                 LinearGradientBrush P = new LinearGradientBrush(box.ClientRectangle, Color.FromArgb(64, 64, 55), Color.FromArgb(139, 139, 125), LinearGradientMode.Horizontal);
                  
-                p.Graphics.FillPath(P, gPath); // color of the dark meter background new SolidBrush(Color.FromArgb(146,146,140))
+                p10.Graphics.FillPath(P, gPath); // color of the dark meter background new SolidBrush(Color.FromArgb(146,146,140))
                 if (FWCEEPROM.RX2OK)  // if no 2nd receiver then make the 2nd meter visable
                 {
-                    p.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.White, 8, 2);
+                    p10.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.White, 8, 2);
                 }
                 else
                 {
-                    p.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.White, 88, 2);
+                    p10.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.White, 88, 2);
                 }
 
                 txtRX2Meter.ForeColor = Color.Black;
@@ -69733,22 +69873,22 @@ namespace PowerSDR
             }
             else
             {
-                p.Graphics.FillPath(new SolidBrush(AnalogMeterBackgroundColor), gPath);
+                p10.Graphics.FillPath(new SolidBrush(AnalogMeterBackgroundColor), gPath);
 
                 if (FWCEEPROM.RX2OK)  // if no 2nd receiver then make the 2nd meter visable
                 {
-                    p.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.White, 8, 2);
+                    p10.Graphics.DrawString("RX2 Meter          TX Meter(2nd)", box.Font, Brushes.White, 8, 2);
                 }
                 else
                 {
-                    p.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.White, 88, 2);
+                    p10.Graphics.DrawString("TX Meter(2nd)", box.Font, Brushes.White, 88, 2);
                 }
 
                 txtRX2Meter.ForeColor = MeterDigitalTextColor;
                 txtRX2Meter.BackColor = MeterDigitalBackgroundColor;
             }
 
-            p.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
+            p10.Graphics.DrawPath(new Pen(ring_vfo_color, BorderThk), gPath); // ke9ns take color from setup Ring VFO color
 
         } //  grpRX2Meter_Paint
 
@@ -69757,22 +69897,22 @@ namespace PowerSDR
         //=======================================================================================================
         //  grpVFOA.Paint += PaintBorderlessGroupBox;
         // ke9ns add draw rounded box around groupbox (but prefer to use the grpVFOA_PAINT event instead of this)
-        private void PaintBorderlessGroupBox(object sender, PaintEventArgs p)
+        private void PaintBorderlessGroupBox(object sender, PaintEventArgs p6)
         {
             GroupBoxTS box = (GroupBoxTS)sender;
 
             GraphicsPath gPath = CreatePath(0, 0, box.Width - 1, box.Height - 1, 4, true, true, true, true); //
 
-            p.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
+            p6.Graphics.Clear(Color.Transparent);  // box.Parent.BackColor
 
-            p.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            p.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            p.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            p6.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            p6.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            p6.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-            p.Graphics.FillPath(new SolidBrush(Color.Transparent), gPath);
-            p.Graphics.DrawPath(new Pen(Color.Green, 2.2f), gPath);
+            p6.Graphics.FillPath(new SolidBrush(Color.Transparent), gPath);
+            p6.Graphics.DrawPath(new Pen(Color.Green, 2.2f), gPath);
 
-            p.Graphics.DrawString(box.Text, box.Font, Brushes.White, 8, 0);
+            p6.Graphics.DrawString(box.Text, box.Font, Brushes.White, 8, 0);
 
         } // PaintBorderlessGroupBox
 
@@ -70812,14 +70952,16 @@ namespace PowerSDR
         public bool SWLFORM
         {
             get {
-                return false;
+                    return false;
                 }
             set {
-                  if (SwlForm == null || SwlForm.IsDisposed) SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
 
-                   SwlForm.Show();
-                   SwlForm.Focus();
-                   SwlForm.WindowState = FormWindowState.Normal; // ke9ns add
+                if (SwlForm == null || SwlForm.IsDisposed) SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
+                           
+                SwlForm.Show();
+                SwlForm.Focus();
+
+               SwlForm.WindowState = FormWindowState.Normal; // ke9ns add
 
 
                 // = value;
@@ -73076,7 +73218,7 @@ namespace PowerSDR
 
             if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
 
-            if (((int)SpotForm.udDisplayLat.Value > 29) && ((int)SpotForm.udDisplayLat.Value < 49))
+            if (((int)SpotForm.udDisplayLat.Value > 24) && ((int)SpotForm.udDisplayLat.Value < 51))
             {
                 if (((int)SpotForm.udDisplayLong.Value > -120) && ((int)SpotForm.udDisplayLong.Value < -73))
                 {
@@ -73832,19 +73974,64 @@ namespace PowerSDR
         // ke9ns add send hygain rotor command to DDUtil via the CAT port setup in PowerSDR
         public string spotDDUtil_Rotor // called from SPOT.cs routine when clicking on DX SPOT
         {
+           
             set
             {
-               
+                if (ROTOREnabled == false) return; // if rotor is not connected then dont check
+
                 try
                 {
                     Debug.WriteLine("DDUTIL ROTOR1:");
-                    siolisten1.SIO.put(value);   // this is the DDUtil PORT found in setup and SIOListenerIII.cs
+                    siolisten1.SIO1.put(value);   // this is the DDUtil PORT found in setup and SIOListenerIII.cs
                 }
                 catch { }
             }
 
         } // 
 
+        // ke9ns add
+        public string RotorAngle = "NA";  // ke9ns add
+        public bool RotorAngleRdy = false; // ke9ns add
+
+        public string spotDDUtil_Rotor1 // called from SPOT.cs routine when clicking on DX SPOT
+        {
+           
+            get
+            {
+                   
+               // CATTester cat = new CATTester(this);
+
+                string answer = "N-A";
+
+                if (ROTOREnabled == false) return answer; // if rotor is not connected then dont check
+
+                try
+                {
+                    siolisten1.SIO1.put1("AI1;");  // parser.Get1("AI1;");
+                    Stopwatch rotor = new Stopwatch();
+
+                    rotor.Restart();
+
+                    for (; ; )
+                    {
+                        if ((rotor.ElapsedMilliseconds > 200) || (RotorAngleRdy == true)) break;
+                    }
+
+
+
+                    rotor.Stop();
+
+                  //  Debug.WriteLine("ROTORANGLE :" + RotorAngle + ", "+ RotorAngleRdy);
+                    RotorAngleRdy = false;
+                }
+                catch { }
+
+                answer = RotorAngle;
+
+                return answer;
+            }
+
+        } // 
 
         double sPrev = 0.0;
         double sPrev2 = 0.0;
@@ -75178,7 +75365,7 @@ namespace PowerSDR
 
         //====================================================================================================
         // ke9ns add works auto closing messagebox
-        public class AutoClosingMessageBox
+        sealed public class AutoClosingMessageBox
         {
             System.Threading.Timer _timeoutTimer;
             string _caption;
@@ -75558,9 +75745,9 @@ namespace PowerSDR
         {
             if (SpotForm != null)
             {
-                SWLFORM = true; // open up SWL search window
                 SpotControl.SP1_Active = 1; // make sure SWL is actually turned ON
-
+                SWLFORM = true; // open up SWL search window
+              
                 if (SpotControl.SP_Active == 0)
                 {
                     spotterMenu.ForeColor = Color.Yellow;
@@ -75743,6 +75930,32 @@ namespace PowerSDR
             ScreenCap.Visible = true;
             ScreenCap1.Visible = false;
 
+        }
+
+        // ke9ns add
+        private void txtVFOABand_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+                if (SpotForm.chkBoxBandText.Checked == true) SpotForm.chkBoxBandText.Checked = false;
+                else    SpotForm.chkBoxBandText.Checked = true;
+            }
+
+
+        } // txtVFOABand_MouseUp
+
+          // ke9ns add
+        private void txtVFOBBand_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+                if (SpotForm.chkBoxBandText.Checked == true) SpotForm.chkBoxBandText.Checked = false;
+                else SpotForm.chkBoxBandText.Checked = true;
+            }
         }
 
 
@@ -76070,8 +76283,10 @@ namespace PowerSDR
 
 
         } // SWR_Logger_Read()
-
-
+         
+        
+        
+      
         //==========================================================================================
         // ke9ns add come here from from SETUP.cs (Update BandText)
         public void Refresh_Tables()

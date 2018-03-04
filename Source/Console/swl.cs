@@ -80,8 +80,7 @@ namespace PowerSDR
             Common.RestoreForm(this, "SwlForm", true);
 
          
-
-         //   bandSwlupdate();
+            //   bandSwlupdate();
 
 
         } // swlcontrol
@@ -272,9 +271,9 @@ namespace PowerSDR
 
         private void SwlControl_Load(object sender, EventArgs e)
         {
-            bandSwlupdate();
+           
+           bandSwlupdate();
           
-
         }
 
 
@@ -317,164 +316,178 @@ namespace PowerSDR
 
             iii = 0;
 
-           
-            for (int ii = 0; ii <= SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
+            int ii = 0;
+            try
             {
-              
-                // station check 
-                if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
+
+                for ( ii = 0; ii < SpotControl.SWL_Index1; ii++) // check all spots to see which ones are on at this particular time and day
                 {
 
-                 //   Debug.WriteLine("1SWL FREQ " + SpotControl.SWL_Freq[ii] + " , " + ii);
-
-
-                    // station check days on air and time on air
-                    if (
-                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && ( ((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])) )   
-                         )
+                    // station check 
+                    if ((SpotControl.SWL_Station[ii].IndexOf(richTextBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0) || (richTextBox1.Text == "") || (richTextBox1.Text == " "))
                     {
 
-                     //  Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
+                        //   Debug.WriteLine("1SWL FREQ " + SpotControl.SWL_Freq[ii] + " , " + ii);
 
 
-                        swl_index[iii++] = ii; // keep track of frequencies on at the moment
+                        // station check days on air and time on air
+                        if (
+                            ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                            ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                             )
+                        {
 
-                        if (SpotControl.SWL_Station[ii].Length > 25) SpotControl.SWL_Station[ii] = SpotControl.SWL_Station[ii].Substring(0, 25);
-
-
-                        if ((SpotControl.SWL_Station[ii].IndexOf("volmet", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("DSC-", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("hfdl", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("ALE-", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("ALE4", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("WLO", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("Beacon-", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("Maritime", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("fax", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("marker", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("weather", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("number", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("military", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("stanag", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("uscg", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("gander", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("Meteo", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("propag", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("wx", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("cw", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "CWU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("rtty", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("SSTV", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("olivia", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("navy", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("army", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("force", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "USB";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("digital", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("drm", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Station[ii].IndexOf("FT8", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            SpotControl.SWL_Mode[ii] = "DIGU";
-                        }
-                        else if ((SpotControl.SWL_Freq[ii] / 1000000) >= 29) SpotControl.SWL_Mode[ii] = "USB";
-
-                        else SpotControl.SWL_Mode[ii] = "SAM";
-    
-                        bigmessage += (String.Format("{0:00.000000}", (double)(SpotControl.SWL_Freq[ii]) / 1000000.0) +
-                            "  " + SpotControl.SWL_Station[ii].PadRight(25, ' ') + " " + SpotControl.SWL_Loc[ii].PadRight(3, ' ') +
-                            " " + SpotControl.SWL_TimeN[ii].ToString().PadLeft(4, '0') + ":" + SpotControl.SWL_TimeF[ii].ToString().PadLeft(4, '0') +
-                            " " + "\r\n");
+                            //  Debug.WriteLine("station found" + SpotControl.SWL_Freq[ii] + " , "+ SpotControl.SWL_Day1[ii]);
 
 
-                    } // check time
-                } // text search to narrow down
+                            swl_index[iii++] = ii; // keep track of frequencies on at the moment
 
-              
-            } // for loop through SWL_Index
+                            if (SpotControl.SWL_Station[ii].Length > 25) SpotControl.SWL_Station[ii] = SpotControl.SWL_Station[ii].Substring(0, 25);
 
+
+                            if ((SpotControl.SWL_Station[ii].IndexOf("volmet", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("DSC-", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("hfdl", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("ALE-", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("ALE4", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("WLO", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("Beacon-", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("Maritime", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("fax", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("marker", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("weather", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("number", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("military", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("stanag", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("uscg", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("gander", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("Meteo", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("propag", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("wx", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("cw", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "CWU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("rtty", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("SSTV", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("olivia", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("navy", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("army", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("force", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("digital", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("drm", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Station[ii].IndexOf("FT8", StringComparison.OrdinalIgnoreCase) >= 0))
+                            {
+                                SpotControl.SWL_Mode[ii] = "DIGU";
+                            }
+                            else if ((SpotControl.SWL_Freq[ii] / 1000000) >= 29)
+                            {
+                                SpotControl.SWL_Mode[ii] = "USB";
+                            }
+
+                            else
+                            {
+                                SpotControl.SWL_Mode[ii] = "SAM";
+                            }
+
+                            bigmessage += (String.Format("{0:00.000000}", (double)(SpotControl.SWL_Freq[ii]) / 1000000.0) +
+                                "  " + SpotControl.SWL_Station[ii].PadRight(25, ' ') + " " + SpotControl.SWL_Loc[ii].PadRight(3, ' ') +
+                                " " + SpotControl.SWL_TimeN[ii].ToString().PadLeft(4, '0') + ":" + SpotControl.SWL_TimeF[ii].ToString().PadLeft(4, '0') +
+                                " " + "\r\n");
+
+
+                        } // check time
+                    } // text search to narrow down
+
+
+                } // for loop through SWL_Index
+            }
+            catch (Exception e)
+            {
+                //   MessageBox.Show(new Form() { TopMost = true }, "swlform is open10 " + ii + " , " + e);
+                Debug.WriteLine("SWL Load problem " + ii + " , " + e);
+            }
 
             Debug.WriteLine("SWL DONE");
 

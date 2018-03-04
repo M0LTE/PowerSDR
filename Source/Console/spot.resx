@@ -167,6 +167,17 @@ Sync up your PC clock time to NIST.
 Use this feature before running a Beacon Scan,
 or before running WJST (JT65) or WSPR digital modes</value>
   </data>
+  <data name="RotorHead.ToolTip" xml:space="preserve">
+    <value>When Connected to your Antenna Rotor Controller via DDUtil
+This shows the current Antenna Rotor Heading 0-359
+
+NA = you are not connected to your Rotor Control. 
+DDUtil may not be running, or configured correctly.
+</value>
+  </data>
+  <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>264, 17</value>
+  </metadata>
   <data name="chkISS.ToolTip" xml:space="preserve">
     <value>True (Zenith) position of the ISS will show on Panadapter screen 
 When you Click on the TRACK button to activate the World Map
@@ -210,9 +221,6 @@ Right Click on memory in Pan to open up Memory Comments URL internet address
 LEFT CLICK on PAN + ALT + M keys to save New Memory
 </value>
   </data>
-  <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>264, 17</value>
-  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>47</value>
   </metadata>

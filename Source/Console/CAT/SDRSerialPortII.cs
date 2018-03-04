@@ -1,5 +1,6 @@
 //=================================================================
 // SDRSerialPort.cs
+// this is for standard CAT COM port Communication
 //=================================================================
 // Copyright (C) 2005  Bill Tracey
 //
@@ -27,14 +28,16 @@ using System.Threading;
 using System.IO.Ports;
 
 using FlexCW;
+using System.Diagnostics;
 
 namespace PowerSDR
 {
 	public class SDRSerialPort
 	{
 		public static event SerialRXEventHandler serial_rx_event;
-		
-		private SerialPort commPort;
+
+      
+        private SerialPort commPort;
         public SerialPort BasePort
         {
             get { return commPort; }
@@ -99,9 +102,12 @@ namespace PowerSDR
 			commPort.WriteTimeout = 500;	
 			commPort.ReceivedBytesThreshold = 1;
 		}
-		// set the comm parms ... can only be done if port is not open -- silently fails if port is open (fixme -- add some error checking) 
-		// 
-		public void setCommParms(int baudrate, Parity p, int databits, StopBits stop, Handshake handshake)  
+
+       
+
+        // set the comm parms ... can only be done if port is not open -- silently fails if port is open (fixme -- add some error checking) 
+        // 
+        public void setCommParms(int baudrate, Parity p, int databits, StopBits stop, Handshake handshake)  
 		{ 
 			if ( commPort.IsOpen ) return; // bail out if it's already open 
 			
@@ -116,10 +122,50 @@ namespace PowerSDR
 		{
 			if ( bitBangOnly ) return 0;  // fixme -- throw exception?			
 			commPort.Write(s);
+       
 			return (uint)s.Length; // wjt fixme -- hack -- we don't know if we actually wrote things 			
 		}
 
-		public int Create()
+        // ke9ns add
+        public string put1(string s)
+        {
+            string answer="---";
+
+            if (bitBangOnly) return answer;  // fixme -- throw exception?			
+
+            commPort.Write("AI1;");
+
+            try
+            {
+               
+                byte[] test = new byte[10];
+
+                //  var tes1 = commPort.Read(test, 0, 4);
+
+                 //  test[0] = commPort.ReadByte();
+
+
+                // answer = test.ToString();
+
+                //  Debug.WriteLine("BEAM: " + test[0] + " , " + test[1] + " , " + test[2] + " , " + test[3]);
+
+               // answer = commPort.ReadExisting();
+
+                Debug.WriteLine("BEAM: " + answer);
+
+              //  answer = System.Text.Encoding.Default.GetString(test);
+
+            }
+            catch (Exception e)
+            {
+              //  Debug.WriteLine("BEAM: " + e);
+                answer = "===";
+            }
+
+            return answer; // wjt fixme -- hack -- we don't know if we actually wrote things 			
+        } // put1
+
+        public int Create()
 		{
 			return Create(false); 
 		}
@@ -297,7 +343,10 @@ namespace PowerSDR
 		void SerialReceivedData(object source, SerialDataReceivedEventArgs e)
 		{
             serial_rx_event(this, new SerialRXEvent(commPort.ReadExisting()));
+
+
 		}
 
-	}
+       
+    }
 }

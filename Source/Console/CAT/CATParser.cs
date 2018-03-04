@@ -105,7 +105,10 @@ namespace PowerSDR
 			return rtncmd;
 		}
 
-		public string Get(string pCmdString)
+      
+
+
+        public string Get(string pCmdString)
 		{
 			current_cat = pCmdString;
 			string rtncmd = "";
@@ -124,6 +127,7 @@ namespace PowerSDR
             }
 
 			bool goodcmd = CheckFormat();
+
 			if(goodcmd)
 			{
 				switch(prefix)
@@ -451,7 +455,7 @@ namespace PowerSDR
             }
 
 			return true;
-		}
+		} //CheckFormat()
 
 
 		private bool FindPrefix()
@@ -522,7 +526,7 @@ namespace PowerSDR
 				throw(e);
 			}
 			return false;
-		}	
+		}	// FindPrefix()
 
 		private bool FindSuffix()
 		{
@@ -578,7 +582,7 @@ namespace PowerSDR
                 verbose_error_code = 6;     //suffix length error
                 return false;
             }
-		}
+		} // FindSuffix()
 
 		private string ParseExtended()
 		{

@@ -1126,6 +1126,11 @@ namespace PowerSDR
         public NumericUpDownTS udPTTHT;
         public CheckBoxTS chkBoxPTTHT;
         private CheckBoxTS chkDSPRX2;
+        private LabelTS labelTS32;
+        public TrackBarTS tbPanGrid;
+        private LabelTS labelTS33;
+        public NumericUpDownTS udTXDriveMax;
+        public CheckBoxTS chkBoxPanFillColor;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1909,6 +1914,8 @@ namespace PowerSDR
             this.lblTransmitTunePower = new System.Windows.Forms.LabelTS();
             this.udTXTunePower = new System.Windows.Forms.NumericUpDownTS();
             this.grpTXFilter = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS33 = new System.Windows.Forms.LabelTS();
+            this.udTXDriveMax = new System.Windows.Forms.NumericUpDownTS();
             this.lblTXFilterHigh = new System.Windows.Forms.LabelTS();
             this.udTXFilterLow = new System.Windows.Forms.NumericUpDownTS();
             this.lblTXFilterLow = new System.Windows.Forms.LabelTS();
@@ -2014,6 +2021,8 @@ namespace PowerSDR
             this.lblAppearanceGenBtnSel = new System.Windows.Forms.LabelTS();
             this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
             this.grpMainDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS32 = new System.Windows.Forms.LabelTS();
+            this.tbPanGrid = new System.Windows.Forms.TrackBarTS();
             this.clrbtnText = new PowerSDR.ColorButton();
             this.lblDisplayBackgroundColor = new System.Windows.Forms.LabelTS();
             this.udDisplayLineWidth = new System.Windows.Forms.NumericUpDownTS();
@@ -2431,6 +2440,7 @@ namespace PowerSDR
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.textBoxSAVE = new System.Windows.Forms.TextBoxTS();
+            this.chkBoxPanFillColor = new System.Windows.Forms.CheckBoxTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2640,6 +2650,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbDutyCycle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).BeginInit();
             this.grpTXFilter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.udTXDriveMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).BeginInit();
             this.grpTX1500.SuspendLayout();
@@ -2676,6 +2687,7 @@ namespace PowerSDR
             this.grpAppearanceVFO.SuspendLayout();
             this.tpAppearanceDisplay.SuspendLayout();
             this.grpMainDisplay.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
             this.grpAppPanadapter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbPanAlpha)).BeginInit();
@@ -3631,7 +3643,9 @@ namespace PowerSDR
             this.buttonTS2.Name = "buttonTS2";
             this.buttonTS2.Size = new System.Drawing.Size(117, 23);
             this.buttonTS2.TabIndex = 57;
-            this.buttonTS2.Text = "Update BandText";
+            this.buttonTS2.Text = "Update BandText \r\n\r\nClick when you change TURF region for your Flex Radio\r\nOR the" +
+    "re is a PowerSDR software update that contains changes or \r\nUpdates to the Band " +
+    "Text";
             this.toolTip1.SetToolTip(this.buttonTS2, "Update the BandText found in your Database file to the BandText found in this ver" +
         "sion of PowerSDR, \r\nwithout having to do a Setup->Factory Defaults\r\n");
             this.buttonTS2.Click += new System.EventHandler(this.buttonTS2_Click);
@@ -3664,8 +3678,6 @@ namespace PowerSDR
             // chkImportDBRestrict
             // 
             this.chkImportDBRestrict.AllowDrop = true;
-            this.chkImportDBRestrict.Checked = true;
-            this.chkImportDBRestrict.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkImportDBRestrict.Image = null;
             this.chkImportDBRestrict.Location = new System.Drawing.Point(24, 243);
             this.chkImportDBRestrict.Name = "chkImportDBRestrict";
@@ -7726,7 +7738,7 @@ namespace PowerSDR
             this.udDisplayGridMin.TabIndex = 24;
             this.toolTip1.SetToolTip(this.udDisplayGridMin, "Signal Level at bottom of display in dB.");
             this.udDisplayGridMin.Value = new decimal(new int[] {
-            150,
+            135,
             0,
             0,
             -2147483648});
@@ -7756,7 +7768,7 @@ namespace PowerSDR
             this.udDisplayGridMax.TabIndex = 23;
             this.toolTip1.SetToolTip(this.udDisplayGridMax, "Signal level at top of display in dB.");
             this.udDisplayGridMax.Value = new decimal(new int[] {
-            1,
+            19,
             0,
             0,
             -2147483648});
@@ -10128,7 +10140,7 @@ namespace PowerSDR
             // chkBoxTNTX3
             // 
             this.chkBoxTNTX3.Image = null;
-            this.chkBoxTNTX3.Location = new System.Drawing.Point(152, 266);
+            this.chkBoxTNTX3.Location = new System.Drawing.Point(155, 290);
             this.chkBoxTNTX3.Name = "chkBoxTNTX3";
             this.chkBoxTNTX3.Size = new System.Drawing.Size(133, 26);
             this.chkBoxTNTX3.TabIndex = 67;
@@ -10457,7 +10469,7 @@ namespace PowerSDR
             // 
             this.grpTXMonitor.Controls.Add(this.lblTXAF);
             this.grpTXMonitor.Controls.Add(this.udTXAF);
-            this.grpTXMonitor.Location = new System.Drawing.Point(152, 204);
+            this.grpTXMonitor.Location = new System.Drawing.Point(152, 229);
             this.grpTXMonitor.Name = "grpTXMonitor";
             this.grpTXMonitor.Size = new System.Drawing.Size(144, 56);
             this.grpTXMonitor.TabIndex = 51;
@@ -10511,7 +10523,7 @@ namespace PowerSDR
             this.grpTXNoiseGate.Controls.Add(this.chkTXNoiseGateEnabled);
             this.grpTXNoiseGate.Controls.Add(this.udTXNoiseGate);
             this.grpTXNoiseGate.Controls.Add(this.lblTXNoiseGateThreshold);
-            this.grpTXNoiseGate.Location = new System.Drawing.Point(152, 96);
+            this.grpTXNoiseGate.Location = new System.Drawing.Point(152, 121);
             this.grpTXNoiseGate.Name = "grpTXNoiseGate";
             this.grpTXNoiseGate.Size = new System.Drawing.Size(144, 102);
             this.grpTXNoiseGate.TabIndex = 49;
@@ -10801,23 +10813,64 @@ namespace PowerSDR
             // 
             // grpTXFilter
             // 
+            this.grpTXFilter.Controls.Add(this.labelTS33);
+            this.grpTXFilter.Controls.Add(this.udTXDriveMax);
             this.grpTXFilter.Controls.Add(this.lblTXFilterHigh);
             this.grpTXFilter.Controls.Add(this.udTXFilterLow);
             this.grpTXFilter.Controls.Add(this.lblTXFilterLow);
             this.grpTXFilter.Controls.Add(this.udTXFilterHigh);
             this.grpTXFilter.Location = new System.Drawing.Point(152, 8);
             this.grpTXFilter.Name = "grpTXFilter";
-            this.grpTXFilter.Size = new System.Drawing.Size(144, 80);
+            this.grpTXFilter.Size = new System.Drawing.Size(144, 107);
             this.grpTXFilter.TabIndex = 19;
             this.grpTXFilter.TabStop = false;
             this.grpTXFilter.Text = "Transmit Filter";
+            // 
+            // labelTS33
+            // 
+            this.labelTS33.Image = null;
+            this.labelTS33.Location = new System.Drawing.Point(6, 76);
+            this.labelTS33.Name = "labelTS33";
+            this.labelTS33.Size = new System.Drawing.Size(58, 17);
+            this.labelTS33.TabIndex = 5;
+            this.labelTS33.Text = "Drive Max:";
+            // 
+            // udTXDriveMax
+            // 
+            this.udTXDriveMax.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.udTXDriveMax.Location = new System.Drawing.Point(70, 73);
+            this.udTXDriveMax.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udTXDriveMax.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udTXDriveMax.Name = "udTXDriveMax";
+            this.udTXDriveMax.Size = new System.Drawing.Size(49, 20);
+            this.udTXDriveMax.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.udTXDriveMax, "Set to MAX Drive Value allowed\r\n\r\nReduce MAX Deive Value for Amp\'s that do not re" +
+        "quire full power.");
+            this.udTXDriveMax.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.udTXDriveMax.ValueChanged += new System.EventHandler(this.udTXDriveMax_ValueChanged);
             // 
             // lblTXFilterHigh
             // 
             this.lblTXFilterHigh.Image = null;
             this.lblTXFilterHigh.Location = new System.Drawing.Point(16, 24);
             this.lblTXFilterHigh.Name = "lblTXFilterHigh";
-            this.lblTXFilterHigh.Size = new System.Drawing.Size(40, 23);
+            this.lblTXFilterHigh.Size = new System.Drawing.Size(40, 18);
             this.lblTXFilterHigh.TabIndex = 3;
             this.lblTXFilterHigh.Text = "High:";
             // 
@@ -10828,7 +10881,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udTXFilterLow.Location = new System.Drawing.Point(56, 48);
+            this.udTXFilterLow.Location = new System.Drawing.Point(56, 45);
             this.udTXFilterLow.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -10856,7 +10909,7 @@ namespace PowerSDR
             this.lblTXFilterLow.Image = null;
             this.lblTXFilterLow.Location = new System.Drawing.Point(16, 48);
             this.lblTXFilterLow.Name = "lblTXFilterLow";
-            this.lblTXFilterLow.Size = new System.Drawing.Size(40, 23);
+            this.lblTXFilterLow.Size = new System.Drawing.Size(40, 17);
             this.lblTXFilterLow.TabIndex = 1;
             this.lblTXFilterLow.Text = "Low:";
             // 
@@ -10867,7 +10920,7 @@ namespace PowerSDR
             0,
             0,
             0});
-            this.udTXFilterHigh.Location = new System.Drawing.Point(56, 24);
+            this.udTXFilterHigh.Location = new System.Drawing.Point(56, 19);
             this.udTXFilterHigh.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -12404,6 +12457,8 @@ namespace PowerSDR
             // 
             // grpMainDisplay
             // 
+            this.grpMainDisplay.Controls.Add(this.labelTS32);
+            this.grpMainDisplay.Controls.Add(this.tbPanGrid);
             this.grpMainDisplay.Controls.Add(this.clrbtnText);
             this.grpMainDisplay.Controls.Add(this.lblDisplayBackgroundColor);
             this.grpMainDisplay.Controls.Add(this.udDisplayLineWidth);
@@ -12422,6 +12477,28 @@ namespace PowerSDR
             this.grpMainDisplay.TabIndex = 78;
             this.grpMainDisplay.TabStop = false;
             this.grpMainDisplay.Text = "Main Display";
+            // 
+            // labelTS32
+            // 
+            this.labelTS32.Image = null;
+            this.labelTS32.Location = new System.Drawing.Point(250, 37);
+            this.labelTS32.Name = "labelTS32";
+            this.labelTS32.Size = new System.Drawing.Size(50, 26);
+            this.labelTS32.TabIndex = 96;
+            this.labelTS32.Text = "Fill Alpha:";
+            // 
+            // tbPanGrid
+            // 
+            this.tbPanGrid.AutoSize = false;
+            this.tbPanGrid.Location = new System.Drawing.Point(301, 41);
+            this.tbPanGrid.Maximum = 200;
+            this.tbPanGrid.Name = "tbPanGrid";
+            this.tbPanGrid.Size = new System.Drawing.Size(66, 18);
+            this.tbPanGrid.TabIndex = 96;
+            this.tbPanGrid.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbPanGrid, "Transparency of BandText fill area ");
+            this.tbPanGrid.Value = 70;
+            this.tbPanGrid.Scroll += new System.EventHandler(this.tbPanGrid_Scroll);
             // 
             // clrbtnText
             // 
@@ -12452,7 +12529,7 @@ namespace PowerSDR
             0,
             0,
             65536});
-            this.udDisplayLineWidth.Location = new System.Drawing.Point(316, 61);
+            this.udDisplayLineWidth.Location = new System.Drawing.Point(316, 69);
             this.udDisplayLineWidth.Maximum = new decimal(new int[] {
             50,
             0,
@@ -12495,9 +12572,9 @@ namespace PowerSDR
             // lblDisplayLineWidth
             // 
             this.lblDisplayLineWidth.Image = null;
-            this.lblDisplayLineWidth.Location = new System.Drawing.Point(256, 61);
+            this.lblDisplayLineWidth.Location = new System.Drawing.Point(250, 68);
             this.lblDisplayLineWidth.Name = "lblDisplayLineWidth";
-            this.lblDisplayLineWidth.Size = new System.Drawing.Size(64, 36);
+            this.lblDisplayLineWidth.Size = new System.Drawing.Size(64, 30);
             this.lblDisplayLineWidth.TabIndex = 43;
             this.lblDisplayLineWidth.Text = "Data Line Width:";
             // 
@@ -12518,11 +12595,12 @@ namespace PowerSDR
             this.clrbtnGrid.Automatic = "Automatic";
             this.clrbtnGrid.Color = System.Drawing.Color.Purple;
             this.clrbtnGrid.Image = null;
-            this.clrbtnGrid.Location = new System.Drawing.Point(316, 16);
+            this.clrbtnGrid.Location = new System.Drawing.Point(316, 12);
             this.clrbtnGrid.MoreColors = "More Colors...";
             this.clrbtnGrid.Name = "clrbtnGrid";
             this.clrbtnGrid.Size = new System.Drawing.Size(40, 23);
             this.clrbtnGrid.TabIndex = 69;
+            this.toolTip1.SetToolTip(this.clrbtnGrid, "Display area Grid Color and BandText color");
             this.clrbtnGrid.Changed += new System.EventHandler(this.clrbtnGrid_Changed);
             // 
             // lblDisplayZeroLineColor
@@ -12549,11 +12627,12 @@ namespace PowerSDR
             // lblDisplayGridColor
             // 
             this.lblDisplayGridColor.Image = null;
-            this.lblDisplayGridColor.Location = new System.Drawing.Point(256, 21);
+            this.lblDisplayGridColor.Location = new System.Drawing.Point(248, 10);
             this.lblDisplayGridColor.Name = "lblDisplayGridColor";
-            this.lblDisplayGridColor.Size = new System.Drawing.Size(62, 24);
+            this.lblDisplayGridColor.Size = new System.Drawing.Size(72, 28);
             this.lblDisplayGridColor.TabIndex = 35;
-            this.lblDisplayGridColor.Text = "Grid Color:";
+            this.lblDisplayGridColor.Text = "Grid and BandText";
+            this.toolTip1.SetToolTip(this.lblDisplayGridColor, "Display area Grid Color and BandText color");
             // 
             // clrbtnDataLine
             // 
@@ -12570,6 +12649,7 @@ namespace PowerSDR
             // 
             // grpAppPanadapter
             // 
+            this.grpAppPanadapter.Controls.Add(this.chkBoxPanFillColor);
             this.grpAppPanadapter.Controls.Add(this.labelTS11);
             this.grpAppPanadapter.Controls.Add(this.labelTS10);
             this.grpAppPanadapter.Controls.Add(this.tbPanAlpha);
@@ -17150,6 +17230,18 @@ namespace PowerSDR
             this.textBoxSAVE.Size = new System.Drawing.Size(316, 20);
             this.textBoxSAVE.TabIndex = 30;
             // 
+            // chkBoxPanFillColor
+            // 
+            this.chkBoxPanFillColor.Image = null;
+            this.chkBoxPanFillColor.Location = new System.Drawing.Point(439, 127);
+            this.chkBoxPanFillColor.Name = "chkBoxPanFillColor";
+            this.chkBoxPanFillColor.Size = new System.Drawing.Size(70, 32);
+            this.chkBoxPanFillColor.TabIndex = 96;
+            this.chkBoxPanFillColor.Text = "Pan Fill Gradient";
+            this.toolTip1.SetToolTip(this.chkBoxPanFillColor, "Check to show Color gradient under Panadapter Spectrum line.\r\nColor related to si" +
+        "gnal strength (BLUE = LOW, VIOLET = HIGH)");
+            this.chkBoxPanFillColor.CheckedChanged += new System.EventHandler(this.chkBoxPanFillColor_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -17389,6 +17481,7 @@ namespace PowerSDR
             ((System.ComponentModel.ISupportInitialize)(this.tbDutyCycle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXTunePower)).EndInit();
             this.grpTXFilter.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.udTXDriveMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).EndInit();
             this.grpTX1500.ResumeLayout(false);
@@ -17425,6 +17518,7 @@ namespace PowerSDR
             this.grpAppearanceVFO.ResumeLayout(false);
             this.tpAppearanceDisplay.ResumeLayout(false);
             this.grpMainDisplay.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tbPanGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
             this.grpAppPanadapter.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbPanAlpha)).EndInit();
@@ -19776,8 +19870,14 @@ namespace PowerSDR
 		public int TunePower
 		{
 			get { return (int)udTXTunePower.Value; }
-			set { udTXTunePower.Value = (decimal)value; }
-		}
+			set {
+               
+                udTXTunePower.Value = (decimal)value;
+
+               if (udTXDriveMax.Value < udTXTunePower.Value) udTXTunePower.Value = udTXDriveMax.Value;
+
+            }
+        }
 
 		public bool DigUIsUSB
 		{
@@ -20835,8 +20935,9 @@ namespace PowerSDR
 		{
 			comboGeneralLPTAddr_KeyDown(sender, new KeyEventArgs(Keys.Enter));
 		}
-		
-		private void chkGeneralRXOnly_CheckedChanged(object sender, System.EventArgs e)
+
+        // ke9ns (see  PollRXOnly() in console)
+        private void chkGeneralRXOnly_CheckedChanged(object sender, System.EventArgs e)
 		{
             bool rx_only = chkGeneralRXOnly.Checked;
 
@@ -20854,7 +20955,7 @@ namespace PowerSDR
 					chkGeneralRXOnly.Checked = true;
 					return;
 				}
-			}
+			} 
                 
 			if(console.RXOnly != rx_only)  console.RXOnly = rx_only;
 
@@ -20863,9 +20964,10 @@ namespace PowerSDR
             tpPowerAmplifier.Enabled = !rx_only;
 
             grpTestTXIMD.Enabled = !rx_only;
-		}
 
-		private void chkGeneralUSBPresent_CheckedChanged(object sender, System.EventArgs e)
+        } // chkGeneralRXOnly_CheckedChanged
+
+        private void chkGeneralUSBPresent_CheckedChanged(object sender, System.EventArgs e)
 		{
 			try
 			{
@@ -23120,27 +23222,34 @@ namespace PowerSDR
 
 		private void udDisplayGridMax_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udDisplayGridMax.Value <= udDisplayGridMin.Value)
-				udDisplayGridMax.Value = udDisplayGridMin.Value + 10;
+			if(udDisplayGridMax.Value <= udDisplayGridMin.Value) udDisplayGridMax.Value = udDisplayGridMin.Value + 10;
 			Display.SpectrumGridMax = (int)udDisplayGridMax.Value;
-            
-          //  console.AutoPanScaleMax = (int)udDisplayGridMax.Value; // ke9ns add storage of original  value
+         
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
+
+
+            //  console.AutoPanScaleMax = (int)udDisplayGridMax.Value; // ke9ns add storage of original  value
         }
 
-		private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
+        private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udDisplayGridMin.Value >= udDisplayGridMax.Value)
-				udDisplayGridMin.Value = udDisplayGridMax.Value - 10;
+			if(udDisplayGridMin.Value >= udDisplayGridMax.Value) udDisplayGridMin.Value = udDisplayGridMax.Value - 10;
 			Display.SpectrumGridMin = (int)udDisplayGridMin.Value;
-           // console.AutoPanScaleMin = (int)udDisplayGridMin.Value; // ke9ns add storage of original  value
+            
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
+
+            // console.AutoPanScaleMin = (int)udDisplayGridMin.Value; // ke9ns add storage of original  value
         }
 
-		private void udDisplayGridStep_ValueChanged(object sender, System.EventArgs e)
+        private void udDisplayGridStep_ValueChanged(object sender, System.EventArgs e)
 		{
 			Display.SpectrumGridStep = (int)udDisplayGridStep.Value;
-		}
+           
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
 
-		private void comboDisplayLabelAlign_SelectedIndexChanged(object sender, System.EventArgs e)
+        }
+
+        private void comboDisplayLabelAlign_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			switch(comboDisplayLabelAlign.Text)
 			{
@@ -23916,7 +24025,12 @@ namespace PowerSDR
 
 		private void udTransmitTunePower_ValueChanged(object sender, System.EventArgs e)
 		{
-            if (console.chkBoxDrive.Checked == false)  console.TunePower = (int)udTXTunePower.Value;
+            if (console.chkBoxDrive.Checked == false)
+            {
+                if (udTXDriveMax.Value < udTXTunePower.Value) udTXTunePower.Value = udTXDriveMax.Value;
+
+                console.TunePower = (int)udTXTunePower.Value;
+            }
 		}
 
 		private string current_profile = "";
@@ -24483,9 +24597,20 @@ namespace PowerSDR
 		private void clrbtnGrid_Changed(object sender, System.EventArgs e)
 		{
 			Display.GridColor = clrbtnGrid.Color;
-		}
+            
+            // ke9ns add
+            Display.BandTextColor = Color.FromArgb(tbPanGrid.Value, clrbtnGrid.Color); // ke9ns  combine color and alpha here
 
-		private void clrbtnZeroLine_Changed(object sender, System.EventArgs e)
+        }
+
+        // ke9ns add
+        private void tbPanGrid_Scroll(object sender, EventArgs e)
+        {
+            clrbtnGrid_Changed(this, EventArgs.Empty);
+        }
+
+
+        private void clrbtnZeroLine_Changed(object sender, System.EventArgs e)
 		{
 			Display.GridZeroColor = clrbtnZeroLine.Color;
 		}
@@ -25971,7 +26096,7 @@ namespace PowerSDR
             {
                 Debug.WriteLine("current , old " + current_ver_num + " , "+ db_ver_num);
 
-                if (chkImportDBRestrict.Checked)
+            /*    if (chkImportDBRestrict.Checked)
                 {
                     MessageBox.Show("Database Import Restricted.\r\n\r\nThe database selected for import was " +
                         "created from a version of PowerSDR that is not the same as PowerSDR v" + current_ver_num + ".\r\n\r\n" +
@@ -25990,6 +26115,7 @@ namespace PowerSDR
                 }
                 else
                 {
+                */
                     DialogResult result = MessageBox.Show("The database selected for import was " +
                         "created (Exported) from a version of PowerSDR that is not the same as PowerSDR v" + current_ver_num + " and " +
                         "the DB import safeguard has been disabled.\r\n\r\n" +
@@ -26007,7 +26133,7 @@ namespace PowerSDR
                         db_import_success = false;
                         return;
                     }
-                }
+              //  }
             }
 
             DB.ImportDatabase(openFileDialog1.FileName);
@@ -26494,9 +26620,11 @@ namespace PowerSDR
 		private void udTXTunePower_LostFocus(object sender, EventArgs e)
 		{
 			udTXTunePower.Value = udTXTunePower.Value;
-		}
+            if (udTXDriveMax.Value < udTXTunePower.Value) udTXTunePower.Value = udTXDriveMax.Value;
 
-		private void udTXFilterLow_LostFocus(object sender, EventArgs e)
+        }
+
+        private void udTXFilterLow_LostFocus(object sender, EventArgs e)
 		{
 			udTXFilterLow.Value = udTXFilterLow.Value;
 		}
@@ -28257,12 +28385,19 @@ namespace PowerSDR
         private void clrbtnPan_Changed(object sender, EventArgs e)
         {
             Display.DisplayPanFillColor = Color.FromArgb(tbPanAlpha.Value, clrbtnPan.Color); // ke9ns  combine color and alpha here
+           
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
 
         }
 
         private void tbPanAlpha_Scroll(object sender, EventArgs e)
         {
+            Display.PanFillAlpha = tbPanAlpha.Value;
+
             clrbtnPan_Changed(this, EventArgs.Empty);
+           
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
+
         }
 
 
@@ -28563,7 +28698,8 @@ namespace PowerSDR
               
                 try
                 {
-                    console.ROTOREnabled = true;
+                    
+                    console.ROTOREnabled = chkROTOREnable.Checked;
                 }
                 catch (Exception ex)
                 {
@@ -28582,6 +28718,7 @@ namespace PowerSDR
 
 
         } // chkROTORENable
+
 
         private void comboROTORPort_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -29094,6 +29231,36 @@ namespace PowerSDR
             if (chkBoxPTTHT.Checked == false) console.PTTHT = 0;
             else console.PTTHT = (int)udPTTHT.Value;
         }
+
+        // ke9ns add
+        private void udTXDriveMax_ValueChanged(object sender, EventArgs e)
+        {
+
+            if (udTXDriveMax.Value < udTXTunePower.Value)
+            {
+                udTXTunePower.Value = udTXDriveMax.Value;
+                console.ptbTune.Value = (int)udTXDriveMax.Value;
+                console.lblTUNE.Text = "Tune: " + console.ptbTune.Value.ToString();
+            }
+
+            if (udTXDriveMax.Value < (decimal)console.ptbPWR.Value)
+            {
+                console.ptbPWR.Value = (int)udTXDriveMax.Value;
+                console.lblPWR.Text = "Drive: " + console.ptbPWR.Value.ToString();
+            }
+
+
+        } // udTXDriveMax_ValueChanged
+
+        private void chkBoxPanFillColor_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.Gradient(Display.SpectrumGridMax, Display.SpectrumGridMin); // set new Gradient color scheme
+           
+            Display.PanFillGradient = chkBoxPanFillColor.Checked;
+          
+        } // chkBoxPanFillColor_CheckedChanged
+
+
 
 
 

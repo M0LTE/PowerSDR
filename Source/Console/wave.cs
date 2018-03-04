@@ -49,7 +49,7 @@ using NAudio.Lame;
 
 namespace PowerSDR
 {
-	public class WaveControl : System.Windows.Forms.Form
+    sealed public class WaveControl : System.Windows.Forms.Form
 	{
         #region Variable Declaration
 

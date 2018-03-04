@@ -51,7 +51,7 @@ using Flex.TNF;
 
 namespace PowerSDR
 {
-    class Display
+    sealed class Display
     {
 
         #region Variable Declaration
@@ -912,6 +912,18 @@ namespace PowerSDR
             }
         }
 
+
+        private static Color BT_color = Color.Purple;
+        public static Color BandTextColor
+        {
+            get { return BT_color; }
+            set
+            {
+                BT_color = value;
+               
+            }
+        }
+
         private static Pen data_line_pen = new Pen(new SolidBrush(Color.White), display_line_width);
         private static Pen IDENT_pen = new Pen(new SolidBrush(Color.PaleGreen), 1); // ke9ns add
         private static Pen IDENT_pen2 = new Pen(new SolidBrush(Color.PaleGoldenrod), 1); // ke9ns add
@@ -954,6 +966,35 @@ namespace PowerSDR
                 DrawBackground();
             }
         }
+
+        // ke9ns add for panadapter fill color and alpha
+        private static int panfillalpha = 150;
+
+        public static int PanFillAlpha
+        {
+            get { return panfillalpha; }
+            set
+            {
+                panfillalpha = value;
+               
+            }
+        }
+
+        //  Display.DisplayPanFillColor = Color.FromArgb(tbPanAlpha.Value, clrbtnPan.Color); // ke9ns  combine color and alpha here
+
+        // ke9ns add for Pan Fill Gradient color (instead of just 1 color)
+        private static bool panfillgradient = false;
+        public static bool PanFillGradient
+        {
+            get { return panfillgradient; }
+            set
+            {
+                panfillgradient = value;
+
+            }
+        }
+
+
 
         // ke9ns add  autobright                        helper to keep thread safe
         private static int wateroffset = 20;
@@ -2660,6 +2701,12 @@ namespace PowerSDR
         static bool SWR_Multi = false; // true = Panadapter screen only (no waterfall) will display up to 5 SWR plots simultaneously
         static int SWR_Count = 1; //
         static int SWR_C = 1; //
+
+        static decimal freqlast1 = 0; // ke9ns add for bandtext
+        static string[] bandtext = new string[2000]; // ke9ns add for bandtext
+        static  decimal[] bandfreq = new decimal[2000]; // ke9ns add for bandtext
+        static bool[] bandhere = new bool[2000]; // ke9ns add for bandtext
+        static int bandtext_counter = 0; // ke9ns add for bandtext
 
         private static void DrawPanadapterGrid(ref Graphics g, int W, int H, int rx, bool bottom)
         {
@@ -11346,251 +11393,671 @@ namespace PowerSDR
             //===============================================================================================================================================================
             //=====================================================================
             //=====================================================================
-            // ke9ns add DRAW MEMORY SPOTS ON PANADAPTER
+            // ke9ns add DRAW BandText ON PANADAPTER
             //=====================================================================
             //=====================================================================
 
-            if ((SpotControl.SP6_Active != 0) && (!mox) && (console.chkPower.Checked == true))// do memory spot if active and not transmitting
+
+            if ((!mox) && (console.chkPower.Checked == true) && (SpotForm.chkBoxBandText.Checked == true))
             {
 
-                int iii = 0;                          // ke9ns add stairstep holder
-
-                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
-
-                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
-
-                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
-                int H1b = 20;               // starting point of vertical line
-
-                // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
-                if (bottom)                 // if your drawing to the bottom 
+                if (!bottom) // RX1
                 {
+                    VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
+                    VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
+                    VFODiff = VFOHigh - VFOLow; // diff in hz
+
+                    decimal VFOLowB = (decimal)((float)VFOLow / 1000000); // freq in mhz
+                    decimal VFOHighB = (decimal)((float)VFOHigh / 1000000); // freq in mhz
+                    decimal VFOC = (decimal)((float)vfoa_hz / 1000000); // freq in mhz
+
+                    int tempL = (int)(VFOLowB * 1000);
+                    int tempH = (int)(VFOHighB * 1000);
+                    int tempC = (int)(VFOC * 1000); // current freq in mhz 7.128 (down to khz only)
+
+                    VFOLowB = (decimal)tempL / 1000;
+                    VFOHighB = (decimal)tempH / 1000; // ke9ns only allow freq in MHZ down to khz 7.123456 becomes 7.123 mhz
+                    VFOC = (decimal)tempC / 1000;
+
+                    float XPOS = (float)W / (float)VFODiff; // generate a conversion factor (pixels per hz) to be able to select the pixel based on the freq
+                    int H1a = H * 2 / 3; // vert line length from top down
+
+                    string bandInfo;
+
+                    //  Debug.WriteLine("START BANDTEXT: " + bandtext_counter + " , " + freqlast1 + ", " + vfoa_hz);
+
+                    //---------------------------------------------------
+                    // ke9ns RX1 determine the bandtext to display for the current pan
+                    if (freqlast1 != VFOC)
+                    {
+                        bandtext_counter = 0; // reset the bandtext counter
+                        freqlast1 = VFOC;
+
+                        //   Debug.WriteLine("LOOP BANDTEXT2 " + VFOLow + " , " + VFOHigh + " , " + VFOLowB + ", " + VFOHighB + " , " + XPOS + " , " + VFODiff);
+
+                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.001m) // for loop through each 1khz to find all the bandtext for the current display
+                        {
+                            DB.BandText((double)ii, out bandInfo);
+
+                            //   Debug.WriteLine("BANDINFO: " + bandInfo + " , " + ii + " , " + bandtext[bandtext_counter]);
+
+                            if (bandInfo == bandtext[bandtext_counter])
+                            {
+                                bandtext_counter++;
+                                bandtext[bandtext_counter] = bandInfo;
+                                bandfreq[bandtext_counter] = ii;
+                                bandhere[bandtext_counter] = false;
+                            }
+                            else
+                            {
+                                bandtext_counter++;
+                                bandtext[bandtext_counter] = bandInfo;
+                                bandfreq[bandtext_counter] = ii;
+                                bandhere[bandtext_counter] = true;
+                                //  Debug.WriteLine("ADD BANDTEXT " + " , " + ii + " , "+ bandtext_counter + " , " + bandInfo);
+                            }
+
+                        } // for 
+
+                        //  Debug.WriteLine("FINISHED BANDTEXT: " + bandtext_counter + " , " + freqlast1 + ", " + vfoa_hz);
+                        //   Debug.WriteLine("--------------------------");
+
+                    } //  if (console.UpdateBandText == true)
+
+
+                    //----------------------------------------------------------------------
+                    // ke9ns RX1 display the bandtext on the pan XPOS = 0.00701875 , 
+
+                    for (int zz = 0; zz < bandtext_counter; zz++) // scan through all the bandtext that appear
+                    {
+                        int VFO_bandtext = (int)(((XPOS) * (float)((int)(bandfreq[zz] * 1000000) - VFOLow)));
+
+                        if (bandhere[zz] == true)
+                        {
+                            //  Debug.WriteLine("Display Band text: " + VFO_bandtext + " , " + bandfreq[zz] + " , " + bandtext[zz] + " , " + XPOS + " , " +VFOLow  );
+
+                            g.DrawLine(p2, VFO_bandtext, 20, VFO_bandtext, H1a);   // draw vertical line
+
+                            StringFormat SF = new StringFormat();
+                            SF.Alignment = StringAlignment.Near;
+                            SF.FormatFlags = StringFormatFlags.DirectionVertical;
+
+
+                            g.DrawString(bandtext[zz], font1, grid_text_brush, VFO_bandtext, 20, SF); // draw bandtext vertically
+
+                        }
+                        else // draw a transparent box in the area of freq that the bandtext refers to.
+                        {
+                            int zz1 = zz;
+                            int zz4 = 0;
+                            for (; zz1 < bandtext_counter; zz1++)   // find next value bandtext (and how wide the open space is in khz)
+                            {
+                                zz4++;
+                                if (bandhere[zz1] == true) break;
+
+                            } // for loop
+
+                            int zz2 = zz; // save the current ZZ position
+
+                            if (zz != 0) zz2--; // get the position before (as long as your not at the start)
+
+                            int VFO_bandtext2 = 0;
+
+
+                            int VFO_bandtext0 = (int)(((XPOS) * (float)((int)(bandfreq[zz2] * 1000000) - VFOLow)));   // LEFT SIDE X PIXEL POS of Rectangle
+                            int VFO_bandtext1 = (int)(((XPOS) * (float)((int)(bandfreq[zz1 - 1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
+                            int VFO_bandtext3 = (int)(((XPOS) * (float)((int)(bandfreq[zz1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
+
+                            VFO_bandtext1 = ((VFO_bandtext3 - VFO_bandtext1) * 3 / 4) + VFO_bandtext1;
+
+
+
+                            //  Brush B9 = new SolidBrush(Color.FromArgb(42, grid_color));
+                            Brush B9 = new SolidBrush(BT_color);
+
+                            g.FillRectangle(B9, VFO_bandtext0, 20, VFO_bandtext1 - VFO_bandtext0, H1a / 2);
+
+                            if (((zz1 - 1) > zz2))
+                            {
+                                int zz3 = (int)((decimal)((zz1 - 1) - zz2) / 1.5m) + zz2; // print extra label around 2/3rds of the way to the end
+
+                                VFO_bandtext2 = (int)(((XPOS) * (float)((int)(bandfreq[zz3] * 1000000) - VFOLow))); // x pixel position
+
+                                if (((VFO_bandtext1 - VFO_bandtext0) > 400) && (VFO_bandtext2 > 40) && (VFO_bandtext2 < (W - 40))) // keep away from the left and right vertical dbM and S meter text
+                                {
+
+                                    StringFormat SF = new StringFormat();
+                                    SF.Alignment = StringAlignment.Near;
+                                    SF.FormatFlags = StringFormatFlags.DirectionVertical;
+                                    g.DrawString(bandtext[zz], font1, grid_text_brush, VFO_bandtext2, 20, SF); // draw bandtext vertically
+                                }
+                            }
+
+
+                            zz = zz1 - 1; // jump directly to next bandtext label
+
+                        } // else
+
+                    } // for loop
+
+                    //  Debug.WriteLine("=============================");
+
+
+                } // top RX1 draw bandtext to pan
+                else // bottom rX2
+                {
+
+                    VFOLow = (int)vfob_hz + RXDisplayLow; // low freq (left side) in hz
+                    VFOHigh = (int)vfob_hz + RXDisplayHigh; // high freq (right side) in hz
+                    VFODiff = VFOHigh - VFOLow; // diff in hz
+
+                    decimal VFOLowB = (decimal)((float)VFOLow / 1000000); // freq in mhz
+                    decimal VFOHighB = (decimal)((float)VFOHigh / 1000000); // freq in mhz
+                    decimal VFOC = (decimal)((float)vfob_hz / 1000000); // freq in mhz
+
+                    int tempL = (int)(VFOLowB * 1000);
+                    int tempH = (int)(VFOHighB * 1000);
+                    int tempC = (int)(VFOC * 1000); // current freq in mhz 7.128 (down to khz only)
+
+                    VFOLowB = (decimal)tempL / 1000;
+                    VFOHighB = (decimal)tempH / 1000; // ke9ns only allow freq in MHZ down to khz 7.123456 becomes 7.123 mhz
+                    VFOC = (decimal)tempC / 1000;
+
+                    float XPOS = (float)W / (float)VFODiff; // generate a conversion factor (pixels per hz) to be able to select the pixel based on the freq
+                                                            //  int H1a = H * 2 / 3; // vert line length from top down
+
+
+
+                    // below is for rx2 only
+                    int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
+                    int H1b = 20;               // starting point of vertical line
+
+                    // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+
                     if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
                     else H1a = H + (H / 4); // short
 
                     H1b = H + 20;
 
-                    vfo_hz = (int)vfob_hz;
-                    Console.MMK4 = 0;        // RX4 index to allow call signs to draw after all the vert lines on the screen
 
-                }
-                else
-                {
-                    Console.MMK3 = 0;        // RX3 index to allow call signs to draw after all the vert lines on the screen
+                    string bandInfo;
 
+                    //  Debug.WriteLine("START BANDTEXT: " + bandtext_counter + " , " + freqlast1 + ", " + vfoa_hz);
 
-                }
-
-                VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
-                VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
-                VFODiff = VFOHigh - VFOLow;       // diff in hz
-
-                int gg = SpotForm.dataGridView2.Rows.Count;  // get current # of memories we have available
-                                                             //  int gg = console.comboFMMemory.Items.Count;
-
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-                // draw MEMORY SPOTS
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-
-
-                for (int ii = 0; ii < gg; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
-                {
-
-                    int hh = (int)(Convert.ToDouble(SpotForm.dataGridView2[1, ii].Value) * 1000000);  // MEMORY "RXFREQ"  convert to hz
-
-                    if ((hh >= VFOLow) && (hh <= VFOHigh)) // find MEMORIES that appear on PAN
+                    //---------------------------------------------------
+                    // ke9ns RX2 determine the bandtext to display for the current pan
+                    if (freqlast1 != VFOC)
                     {
+                        bandtext_counter = 0; // reset the bandtext counter
+                        freqlast1 = VFOC;
 
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(hh - VFOLow))); // determine MEMORY spot line pos on current panadapter screen
+                        //   Debug.WriteLine("LOOP BANDTEXT2 " + VFOLow + " , " + VFOHigh + " , " + VFOLowB + ", " + VFOHighB + " , " + XPOS + " , " + VFODiff);
 
-                        holder2[kk] = ii;                    // ii is the actual MEMORY INDEX pos the the KK holds
-                        holder3[kk] = VFO_DXPos;
+                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.001m) // for loop through each 1khz to find all the bandtext for the current display
+                        {
+                            DB.BandText((double)ii, out bandInfo);
 
-                        kk++;
+                            //   Debug.WriteLine("BANDINFO: " + bandInfo + " , " + ii + " , " + bandtext[bandtext_counter]);
 
-                        g.DrawLine(p3, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
+                            if (bandInfo == bandtext[bandtext_counter])
+                            {
+                                bandtext_counter++;
+                                bandtext[bandtext_counter] = bandInfo;
+                                bandfreq[bandtext_counter] = ii;
+                                bandhere[bandtext_counter] = false;
+                            }
+                            else
+                            {
+                                bandtext_counter++;
+                                bandtext[bandtext_counter] = bandInfo;
+                                bandfreq[bandtext_counter] = ii;
+                                bandhere[bandtext_counter] = true;
+                                //  Debug.WriteLine("ADD BANDTEXT " + " , " + ii + " , "+ bandtext_counter + " , " + bandInfo);
+                            }
+
+                        } // for 
+
+                        //  Debug.WriteLine("FINISHED BANDTEXT: " + bandtext_counter + " , " + freqlast1 + ", " + vfoa_hz);
+                        //   Debug.WriteLine("--------------------------");
+
+                    } //  if (console.UpdateBandText == true)
+
+
+                    //----------------------------------------------------------------------
+                    // ke9ns RX2 display the bandtext on the pan XPOS = 0.00701875 , 
+
+                    for (int zz = 0; zz < bandtext_counter; zz++) // scan through all the bandtext that appear
+                    {
+                        int VFO_bandtext = (int)(((XPOS) * (float)((int)(bandfreq[zz] * 1000000) - VFOLow)));
+
+                        if (bandhere[zz] == true)
+                        {
+                            //  Debug.WriteLine("Display Band text: " + VFO_bandtext + " , " + bandfreq[zz] + " , " + bandtext[zz] + " , " + XPOS + " , " +VFOLow  );
+
+                            g.DrawLine(p2, VFO_bandtext, H1b, VFO_bandtext, H1a);   // draw vertical line
+
+                            StringFormat SF = new StringFormat();
+                            SF.Alignment = StringAlignment.Near;
+                            SF.FormatFlags = StringFormatFlags.DirectionVertical;
+
+                            g.DrawString(bandtext[zz], font1, grid_text_brush, VFO_bandtext, H1b, SF); // draw bandtext vertically
+
+                        }
+                        else // draw a transparent box in the area of freq that the bandtext refers to.
+                        {
+                            int zz1 = zz;
+                            int zz4 = 0;
+                            for (; zz1 < bandtext_counter; zz1++)   // find next value bandtext (and how wide the open space is in khz)
+                            {
+                                zz4++;
+                                if (bandhere[zz1] == true) break;
+
+                            } // for loop
+
+                            int zz2 = zz; // save the current ZZ position
+
+                            if (zz != 0) zz2--; // get the position before (as long as your not at the start)
+
+                            int VFO_bandtext2 = 0;
+
+
+                            int VFO_bandtext0 = (int)(((XPOS) * (float)((int)(bandfreq[zz2] * 1000000) - VFOLow)));   // LEFT SIDE X PIXEL POS of Rectangle
+                            int VFO_bandtext1 = (int)(((XPOS) * (float)((int)(bandfreq[zz1 - 1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
+                            int VFO_bandtext3 = (int)(((XPOS) * (float)((int)(bandfreq[zz1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
+
+                            VFO_bandtext1 = ((VFO_bandtext3 - VFO_bandtext1) * 3 / 4) + VFO_bandtext1;
+
+
+                            //   Brush B9 = new SolidBrush(Color.FromArgb(42, grid_color));
+                            Brush B9 = new SolidBrush(BT_color);
+
+                            g.FillRectangle(B9, VFO_bandtext0, H1b, VFO_bandtext1 - (VFO_bandtext0), H1a / 4);
+
+                            if (((zz1 - 1) > zz2))
+                            {
+                                int zz3 = (int)((decimal)((zz1 - 1) - zz2) / 1.5m) + zz2; // print extra label around 2/3rds of the way to the end
+
+                                VFO_bandtext2 = (int)(((XPOS) * (float)((int)(bandfreq[zz3] * 1000000) - VFOLow))); // x pixel position
+
+                                if (((VFO_bandtext1 - VFO_bandtext0) > 400) && (VFO_bandtext2 > 40) && (VFO_bandtext2 < (W - 40))) // keep away from the left and right vertical dbM and S meter text
+                                {
+
+                                    StringFormat SF = new StringFormat();
+                                    SF.Alignment = StringAlignment.Near;
+                                    SF.FormatFlags = StringFormatFlags.DirectionVertical;
+                                    g.DrawString(bandtext[zz], font1, grid_text_brush, VFO_bandtext2, H1b, SF); // draw bandtext vertically
+                                }
+                            }
+
+
+                            zz = zz1 - 1; // jump directly to next bandtext label
+
+                        } // else
+
+                    } // for loop
+
+                    //  Debug.WriteLine("=============================");
+
+
+                } // bottom RX2
+
+
+
+            } //Draw Band text if SpotForm.chkBoxBandText.Checked == true 
+            else
+            {
+
+
+
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //=====================================================================
+                //=====================================================================
+                // ke9ns add DRAW MEMORY SPOTS ON PANADAPTER
+                //=====================================================================
+                //=====================================================================
+
+                if ((SpotControl.SP6_Active != 0) && (!mox) && (console.chkPower.Checked == true))// do memory spot if active and not transmitting
+                {
+
+                    int iii = 0;                          // ke9ns add stairstep holder
+
+                    int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
+
+                    int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
+
+                    int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
+                    int H1b = 20;               // starting point of vertical line
+
+                    // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                    if (bottom)                 // if your drawing to the bottom 
+                    {
+                        if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
+                        else H1a = H + (H / 4); // short
+
+                        H1b = H + 20;
+
+                        vfo_hz = (int)vfob_hz;
+                        Console.MMK4 = 0;        // RX4 index to allow call signs to draw after all the vert lines on the screen
+
+                    }
+                    else
+                    {
+                        Console.MMK3 = 0;        // RX3 index to allow call signs to draw after all the vert lines on the screen
+
 
                     }
 
-                } // for loop through MEMORIES
+                    VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
+                    VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                    VFODiff = VFOHigh - VFOLow;       // diff in hz
+
+                    int gg = SpotForm.dataGridView2.Rows.Count;  // get current # of memories we have available
+                                                                 //  int gg = console.comboFMMemory.Items.Count;
+
+                    //-------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
+                    // draw MEMORY SPOTS
+                    //-------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
 
 
-                if (bottom) Console.MMK4 = kk; // keep a count for the bottom MEMORY 
-                else Console.MMK3 = kk; // count of spots in current panadapter
-
-
-                //--------------------------------------------------------------------------------------------
-                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
-                {
-
-                    string ll = (string)SpotForm.dataGridView2[2, holder2[ii]].Value;  // Name of MEMORY
-                    string mm = (string)SpotForm.dataGridView2[0, holder2[ii]].Value;  // GROUP of MEMORY
-                    string cc = (string)SpotForm.dataGridView2[9, holder2[ii]].Value;  // comments for hyperlinking of MEMORY
-
-                    DSPMode nn = (DSPMode)SpotForm.dataGridView2[3, holder2[ii]].Value;  // DSPMODE of MEMORY
-
-                    if ((nn == DSPMode.LSB) || (nn == DSPMode.DIGL) || (nn == DSPMode.CWL)) low = true;
-                    else low = false;
-
-                    // font
-                    if (low) // 1=LSB so draw on left side of line
+                    for (int ii = 0; ii < gg; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                     {
 
-                        length = g.MeasureString(ll, font1);             //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-                        length1 = g.MeasureString(mm, font1);             //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
+                        int hh = (int)(Convert.ToDouble(SpotForm.dataGridView2[1, ii].Value, CultureInfo.InvariantCulture) * 1000000);  // MEMORY "RXFREQ"  convert to hz
 
-
-                        g.DrawString(ll, font1, grid_text_brush, holder3[ii] - length.Width, H1b + iii);    // Memory Name
-                        g.DrawString(mm, font1, grid_text_brush, holder3[ii] - length1.Width, H1b + iii + 11); // Memory Group
-
-                        if (bottom) rx3 = 50; // allow only 50 spots per Receiver
-                        else rx3 = 0;
-
-                        if (!mox) // only do when not transmitting
+                        if ((hh >= VFOLow) && (hh <= VFOHigh)) // find MEMORIES that appear on PAN
                         {
 
-                            if (length1.Width > length.Width) length.Width = length1.Width; // make virtual box as wide as the widest text
+                            int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(hh - VFOLow))); // determine MEMORY spot line pos on current panadapter screen
 
-                            Console.MMW[ii + rx3] = (int)length.Width;           // Width,Height,X,Y of upper left corner to locate where text actually is 
-                            Console.MMH[ii + rx3] = (int)length.Height * 2;       // * 2 because of 2 lines of text
-                            Console.MMX[ii + rx3] = holder3[ii] - (int)length.Width;
-                            Console.MMY[ii + rx3] = H1b + iii;
-                            Console.MMS[ii + rx3] = ll;
-                            Console.MMC[ii + rx3] = cc; // comments
-                            Console.MMM[ii + rx3] = holder2[ii];
+                            holder2[kk] = ii;                    // ii is the actual MEMORY INDEX pos the the KK holds
+                            holder3[kk] = VFO_DXPos;
+
+                            kk++;
+
+                            g.DrawLine(p3, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
 
                         }
 
+                    } // for loop through MEMORIES
 
-                    } // LSB side
-                    else   // 0=usb so draw on righ side of line (normal)
+
+                    if (bottom) Console.MMK4 = kk; // keep a count for the bottom MEMORY 
+                    else Console.MMK3 = kk; // count of spots in current panadapter
+
+
+                    //--------------------------------------------------------------------------------------------
+                    for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
                     {
 
-                        length = g.MeasureString(ll, font1); //  not needed here but used for MEMORY NAME
-                        length1 = g.MeasureString(mm, font1); //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
+                        string ll = (string)SpotForm.dataGridView2[2, holder2[ii]].Value;  // Name of MEMORY
+                        string mm = (string)SpotForm.dataGridView2[0, holder2[ii]].Value;  // GROUP of MEMORY
+                        string cc = (string)SpotForm.dataGridView2[9, holder2[ii]].Value;  // comments for hyperlinking of MEMORY
 
+                        DSPMode nn = (DSPMode)SpotForm.dataGridView2[3, holder2[ii]].Value;  // DSPMODE of MEMORY
 
-                        g.DrawString(ll, font1, grid_text_brush, holder3[ii], H1b + iii); // Memory Name
-                        g.DrawString(mm, font1, grid_text_brush, holder3[ii], H1b + iii + 11); // Memory Group
+                        if ((nn == DSPMode.LSB) || (nn == DSPMode.DIGL) || (nn == DSPMode.CWL)) low = true;
+                        else low = false;
 
-                        if (bottom) rx3 = 50;
-                        else rx3 = 0;
-
-                        if (!mox) // only do when not transmitting
+                        // font
+                        if (low) // 1=LSB so draw on left side of line
                         {
-                            if (length1.Width > length.Width) length.Width = length1.Width;
 
-                            Console.MMW[ii + rx3] = (int)length.Width;    // Width,Height,X,Y of upper left corner to locate where text actually is 
-                            Console.MMH[ii + rx3] = (int)length.Height * 2;  // H
-                            Console.MMX[ii + rx3] = holder3[ii];         // X
-                            Console.MMY[ii + rx3] = H1b + iii;           // Y
-                            Console.MMS[ii + rx3] = ll;                  // Name of Memory showing up in Pan
-                            Console.MMC[ii + rx3] = cc;                  // comments
-                            Console.MMM[ii + rx3] = holder2[ii];         // index in memory.xml file
-                        }
-
-                    } // USB side
-
-                    iii = iii + 22; // 11
-                    if (iii > 90) iii = 0;
+                            length = g.MeasureString(ll, font1);             //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
+                            length1 = g.MeasureString(mm, font1);             //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
 
 
-                }// for loop through MEMORIES
+                            g.DrawString(ll, font1, grid_text_brush, holder3[ii] - length.Width, H1b + iii);    // Memory Name
+                            g.DrawString(mm, font1, grid_text_brush, holder3[ii] - length1.Width, H1b + iii + 11); // Memory Group
 
+                            if (bottom) rx3 = 50; // allow only 50 spots per Receiver
+                            else rx3 = 0;
 
-            } // MEMORY SPOTTING
-
-
-
-
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //=====================================================================
-            //=====================================================================
-            // ke9ns add DRAW SWL SPOTS ON PANADAPTER
-            //=====================================================================
-            //=====================================================================
-
-            if ((!mox) && (console.chkPower.Checked == true) && (SpotControl.SP1_Active != 0))
-            {
-                DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc); // used by both RX1 and RX2 SWL display
-                byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek));   // this is the day. Sun = 0, Mon = 1
-                SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm")); // convert 24hr UTC to int
-
-                if ((!bottom) && (vfoa_hz < 54000000))// do SWL spot if active and not transmitting
-                {
-                  
-                   VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
-                    VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
-                    VFODiff = VFOHigh - VFOLow; // diff in hz
-
-                    byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
-                    byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
-
-                 //   Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB);
-
-
-                   int iii = 0; // stairstep the swl stations on the screen
-
-                    int L_index = 0;                                              // 0Mhz in index
-                    if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB - 1]; // Left side  index position corresponding to the Left side Mhz
-                    int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
-
-                  //  Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB + " , " + L_index + " , " + H_index);
-
-
-                    float XPOS = (float)W / (float)VFODiff;
-
-                    int H1a = H * 2 / 3; // vert line length from top down
-
-                    // DayOfWeek UTCDD = UTCD.DayOfWeek; // day is spelled out: Monday, Tuesday
-
-
-                    if ((VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
-                    {
-
-                        SpotControl.VFOHLast = VFOHigh;
-                        SpotControl.Lindex = 0; // bottom of index to display spots
-                        SpotControl.Hindex = 0; // top of index to display spots
-
-                        Console.SXK = 0;
-
-
-                        for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
-                        {
-                            SpotControl.Hindex = ii; // get top index spot
-
-                            if ((SpotControl.SWL_Freq[ii] > VFOHigh))
+                            if (!mox) // only do when not transmitting
                             {
-                                SpotControl.Hindex--; // get top index spot
 
-                                break; // once a SWL spot if found off the right side of screen then DONE
+                                if (length1.Width > length.Width) length.Width = length1.Width; // make virtual box as wide as the widest text
+
+                                Console.MMW[ii + rx3] = (int)length.Width;           // Width,Height,X,Y of upper left corner to locate where text actually is 
+                                Console.MMH[ii + rx3] = (int)length.Height * 2;       // * 2 because of 2 lines of text
+                                Console.MMX[ii + rx3] = holder3[ii] - (int)length.Width;
+                                Console.MMY[ii + rx3] = H1b + iii;
+                                Console.MMS[ii + rx3] = ll;
+                                Console.MMC[ii + rx3] = cc; // comments
+                                Console.MMM[ii + rx3] = holder2[ii];
+
                             }
 
-                            if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
+
+                        } // LSB side
+                        else   // 0=usb so draw on righ side of line (normal)
+                        {
+
+                            length = g.MeasureString(ll, font1); //  not needed here but used for MEMORY NAME
+                            length1 = g.MeasureString(mm, font1); //  length of "GROUP" string from Memory (to create a virtual box around the Memory Name & Group) to click on
+
+
+                            g.DrawString(ll, font1, grid_text_brush, holder3[ii], H1b + iii); // Memory Name
+                            g.DrawString(mm, font1, grid_text_brush, holder3[ii], H1b + iii + 11); // Memory Group
+
+                            if (bottom) rx3 = 50;
+                            else rx3 = 0;
+
+                            if (!mox) // only do when not transmitting
                             {
-                                if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
+                                if (length1.Width > length.Width) length.Width = length1.Width;
 
-                                 //  Debug.Write(" FREQ-SWL " + ii);
+                                Console.MMW[ii + rx3] = (int)length.Width;    // Width,Height,X,Y of upper left corner to locate where text actually is 
+                                Console.MMH[ii + rx3] = (int)length.Height * 2;  // H
+                                Console.MMX[ii + rx3] = holder3[ii];         // X
+                                Console.MMY[ii + rx3] = H1b + iii;           // Y
+                                Console.MMS[ii + rx3] = ll;                  // Name of Memory showing up in Pan
+                                Console.MMC[ii + rx3] = cc;                  // comments
+                                Console.MMM[ii + rx3] = holder2[ii];         // index in memory.xml file
+                            }
+
+                        } // USB side
+
+                        iii = iii + 22; // 11
+                        if (iii > 90) iii = 0;
 
 
-                                // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
+                    }// for loop through MEMORIES
+
+
+                } // MEMORY SPOTTING
+
+
+
+
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //=====================================================================
+                //=====================================================================
+                // ke9ns add DRAW SWL SPOTS ON PANADAPTER
+                //=====================================================================
+                //=====================================================================
+
+                if ((!mox) && (console.chkPower.Checked == true) && (SpotControl.SP1_Active != 0))
+                {
+                    DateTime UTCD = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc); // used by both RX1 and RX2 SWL display
+                    byte UTCDD = (byte)(1 << ((byte)UTCD.DayOfWeek));   // this is the day. Sun = 0, Mon = 1
+                    SpotControl.UTCNEW1 = Convert.ToInt16(UTCD.ToString("HHmm"), CultureInfo.InvariantCulture); // convert 24hr UTC to int
+
+                    if ((!bottom) && (vfoa_hz < 54000000))// do SWL spot if active and not transmitting
+                    {
+
+                        VFOLow = (int)vfoa_hz + RXDisplayLow; // low freq (left side) in hz
+                        VFOHigh = (int)vfoa_hz + RXDisplayHigh; // high freq (right side) in hz
+                        VFODiff = VFOHigh - VFOLow; // diff in hz
+
+                        byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
+                        byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
+
+                        //   Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB);
+
+                        int iii = 0; // stairstep the swl stations on the screen
+
+                        int L_index = 0;                                              // 0Mhz in index
+                        if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB - 1]; // Left side  index position corresponding to the Left side Mhz
+                        int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
+
+                        //  Debug.WriteLine("VFOLOW:" + VFOLowB + " , " + VFOHighB + " , " + L_index + " , " + H_index);
+
+
+                        float XPOS = (float)W / (float)VFODiff;
+
+                        int H1a = H * 2 / 3; // vert line length from top down
+
+                        // DayOfWeek UTCDD = UTCD.DayOfWeek; // day is spelled out: Monday, Tuesday
+
+
+                        if ((VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
+                        {
+
+                            SpotControl.VFOHLast = VFOHigh;
+                            SpotControl.Lindex = 0; // bottom of index to display spots
+                            SpotControl.Hindex = 0; // top of index to display spots
+
+                            Console.SXK = 0;
+
+
+                            for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
+                            {
+                                SpotControl.Hindex = ii; // get top index spot
+
+                                if ((SpotControl.SWL_Freq[ii] > VFOHigh))
+                                {
+                                    SpotControl.Hindex--; // get top index spot
+
+                                    break; // once a SWL spot if found off the right side of screen then DONE
+                                }
+
+                                if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
+                                {
+                                    if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
+
+                                    //  Debug.Write(" FREQ-SWL " + ii);
+
+
+                                    // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
+
+                                    if (
+                                ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                                ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                                 )
+                                    //   if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
+                                    {
+
+
+                                        int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+
+                                        g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+
+                                        if ((Console.MMK3 > 0) && (SpotControl.SP6_Active != 0))
+                                        {
+                                            int x2 = VFO_SWLPos;
+                                            int y2 = 20 + iii;
+
+                                            SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                            for (int jj = 0; jj < Console.MMK3; jj++)
+                                            {
+
+                                                if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                                {
+                                                    if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                                    {
+                                                        iii = iii + 33;
+                                                        break;
+                                                    }
+                                                }
+
+                                            } // for loop to check if DX text will draw over top of Memory text
+                                        }
+
+                                        g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
+
+                                        //   Debug.WriteLine(" FINDSWL "+ ii );
+
+                                        if (Console.SXK < 99)
+                                        {
+
+                                            SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
+
+                                            Console.SXW[Console.SXK] = (int)length.Width;
+                                            Console.SXH[Console.SXK] = (int)length.Height;
+                                            Console.SXX[Console.SXK] = VFO_SWLPos;
+                                            Console.SXY[Console.SXK] = 20 + iii;
+                                            Console.SXS[Console.SXK] = SpotControl.SWL_Station[ii];
+                                            Console.SXF[Console.SXK] = SpotControl.SWL_Freq[ii];
+                                            Console.SXM[Console.SXK] = SpotControl.SWL_Mode[ii];
+
+
+                                            Console.SXK++;
+                                        }
+                                        else Debug.Write(" SXK OVERLIMIT ");
+
+
+                                        iii = iii + 11; // stairstep spots
+                                        if (iii > 90) iii = 0;
+
+                                    } // check time
+
+                                } // make sure spot is > then left side of screen
+
+                            } // for loop through SWL_Index
+
+                            //   Debug.WriteLine(" L_index " + SpotControl.Lindex);
+                            //   Debug.WriteLine(" H_index " + SpotControl.Hindex);
+
+                            //   Debug.WriteLine(" VFOLow " + VFOLow);
+                            //   Debug.WriteLine(" VFOHigh " + VFOHigh);
+
+
+                        } // if you change vfo freq do above
+                        else // if you dont change freq, then do below
+                        {
+
+
+                            for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                            {
+                                //  Debug.Write(" drawSWL " + ii);
 
                                 if (
-                            ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                            ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                             )
-                                //   if ( ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) // ke9ns check if stations on the panadapter are on the air (based on time)
+                             ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                             ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                              )
+                                //     if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
                                 {
-
-
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
                                     g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
+
+                                    iii = iii + 11; // stairstep spots
+                                    if (iii > 90) iii = 0;
+
+                                } // check time
+
+                            } // for loop to display all current swl spots
+                            iii = 0;
+                            for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                            {
+                                //   Debug.Write(" drawSWL " + ii);
+
+                                if (
+                           ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                           ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                            )
+                                //    if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                                {
+                                    int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
                                     if ((Console.MMK3 > 0) && (SpotControl.SP6_Active != 0))
                                     {
@@ -11614,198 +12081,194 @@ namespace PowerSDR
                                         } // for loop to check if DX text will draw over top of Memory text
                                     }
 
-                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii);
-
-                                    //   Debug.WriteLine(" FINDSWL "+ ii );
-
-                                    if (Console.SXK < 99)
-                                    {
-
-                                        SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
-                                        Console.SXW[Console.SXK] = (int)length.Width;
-                                        Console.SXH[Console.SXK] = (int)length.Height;
-                                        Console.SXX[Console.SXK] = VFO_SWLPos;
-                                        Console.SXY[Console.SXK] = 20 + iii;
-                                        Console.SXS[Console.SXK] = SpotControl.SWL_Station[ii];
-                                        Console.SXF[Console.SXK] = SpotControl.SWL_Freq[ii];
-                                        Console.SXM[Console.SXK] = SpotControl.SWL_Mode[ii];
-
-
-                                        Console.SXK++;
-                                    }
-                                    else Debug.Write(" SXK OVERLIMIT ");
-
+                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii); // draw station Name
 
                                     iii = iii + 11; // stairstep spots
                                     if (iii > 90) iii = 0;
 
                                 } // check time
 
-                            } // make sure spot is > then left side of screen
-
-                        } // for loop through SWL_Index
-
-                        //   Debug.WriteLine(" L_index " + SpotControl.Lindex);
-                        //   Debug.WriteLine(" H_index " + SpotControl.Hindex);
-
-                        //   Debug.WriteLine(" VFOLow " + VFOLow);
-                        //   Debug.WriteLine(" VFOHigh " + VFOHigh);
+                            } // for loop to display all current swl spots
 
 
-                    } // if you change vfo freq do above
-                    else // if you dont change freq, then do below
+                        } //do this above until you move freq again
+
+
+                    } // DISPLAY RX1 SWL SPots only
+
+
+                    //======================================================
+                    //======================================================
+                    //ke9ns add SWL spots to RX2
+
+                    if ((bottom) && (vfob_hz < 60000000))// do SWL spot if active and not transmitting
                     {
 
+                        VFOLow = (int)vfob_hz + RXDisplayLow; // low freq (left side) in hz
+                        VFOHigh = (int)vfob_hz + RXDisplayHigh; // high freq (right side) in hz
+                        VFODiff = VFOHigh - VFOLow; // diff in hz
+
+                        byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
+                        byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
+
+                        int iii = 0; // stairstep the swl stations on the screen
+
+                        int L_index = 0;                                              // 0Mhz in index
+                        if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB - 1]; // Left side  index position corresponding to the Left side Mhz
+                        int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
+
+                        float XPOS = (float)W / (float)VFODiff;
 
 
-                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                        // below is for rx2 only
+                        int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
+                        int H1b = 20;               // starting point of vertical line
+
+                        // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+
+                        if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
+                        else H1a = H + (H / 4); // short
+
+                        H1b = H + 20;
+
+
+                        if ((VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
                         {
-                            //  Debug.Write(" drawSWL " + ii);
 
-                            if (
-                         ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                         ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                          )
-                            //     if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
+                            SpotControl.VFOHLast = VFOHigh;
+                            SpotControl.Lindex = 0; // bottom of index to display spots
+                            SpotControl.Hindex = 0; // top of index to display spots
+
+                            Console.SXK2 = 0;
+
+
+                            for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
                             {
-                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+                                SpotControl.Hindex = ii; // get top index spot
 
-                                g.DrawLine(p2, VFO_SWLPos, 20, VFO_SWLPos, H1a);   // draw vertical line
-
-                                iii = iii + 11; // stairstep spots
-                                if (iii > 90) iii = 0;
-
-                            } // check time
-
-                        } // for loop to display all current swl spots
-                        iii = 0;
-                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
-                        {
-                           //   Debug.Write(" drawSWL " + ii);
-
-                            if (
-                       ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                       ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                        )
-                            //    if (((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1))
-                            {
-                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
-
-                                if ((Console.MMK3 > 0) && (SpotControl.SP6_Active != 0))
+                                if ((SpotControl.SWL_Freq[ii] > VFOHigh))
                                 {
-                                    int x2 = VFO_SWLPos;
-                                    int y2 = 20 + iii;
+                                    SpotControl.Hindex--; // get top index spot
 
-                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
-                                    for (int jj = 0; jj < Console.MMK3; jj++)
-                                    {
-
-                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                        {
-                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                            {
-                                                iii = iii + 33;
-                                                break;
-                                            }
-                                        }
-
-                                    } // for loop to check if DX text will draw over top of Memory text
+                                    break; // once a SWL spot if found off the right side of screen then DONE
                                 }
 
-                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, 20 + iii); // draw station Name
+                                if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
+                                {
+                                    if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
 
-                                iii = iii + 11; // stairstep spots
-                                if (iii > 90) iii = 0;
-
-                            } // check time
-
-                        } // for loop to display all current swl spots
+                                    //   Debug.Write(" FREQ-SWL " + ii);
 
 
-                    } //do this above until you move freq again
+                                    // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
+
+                                    if (
+                                            ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                                            ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                                       )
+                                    {
 
 
-                } // DISPLAY RX1 SWL SPots only
+                                        int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+
+                                        g.DrawLine(p2, VFO_SWLPos, H1b, VFO_SWLPos, H1a);   // draw RX2 vertical line
 
 
-                //======================================================
-                //======================================================
-                //ke9ns add SWL spots to RX2
+                                        if ((Console.MMK4 > 0) && (SpotControl.SP6_Active != 0))
+                                        {
+                                            int x2 = VFO_SWLPos;
+                                            int y2 = 20 + iii;
 
-                if ((bottom) && (vfob_hz < 60000000))// do SWL spot if active and not transmitting
-                {
+                                            SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
 
-                    VFOLow = (int)vfob_hz + RXDisplayLow; // low freq (left side) in hz
-                    VFOHigh = (int)vfob_hz + RXDisplayHigh; // high freq (right side) in hz
-                    VFODiff = VFOHigh - VFOLow; // diff in hz
+                                            for (int jj = 0; jj < Console.MMK4; jj++)
+                                            {
 
-                    byte VFOLowB = (byte)(VFOLow / 1000000); // freq in mhz
-                    byte VFOHighB = (byte)(VFOHigh / 1000000); // freq in mhz
+                                                if (((x2 + length.Width) >= Console.MMX[jj + rx3]) && (x2 < (Console.MMX[jj + rx3] + Console.MMW[jj + rx3])))
+                                                {
+                                                    if (((y2 + length.Height) >= Console.MMY[jj + rx3]) && (y2 < (Console.MMY[jj + rx3] + Console.MMH[jj + rx3])))
+                                                    {
+                                                        iii = iii + 33;
+                                                        break;
+                                                    }
+                                                }
 
-                    int iii = 0; // stairstep the swl stations on the screen
+                                            } // for loop to check if DX text will draw over top of Memory text
+                                        }
 
-                    int L_index = 0;                                              // 0Mhz in index
-                    if (VFOLowB != 0) L_index = SpotControl.SWL_BandL[VFOLowB - 1]; // Left side  index position corresponding to the Left side Mhz
-                    int H_index = SpotControl.SWL_BandL[VFOHighB];                // Right side index position corresponding to the right side Mhz
+                                        g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, H1b + iii); // 20+iii
 
-                    float XPOS = (float)W / (float)VFODiff;
+                                        //   Debug.WriteLine(" FINDSWL "+ ii );
 
+                                        if (Console.SXK2 < 99)
+                                        {
 
-                    // below is for rx2 only
-                    int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
-                    int H1b = 20;               // starting point of vertical line
+                                            SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
 
-                    // RX3/RX4 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                                            Console.SXW[Console.SXK2 + 100] = (int)length.Width;
+                                            Console.SXH[Console.SXK2 + 100] = (int)length.Height;
+                                            Console.SXX[Console.SXK2 + 100] = VFO_SWLPos;
+                                            Console.SXY[Console.SXK2 + 100] = 20 + iii;
+                                            Console.SXS[Console.SXK2 + 100] = SpotControl.SWL_Station[ii];
+                                            Console.SXF[Console.SXK2 + 100] = SpotControl.SWL_Freq[ii];
+                                            Console.SXM[Console.SXK2 + 100] = SpotControl.SWL_Mode[ii];
 
-                    if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
-                    else H1a = H + (H / 4); // short
-
-                    H1b = H + 20;
-
-
-                    if ((VFOHigh != SpotControl.VFOHLast)) // check if moved frequency
-                    {
-
-                        SpotControl.VFOHLast = VFOHigh;
-                        SpotControl.Lindex = 0; // bottom of index to display spots
-                        SpotControl.Hindex = 0; // top of index to display spots
-
-                        Console.SXK2 = 0;
+                                            Console.SXK2++;
+                                        }
+                                        else Debug.Write(" SXK2 OVERLIMIT ");
 
 
-                        for (int ii = L_index; ii < H_index; ii++) // start by checking spots that fall within the mhz range of the panadapter
+                                        iii = iii + 11; // stairstep spots
+                                        if (iii > 90) iii = 0;
+
+                                    } // check time
+
+                                } // make sure spot is > then left side of screen
+
+                            } // for loop through SWL_Index
+
+                            //   Debug.WriteLine(" L_index " + SpotControl.Lindex);
+                            //   Debug.WriteLine(" H_index " + SpotControl.Hindex);
+
+                            //   Debug.WriteLine(" VFOLow " + VFOLow);
+                            //   Debug.WriteLine(" VFOHigh " + VFOHigh);
+
+
+                        } // if you change vfo freq do above
+                        else // if you dont change freq, then do below
                         {
-                            SpotControl.Hindex = ii; // get top index spot
 
-                            if ((SpotControl.SWL_Freq[ii] > VFOHigh))
+
+                            for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
                             {
-                                SpotControl.Hindex--; // get top index spot
-
-                                break; // once a SWL spot if found off the right side of screen then DONE
-                            }
-
-                            if ((SpotControl.SWL_Freq[ii] >= VFOLow)) // find all swl spot within the screen area
-                            {
-                                if (SpotControl.Lindex == 0) SpotControl.Lindex = ii; // capture index of first valid spot on screen
-
-                                //   Debug.Write(" FREQ-SWL " + ii);
-
-
-                                // ke9ns check that the UTC day falls within the stations days listed at ON the air, then check the UTC time
+                                //  Debug.Write(" drawSWL " + ii);
 
                                 if (
-                                        ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                                        ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                                   )
+                             ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                             ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                              )
                                 {
-
-
                                     int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
                                     g.DrawLine(p2, VFO_SWLPos, H1b, VFO_SWLPos, H1a);   // draw RX2 vertical line
 
+                                    iii = iii + 11; // stairstep spots
+                                    if (iii > 90) iii = 0;
+
+                                } // check time
+
+                            } // for loop to display all current swl spots
+                            iii = 0;
+                            for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                            {
+                                //  Debug.Write(" drawSWL " + ii);
+
+                                if (
+                           ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
+                           ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
+                            )
+                                {
+                                    int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
 
                                     if ((Console.MMK4 > 0) && (SpotControl.SP6_Active != 0))
                                     {
@@ -11829,93 +12292,135 @@ namespace PowerSDR
                                         } // for loop to check if DX text will draw over top of Memory text
                                     }
 
-                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, H1b + iii); // 20+iii
-
-                                    //   Debug.WriteLine(" FINDSWL "+ ii );
-
-                                    if (Console.SXK2 < 99)
-                                    {
-
-                                        SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
-                                        Console.SXW[Console.SXK2 + 100] = (int)length.Width;
-                                        Console.SXH[Console.SXK2 + 100] = (int)length.Height;
-                                        Console.SXX[Console.SXK2 + 100] = VFO_SWLPos;
-                                        Console.SXY[Console.SXK2 + 100] = 20 + iii;
-                                        Console.SXS[Console.SXK2 + 100] = SpotControl.SWL_Station[ii];
-                                        Console.SXF[Console.SXK2 + 100] = SpotControl.SWL_Freq[ii];
-                                        Console.SXM[Console.SXK2 + 100] = SpotControl.SWL_Mode[ii];
-
-                                        Console.SXK2++;
-                                    }
-                                    else Debug.Write(" SXK2 OVERLIMIT ");
-
+                                    g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, H1b + iii); // draw station Name  20+iii
 
                                     iii = iii + 11; // stairstep spots
                                     if (iii > 90) iii = 0;
 
                                 } // check time
 
-                            } // make sure spot is > then left side of screen
-
-                        } // for loop through SWL_Index
-
-                        //   Debug.WriteLine(" L_index " + SpotControl.Lindex);
-                        //   Debug.WriteLine(" H_index " + SpotControl.Hindex);
-
-                        //   Debug.WriteLine(" VFOLow " + VFOLow);
-                        //   Debug.WriteLine(" VFOHigh " + VFOHigh);
+                            } // for loop to display all current swl spots
 
 
-                    } // if you change vfo freq do above
-                    else // if you dont change freq, then do below
+                        } //do this above until you move freq again
+
+
+                    } // DISPLAY RX2 spots 
+
+
+                } // CHECK FOR SWL listing   SP1_Active SWL CLUSTER
+
+
+
+
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //===============================================================================================================================================================
+                //=====================================================================
+                //=====================================================================
+                // ke9ns add draw DX SPOTS on pandapter
+                //=====================================================================
+                //=====================================================================
+
+
+                if ((SpotControl.SP_Active != 0) && (SpotForm.beacon1 == false)) // make sure DX cluster is running but Beacon chk is OFF so as to not crowd the screen.
+                {
+
+                    int iii = 0;                          // ke9ns add stairstep holder
+
+                    int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
+
+                    int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
+
+                    int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
+                    int H1b = 20;               // starting point of vertical line
+
+                    // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
+                    if (bottom)                 // if your drawing to the bottom 
+                    {
+                        if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
+                        else H1a = H + (H / 4); // short
+
+                        H1b = H + 20;
+
+                        vfo_hz = (int)vfob_hz;
+                        Console.DXK2 = 0;        // RX2 index to allow call signs to draw after all the vert lines on the screen
+
+                    }
+                    else
+                    {
+                        Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
+                    }
+
+                    VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
+                    VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
+                    VFODiff = VFOHigh - VFOLow;       // diff in hz
+
+                    if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
+                    else low = false;     // usb
+
+                    //-------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
+                    // draw DX spots
+                    //-------------------------------------------------------------------------------------------------
+                    //-------------------------------------------------------------------------------------------------
+
+                    for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
                     {
 
-
-                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                        if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
                         {
-                            //  Debug.Write(" drawSWL " + ii);
+                            int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] - VFOLow))); // determine DX spot line pos on current panadapter screen
 
-                            if (
-                         ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                         ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                          )
-                            {
-                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+                            holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
+                            holder1[kk] = VFO_DXPos;
 
-                                g.DrawLine(p2, VFO_SWLPos, H1b, VFO_SWLPos, H1a);   // draw RX2 vertical line
+                            kk++;
 
-                                iii = iii + 11; // stairstep spots
-                                if (iii > 90) iii = 0;
+                            g.DrawLine(p1, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
 
-                            } // check time
+                        }
 
-                        } // for loop to display all current swl spots
-                        iii = 0;
-                        for (int ii = SpotControl.Lindex; ii <= SpotControl.Hindex; ii++) // now check only spots that fit exactly on panadapter
+                    } // for loop through DX_Index
+
+
+                    int bb = 0;
+                    if (bottom)
+                    {
+                        Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
+                        bb = Console.MMK4;
+                    }
+                    else
+                    {
+                        Console.DXK = kk; // count of spots in current panadapter
+                        bb = Console.MMK3;
+                    }
+
+
+                    //--------------------------------------------------------------------------------------------
+                    for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
+                    {
+
+                        // font
+                        if (low) // 1=LSB so draw on left side of line
                         {
-                            //  Debug.Write(" drawSWL " + ii);
 
-                            if (
-                       ((SpotControl.SWL_Day1[ii] & SpotControl.UTCDD) > 0) && (((SpotControl.SWL_TimeN[ii] <= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1)) ||
-                       ((SpotControl.SWL_TimeN[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] >= SpotControl.UTCNEW1) && (SpotControl.SWL_TimeF[ii] < SpotControl.SWL_TimeN[ii])))
-                        )
+                            if (Console.DXR == 0) // display Spotted on Pan
                             {
-                                int VFO_SWLPos = (int)(((XPOS) * (float)(SpotControl.SWL_Freq[ii] - VFOLow)));
+                                length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
 
-                                if ((Console.MMK4 > 0) && (SpotControl.SP6_Active != 0))
+                                if ((bb > 0) && (SpotControl.SP6_Active != 0))
                                 {
-                                    int x2 = VFO_SWLPos;
-                                    int y2 = 20 + iii;
+                                    int x2 = holder1[ii] - (int)length.Width;
+                                    int y2 = H1b + iii;
 
-                                    SizeF length = g.MeasureString(SpotControl.SWL_Station[ii], font1); //  used for google lookups of SWL stations
-
-                                    for (int jj = 0; jj < Console.MMK4; jj++)
+                                    for (int jj = 0; jj < bb; jj++)
                                     {
 
-                                        if (((x2 + length.Width) >= Console.MMX[jj + rx3]) && (x2 < (Console.MMX[jj + rx3] + Console.MMW[jj + rx3])))
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
                                         {
-                                            if (((y2 + length.Height) >= Console.MMY[jj + rx3]) && (y2 < (Console.MMY[jj + rx3] + Console.MMH[jj + rx3])))
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
                                             {
                                                 iii = iii + 33;
                                                 break;
@@ -11925,276 +12430,143 @@ namespace PowerSDR
                                     } // for loop to check if DX text will draw over top of Memory text
                                 }
 
-                                g.DrawString(SpotControl.SWL_Station[ii], font1, grid_text_brush, VFO_SWLPos, H1b + iii); // draw station Name  20+iii
+                                g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii); // DX call sign to panadapter
 
-                                iii = iii + 11; // stairstep spots
-                                if (iii > 90) iii = 0;
-
-                            } // check time
-
-                        } // for loop to display all current swl spots
-
-
-                    } //do this above until you move freq again
-
-
-                } // DISPLAY RX2 spots 
-
-
-            } // CHECK FOR SWL listing   SP1_Active SWL CLUSTER
-
-
-
-
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //===============================================================================================================================================================
-            //=====================================================================
-            //=====================================================================
-            // ke9ns add draw DX SPOTS on pandapter
-            //=====================================================================
-            //=====================================================================
-
-
-            if ((SpotControl.SP_Active != 0) && (SpotForm.beacon1 == false)) // make sure DX cluster is running but Beacon chk is OFF so as to not crowd the screen.
-            {
-
-                int iii = 0;                          // ke9ns add stairstep holder
-
-                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
-
-                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
-
-                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
-                int H1b = 20;               // starting point of vertical line
-
-                // RX1/RX2 PanF/Pan = 5,2 (K9,K10)(short)  PanF/PanF = 5,5, (short) Pan/Pan 2,2 (long)
-                if (bottom)                 // if your drawing to the bottom 
-                {
-                    if ((K9 == 2) && (K10 == 2)) H1a = H + (H / 2); // long
-                    else H1a = H + (H / 4); // short
-
-                    H1b = H + 20;
-
-                    vfo_hz = (int)vfob_hz;
-                    Console.DXK2 = 0;        // RX2 index to allow call signs to draw after all the vert lines on the screen
-
-                }
-                else
-                {
-                    Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
-                }
-
-                VFOLow = vfo_hz + RXDisplayLow;    // low freq (left side) in hz
-                VFOHigh = vfo_hz + RXDisplayHigh; // high freq (right side) in hz
-                VFODiff = VFOHigh - VFOLow;       // diff in hz
-
-                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) low = true; // LSB
-                else low = false;     // usb
-
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-                // draw DX spots
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-
-                for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
-                {
-
-                    if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
-                    {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] - VFOLow))); // determine DX spot line pos on current panadapter screen
-
-                        holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
-                        holder1[kk] = VFO_DXPos;
-
-                        kk++;
-
-                        g.DrawLine(p1, VFO_DXPos, H1b, VFO_DXPos, H1a);   // draw vertical line
-
-                    }
-
-                } // for loop through DX_Index
-
-
-                int bb = 0;
-                if (bottom)
-                {
-                    Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
-                    bb = Console.MMK4;
-                }
-                else
-                {
-                    Console.DXK = kk; // count of spots in current panadapter
-                    bb = Console.MMK3;
-                }
-
-
-                //--------------------------------------------------------------------------------------------
-                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
-                {
-
-                    // font
-                    if (low) // 1=LSB so draw on left side of line
-                    {
-
-                        if (Console.DXR == 0) // display Spotted on Pan
-                        {
-                            length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            }
+                            else // display SPOTTER on Pan (not the Spotted)
                             {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
+                                length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
 
-                                for (int jj = 0; jj < bb; jj++)
+                                if ((bb > 0) && (SpotControl.SP6_Active != 0))
                                 {
+                                    int x2 = holder1[ii] - (int)length.Width;
+                                    int y2 = H1b + iii;
 
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    for (int jj = 0; jj < bb; jj++)
                                     {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
 
-                                } // for loop to check if DX text will draw over top of Memory text
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                        {
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                            {
+                                                iii = iii + 33;
+                                                break;
+                                            }
+                                        }
+
+                                    } // for loop to check if DX text will draw over top of Memory text
+                                }
+
+                                g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii);
+
                             }
 
-                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii); // DX call sign to panadapter
+                            if (bottom) rx2 = 50; // allow only 50 qrz spots per Receiver
+                            else rx2 = 0;
 
-                        }
-                        else // display SPOTTER on Pan (not the Spotted)
-                        {
-                            length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            if (!mox) // only do when not transmitting
                             {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
+                                Console.DXW[ii + rx2] = (int)length.Width;    // this is all for QRZ hyperlinking 
+                                Console.DXH[ii + rx2] = (int)length.Height;
+                                Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
+                                Console.DXY[ii + rx2] = H1b + iii;
+                                Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
 
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
                             }
 
-                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii);
 
-                        }
+                        } // LSB side
 
-                        if (bottom) rx2 = 50; // allow only 50 qrz spots per Receiver
-                        else rx2 = 0;
 
-                        if (!mox) // only do when not transmitting
+                        else   // 0=usb so draw on righ side of line (normal)
                         {
-                            Console.DXW[ii + rx2] = (int)length.Width;    // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-
-                        }
-
-
-                    } // LSB side
-
-
-                    else   // 0=usb so draw on righ side of line (normal)
-                    {
-                        if (Console.DXR == 0) // spot
-                        {
-                            length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            if (Console.DXR == 0) // spot
                             {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
+                                length = g.MeasureString(SpotControl.DX_Station[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
 
-                                for (int jj = 0; jj < bb; jj++)
+                                if ((bb > 0) && (SpotControl.SP6_Active != 0))
                                 {
+                                    int x2 = holder1[ii];
+                                    int y2 = H1b + iii;
 
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                    for (int jj = 0; jj < bb; jj++)
                                     {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
 
-                                } // for loop to check if DX text will draw over top of Memory text
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                        {
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                            {
+                                                iii = iii + 33;
+                                                break;
+                                            }
+                                        }
+
+                                    } // for loop to check if DX text will draw over top of Memory text
+                                }
+
+                                g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
+                            }
+                            else // spotter
+                            {
+                                length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+
+                                if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                                {
+                                    int x2 = holder1[ii];
+                                    int y2 = H1b + iii;
+
+                                    for (int jj = 0; jj < bb; jj++)
+                                    {
+
+                                        if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
+                                        {
+                                            if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
+                                            {
+                                                iii = iii + 33;
+                                                break;
+                                            }
+                                        }
+
+                                    } // for loop to check if DX text will draw over top of Memory text
+                                }
+
+                                g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
+
                             }
 
-                            g.DrawString(SpotControl.DX_Station[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
-                        }
-                        else // spotter
-                        {
-                            length = g.MeasureString(SpotControl.DX_Spotter[holder[ii]], font1); //  not needed here but used for qrz hyperlinking
+                            if (bottom) rx2 = 50;
+                            else rx2 = 0;
 
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
+                            if (!mox) // only do when not transmitting
                             {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
+                                Console.DXW[ii + rx2] = (int)length.Width;   // this is all for QRZ hyperlinking 
+                                Console.DXH[ii + rx2] = (int)length.Height;
+                                Console.DXX[ii + rx2] = holder1[ii];
+                                Console.DXY[ii + rx2] = H1b + iii;
+                                Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
                             }
 
-                            g.DrawString(SpotControl.DX_Spotter[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX station name
+                            if (vfo_hz >= 50000000) // 50000000 or 50mhz
+                            {
+                                iii = iii + 11;
+                                g.DrawString(SpotControl.DX_Grid[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX grid name
+                            }
 
-                        }
+                        } // USB side
 
-                        if (bottom) rx2 = 50;
-                        else rx2 = 0;
-
-                        if (!mox) // only do when not transmitting
-                        {
-                            Console.DXW[ii + rx2] = (int)length.Width;   // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii];
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-                        }
-
-                        if (vfo_hz >= 50000000) // 50000000 or 50mhz
-                        {
-                            iii = iii + 11;
-                            g.DrawString(SpotControl.DX_Grid[holder[ii]], font1, grid_text_brush, holder1[ii], H1b + iii); // DX grid name
-                        }
-
-                    } // USB side
-
-                    iii = iii + 11;
-                    if (iii > 90) iii = 0;
+                        iii = iii + 11;
+                        if (iii > 90) iii = 0;
 
 
-                }// for loop through DX_Index
+                    }// for loop through DX_Index
 
 
-            } // SP_Active DX SSB CLUSTER
+                } // SP_Active DX SSB CLUSTER
+
+
+
+
+            } // do above only if BandText is not on
 
             //===============================================================================================================================================================
             //===============================================================================================================================================================
@@ -16025,7 +16397,7 @@ namespace PowerSDR
 		}
 
 		private static Point[] points;
-        
+      
         unsafe static private bool DrawSpectrum(Graphics g, int W, int H, bool bottom)
 		{
 			DrawSpectrumGrid(ref g, W, H, bottom);
@@ -16205,6 +16577,58 @@ namespace PowerSDR
 		
         }  // drawspectrum
 
+
+
+        //==============================================================
+        // ke9ns for gradient color fill
+
+        static LinearGradientBrush pan_Brush;
+        static LinearGradientBrush pan_BrushB; // bottom
+        static ColorBlend pan_cb = new ColorBlend();
+
+        static float GD = 1.0f;
+        public static void Gradient(int max, int min)
+        {
+            
+            pan_Brush = new LinearGradientBrush(new Point(W10, H10), new Point(W10, 10), Color.Black, Color.Black); // standard RX
+            pan_BrushB = new LinearGradientBrush(new Point(W10, H10), new Point(W10, H10 / 2), Color.Black, Color.Black); // bottom RX
+
+            if ((max != 0) && (min != 0))
+            {
+               GD =(float) -73 / (float)(min - max); // min=-122, max=-19 (S9=-73) = .708
+            }
+            else GD = 1.0f;  // use to set where Violet = S9 (-73db) based on Min and Max Spectrum values from setup screen
+
+            GD = 1.0f;
+
+          //  Debug.WriteLine("PANGRADIENT " + GD + " , " + (0.07f * GD) + " , " + min + " , " + max + " , " + W + " , " + W10 + " , " + H + " , " + H10);
+
+            pan_cb.Positions = new[] { 0, 0.05f * GD, 0.1f * GD, 0.15f * GD, 0.2f * GD, 0.25f * GD, 0.3f * GD, 0.35f * GD, 0.45f * GD, 0.55f * GD, 0.65f * GD, 0.8f * GD, 1 }; // Black (MIN spectrum value or Lower), Blue, Green, Yellow, Red, Violet = -73 (S9 or better)
+
+            pan_cb.Colors = new[] { Color.FromArgb(panfillalpha, Color.Black), //1
+                            Color.FromArgb(panfillalpha, Color.Blue), //2
+                            Color.FromArgb(panfillalpha, 0,127,255), // 3 blue cyan
+                            Color.FromArgb(panfillalpha, Color.Cyan), //4 
+                            Color.FromArgb(panfillalpha, 0,255,127), // 5 green cyan
+                           // Color.FromArgb(panfillalpha, Color.Green), //6
+                            Color.FromArgb(panfillalpha, 127,255,0), //7 green yellow
+                            Color.FromArgb(panfillalpha, Color.Yellow), //8
+                            Color.FromArgb(panfillalpha, Color.Orange), //9
+                            Color.FromArgb(panfillalpha, Color.Red), //10
+                            Color.FromArgb(panfillalpha,255,0,127), //11 Red Magenta
+                            Color.FromArgb(panfillalpha, Color.Magenta), //12
+                            Color.FromArgb(panfillalpha, 127,0,255), //13 blue magenta
+                            Color.FromArgb(panfillalpha, 127,0,255),
+                             }; // 13 colors
+
+          
+            pan_Brush.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
+
+            pan_BrushB.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
+
+
+        } // Gradient(int max, int min)
+
         //==============================================================
         //==============================================================
         //==============================================================
@@ -16235,8 +16659,22 @@ namespace PowerSDR
         public static int floorB = 1000; // ke9ns add
         public static int countB = 0; // ke9ns add
 
+
+
+        static int W10=1;
+        static int H10=1;
+
         unsafe static private bool DrawPanadapter(Graphics g, int W, int H, int rx, bool bottom)
 		{
+
+
+            if ((H10 != H) || (W10 != W))
+            {
+                W10 = W;
+                H10 = H;
+                Gradient(SpectrumGridMax, SpectrumGridMin);
+            }
+
             bool local_mox = false;                 // whether you are transmitting or not
             A3B = A2B = AB = 0;    // ke9ns auto brightness
 
@@ -16244,7 +16682,7 @@ namespace PowerSDR
             if (rx == 2 && tx_on_vfob && mox) local_mox = true;
          
 
-            if (local_mox) // ke9ns ADD reset panadapter to TX mic levels , then set it back when back to RX
+            if (local_mox) // ke9ns ADD reset panadapter to TX mic levels , then set it back 3hen back to RX
             {
               
                 if ((tx_on_vfob) && (rx == 2))
@@ -16284,8 +16722,7 @@ namespace PowerSDR
             }
             else
             {
-                if (points == null || points.Length < W)
-                    points = new Point[W];			// array of points to display
+                if (points == null || points.Length < W)   points = new Point[W];			// array of points to display
             }
 
 			float slope = 0.0F;						// samples to process per pixel
@@ -16483,7 +16920,7 @@ namespace PowerSDR
             //=================================================================
             // draw line that makes up spectrum (width of window)
             //=================================================================
-            for (int i=0; i < W; i++)
+            for (int i = 0; i < W; i++)
 			{
 				float max = float.MinValue;                             // max = y point determined by RX data of spectrum as you go from 0 to W
 				float dval = i * slope + start_sample_index;            // dval = how many digital values per pixel (going left to right)
@@ -16718,6 +17155,8 @@ namespace PowerSDR
 
             }  // for loop from 0 to W wide
 
+
+
             if (console.BeaconSigAvg == true) // ke9ns for beacon scanner floor
             {
                 SpotControl.BX_dBm2 = (int)(max1 / W); // avg db value of the freq your on now
@@ -16830,23 +17269,44 @@ namespace PowerSDR
 
             if (pan_fill)                               // trace spectrum line and fill under it
             {
-                points[W].X = W; points[W].Y = H;
-                points[W + 1].X = 0; points[W + 1].Y = H;
+                points[W].X = W; // bottom of pan display area
+                points[W].Y = H;
+
+                points[W + 1].X = 0;
+                points[W + 1].Y = H;
+
                 if (bottom)
                 {
                     points[W].Y += H;
                     points[W + 1].Y += H;
                 }
 
-                data_line_pen.Color = DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+                if (panfillgradient == false) // ke9ns add  (normal)
+                {
+                    data_line_pen.Color = DisplayPanFillColor; // was  Color.FromArgb(100, 255, 255, 255); // ke9ns draw white at 100
+                    g.FillPolygon(data_line_pen.Brush, points); // fill with standard color (no gradient)
+                }
+                else // special color gradient mode under spectrum line)
+                {
+                    //   Gradient(); // obtain gradient
+                    
+                    if (bottom)
+                    {
+                        g.FillPolygon(pan_BrushB, points); // fill with gradient color
+                    }
+                    else
+                    {
+                        g.FillPolygon(pan_Brush, points); // fill with gradient color
+                    }
+                } //  if (panfillgradient == true
 
-                g.FillPolygon(data_line_pen.Brush, points);
+
                 points[W] = points[W - 1];
 
                 points[W + 1] = points[W - 1];
                 data_line_pen.Color = data_line_color;
              
-                g.DrawLines(data_line_pen, points);
+                g.DrawLines(data_line_pen, points);                             // trace spectrum line to screen
             }
             else
             {
@@ -18382,6 +18842,7 @@ namespace PowerSDR
 
                 int Maxcolor = 255; // 255
 
+                // ke9ns color: Blue->light blue->Green->light Green->Yellow->Light Yellow->Light Orange->Orange->Dark Orange->Red->Purple->Violet
 
                 if (Gray_Scale == 0) // RGB
                 {
@@ -18411,51 +18872,59 @@ namespace PowerSDR
 
                             float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
 
-                            if (overall_percent < (float)2 / 9) // background to blue
+                            if (overall_percent < (float)2 / 9) // background to blue (22% or .22222222)
                             {
-                                float local_percent = overall_percent / ((float)2 / 9);
+                                float local_percent = overall_percent / ((float)2 / 9); // local = 0= 0%  to 1=22%
+
                                 R = (int)((1.0 - local_percent) * waterfall_low_color.R);
                                 G = (int)((1.0 - local_percent) * waterfall_low_color.G);
                                 B = (int)(waterfall_low_color.B + local_percent * (Maxcolor - waterfall_low_color.B));
                             }
-                            else if (overall_percent < (float)3 / 9) // blue to blue-green
+                            else if (overall_percent < (float)3 / 9) // BLUE (min) to blue-green  (33%)
                             {
-                                float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9);
+                                float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9); // local RANGE = 0(22%) TO 1(33%)
+
                                 R = 0;
                                 G = (int)(local_percent * Maxcolor);
                                 B = Maxcolor;
                             }
-                            else if (overall_percent < (float)4 / 9) // blue-green to green
+                            else if (overall_percent < (float)4 / 9) // blue-green to green (44%)
                             {
-                                float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9);
+                                float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9); // local range = 0(33%) to 1(44%)
+
+                              
                                 R = 0;
                                 G = Maxcolor;
                                 B = (int)((1.0 - local_percent) * Maxcolor);
                             }
-                            else if (overall_percent < (float)5 / 9) // green to red-green
+                            else if (overall_percent < (float)5 / 9) // GREEN to YELLOW (55%)
                             {
-                                float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9);
+                                float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9); // local range = 0(44%) to 1(55%)
+
                                 R = (int)(local_percent * Maxcolor);
                                 G = Maxcolor;
-                                B = 0;
+                                B = 0; // yellow = R=255 G =255 (ie when local percent = 1 so overall_percent = 55%)
                             }
-                            else if (overall_percent < (float)7 / 9) // red-green to red
+                            else if (overall_percent < (float)7 / 9) // YELLOW to RED (77%)
                             {
-                                float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9);
+                                float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9); //0= 55% to 1=77%
+
                                 R = Maxcolor;
                                 G = (int)((1.0 - local_percent) * Maxcolor);
-                                B = 0;
+                                B = 0; 
                             }
-                            else if (overall_percent < (float)8 / 9) // red to red-blue
+                            else if (overall_percent < (float)8 / 9) // RED to Purple (88%)
                             {
-                                float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9);
+                                float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9); // 7
+
                                 R = 255;
                                 G = 0;
                                 B = (int)(local_percent * Maxcolor);
                             }
-                            else // red-blue to purple end
+                            else //Purple to Violet (max)
                             {
-                                float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9);
+                                float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9); // 8
+
                                 R = (int)((0.75 + 0.25 * (1.0 - local_percent)) * Maxcolor);
                                 G = (int)(local_percent * Maxcolor * 0.5);
                                 B = Maxcolor;
@@ -18885,9 +19354,9 @@ namespace PowerSDR
 			rx2_peak_buffer[0] = CLEAR_FLAG; // set reset flag
 		}
 
-        private class int16
-        {
-        }
+      //  sealed private class int16
+     //   {
+      //  }
 
 #endregion
 

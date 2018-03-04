@@ -394,6 +394,7 @@ C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Cons
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.DJConsoleMK2Config.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.DJConsoleMP3e2Config.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.DJConsoleMP3LEConfig.resources
+C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.helpbox1.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.FLEX1500DebugForm.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.FLEX1500MixerForm.resources
 C:\Users\RADIO\Documents\Visual Studio 2017\Projects\PowerSDR_v2.8.0\Source\Console\obj\Release\PowerSDR.HIDAntForm.resources

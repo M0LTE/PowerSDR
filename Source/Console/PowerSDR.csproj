@@ -85,7 +85,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NO_WIDETX;NO_MCL_PM;NO_KE9NS;NO_DJ</DefineConstants>
+    <DefineConstants>DEBUG;NO_WIDETX;NO_MCL_PM;NO_KE9NS;NO_DJ</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -176,11 +176,11 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualBasic.Compatibility" />
     <Reference Include="Microsoft.VisualC" />
-    <Reference Include="NAudio, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.8.3\lib\net35\NAudio.dll</HintPath>
+    <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.Lame, Version=1.0.5.27653, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.Lame.1.0.6\lib\net20\NAudio.Lame.dll</HintPath>
+    <Reference Include="NAudio.Lame, Version=1.0.5.22475, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.Lame.1.0.7\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -222,6 +222,10 @@
     <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
@@ -274,6 +278,7 @@
     <Compile Include="CAT\RemoteProfiles.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CAT\SDRSerialPortIII.cs" />
     <Compile Include="CAT\SDRSerialPortII.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -745,15 +750,15 @@
     <EmbeddedResource Include="Resources\arrowB.png" />
     <EmbeddedResource Include="Resources\Black_TXonly.png" />
     <EmbeddedResource Include="Resources\Black_combo.png" />
+    <EmbeddedResource Include="Resources\Wmap1.jpg" />
+    <EmbeddedResource Include="Resources\SC.png" />
+    <EmbeddedResource Include="Resources\SCB.png" />
     <Content Include="libmp3lame.32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="libmp3lame.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Resources\Wmap1.jpg" />
-    <EmbeddedResource Include="Resources\SC.png" />
-    <EmbeddedResource Include="Resources\SCB.png" />
     <Content Include="Scripts\json-serialize.js" />
     <Content Include="Scripts\json-serialize.min.js" />
     <EmbeddedResource Include="Resources\picD1.png" />
@@ -995,7 +1000,9 @@
       <DependentUpon>xvtr.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="CAT\CATStructs.xml" />
+    <Content Include="CAT\CATStructs.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="images\flex-3000.jpg" />
     <Content Include="images\PowerSDR.ico" />
     <EmbeddedResource Include="Resources\napoli.ttf" />
