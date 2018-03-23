@@ -747,6 +747,7 @@ namespace PowerSDR
             set { max_x = value; }
         }
 
+        static int MaxYLast = 0; // ke9ns add for continuum mode
         private static float max_y;                             // y-coord of maxmimum over one display pass
         public static float MaxY
         {
@@ -16580,7 +16581,7 @@ namespace PowerSDR
 
 
         //==============================================================
-        // ke9ns for gradient color fill
+        // ke9ns for gradient color fill (updates the gradient pattern when you change the screen size)
 
         static LinearGradientBrush pan_Brush;
         static LinearGradientBrush pan_BrushB; // bottom
@@ -16589,23 +16590,38 @@ namespace PowerSDR
         static float GD = 1.0f;
         public static void Gradient(int max, int min)
         {
-            
-            pan_Brush = new LinearGradientBrush(new Point(W10, H10), new Point(W10, 10), Color.Black, Color.Black); // standard RX
-            pan_BrushB = new LinearGradientBrush(new Point(W10, H10), new Point(W10, H10 / 2), Color.Black, Color.Black); // bottom RX
 
-            if ((max != 0) && (min != 0))
+            if (max <= min) max = min + 30;
+
+            if (max < -80) max = -80;
+            if (max > 20) max = 20;
+
+            if (min < -150) min = -150;
+            if (min > -80) min = -80;
+
+            if (W10 < 1) W10 = 1;
+            if (W10 > 3600) W10 = 1900;
+            if (H10 < 1) H10 = 1;
+            if (H10 > 2000) H10 = 1200;
+
+            try
             {
-               GD =(float) -73 / (float)(min - max); // min=-122, max=-19 (S9=-73) = .708
-            }
-            else GD = 1.0f;  // use to set where Violet = S9 (-73db) based on Min and Max Spectrum values from setup screen
+                pan_Brush = new LinearGradientBrush(new Point(W10, H10), new Point(W10, 10), Color.Black, Color.Black); // standard RX
+                pan_BrushB = new LinearGradientBrush(new Point(W10, H10), new Point(W10, H10 / 2), Color.Black, Color.Black); // bottom RX
 
-            GD = 1.0f;
+                if ((max != 0) && (min != 0))
+                {
+                    GD = (float)-73 / (float)(min - max); // min=-122, max=-19 (S9=-73) = .708
+                }
+                else GD = 1.0f;  // use to set where Violet = S9 (-73db) based on Min and Max Spectrum values from setup screen
 
-          //  Debug.WriteLine("PANGRADIENT " + GD + " , " + (0.07f * GD) + " , " + min + " , " + max + " , " + W + " , " + W10 + " , " + H + " , " + H10);
+                GD = 1.0f;
 
-            pan_cb.Positions = new[] { 0, 0.05f * GD, 0.1f * GD, 0.15f * GD, 0.2f * GD, 0.25f * GD, 0.3f * GD, 0.35f * GD, 0.45f * GD, 0.55f * GD, 0.65f * GD, 0.8f * GD, 1 }; // Black (MIN spectrum value or Lower), Blue, Green, Yellow, Red, Violet = -73 (S9 or better)
+                //  Debug.WriteLine("PANGRADIENT " + GD + " , " + (0.07f * GD) + " , " + min + " , " + max + " , " + W + " , " + W10 + " , " + H + " , " + H10);
 
-            pan_cb.Colors = new[] { Color.FromArgb(panfillalpha, Color.Black), //1
+                pan_cb.Positions = new[] { 0, 0.05f * GD, 0.1f * GD, 0.15f * GD, 0.2f * GD, 0.25f * GD, 0.3f * GD, 0.35f * GD, 0.45f * GD, 0.55f * GD, 0.65f * GD, 0.8f * GD, 1 }; // Black (MIN spectrum value or Lower), Blue, Green, Yellow, Red, Violet = -73 (S9 or better)
+
+                pan_cb.Colors = new[] { Color.FromArgb(panfillalpha, Color.Black), //1
                             Color.FromArgb(panfillalpha, Color.Blue), //2
                             Color.FromArgb(panfillalpha, 0,127,255), // 3 blue cyan
                             Color.FromArgb(panfillalpha, Color.Cyan), //4 
@@ -16621,10 +16637,16 @@ namespace PowerSDR
                             Color.FromArgb(panfillalpha, 127,0,255),
                              }; // 13 colors
 
-          
-            pan_Brush.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
 
-            pan_BrushB.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
+                pan_Brush.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
+                pan_BrushB.InterpolationColors = pan_cb; // set the color blend and gradient to the above list
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Gradient failure. " + e, "Gradient creation",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
 
 
         } // Gradient(int max, int min)
@@ -16668,7 +16690,7 @@ namespace PowerSDR
 		{
 
 
-            if ((H10 != H) || (W10 != W))
+            if ((panfillgradient) && (pan_fill) && (H10 != H) || (W10 != W))
             {
                 W10 = W;
                 H10 = H;
@@ -17871,7 +17893,8 @@ namespace PowerSDR
         private static int itemp = 0; // ke9ns add continuum mode
         private static int itemp_last = 0; // ke9ns add continuum mode
         private static int timerflag = 0; // ke9ns add
-        private static DateTime DT, DT1; // ke9ns add
+        private static int timerflag1 = 0; // ke9ns add
+        private static DateTime DT, DT1, DT2, DT3; // ke9ns add
 
         static Graphics g1; // 
         
@@ -18410,10 +18433,13 @@ namespace PowerSDR
 
                 if ((rx ==1) && (continuum == 1)) // ke9ns add (get the current Peak dbm value and convert to pixel location left=waterfall_low_threshold , right=waterall_high_threshold
                 {
-                    if ((MaxY < 20)&& (MaxY > -150) )
+                    if ((MaxY < 20) && (MaxY > -150) ) // if its a good dbm value
                     {  
-                        itemp = (int)(150 - Math.Abs(MaxY)) ; // ke9ns add reverse db for plotting
+                        itemp = (int)(150 - Math.Abs(MaxY)); // ke9ns add reverse db for plotting
                         itemp = itemp * (int)((float)W / (float)150);
+
+                        MaxYLast = (int)MaxY;
+
                     }
                     else
                     {
@@ -18427,8 +18453,8 @@ namespace PowerSDR
                     System.Drawing.Font font = new System.Drawing.Font("Swis721 BT", 9, FontStyle.Italic); // Arial size and style of freq text for waterfall
                     SolidBrush grid_text_brush = new SolidBrush(grid_text_color);
                   
-
-                    if (timerflag == 0) // set timer for every 5 seconds
+                   //.............................................................
+                    if (timerflag == 0) // set timer for every 1 seconds
                     {
                         DT1 = DT = DateTime.Now;
                         timerflag = 1;
@@ -18438,14 +18464,77 @@ namespace PowerSDR
                         DT1 = DateTime.Now;
                     }
 
-                 
-                 //   Debug.Write("diff "+ DT1.Subtract(DT).TotalSeconds);
-                  // Debug.Write("ts " + ts);
-
-                    if ((DT1.Subtract(DT).TotalSeconds) >= 5)
+                    //.............................................................
+                    if (timerflag1 == 0) // set timer for every 5 seconds
                     {
-                         g1.DrawString(string.Format("{0:yyyy-MM-dd_hh-mm-ss}", DateTime.Now), font, grid_text_brush, 1, 10); // ke9ns add continuum
-                         timerflag = 0;
+                        DT3 = DT2 = DT1;
+                        timerflag1 = 1;
+                    }
+                    else
+                    {
+                        DT3 = DT1;
+                    }
+
+
+                    //   Debug.Write("diff "+ DT1.Subtract(DT).TotalSeconds);
+                    // Debug.Write("ts " + ts);
+
+
+                    if ((DT1.Subtract(DT).TotalSeconds) >= 0.1) // was 5 seconds
+                    {
+                        string answer = " ";
+                        string Rotor = " ";
+  
+                        if (console.ROTOREnabled == true)
+                        {
+                            answer = console.spotDDUtil_Rotor1; // get rotor angle current position
+                            Rotor = answer + "°";
+                        }
+                        else
+                        {
+                            Rotor = " ";
+                        }
+
+                        if (console.CONT_RUN == true) // if recording 
+                        {
+                         //   Debug.Write("continuum recording... ") ;
+
+                            int temp0a = console.CONT_Curr;
+                           
+                            string temp0 = temp0a.ToString();
+                          
+                            // save CONTINUUM data as: Index, Ant heading, Gregorian time, Modified Julian Date, dBm peak value in the BandPass
+                            string temp1 = temp0 + " , " + answer + " , " + DT1.ToString("hh:mm:ss.ms") + " , " + (DT1.ToOADate() + 2415018.5).ToString() + " , " + MaxYLast.ToString("####");
+
+                            //  console.CONT_dbm[console.CONT_Curr++] = temp1;
+
+                            console.CONT_dbm.Add(temp1);
+                            console.CONT_Curr++;
+
+
+                            if (temp0a > 1000000) // dont allow to run forever  600 reading / min or 36,000 / hr or 864,000 / day
+                            {
+                                console.CONT_Curr = 0;
+                                console.CONT_RUN = false;
+
+                            }
+
+                            //   Debug.WriteLine("cont: " + temp1);
+                        } // if (console.CONT_RUN == true)
+
+                        //  g1.DrawString(string.Format("{0:yyyy-MM-dd_hh-mm-ss}", DateTime.Now), font, grid_text_brush, 1, 10); // ke9ns add continuum
+
+                        if ((DT3.Subtract(DT2).TotalSeconds) >= 2) // was 5 seconds
+                        {
+                          if (console.CONT_RUN == true)
+                                g1.DrawString(string.Format("{0:yyyy-MM-dd hh:mm:ss} , " + Rotor, DT1), font, new SolidBrush(Color.Red), 1, 10); // ke9ns add continuum
+                          else
+                                g1.DrawString(string.Format("{0:yyyy-MM-dd hh:mm:ss} , " + Rotor, DT1), font, grid_text_brush, 1, 10); // ke9ns add continuum
+
+                            timerflag1 = 0;
+                        }
+
+                       timerflag = 0;
                     }
 
                  //   g1.DrawLine(p,itemp,1,itemp_last,0); // ke9ns draw line
@@ -18559,12 +18648,22 @@ namespace PowerSDR
 
                             waterfall_data[i] = waterfall_low_threshold; // ke9ns add no line shown
 
+
+                            // ke9ns i=X position on screen (assuming -150dBm is on the far left side). draw a bright area when the X equals the continuum value 
                             
                             if (itemp > itemp_last)
                             {
                                 if ((i <= itemp) && (i >= itemp_last))
                                 {
-                                    waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                   
+                                    if (console.CONT_RUN == true)
+                                    {
+                                       waterfall_data[i] = waterfall_low_threshold + 40.0f; // ke9ns add draw line showing peak power per time
+                                    }
+                                    else
+                                    {
+                                        waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                    }
                                 }
                                 else
                                 {
@@ -18576,7 +18675,14 @@ namespace PowerSDR
                             {
                                 if ((i >= itemp) && (i <= itemp_last))
                                 {
-                                    waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                    if (console.CONT_RUN == true)
+                                    {
+                                        waterfall_data[i] = waterfall_low_threshold + 40.0f; // ke9ns add draw line showing peak power per time
+                                    }
+                                    else
+                                    {
+                                        waterfall_data[i] = waterfall_high_threshold; // ke9ns add draw line showing peak power per time
+                                    }
                                 }
                                 else
                                 {
@@ -19070,7 +19176,7 @@ namespace PowerSDR
                     }
                     else
                     {
-                        g.DrawImageUnscaled(waterfall_bmp, 0, 16);  // ke9ns draw image shift down 16 and over to the right 100 to allow for time stamp and db values	
+                            g.DrawImageUnscaled(waterfall_bmp, 0, 16);  // ke9ns draw image shift down 16 and over to the right 100 to allow for time stamp and db values	
 
                     }
                     //  }
@@ -19169,7 +19275,7 @@ namespace PowerSDR
 			}
 
 			return true;
-		}
+		} // DrawWaterfall
 
 		unsafe static private bool DrawHistogram(Graphics g, int W, int H)
 		{

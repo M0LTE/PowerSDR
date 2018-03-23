@@ -186,79 +186,127 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                2.500000, 2.500000, "WWV Time",					false,
-								5.000000, 5.000000, "WWV Time",					false,
-								10.000000, 10.000000, "WWV Time",				false,
-								15.000000, 15.000000, "WWV Time",			    false,
-								20.000000, 20.000000, "WWV Time",			    false,
-                                25.000000, 25.000000, "WWV Time",               false,  // ke9ns add
-                                3.330000, 3.330000, "CHU Time",                 false,
-                                7.850000, 7.850000, "CHU Time",                 false,
-                                14.670000, 14.670000, "CHU Time",               false,
+
+                                0.060000, 0.060000, "WWVB Time",                false,  // ke9ns add
+                                2.500000, 2.500000, "WWV Night Time",           false,
+                                5.000000, 5.000000, "WWV Night Time",           false,
+                                10.000000, 10.000000, "WWV Day-Evening Time",       false,
+                                15.000000, 15.000000, "WWV Day Time",       false,
+                                20.000000, 20.000000, "WWV Day Time",           false,
+                                25.000000, 25.000000, "WWV Day Time",           false,  // ke9ns add
+                                3.330000, 3.330000, "CHU Night Time",           false,
+                                7.850000, 7.850000, "CHU Night Time",           false,
+                                14.670000, 14.670000, "CHU Day Time",           false,
                                 4.996000, 4.996000, "RWM",                      false,
-                                9.996000, 9.996000, "RWM",                     	false,
-                                14.996000, 14.996000, "RWM",                   	false,
-                                4.998000, 4.998000, "EBC",                     	false,
+                                9.996000, 9.996000, "RWM",                      false,
+                                14.996000, 14.996000, "RWM",                    false,
+                                4.998000, 4.998000, "EBC",                      false,
                                 15.006000, 15.006000, "EBC",                    false,
+                                
+								0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // 2200m ham ke9ns change
 
-								0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // ke9ns change
-                                0.153000, 0.279000, "AM - Long Wave",			false,
+                                0.137800, 0.148499, "Long Wave",                false, // ke9ns add
+                                0.148500, 0.283500, "International AM LW",      false, // ke9ns mod
+                                0.283501, 0.414999, "Long Wave - Beacons",      false, // ke9ns add
                                 0.415000, 0.471999, "Maritime Band",            false,
-                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // ke9ns change
+                                
+                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // 630m ham ke9ns change
+
                                 0.479000, 0.526400, "Maritime Band",            false,
-								0.530000, 1.710000, "Broadcast AM Med Wave",	false,
-								2.300000, 2.495000, "120M Short Wave",			false,
-								3.200000, 3.329999, "90M Short Wave",			false,
-                                3.330001, 3.400000, "90M Short Wave",			false,
-								4.750000, 4.995999, "61M Short Wave",			false,
-                                4.996001, 4.997999, "61M Short Wave",			false,
-                                4.998001, 4.999999, "61M Short Wave",			false,
-                                5.000001, 5.060000, "61M Short Wave",			false,
-								5.450000, 6.999999, "49M Short Wave",			false,
-								7.300000, 8.999999, "41M Short Wave",			false, // ke9ns mod
-								9.000000, 9.900000, "31M Short Wave",			false, // ke9ns mod
-								11.600000, 12.100000, "25M Short Wave",			false,
-								13.570000, 13.870000, "22M Short Wave",			false,
-								15.100000, 15.800000, "19M Short Wave",			false,
-								17.480000, 17.900000, "16M Short Wave",			false,
-								18.900000, 19.020000, "15M Short Wave",			false,
-								21.450000, 21.850000, "13M Short Wave",			false,
+                                0.526401, 0.529999, "Long Wave - Beacons",      false,   // ke9ns add
 
-                                25.600000, 26.960000, "11M Short Wave",         false,
+                                0.530000, 0.530000, "TIS Travelers info stat",  false, // ke9ns add
+								0.530001, 1.609999, "Broadcast AM Med Wave",	false,
+                                1.610000, 1.610000, "TIS Travelers info stat",  false,
+                                1.610001, 1.710000, "Extd Bcast AM Med Wave",   false,
+                                1.710001, 1.799999, "Medium Wave",              false, // ke9ns add
+                                // 160m ham
+								2.000000, 2.499999, "120M Tropical Short Wave", false,
+                                // wwv 2.5000 mhz
+                                2.500001, 2.999999, "120M Tropical Short Wave", false, // ke9ns add
+                                3.000000, 3.199999, "90M Tropical Short Wave",  false, // ke9ns add
+                                3.200000, 3.329999, "90M Tropical Short Wave",	false,
+                                // chu 3.3
+                                3.330001, 3.499999, "90M Tropical Short Wave",	false,
+                                // 3.5 - 4.0 80-75m ham
+                                4.000001, 4.745999, "61M Night Short Wave",     false, // ke9ns add
+                                4.750000, 4.995999, "61M NIght Short Wave",		false,
+                                4.996001, 4.997999, "61M Night Short Wave",		false,
+                                4.998001, 4.999999, "61M Night Short Wave",		false,
+                                // wwv
+                                5.000001, 5.060000, "61M Night Short Wave",		false,
+                                5.060001, 5.249999, "61M Night Short Wave",     false, // ke9ns add
+                                // 60m ham
+                                5.450000, 6.999999, "49M Night Short Wave",		false,
+                                // 40m ham
+								7.300000, 7.849999, "41M Night Short Wave",		false, // ke9ns mod
+                                // chu 7.85
+                                7.850001, 8.999999, "41M Night Short Wave",     false, // ke9ns mod
 
-                                26.960001, 26.969999, "11M CB ch 1",              false,
-                                26.970001, 26.979999, "11M CB ch 2",              false,
-                                26.980001, 26.989999, "11M CB ch 3",              false,
+                                9.000000, 9.900000, "31M Evening Short Wave",	false, // ke9ns mod
+                                9.900001, 9.999999, "31M Evening Short Wave",   false, // ke9ns add
+                                // wwv
+                                10.000001, 10.099999, "31M Evening Short Wave", false, // ke9ns add
+                                // 30m 10.1 - 10.15 mhz
+	                            10.150001, 11.599999, "25M Evening Short Wave", false, // ke9ns add
+                                11.600000, 12.100000, "25M Evening Short Wave",	false,
+                                12.100001, 13.569999, "25M Evening Short Wave", false, // ke9ns add
+
+                                13.570000, 13.870000, "22M Daytime Short Wave",	false,
+                                13.870001, 13.999999, "22M Daytime Short Wave", false, // ke9ns add
+
+                                // 20m 14.000-14.350
+								14.350001, 14.999999, "19M Daytime Short Wave",	false,
+                                // wwv
+                                15.000001, 15.800000, "19M Daytime Short Wave", false,
+                                15.800001, 17.479999, "19M Daytime Short Wave", false, // ke9ns add
+                                17.480000, 18.067999, "19M Daytime Short Wave",	false, // ke9ns mod
+                                // 17m 18.068-18.168
+                                18.168001, 18.899999, "16M Daytime Short Wave", false, // ke9ns add
+                                18.900000, 19.999999, "16M Daytime Short Wave",	false, // ke9ns mod
+                                // wwv
+                                20.000001, 20.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                              
+                                // 15m 21.00 = 21.45
+                                21.449999, 24.889999, "13M Daytime Short Wave",	false,
+
+                                // 12m 24.89 - 24.99 mhz
+                                // wwv
+                                25.000001, 26.960000, "11M Day Short Wave",     false,
+
+                                26.960001, 26.969999, "11M CB ch 1",            false,
+                                26.970001, 26.979999, "11M CB ch 2",            false,
+                                26.980001, 26.989999, "11M CB ch 3",            false,
                                 26.990001, 26.999999, "11M CB RC",              false,
-                                27.000001, 27.009999, "11M CB ch 4",              false,
-                                27.010001, 27.019999, "11M CB ch 5",              false,
-                                27.020001, 27.029999, "11M CB ch 6",              false,
-                                27.030001, 27.039999, "11M CB ch 7",              false,
+                                27.000001, 27.009999, "11M CB ch 4",            false,
+                                27.010001, 27.019999, "11M CB ch 5",            false,
+                                27.020001, 27.029999, "11M CB ch 6",            false,
+                                27.030001, 27.039999, "11M CB ch 7",            false,
                                 27.040001, 27.049999, "11M CB RC",              false,
-                                27.050001, 27.059999, "11M CB ch 8",              false,
-                                27.060001, 27.069999, "11M CB ch 9",              false,
-                                27.070001, 27.079999, "11M CB ch 10",             false,
-                                27.080001, 27.089999, "11M CB ch 11",             false,
-                                27.090001, 27.099999, "11M CB RC",             false,
-                                27.100001, 27.109999, "11M CB ch 12",             false,
-                                27.110001, 27.119999, "11M CB ch 13",             false,
-                                27.120001, 27.129999, "11M CB ch 14",             false,
-                                27.130001, 27.139999, "11M CB ch 15",             false,
-                                27.140001, 27.149999, "11M CB RC",             false,
-                                27.150001, 27.159999, "11M CB ch 16",             false,
-                                27.160001, 27.169999, "11M CB ch 17",             false,
-                                27.170001, 27.179999, "11M CB ch 18",             false,
-                                27.180001, 27.189999, "11M CB ch 19",             false,
-                                27.190001, 27.199999, "11M CB RC",             false,
-                                27.200001, 27.209999, "11M CB ch 20",             false,
-                                27.210001, 27.219999, "11M CB ch 21",             false,
-                                27.220001, 27.229999, "11M CB ch 22",             false,
-                                27.250001, 27.259999, "11M CB ch 23",             false,
-                                27.230001, 27.239999, "11M CB ch 24",             false,
-                                27.240001, 27.249999, "11M CB ch 25",             false,
-                                27.260001, 27.269999, "11M CB ch 26",             false,
-                                27.270001, 27.279999, "11M CB ch 27",             false,
-                                27.280001, 27.289999, "11M CB ch 28",             false,
+                                27.050001, 27.059999, "11M CB ch 8",            false,
+                                27.060001, 27.069999, "11M CB ch 9",            false,
+                                27.070001, 27.079999, "11M CB ch 10",           false,
+                                27.080001, 27.089999, "11M CB ch 11",           false,
+                                27.090001, 27.099999, "11M CB RC",              false,
+                                27.100001, 27.109999, "11M CB ch 12",           false,
+                                27.110001, 27.119999, "11M CB ch 13",           false,
+                                27.120001, 27.129999, "11M CB ch 14",           false,
+                                27.130001, 27.139999, "11M CB ch 15",           false,
+                                27.140001, 27.149999, "11M CB RC",              false,
+                                27.150001, 27.159999, "11M CB ch 16",           false,
+                                27.160001, 27.169999, "11M CB ch 17",           false,
+                                27.170001, 27.179999, "11M CB ch 18",           false,
+                                27.180001, 27.189999, "11M CB ch 19",           false,
+                                27.190001, 27.199999, "11M CB RC",              false,
+                                27.200001, 27.209999, "11M CB ch 20",           false,
+                                27.210001, 27.219999, "11M CB ch 21",           false,
+                                27.220001, 27.229999, "11M CB ch 22",           false,
+                                27.250001, 27.259999, "11M CB ch 23",           false,
+                                27.230001, 27.239999, "11M CB ch 24",           false,
+                                27.240001, 27.249999, "11M CB ch 25",           false,
+                                27.260001, 27.269999, "11M CB ch 26",           false,
+                                27.270001, 27.279999, "11M CB ch 27",           false,
+                                27.280001, 27.289999, "11M CB ch 28",           false,
                                 27.290001, 27.299999, "11M CB ch 29",             false,
                                 27.300001, 27.309999, "11M CB ch 30",             false,
                                 27.310001, 27.319999, "11M CB ch 31",             false,
@@ -318,7 +366,8 @@ namespace PowerSDR
                              
                                 27.810000, 27.999999, "11M Short Wave",         false,
 
-
+                                // 10m 28-29.7 mhz
+                                // 6m 50 - 54 mhz
 
                             };
 
@@ -340,70 +389,117 @@ namespace PowerSDR
             DataTable t = ds.Tables["BandText"];
 
             object[] data = {
-                                2.500000, 2.500000, "WWV Time",                 false,
-                                5.000000, 5.000000, "WWV Time",                 false,
-                                10.000000, 10.000000, "WWV Time",               false,
-                                15.000000, 15.000000, "WWV Time",               false,
-                                20.000000, 20.000000, "WWV Time",               false,
-                                25.000000, 25.000000, "WWV Time",               false,  // ke9ns add
-                                3.330000, 3.330000, "CHU Time",                 false,
-                                7.850000, 7.850000, "CHU Time",                 false,
-                                14.670000, 14.670000, "CHU Time",               false,
+                                0.060000, 0.060000, "WWVB Time",                false,  // ke9ns add
+                                2.500000, 2.500000, "WWV Night Time",           false,
+                                5.000000, 5.000000, "WWV Night Time",           false,
+                                10.000000, 10.000000, "WWV Day-Evening Time",       false,
+                                15.000000, 15.000000, "WWV Day Time",       false,
+                                20.000000, 20.000000, "WWV Day Time",           false,
+                                25.000000, 25.000000, "WWV Day Time",           false,  // ke9ns add
+                                3.330000, 3.330000, "CHU Night Time",           false,
+                                7.850000, 7.850000, "CHU Night Time",           false,
+                                14.670000, 14.670000, "CHU Day Time",           false,
                                 4.996000, 4.996000, "RWM",                      false,
                                 9.996000, 9.996000, "RWM",                      false,
                                 14.996000, 14.996000, "RWM",                    false,
                                 4.998000, 4.998000, "EBC",                      false,
                                 15.006000, 15.006000, "EBC",                    false,
 
-                                0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // ke9ns change
-                                0.153000, 0.279000, "AM - Long Wave",           false,
-                                0.415000, 0.471999, "Maritime Band",            false,
-                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // ke9ns change
-                                0.479000, 0.526400, "Maritime Band",            false,
-                                0.530000, 1.710000, "Broadcast AM Med Wave",    false,
-                                2.300000, 2.495000, "120M Short Wave",          false,
-                                3.200000, 3.329999, "90M Short Wave",           false,
-                                3.330001, 3.400000, "90M Short Wave",           false,
-                                4.750000, 4.995999, "61M Short Wave",           false,
-                                4.996001, 4.997999, "61M Short Wave",           false,
-                                4.998001, 4.999999, "61M Short Wave",           false,
-                                5.000001, 5.060000, "61M Short Wave",           false,
-                                5.900000, 6.999999, "49M Short Wave",           false,
-                                7.300000, 8.999999, "41M Short Wave",           false, // ke9ns mod
-                                9.000000, 9.900000, "31M Short Wave",           false, // ke9ns mod
-                                11.600000, 12.100000, "25M Short Wave",         false,
-                                13.570000, 13.870000, "22M Short Wave",         false,
-                                15.100000, 15.800000, "19M Short Wave",         false,
-                                17.480000, 17.900000, "16M Short Wave",         false,
-                                18.900000, 19.020000, "15M Short Wave",         false,
-                                21.450000, 21.850000, "13M Short Wave",         false,
+                                0.135700, 0.137799, "2.2kM CW & Narrow Band",   true, // 2200m ham ke9ns change
 
-                                25.600000, 26.960000, "11M Short Wave",         true,
+                                0.137800, 0.148499, "Long Wave",                false, // ke9ns add
+                                0.148500, 0.283500, "International AM LW",      false, // ke9ns mod
+                                0.283501, 0.414999, "Long Wave - Beacons",      false, // ke9ns add
+                                0.415000, 0.471999, "Maritime Band",            false,
+
+                                0.472000, 0.478999, "630M CW & Narrow Band",    true, // 630m ham ke9ns change
+
+                                0.479000, 0.526400, "Maritime Band",            false,
+
+                                0.526401, 0.529999, "Long Wave - Beacons",      false,   // ke9ns add
+                                0.530000, 0.530000, "TIS Travelers info stat",  false, // ke9ns add
+								0.530001, 1.609999, "Broadcast AM Med Wave",    false,
+                                1.610000, 1.610000, "TIS Travelers info stat",  false,
+                                1.610001, 1.710000, "Extd Bcast AM Med Wave",   false,
+                                1.710001, 1.799999, "Medium Wave",              false, // ke9ns add
+                                // 160m ham
+								2.000000, 2.499999, "120M Tropical Short Wave", false,
+                                // wwv 2.5000 mhz
+                                2.500001, 2.999999, "120M Tropical Short Wave", false, // ke9ns add
+                                3.000000, 3.199999, "90M Tropical Short Wave",  false, // ke9ns add
+                                3.200000, 3.329999, "90M Tropical Short Wave",  false,
+                                // chu 3.3
+                                3.330001, 3.499999, "90M Tropical Short Wave",  false,
+                                // 3.5 - 4.0 80-75m ham
+                                4.000001, 4.745999, "61M Night Short Wave",     false, // ke9ns add
+                                4.750000, 4.995999, "61M NIght Short Wave",     false,
+                                4.996001, 4.997999, "61M Night Short Wave",     false,
+                                4.998001, 4.999999, "61M Night Short Wave",     false,
+                                // wwv
+                                5.000001, 5.060000, "61M Night Short Wave",     false,
+                                5.060001, 5.249999, "61M Night Short Wave",     false, // ke9ns add
+                                // 60m ham
+                                5.450000, 6.999999, "49M Night Short Wave",     false,
+                                // 40m ham
+								7.300000, 7.849999, "41M Night Short Wave",     false, // ke9ns mod
+                                // chu 7.85
+                                7.850001, 8.999999, "41M Night Short Wave",     false, // ke9ns mod
+
+                                9.000000, 9.900000, "31M Evening Short Wave",   false, // ke9ns mod
+                                9.900001, 9.999999, "31M Evening Short Wave",   false, // ke9ns add
+                                // wwv
+                                10.000001, 10.099999, "31M Evening Short Wave", false, // ke9ns add
+                                // 30m 10.1 - 10.15 mhz
+	                            10.150001, 11.599999, "25M Evening Short Wave", false, // ke9ns add
+                                11.600000, 12.100000, "25M Evening Short Wave", false,
+                                12.100001, 13.569999, "25M Evening Short Wave", false, // ke9ns add
+
+                                13.570000, 13.870000, "22M Daytime Short Wave", false,
+                                13.870001, 13.999999, "22M Daytime Short Wave", false, // ke9ns add
+
+                                // 20m 14.000-14.350
+								14.350001, 14.999999, "19M Daytime Short Wave", false,
+                                // wwv
+                                15.000001, 15.800000, "19M Daytime Short Wave", false,
+                                15.800001, 17.479999, "19M Daytime Short Wave", false, // ke9ns add
+                                17.480000, 18.067999, "19M Daytime Short Wave", false, // ke9ns mod
+                                // 17m 18.068-18.168
+                                18.168001, 18.899999, "16M Daytime Short Wave", false, // ke9ns add
+                                18.900000, 19.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                                // wwv
+                                20.000001, 20.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                              
+                                // 15m 21.00 = 21.45
+                                21.449999, 24.889999, "13M Daytime Short Wave", false,
+
+                                // 12m 24.89 - 24.99 mhz
+                                // wwv
+                                25.000001, 26.960000, "11M Day Short Wave",     false,
 
                                 26.960001, 26.969999, "11M CB ch 1",              true,
                                 26.970001, 26.979999, "11M CB ch 2",              true,
                                 26.980001, 26.989999, "11M CB ch 3",              true,
-                                26.990001, 26.999999, "11M CB RC",              true,
+                                26.990001, 26.999999, "11M CB RC",                true,
                                 27.000001, 27.009999, "11M CB ch 4",              true,
                                 27.010001, 27.019999, "11M CB ch 5",              true,
                                 27.020001, 27.029999, "11M CB ch 6",              true,
                                 27.030001, 27.039999, "11M CB ch 7",              true,
-                                27.040001, 27.049999, "11M CB RC",              true,
+                                27.040001, 27.049999, "11M CB RC",                true,
                                 27.050001, 27.059999, "11M CB ch 8",              true,
                                 27.060001, 27.069999, "11M CB ch 9",              true,
                                 27.070001, 27.079999, "11M CB ch 10",             true,
                                 27.080001, 27.089999, "11M CB ch 11",             true,
-                                27.090001, 27.099999, "11M CB RC",             true,
+                                27.090001, 27.099999, "11M CB RC",                true,
                                 27.100001, 27.109999, "11M CB ch 12",             true,
                                 27.110001, 27.119999, "11M CB ch 13",             true,
                                 27.120001, 27.129999, "11M CB ch 14",             true,
                                 27.130001, 27.139999, "11M CB ch 15",             true,
-                                27.140001, 27.149999, "11M CB RC",             true,
+                                27.140001, 27.149999, "11M CB RC",                true,
                                 27.150001, 27.159999, "11M CB ch 16",             true,
                                 27.160001, 27.169999, "11M CB ch 17",             true,
                                 27.170001, 27.179999, "11M CB ch 18",             true,
                                 27.180001, 27.189999, "11M CB ch 19",             true,
-                                27.190001, 27.199999, "11M CB RC",             true,
+                                27.190001, 27.199999, "11M CB RC",                true,
                                 27.200001, 27.209999, "11M CB ch 20",             true,
                                 27.210001, 27.219999, "11M CB ch 21",             true,
                                 27.220001, 27.229999, "11M CB ch 22",             true,

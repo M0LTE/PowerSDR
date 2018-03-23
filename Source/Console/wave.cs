@@ -1405,7 +1405,7 @@ namespace PowerSDR
                     file_name = QPFile; // ke9ns check file name passed from console play button
                    
                 }
-                else if (chkQuickPlay.Checked) 
+                else if ((chkQuickPlay.Checked) && QAC > 0) 
                 {
                     
                     // ke9ns add to keep a missing file name from crashing powersdr
@@ -1419,14 +1419,16 @@ namespace PowerSDR
                     {
                         console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
                      
-                        if (Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
+                        if (!Directory.Exists(console.AppDataPath)) // need to see the quickaudio folder
                         {
-                            MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find QuickAudio folder");
+                            MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find QuickAudio folder. " + console.AppDataPath);
                             return;
                         }
                         else
                         {
+                         //   MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find file " + QAC.ToString() + " in QuickAudio folder");
                             MessageBox.Show(new Form() { TopMost = true }, "WAVE: could not Find file " + QAC.ToString() + " in QuickAudio folder");
+
                             return;
                         }
                     }
@@ -1464,7 +1466,7 @@ namespace PowerSDR
                 else
                 {
                     console.ckQuickPlay.Checked = false; // if not transmitting then dont do anything and return.
-                    MessageBox.Show(new Form() { TopMost = true }, "Wave: could not Find QuickAudio folder");
+                    MessageBox.Show(new Form() { TopMost = true }, "Wave: could not Find QuickAudio folder.. "+ console.AppDataPath);
                     return;
                 }
             }

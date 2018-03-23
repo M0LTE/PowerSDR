@@ -2036,6 +2036,7 @@ namespace PowerSDR
             this.lblDisplayGridColor = new System.Windows.Forms.LabelTS();
             this.clrbtnDataLine = new PowerSDR.ColorButton();
             this.grpAppPanadapter = new System.Windows.Forms.GroupBoxTS();
+            this.chkBoxPanFillColor = new System.Windows.Forms.CheckBoxTS();
             this.labelTS11 = new System.Windows.Forms.LabelTS();
             this.labelTS10 = new System.Windows.Forms.LabelTS();
             this.tbPanAlpha = new System.Windows.Forms.TrackBarTS();
@@ -2440,7 +2441,6 @@ namespace PowerSDR
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.textBoxSAVE = new System.Windows.Forms.TextBoxTS();
-            this.chkBoxPanFillColor = new System.Windows.Forms.CheckBoxTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -12497,7 +12497,7 @@ namespace PowerSDR
             this.tbPanGrid.TabIndex = 96;
             this.tbPanGrid.TickFrequency = 50;
             this.toolTip1.SetToolTip(this.tbPanGrid, "Transparency of BandText fill area ");
-            this.tbPanGrid.Value = 70;
+            this.tbPanGrid.Value = 130;
             this.tbPanGrid.Scroll += new System.EventHandler(this.tbPanGrid_Scroll);
             // 
             // clrbtnText
@@ -12593,7 +12593,7 @@ namespace PowerSDR
             // clrbtnGrid
             // 
             this.clrbtnGrid.Automatic = "Automatic";
-            this.clrbtnGrid.Color = System.Drawing.Color.Purple;
+            this.clrbtnGrid.Color = System.Drawing.Color.RoyalBlue;
             this.clrbtnGrid.Image = null;
             this.clrbtnGrid.Location = new System.Drawing.Point(316, 12);
             this.clrbtnGrid.MoreColors = "More Colors...";
@@ -12684,6 +12684,18 @@ namespace PowerSDR
             this.grpAppPanadapter.TabStop = false;
             this.grpAppPanadapter.Text = "Panadapter";
             this.grpAppPanadapter.Enter += new System.EventHandler(this.grpAppPanadapter_Enter);
+            // 
+            // chkBoxPanFillColor
+            // 
+            this.chkBoxPanFillColor.Image = null;
+            this.chkBoxPanFillColor.Location = new System.Drawing.Point(439, 127);
+            this.chkBoxPanFillColor.Name = "chkBoxPanFillColor";
+            this.chkBoxPanFillColor.Size = new System.Drawing.Size(70, 32);
+            this.chkBoxPanFillColor.TabIndex = 96;
+            this.chkBoxPanFillColor.Text = "Pan Fill Gradient";
+            this.toolTip1.SetToolTip(this.chkBoxPanFillColor, "Check to show Color gradient under Panadapter Spectrum line.\r\nColor related to si" +
+        "gnal strength (BLUE = LOW, VIOLET = HIGH)");
+            this.chkBoxPanFillColor.CheckedChanged += new System.EventHandler(this.chkBoxPanFillColor_CheckedChanged);
             // 
             // labelTS11
             // 
@@ -17230,18 +17242,6 @@ namespace PowerSDR
             this.textBoxSAVE.Size = new System.Drawing.Size(316, 20);
             this.textBoxSAVE.TabIndex = 30;
             // 
-            // chkBoxPanFillColor
-            // 
-            this.chkBoxPanFillColor.Image = null;
-            this.chkBoxPanFillColor.Location = new System.Drawing.Point(439, 127);
-            this.chkBoxPanFillColor.Name = "chkBoxPanFillColor";
-            this.chkBoxPanFillColor.Size = new System.Drawing.Size(70, 32);
-            this.chkBoxPanFillColor.TabIndex = 96;
-            this.chkBoxPanFillColor.Text = "Pan Fill Gradient";
-            this.toolTip1.SetToolTip(this.chkBoxPanFillColor, "Check to show Color gradient under Panadapter Spectrum line.\r\nColor related to si" +
-        "gnal strength (BLUE = LOW, VIOLET = HIGH)");
-            this.chkBoxPanFillColor.CheckedChanged += new System.EventHandler(this.chkBoxPanFillColor_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -18662,6 +18662,8 @@ namespace PowerSDR
 
         public void SaveTXProfileData()
         {
+            Debug.WriteLine("SAVETXPROFILE");
+
             if (profile_deleted == true)
             {
                 profile_deleted = false;
@@ -24039,7 +24041,7 @@ namespace PowerSDR
 			if(comboTXProfileName.SelectedIndex < 0 || initializing)
 				return;
 
-            if (chkAutoSaveTXProfile.Checked)
+            if (chkAutoSaveTXProfile.Checked == true)
             {
                 SaveTXProfileData();
             }
@@ -24241,7 +24243,9 @@ namespace PowerSDR
 				if(result == DialogResult.No)
 					return;
 
-				foreach(DataRow d in DB.ds.Tables["TxProfile"].Rows)
+                Debug.WriteLine("BTN....SAVETXPROFILE");
+
+                foreach (DataRow d in DB.ds.Tables["TxProfile"].Rows)
 				{
 					if((string)d["Name"] == name) 
 					{

@@ -4067,6 +4067,7 @@ namespace PowerSDR
             this.comboDisplayMode.Name = "comboDisplayMode";
             this.toolTip1.SetToolTip(this.comboDisplayMode, resources.GetString("comboDisplayMode.ToolTip"));
             this.comboDisplayMode.SelectedIndexChanged += new System.EventHandler(this.comboDisplayMode_SelectedIndexChanged);
+            this.comboDisplayMode.MouseUp += new System.Windows.Forms.MouseEventHandler(this.comboDisplayMode_MouseUp);
             // 
             // chkDisplayAVG
             // 
@@ -9513,12 +9514,14 @@ namespace PowerSDR
 
            //----------------------------------------------------------------------------------
          
-            Debug.WriteLine("((((((((SAVETXPROFILEDATA))))))))))))))))");
+            Debug.WriteLine("((((((((CHECK...SAVETXPROFILEDATA))))))))))))))))");
 
             if (setupForm != null)
             {
                 if (SaveTXProfileOnExit == true)    // save the tx profile
                 {
+                    Debug.WriteLine("((((((((SAVETXPROFILEDATA))))))))))))))))");
+
                     setupForm.SaveTXProfileData();
                 }
             }
@@ -29352,7 +29355,7 @@ namespace PowerSDR
 					ret = tx_ant_by_band[(int)b];
 					break;
 			}
-			return ret;
+			return ret; // return which antenna to use for TX
 		}
 
         private HIDAnt[] rx_ant_1500_by_band;
@@ -31867,7 +31870,7 @@ namespace PowerSDR
 			set { vox_active = value; }
 		}
 
-        private bool save_txprofile_on_exit = true;
+        private bool save_txprofile_on_exit = false;
         public bool SaveTXProfileOnExit
         {
             get { return save_txprofile_on_exit; }
@@ -34515,7 +34518,7 @@ namespace PowerSDR
                             byte b1 = 0;
                             byte b2 = 0;
 
-                            if (rx1_xvtr_index >= 0)
+                            if(rx1_xvtr_index >= 0)
                             {
                                 val = ucbForm.GetLine(rx1_xvtr_index);
                                 b1 = (byte)val;
@@ -34548,6 +34551,7 @@ namespace PowerSDR
                         }
                     } //  if ((flex_wire_ucb))
 
+/*  ke9ns add but removed
                     byte reg0 = 0;
                     byte reg1 = 0;
 
@@ -34571,7 +34575,7 @@ namespace PowerSDR
                                     USBHID.FlexWire_Write2Value(0x55, reg0, reg1);
                                 break;
                         }
-
+*/
 
                 } //   if ((rx1_band != old_band))
 
@@ -38257,8 +38261,8 @@ namespace PowerSDR
 
             if (Display.continuum == 1) // ke9ns add
             {
-                 float tempf = (Display.RXDisplayHigh - Display.RXDisplayLow) / 1000;
-                autoBrightBox.Text = tempf.ToString("f0") + " KHz";
+                 float tempf = (Display.RXDisplayHigh - Display.RXDisplayLow) / 1000; // find width
+                 autoBrightBox.Text = tempf.ToString("f0") + " KHz";
      
             }
             else
@@ -52595,51 +52599,65 @@ namespace PowerSDR
         public void comboDisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			DisplayMode old_mode = Display.CurrentDisplayMode;
-           
+
+            CONT_Curr = 0; // clear continuum counter
+            CONT_dbm.Clear();
+
             switch (comboDisplayMode.Text)  // ke9ns  list of display modes is populated for a list at the top of the code Displaymodes
 			{
 				case "Spectrum":
+                    CONT_RUN = false;
+
 					Display.CurrentDisplayMode = DisplayMode.SPECTRUM;
 					UpdateRXDisplayVars((int)udFilterLow.Value, (int)udFilterHigh.Value);
                     CTUN1 = false;
 
 					break; 
 				case "Panadapter":
-					Display.CurrentDisplayMode = DisplayMode.PANADAPTER;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.PANADAPTER;
                   	CalcDisplayFreq();
 					break;
 				case "Scope":
-					Display.CurrentDisplayMode = DisplayMode.SCOPE;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.SCOPE;
                     CTUN1 = false;
                     break;
 				case "Phase":
-					Display.CurrentDisplayMode = DisplayMode.PHASE;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.PHASE;
                     CTUN1 = false;
                     break;
 				case "Phase2":
-					Display.CurrentDisplayMode = DisplayMode.PHASE2;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.PHASE2;
                     CTUN1 = false;
                     break;
 				case "Waterfall":
-					Display.CurrentDisplayMode = DisplayMode.WATERFALL;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.WATERFALL;
 					CalcDisplayFreq();
 					break;
 				case "Histogram":
-					Display.CurrentDisplayMode = DisplayMode.HISTOGRAM;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.HISTOGRAM;
                     CTUN1 = false;
                     break;
 				case "Panafall":
+                    CONT_RUN = false;
                     Display.map = 0;
                     Display.CurrentDisplayMode = DisplayMode.PANAFALL;
                     CalcDisplayFreq();
 					break;
                 case "Panafall8020":                                    // ke9ns add special panfall size 80%pan 20% water
+                    CONT_RUN = false;
                     Display.map = 1;
                     Display.CurrentDisplayMode = DisplayMode.PANAFALL;
                     CalcDisplayFreq();
                     break;
                 case "Panascope":
-					Display.CurrentDisplayMode = DisplayMode.PANASCOPE;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.PANASCOPE;
 					CalcDisplayFreq();
 					break;
                 case "Continuum":
@@ -52648,7 +52666,8 @@ namespace PowerSDR
                     CalcDisplayFreq();
                     break;
                 case "Off":
-					Display.CurrentDisplayMode = DisplayMode.OFF;
+                    CONT_RUN = false;
+                    Display.CurrentDisplayMode = DisplayMode.OFF;
                     CTUN1 = false;
                     break;
 			}
@@ -53060,8 +53079,7 @@ namespace PowerSDR
 
             if (cwxForm != null)
             {
-              
-                cwxForm.Close();
+               cwxForm.Close();
             }
 
             if (setupForm != null) setupForm.SaveOptions();
@@ -76162,10 +76180,107 @@ namespace PowerSDR
 
         } // N1MM_SPECTRUM()
 
+        //==============================================================================================
+        // ke9ns add
+        private void comboDisplayMode_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
 
-//===============================================================================
-// ke9ns add (these 2 functions are called from the scanner routine
+            if ((me.Button == System.Windows.Forms.MouseButtons.Right))
+            {
+              //  Debug.WriteLine("DISPLAY MODE RIGHT CLICK ");
 
+                if (comboDisplayMode.Text == "Continuum") 
+                {
+                    if (CONT_RUN == false)
+                    {
+                        Debug.WriteLine("CONT false ");
+
+                        CONT_dbm.Clear();
+
+                        CONT_Curr = 0; // reset
+                        CONT_Last = 0;
+                        CONT_RUN = true; // start recording continuum data
+                    }
+                    else
+                    {
+                        Debug.WriteLine("CONT true ");
+
+                        CONT_RUN = false; // stop recording continuum data
+                        CONT_Last = CONT_Curr;
+                        CONT_Logger_Write();
+                        CONT_Curr = 0; // reset
+                        CONT_Last = 0;
+                        CONT_dbm.Clear();
+                    }
+                } // if in continuum mode only
+                else
+                {
+                    Debug.WriteLine("not in CONT mode " + comboDisplayMode.Text);
+                }
+
+            } // right click button pushed
+
+
+            
+
+        } //  comboDisplayMode_MouseUp
+
+        //===============================================================================
+        // ke9ns add (record Continuum into CSV)
+       
+
+       
+        public int CONT_Curr = 0;
+
+        public int CONT_Last = 0;
+        public bool CONT_RUN = false;
+
+
+        public List<string> CONT_dbm = new List<string>(); // create list to hold strings of Continuum data
+
+
+
+        public void CONT_Logger_Write()
+        {
+
+            // ke9ns store SWR PLOTS
+            string file_nameCONT = AppDataPath + "Continuum" + WaveForm.QAName() + ".csv"; // save data for my mods
+
+          //  Debug.WriteLine("CONTINUUM FILE OPEN TO WRITE: " + CONT_Last + " , " + file_nameCONT);
+
+            FileStream stream3 = new FileStream(file_nameCONT, FileMode.Create); // open   file
+            BinaryWriter writer3 = new BinaryWriter(stream3);
+
+
+            int i3 = 0; // 1-3000 SWR data Slot
+
+
+            writer3.Write("Index , Ant Heading , Current Time (Gregorian), Modified Julian Date, dBm peak value in the BandPass " + Environment.NewLine);
+
+
+
+            for (i3 = 0; i3 < CONT_Last; i3++) // 
+            {
+
+              
+                writer3.Write(CONT_dbm[i3] + Environment.NewLine);
+
+
+            } // for loop SLOTS
+
+            writer3.Close();    // close  file
+            stream3.Close();   // close stream
+
+            Debug.WriteLine("CONTINUUM FILE CLOSED ");
+
+        } // CONT_Logger_Write()
+
+
+     
+
+        //===============================================================================
+        // ke9ns add (these 2 functions are called from the scanner routine
 
         public void SWR_Logger_Write()
         {
@@ -76198,18 +76313,16 @@ namespace PowerSDR
                             {
                                 temp2 = 999.0;
                                 writer3.Write(temp2);
-                              //  Debug.WriteLine("WW> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+                                //  Debug.WriteLine("WW> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
 
                                 break;
                             }
                             else
                             {
                                 writer3.Write(temp2);
-                              //  Debug.WriteLine("w> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
+                                //  Debug.WriteLine("w> " + i0 + "," + i1 + "," + i2 + "," + i3 + ", " + temp2);
 
                             }
-
-
 
                         } // for loop SLOTS
                     } // for loop BANDS
@@ -76223,6 +76336,8 @@ namespace PowerSDR
 
         } // SWR_Logger_Write()
 
+
+        //========================================================================================================
 
         public void SWR_Logger_Read()
         {

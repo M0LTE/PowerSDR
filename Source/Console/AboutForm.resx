@@ -307,34 +307,36 @@ TX Waterfall ID PDF file:
 "file://%userprofile%\AppData\Roaming\FlexRadio%20Systems\PowerSDR%20v2.8.0\PowerSDR%20TX%20Waterfall%20ID.pdf"
 
 Each Video covers additional features not covered in earlier videos:
-YouTube Video Describing 2.8.0.54 (SWR Scanner / Plotter / Logger): https://www.youtube.com/embed/w5j6jh6c0_g
-YouTube Video Describing 2.8.0.52 (New Combo TX meter &amp; Weather, and demonstrate setup of PowerSDR to run digital mode programs (like wsjt-x): https://www.youtube.com/embed/VOIve-4hEYQ
-YouTube Video Describing 2.8.0.43 (New VFO Font, Time-Out Timer, Enable VAC2, SSB-AM H3E mode,FM data mode, N1MM spectrum, UTC Recording start time): https://www.youtube.com/embed/BayWkcjS3os
-YouTube Video Describing 2.8.0.38 (Updates to ID TImer, Pan Spotting, VFO Dials): https://www.youtube.com/embed/y5VLJEBOoZE
-YouTube Video Describing 2.8.0.27 (Updates to Scanner, Meters, Time Sync, SWL): https://www.youtube.com/embed/t3AWOG94w1Q
-YouTube Video Describing 2.8.0.18 (Scanner and DX Spotting): https://www.youtube.com/embed/YRG6ifwosAo
-YouTube Video Describing 2.8.0.16 (TX WaterID images): https://www.youtube.com/embed/Bsoz0c_mo5k
-YouTube Video Describing 2.8.0.2 (ID and Wav recording features): https://www.youtube.com/embed/VdzK-H5SXNc
-YouTube Video Describing RevT11 (ID Timer): https://www.youtube.com/embed/-KSlMNyN8U0
-YouTube Video Describing RevT11 (BandStack): https://www.youtube.com/embed/CQFvdhAtMaE
-YouTube Video Describing RevT11 (Pulser): https://www.youtube.com/embed/uruyOtyLRvM
-YouTube Video Describing RevT11 (VOACAP): https://www.youtube.com/embed/nBkeqs9No2E
-YouTube Video Describing RevT11 (NIST Time Sync): https://www.youtube.com/embed/p-5wKRw2xdY
-YouTube Video Describing RevT11 (NCDXF Beacon): https://www.youtube.com/embed/tJBvmF5t9zc
-YouTube Video Describing RevT10 (Rotor Control): https://www.youtube.com/embed/8hAMc_WUa2Q
-YouTube Video Describing RevT10 (Beam Heading): https://www.youtube.com/embed/AOEclAFXI0s
-YouTube Video Describing RevT10 (Scheduler): https://www.youtube.com/embed/JtKY6lwMTVY
-YouTube Video Describing RevT9 (SWL Search): https://www.youtube.com/embed/Cv-Jm2j3jw8
 
-YouTube Video Describing RevT8 (BandStack): https://www.youtube.com/embed/1JHV_CDQwIU
-YouTube Video Describing RevT8 (Space Wthr): https://www.youtube.com/embed/5xjzl5IkiJg
-YouTube Video Describing RevT8(PowerMate):  https://www.youtube.com/watch?v=sEQ2bzZn4bQ
-YouTube Video Describing RevT7(2nd TX meter): https://www.youtube.com/embed/635dur8SoKo
-YouTube Video Describing RevT6 to RevS11: https://www.youtube.com/embed/uPTpZCXCFw0
-YouTube Video Describing RevS10 to RevS2: https://www.youtube.com/embed/zninPwfSgJY
-YouTube Video Describing RevS1 to RevR4 : https://www.youtube.com/embed/fr523IwrApU
-YouTube Video Describing RevR3 to RevP2 : https://www.youtube.com/embed/mOwYpAMm8S0
-YouTube Video Describing RevP1 to Rev A : https://www.youtube.com/embed/aQN9KStSuPI
+YouTube Video v2.8.0.67 (SWR Plots, SWL Search, PTT Hang timer, AM/SSB, Screen Shot, 8020PAN, BandText to Pan, Manual Rotor Control): https://www.youtube.com/embed/X2K6S4ZIzfQ
+YouTube Video v2.8.0.54 (SWR Scanner / Plotter / Logger): https://www.youtube.com/embed/w5j6jh6c0_g
+YouTube Video v2.8.0.52 (New Combo TX meter &amp; Weather, and demonstrate setup of PowerSDR to run digital mode programs (like wsjt-x): https://www.youtube.com/embed/VOIve-4hEYQ
+YouTube Video v2.8.0.43 (New VFO Font, Time-Out Timer, Enable VAC2, SSB-AM H3E mode,FM data mode, N1MM spectrum, UTC Recording start time): https://www.youtube.com/embed/BayWkcjS3os
+YouTube Video v2.8.0.38 (Updates to ID TImer, Pan Spotting, VFO Dials): https://www.youtube.com/embed/y5VLJEBOoZE
+YouTube Video v2.8.0.27 (Updates to Scanner, Meters, Time Sync, SWL): https://www.youtube.com/embed/t3AWOG94w1Q
+YouTube Video v2.8.0.18 (Scanner and DX Spotting): https://www.youtube.com/embed/YRG6ifwosAo
+YouTube Video v2.8.0.16 (TX WaterID images): https://www.youtube.com/embed/Bsoz0c_mo5k
+YouTube Video v2.8.0.2 (ID and Wav recording features): https://www.youtube.com/embed/VdzK-H5SXNc
+YouTube Video RevT11 (ID Timer): https://www.youtube.com/embed/-KSlMNyN8U0
+YouTube Video RevT11 (BandStack): https://www.youtube.com/embed/CQFvdhAtMaE
+YouTube Video RevT11 (Pulser): https://www.youtube.com/embed/uruyOtyLRvM
+YouTube Video RevT11 (VOACAP): https://www.youtube.com/embed/nBkeqs9No2E
+YouTube Video RevT11 (NIST Time Sync): https://www.youtube.com/embed/p-5wKRw2xdY
+YouTube Video RevT11 (NCDXF Beacon): https://www.youtube.com/embed/tJBvmF5t9zc
+YouTube Video RevT10 (Rotor Control): https://www.youtube.com/embed/8hAMc_WUa2Q
+YouTube Video RevT10 (Beam Heading): https://www.youtube.com/embed/AOEclAFXI0s
+YouTube Video RevT10 (Scheduler): https://www.youtube.com/embed/JtKY6lwMTVY
+YouTube Video RevT9 (SWL Search): https://www.youtube.com/embed/Cv-Jm2j3jw8
+
+YouTube Video RevT8 (BandStack): https://www.youtube.com/embed/1JHV_CDQwIU
+YouTube Video RevT8 (Space Wthr): https://www.youtube.com/embed/5xjzl5IkiJg
+YouTube Video RevT8(PowerMate):  https://www.youtube.com/watch?v=sEQ2bzZn4bQ
+YouTube Video RevT7(2nd TX meter): https://www.youtube.com/embed/635dur8SoKo
+YouTube Video RevT6 to RevS11: https://www.youtube.com/embed/uPTpZCXCFw0
+YouTube Video RevS10 to RevS2: https://www.youtube.com/embed/zninPwfSgJY
+YouTube Video RevS1 to RevR4 : https://www.youtube.com/embed/fr523IwrApU
+YouTube Video RevR3 to RevP2 : https://www.youtube.com/embed/mOwYpAMm8S0
+YouTube Video RevP1 to Rev A : https://www.youtube.com/embed/aQN9KStSuPI
 </value>
   </data>
 </root>

@@ -654,7 +654,7 @@ namespace PowerSDR
             // FWCAntForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(280, 372);
+            this.ClientSize = new System.Drawing.Size(280, 374);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.grpComplexity);
             this.Controls.Add(this.grpAntenna);
@@ -1060,6 +1060,8 @@ namespace PowerSDR
 				{
 					comboTXAnt.Text = AntToString(console.GetTXAnt(band));
 				}
+
+
 				chkRX1Loop.Checked = console.GetRX1Loop(band);
 				chkRCATX1.Checked = console.GetTX1(band);
 				chkRCATX2.Checked = console.GetTX2(band);
@@ -1305,6 +1307,11 @@ namespace PowerSDR
 
             } // if (e.KeyCode == Keys.F1)
 
+
+        }
+
+        private void checkBoxTS1_CheckedChanged(object sender, EventArgs e)
+        {
 
         }
     }

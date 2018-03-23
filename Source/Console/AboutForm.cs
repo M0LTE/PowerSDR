@@ -296,9 +296,9 @@ namespace PowerSDR
 
         } // okButton_Click
 
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
 
-
-
-
+        }
     } // class about
 }
