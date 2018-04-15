@@ -1169,7 +1169,6 @@ namespace PowerSDR
                     autobright3 = 0;
 
 
-
                     if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.PANADAPTER) || (current_display_mode == DisplayMode.PANAFALL)))// PANADAPTER
                     {
                         if (value == 2)
@@ -1190,7 +1189,7 @@ namespace PowerSDR
                             autobright7 = value; // RX1 adjust standard signal scale
                             return;
                         }
-                        else
+                        else // = 1
                         {
                             autobright7 = 0;
                             autobright6 = 0;
@@ -1199,18 +1198,20 @@ namespace PowerSDR
 
                     if ((console.chkPower.Checked) && ((current_display_mode == DisplayMode.WATERFALL) || (current_display_mode == DisplayMode.PANAFALL)))
                     {
+                       
                         autobright = value; // RX1 adjust
                     }
                     else autobright = 0;
 
                     if ((console.chkRX2.Checked) && ((current_display_mode_bottom == DisplayMode.WATERFALL) || (current_display_mode_bottom == DisplayMode.PANAFALL)))
                     {
+                       
                         autobright2 = value;   // RX2 adjust
                     }
                     else autobright2 = 0;
 
 
-                }
+                } // RX mode above
 
                 //   Debug.WriteLine("hereasdfadsf===========");
 
@@ -11429,14 +11430,14 @@ namespace PowerSDR
 
                     //---------------------------------------------------
                     // ke9ns RX1 determine the bandtext to display for the current pan
-                    if (freqlast1 != VFOC)
+                    if (freqlast1 != VFOC)  // if last freq is not equal to the current VFOA freq
                     {
                         bandtext_counter = 0; // reset the bandtext counter
                         freqlast1 = VFOC;
 
                         //   Debug.WriteLine("LOOP BANDTEXT2 " + VFOLow + " , " + VFOHigh + " , " + VFOLowB + ", " + VFOHighB + " , " + XPOS + " , " + VFODiff);
 
-                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.001m) // for loop through each 1khz to find all the bandtext for the current display
+                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.0005m) // for loop through each 1khz to find all the bandtext for the current display 0.001m
                         {
                             DB.BandText((double)ii, out bandInfo);
 
@@ -11469,23 +11470,32 @@ namespace PowerSDR
                     //----------------------------------------------------------------------
                     // ke9ns RX1 display the bandtext on the pan XPOS = 0.00701875 , 
 
+                    int temp9 = 0;
+                    int temp10 = 0;
+
+
                     for (int zz = 0; zz < bandtext_counter; zz++) // scan through all the bandtext that appear
                     {
                         int VFO_bandtext = (int)(((XPOS) * (float)((int)(bandfreq[zz] * 1000000) - VFOLow)));
 
-                        if (bandhere[zz] == true)
+                        if (bandhere[zz] == true) // if your on the exact freq (not just inside the area defined)
                         {
                             //  Debug.WriteLine("Display Band text: " + VFO_bandtext + " , " + bandfreq[zz] + " , " + bandtext[zz] + " , " + XPOS + " , " +VFOLow  );
 
+                            temp9 = zz;
+                            temp10 = VFO_bandtext;
+    
                             g.DrawLine(p2, VFO_bandtext, 20, VFO_bandtext, H1a);   // draw vertical line
 
+                            // draw after the fill rectangle so its easier to see the text
+                            
                             StringFormat SF = new StringFormat();
                             SF.Alignment = StringAlignment.Near;
                             SF.FormatFlags = StringFormatFlags.DirectionVertical;
 
 
                             g.DrawString(bandtext[zz], font1, grid_text_brush, VFO_bandtext, 20, SF); // draw bandtext vertically
-
+                           
                         }
                         else // draw a transparent box in the area of freq that the bandtext refers to.
                         {
@@ -11509,14 +11519,21 @@ namespace PowerSDR
                             int VFO_bandtext1 = (int)(((XPOS) * (float)((int)(bandfreq[zz1 - 1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
                             int VFO_bandtext3 = (int)(((XPOS) * (float)((int)(bandfreq[zz1] * 1000000) - VFOLow))); // RIGHT SIDE X PIXEL POS of Rectangle
 
-                            VFO_bandtext1 = ((VFO_bandtext3 - VFO_bandtext1) * 3 / 4) + VFO_bandtext1;
-
+                            VFO_bandtext1 = ((VFO_bandtext3 - VFO_bandtext1) * 1 / 2) + VFO_bandtext1; // dont allow shaded area to bump up to the next bandtext (leave a gap) was 3/4
 
 
                             //  Brush B9 = new SolidBrush(Color.FromArgb(42, grid_color));
                             Brush B9 = new SolidBrush(BT_color);
 
-                            g.FillRectangle(B9, VFO_bandtext0, 20, VFO_bandtext1 - VFO_bandtext0, H1a / 2);
+                            g.FillRectangle(B9, VFO_bandtext0, 20, VFO_bandtext1 - VFO_bandtext0, H1a / 2); // draw shaded rectangle area 
+  
+                          
+                            StringFormat SF1 = new StringFormat();
+                            SF1.Alignment = StringAlignment.Near;
+                            SF1.FormatFlags = StringFormatFlags.DirectionVertical;
+
+                            g.DrawString(bandtext[temp9], font1, grid_text_brush, temp10, 20, SF1); // draw bandtext vertically
+                         
 
                             if (((zz1 - 1) > zz2))
                             {
@@ -11594,7 +11611,7 @@ namespace PowerSDR
 
                         //   Debug.WriteLine("LOOP BANDTEXT2 " + VFOLow + " , " + VFOHigh + " , " + VFOLowB + ", " + VFOHighB + " , " + XPOS + " , " + VFODiff);
 
-                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.001m) // for loop through each 1khz to find all the bandtext for the current display
+                        for (decimal ii = VFOLowB; ii < VFOHighB; ii = ii + 0.0005m) // for loop through each 1khz to find all the bandtext for the current display
                         {
                             DB.BandText((double)ii, out bandInfo);
 
@@ -17149,11 +17166,11 @@ namespace PowerSDR
 
                 //=========================================================================
                 // ke9ns add auto
-                if (autobright6 == 2) // RX1 waterfall adjust
+                if (autobright6 == 2) // RX1 panadapter level adjust
                 {
                     if ((!mox) && (rx == 1))
                     {
-                      
+                     
                         AB = AB + (long)max; // ke9ns add autobright feature (detect floor)
                     }
 
@@ -17189,26 +17206,44 @@ namespace PowerSDR
         
 
             //=========================================================================
-            // ke9ns waterfall adjust
+            // ke9ns Panadapter level adjust
             //=========================================================================
             // ke9ns add auto
             if (autobright6 == 2) // rx1 adjust
             {
                 Debug.WriteLine(" ");
 
-                Debug.WriteLine("==========AUTOBRIGHT6=================");
+                Debug.WriteLine("==========PAN AUTOBRIGHT6=================");
 
-                AB1[0] = AB / W; // get avg of the entire read
-
-                AB3 = (float)(AB1[0]);
+                AB3 = (float)(AB / W); // get avg of the entire read
 
                 autobright6 = autobright3 = autobright = 0; // turn off feature
 
-                if ((AB3 > -170) && (AB3 < -50))
+              
+                if ((AB3 > AB3_Last + 4) || (AB3 < AB3_Last - 4) || (console.waterpanClick == true) )
                 {
-                    console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
-                    SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
-                    Debug.WriteLine("min = "+ SpectrumGridMin);
+                    Debug.WriteLine("RX1-2 PAN auto update");
+
+                    if (AB3_count > 0)
+                    {
+                        AB3_count = 0;
+
+                        AB3_Last = AB3;
+                        console.waterpanClick = false;
+
+                        if ((AB3 > -170) && (AB3 < -50))
+                        {
+                            console.setupForm.udDisplayGridMin.Value = (decimal)(AB3 - abrightpan - (gridoffset - 20));
+                            SpectrumGridMin = (int)(AB3 - abrightpan - (gridoffset - 20));
+                            Debug.WriteLine("min = " + SpectrumGridMin);
+                        }
+                    }
+                    else AB3_count++;
+                }
+                else
+                {
+                    AB3_count = 0;
+
                 }
                
 
@@ -17870,8 +17905,12 @@ namespace PowerSDR
 
         // RX1
         private static long AB = 0; // ke9ns for autobright accumulator across a single W length line of data
-        private static long[] AB1 = new long[10];// ke9ns
+      //  private static long[] AB1 = new long[10];// ke9ns
         private static float AB3 = 0; // ke9ns
+        private static float AB3_Last = 0; // ke9ns
+        private static float AB3_LastW = 0; // ke9ns
+        private static int AB3_count = 0; // ke9ns
+        private static int AB3_countW = 0; // ke9ns
 
         private static int AB_Peak = -200; // ke9ns peak signal for scaling small signals
         private static int AB_Count = 0; // ke9ns counter for determining peak signal
@@ -17879,8 +17918,11 @@ namespace PowerSDR
 
         // RX2
         private static long A2B = 0; // ke9ns for autobright
-        private static long[] A2B1 = new long[10];// ke9ns
+     //   private static long[] A2B1 = new long[10];// ke9ns
         private static float A2B3 = 0; // ke9ns
+        private static float A2B3_Last = 0; // ke9ns
+        private static int A2B3_count = 0; // ke9ns
+
 
         // TX
         private static long A3B = 0; // ke9ns for autobright
@@ -18763,19 +18805,37 @@ namespace PowerSDR
                 {
                     if (autobright == 1) // rx1 adjust
                     {
-                        AB1[0] = AB / W; // get avg of the entire read
-
-                        AB3 = (float)(AB1[0]);
+                        AB3  = (float) (AB / W); // get avg of the entire read
 
                         autobright3 = autobright = 0; // turn off feature
 
-                        if ((AB3 > -170) && (AB3 < -50))
+                        if ( (AB3 > AB3_LastW + 4) || (AB3 < AB3_LastW - 4) || (console.waterpanClick3 == true))
                         {
-                            console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright - (wateroffset - 20);
-                            console.setupForm.udDisplayWaterfallLowLevel.Value = (decimal)WaterfallLowThreshold;
+                            Debug.WriteLine("RX1 water auto update");
 
-                            //  console.setupForm.udDisplayWaterfallLowLevel.Invalidate();
+                            if (AB3_countW > 0)
+                            {
+                                AB3_countW = 0;
+                                console.waterpanClick3 = false; // reset the flag for changing band or ant
+
+                                AB3_LastW = AB3;
+                                if ((AB3 > -170) && (AB3 < -50))
+                                {
+                                    console.setupForm.WaterfallLowThreshold = temp_low_threshold = WaterfallLowThreshold = AB3 - abright - (wateroffset - 20);
+                                    console.setupForm.udDisplayWaterfallLowLevel.Value = (decimal)WaterfallLowThreshold;
+
+                                    //  console.setupForm.udDisplayWaterfallLowLevel.Invalidate();
+                                }
+                            }
+                            else AB3_countW++;
+
                         }
+                        else
+                        {
+                            AB3_countW = 0; // reset counter
+                        }
+                      
+
                         //  Debug.WriteLine("rx1 value " + AB3);
 
                     } // autobright = 1
@@ -18786,17 +18846,35 @@ namespace PowerSDR
 
                     if (autobright2 == 1)  // rx2 adjust
                     {
-                        A2B1[0] = A2B / W; // get avg of the entire read
+                        A2B3 = (float)(A2B / W); // get avg of the entire read
 
-
-                        A2B3 = (float)(A2B1[0]);
 
                         autobright3 = autobright2 = 0; // turn off feature
 
-                        if ((A2B3 > -140) && (A2B3 < -50))
+                       
+                        if ((A2B3 > A2B3_Last + 4) || (A2B3 < A2B3_Last - 4) || console.waterpanClick2 == true )
                         {
-                            console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright - (wateroffset - 20);
-                            console.setupForm.udDisplayWaterfallRX2Level.Value = (decimal)WaterfallLowRX2Threshold;
+                            Debug.WriteLine("RX2 water auto update");
+
+                            if (A2B3_count > 0)
+                            {
+
+                                A2B3_count = 0;
+
+                                A2B3_Last = A2B3;
+                                console.waterpanClick2 = false;
+
+                                if ((A2B3 > -140) && (A2B3 < -50))
+                                {
+                                    console.setupForm.WaterfallLowRX2Threshold = WaterfallLowRX2Threshold = A2B3 - abright - (wateroffset - 20);
+                                    console.setupForm.udDisplayWaterfallRX2Level.Value = (decimal)WaterfallLowRX2Threshold;
+                                }
+                            }
+                            else A2B3_count++;
+                        }
+                        else
+                        {
+                            A2B3_count = 0;
                         }
                          //  Debug.WriteLine("rx2 value " + A2B3 );
                         //   console.setupForm.udDisplayWaterfallRX2Level.Invalidate();

@@ -3666,8 +3666,7 @@ namespace PowerSDR
         //private VUForm vuForm;
         private void menuItem3_Click(object sender, EventArgs e)
         {
-            if (console.vuForm == null || console.vuForm.IsDisposed)
-                console.vuForm = new VUForm(console);
+            if (console.vuForm == null || console.vuForm.IsDisposed)   console.vuForm = new VUForm(console);
             console.vuForm.Show();
             console.vuForm.Focus();
         }

@@ -150,10 +150,10 @@ namespace PowerSDR
             this.chkRCATX3 = new System.Windows.Forms.CheckBoxTS();
             this.chkRCATX2 = new System.Windows.Forms.CheckBoxTS();
             this.chkRCATX1 = new System.Windows.Forms.CheckBoxTS();
+            this.comboBand = new System.Windows.Forms.ComboBoxTS();
             this.txtStatus = new System.Windows.Forms.TextBoxTS();
             this.grpComplexity = new System.Windows.Forms.GroupBoxTS();
             this.lblBand = new System.Windows.Forms.LabelTS();
-            this.comboBand = new System.Windows.Forms.ComboBoxTS();
             this.grpAntenna = new System.Windows.Forms.GroupBoxTS();
             this.lblLoopGain = new System.Windows.Forms.LabelTS();
             this.udLoopGain = new System.Windows.Forms.NumericUpDownTS();
@@ -262,8 +262,7 @@ namespace PowerSDR
             this.comboRX2Ant.Name = "comboRX2Ant";
             this.comboRX2Ant.Size = new System.Drawing.Size(72, 21);
             this.comboRX2Ant.TabIndex = 14;
-            this.toolTip1.SetToolTip(this.comboRX2Ant, "Selects the second receivers antenna (only available if optional 2nd RX is instal" +
-        "led)");
+            this.toolTip1.SetToolTip(this.comboRX2Ant, resources.GetString("comboRX2Ant.ToolTip"));
             this.comboRX2Ant.SelectedIndexChanged += new System.EventHandler(this.comboRX2Ant_SelectedIndexChanged);
             // 
             // comboTXAnt
@@ -449,39 +448,6 @@ namespace PowerSDR
         " can be used to switch an external linear, transverter, preselector, etc.");
             this.chkRCATX1.CheckedChanged += new System.EventHandler(this.chkRCATX1_CheckedChanged);
             // 
-            // txtStatus
-            // 
-            this.txtStatus.Location = new System.Drawing.Point(8, 340);
-            this.txtStatus.Name = "txtStatus";
-            this.txtStatus.ReadOnly = true;
-            this.txtStatus.Size = new System.Drawing.Size(264, 20);
-            this.txtStatus.TabIndex = 23;
-            this.txtStatus.Text = "Simple Mode: Settings are applied to all bands";
-            // 
-            // grpComplexity
-            // 
-            this.grpComplexity.Controls.Add(this.radModeSimple);
-            this.grpComplexity.Controls.Add(this.radModeExpert);
-            this.grpComplexity.Controls.Add(this.lblBand);
-            this.grpComplexity.Controls.Add(this.comboBand);
-            this.grpComplexity.Location = new System.Drawing.Point(8, 8);
-            this.grpComplexity.Name = "grpComplexity";
-            this.grpComplexity.Size = new System.Drawing.Size(264, 56);
-            this.grpComplexity.TabIndex = 21;
-            this.grpComplexity.TabStop = false;
-            this.grpComplexity.Text = "Complexity";
-            // 
-            // lblBand
-            // 
-            this.lblBand.Image = null;
-            this.lblBand.Location = new System.Drawing.Point(149, 24);
-            this.lblBand.Name = "lblBand";
-            this.lblBand.Size = new System.Drawing.Size(40, 24);
-            this.lblBand.TabIndex = 19;
-            this.lblBand.Text = "Band:";
-            this.lblBand.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblBand.Visible = false;
-            // 
             // comboBand
             // 
             this.comboBand.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -532,8 +498,43 @@ namespace PowerSDR
             this.comboBand.Name = "comboBand";
             this.comboBand.Size = new System.Drawing.Size(68, 21);
             this.comboBand.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboBand, "NOTE: When RX2 is ON, this should be set to the 2nd Receiver Band for the Antenna" +
+        " selector to work properly.");
             this.comboBand.Visible = false;
             this.comboBand.SelectedIndexChanged += new System.EventHandler(this.comboBand_SelectedIndexChanged);
+            // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(8, 340);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.ReadOnly = true;
+            this.txtStatus.Size = new System.Drawing.Size(264, 20);
+            this.txtStatus.TabIndex = 23;
+            this.txtStatus.Text = "Simple Mode: Settings are applied to all bands";
+            // 
+            // grpComplexity
+            // 
+            this.grpComplexity.Controls.Add(this.radModeSimple);
+            this.grpComplexity.Controls.Add(this.radModeExpert);
+            this.grpComplexity.Controls.Add(this.lblBand);
+            this.grpComplexity.Controls.Add(this.comboBand);
+            this.grpComplexity.Location = new System.Drawing.Point(8, 8);
+            this.grpComplexity.Name = "grpComplexity";
+            this.grpComplexity.Size = new System.Drawing.Size(264, 56);
+            this.grpComplexity.TabIndex = 21;
+            this.grpComplexity.TabStop = false;
+            this.grpComplexity.Text = "Complexity";
+            // 
+            // lblBand
+            // 
+            this.lblBand.Image = null;
+            this.lblBand.Location = new System.Drawing.Point(149, 24);
+            this.lblBand.Name = "lblBand";
+            this.lblBand.Size = new System.Drawing.Size(40, 24);
+            this.lblBand.TabIndex = 19;
+            this.lblBand.Text = "Band:";
+            this.lblBand.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblBand.Visible = false;
             // 
             // grpAntenna
             // 
@@ -1141,9 +1142,9 @@ namespace PowerSDR
 						break;
 				}
 			}
-		}
+        } //comboRX1Ant_SelectedIndexChanged
 
-		private void comboRX2Ant_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void comboRX2Ant_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if((comboRX2Ant.Focused || comboTXAnt.Focused) && rx2_ok && comboRX1Ant.Text == "ANT 1" && comboRX2Ant.Text == "ANT 1")
 			{
@@ -1158,6 +1159,7 @@ namespace PowerSDR
 			if(rx2_ok) console.SetRX2Ant(StringToBand(comboBand.Text), StringToAnt(comboRX2Ant.Text));
 		}
 
+        //==========================================================================================
 		private void comboTXAnt_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if((byte)(FWCEEPROM.RFIORev) < 34)

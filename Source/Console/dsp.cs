@@ -1302,6 +1302,8 @@ namespace PowerSDR
 			DttSP.SetTRX(t, true);
 		}
 
+
+        //============================================================================
 		private void SyncAll()
 		{
 			//BufferSize = buffer_size;
@@ -1312,13 +1314,24 @@ namespace PowerSDR
 			DCBlock = dc_block;
 			if(tx_eq_num_bands == 3)
 			{
-				TXEQ10 = tx_eq10;
+                TXEQ28 = tx_eq28;// ke9ns add
+                TXEQ10 = tx_eq10;
 				TXEQ3 = tx_eq3;				
 			}
 			else
 			{
-				TXEQ3 = tx_eq3;
-				TXEQ10 = tx_eq10;
+                if (tx_eq_num_bands == 28)
+                {
+                    TXEQ3 = tx_eq3;
+                    TXEQ10 = tx_eq10;
+                    TXEQ28 = tx_eq28;  // ke9ns add
+                }
+                else
+                {
+                    TXEQ28 = tx_eq28; // ke9ns add
+                    TXEQ3 = tx_eq3;
+                    TXEQ10 = tx_eq10;
+                }
 			}
 			TXEQOn = tx_eq_on;
 			Notch160 = notch_160;
@@ -1542,6 +1555,7 @@ namespace PowerSDR
 		}
 
         //=====================================================================================
+        // ke9ns set to 10 or 3
         private int tx_eq_num_bands = 3;
 		public int TXEQNumBands
 		{
@@ -1551,6 +1565,7 @@ namespace PowerSDR
 
 
         //=====================================================================================
+        // ke9ns set when 3 band EQ enabled
 		private int[] tx_eq3_dsp = new int[4];
 		private int[] tx_eq3 = new int[4];
 		public int[] TXEQ3
@@ -1564,63 +1579,78 @@ namespace PowerSDR
                 }
 				if(update)
 				{
-					/*bool need_update = false;
-					for(int i=0; i<tx_eq3_dsp.Length && i<value.Length; i++)
-					{
-						if(value[i] != tx_eq3_dsp[i] || force)
-						{
-							need_update = true;
-							break;
-						}
-					}
+					
+					DttSP.SetGrphTXEQ(thread, tx_eq3);  // ke9ns this routine is in update.c code
 
-					if(need_update)
-					{*/
-						DttSP.SetGrphTXEQ(thread, tx_eq3);
                     for (int i = 0; i < tx_eq3_dsp.Length && i < value.Length; i++)
                     {
                         tx_eq3_dsp[i] = value[i];
                     }
-					//}
+					
 				}
 			}
 		}
 
-		private int[] tx_eq10_dsp = new int[11];
+        //=====================================================================================
+        // ke9ns called by eqform when you enable the 10 band EQ
+        private int[] tx_eq10_dsp = new int[11];
 		private int[] tx_eq10 = new int[11];
 		public int[] TXEQ10
 		{
 			get { return tx_eq10; }
 			set
 			{
-				for(int i=0; i < tx_eq10.Length && i < value.Length; i++)
-					tx_eq10[i] = value[i];
-
+                for (int i = 0; i < tx_eq10.Length && i < value.Length; i++)
+                {
+                    tx_eq10[i] = value[i];
+                }
                 if (update)
 				{
-					/*bool need_update = false;
-					for(int i=0; i<tx_eq10_dsp.Length && i<value.Length; i++)
-					{
-						if(value[i] != tx_eq10_dsp[i] || force)
-						{
-							need_update = true;
-							break;
-						}
-					}
+					
+						DttSP.SetGrphTXEQ10(thread, tx_eq10); // ke9ns this routine is in update.c code
 
-					if(need_update)
-					{*/
-						DttSP.SetGrphTXEQ10(thread, tx_eq10);
-                    
 
-						for(int i=0; i < tx_eq10_dsp.Length && i < value.Length; i++)
-							tx_eq10_dsp[i] = value[i];
-					//}
+                    for (int i = 0; i < tx_eq10_dsp.Length && i < value.Length; i++)
+                    {
+                        tx_eq10_dsp[i] = value[i];
+                    }
+					
 				} // update
 			} // set
 		} // TXEQ10
 
-		private bool tx_eq_on_dsp = false;
+
+        //=====================================================================================
+        // ke9ns called by eqform when you enable the 10 band EQ
+        private int[] tx_eq28_dsp = new int[30];
+        private int[] tx_eq28= new int[30];
+        public int[] TXEQ28
+        {
+            get { return tx_eq28; }
+            set
+            {
+                for (int i = 0; i < tx_eq28.Length && i < value.Length; i++)
+                {
+                    tx_eq28[i] = value[i];
+                }
+                if (update)
+                {
+
+                    DttSP.SetGrphTXEQ28(thread, tx_eq28); // ke9ns this routine is in update.c code
+
+
+                    for (int i = 0; i < tx_eq28_dsp.Length && i < value.Length; i++)
+                    {
+                        tx_eq28_dsp[i] = value[i];
+                    }
+
+                } // update
+            } // set
+        } // TXEQ28
+
+          //======================================================================================
+          // ke9ns called by eqform when you ENABLE TX eq            
+        private bool tx_eq_on_dsp = false;
 		private bool tx_eq_on = false;
 		public bool TXEQOn
 		{
@@ -1632,13 +1662,15 @@ namespace PowerSDR
 				{
 					if(value != tx_eq_on_dsp || force)
 					{
-						DttSP.SetGrphTXEQcmd(thread, value);
-						tx_eq_on_dsp = value;
+						DttSP.SetGrphTXEQcmd(thread, value);  // ke9ns this routine is in update.c code
+                        tx_eq_on_dsp = value;
 					}
 				}
 			}
 		}
 
+
+        //=============================================================================
 		private bool notch_160_dsp = false;
 		private bool notch_160 = false;
 		public bool Notch160

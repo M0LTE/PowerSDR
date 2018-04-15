@@ -184,6 +184,9 @@ namespace PowerSDR
         [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetGrphTXEQ10")]///
 		public static extern void SetGrphTXEQ10(uint thread, int[] txeq);
 
+        [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetGrphTXEQ28")]///
+		public static extern void SetGrphTXEQ28(uint thread, int[] txeq); //ke9ns add
+
         [DllImport("DttSP.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetTXFMDeviation")]///
         public static extern void SetTXFMDeviation(uint thread, double deviation);
 

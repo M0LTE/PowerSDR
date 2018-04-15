@@ -120,6 +120,11 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="comboRX2Ant.ToolTip" xml:space="preserve">
+    <value>Selects the second receivers antenna (only available if optional 2nd RX is installed)
+
+Expert Mode: When RX2 is ON, Band should be set to the 2nd Receiver Band for the Antenna selector to work properly.</value>
+  </data>
   <data name="udTX3Delay.ToolTip" xml:space="preserve">
     <value>Sets the Delay period to wait after switching TX Out before TR when enabled above.  Note that adding TX delay may truncate the initial part of your transmission, which can adversely affect CW and digital modes that transmit immediatly.</value>
   </data>

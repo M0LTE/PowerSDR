@@ -63,9 +63,10 @@ safealloc16(int count, int nbytes, char *tag)
 	return p;
 }
 
+//==========================================================================
 char * safealloc(int count, int nbytes, char *tag) // ke9ns 
 {
-	char *p = calloc(count, nbytes);  // ke9ns allocate memory to pointer p (size or array = count) (size of each element = nbytes)
+	char *p = calloc(count, nbytes);  // ke9ns   allocate memory to pointer p (size or array = count) (size of each element = nbytes)
 	
 	if (!p)  // ke9ns if it fails do below
 	{
@@ -129,8 +130,8 @@ delvec_IMAG(IMAG *vec)
 	safefree((char *) vec);
 }
 
-COMPLEX *
-newvec_COMPLEX(int size, char *tag)
+// ke9ns called by update.c setGrphTXEq10() routine
+COMPLEX *newvec_COMPLEX(int size, char *tag)
 {
 	return (COMPLEX *) safealloc(size, sizeof(COMPLEX), tag);
 }

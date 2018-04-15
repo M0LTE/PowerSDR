@@ -45,7 +45,7 @@ unsigned int thread_com;
 #define asinh(value) (REAL)log(value + sqrt(value * value + 1))
 ////////////////////////////////////////////////////////////////////////////
 
-PRIVATE REAL INLINE dB2lin (REAL dB)
+PRIVATE REAL INLINE dB2lin (REAL dB) // just  = 10^(db/20)
 {
 	return (REAL) pow (10.0, (REAL) dB / 20.0);
 }
@@ -475,8 +475,7 @@ SetOscPhase(double phase)
 
 DttSP_EXP int SetRXOsc (unsigned int thread, unsigned subrx, double newfreq)
 {
-	if (fabs (newfreq) >= 0.5 * uni[thread].samplerate)
-		return -1;
+	if (fabs (newfreq) >= 0.5 * uni[thread].samplerate)	return -1;
 
 	newfreq *= 2.0 * M_PI / uni[thread].samplerate;
 	sem_wait(&top[thread].sync.upd.sem);
@@ -1159,8 +1158,8 @@ SetPWSmode (unsigned thread, unsigned subrx, int setit)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetWindow (unsigned int thread, Windowtype window)
+//==================================================================================
+DttSP_EXP void SetWindow (unsigned int thread, Windowtype window)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	if (!uni[thread].spec.polyphase)
@@ -1169,8 +1168,8 @@ SetWindow (unsigned int thread, Windowtype window)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-DttSP_EXP void
-SetSpectrumPolyphase (unsigned int thread, BOOLEAN setit)
+//==================================================================================
+DttSP_EXP void SetSpectrumPolyphase (unsigned int thread, BOOLEAN setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	if (uni[thread].spec.polyphase != setit)
@@ -1207,56 +1206,83 @@ SetSpectrumPolyphase (unsigned int thread, BOOLEAN setit)
 		reinit_spectrum (&uni[thread].spec);
 	}
 	sem_post(&top[thread].sync.upd.sem);
-}
 
-DttSP_EXP void
-SetGrphTXEQ (unsigned int thread, int *txeq)
+} // SetSpectrumPolyphase
+
+//==================================================================================
+// ke9ns EQFORM -> move 3 band Eq slider -> TXEQ3 -> dttsp.setgrphtxeq -> here
+DttSP_EXP void SetGrphTXEQ (unsigned int thread, int *txeq)
 {
 	int i;
 	fftwf_plan ptmp;
+	
 	COMPLEX *filtcoef, *tmpcoef;
+	
 	ComplexFIR tmpfilt;
+	
 	REAL preamp, gain[3];
 
 	filtcoef = newvec_COMPLEX (512, "filter for EQ");
+
 	tmpcoef = newvec_COMPLEX (257, "tmp filter for EQ");
+
 	preamp  = (REAL) dB2lin ((REAL) txeq[0]) * 0.5f;
+
 	gain[0] = (REAL) dB2lin ((REAL) txeq[1]) * preamp;
 	gain[1] = (REAL) dB2lin ((REAL) txeq[2]) * preamp;
 	gain[2] = (REAL) dB2lin ((REAL) txeq[3]) * preamp;
 
 	sem_wait(&top[thread].sync.upd.sem);
 
-	tmpfilt = newFIR_Bandpass_COMPLEX (-400, 400, uni[thread].samplerate, 257);
+
+
+	//...................................................................................
+	tmpfilt = newFIR_Bandpass_COMPLEX (-400, 400, uni[thread].samplerate, 257); //
 	for (i = 0; i < 257; i++)
-		tmpcoef[i] = Cscl (tmpfilt->coef[i], (REAL)gain[0]);
+	{
+		tmpcoef[i] = Cscl(tmpfilt->coef[i], (REAL)gain[0]);
+	}
 	delFIR_Bandpass_COMPLEX (tmpfilt);
 
-	tmpfilt = newFIR_Bandpass_COMPLEX (400, 1500, uni[thread].samplerate, 257);
+
+
+    //...................................................................................
+	tmpfilt = newFIR_Bandpass_COMPLEX (400, 1500, uni[thread].samplerate, 257);  // above, below
 	for (i = 0; i < 257; i++)
-		tmpcoef[i] = Cadd (tmpcoef[i], Cscl (tmpfilt->coef[i], (REAL)gain[1]));
+	{
+		tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], (REAL)gain[1]));
+	}
 	delFIR_Bandpass_COMPLEX (tmpfilt);
 
-	tmpfilt = newFIR_Bandpass_COMPLEX (-1500, -400, uni[thread].samplerate, 257);
+	tmpfilt = newFIR_Bandpass_COMPLEX (-1500, -400, uni[thread].samplerate, 257);  //below and above
 	for (i = 0; i < 257; i++)
-		tmpcoef[i] = Cadd (tmpcoef[i], Cscl (tmpfilt->coef[i], (REAL)gain[1]));
+	{
+		tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], (REAL)gain[1]));
+	}
 	delFIR_Bandpass_COMPLEX (tmpfilt);
 
-	tmpfilt = newFIR_Bandpass_COMPLEX (1500, 6000, uni[thread].samplerate, 257);
+	//.................................................................................
+	tmpfilt = newFIR_Bandpass_COMPLEX (1500, 6000, uni[thread].samplerate, 257);  //
 	for (i = 0; i < 257; i++)
-		tmpcoef[i] = Cadd (tmpcoef[i], Cscl (tmpfilt->coef[i], (REAL)gain[2]));
+	{
+		tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], (REAL)gain[2]));
+	}
 	delFIR_Bandpass_COMPLEX (tmpfilt);
 
-	tmpfilt = newFIR_Bandpass_COMPLEX (-6000, -1500, uni[thread].samplerate, 257);
+	tmpfilt = newFIR_Bandpass_COMPLEX (-6000, -1500, uni[thread].samplerate, 257); //
 	for (i = 0; i < 257; i++)
-		tmpcoef[i] = Cadd (tmpcoef[i], Cscl (tmpfilt->coef[i], (REAL)gain[2]));
+	{
+		tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], (REAL)gain[2]));
+	}
 	delFIR_Bandpass_COMPLEX (tmpfilt);
+	//.................................................................................
+
 	for (i = 0; i < 257; i++)
-		filtcoef[255 + i] = Cscl(tmpcoef[i],(REAL)(1.0/512.0));
-	ptmp =
-		fftwf_plan_dft_1d (512, (fftwf_complex *) filtcoef,
-		(fftwf_complex *) tx[thread].grapheq.gen->p->zfvec,
-		FFTW_FORWARD, uni[thread].wisdom.bits);
+	{
+		filtcoef[255 + i] = Cscl(tmpcoef[i], (REAL)(1.0 / 512.0));
+	}
+
+	ptmp = fftwf_plan_dft_1d (512, (fftwf_complex *) filtcoef, (fftwf_complex *) tx[thread].grapheq.gen->p->zfvec, FFTW_FORWARD, uni[thread].wisdom.bits);
 
 	fftwf_execute (ptmp);
 	fftwf_destroy_plan (ptmp);
@@ -1264,10 +1290,14 @@ SetGrphTXEQ (unsigned int thread, int *txeq)
 	delvec_COMPLEX(tmpcoef);
 
 	sem_post(&top[thread].sync.upd.sem);
-}
 
-DttSP_EXP void
-SetGrphTXEQ10(unsigned int thread, int *txeq) 
+} // SetGrphTXEQ  (3 band EQ)
+
+
+//==================================================================================
+// ke9ns EQFORM -> move 10 band Eq slider -> TXEQ10 -> dttsp.setgrphtxeq10 -> update.c (here)
+
+DttSP_EXP void SetGrphTXEQ10(unsigned int thread, int *txeq) 
 {
 /*  if (n < 11)
     return -1;
@@ -1280,66 +1310,156 @@ SetGrphTXEQ10(unsigned int thread, int *txeq)
     REAL preamp = dB2lin(atof(p[0])) * 0.5; */
 
     int i,j,band;
-	fftwf_plan ptmp;
-	COMPLEX *filtcoef = newvec_COMPLEX(512, "filter for EQ"),
-		*tmpcoef  = newvec_COMPLEX(257, "tmp filter for EQ");
-	ComplexFIR tmpfilt;
-	REAL preamp;
+
+	fftwf_plan ptmp; //fftw3.h   FFTW_DEFINE_API(FFTW_MANGLE_FLOAT, float, fftwf_complex) this is huge 2nd order macro
 
 
-	preamp = dB2lin((REAL) txeq[0]) * 0.5f;
+	//ke9ns to allocate a pointer to a buffer of a struct of COMPLEX (which is just 2 REAL values: re, im  (REAL is just a float)
+	COMPLEX *filtcoef = newvec_COMPLEX(512, "filter for EQ");
+	COMPLEX *tmpcoef  = newvec_COMPLEX(257, "tmp filter for EQ");   // call to bufvec.c 
 
-	for (j = 1, band = 15; j <= 10; j++, band += 3) 
+	ComplexFIR tmpfilt; // ke9ns struct = COMPLEX, int, enum(0-5), BOOLEAN (which is just uchr), struct of freq (real lo, hi)
+		
+	REAL preamp = dB2lin((REAL) txeq[0]) * 0.5f;  // ke9ns preamp slider =  (10^(txeq[0]/20)) / 2
+
+	//.............................................................................
+	// ke9ns 10 txeq bands (see isoband.c table)
+	for (j = 1, band = 15; j <= 10; j++, band += 3)  // band = 15, ++3 each cycle    ISOband_get_info only allows band= 1 to 43 as legal
 	{
-		REAL f_here  = ISOband_get_nominal(band),
-			f_below = gmean(f_here / 2.0f, f_here),
-			f_above = gmean(f_here, f_here * 2.0f),
-			g_here  = dB2lin((REAL) txeq[j]) * preamp;
+	 
+		REAL f_here = ISOband_get_nominal(band);       // isoband.c = ISOband_get_info(band)->nominal, exact, low, high for band 1 to 43
+		
+		REAL f_below = gmean(f_here / 2.0f, f_here);   // sqrt(x*y)
+		REAL f_above = gmean(f_here, f_here * 2.0f);   // sqrt(x*y)
+		REAL g_here = dB2lin((REAL)txeq[j]) * preamp;  // g_here = (10^(txeq[j]))*preamp (I think this is just the overall gain)
 
-		tmpfilt = newFIR_Bandpass_COMPLEX(-f_above, -f_below, uni->samplerate, 257);
+		tmpfilt = newFIR_Bandpass_COMPLEX(-f_above, -f_below, uni->samplerate, 257); // ke9ns low, high, samplerate, size
+	
 		for (i = 0; i < 257; i++)
+		{
 			tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], g_here));
+		}
 		delFIR_Bandpass_COMPLEX(tmpfilt);
 
 		tmpfilt = newFIR_Bandpass_COMPLEX(f_below, f_above, uni->samplerate, 257);
+		
 		for (i = 0; i < 257; i++)
+		{
 			tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], g_here));
+		}
 		delFIR_Bandpass_COMPLEX(tmpfilt);
-	}
+
+	} // for (j = 1, band = 15; j <= 10; j++, band += 3) 
+
+	//...................................................................................
 
 	for (i = 0; i < 257; i++)
-		filtcoef[254 + i] = Cscl(tmpcoef[i],(REAL)(1.0/512.0));
+	{
+		filtcoef[254 + i] = Cscl(tmpcoef[i], (REAL)(1.0 / 512.0));
+	}
 
-    ptmp = fftwf_plan_dft_1d(512,
-		(fftwf_complex *) filtcoef,
-		(fftwf_complex *) tx[thread].grapheq.gen->p->zfvec,
-		FFTW_FORWARD,
-		uni->wisdom.bits);
+    ptmp = fftwf_plan_dft_1d(512, (fftwf_complex *) filtcoef, (fftwf_complex *) tx[thread].grapheq.gen->p->zfvec, FFTW_FORWARD, uni->wisdom.bits);
 
 	fftwf_execute(ptmp);
 	fftwf_destroy_plan(ptmp);
-	delvec_COMPLEX(filtcoef);
+
+	delvec_COMPLEX(filtcoef); // release the memory (free)
 	delvec_COMPLEX(tmpcoef);
-}
 
 
-DttSP_EXP void
-SetGrphTXEQcmd (unsigned int thread, BOOLEAN state)
+} // SetGrphTXEQ10
+
+
+  //==================================================================================
+  // ke9ns add EQFORM -> move 28 band Eq slider -> TXEQ10 -> dttsp.setgrphtxeq28 -> update.c (here)
+
+DttSP_EXP void SetGrphTXEQ28(unsigned int thread, int *txeq)
+{
+	// fprintf(stdout, "28band EQ\n"), fflush(stdout);
+
+	int i, j, band;
+
+	fftwf_plan ptmp; //fftw3.h   FFTW_DEFINE_API(FFTW_MANGLE_FLOAT, float, fftwf_complex) this is huge 2nd order macro
+
+
+					 //ke9ns to allocate a pointer to a buffer of a struct of COMPLEX (which is just 2 REAL values: re, im  (REAL is just a float)
+	COMPLEX *filtcoef = newvec_COMPLEX(512, "filter for EQ"); // COMPLEX =   REAL re, im;
+	COMPLEX *tmpcoef = newvec_COMPLEX(257, "tmp filter for EQ");   // call to bufvec.c 
+
+	ComplexFIR tmpfilt; // ke9ns struct = COMPLEX, int, enum(0-5), BOOLEAN (which is just uchr), struct of freq (real lo, hi)
+
+	REAL preamp = dB2lin((REAL)txeq[0]) * 0.5f;  // ke9ns preamp slider =  (10^(txeq[0]/20)) / 2
+
+	//.............................................................................
+	 // ke9ns  txeq bands (see isoband.c table)
+	for (j = 1, band = 15; j <= 28; j++, band += 1)  // band = 15, ++3 each cycle    ISOband_get_info only allows band= 1 to 43 as legal
+	{
+
+		REAL f_here = ISOband_get_nominal(band);       // isoband.c = ISOband_get_info(band)->nominal,         exact, low, high for band 1 to 43
+
+		REAL f_below = gmean(f_here / 2.0f, f_here);   // sqrt(x*y)
+		REAL f_above = gmean(f_here, f_here * 2.0f);   // sqrt(x*y)
+
+		REAL g_here = dB2lin((REAL)txeq[j]) * preamp;  // g_here = (10^(txeq[j]))*preamp (I think this is just the overall gain)
+
+		//.............................................................................
+		tmpfilt = newFIR_Bandpass_COMPLEX(-f_above, -f_below, uni->samplerate, 257); // ke9ns low, high, samplerate, size
+
+		for (i = 0; i < 257; i++)
+		{
+			tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], g_here) ); // Cadd=Complex# add,  Cscl=Complex# scaler                re, im
+		}
+		delFIR_Bandpass_COMPLEX(tmpfilt); // delete FIR complex numbers
+
+		//.............................................................................
+		tmpfilt = newFIR_Bandpass_COMPLEX(f_below, f_above, uni->samplerate, 257);
+
+		for (i = 0; i < 257; i++)
+		{
+			tmpcoef[i] = Cadd(tmpcoef[i], Cscl(tmpfilt->coef[i], g_here));
+		}
+		delFIR_Bandpass_COMPLEX(tmpfilt);
+
+	} // for (j = 1, band = 15; j <= 10; j++, band += 3) 
+
+	  //...................................................................................
+
+	for (i = 0; i < 257; i++)
+	{
+		filtcoef[254 + i] = Cscl(tmpcoef[i], (REAL)(1.0 / 512.0));
+	}
+
+	ptmp = fftwf_plan_dft_1d(512, (fftwf_complex *)filtcoef, (fftwf_complex *)tx[thread].grapheq.gen->p->zfvec, FFTW_FORWARD, uni->wisdom.bits);
+
+	fftwf_execute(ptmp);
+	fftwf_destroy_plan(ptmp);
+
+	delvec_COMPLEX(filtcoef); // release the memory (free)
+	delvec_COMPLEX(tmpcoef);
+
+
+} // SetGrphTXEQ28
+
+
+//==================================================================================
+// ke9ns EQFORM -> Enable TX checkbox -> TXEQON -> dttsp.setgrphtxeqcmd -> here
+DttSP_EXP void SetGrphTXEQcmd (unsigned int thread, BOOLEAN state)
 {
 	sem_wait(&top[thread].sync.upd.sem);
 	tx[thread].grapheq.flag = state;
 	sem_post(&top[thread].sync.upd.sem);
-}
+
+} // SetGrphTXEQcmd
 
 
-DttSP_EXP void
-SetNotch160 (unsigned int thread, BOOLEAN state)
+//==================================================================================
+DttSP_EXP void SetNotch160 (unsigned int thread, BOOLEAN state)
 {
 
 }
 
-DttSP_EXP void
-SetGrphRXEQ (unsigned int thread, unsigned int subrx, int *rxeq)
+//==================================================================================
+DttSP_EXP void SetGrphRXEQ (unsigned int thread, unsigned int subrx, int *rxeq)
 {
     int i;
     fftwf_plan ptmp;
@@ -1397,8 +1517,8 @@ SetGrphRXEQ (unsigned int thread, unsigned int subrx, int *rxeq)
 	//fprintf(stderr,"%f %f %f %f\n",preamp, gain[0],gain[1],gain[2]),fflush(stderr);
 }
 
-DttSP_EXP void
-SetGrphRXEQ10(unsigned int thread, unsigned int subrx, int *rxeq) 
+//==================================================================================
+DttSP_EXP void SetGrphRXEQ10(unsigned int thread, unsigned int subrx, int *rxeq) 
 {
 /*  if (n < 11)
 	return -1;
@@ -1452,6 +1572,7 @@ SetGrphRXEQ10(unsigned int thread, unsigned int subrx, int *rxeq)
     delvec_COMPLEX(tmpcoef);
 }
 
+//==================================================================================
 DttSP_EXP void SetGrphRXEQcmd (unsigned int thread, unsigned int subrx,BOOLEAN state)
 {
 	sem_wait(&top[thread].sync.upd.sem);
@@ -1459,7 +1580,7 @@ DttSP_EXP void SetGrphRXEQcmd (unsigned int thread, unsigned int subrx,BOOLEAN s
 	sem_post(&top[thread].sync.upd.sem);
 }
 
-
+//==================================================================================
 DttSP_EXP void SetTXAGCFF (unsigned int thread, BOOLEAN setit)
 {
 	sem_wait(&top[thread].sync.upd.sem);

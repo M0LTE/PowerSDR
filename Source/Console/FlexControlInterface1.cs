@@ -335,7 +335,7 @@ namespace PowerSDR
                 }
                 return console.CurrentTuneStepHz;
             }
-        }
+        } // gettunestep
 
         public void FlexControl_KnobRotated(FlexControl.RotateDirection dir, int num_steps)
         {

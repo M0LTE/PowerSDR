@@ -1,3 +1,4 @@
+"195","3C0","Annobon I.","AF","1.30N","5.36E","36","52","A","11-15-45","3C0","",""
 "001","VE1","Nova Scotia","NA","44.54N","63.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
 "001","VE2","Quebec","NA","52.54N","73.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
 "001","VE3","Ontario","NA","51.54N","87.06W","5","2","A","11-15-45","VE,VA,VB,VC,VD,VF,VG,XN,XL,VY,VX,CY,VO,CF,CG,CH,CI,CZ,XO,CJ,XJ,XK,XM,CK","",""
@@ -491,7 +492,6 @@
 "192","JD1","Ogasawara","AS","27.30N","141.00E","27","45","A","11-15-45","JD1,KA2IJ,JD1AMA","",""
 "193","KR6","Okinawa Ryukyu Is.","AS","26.5N","127.99E","25","45","D","05-16-72","KR6,KR8,JR6,KA6","",""
 "194","7J1","Okino Tori-shima","AS","27.30N","141.00E","27","45","D","12-01-80","7J1","",""
-"195","3C0","Annobon I.","AF","1.30N","5.36E","36","52","A","11-15-45","3C0","",""
 "196","ZC6","Palestine","AS","32.00N","35.00E","20","39","D","07-01-68","ZC6,4X1","",""
 "197","KH5","Palmyra & Jarvis Is.","OC","6.00N","162.00W","31","61","A","11-15-45","KH5,WH5,AH5,NH5.KH5J,WH5J,AH5J,NH5J","",""
 "198","P2/P","Papua Territory","OC","5.12S","145.36E","28","51","D","09-16-75","P2,VK9/P","",""

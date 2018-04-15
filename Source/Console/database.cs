@@ -121,11 +121,11 @@ namespace PowerSDR
 			if(!ds.Tables.Contains("GroupList"))
 				AddGroupListTable();
 
-			if(!ds.Tables.Contains("TXProfile"))
-				AddTXProfileTable(model);
+            Debug.WriteLine("VERIFYTABLE HERE");
 
-			if(!ds.Tables.Contains("TXProfileDef"))
-				AddTXProfileDefTable(model);
+			if(!ds.Tables.Contains("TXProfile"))AddTXProfileTable(model);
+
+            if (!ds.Tables.Contains("TXProfileDef"))	AddTXProfileDefTable(model);
 
 			Update();
 		}
@@ -260,14 +260,14 @@ namespace PowerSDR
                                 // wwv
                                 15.000001, 15.800000, "19M Daytime Short Wave", false,
                                 15.800001, 17.479999, "19M Daytime Short Wave", false, // ke9ns add
-                                17.480000, 18.067999, "19M Daytime Short Wave",	false, // ke9ns mod
+                                17.480000, 18.067999, "16M Daytime Short Wave",	false, // ke9ns mod
                                 // 17m 18.068-18.168
                                 18.168001, 18.899999, "16M Daytime Short Wave", false, // ke9ns add
-                                18.900000, 19.999999, "16M Daytime Short Wave",	false, // ke9ns mod
+                                18.900000, 19.999999, "14M Daytime Short Wave",	false, // ke9ns mod
                                 // wwv
-                                20.000001, 20.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                                20.000001, 20.999999, "13M Daytime Short Wave", false, // ke9ns mod
                               
-                                // 15m 21.00 = 21.45
+                                // 15m 21.000 - 21.450
                                 21.449999, 24.889999, "13M Daytime Short Wave",	false,
 
                                 // 12m 24.89 - 24.99 mhz
@@ -454,7 +454,7 @@ namespace PowerSDR
                                 11.600000, 12.100000, "25M Evening Short Wave", false,
                                 12.100001, 13.569999, "25M Evening Short Wave", false, // ke9ns add
 
-                                13.570000, 13.870000, "22M Daytime Short Wave", false,
+                                13.570000, 13.870000, "22M Daytime Short Wave",  false,
                                 13.870001, 13.999999, "22M Daytime Short Wave", false, // ke9ns add
 
                                 // 20m 14.000-14.350
@@ -462,20 +462,19 @@ namespace PowerSDR
                                 // wwv
                                 15.000001, 15.800000, "19M Daytime Short Wave", false,
                                 15.800001, 17.479999, "19M Daytime Short Wave", false, // ke9ns add
-                                17.480000, 18.067999, "19M Daytime Short Wave", false, // ke9ns mod
+                                17.480000, 18.067999, "16M Daytime Short Wave", false, // ke9ns mod
                                 // 17m 18.068-18.168
                                 18.168001, 18.899999, "16M Daytime Short Wave", false, // ke9ns add
-                                18.900000, 19.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                                18.900000, 19.999999, "14M Daytime Short Wave", false, // ke9ns mod
                                 // wwv
-                                20.000001, 20.999999, "16M Daytime Short Wave", false, // ke9ns mod
+                                20.000001, 20.999999, "13M Daytime Short Wave", false, // ke9ns mod
                               
-                                // 15m 21.00 = 21.45
+                                // 15m 21.000 - 21.450
                                 21.449999, 24.889999, "13M Daytime Short Wave", false,
 
                                 // 12m 24.89 - 24.99 mhz
                                 // wwv
                                 25.000001, 26.960000, "11M Day Short Wave",     false,
-
                                 26.960001, 26.969999, "11M CB ch 1",              true,
                                 26.970001, 26.979999, "11M CB ch 2",              true,
                                 26.980001, 26.989999, "11M CB ch 3",              true,
@@ -2262,8 +2261,8 @@ namespace PowerSDR
                                 5.332001, 5.347999, "60M General",              false,
 								5.348000, 5.348000, "60M Channel 2",			true,
                                 5.348001, 5.358499, "60M General",              false,
-								5.358500, 5.358500, "60M Channel 3 (IARU 1)",	true,
-                                5.358501, 5.372999, "60M General",              false,
+                                5.358500, 5.358500, "60M Channel 3 (IARU 1)",    true,
+						        5.358501, 5.372999, "60M General",              false,
 								5.373000, 5.373000, "60M Channel 4",			true,
                                 5.373001, 5.404999, "60M General",              false,
 								5.405000, 5.405000, "60M Channel 5",			true,
@@ -4923,7 +4922,7 @@ namespace PowerSDR
 
 			string[] vals = { "AM", "FM", "SSB", "SSTV", "CW", "PSK", "RTTY" };
 			
-			for(int i= 0; i<vals.Length; i++)
+			for(int i= 0; i < vals.Length; i++)
 			{
 				DataRow dr = t.NewRow();
 				dr[0] = i;
@@ -4931,6 +4930,66 @@ namespace PowerSDR
 				t.Rows.Add(dr);
 			}
 		}
+
+
+        //=============================================================
+        // ke9ns
+        private static void AddTXProfileTable1()
+        {
+            ds.Tables.Add("TXProfile");
+            DataTable t = ds.Tables["TXProfile"];
+
+
+            t.Columns.Add("TXEQ11", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ12", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ13", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ14", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ15", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ16", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ17", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ18", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ19", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ20", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ21", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ22", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ23", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ24", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ25", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ26", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ27", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ28", typeof(int)); // ke9ns add
+
+
+            DataRow dr = t.NewRow();
+
+            dr["Name"] = "Default";
+          
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+
+
+
+        } // AddTXProfileTable1()
+
+
 
         private static void AddTXProfileTable(Model model)
 		{
@@ -4953,7 +5012,27 @@ namespace PowerSDR
 			t.Columns.Add("TXEQ8", typeof(int));
 			t.Columns.Add("TXEQ9", typeof(int));
 			t.Columns.Add("TXEQ10", typeof(int));
-			t.Columns.Add("DXOn", typeof(bool));
+
+            t.Columns.Add("TXEQ11", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ12", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ13", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ14", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ15", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ16", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ17", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ18", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ19", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ20", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ21", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ22", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ23", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ24", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ25", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ26", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ27", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ28", typeof(int)); // ke9ns add
+
+            t.Columns.Add("DXOn", typeof(bool));
 			t.Columns.Add("DXLevel", typeof(int));
 			t.Columns.Add("CompanderOn", typeof(bool));
 			t.Columns.Add("CompanderLevel", typeof(int));
@@ -5046,7 +5125,29 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 2;
@@ -5143,7 +5244,7 @@ namespace PowerSDR
                     dr["FlexWire_Input_On"] = "0";
                     dr["FlexWire_Input_Level"] = 0;
                     break;
-            }
+            } // switch
 
 			t.Rows.Add(dr);
 
@@ -5168,7 +5269,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = true;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = true;
 			dr["DXLevel"] = 5;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 2;
@@ -5290,6 +5411,26 @@ namespace PowerSDR
             dr["TXEQ8"] = 3;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = -6;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5412,6 +5553,26 @@ namespace PowerSDR
             dr["TXEQ8"] = 3;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = -6;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = true;
             dr["DXLevel"] = 5;
             dr["CompanderOn"] = false;
@@ -5514,7 +5675,8 @@ namespace PowerSDR
             t.Rows.Add(dr);
 
             #endregion
-        }
+
+        } //  AddTXProfileTable(Model model)
 
         #region TX Profile Management
 
@@ -5539,7 +5701,28 @@ namespace PowerSDR
 			t.Columns.Add("TXEQ8", typeof(int));
 			t.Columns.Add("TXEQ9", typeof(int));
 			t.Columns.Add("TXEQ10", typeof(int));
-			t.Columns.Add("DXOn", typeof(bool));
+
+            t.Columns.Add("TXEQ11", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ12", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ13", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ14", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ15", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ16", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ17", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ18", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ19", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ20", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ21", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ22", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ23", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ24", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ25", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ26", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ27", typeof(int)); // ke9ns add
+            t.Columns.Add("TXEQ28", typeof(int)); // ke9ns add
+
+
+            t.Columns.Add("DXOn", typeof(bool));
 			t.Columns.Add("DXLevel", typeof(int));
 			t.Columns.Add("CompanderOn", typeof(bool));
 			t.Columns.Add("CompanderLevel", typeof(int));
@@ -5631,7 +5814,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 2;
@@ -5753,7 +5956,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = true;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = true;
 			dr["DXLevel"] = 5;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 2;
@@ -5875,6 +6098,25 @@ namespace PowerSDR
             dr["TXEQ8"] = 3;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = -6;
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = false;
             dr["DXLevel"] = 3;
             dr["CompanderOn"] = true;
@@ -5997,6 +6239,26 @@ namespace PowerSDR
             dr["TXEQ8"] = 3;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = -6;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = true;
             dr["DXLevel"] = 5;
             dr["CompanderOn"] = false;
@@ -6119,6 +6381,26 @@ namespace PowerSDR
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = false;
             dr["DXLevel"] = 0;
             dr["CompanderOn"] = false;
@@ -6241,6 +6523,26 @@ namespace PowerSDR
             dr["TXEQ8"] = 0;
             dr["TXEQ9"] = 0;
             dr["TXEQ10"] = 0;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
             dr["DXOn"] = false;
             dr["DXLevel"] = 0;
             dr["CompanderOn"] = false;
@@ -6363,7 +6665,28 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 3;
@@ -6485,7 +6808,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 3;
@@ -6607,7 +6950,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 5;
@@ -6729,7 +7092,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 5;
@@ -6851,7 +7234,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 5;
@@ -6973,7 +7376,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = true;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = true;
 			dr["DXLevel"] = 5;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 3;
@@ -7095,7 +7518,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 3;
@@ -7217,7 +7660,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 5;
@@ -7339,7 +7802,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 5;
@@ -7461,7 +7944,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 3;
@@ -7583,7 +8086,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 3;
@@ -7705,7 +8228,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = false;
 			dr["CompanderLevel"] = 3;
@@ -7827,7 +8370,27 @@ namespace PowerSDR
 			dr["TXEQ8"] = 0;
 			dr["TXEQ9"] = 0;
 			dr["TXEQ10"] = 0;
-			dr["DXOn"] = false;
+
+            dr["TXEQ11"] = 0; // ke9ns add
+            dr["TXEQ12"] = 0; // ke9ns add
+            dr["TXEQ13"] = 0; // ke9ns add
+            dr["TXEQ14"] = 0; // ke9ns add
+            dr["TXEQ15"] = 0; // ke9ns add
+            dr["TXEQ16"] = 0; // ke9ns add
+            dr["TXEQ17"] = 0; // ke9ns add
+            dr["TXEQ18"] = 0; // ke9ns add
+            dr["TXEQ19"] = 0; // ke9ns add
+            dr["TXEQ20"] = 0; // ke9ns add
+            dr["TXEQ21"] = 0; // ke9ns add
+            dr["TXEQ22"] = 0; // ke9ns add
+            dr["TXEQ23"] = 0; // ke9ns add
+            dr["TXEQ24"] = 0; // ke9ns add
+            dr["TXEQ25"] = 0; // ke9ns add
+            dr["TXEQ26"] = 0; // ke9ns add
+            dr["TXEQ27"] = 0; // ke9ns add
+            dr["TXEQ28"] = 0; // ke9ns add
+
+            dr["DXOn"] = false;
 			dr["DXLevel"] = 3;
 			dr["CompanderOn"] = true;
 			dr["CompanderLevel"] = 2;
@@ -7928,10 +8491,11 @@ namespace PowerSDR
 
 			t.Rows.Add(dr);
 
-			#endregion
-		}
+            #endregion
 
-		private static void CheckBandTextValid()
+        } // AddTXProfileDefTable(Model model)
+
+        private static void CheckBandTextValid()
 		{
 			ArrayList bad_rows = new ArrayList();
 
