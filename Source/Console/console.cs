@@ -146,6 +146,8 @@ using System.Media; // ke9ns for system Beep
 using System.Net.Http; // ke9ns add
 using System.Xml.Linq;
 
+
+
 //System.Windows.Media.Effects; // ke9ns add
 
 using System.Windows.Forms;
@@ -440,8 +442,8 @@ namespace PowerSDR
     {
         FIRST = -1,
         US = 0,           // USA  USA, CA, ROW 
-        UK = 1,           // EU01 UK, Slovakia, France, Malta
-        Europe = 2,       // EU00 Germany, European Union, IARU1
+        UK = 1,           // EU01 UK, Slovakia, France, Malta  
+        Europe = 2,       // EU00 Germany, European Union, IARU1   (5351.5 - 5366.5 kHz)
         UK_Plus = 3,      // EU02 UK+ (adds 60m band)
         Italy = 4,        // EU10 
         Norway = 5,       // EU03 Norway, Czech Rep.
@@ -458,11 +460,11 @@ namespace PowerSDR
         IARU3 = 16,       // IARU3 China, Australia, New Zealand
         Japan = 17,       // JPN  
         Italy_Plus = 18,  // EU11 Italy+ (40m band)
-        ES_CH_FIN = 19,   // EU12 Spain, Switzerland, Finland (ES,CH,FIN)  
+        ES_CH_FIN = 19,   // EU12 Spain, Switzerland, Finland (ES,CH,FIN)   5351.5 - 5366.5 kHz
         Netherlands = 20, // EU13 
         EU_Travel = 21,   // EU14 
         Luxembourg = 22,  // EU15
-        IARU2 = 23,       // IARU2 (Central & South America)	
+        IARU2 = 23,       // IARU2 (Central & South America)	 (NOTE: 4/17/18 Canada to get IARU1 60m band plan in addition to the 4 existing channels) 5351.5 - 5366.5 kHz
         Australia = 24,   // AUS
         LAST,
     }
@@ -3442,6 +3444,13 @@ namespace PowerSDR
             // 
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 200;
+            this.toolTip1.AutoPopDelay = 12000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 40;
             // 
             // chkVAC2
             // 
@@ -9318,10 +9327,9 @@ namespace PowerSDR
             }
             else PAPresent = pa_present;
 
-            if (comboAGC.SelectedIndex < 0)
-                RX1AGCMode = AGCMode.MED;
-            if (comboRX2AGC.SelectedIndex < 0)
-                comboRX2AGC.Text = "Med";
+            if (comboAGC.SelectedIndex < 0)  RX1AGCMode = AGCMode.MED;
+            if (comboRX2AGC.SelectedIndex < 0)  comboRX2AGC.Text = "Med";
+
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             ptbTune_Scroll(this, EventArgs.Empty); // ke9ns add		
@@ -12013,15 +12021,32 @@ namespace PowerSDR
         // Firmware upate: Flex-3000 2017-07-20 2.1.4.7   
         // Firmware upate: Flex-1500 2017-07-20 0.5.3.16   
 
+        // ke9ns add 5/25/18 From Tim 
+        // The following TURF change were made in SmartSDR v2.2.8
+        //TURF: Modification to Belgium(EU04)
+        //Belgium has increased the frequency allocations for the 160m band to 1.810 - 2.0
+
+        //TURF: Modification to Netherlands(EU13)
+        //The Netherlands have changed the frequency allocations for the 60m band to 5.351.5 to 5.366.5
+
+        //TURF: add CDEMA(Caribbean Disaster Emergency Response Agency) frequencies to IARU 2 TURF
+        //7.453.5 to 7.456.5MHz USB CDEMA Caribbean Disaster Emergency Response Agency
+        //7.850 to 7.853MHz USB CDEMA Caribbean Disaster Emergency Response Agency
+        //13.998 to 14.001MHz USB Caribbean Red Cross
+        //14.415 to 14.418MHz USB CDEMA Caribbean Disaster Emergency Response Agency
+
+        // Firmware upate: Flex-5000 2018-05-14 2.1.4.8   
+        // Firmware upate: Flex-3000 2018-05-14 2.1.4.8   
+        // Firmware upate: Flex-1500 2018-05-25 0.5.3.20   
 
         private uint GetMinVersion(Model m)
         {
             uint MIN_VERSION = 0;
             switch (m)
             {
-                case Model.FLEX5000: MIN_VERSION = 0x02010407; break; // was 0x02010309, was 0x02010404 ,was 0x02010405, was 0x02010406
-                case Model.FLEX3000: MIN_VERSION = 0x02010407; break; // was 0x02010307, was 0x02010404 ,was 0x02010405, was 0x02010406
-                case Model.FLEX1500: MIN_VERSION = 0x00050310; break;  // was 0x0005030A, was 0x0005030D ,was 0x0005030E, was 0x0005030F
+                case Model.FLEX5000: MIN_VERSION = 0x02010408; break; // was 0x02010309, was 0x02010404 ,was 0x02010405, was 0x02010406, was 0x02010407
+                case Model.FLEX3000: MIN_VERSION = 0x02010408; break; // was 0x02010307, was 0x02010404 ,was 0x02010405, was 0x02010406, was 0x02010407
+                case Model.FLEX1500: MIN_VERSION = 0x00050314; break;  // was 0x0005030A, was 0x0005030D ,was 0x0005030E, was 0x0005030F ,was 0x00050310 = .16
             }
             return MIN_VERSION;
         }
@@ -14024,7 +14049,7 @@ namespace PowerSDR
                 comboAGC.Items.Add(s);
             }
 
-            for (AGCMode agc = AGCMode.FIRST + 1; agc < AGCMode.CUSTOM; agc++)
+            for (AGCMode agc = AGCMode.FIRST + 1; agc < AGCMode.CUSTOM; agc++) //ke9ns mod to add custom for (AGCMode agc = AGCMode.FIRST + 1; agc < AGCMode.CUSTOM; agc++)
             {
                 string s = agc.ToString().ToLower();
                 s = s.Substring(0, 1).ToUpper() + s.Substring(1, s.Length - 1);
@@ -17792,7 +17817,7 @@ namespace PowerSDR
 
             else if (region == FRSRegion.Belgium)
             {
-                if (freq >= 1.81 && freq <= 1.88)
+                if (freq >= 1.81 && freq <= 2.0)
                 {
                     if (A) panelBandHF.Visible = true; if (A) panelBandGN.Visible = false; return Band.B160M;
                 }
@@ -17854,7 +17879,7 @@ namespace PowerSDR
                     return Band.BLMF;
                 }
 
-                else if (freq >= 1.88 && freq < 3.0)
+                else if (freq >= 2.0 && freq < 3.0)
                 {
                     if (A) panelBandHF.Visible = false;
                     if (A) panelBandGN.Visible = true;
@@ -19074,7 +19099,7 @@ namespace PowerSDR
                 {
                     if (A) panelBandHF.Visible = true; if (A) panelBandGN.Visible = false; return Band.B80M;
                 }
-                else if (freq >= 5.350 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0), w4tme changed lower freq to 5.350
+                else if (freq >= 5.250 && freq < 5.450) // ke9ns was else if (freq >= 5.3305 && freq < 7.0), w4tme changed lower freq to 5.350
                 {
                     if (A) panelBandHF.Visible = true; if (A) panelBandGN.Visible = false; return Band.B60M; // ke9ns
                 }
@@ -20633,7 +20658,7 @@ namespace PowerSDR
                     else ret_val = false;
                     break;
                 case FRSRegion.Belgium: // 12
-                    if (f >= 1.81 && f <= 1.88) ret_val = true;
+                    if (f >= 1.81 && f <= 2.0) ret_val = true;
                     else if (f >= 3.5 && f <= 3.8) ret_val = true;
 
                     else if (f >= 5.3515 && f <= 5.3665) ret_val = true; // New IARU 1 60m band
@@ -20754,7 +20779,8 @@ namespace PowerSDR
                 case FRSRegion.Netherlands: // 20
                     if (f >= 1.81 && f <= 1.88) ret_val = true;
                     else if (f >= 3.5 && f <= 3.8) ret_val = true;
-                    else if (f >= 5.35 && f <= 5.45) ret_val = true; // New IARU 1 60m band
+                    else if (f >= 5.3515 && f <= 5.3665) ret_val = true; // New IARU 1 60m band
+                  //  else if (f >= 5.35 && f <= 5.45) ret_val = true; // New IARU 1 60m band
                     else if (f >= 7.0 && f <= 7.2) ret_val = true;
                     else if (f >= 10.1 && f <= 10.15) ret_val = true;
                     else if (f >= 14.0 && f <= 14.35) ret_val = true;
@@ -20798,8 +20824,19 @@ namespace PowerSDR
                     else if (f >= 3.5 && f <= 4.0) ret_val = true;
                     else if (f >= 5.3515 && f <= 5.3665) ret_val = true; // New IARU 2 60m band
                     else if (f >= 7.0 && f <= 7.3) ret_val = true;
+
+                    else if (f >= 7.4535 && f <= 7.4565) ret_val = true; // ke9ns USB CDEMA Caribbean Disaster Emergency Response Agency
+                    else if (f >= 7.850 && f <= 7.853) ret_val = true; // ke9ns USB CDEMA Caribbean Disaster Emergency Response Agency
+
                     else if (f >= 10.1 && f <= 10.15) ret_val = true;
+
+                    else if (f >= 13.998 && f <= 14.0) ret_val = true; // ke9ns USB USB Caribbean Red Cross
+                    
                     else if (f >= 14.0 && f <= 14.35) ret_val = true;
+
+                    else if (f >= 14.415 && f <= 14.418) ret_val = true; // ke9ns USB CDEMA Caribbean Disaster Emergency Response Agency
+
+
                     else if (f >= 18.068 && f <= 18.168) ret_val = true;
                     else if (f >= 21.0 && f <= 21.45) ret_val = true;
                     else if (f >= 24.89 && f <= 24.99) ret_val = true;
@@ -38672,6 +38709,7 @@ namespace PowerSDR
         static Pen high_brush3; // yellow
         static Pen high_brush5; // 
         static Pen high_brush4; // 
+        static Pen high_brush7; // green
 
         static Pen line_pen;
         static Pen line_dark_pen; // edge meter shadow around needle
@@ -38687,6 +38725,16 @@ namespace PowerSDR
         static SolidBrush b;
         static SolidBrush low_brush; // white
         static SolidBrush high_brush; // red
+
+        // for SWR only
+        static SolidBrush grn_brush = new SolidBrush(Color.Green); // green ke9ns add
+        static SolidBrush yel_brush= new SolidBrush(Color.Yellow); // yellow ke9ns add
+        static SolidBrush red_brush = new SolidBrush(Color.Red); // red ke9ns add
+
+        static Pen grn_pen = new Pen(Color.Green); // ke9ns add
+        static Pen yel_pen = new Pen(Color.Yellow); // ke9ns add
+        static Pen red_pen = new Pen(Color.Red); // ke9ns add
+
 
         static double signal = 0;
 
@@ -39211,6 +39259,9 @@ namespace PowerSDR
                     low_brush = new SolidBrush(edge_low_color); // white
                     high_brush = new SolidBrush(edge_high_color); // red
 
+
+                    
+
                     //=============================================
                     // Receiver meters ke9ns10
                     //=============================================
@@ -39621,7 +39672,7 @@ namespace PowerSDR
 
                             //==========================================TR7
 
-                            case MeterTXMode.SWR:
+                            case MeterTXMode.SWR: // RX1 analog swr meter
 
 
                                 //=================================================================
@@ -39641,6 +39692,8 @@ namespace PowerSDR
                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
                                 high_brush4 = new Pen(Brushes.AntiqueWhite); // 
 
+
+                             
                                 //======================================
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
@@ -39648,6 +39701,16 @@ namespace PowerSDR
                                 low_brush1.Width = arc_thick;
                                 g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
 
+                             //   grn_pen.Width = arc_thick;
+                             //   g.DrawArc(grn_pen, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                                //======================================
+                                // Draw YELLOW arc line
+                                // upper left corner x,y , width,height, start angle, sweep angle
+
+                            
+                             //   yel_pen.Width = arc_thick;
+                             //   g.DrawArc(yel_pen, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
 
                                 //======================================
                                 // Draw Red arc line
@@ -39655,6 +39718,11 @@ namespace PowerSDR
 
                                 high_brush1.Width = arc_thick;
                                 g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+                             //   red_pen.Width = arc_thick;
+                             //   g.DrawArc(red_pen, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+
 
                                 //======================================
                                 // Draw Yellow full arc line under white/red 
@@ -40605,13 +40673,20 @@ namespace PowerSDR
                                 }
                                 break;
 
-                            case MeterTXMode.SWR:
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+                            case MeterTXMode.SWR:  // EDGE RX1 W= 164
+                              
+                                //   g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2); // start at 0 span to 123
+                                 //    g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2); // start at 123 and span 41-9
+
+                              
+                                g.FillRectangle(grn_brush, 0, H - 8, 45, 2); // ke9ns mod
+                                g.FillRectangle(yel_brush, 45, H - 8, 31, 2); // ke9ns mod
+                                g.FillRectangle(red_brush, 76, H - 8, 79 , 2); // ke9ns mod
 
                                 spacing = (W * 0.75 - 2.0) / 4.0;
                                 string_height = 0;
                                 string[] swr_list = { "1.5", "2", "5", "10", "20" };
+
                                 for (int i = 1; i < 5; i++)
                                 {
                                     g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 8 - 3 - 3, 1, 6);
@@ -41579,7 +41654,7 @@ namespace PowerSDR
 
                             //==========================================
 
-                            case MeterTXMode.SWR:
+                            case MeterTXMode.SWR: // analog meter
 
                                 //=================================================================
                                 // Draw curved meter movement for SWR
@@ -41594,27 +41669,40 @@ namespace PowerSDR
 
 
                                 //   low_brush1 = new Pen(analog_low_color);  // white
-
-
-                                high_brush2 = new Pen(Brushes.Red); // blue
+                                high_brush7 = new Pen(Brushes.Green); // green
+                                high_brush2 = new Pen(Brushes.Red); // red
                                 high_brush1 = new Pen(analog_high_color); // red
                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
                                 high_brush4 = new Pen(Brushes.AntiqueWhite); // 
 
 
+                              // startang, sweepang
+                              // -90, 0 would be top side half circle (horizontal) with -45 being middle
+
                                 //======================================
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                  low_brush1.Width = arc_thick;
+                                  g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                             //   high_brush7.Width = arc_thick;
+                             //   g.DrawArc(high_brush7, 0, 37, W, W, -57, -48); // draw OUTER arc -75  -61
+                               
+                                //======================================
+                                // Draw yel arc line
+                             //   high_brush3.Width = arc_thick;
+                             //  g.DrawArc(high_brush3, 0, 37, W, W, -57, -54); // draw OUTER arc -75  -61
 
                                 //======================================
                                 // Draw Red arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                                 high_brush1.Width = arc_thick;
+                                 g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+                             //   high_brush2.Width = arc_thick;
+                             //   g.DrawArc(high_brush2, 0, 37, W, W, -52, -33); // draw OUTER arc -41
 
                                 //======================================
                                 // Draw Yellow full arc line under white/red 
@@ -43754,7 +43842,7 @@ namespace PowerSDR
 
                             //==========================================TR7
 
-                            case MeterTXMode.SWR:
+                            case MeterTXMode.SWR: // RX2 analog
 
 
                                 //=================================================================
@@ -44838,9 +44926,14 @@ namespace PowerSDR
                                 }
                                 break;
 
-                            case MeterTXMode.SWR:
-                                g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
-                                g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+                            case MeterTXMode.SWR: // edge RX2 SWR meter
+
+                                //  g.FillRectangle(low_brush, 0, H - 8, (int)(W * 0.75), 2);
+                                // g.FillRectangle(high_brush, (int)(W * 0.75), H - 8, (int)(W * 0.25) - 9, 2);
+
+                                g.FillRectangle(grn_brush, 0, H - 8, 45, 2); // ke9ns mod
+                                g.FillRectangle(yel_brush, 45, H - 8, 31, 2); // ke9ns mod
+                                g.FillRectangle(red_brush, 76, H - 8, 79, 2); // ke9ns mod
 
                                 spacing = (W * 0.75 - 2.0) / 4.0;
                                 string_height = 0;
@@ -45799,7 +45892,7 @@ namespace PowerSDR
 
                             //==========================================
 
-                            case MeterTXMode.SWR:
+                            case MeterTXMode.SWR: // analog RX2 meter
 
                                 //=================================================================
                                 // Draw curved meter movement for SWR RX2
@@ -48455,6 +48548,49 @@ namespace PowerSDR
             while (chkPower.Checked)
             {
 
+                if (chkVFOSplit.Checked == true)
+                {
+                    if ((SplitModeRX != SplitModeTX)) // only change DSP modes if you set them up differently by changing modes while in TX mode
+                    {
+                        if (!MOX) // RX
+                        {
+                            if (rx1_dsp_mode != SplitModeRX)
+                            {
+                                //  Debug.WriteLine("PTT RX HERE");
+                                if (SplitModeRX == DSPMode.LSB) radModeLSB.Checked = true;
+                                else if (SplitModeRX == DSPMode.USB) radModeUSB.Checked = true;
+                              
+                                else if (SplitModeRX == DSPMode.DIGU) radModeDIGU.Checked = true;
+                                else if (SplitModeRX == DSPMode.DIGL) radModeDIGL.Checked = true;
+                              
+
+                              //  Debug.WriteLine("PTT RX HERE DONE");
+                                // SetRX1Mode(SplitModeRX);
+
+                            }
+                            
+                        }
+                        else // TX
+                        {
+                            if (rx1_dsp_mode != SplitModeTX)
+                            {
+                              //  Debug.WriteLine("PTT TX HERE");
+                                if (SplitModeTX == DSPMode.LSB) radModeLSB.Checked = true;
+                                else if (SplitModeTX == DSPMode.USB) radModeUSB.Checked = true;
+                               
+                                else if (SplitModeTX == DSPMode.DIGU) radModeDIGU.Checked = true;
+                                else if (SplitModeTX == DSPMode.DIGL) radModeDIGL.Checked = true;
+                              
+                                //  Debug.WriteLine("PTT TX HERE DONE");
+                                // SetRX1Mode(SplitModeTX);
+
+                            }
+                        }
+
+                    }
+
+                }
+
                 //---------------------------------------------------------------------------------
                 // ke9ns add  allows you to use SSB for RX, while AM for TX
                 if (!MOX) // if in RX mode
@@ -49936,6 +50072,13 @@ namespace PowerSDR
             if (e.Shift == false && shift_down)
                 shift_down = false;
 
+            if (setupForm != null) // ke9ns add for DTMF buttons
+            {
+                Audio.TXInputSignal = Audio.SignalSource.RADIO;
+                Audio.SineFreq1 = (double)setupForm.udDSPCWPitch.Value;
+                Audio.two_tone = false;
+            }
+
         }
 
         private static byte regBand = 0; // ke9ns add (used for an extra right click + CTRL function: add bandstacking and hyperlinking) 1=CTRL key pressed
@@ -50050,6 +50193,8 @@ namespace PowerSDR
 
             if (e.Alt == true) // ke9ns add
             {
+              
+
                 switch (e.KeyCode)
                 {
                     case Keys.M: // ke9ns add  add to memory list
@@ -50065,9 +50210,240 @@ namespace PowerSDR
 
                         break;
 
+                    case Keys.D1: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+
+                            //  setupForm.checkBoxDTMF1_MouseDown(this.setupForm, System.Windows.Forms.MouseEventArgs.Empty);
+
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 697.0;
+                                    Audio.SineFreq2 = 1209.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Keys.D2: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 697.0;
+                                    Audio.SineFreq2 = 1336.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Keys.D3: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                Audio.MOX = true;
+
+                                if (e.Shift == true) // * key
+                                {
+                                    Audio.SineFreq1 = 941.0;
+                                    Audio.SineFreq2 = 1477.0;
+                                }
+                                else
+                                {
+                                    Audio.SineFreq1 = 697.0;
+                                    Audio.SineFreq2 = 1477.0;
+                                }
+                                Audio.two_tone = true;
+                                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                Audio.SourceScale = 1.0;
+                            }
+                        }
+
+                        break;
 
 
-                }
+                    case Keys.D4: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 770.0;
+                                    Audio.SineFreq2 = 1209.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+
+                    case Keys.D5: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 770.0;
+                                    Audio.SineFreq2 = 1336.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+
+
+                    case Keys.D6: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 770.0;
+                                    Audio.SineFreq2 = 1477.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Keys.D7: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 852.0;
+                                    Audio.SineFreq2 = 1209.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Keys.D8: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                Audio.MOX = true;
+
+                                if (e.Shift == true) // * key
+                                {
+                                    Audio.SineFreq1 = 941.0;
+                                    Audio.SineFreq2 = 1209.0;
+                                }
+                                else
+                                {
+                                    Audio.SineFreq1 = 852.0;
+                                    Audio.SineFreq2 = 1336.0;
+                                }
+
+                                Audio.two_tone = true;
+                                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                Audio.SourceScale = 1.0;
+                            }
+                        }
+
+                        break;
+
+
+                    case Keys.D9: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 852.0;
+                                    Audio.SineFreq2 = 1477.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Keys.D0: // ke9ns add  for DTMF tones
+
+                        if (setupForm != null)
+                        {
+                            if (MOX == true)
+                            {
+                                if (e.Shift == false)
+                                {
+                                    Audio.MOX = true;
+
+                                    Audio.SineFreq1 = 941.0;
+                                    Audio.SineFreq2 = 1336.0;
+                                    Audio.two_tone = true;
+                                    Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                                    Audio.SourceScale = 1.0;
+                                }
+                            }
+                        }
+
+                        break;
+
+
+                   
+
+
+                } // switch
 
 
 
@@ -50624,7 +51000,7 @@ namespace PowerSDR
                         else if (hid_init && current_model == Model.FLEX1500)
                         {
                             if (flex1500DebugForm == null || flex1500DebugForm.IsDisposed)
-                                flex1500DebugForm = new FLEX1500DebugForm();
+                                flex1500DebugForm = new FLEX1500DebugForm(this); // this was not there before
                             flex1500DebugForm.Show();
                             flex1500DebugForm.Focus();
                             flex1500DebugForm.WindowState = FormWindowState.Normal; // ke9ns add
@@ -52991,6 +53367,7 @@ namespace PowerSDR
         private void comboAGC_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (comboAGC.SelectedIndex < 0) return;
+
             dsp.GetDSPRX(0, 0).RXAGCMode = (AGCMode)comboAGC.SelectedIndex;
             dsp.GetDSPRX(0, 1).RXAGCMode = (AGCMode)comboAGC.SelectedIndex;
 
@@ -54875,6 +55252,12 @@ namespace PowerSDR
             }
         }
 
+
+         //======================================================================
+        // ke9ns add
+        DSPMode SplitModeTX = DSPMode.FIRST;
+        DSPMode SplitModeRX = DSPMode.USB;
+
         private void UIMOXChangedTrue()
         {
             Display.MOX = true;
@@ -54904,7 +55287,26 @@ namespace PowerSDR
             {
                 setupForm.SpurRedEnabled = false;
                 DisableAllBands();
-                DisableAllModes();
+
+                if (chkVFOSplit.Checked != true)   DisableAllModes(); // ke9ns mod to allow MODE change while in SPLIT
+                else
+                {
+                    DisableAllModes();
+                    //EnableAllModes();
+
+                    if (radModeLSB.Text != "") radModeLSB.Enabled = true;
+                    if (radModeLSB.BackColor == vfo_text_dark_color)radModeLSB.BackColor = button_selected_color;
+                    if (radModeUSB.Text != "") radModeUSB.Enabled = true;
+                    if (radModeUSB.BackColor == vfo_text_dark_color) radModeUSB.BackColor = button_selected_color;
+
+                    if (radModeDIGL.Text != "") radModeDIGL.Enabled = true;
+                    if (radModeDIGL.BackColor == vfo_text_dark_color) radModeDIGL.BackColor = button_selected_color;
+                    if (radModeDIGU.Text != "") radModeDIGU.Enabled = true;
+                    if (radModeDIGU.BackColor == vfo_text_dark_color) radModeDIGU.BackColor = button_selected_color;
+
+                }
+
+
                 chkVFOSplit.Enabled = false;
                 btnVFOAtoB.Enabled = false;
                 btnVFOBtoA.Enabled = false;
@@ -61142,17 +61544,42 @@ namespace PowerSDR
 
         private void SetRX1Mode(DSPMode new_mode)
         {
-            Debug.WriteLine("SETRX1MODE HERE " + new_mode);
+          
             AMSSBmodeFILT = false; // ke9ns add (only SetRX1Filter() can set it to true)
 
             if (new_mode == DSPMode.FIRST || new_mode == DSPMode.LAST) return;
 
             DSPMode old_mode = rx1_dsp_mode;
+           
+
+            // ke9ns add
+            if (chkVFOSplit.Checked == true)
+            {
+                if (mox == true)
+                {
+                    SplitModeTX = new_mode; //  dsp.GetDSPTX(0).CurrentDSPMode = new_mode;
+                }
+                else
+                {
+                    SplitModeRX = new_mode;  // rx1_dsp_mode;
+                }
+       
+            }
+            else
+            {
+                if (mox == false) SplitModeRX = SplitModeTX = new_mode;  // reset them if you turn Split OFF
+            }
+
+            Debug.WriteLine("New_mode: " + new_mode);
+            Debug.WriteLine("Old_mode: " + old_mode);
 
             string current_txprofile = comboTXProfile.Text;
 
             dsp.GetDSPRX(0, 0).DSPMode = new_mode;              // set new DSP mode
+
+           
             dsp.GetDSPRX(0, 1).DSPMode = new_mode; // ke9ns  ( 0,1) sets the multiRX receiver to the same DSP mode
+           
 
             if (disable_split_on_modechange & !initializing)
             {
@@ -61188,12 +61615,14 @@ namespace PowerSDR
             {
                 case DSPMode.LSB:
                     radModeLSB.BackColor = SystemColors.Control;
+                  //  Debug.WriteLine("OLD LSB RADMODE ");
 
                     if (TXProfileByMode & !initializing) lsb_txprofile = comboTXProfile.Text;
 
                     break;
                 case DSPMode.USB:
                     radModeUSB.BackColor = SystemColors.Control;
+                  //  Debug.WriteLine("OLD USB RADMODE ");
 
                     if (TXProfileByMode & !initializing) usb_txprofile = comboTXProfile.Text;
 
@@ -61413,6 +61842,7 @@ namespace PowerSDR
             {
                 case DSPMode.LSB:
                     radModeLSB.BackColor = button_selected_color;
+                  //  Debug.WriteLine("NEW LSB RADMODE ");
 
                     if ((current_txprofile != lsb_txprofile) & (TXProfileByMode) & !initializing)
                         comboTXProfile.Text = lsb_txprofile;
@@ -61430,6 +61860,7 @@ namespace PowerSDR
 
                 case DSPMode.USB:
                     radModeUSB.BackColor = button_selected_color;
+                   // Debug.WriteLine("NEW USB RADMODE ");
 
                     if ((current_txprofile != usb_txprofile) & (TXProfileByMode) & !initializing)
                         comboTXProfile.Text = usb_txprofile;
@@ -61788,6 +62219,8 @@ namespace PowerSDR
 
             rx1_dsp_mode = new_mode;
 
+           
+
             if (old_mode == DSPMode.FM) chkSquelch.Checked = rx1_squelch_on;  // ke9ns 
 
             if (old_mode == DSPMode.FM || new_mode == DSPMode.FM) ptbSquelch_Scroll(this, EventArgs.Empty);
@@ -61836,7 +62269,9 @@ namespace PowerSDR
                 if (flex5000RelayForm != null) flex5000RelayForm.UpdateRelayState(out tx1, out tx2, out tx3);
             }
 
-            // voacap
+            
+
+          
 
         } // SetRX1Mode()
 
@@ -67375,6 +67810,7 @@ namespace PowerSDR
         private void comboRX2AGC_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (!fwc_init || current_model != Model.FLEX5000 || comboRX2AGC.SelectedIndex < 0) return;
+
             dsp.GetDSPRX(1, 0).RXAGCMode = (AGCMode)comboRX2AGC.SelectedIndex;
 
             switch ((AGCMode)comboRX2AGC.SelectedIndex)
@@ -67399,11 +67835,12 @@ namespace PowerSDR
                         "Fast (Attack 2ms, Hang 100ms, Decay 100ms)");
                     //comboRX2AGC.BackColor = SystemColors.Window;
                     break;
-                /*case AGCMode.CUSTOM:
-					toolTip1.SetToolTip(comboAGC, "Automatic Gain Control Mode Setting:\n"+
-						"Custom - Set specifics in Setup Form -> DSP -> AGC/ALC");
-					comboRX2AGC.BackColor = SystemColors.Window;
-					break;*/
+               case AGCMode.CUSTOM:
+                  //  setupForm.CustomRXAGCEnabled = true; // ke9ns add (copy from AGC of RX1)
+                  //  toolTip1.SetToolTip(comboAGC, "Automatic Gain Control Mode Setting:\n"+
+					//	"Custom - Set specifics in Setup Form -> DSP -> AGC/ALC");
+					//comboRX2AGC.BackColor = SystemColors.Window;
+				//	break;
                 case AGCMode.FIXD:
                     setupForm.CustomRXAGCEnabled = false;
                     toolTip1.SetToolTip(comboAGC, "Automatic Gain Control Mode Setting:\n" +
@@ -67419,6 +67856,7 @@ namespace PowerSDR
                     ptbRX2RF.Value = rx2_fixed_gain;
                     ptbRX2RF_Scroll(this, EventArgs.Empty);
                     break;
+               
                 default:
                     ptbRX2RF.Value = rx2_max_gain;
                     ptbRX2RF_Scroll(this, EventArgs.Empty);
@@ -73450,6 +73888,9 @@ namespace PowerSDR
 
             if (((int)SpotForm.udDisplayLat.Value > 24) && ((int)SpotForm.udDisplayLat.Value < 51))
             {
+
+             
+
                 if (((int)SpotForm.udDisplayLong.Value > -120) && ((int)SpotForm.udDisplayLong.Value < -73))
                 {
                     string currweth = httpFile.Weather(); // get local weather data if in USA
@@ -75148,6 +75589,10 @@ namespace PowerSDR
         } // 
 
 
+        //============================================================================
+        //============================================================================
+        //============================================================================
+        // ke9ns add improve tooltip
 
 
 
@@ -76213,7 +76658,7 @@ namespace PowerSDR
 
         private bool SplitUp = false;
         //===============================================================================
-        // ke9ns add to allow a 5khz split 
+        // ke9ns add to allow a 5khz split (1khz on cw)
         private void chkVFOSplit_MouseDown(object sender, MouseEventArgs e)
         {
 
@@ -76233,12 +76678,18 @@ namespace PowerSDR
                 if (SplitUp == false)
                 {
                     SplitUp = true;
-                    VFOBFreq = VFOAFreq + .005; // in mhz
+                    if ((RX1DSPMode == DSPMode.CWL )|| (RX1DSPMode == DSPMode.CWU))
+                        VFOBFreq = VFOAFreq + .001; // in mhz
+                    else
+                        VFOBFreq = VFOAFreq + .005; // in mhz
                 }
                 else
                 {
                     SplitUp = false;
-                    VFOBFreq = VFOAFreq - .005; // in mhz
+                    if ((RX1DSPMode == DSPMode.CWL) || (RX1DSPMode == DSPMode.CWU))
+                        VFOBFreq = VFOAFreq - .001; // in mhz
+                    else
+                        VFOBFreq = VFOAFreq - .005; // in mhz
                 }
 
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);

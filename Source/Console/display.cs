@@ -1460,7 +1460,7 @@ namespace PowerSDR
 
             // draw channels for all regions for common are
             
-            channels_60m.Add(new Channel(26.9650, 6000)); // channel 1 cb
+            channels_60m.Add(new Channel(26.9650, 6000)); // channel 1 cb  AM +/- 3khz
             channels_60m.Add(new Channel(26.9750, 6000)); // channel 2 cb
             channels_60m.Add(new Channel(26.9850, 6000)); // channel 3 cb
             channels_60m.Add(new Channel(27.0050, 6000)); // channel 4 cb
@@ -2987,6 +2987,7 @@ namespace PowerSDR
                 {
                     g.FillRectangle(new SolidBrush(sub_rx_filter_color),    // draw filter overlay
                         filter_left_x, top, filter_right_x - filter_left_x, H - top);
+                   
                 }
 
 
@@ -3280,7 +3281,7 @@ namespace PowerSDR
 
 
             //===============================================================
-            // draw 60m channels if in view
+            // draw 60m channels if in view (for any FRSregion, channels are only added if the region warrents it)
             //===============================================================
 
             foreach (Channel c in channels_60m)
@@ -3348,7 +3349,7 @@ namespace PowerSDR
                           
                     int chan_center_x = ((chan_right_x - chan_left_x) / 2) + chan_left_x; // ke9ns add
 
-                    if (rf_freq < 25000000) chan_center_x = 0;
+                    if (rf_freq < 25000000) chan_center_x = 0; // 25mhz check
 
                     if (chan_right_x == chan_left_x) chan_right_x = chan_left_x + 1;
 
@@ -3651,6 +3652,7 @@ namespace PowerSDR
                 //============================================================================================================
                 //============================================================================================================
                 case FRSRegion.US: // 
+
                     for (int i = 0; i < f_steps + 1; i++)
                     {
                         string label;
@@ -3994,6 +3996,70 @@ namespace PowerSDR
 
                     } // for (int i = 0; i < f_steps + 1; i++)
 
+                    //---------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------
+                    // 60m edges (NOT FOR US), BUT FOR CANADA
+
+                    int[] band_edge_list_r14 = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 }; //  5351.5 - 5366.5 kHz  
+
+                    bool onetime = false;
+                    bool onetime1 = false;
+
+                    for (int i = 0; i < band_edge_list_r14.Length; i++)
+                    {
+                       
+                        double band_edge_offset = band_edge_list_r14[i] - vfo;
+                        if (bottom)
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = H + top;
+                                is_first = false;
+
+                                StringFormat SF = new StringFormat();
+                                SF.Alignment = StringAlignment.Near;
+                                SF.FormatFlags = StringFormatFlags.DirectionVertical;
+
+                               if (onetime == false) g.DrawString("IARU1/2 only", font1, grid_text_brush, _x, _y+10, SF); // draw bandtext vertically
+                                onetime = true;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = (H + H) - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                        else
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = top;
+                                is_first = false;
+
+                                StringFormat SF1 = new StringFormat();
+                                SF1.Alignment = StringAlignment.Near;
+                                SF1.FormatFlags = StringFormatFlags.DirectionVertical;
+
+                                if (onetime1 == false) g.DrawString("IARU1/2 only", font1, grid_text_brush, _x, _y+10, SF1); // draw bandtext vertically
+                                onetime1 = true;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = H - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+
+                        }
+
+
+                    } // 60m europe
+
 
                     break; // case FRSRegion.US:
 
@@ -4002,6 +4068,7 @@ namespace PowerSDR
                 //============================================================================================================
                 //===============================================
                 case FRSRegion.UK_Plus:
+
                     for (int i = 0; i < f_steps + 1; i++)
                     {
                         string label;
@@ -4744,13 +4811,13 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges
+                    // 60m edges for europe
 
-                    int[] band_edge_list_r14 = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
+                    int[] band_edge_list_r19 = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 }; //  5351.5 - 5366.5 kHz
 
-                    for (int i = 0; i < band_edge_list_r14.Length; i++)
+                    for (int i = 0; i < band_edge_list_r19.Length; i++)
                     {
-                        double band_edge_offset = band_edge_list_r14[i] - vfo;
+                        double band_edge_offset = band_edge_list_r19[i] - vfo;
                         if (bottom)
                         {
                             if (is_first)
@@ -5149,7 +5216,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  for UK, france, slovakia and es_ch_fin
 
                     int[] band_edge_list_r14a = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -5550,7 +5617,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  for norway denmark, eu_travel
 
                     int[] band_edge_list_r14aa = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -5931,7 +5998,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------EU04
                     //---------------------------------------------------------------------------------------------------
-                    int[] band_edge_list_r1c = { 1810000, 1880000,  3500000, 3800000, 5250000, 5450000,
+                    int[] band_edge_list_r1c = { 1810000, 2000000,  3500000, 3800000, 5250000, 5450000,
                                                 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
                                                 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 };
 
@@ -5949,7 +6016,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  belgium
 
                     int[] band_edge_list_r14c = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -6348,7 +6415,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  hungary (no 60m)
 
                     int[] band_edge_list_r14d = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -6747,7 +6814,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  sweden
 
                     int[] band_edge_list_r14e = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -7146,7 +7213,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  bulgaria
 
                     int[] band_edge_list_r14f = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -7547,7 +7614,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges latvia 
 
                     int[] band_edge_list_r14g = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -7944,7 +8011,7 @@ namespace PowerSDR
 
                     //---------------------------------------------------------------------------------------------------
                     //---------------------------------------------------------------------------------------------------
-                    // 60m edges  
+                    // 60m edges  greece
 
                     int[] band_edge_list_r14h = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -8338,6 +8405,7 @@ namespace PowerSDR
                     }
 
 
+                    // draw 60m italy
 
                     // draw 60m band segment rectangles - European ( Germany, Belgium, Spain, Switzerland, Finland, Luxembourg)
                     int[] band_edge_list_r7 = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 }; // but no TX on 60m
@@ -8794,7 +8862,7 @@ namespace PowerSDR
                         {
                             if (actual_fgrid == 1.81 || actual_fgrid == 1.88 ||
                                 actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
-                                actual_fgrid == 5.350 || actual_fgrid == 5.45 ||   // ke9ns add
+                                actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
                                 actual_fgrid == 7.0 || actual_fgrid == 7.2 ||
                                 actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
                                 actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
@@ -9108,7 +9176,7 @@ namespace PowerSDR
 
                     //--------------------------------------------------------------------------------------------------- EU13
                     //---------------------------------------------------------------------------------------------------
-                    int[] band_edge_list_r1j = { 1810000, 1880000,  3500000, 3800000, 5350000, 5450000,
+                    int[] band_edge_list_r1j = { 1810000, 1880000,  3500000, 3800000, 5250000, 5450000,
                                                 7000000, 7200000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
                                                 24890000, 24990000, 28000000, 29700000, 50000000, 52000000, 144000000, 146000000 };
 
@@ -9123,6 +9191,50 @@ namespace PowerSDR
                         }
                     }
 
+                    //---------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------
+                    // 60m edges for europe
+
+                    int[] band_edge_list_r19a = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 }; //  5351.5 - 5366.5 kHz
+
+                    for (int i = 0; i < band_edge_list_r19a.Length; i++)
+                    {
+                        double band_edge_offset = band_edge_list_r19a[i] - vfo;
+                        if (bottom)
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = H + top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = (H + H) - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+                        else
+                        {
+                            if (is_first)
+                            {
+                                _x = (int)((double)(band_edge_offset - Low) / (High - Low) * W);
+                                _y = top;
+                                is_first = false;
+                            }
+                            else
+                            {
+                                _width = ((int)((double)(band_edge_offset - Low) / (High - Low) * W)) - _x;
+                                _height = H - _y;
+                                g.DrawRectangle(new Pen(band_box_color, band_box_width), new Rectangle(_x, _y, _width, _height));
+                                is_first = true;
+                            }
+                        }
+
+
+                    } // 60m europe
 
 
                     break; // EU13
@@ -9480,8 +9592,7 @@ namespace PowerSDR
 
 
 
-                    //---------------------------------------------------------------------------------------------------EU15
-                    //---------------------------------------------------------------------------------------------------
+                   // 60m luxumbourg
 
                     int[] band_edge_list_r14l = { 5351500, 5353999, 5354000, 5365999, 5366000, 5366500 };
 
@@ -13223,7 +13334,7 @@ namespace PowerSDR
 
                         int[] band_edge_list_r2 = { 0135700, 0137800, 0472000, 0479000, 1800000, 2000000, 3500000, 4000000, 5250000,5450000,
                                        7000000, 7300000, 10100000, 10150000, 14000000, 14350000, 18068000, 18168000, 21000000, 21450000,
-                                       24890000, 24990000,26960000, 27410000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 }; //ke9ns add CB
+                                       24890000, 24990000, 26960000, 27410000, 28000000, 29700000, 50000000, 54000000, 144000000, 148000000 }; //ke9ns add CB
 
                         for (int i = 0; i < band_edge_list_r2.Length; i++)
                         {
@@ -13624,7 +13735,7 @@ namespace PowerSDR
 
                             if (!show_freq_offset)
                             {
-                                if (actual_fgrid == 1.81 || actual_fgrid == 1.88 ||
+                                if (actual_fgrid == 1.81 || actual_fgrid == 2.0 ||
                                     actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
                                     actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
                                     actual_fgrid == 7.0 || actual_fgrid == 7.2 ||
@@ -14855,7 +14966,7 @@ namespace PowerSDR
                             {
                                 if (actual_fgrid == 1.81 || actual_fgrid == 1.88 ||
                                     actual_fgrid == 3.5 || actual_fgrid == 3.8 ||
-                                    actual_fgrid == 5.350 || actual_fgrid == 5.45 ||   // ke9ns add
+                                    actual_fgrid == 5.250 || actual_fgrid == 5.45 ||   // ke9ns add
                                     actual_fgrid == 7.0 || actual_fgrid == 7.2 ||
                                     actual_fgrid == 10.1 || actual_fgrid == 10.15 ||
                                     actual_fgrid == 14.0 || actual_fgrid == 14.35 ||
@@ -17211,9 +17322,8 @@ namespace PowerSDR
             // ke9ns add auto
             if (autobright6 == 2) // rx1 adjust
             {
-                Debug.WriteLine(" ");
-
-                Debug.WriteLine("==========PAN AUTOBRIGHT6=================");
+              //  Debug.WriteLine(" ");
+              //   Debug.WriteLine("==========PAN AUTOBRIGHT6=================");
 
                 AB3 = (float)(AB / W); // get avg of the entire read
 
@@ -18811,7 +18921,7 @@ namespace PowerSDR
 
                         if ( (AB3 > AB3_LastW + 4) || (AB3 < AB3_LastW - 4) || (console.waterpanClick3 == true))
                         {
-                            Debug.WriteLine("RX1 water auto update");
+                         //   Debug.WriteLine("RX1 water auto update");
 
                             if (AB3_countW > 0)
                             {

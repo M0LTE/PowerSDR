@@ -201,6 +201,15 @@ namespace PowerSDR
             this.openFileDialog1.Filter = "WAV files (*.wav)|*.wav|All files (*.*)|*.*";
             this.openFileDialog1.Multiselect = true;
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
+
+        
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 200;
+            this.toolTip1.AutoPopDelay = 12000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 40;
             // 
             // grpPlaylist
             // 

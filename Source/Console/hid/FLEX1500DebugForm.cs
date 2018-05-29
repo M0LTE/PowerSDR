@@ -45,14 +45,19 @@ using WDU_DEVICE_HANDLE = System.IntPtr;
 
 namespace PowerSDR
 {
+ 
     unsafe public partial class FLEX1500DebugForm : Form
     {
         float tone1 = 350.0f;
         float tone2 = 440.0f;
+        Console console;
 
-        public FLEX1500DebugForm()
+        public FLEX1500DebugForm(Console c)
         {
             InitializeComponent();
+            console = c;
+           
+
         }
 
         public static string SerialToString(uint serial)
@@ -845,8 +850,212 @@ namespace PowerSDR
             Debug.WriteLine("GPIO3: " + val + "  (" + t1.DurationMsec.ToString("f2") + ")");
             txtGPIOResult.Text = b.ToString("X");
         }
+        
+        //==========================================================================
+        // TURF selector
+        private void buttonTS3_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Warning: You are changing your Turf Region.\n",
+                                        "Do you have authorization?",
+                      MessageBoxButtons.YesNo,
+                      MessageBoxIcon.Question);
+            int val = 0;
+            byte[] data = new byte[1]; // 1 byte long
 
-       
+            if (dr == DialogResult.Yes)
+            {
+                data[0] = (byte)numericUpDown1.Value;
+               Debug.WriteLine("Byte value " + (byte)numericUpDown1.Value);
+               
+                val = Flex1500.WriteEEPROM(0x1819, data);
+
+            }
+
+            MessageBox.Show("You must close PowerSDR and cycle power to the radio. Then go to setup->General->Options->BandText Udpate", "Cycle Power",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        } // buttonTS3_Click (TURF)
+
+        //===============================================================================
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Warning: You must have Authorization as a MARS Licensed Operator.\n",
+                                          "Do you have authorization?",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+            int val = 0;
+            byte[] data = new byte[1];
+
+            data[0] = 0x01;
+
+            if (dr == DialogResult.Yes)
+            {
+
+                //  val = Flex1500.WriteEEPROM(offset, data);
+                //   val = Flex1500.ReadEEPROM(offset, num_bytes, out data);
+
+                val = Flex1500.WriteEEPROM(0x1818, data);  // x1818, 181a-1f are all FF
+
+
+
+                /*
+                                if (FWC.WriteTRXEEPROMByte(0x0034, 0x2D) == 0) MessageBox.Show("Error in WriteEEPROM 34");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0035, 0x05) == 0) MessageBox.Show("Error in WriteEEPROM 35");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0036, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 36");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0037, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 37");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0038, 0x0D) == 0) MessageBox.Show("Error in WriteEEPROM 38");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0039, 0x0B) == 0) MessageBox.Show("Error in WriteEEPROM 39");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003A, 0x01) == 0) MessageBox.Show("Error in WriteEEPROM 3a");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003B, 0x00) == 0) MessageBox.Show("Error in WriteEEPROM 3b");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003C, 0x78) == 0) MessageBox.Show("Error in WriteEEPROM 3c");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                */
+            }
+
+
+
+            MessageBox.Show("You must cycle power to the radio", "Cycle Power",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        } // buttonTS1_Click
+
+        private void buttonTS2_Click(object sender, EventArgs e)
+        {
+
+            DialogResult dr = MessageBox.Show("This will reset any MARS operate back to Normal Standard Operation\n",
+
+                         "Yes?",
+                         MessageBoxButtons.YesNo,
+                         MessageBoxIcon.Question);
+
+            int val = 0;
+            byte[] data = new byte[1];
+
+            data[0] = 0xff;
+
+            if (dr == DialogResult.Yes)
+            {
+
+                //  val = Flex1500.WriteEEPROM(offset, data);
+                //   val = Flex1500.ReadEEPROM(offset, num_bytes, out data);
+
+                val = Flex1500.WriteEEPROM(0x1818, data);
+
+
+                /*
+                                if (FWC.WriteTRXEEPROMByte(0x0034, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 34");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0035, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 35");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0036, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 36");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0037, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 37");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0038, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 38");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x0039, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 39");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003A, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3a");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003B, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3b");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                                if (FWC.WriteTRXEEPROMByte(0x003C, 0xff) == 0) MessageBox.Show("Error in WriteEEPROM 3c");
+                                txtEEPROMWrite.BackColor = SystemColors.Window;
+                                btnEEPROMRead_Click(this, EventArgs.Empty);
+                */
+            }
+
+        } // buttonTS2_Click
+
+        private void btnEEPROMRead1_Click(object sender, EventArgs e)
+        {
+            // if (txtEEPROMOffset.Text == "") return;
+         //   txtEEPROMRead.BackColor = Color.Red;
+            Application.DoEvents();
+            //  uint offset = uint.Parse(txtEEPROMOffset.Text, System.Globalization.NumberStyles.HexNumber);
+
+          
+
+            Debug.WriteLine("TRYING TO OPEN EEPROM TXT FILE TO WRITE TO ");
+
+
+            string file_name2 = console.AppDataPath + "USBEEEPROMDATA.txt"; // save data for my mods
+
+            FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open   file
+            BinaryWriter writer2 = new BinaryWriter(stream2);
+
+            Debug.WriteLine("OPENED EEPROM TXT FILE TO WRITE TO ");
+          
+            ushort offset; // 16bit int
+
+            byte[] data;
+            string datastring;
+            string final;
+            string offsetstring;
+            int val;
+
+            for (offset = 0x1800; offset < 0x2500; offset++) // valid data here  (x1819 is Turf)
+            {
+
+                Debug.Write("   Reading offset-> " + offset);
+
+               val = Flex1500.ReadEEPROM(offset, 1, out data);
+                
+                  //  MessageBox.Show("Error in ReadTRXEEPROM.");
+
+                // if (FWC.ReadTRXEEPROMByte(offset, out data) == 0)
+
+
+
+
+                Debug.WriteLine("   Data-> " + data[0]);
+
+             //   txtEEPROMRead.BackColor = SystemColors.Control;
+
+                datastring = String.Format("{0:X4}", data[0]);
+
+             //   txtEEPROMRead.Text = datastring;
+
+                offsetstring = String.Format("{0:X4}", offset);
+
+             //   txtEEPROMOffset.Text = offsetstring;
+
+                final = offsetstring + " , " + datastring + "\n";
+
+                writer2.Write(final);
+
+
+            } // for offset loop
+
+
+            writer2.Close();    // close  file
+            stream2.Close();   // close stream
+
+
+        } // btneepromread1_click
 
         private void btnTune_Click(object sender, EventArgs e)
         {

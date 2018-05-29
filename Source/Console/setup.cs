@@ -545,8 +545,8 @@ namespace PowerSDR
 		private System.Windows.Forms.GroupBoxTS grpDSPKeyerSemiBreakIn;
 		private System.Windows.Forms.GroupBoxTS grpDSPCWPitch;
 		private System.Windows.Forms.LabelTS lblDSPCWPitchFreq;
-		private System.Windows.Forms.NumericUpDownTS udDSPCWPitch;
-		private System.Windows.Forms.CheckBoxTS chkDSPKeyerSidetone;
+        public NumericUpDownTS udDSPCWPitch;
+        private System.Windows.Forms.CheckBoxTS chkDSPKeyerSidetone;
         public TabControl tcDSP;
         private System.Windows.Forms.TabPage tpDSPImageReject;
 		private System.Windows.Forms.GroupBoxTS grpDSPImageRejectTX;
@@ -1142,6 +1142,19 @@ namespace PowerSDR
         public CheckBoxTS chkBoxSplitListen;
         public CheckBoxTS chkBoxAutoWtrPan;
         public CheckBoxTS chkBoxVFOLockAB;
+        private GroupBoxTS groupBoxTS2;
+        private CheckBoxTS checkBoxDTMF11;
+        private CheckBoxTS checkBoxDTMF10;
+        private CheckBoxTS checkBoxDTMF0;
+        private CheckBoxTS checkBoxDTMF9;
+        private CheckBoxTS checkBoxDTMF8;
+        private CheckBoxTS checkBoxDTMF7;
+        private CheckBoxTS checkBoxDTMF6;
+        private CheckBoxTS checkBoxDTMF5;
+        private CheckBoxTS checkBoxDTMF4;
+        private CheckBoxTS checkBoxDTMF3;
+        private CheckBoxTS checkBoxDTMF2;
+        private CheckBoxTS checkBoxDTMF1;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1454,6 +1467,7 @@ namespace PowerSDR
             this.lbl1500TRXRev = new System.Windows.Forms.LabelTS();
             this.lbl1500SN = new System.Windows.Forms.LabelTS();
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
+            this.chkBoxVFOLockAB = new System.Windows.Forms.CheckBoxTS();
             this.buttonTS2 = new System.Windows.Forms.ButtonTS();
             this.chkBoxBandStack = new System.Windows.Forms.CheckBoxTS();
             this.chkGenOptionsShowATUPopup = new System.Windows.Forms.CheckBoxTS();
@@ -2121,6 +2135,19 @@ namespace PowerSDR
             this.lblMeterType = new System.Windows.Forms.LabelTS();
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpKeyboard = new System.Windows.Forms.TabPage();
+            this.groupBoxTS2 = new System.Windows.Forms.GroupBoxTS();
+            this.checkBoxDTMF11 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF10 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF0 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF9 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF8 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF7 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF6 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF5 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF4 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF3 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF2 = new System.Windows.Forms.CheckBoxTS();
+            this.checkBoxDTMF1 = new System.Windows.Forms.CheckBoxTS();
             this.grpKBXIT = new System.Windows.Forms.GroupBoxTS();
             this.lblKBXITUp = new System.Windows.Forms.LabelTS();
             this.lblKBXITDown = new System.Windows.Forms.LabelTS();
@@ -2462,7 +2489,6 @@ namespace PowerSDR
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.textBoxSAVE = new System.Windows.Forms.TextBoxTS();
-            this.chkBoxVFOLockAB = new System.Windows.Forms.CheckBoxTS();
             this.tcSetup.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tcGeneral.SuspendLayout();
@@ -2723,6 +2749,7 @@ namespace PowerSDR
             this.grpMeterEdge.SuspendLayout();
             this.grpAppearanceMeter.SuspendLayout();
             this.tpKeyboard.SuspendLayout();
+            this.groupBoxTS2.SuspendLayout();
             this.grpKBXIT.SuspendLayout();
             this.grpKBRIT.SuspendLayout();
             this.grpKBMode.SuspendLayout();
@@ -3659,6 +3686,17 @@ namespace PowerSDR
             this.tpGeneralOptions.Size = new System.Drawing.Size(592, 318);
             this.tpGeneralOptions.TabIndex = 1;
             this.tpGeneralOptions.Text = "Options";
+            // 
+            // chkBoxVFOLockAB
+            // 
+            this.chkBoxVFOLockAB.AllowDrop = true;
+            this.chkBoxVFOLockAB.Image = null;
+            this.chkBoxVFOLockAB.Location = new System.Drawing.Point(240, 254);
+            this.chkBoxVFOLockAB.Name = "chkBoxVFOLockAB";
+            this.chkBoxVFOLockAB.Size = new System.Drawing.Size(117, 18);
+            this.chkBoxVFOLockAB.TabIndex = 58;
+            this.chkBoxVFOLockAB.Text = "VFO Lock A / B";
+            this.toolTip1.SetToolTip(this.chkBoxVFOLockAB, "Check to allow VFO Lock button to toggle between VFOA, VFOAB, and VFOB Lock\r\n");
             // 
             // buttonTS2
             // 
@@ -13567,6 +13605,7 @@ namespace PowerSDR
             // 
             // tpKeyboard
             // 
+            this.tpKeyboard.Controls.Add(this.groupBoxTS2);
             this.tpKeyboard.Controls.Add(this.grpKBXIT);
             this.tpKeyboard.Controls.Add(this.grpKBRIT);
             this.tpKeyboard.Controls.Add(this.grpKBMode);
@@ -13579,6 +13618,184 @@ namespace PowerSDR
             this.tpKeyboard.Size = new System.Drawing.Size(584, 341);
             this.tpKeyboard.TabIndex = 4;
             this.tpKeyboard.Text = "Keyboard";
+            // 
+            // groupBoxTS2
+            // 
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF11);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF10);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF0);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF9);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF8);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF7);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF6);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF5);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF4);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF3);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF2);
+            this.groupBoxTS2.Controls.Add(this.checkBoxDTMF1);
+            this.groupBoxTS2.Location = new System.Drawing.Point(19, 270);
+            this.groupBoxTS2.Name = "groupBoxTS2";
+            this.groupBoxTS2.Size = new System.Drawing.Size(548, 55);
+            this.groupBoxTS2.TabIndex = 90;
+            this.groupBoxTS2.TabStop = false;
+            this.groupBoxTS2.Text = "DTMF keypad (hold down button while in TX mode) or use ALT + KEY";
+            this.toolTip1.SetToolTip(this.groupBoxTS2, "Mouse Click on any Button while in TX mode, to transmit DTMF ");
+            // 
+            // checkBoxDTMF11
+            // 
+            this.checkBoxDTMF11.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF11.Image = null;
+            this.checkBoxDTMF11.Location = new System.Drawing.Point(426, 23);
+            this.checkBoxDTMF11.Name = "checkBoxDTMF11";
+            this.checkBoxDTMF11.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF11.TabIndex = 104;
+            this.checkBoxDTMF11.Text = "#";
+            this.checkBoxDTMF11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF11.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF11_MouseDown);
+            this.checkBoxDTMF11.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF10
+            // 
+            this.checkBoxDTMF10.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF10.Image = null;
+            this.checkBoxDTMF10.Location = new System.Drawing.Point(388, 23);
+            this.checkBoxDTMF10.Name = "checkBoxDTMF10";
+            this.checkBoxDTMF10.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF10.TabIndex = 103;
+            this.checkBoxDTMF10.Text = "*";
+            this.checkBoxDTMF10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF0_MouseDown);
+            this.checkBoxDTMF10.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF0
+            // 
+            this.checkBoxDTMF0.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF0.Image = null;
+            this.checkBoxDTMF0.Location = new System.Drawing.Point(348, 23);
+            this.checkBoxDTMF0.Name = "checkBoxDTMF0";
+            this.checkBoxDTMF0.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF0.TabIndex = 102;
+            this.checkBoxDTMF0.Text = "0";
+            this.checkBoxDTMF0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF10_MouseDown);
+            this.checkBoxDTMF0.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF9
+            // 
+            this.checkBoxDTMF9.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF9.Image = null;
+            this.checkBoxDTMF9.Location = new System.Drawing.Point(310, 23);
+            this.checkBoxDTMF9.Name = "checkBoxDTMF9";
+            this.checkBoxDTMF9.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF9.TabIndex = 101;
+            this.checkBoxDTMF9.Text = "9";
+            this.checkBoxDTMF9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF9_MouseDown);
+            this.checkBoxDTMF9.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF8
+            // 
+            this.checkBoxDTMF8.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF8.Image = null;
+            this.checkBoxDTMF8.Location = new System.Drawing.Point(274, 23);
+            this.checkBoxDTMF8.Name = "checkBoxDTMF8";
+            this.checkBoxDTMF8.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF8.TabIndex = 100;
+            this.checkBoxDTMF8.Text = "8";
+            this.checkBoxDTMF8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF8.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF8_MouseDown);
+            this.checkBoxDTMF8.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF7
+            // 
+            this.checkBoxDTMF7.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF7.Image = null;
+            this.checkBoxDTMF7.Location = new System.Drawing.Point(236, 23);
+            this.checkBoxDTMF7.Name = "checkBoxDTMF7";
+            this.checkBoxDTMF7.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF7.TabIndex = 99;
+            this.checkBoxDTMF7.Text = "7";
+            this.checkBoxDTMF7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF7_MouseDown);
+            this.checkBoxDTMF7.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF6
+            // 
+            this.checkBoxDTMF6.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF6.Image = null;
+            this.checkBoxDTMF6.Location = new System.Drawing.Point(196, 23);
+            this.checkBoxDTMF6.Name = "checkBoxDTMF6";
+            this.checkBoxDTMF6.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF6.TabIndex = 98;
+            this.checkBoxDTMF6.Text = "6";
+            this.checkBoxDTMF6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF6_MouseDown);
+            this.checkBoxDTMF6.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF5
+            // 
+            this.checkBoxDTMF5.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF5.Image = null;
+            this.checkBoxDTMF5.Location = new System.Drawing.Point(158, 23);
+            this.checkBoxDTMF5.Name = "checkBoxDTMF5";
+            this.checkBoxDTMF5.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF5.TabIndex = 97;
+            this.checkBoxDTMF5.Text = "5";
+            this.checkBoxDTMF5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF5_MouseDown);
+            this.checkBoxDTMF5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF4
+            // 
+            this.checkBoxDTMF4.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF4.Image = null;
+            this.checkBoxDTMF4.Location = new System.Drawing.Point(122, 23);
+            this.checkBoxDTMF4.Name = "checkBoxDTMF4";
+            this.checkBoxDTMF4.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF4.TabIndex = 96;
+            this.checkBoxDTMF4.Text = "4";
+            this.checkBoxDTMF4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF4_MouseDown);
+            this.checkBoxDTMF4.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF3
+            // 
+            this.checkBoxDTMF3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF3.Image = null;
+            this.checkBoxDTMF3.Location = new System.Drawing.Point(84, 23);
+            this.checkBoxDTMF3.Name = "checkBoxDTMF3";
+            this.checkBoxDTMF3.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF3.TabIndex = 95;
+            this.checkBoxDTMF3.Text = "3";
+            this.checkBoxDTMF3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF3_MouseDown);
+            this.checkBoxDTMF3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF2
+            // 
+            this.checkBoxDTMF2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF2.Image = null;
+            this.checkBoxDTMF2.Location = new System.Drawing.Point(44, 23);
+            this.checkBoxDTMF2.Name = "checkBoxDTMF2";
+            this.checkBoxDTMF2.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF2.TabIndex = 94;
+            this.checkBoxDTMF2.Text = "2";
+            this.checkBoxDTMF2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF2_MouseDown);
+            this.checkBoxDTMF2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
+            // 
+            // checkBoxDTMF1
+            // 
+            this.checkBoxDTMF1.Appearance = System.Windows.Forms.Appearance.Button;
+            this.checkBoxDTMF1.Image = null;
+            this.checkBoxDTMF1.Location = new System.Drawing.Point(6, 23);
+            this.checkBoxDTMF1.Name = "checkBoxDTMF1";
+            this.checkBoxDTMF1.Size = new System.Drawing.Size(32, 24);
+            this.checkBoxDTMF1.TabIndex = 93;
+            this.checkBoxDTMF1.Text = "1";
+            this.checkBoxDTMF1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxDTMF1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseDown);
+            this.checkBoxDTMF1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkBoxDTMF1_MouseUp);
             // 
             // grpKBXIT
             // 
@@ -17290,6 +17507,13 @@ namespace PowerSDR
             // 
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 200;
+            this.toolTip1.AutoPopDelay = 12000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 40;
+            // 
             // buttonTS1
             // 
             this.buttonTS1.Image = null;
@@ -17383,17 +17607,6 @@ namespace PowerSDR
             this.textBoxSAVE.Name = "textBoxSAVE";
             this.textBoxSAVE.Size = new System.Drawing.Size(316, 20);
             this.textBoxSAVE.TabIndex = 30;
-            // 
-            // chkBoxVFOLockAB
-            // 
-            this.chkBoxVFOLockAB.AllowDrop = true;
-            this.chkBoxVFOLockAB.Image = null;
-            this.chkBoxVFOLockAB.Location = new System.Drawing.Point(240, 254);
-            this.chkBoxVFOLockAB.Name = "chkBoxVFOLockAB";
-            this.chkBoxVFOLockAB.Size = new System.Drawing.Size(117, 18);
-            this.chkBoxVFOLockAB.TabIndex = 58;
-            this.chkBoxVFOLockAB.Text = "VFO Lock A / B";
-            this.toolTip1.SetToolTip(this.chkBoxVFOLockAB, "Check to allow VFO Lock button to toggle between VFOA, VFOAB, and VFOB Lock\r\n");
             // 
             // Setup
             // 
@@ -17685,6 +17898,7 @@ namespace PowerSDR
             this.grpMeterEdge.ResumeLayout(false);
             this.grpAppearanceMeter.ResumeLayout(false);
             this.tpKeyboard.ResumeLayout(false);
+            this.groupBoxTS2.ResumeLayout(false);
             this.grpKBXIT.ResumeLayout(false);
             this.grpKBRIT.ResumeLayout(false);
             this.grpKBMode.ResumeLayout(false);
@@ -24073,7 +24287,10 @@ namespace PowerSDR
 			{
 				console.dsp.GetDSPRX(0, 0).RXAGCAttack = (int)udDSPAGCAttack.Value;
 				console.dsp.GetDSPRX(0, 1).RXAGCAttack = (int)udDSPAGCAttack.Value;
-			}
+
+              
+
+            }
 		}
 
 		private void udDSPAGCDecay_ValueChanged(object sender, System.EventArgs e)
@@ -29644,6 +29861,231 @@ namespace PowerSDR
 
 
 
+        //===========================================================================
+        //===========================================================================
+        //===========================================================================
+        // ke9ns add
+        public void checkBoxDTMF1_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 697.0;
+                Audio.SineFreq2 = 1209.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF1
+
+        public void checkBoxDTMF1_MouseUp(object sender, MouseEventArgs e)
+        {
+            Audio.TXInputSignal = Audio.SignalSource.RADIO;
+            Audio.SineFreq1 = (double)udDSPCWPitch.Value;
+            Audio.two_tone = false;
+        }
+
+
+        public void checkBoxDTMF2_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 697.0;
+                Audio.SineFreq2 = 1336.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF2
+
+
+
+        public void checkBoxDTMF3_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 697.0;
+                Audio.SineFreq2 = 1477.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF3
+
+        public void checkBoxDTMF4_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 770.0;
+                Audio.SineFreq2 = 1209.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF4
+
+
+        public void checkBoxDTMF5_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 770.0;
+                Audio.SineFreq2 = 1336.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF5
+
+
+        public void checkBoxDTMF6_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 770.0;
+                Audio.SineFreq2 = 1477.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF6
+
+
+        public void checkBoxDTMF7_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 852.0;
+                Audio.SineFreq2 = 1209.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF7
+
+
+        public void checkBoxDTMF8_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 852.0;
+                Audio.SineFreq2 = 1336.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF8
+
+
+        public void checkBoxDTMF9_MouseDown(object sender, MouseEventArgs e)
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 852.0;
+                Audio.SineFreq2 = 1477.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF9
+
+
+        public void checkBoxDTMF10_MouseDown(object sender, MouseEventArgs e) // * key
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 941.0;
+                Audio.SineFreq2 = 1209.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF10
+
+
+        public void checkBoxDTMF0_MouseDown(object sender, MouseEventArgs e) // 0 key
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 941.0;
+                Audio.SineFreq2 = 1336.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF0
+
+
+        public void checkBoxDTMF11_MouseDown(object sender, MouseEventArgs e) // # key
+        {
+            //  console.MOX = true;
+
+            if (console.MOX == true)
+            {
+                Audio.MOX = true;
+
+                Audio.SineFreq1 = 941.0;
+                Audio.SineFreq2 = 1477.0;
+                Audio.two_tone = true;
+                Audio.TXInputSignal = Audio.SignalSource.SINE_TWO_TONE;
+                Audio.SourceScale = 1.0;
+            }
+
+        } // checkboxDTMF11
 
 
 

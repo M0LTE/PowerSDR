@@ -257,7 +257,7 @@ namespace PowerSDR
             USB_OP_SET_TX_OFFSET = 1352,
             USB_OP_SET_TX_DSP_MODE = 1353,
             USB_OP_SET_CW_PITCH = 1354,
-            USB_OP_GET_STATUS = 1355,
+            USB_OP_GET_STATUS = 1355,     // check for extended
             USB_OP_SET_VU_FAN_HIGH = 1356,
 	        USB_OP_SET_VU_KEY_V = 1357,
 	        USB_OP_SET_VU_TXIFU = 1358,
@@ -568,7 +568,8 @@ namespace PowerSDR
         public static int GetRegion(out FRSRegion region)
         {
             uint data;
-            int rtn = Flex1500.ReadOp(Opcode.USB_OP_GET_REGION, 0, 0, out data);
+            int rtn = Flex1500.ReadOp(Opcode.USB_OP_GET_REGION, 0, 0, out data); // get Flex-1500 TURF region
+
             if ((FRSRegion)data >= FRSRegion.LAST)
             {
                 region = 0;

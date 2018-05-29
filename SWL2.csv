@@ -87,7 +87,7 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 1360;0000-2400;;USA;NA AM Bcast;;USA;;1;;
 1370;0000-2400;;USA;NA AM Bcast;;USA;;1;;
 1380;0000-2400;;USA;NA AM Bcast;;USA;;1;;
-1490;0000-2400;;USA;NA AM Bcast;;USA;;1;;
+1390;0000-2400;;USA;NA AM Bcast;;USA;;1;;
 1400;0000-2400;;USA;NA AM Bcast;;USA;;1;;
 1410;0000-2400;;USA;NA AM Bcast;;USA;;1;;
 1420;0000-2400;;USA;NA AM Bcast;;USA;;1;;
@@ -189,7 +189,9 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 7102;0000-2400;;Wld;ALE-World;;Wld;;1;;
 7185.5;0000-2400;;Wld;ALE-World;;Wld;;1;;
 7296;0000-2400;;Wld;ALE-World;;Wld;;1;;
+7453.5;0000-2400;;CAR;CDEMA USB Caribbean Disaster;;CAR;;1;;
 7454;0000-2400;;Wld;RTTY-??800hz;;Wld;;1;;
+7850;0000-2400;;CAR;CDEMA USB Caribbean Disaster;;CAR;;1;;
 8291;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
 8294;0000-2400;;DSC;Maritime Exclusive;;DSC;;1;;
 8414.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
@@ -255,15 +257,17 @@ kHz:75;Time(UTC):93;Days:59;ITU:49;Station:201;Lng:49;Target:62;Remarks:135;P:35
 13324;0000-2400;;USA;HFDL-Molokai;;HWA;;1;;
 13351;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;
 13354;0000-2400;;BHR;HFDL-Muharraq;;BHR;;1;;
+13998;0000-2400;;CAR;Caribbean Red Cross;;CAR;;1;;
 14094;0000-2400;;Wld;ALE400;;Wld;1;;
 14100;0000-2400;;Wld;Beacon-NCDXF;;Wld;;1;;
 14109;0000-2400;;Wld;ALE-World;;Wld;;1;;
 14346;0000-2400;;Wld;ALE-World;;Wld;;1;;
+14415;0000-2400;;CAR;CDEMA Caribbean Disaster;;CAR;;1;;
+15025;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
 15034;0000-2400;;CFB;Trenton Mil Volmet;;CFB;;1;;
 16420;0000-2400;;DSC;Maritime Distress;;DSC;;1;;
-16806.5;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 16804.5;0000-2400;;DSC;DSC-World Wide;;DSC;;1;;
-15025;0000-2400;;ISL;HFDL-Reykjavik;;ISL;;1;;
+16806.5;0000-2400;;Wld;NAVTEX;;Wld;;1;;
 17901;0000-2400;;PNR;HFDL-Albrook;;PNR;;1;;
 17912;0000-2400;;RUS;HFDL-Krasnoyarsk;;RUS;;1;;
 17916;0000-2400;;USA;HFDL-Riverhead;;NY;;1;;

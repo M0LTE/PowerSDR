@@ -57,10 +57,10 @@ namespace PowerSDR
             /* USBHID.ReadTRXEEPROMByte(0x1BE, out temp);
 			rx1_image_ver = temp;*/
 
-            USBHID.GetRegion(out region);
-            if (region >= FRSRegion.LAST)
-                region = FRSRegion.US;
-		}
+            USBHID.GetRegion(out region); // check TURF in EEPROM
+            if (region >= FRSRegion.LAST) region = FRSRegion.US; // use US REGION if value is messed up
+
+        } // Init()
 
 		public static bool NeedDump()
 		{

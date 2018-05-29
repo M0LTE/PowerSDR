@@ -2264,7 +2264,7 @@ namespace PowerSDR
             // FLEX5000LLHWForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(640, 542);
+            this.ClientSize = new System.Drawing.Size(640, 540);
             this.Controls.Add(this.buttonTS3);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.labelTS1);
@@ -3260,7 +3260,7 @@ namespace PowerSDR
 
             }
 
-            MessageBox.Show("You must cycle power to the radio", "Cycle Power",
+            MessageBox.Show("You must close PowerSDR and cycle power to the radio. Then go to setup->General->Options->BandText Udpate", "Cycle Power",
                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
         } //  buttonTS3_Click
