@@ -120,6 +120,42 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <data name="chkBoxIICON.ToolTip" xml:space="preserve">
+    <value>Check to send IIC signal to activate SS AMP (ON/OFF).
+The IIC bus will send 3 bytes of data:  4E,  01, &lt;DATA&gt;
+
+Where &lt;DATA&gt; bit6 (64) will always be SET when this box is checked.
+Except on VHF/UHF bands
+
+The Band your on determines which bit0-bit5 of  the  &lt;DATA&gt; byte sets SET
+</value>
+  </data>
+  <data name="chkBoxIIC.ToolTip" xml:space="preserve">
+    <value>Check to use IIC FlexWire bus (address 0x4E) to send commands to an external device for AMP control.
+
+The AMP uses the relay controlled W6PQL Output FIlter board and a relay for ON/OFF of the AMP 
+and a relay to enable PTT operation
+
+For reading the IIC bus, you can use a  PCA9534 device and some relays, and use the FlexWire port for power.
+
+Upon startup and band change, PowerSDR will send 2 IIC command strings:
+1)  Address 0x4E  Register 0x01 Value = &lt;DATA&gt;
+2)  Address 0x4E, Register 0x03, Value = 0xFF
+
+Where &lt;DATA&gt; runs from the following map:
+
+1 = Select bands: L/MW, 160m, 120m (no relay needed with W6PQL design filter board)
+2 = Select bands: 90m, 80m, 61m, 60m, 49m
+4 = Select bands: 41m, 40m, 31m ,30m
+8 = Select bands: 25m, 22m, 20m, 17m, 16m, 15m, 14m
+16 = Select bands: 13m, 12m, 11m, 10m
+32 = Select bands: 6m
+64 = Remote ON/OFF (used N.C. contact... 64 relay on = remote control)
+128 = Selected bands: VHF/UHF  (bit7 is turned OFF)
+
+&lt;DATA&gt; bit6 (64) is SET only if IIC AMP ON/OFF checkbox is set and on an HF/6m band
+</value>
+  </data>
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

@@ -2310,7 +2310,7 @@ namespace PowerSDR
 								7.040000, 7.042999, "40M PSK",       			true,
                                 7.043000, 7.069999, "40M RTTY",                 true,
                               
-                                7.070000, 7.070000, "40m PSK",                  true,            // ke9ns add
+                                7.070000, 7.070000, "40m PSK",                  true, // ke9ns add
                                 7.070001, 7.073999, "40m PSK",                  true,
 
                                 7.074000, 7.074000, "40M FT8 DIGU",             true, // ke9ns add  7.074
@@ -2325,12 +2325,19 @@ namespace PowerSDR
 								7.171000, 7.171000, "40M SSTV",					true,
                               
                                 7.171001, 7.174999, "40M Ext/Adv SSB",			true,
+                                7.175000, 7.176999, "40M SSB",                  true,
 
-                                7.177000, 7.177000, "40m FreeDV(usb)",             true,
-                                7.177001, 7.178999, "40m FreeDV(usb)",             true,
+                                7.177000, 7.177000, "40m FreeDV(usb)",          true,
+                                7.177001, 7.178999, "40m FreeDV(usb)",          true, // ke9ns add 1.25khz, but reserve 2k
 
-                                7.179000, 7.289999, "40M SSB",					true,
-								7.290000, 7.290000, "40M AM Calling Frequency", true,
+                                7.179000, 7.189999, "40M SSB",					true,
+
+                                7.190000, 7.190000, "40m FreeDV(usb)",          true,
+                                7.190001, 7.191999, "40m FreeDV(usb)",          true,
+
+                                7.192000, 7.289999, "40M SSB",                  true,
+
+                                7.290000, 7.290000, "40M AM Calling Frequency", true,
 								7.290001, 7.299999, "40M SSB",					true,
                             //------------------------------------------------------------------
  
@@ -2378,7 +2385,13 @@ namespace PowerSDR
                                 14.236000, 14.236000, "20m FreeDV",             true,
                                 14.236001, 14.238000, "20m FreeDV",             true,
 
-                                14.238001, 14.282999, "20M SSB",				true,
+                                14.238001, 14.239999, "20M SSB",               true,
+
+                                14.240000, 14.240000, "20m FreeDV",             true,
+                                14.240001, 14.242000, "20m FreeDV",             true,
+
+                                14.242001, 14.282999, "20M SSB",				true,
+
                                 14.283000, 14.285999, "20M AM ",                true,
                                 14.286000, 14.286000, "20M AM Calling Freq",    true,
                                 14.286001, 14.288999, "20M AM ",                true,
@@ -3564,9 +3577,7 @@ namespace PowerSDR
                                 1.840001, 1.842500, "160M FT8 DIGU",            true, // ke9ns add
                                 1.842501, 1.842999, "160M FT8 DIGU",            true,
 
-                                1.843000, 1.839999, "160M CW",                 true,
-
-                                1.840000, 1.999999, "160M CW & Phone",	        true,
+                                1.843000, 1.999999, "160M CW & Phone",	        true,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -3906,10 +3917,10 @@ namespace PowerSDR
         {
             DataTable t = ds.Tables["BandText"];
             object[] data = {
-								50.000000, 50.099999, "6M CW & Beacons",		    true,
-                                50.100000, 50.125999, "6M Phone/NB Digital/CW",	    true,
+								50.000000, 50.099999, "6M CW & Beacons",		true,
+                                50.100000, 50.124999, "6M Phone/NB Digital/CW",	true,
                                 50.125000, 50.125000, "6M Calling Frequency",   true, // calling freq
-                                50.125001, 50.125999, "6M Phone/NB Digital/CW",        true,
+                                50.125001, 50.275999, "6M Phone/NB Digital/CW", true,
                                 50.276000, 50.276000, "6M JT65 DIGU",           true, // ke9ns add 
                                 50.276001, 50.278999, "6M JT65 DIGU",           true, // ke9ns add
                                 50.279000, 50.309999, "6M All Modes",           true,
@@ -3919,7 +3930,7 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 53.999999, "6M Wide Band Modes & CW",    true,
+                                50.316000, 53.999999, "6M Wide Band Modes & CW", true,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)

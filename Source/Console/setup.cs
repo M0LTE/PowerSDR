@@ -1155,6 +1155,9 @@ namespace PowerSDR
         private CheckBoxTS checkBoxDTMF3;
         private CheckBoxTS checkBoxDTMF2;
         private CheckBoxTS checkBoxDTMF1;
+        public CheckBoxTS chkBoxIIC;
+        public CheckBoxTS chkBoxIICON;
+        public CheckBoxTS chkBoxPM1;
         private System.ComponentModel.IContainer components;
 
 		#endregion
@@ -1467,6 +1470,9 @@ namespace PowerSDR
             this.lbl1500TRXRev = new System.Windows.Forms.LabelTS();
             this.lbl1500SN = new System.Windows.Forms.LabelTS();
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
+            this.chkBoxPM1 = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxIICON = new System.Windows.Forms.CheckBoxTS();
+            this.chkBoxIIC = new System.Windows.Forms.CheckBoxTS();
             this.chkBoxVFOLockAB = new System.Windows.Forms.CheckBoxTS();
             this.buttonTS2 = new System.Windows.Forms.ButtonTS();
             this.chkBoxBandStack = new System.Windows.Forms.CheckBoxTS();
@@ -3668,6 +3674,9 @@ namespace PowerSDR
             // tpGeneralOptions
             // 
             this.tpGeneralOptions.BackColor = System.Drawing.SystemColors.Control;
+            this.tpGeneralOptions.Controls.Add(this.chkBoxPM1);
+            this.tpGeneralOptions.Controls.Add(this.chkBoxIICON);
+            this.tpGeneralOptions.Controls.Add(this.chkBoxIIC);
             this.tpGeneralOptions.Controls.Add(this.chkBoxVFOLockAB);
             this.tpGeneralOptions.Controls.Add(this.buttonTS2);
             this.tpGeneralOptions.Controls.Add(this.chkBoxBandStack);
@@ -3687,11 +3696,47 @@ namespace PowerSDR
             this.tpGeneralOptions.TabIndex = 1;
             this.tpGeneralOptions.Text = "Options";
             // 
+            // chkBoxPM1
+            // 
+            this.chkBoxPM1.AllowDrop = true;
+            this.chkBoxPM1.Image = null;
+            this.chkBoxPM1.Location = new System.Drawing.Point(351, 290);
+            this.chkBoxPM1.Name = "chkBoxPM1";
+            this.chkBoxPM1.Size = new System.Drawing.Size(220, 18);
+            this.chkBoxPM1.TabIndex = 62;
+            this.chkBoxPM1.Text = "Use PowerMaster for Watts and SWR";
+            this.toolTip1.SetToolTip(this.chkBoxPM1, "Check box to communicate with PowerMaster (via serial port) and display Power and" +
+        " SWR output from your AMP.\r\n\r\nNOT HOOKED UP YET\r\n");
+            // 
+            // chkBoxIICON
+            // 
+            this.chkBoxIICON.AllowDrop = true;
+            this.chkBoxIICON.Image = null;
+            this.chkBoxIICON.Location = new System.Drawing.Point(351, 272);
+            this.chkBoxIICON.Name = "chkBoxIICON";
+            this.chkBoxIICON.Size = new System.Drawing.Size(161, 18);
+            this.chkBoxIICON.TabIndex = 61;
+            this.chkBoxIICON.Text = "IIC FlexWire AMP ON/OFF";
+            this.toolTip1.SetToolTip(this.chkBoxIICON, resources.GetString("chkBoxIICON.ToolTip"));
+            this.chkBoxIICON.CheckedChanged += new System.EventHandler(this.chkBoxIICON_CheckedChanged);
+            // 
+            // chkBoxIIC
+            // 
+            this.chkBoxIIC.AllowDrop = true;
+            this.chkBoxIIC.Image = null;
+            this.chkBoxIIC.Location = new System.Drawing.Point(324, 250);
+            this.chkBoxIIC.Name = "chkBoxIIC";
+            this.chkBoxIIC.Size = new System.Drawing.Size(247, 25);
+            this.chkBoxIIC.TabIndex = 59;
+            this.chkBoxIIC.Text = "Use IIC FlexWire for External AMP control";
+            this.toolTip1.SetToolTip(this.chkBoxIIC, resources.GetString("chkBoxIIC.ToolTip"));
+            this.chkBoxIIC.CheckedChanged += new System.EventHandler(this.chkBoxIIC_CheckedChanged);
+            // 
             // chkBoxVFOLockAB
             // 
             this.chkBoxVFOLockAB.AllowDrop = true;
             this.chkBoxVFOLockAB.Image = null;
-            this.chkBoxVFOLockAB.Location = new System.Drawing.Point(240, 254);
+            this.chkBoxVFOLockAB.Location = new System.Drawing.Point(174, 270);
             this.chkBoxVFOLockAB.Name = "chkBoxVFOLockAB";
             this.chkBoxVFOLockAB.Size = new System.Drawing.Size(117, 18);
             this.chkBoxVFOLockAB.TabIndex = 58;
@@ -3741,7 +3786,7 @@ namespace PowerSDR
             // 
             this.chkImportDBRestrict.AllowDrop = true;
             this.chkImportDBRestrict.Image = null;
-            this.chkImportDBRestrict.Location = new System.Drawing.Point(24, 243);
+            this.chkImportDBRestrict.Location = new System.Drawing.Point(17, 243);
             this.chkImportDBRestrict.Name = "chkImportDBRestrict";
             this.chkImportDBRestrict.Size = new System.Drawing.Size(187, 18);
             this.chkImportDBRestrict.TabIndex = 31;
@@ -30086,6 +30131,22 @@ namespace PowerSDR
             }
 
         } // checkboxDTMF11
+
+        // ke9ns add for IIC SS AMP control
+        private void chkBoxIICON_CheckedChanged(object sender, EventArgs e)
+        {
+
+            //  Band temp = console.RX1Band;
+            //  console.RX1Band = temp;
+            console.IIC_AMPCONTROL(console.AMPBAND);
+
+
+        } //chkBoxIICON_CheckedChanged
+
+        private void chkBoxIIC_CheckedChanged(object sender, EventArgs e)
+        {
+            console.IIC_AMPCONTROL(console.AMPBAND);
+        }
 
 
 

@@ -34626,6 +34626,9 @@ namespace PowerSDR
 
         //==================================================================
         private Band rx1_band;
+        public byte AMPBAND = 0; // 
+
+
         public Band RX1Band
         {
             get { return rx1_band; }
@@ -34685,32 +34688,7 @@ namespace PowerSDR
                         }
                     } //  if ((flex_wire_ucb))
 
-                    /*  ke9ns add but removed
-                                        byte reg0 = 0;
-                                        byte reg1 = 0;
-
-                                        reg0 = (byte)rx1_band; // Band 0=GEN, 160m=1, WWV = 13, etc.
-                                        reg1 = (byte)rx1_ant;
-
-                                        Debug.WriteLine("IIC 0x55 transmit: " + reg0 + " , " + reg1);
-
-
-                                            switch (CurrentModel)
-                                            {
-                                                case Model.FLEX5000:
-                                                case Model.FLEX3000:
-                                                    if (fwc_init)
-                                                        FWC.FlexWire_Write2Value(0x55, reg0, reg1);
-
-
-                                                    break;
-                                                case Model.FLEX1500:
-                                                    if (hid_init)
-                                                        USBHID.FlexWire_Write2Value(0x55, reg0, reg1);
-                                                    break;
-                                            }
-                    */
-
+                   
                 } //   if ((rx1_band != old_band))
 
 
@@ -34732,6 +34710,8 @@ namespace PowerSDR
                     ScanControl.ScanRST = 0;
 
 
+                    AMPBAND = 0;
+
                     if (RX1Band == Band.B160M)
                     {
                         ScanControl.freq_Low = 1.8;
@@ -34739,6 +34719,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 1.8;
                         ScanControl.freq_High1 = 2.0;
+                        AMPBAND = 1;
 
                     }
                     else if (RX1Band == Band.B80M)
@@ -34748,6 +34729,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 3.5;
                         ScanControl.freq_High1 = 4.0;
+                        AMPBAND = 2;
                     }
                     else if (RX1Band == Band.B60M)
                     {
@@ -34756,6 +34738,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 5.3;
                         ScanControl.freq_High1 = 5.6;
+                        AMPBAND = 2;
                     }
                     else if (RX1Band == Band.B40M)
                     {
@@ -34764,6 +34747,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 7.0;
                         ScanControl.freq_High1 = 7.3;
+                        AMPBAND = 4;
 
                     }
                     else if (RX1Band == Band.B30M)
@@ -34773,6 +34757,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 10.10;
                         ScanControl.freq_High1 = 10.15;
+                        AMPBAND = 4;
                     }
                     else if (RX1Band == Band.B20M)
                     {
@@ -34781,6 +34766,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 14.000;
                         ScanControl.freq_High1 = 14.350;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B17M)
                     {
@@ -34789,6 +34775,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 18.068;
                         ScanControl.freq_High1 = 18.168;
+                        AMPBAND = 8;
 
                     }
                     else if (RX1Band == Band.B15M)
@@ -34798,6 +34785,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 21.0;
                         ScanControl.freq_High1 = 21.45;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B12M)
                     {
@@ -34806,6 +34794,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 24.89;
                         ScanControl.freq_High1 = 24.990;
+                        AMPBAND = 16;
 
                     }
                     else if (RX1Band == Band.B10M)
@@ -34815,6 +34804,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 28.0;
                         ScanControl.freq_High1 = 29.7;
+                        AMPBAND = 16;
                     }
                     else if (RX1Band == Band.B6M)
                     {
@@ -34823,6 +34813,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 50.0;
                         ScanControl.freq_High1 = 54.0;
+                        AMPBAND = 32;
 
                     }
                     else if (RX1Band == Band.B2M)
@@ -34832,6 +34823,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 144.0;
                         ScanControl.freq_High1 = 148.0;
+                        AMPBAND = 128;
                     }
                     else if (RX1Band == Band.VHF0)
                     {
@@ -34840,6 +34832,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 144.0;
                         ScanControl.freq_High1 = 148.0;
+                        AMPBAND = 128;
                     }
                     else if (RX1Band == Band.VHF1)
                     {
@@ -34848,7 +34841,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 430.0;
                         ScanControl.freq_High1 = 450.0;
-
+                        AMPBAND = 128;
                     }
                     else if (RX1Band == Band.BLMF)
                     {
@@ -34857,7 +34850,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 0.4;
                         ScanControl.freq_High1 = 1.8;
-
+                        AMPBAND = 1;
                     }
                     else if (RX1Band == Band.B120M)
                     {
@@ -34866,6 +34859,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 2.0;
                         ScanControl.freq_High1 = 3.0;
+                        AMPBAND = 1;
                     }
                     else if (RX1Band == Band.B90M)
                     {
@@ -34874,6 +34868,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 3.0;
                         ScanControl.freq_High1 = 3.5;
+                        AMPBAND = 2;
                     }
                     else if (RX1Band == Band.B61M)
                     {
@@ -34882,6 +34877,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 4.0;
                         ScanControl.freq_High1 = 5.3;
+                        AMPBAND = 2;
                     }
                     else if (RX1Band == Band.B49M)
                     {
@@ -34890,6 +34886,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 5.4;
                         ScanControl.freq_High1 = 7.0;
+                        AMPBAND = 2;
                     }
                     else if (RX1Band == Band.B41M)
                     {
@@ -34898,6 +34895,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 7.2;
                         ScanControl.freq_High1 = 9.0;
+                        AMPBAND = 4;
                     }
                     else if (RX1Band == Band.B31M)
                     {
@@ -34906,6 +34904,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 9.0;
                         ScanControl.freq_High1 = 9.99;
+                        AMPBAND = 4;
 
                     }
                     else if (RX1Band == Band.B25M)
@@ -34915,6 +34914,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 10.0;
                         ScanControl.freq_High1 = 13.57;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B22M)
                     {
@@ -34923,6 +34923,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 13.57;
                         ScanControl.freq_High1 = 14.00;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B19M)
                     {
@@ -34931,6 +34932,7 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 14.350;
                         ScanControl.freq_High1 = 17.0;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B16M)
                     {
@@ -34938,6 +34940,7 @@ namespace PowerSDR
                         ScanControl.freq_High = 18.0;
                         ScanControl.freq_Low1 = 17.0;
                         ScanControl.freq_High1 = 18.0;
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B14M)
                     {
@@ -34945,6 +34948,8 @@ namespace PowerSDR
                         ScanControl.freq_High = 21.0;
                         ScanControl.freq_Low1 = 18.0;
                         ScanControl.freq_High1 = 21.0;
+
+                        AMPBAND = 8;
                     }
                     else if (RX1Band == Band.B13M)
                     {
@@ -34952,6 +34957,8 @@ namespace PowerSDR
                         ScanControl.freq_High = 25.0;
                         ScanControl.freq_Low1 = 21.0;
                         ScanControl.freq_High1 = 25.0;
+
+                        AMPBAND = 16;
                     }
                     else if (RX1Band == Band.B11M)
                     {
@@ -34959,6 +34966,8 @@ namespace PowerSDR
                         ScanControl.freq_High = 28.0;
                         ScanControl.freq_Low1 = 25.0;
                         ScanControl.freq_High1 = 28.0;
+
+                        AMPBAND = 16;
                     }
                     else // ke9ns need to add xvtr scanner capability
                     {
@@ -34967,11 +34976,18 @@ namespace PowerSDR
 
                         ScanControl.freq_Low1 = 28.0;
                         ScanControl.freq_High1 = 29.0;
+
+                        AMPBAND = 16;
                     }
 
                     ScanForm.lowFBox.Text = ScanControl.freq_Low.ToString("f6");
 
                     ScanForm.highFBox.Text = ScanControl.freq_High.ToString("f6");
+
+
+
+                    IIC_AMPCONTROL(AMPBAND); // send IIC command for SS AMP band control
+
 
                     //============================================================== ke9ns end
 
@@ -35113,6 +35129,88 @@ namespace PowerSDR
                 } // rx1_band != oldBand
             }
         } // rx1_band
+
+
+
+        public void IIC_AMPCONTROL(byte AMPBAND1 )
+        {  //===================================================================
+           // ke9ns add to allow IIC remote control of my SS AMP
+
+            /*
+            IIC FlexWire bus(address 0x4E) to send band change commands to an external device for AMP control.
+            The AMP uses the W6PQL Output FIlter board
+            For reading the IIC bus, you can use a  PCA9534 device and some relays, and use the FlexWire port for power.
+
+            Upon startup and band change, PowerSDR will send 2 IIC command strings:
+            1) Address 0x4E  Register 0x01 Value = < DATA >
+            2)  Address 0x4E, Register 0x03, Value = 0xFF
+
+            Where<DATA> runs from the following map:
+            1 = Select bands: L/MW, 160m, 120m(no relay needed)
+            2 = Select bands: 90m, 80m, 61m, 60m, 49m
+            4 = Select bands: 41m, 40m, 31m ,30m
+            8 = Select bands: 25m, 22m, 20m, 17m, 16m, 15m, 14m
+            16 = Select bands: 13m, 12m, 11m, 10m
+            32 = Select bands: 6m
+
+            64 = Remote ON / OFF (N.C. relay contact to setup AMP for remote band switching)
+                                  (N.O. relay to Power ON AMP and/or PTT enable)
+
+           128 = Select Bands: VHF/UHF bands (currently not used)
+
+            */
+
+
+
+            if ((setupForm != null) && (setupForm.chkBoxIIC.Checked == true))
+            {
+                byte temp1 = 0;
+
+                if ((setupForm.chkBoxIICON.Checked == true) && (AMPBAND1 != 128) )
+                {
+                    temp1 = (byte)(AMPBAND1 | 64);
+                }
+                else
+                {
+                    if (AMPBAND == 128) temp1 = (byte)(128); // also if in VHF/UHF shut down the AMP
+                    else temp1 = 0; // turn OFF
+                }
+
+                if (AMPBAND > 128) // shut down
+                {
+                    temp1 = 0;
+                }
+
+                switch (CurrentModel)
+                {
+                    case Model.FLEX5000:
+                    case Model.FLEX3000:
+                        if (fwc_init)
+                        {
+                            //   Debug.WriteLine("SEND IIC zcode " + temp1);
+
+                            FWC.FlexWire_Write2Value(0x4E, 0x01, temp1);
+                            FWC.FlexWire_Write2Value(0x4E, 0x03, 0x00); // turn all pins to outputs
+                        }
+
+                        break;
+                    case Model.FLEX1500:
+                        if (hid_init)
+                        {
+
+                            //  Debug.WriteLine("SEND IIC zcode " + temp1);
+
+                            USBHID.FlexWire_Write2Value(0x4E, 0x01, temp1);
+                            USBHID.FlexWire_Write2Value(0x4E, 0x03, 0x00); // turn all pins to outputs
+                        }
+                        break;
+                } // switch
+
+            }
+
+        } // IIC_AMPCONTROL
+
+
 
         private string BandToString(Band b)
         {
@@ -39672,7 +39770,7 @@ namespace PowerSDR
 
                             //==========================================TR7
 
-                            case MeterTXMode.SWR: // RX1 analog swr meter
+                            case MeterTXMode.SWR: // RX1 analog swr meter  SWRCOLOR
 
 
                                 //=================================================================
@@ -50087,6 +50185,8 @@ namespace PowerSDR
         public static bool HELPSWR = false; // ke9ns add true = mouse over SWR Scanner button for help
         public bool INIT1 = false; // ke9ns for chrome
 
+        public byte zcode = 0;
+
 
         //===============================================================================================================
         //===============================================================================================================
@@ -50191,12 +50291,20 @@ namespace PowerSDR
 
             Debug.WriteLine("keypressedCODE " + e.KeyCode);
 
+
             if (e.Alt == true) // ke9ns add
             {
               
 
                 switch (e.KeyCode)
                 {
+
+                    case Keys.Z:
+
+                        FWC.FlexWire_WriteValue(0x4C, zcode);
+
+                        break;
+
                     case Keys.M: // ke9ns add  add to memory list
 
                         // Debug.WriteLine("ALT + M key ");
@@ -52559,6 +52667,7 @@ namespace PowerSDR
 
             if (chkPower.Checked)
             {
+                IIC_AMPCONTROL(AMPBAND); // ke9ns add
 
                 //  Display.Power = 1;
 
@@ -53449,6 +53558,8 @@ namespace PowerSDR
         {
 
             Debug.WriteLine("CONSOLE_CLOSING");
+
+            IIC_AMPCONTROL(128); // ke9ns shut down
 
             Audio.callback_return = 2;
             CATEnabled = false;
@@ -77210,7 +77321,7 @@ namespace PowerSDR
                         {
                             if (!MOX)  // make sure you not transmitting when you adjust
                             {
-                                Debug.WriteLine("AUTO WATER/PAN UPDATE NOW");
+                             //   Debug.WriteLine("AUTO WATER/PAN UPDATE NOW");
 
                                 Display.AutoBright = 1; // 1=water, 2 = pan
                                 Thread.Sleep(200);
