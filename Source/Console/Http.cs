@@ -78,6 +78,8 @@ namespace PowerSDR
         }
 
 
+
+
         //=========================================================
         public string Weather()
         {
@@ -86,6 +88,8 @@ namespace PowerSDR
         }
 
 
+        //=========================================================================================
+        //=========================================================================================
         //=========================================================================================
         // ke9ns  ASYNC 
         public async Task<string> WeatherAAsync()
@@ -154,6 +158,106 @@ namespace PowerSDR
 
             return content1;
         } // aync weather data
+
+
+
+
+        //=========================================================================================
+        // ke9ns  ASYNC Communicate with ARRL LoTW server to get result if you have made contact with this station before
+        //=========================================================
+      
+
+        // this gets ALL your LoTW XML contact Data EVER made
+        public string Lotw1()
+        {
+            if (console.SpotForm != null)
+            {
+                var lotw = LotwAAsync().Result;
+                return lotw.ToString(); // return XML data
+            }
+            else
+            {
+                Debug.WriteLine("LoTW NOT READY");
+                return "NOT READY";
+
+            }
+        } //Lotw1()
+
+
+
+        //=========================================================================================
+        //=========================================================================================
+        //=========================================================================================
+        // ke9ns  ASYNC Communicate with ARRL LoTW server to get ALL YOUR uploaded CONTACTS EVER MADE
+        public async Task<string> LotwAAsync()
+        {
+
+            Debug.WriteLine("LoTW TOTAL ASYNC NOW=========");
+
+            string content1 = "NOT READY";
+
+
+            // This grabs ALL your LoTW QSL that you have uploaded (including those that the other person has not confirmed)
+
+            // this only gets confirmed QSL's
+            //  var url = new Uri("https://lotw.arrl.org/lotwuser/lotwreport.adi?login=" + console.SpotForm.callBox.Text + "&password=" + console.SpotForm.LoTWPASS + "&qso_qsldetail=yes" + "&qso_query=1");
+
+            // this gets all your QSO's (confirmed and unconfirmed), but they dont always have DXCC entity numbers, etc., etc.
+            var url = new Uri("https://lotw.arrl.org/lotwuser/lotwreport.adi?login=" + console.SpotForm.callBox.Text + "&password=" + console.SpotForm.LoTWPASS + "&qso_qsldetail=yes" + "&qso_qsl=no" + "&qso_query=1");
+
+            HttpClient client = new HttpClient();
+
+            try
+            {
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Stackoverflow/1.0");
+            }
+            catch (Exception g)
+            {
+                Debug.WriteLine("https client user agent fail " + g);
+                console.SpotForm.LoTWResult = 3;
+                console.SpotForm.LoTWDone = true;
+                return content1;
+            }
+
+            Debug.WriteLine("GOOD LoTW data1=========" + url);
+
+            try
+            {
+                var xml = await client.GetStringAsync(url).ConfigureAwait(false);
+                content1 = xml.ToString();
+                client.Dispose();
+
+                string file_name2 = console.AppDataPath + "LoTW_LOG.adi"; // save your LoTW_LOG file
+
+                FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open  file
+             
+                BinaryWriter writer2 = new BinaryWriter(stream2);
+
+                writer2.Write(content1);
+
+
+                writer2.Close();    // close  file
+                stream2.Close();   // close stream
+
+
+                console.SpotForm.LoTWResult = 2; // good
+                console.SpotForm.LoTWDone = true;
+
+                return content1;
+
+            }
+            catch (Exception g)
+            {
+                content1 = "Error " + g.ToString();
+                client.Dispose();
+                console.SpotForm.LoTWResult = 3;
+                console.SpotForm.LoTWDone = true;
+                return content1;
+            }
+
+        } //   public async Task<string> LotwAAsync1()
+
+
 
 
         //=========================================================================================

@@ -125,6 +125,20 @@
 This list includes Short Wave AM Broadcast, Maritime, Military, Beacons
 and Digital signals: ALE, HFDL, Digital Audio (DRM), Stanag, Fax, DSC, Navtex</value>
   </data>
+  <data name="textBox1.ToolTip" xml:space="preserve">
+    <value>Green: You have this DX Station confirmed on this Band (dont need this Dx Station)
+LightGreen: You have this DX Station confirmed on some other Band 
+Yellow: You have this DX station confirmed on some other band, and some other station already confirmed on this band (dont need this DX Station)
+
+Orange: You have this DXCC country confirmed on this Band (you dont need this DX Station
+LightPurple: You have this DXCC country CONFIRMED on some other Band (you WANT this DX Station)
+Purple: You WANT this DXCC country (you WANT this DX Station)
+
+Pink: You have worked this DX Station on this Band (But they have not  confirmed)
+LightPink: You have worked DX Station on some other Band (But they have not confirmed)
+
+</value>
+  </data>
   <data name="textBox3.Text" xml:space="preserve">
     <value>&lt;&lt;&lt;Additional DX telnet addresses: http://www.dxcluster.info/telnet/index.php.
 Left Click on Spot to go to Freq and set Mode, or Right Click on spot to open QRZ page.
@@ -135,6 +149,12 @@ Panadapter: Right Click on DX  to open QRZ page
 Panadapter: Right Click on Memory to open up Memory Comments URL internet address
 Panadapter: Right Click on SWL to open up Google Search
 Panadapter: Left Click anywhere in PowerSDR + Shift key to see DX Spotters</value>
+  </data>
+  <data name="callBox.ToolTip" xml:space="preserve">
+    <value>Enter Your Call sign to login to the DX Cluster here.
+
+Right click: on the callsign box and enter in your LOTW password.
+Then Right Click again to close the password box (it will be permanently saved)</value>
   </data>
   <data name="btnTrack.ToolTip" xml:space="preserve">
     <value>Click to Turn on/off World Map, and/or  GrayLine (Earth Dark &amp; Light Areas),
@@ -175,16 +195,27 @@ NA = you are not connected to your Rotor Control.
 DDUtil may not be running, or configured correctly.
 </value>
   </data>
+  <data name="button4.ToolTip" xml:space="preserve">
+    <value>Left Click to read LOTW_LOG.adi file and compare to incoming DX Spots for Dups and DXCC list only.
+
+Right Click: Flags PowerSDR to go to LOTW and Download your QSO log file database (Entire Log) to
+a new LOTW_LOG.adi file. After a Right Click, then Left Click to perform the Download.
+
+You must have your Callsign entered in the box in the bottom Right corner
+Right click on the callsign box and enter in your LOTW password.</value>
+  </data>
   <data name="chkISS.ToolTip" xml:space="preserve">
-    <value>True (Zenith) position of the ISS will show on Panadapter screen 
-When you Click on the TRACK button to activate the World Map
-In Panadapter or Special PanaFall modes
-NOTE: This is internet based ISS Location Data (not a PSDR calculation)</value>
+    <value>True (Zenith) position of the ISS will show on Panadapter screen (includes Elevation to you)
+When you Click on the TRACK/Map button to activate the World Map
+
+NOTE: This is internet based ISS Location Data (not a PSDR calculation)
+
+Left Click on the Moon and hit the CTRL key to Rotate your Antenna</value>
   </data>
   <data name="chkMoon.ToolTip" xml:space="preserve">
-    <value>True (Zenith) position of the Moon will show on Panadapter screen 
-When you Click on the TRACK button to activate the World Map
-In Panadapter or Special PanaFall modes
+    <value>True (Zenith) position of the Moon will show on Panadapter screen (including Elevation to you)
+When you Click on the TRACK/Map button to activate the World Map
+
 
 Left Click on the Moon and hit the CTRL key to Rotate your Antenna</value>
   </data>

@@ -12900,6 +12900,7 @@ namespace PowerSDR
             this.tbMapBright.TabIndex = 97;
             this.tbMapBright.TickFrequency = 10;
             this.toolTip1.SetToolTip(this.tbMapBright, "Darker Map  <===> Brighter Map\r\n");
+            this.tbMapBright.Scroll += new System.EventHandler(this.tbMapBright_Scroll);
             this.tbMapBright.ValueChanged += new System.EventHandler(this.tbMapBright_ValueChanged);
             // 
             // labelTS36
@@ -30146,6 +30147,11 @@ namespace PowerSDR
         private void chkBoxIIC_CheckedChanged(object sender, EventArgs e)
         {
             console.IIC_AMPCONTROL(console.AMPBAND);
+        }
+
+        private void tbMapBright_Scroll(object sender, EventArgs e)
+        {
+
         }
 
 

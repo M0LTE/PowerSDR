@@ -145,7 +145,12 @@ NOAA.com&gt;&gt; WWV Solar Flux Index, A and K index values
 sidc.oma.be&gt;&gt;  Estimated SunSpot#: Official Sun Spot # updated hourly.
 
 NWRA.com&gt;&gt; Effective SunSpot# based on ionospheric measurements, updated hourly.
-Effective SSN# is a more accurate SSN# since it takes time for actual SunSpots to effect the ionoshere. 
+Effective SSN# is a more accurate SSN# since it takes time for actual SunSpots to effect the ionoshere.
+
+ALSO certain times of year the following are very important:
+Tropospheric Ducting Propagation (see http://www.dxinfocentre.com/tropo.html  )
+and/or Sporadic E propagation (see http://www.dxmaps.com/spots/mapg.php?Lan=E&amp;Frec=MUF&amp;ML=M&amp;HF=N  )
+ 
 </value>
   </data>
   <data name="PropagationTextBox.Text" xml:space="preserve">

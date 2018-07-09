@@ -1407,7 +1407,12 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.399999, "6M CW, SSB & Digital",	true,
+                                50.316000, 50.322999, "6M CW, SSB & Digital",	true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.399999, "6M CW, SSB & Digital", true,
 
                                 50.400000, 50.400000, "6M WSPR Beacons",        true,
                                 50.400001, 50.499999, "6M CW, SSB & Digital",	true,
@@ -2050,7 +2055,13 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.399999, "6M CW, SSB & Digital",   true,
+                                50.316000, 50.322999, "6M CW, SSB & Digital",    true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.399999, "6M CW, SSB & Digital", true,
+
 
                                 50.400000, 50.400000, "6M WSPR Beacons",        true,
                                 50.400001, 50.499999, "6M CW, SSB & Digital",   true,
@@ -2103,7 +2114,12 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.399999, "6M CW, SSB & Digital",   true,
+                                50.316000, 50.322999, "6M CW, SSB & Digital",   true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.399999, "6M CW, SSB & Digital", true,
 
                                 50.400000, 50.400000, "6M WSPR Beacons",        true,
 
@@ -2154,7 +2170,12 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.315000, 50.399999, "6M CW, SSB & Digital",   true,
+                                50.316000, 50.322999, "6M CW, SSB & Digital",    true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.399999, "6M CW, SSB & Digital", true,
 
                                 50.400000, 50.400000, "6M WSPR Beacons",        true,
                                 50.400001, 50.499999, "6M CW, SSB & Digital", true,
@@ -2494,7 +2515,13 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.399999, "6M All Modes",			true,
+                                50.316000, 50.322999, "6M CW, SSB & Digital",   true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.399999, "6M CW, SSB & Digital", true,
+
                                 50.400000, 50.400000, "6M WSPR Beacons",        true, // ke9ns add
                                 50.400001, 50.599999, "6M All Modes",          true,
                                 50.600000, 50.619999, "6M Non Voice",			true,
@@ -2940,7 +2967,13 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.599999, "6M All Modes",           true,
+                                50.316000, 50.322999, "6M All Modes",           true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.599999, "6M All Modes", true,
+
                                 50.600000, 50.619999, "6M Non Voice",           true,
                                 50.620000, 50.620000, "6M Digital Packet",      true,
                                 50.620001, 50.799999, "6M Non Voice",           true,
@@ -3363,7 +3396,13 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 50.599999, "6M All Modes",           true,
+                                50.316000, 50.322999, "6M All Modes",           true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.599999, "6M All Modes", true,
+
                                 50.600000, 50.619999, "6M Non Voice",           true,
                                 50.620000, 50.620000, "6M Digital Packet",      true,
                                 50.620001, 50.799999, "6M Non Voice",           true,
@@ -3930,7 +3969,12 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
-                                50.316000, 53.999999, "6M Wide Band Modes & CW", true,
+                                50.316000, 50.322999, "6M Wide Band Modes & CW",           true,
+
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+                              
+                                50.326000, 53.999999, "6M Wide Band Modes & CW", true,
                             };
 
             for (int i = 0; i < data.Length / 4; i++)
@@ -4216,7 +4260,12 @@ namespace PowerSDR
                                 50.313000, 50.313000, "6M FT8 DIGU",            true, // ke9ns add   ?
                                 50.313001, 50.315999, "6M FT8 DIGU",            true, // ke9ns add
 
+                                50.316000, 50.322999, "6M Phone/CW/NB Digital",           true,
 
+                                50.323000, 50.323000, "6M DX FT8 DIGU",            true, // ke9ns add   ?
+                                50.323001, 50.325999, "6M DX FT8 DIGU",            true, // ke9ns add
+
+                                50.326000, 50.899999, "6M Phone/CW/NB Digital",           true,
 
                                 50.900000, 50.999999, "6M Phone/CW/NB Digital", true,
                                 51.100000, 51.999999, "6M Wide Phone/Image/CW", true,

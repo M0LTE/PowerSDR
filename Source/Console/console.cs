@@ -31156,7 +31156,7 @@ namespace PowerSDR
                 } // CHECKMIN check
                 else
                 {
-                    Debug.WriteLine("CHECKMIN");
+                  //  Debug.WriteLine("CHECKMIN");
 
                 }
 
@@ -31168,7 +31168,7 @@ namespace PowerSDR
                     {
                         panelTS1.Visible = true;
                         panelTS1.Enabled = true;
-                        Debug.WriteLine("WEATHER UPDATE SCREEN");
+                     //   Debug.WriteLine("WEATHER UPDATE SCREEN");
                         localweatherupdate = false;
                         richTextBox7.Text = "Height = " + localheight + "' / " + localheightm + "m"; // station height reported at your lat and long
                         richTextBox6.Text = "Temp = " + localcurrtemp + "°F / " + localcurrtempC + "°C";
@@ -38824,13 +38824,14 @@ namespace PowerSDR
         static SolidBrush low_brush; // white
         static SolidBrush high_brush; // red
 
-        // for SWR only
+        // for SWR only EDGE meter
         static SolidBrush grn_brush = new SolidBrush(Color.Green); // green ke9ns add
-        static SolidBrush yel_brush= new SolidBrush(Color.Yellow); // yellow ke9ns add
+        static SolidBrush yel_brush= new SolidBrush(Color.Goldenrod); // yellow ke9ns add
         static SolidBrush red_brush = new SolidBrush(Color.Red); // red ke9ns add
 
+        // for SWR only curved analog meter
         static Pen grn_pen = new Pen(Color.Green); // ke9ns add
-        static Pen yel_pen = new Pen(Color.Yellow); // ke9ns add
+        static Pen yel_pen = new Pen(Color.Goldenrod); // ke9ns add
         static Pen red_pen = new Pen(Color.Red); // ke9ns add
 
 
@@ -39796,29 +39797,29 @@ namespace PowerSDR
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                            //    low_brush1.Width = arc_thick;
+                            //    g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
 
-                             //   grn_pen.Width = arc_thick;
-                             //   g.DrawArc(grn_pen, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                grn_pen.Width = arc_thick;
+                                g.DrawArc(grn_pen, 0, 37, W, W, -110, -26); // draw GREEN OUTER arc keep angle sum = 136deg
 
                                 //======================================
                                 // Draw YELLOW arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
                             
-                             //   yel_pen.Width = arc_thick;
-                             //   g.DrawArc(yel_pen, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                yel_pen.Width = arc_thick;
+                                g.DrawArc(yel_pen, 0, 37, W, W, -93, -17); // draw YELLOW OUTER arc -94, -42
 
                                 //======================================
                                 // Draw Red arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                             //   high_brush1.Width = arc_thick;
+                             //   g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
 
-                             //   red_pen.Width = arc_thick;
-                             //   g.DrawArc(red_pen, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                                red_pen.Width = arc_thick;
+                                g.DrawArc(red_pen, 0, 37, W, W, -43, -51); // draw RED OUTER arc -44 -41 keep angle sum = 85deg
 
 
 
@@ -39870,7 +39871,7 @@ namespace PowerSDR
 
 
                                     //===============================================
-                                    // Draw white numbers
+                                    // Draw white numbers  SWR TR7 RX1
 
                                     string s = swr_list[(int)i - 1];
 
@@ -39880,15 +39881,28 @@ namespace PowerSDR
                                     double string_width = size.Width - 2.0;
                                     string_height = size.Height - 2.0;
 
-                                    line1 = i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4);
+                                
+                                    line1 = i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4);
+
+                                    if (i == 1) line1 = line1 + 10;
+
 
                                     line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                                     line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    if (i == 1)
+                                    {
+                                        POSW = (int)((double)(H * 1.50) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.50 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    }
+                                    else
+                                    {
+                                        POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    }
 
                                     g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
 
 
                                 } // white ticks and test
@@ -41774,34 +41788,37 @@ namespace PowerSDR
                                 high_brush4 = new Pen(Brushes.AntiqueWhite); // 
 
 
-                              // startang, sweepang
-                              // -90, 0 would be top side half circle (horizontal) with -45 being middle
+                                // startang, sweepang
+                                // -90, 0 would be top side half circle (horizontal) with -45 being middle
 
                                 //======================================
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                  low_brush1.Width = arc_thick;
-                                  g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                //    low_brush1.Width = arc_thick;
+                                //    g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
 
-                             //   high_brush7.Width = arc_thick;
-                             //   g.DrawArc(high_brush7, 0, 37, W, W, -57, -48); // draw OUTER arc -75  -61
-                               
+                                grn_pen.Width = arc_thick;
+                                g.DrawArc(grn_pen, 0, 37, W, W, -110, -26); // draw OUTER arc 
+
                                 //======================================
                                 // Draw yel arc line
-                             //   high_brush3.Width = arc_thick;
-                             //  g.DrawArc(high_brush3, 0, 37, W, W, -57, -54); // draw OUTER arc -75  -61
+
+                                yel_pen.Width = arc_thick;
+                                g.DrawArc(yel_pen, 0, 37, W, W, -93, -17); // draw OUTER arc 
 
                                 //======================================
                                 // Draw Red arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                 high_brush1.Width = arc_thick;
-                                 g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                                //   high_brush1.Width = arc_thick;
+                                //   g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
 
-                             //   high_brush2.Width = arc_thick;
-                             //   g.DrawArc(high_brush2, 0, 37, W, W, -52, -33); // draw OUTER arc -41
+                                red_pen.Width = arc_thick;
+                                g.DrawArc(red_pen, 0, 37, W, W, -43, -51); // draw OUTER arc 
 
+                              
+                                
                                 //======================================
                                 // Draw Yellow full arc line under white/red 
                                 // upper left corner x,y , width,height, start angle, sweep angle
@@ -43960,19 +43977,39 @@ namespace PowerSDR
                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
                                 high_brush4 = new Pen(Brushes.AntiqueWhite); // 
 
+                             
+
                                 //======================================
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                //   low_brush1.Width = arc_thick;
+                                //   g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                                grn_pen.Width = arc_thick;
+                                g.DrawArc(grn_pen, 0, 37, W, W, -110, -26); // draw GREEN OUTER arc keep angle sum = 136deg
+
+
+                                //======================================
+                                // Draw YELLOW arc line
+                                // upper left corner x,y , width,height, start angle, sweep angle
+
+
+                                yel_pen.Width = arc_thick;
+                                g.DrawArc(yel_pen, 0, 37, W, W, -93, -17); // draw YELLOW OUTER arc -94, -42
+
 
                                 //======================================
                                 // Draw Red arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                                //  high_brush1.Width = arc_thick;
+                                //  g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+
+                                red_pen.Width = arc_thick;
+                                g.DrawArc(red_pen, 0, 37, W, W, -43, -51); // draw RED OUTER arc -44 -41 keep angle sum = 85deg
+
+                              
 
                                 //======================================
                                 // Draw Yellow full arc line under white/red 
@@ -43981,6 +44018,8 @@ namespace PowerSDR
                                 high_brush3.Width = arc_thick1;
                                 g.DrawArc(high_brush3, 6, 43, W - 12, W - 12, -43, -94); // draw INNER arc
 
+                                
+                                
                                 //======================================
                                 // WHITE  tick marks and text
 
@@ -44022,7 +44061,7 @@ namespace PowerSDR
 
 
                                     //===============================================
-                                    // Draw white numbers
+                                    // Draw white numbers  rX2  SWR analog TR7
 
                                     string s = swr_list[(int)i - 1];
 
@@ -44032,15 +44071,27 @@ namespace PowerSDR
                                     double string_width = size.Width - 2.0;
                                     string_height = size.Height - 2.0;
 
-                                    line1 = i * spacing - string_width * s.Length + (int)(i / 3) + (int)(i / 4);
+                                    line1 = i * spacing - string_width * s.Length + 2.0 - 2 * (int)(i / 2) + 3 * (int)(i / 4);
+
+                                    if (i == 1) line1 = line1 + 10;
+
 
                                     line = (angle_start + ((double)line1 * angle_span / (double)W));     // convert signal pixel span (0 to W) int angle span of 45deg to 135deg
                                     line = line * Math.PI / 180;                                                // convert angle to radians for cos/sin math
 
-                                    POSW = (int)((double)(H * 1.4) * Math.Cos(line));  // convert signal to arc
-                                    POSH = (int)((double)(H * (1.48 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    if (i == 1)
+                                    {
+                                        POSW = (int)((double)(H * 1.50) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.50 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    }
+                                    else
+                                    {
+                                        POSW = (int)((double)(H * 1.44) * Math.Cos(line));  // convert signal to arc
+                                        POSH = (int)((double)(H * (1.44 - (.010 * (i - 1)))) * Math.Sin(line));
+                                    }
 
                                     g.DrawString(s, ff1, low_brush, Origin_x - POSW, Origin_y - POSH);
+
 
 
                                 } // white ticks and test
@@ -46012,21 +46063,37 @@ namespace PowerSDR
                                 high_brush3 = new Pen(Brushes.Yellow); // yellow
                                 high_brush4 = new Pen(Brushes.AntiqueWhite); // 
 
-
+                              
                                 //======================================
                                 // Draw WHITE arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                low_brush1.Width = arc_thick;
-                                g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+                                //   low_brush1.Width = arc_thick;
+                                //  g.DrawArc(low_brush1, 0, 37, W, W, -88, -48); // draw OUTER arc -75  -61
+
+                                grn_pen.Width = arc_thick;
+                                g.DrawArc(grn_pen, 0, 37, W, W, -110, -26); // draw OUTER arc 
+
+
+                                //======================================
+                                // Draw yel arc line
+
+                                yel_pen.Width = arc_thick;
+                                g.DrawArc(yel_pen, 0, 37, W, W, -93, -17); // draw OUTER arc 
+
 
                                 //======================================
                                 // Draw Red arc line
                                 // upper left corner x,y , width,height, start angle, sweep angle
 
-                                high_brush1.Width = arc_thick;
-                                g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
+                                //  high_brush1.Width = arc_thick;
+                                //  g.DrawArc(high_brush1, 0, 37, W, W, -44, -41); // draw OUTER arc -41
 
+
+                                red_pen.Width = arc_thick;
+                                g.DrawArc(red_pen, 0, 37, W, W, -43, -51); // draw OUTER arc 
+
+                              
                                 //======================================
                                 // Draw Yellow full arc line under white/red 
                                 // upper left corner x,y , width,height, start angle, sweep angle
@@ -74006,7 +74073,7 @@ namespace PowerSDR
                 {
                     string currweth = httpFile.Weather(); // get local weather data if in USA
 
-                    Debug.WriteLine(" " + currweth);
+                 //   Debug.WriteLine(" " + currweth);
 
                     var xdoc = new XDocument();
 
@@ -74324,15 +74391,15 @@ namespace PowerSDR
                 streamReader1.Close();
 
 
-                Debug.WriteLine("GET SIDC1=========" + eisn);
+             //   Debug.WriteLine("GET SIDC1=========" + eisn);
 
                 int len = eisn.Length;
 
-                Debug.WriteLine("GET SIDC2=========" + len);
+             //   Debug.WriteLine("GET SIDC2=========" + len);
 
                 string sub1 = eisn.Substring(len - 18, 3); // get Sunspot value from end of file (newest data)
 
-                Debug.WriteLine("GET SIDC3=========" + sub1);
+            //    Debug.WriteLine("GET SIDC3=========" + sub1);
 
                 try
                 {
@@ -74352,7 +74419,7 @@ namespace PowerSDR
                 Debug.WriteLine("Could not get SIDC EISN#");
             }
 
-            Debug.WriteLine("endof SIDC thread");
+        //    Debug.WriteLine("endof SIDC thread");
 
             //--------------------------------------------------------------------------
             //--------------------------------------------------------------------------
@@ -74392,7 +74459,7 @@ namespace PowerSDR
 
                     string sub1 = ssne.Substring(len + 59, 5); // get newest effective ssn#
 
-                    Debug.WriteLine("GET SSNe3=========" + sub1);
+                 //   Debug.WriteLine("GET SSNe3=========" + sub1);
 
                     try
                     {
@@ -74413,7 +74480,7 @@ namespace PowerSDR
                 Debug.WriteLine("Could not get NWRA SSNe#");
             }
 
-            Debug.WriteLine("endof NWRA thread");
+         //   Debug.WriteLine("endof NWRA thread");
 
         } // NOAA thread to get space weather
 
@@ -77081,16 +77148,12 @@ namespace PowerSDR
         // ke9ns add (record Continuum into CSV)
 
 
-
         public int CONT_Curr = 0;
 
         public int CONT_Last = 0;
         public bool CONT_RUN = false;
 
-
         public List<string> CONT_dbm = new List<string>(); // create list to hold strings of Continuum data
-
-
 
         public void CONT_Logger_Write()
         {
@@ -77103,20 +77166,13 @@ namespace PowerSDR
             FileStream stream3 = new FileStream(file_nameCONT, FileMode.Create); // open   file
             BinaryWriter writer3 = new BinaryWriter(stream3);
 
-
             int i3 = 0; // 1-3000 SWR data Slot
-
 
             writer3.Write("Index , Ant Heading , Current Time (Gregorian), Modified Julian Date, dBm peak value in the BandPass " + Environment.NewLine);
 
-
-
             for (i3 = 0; i3 < CONT_Last; i3++) // 
             {
-
-
                 writer3.Write(CONT_dbm[i3] + Environment.NewLine);
-
 
             } // for loop SLOTS
 
