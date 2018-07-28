@@ -8682,7 +8682,7 @@ namespace PowerSDR
             // EHR add nav support
             try
             {
-                TDxDevice = new TDxInput.DeviceClass();
+                TDxDevice = new TDxInput.Device();
                 TDxSensor = TDxDevice.Sensor;
                 TDxDevice.Connect();
                 if (TDxDevice.IsConnected)
