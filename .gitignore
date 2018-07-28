@@ -2,3 +2,7 @@
 /Source/Console/obj
 /bin
 /temp
+/Source/DttSP/*.user
+/Source/Backup/*.user
+/Source/Console/*.user
+/Source/PowerMate/*.user

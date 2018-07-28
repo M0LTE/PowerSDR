@@ -165,7 +165,7 @@
     </Reference>
     <Reference Include="Interop.TDxInput">
       <HintPath>..\deps\Interop.TDxInput.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.JScript" />
