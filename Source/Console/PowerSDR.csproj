@@ -151,25 +151,21 @@
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Microsoft.NET\Primary Interop Assemblies\adodb.dll</HintPath>
       <AssemblyFolderKey>hklm\primary interop assemblies</AssemblyFolderKey>
     </Reference>
-    <Reference Include="atu, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\atu.dll</HintPath>
+    <Reference Include="atu">
+      <HintPath>..\deps\atu.dll</HintPath>
     </Reference>
-    <Reference Include="Flex1500USB, Version=2.0.18.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\Flex1500USB.dll</HintPath>
+    <Reference Include="Flex1500USB">
+      <HintPath>..\deps\Flex1500USB.dll</HintPath>
     </Reference>
-    <Reference Include="FlexControl, Version=2.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\FlexControl.dll</HintPath>
+    <Reference Include="FlexControl">
+      <HintPath>..\deps\FlexControl.dll</HintPath>
     </Reference>
-    <Reference Include="FlexCW, Version=1.0.2.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\FlexCW.dll</HintPath>
+    <Reference Include="FlexCW">
+      <HintPath>..\deps\FlexCW.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.TDxInput, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\Interop.TDxInput.dll</HintPath>
+    <Reference Include="Interop.TDxInput">
+      <HintPath>..\deps\Interop.TDxInput.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.JScript" />
@@ -184,19 +180,19 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="Sanford.Collections">
-      <HintPath>..\..\bin\Release\DJ\Sanford.Collections.dll</HintPath>
+      <HintPath>..\deps\Sanford.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Sanford.Multimedia">
-      <HintPath>..\..\bin\Release\DJ\Sanford.Multimedia.dll</HintPath>
+      <HintPath>..\deps\Sanford.Multimedia.dll</HintPath>
     </Reference>
     <Reference Include="Sanford.Multimedia.Midi">
-      <HintPath>..\..\bin\Release\DJ\Sanford.Multimedia.Midi.dll</HintPath>
+      <HintPath>..\deps\Sanford.Multimedia.Midi.dll</HintPath>
     </Reference>
     <Reference Include="Sanford.Multimedia.Timers">
-      <HintPath>..\..\bin\Release\DJ\Sanford.Multimedia.Timers.dll</HintPath>
+      <HintPath>..\deps\Sanford.Multimedia.Timers.dll</HintPath>
     </Reference>
     <Reference Include="Sanford.Threading">
-      <HintPath>..\..\bin\Release\DJ\Sanford.Threading.dll</HintPath>
+      <HintPath>..\deps\Sanford.Threading.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -235,9 +231,8 @@
       <WrapperTool>primary</WrapperTool>
     </COMReference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TNF, Version=1.0.0.2, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Release\TNF.dll</HintPath>
+    <Reference Include="TNF">
+      <HintPath>..\deps\TNF.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
