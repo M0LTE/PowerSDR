@@ -113,7 +113,7 @@ namespace PowerSDR
             while(!closing)
             {
                 if (!pal_init)
-                    pal_init = Pal.Init();
+                    pal_init = PalManager.Instance.Init();
                 else
                     pal_init = RadiosAvailable.ScanPal();
 
@@ -164,7 +164,7 @@ namespace PowerSDR
                     {
                         case Model.FLEX5000:
                         case Model.FLEX3000:
-                            Pal.SelectDevice((uint)r.AccessObj);
+                            PalManager.Instance.SelectDevice((uint)r.AccessObj);
                             break;
                         case Model.FLEX1500:
                             Flex1500.SetActiveRadio((IntPtr)r.AccessObj);

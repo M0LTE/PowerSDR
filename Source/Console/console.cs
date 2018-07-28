@@ -1986,7 +1986,7 @@ namespace PowerSDR
             Debug.Assert(File.Exists(master_path + "master.xml"));
 
             // decide whether to present a choice of radios to the user
-            Pal.Init();
+            PalManager.Instance.Init();
             RadiosAvailable.ScanPal(); // gather info on Pal radios
 
             if (RadiosAvailable.NumPresent == 0) // handle v1.x firmware
@@ -2098,7 +2098,7 @@ namespace PowerSDR
                         case Model.FLEX3000:
                             if (r.Present)
                             {
-                                Pal.SelectDevice((uint)r.AccessObj);
+                                PalManager.Instance.SelectDevice((uint)r.AccessObj);
                                 found = true;
                             }
                             break;
@@ -9537,7 +9537,7 @@ namespace PowerSDR
             {   // always close Pal as it was open to detect radios
                 //if (current_model == Model.FLEX5000 || current_model == Model.FLEX3000)
                 {
-                    Pal.Exit();
+                    PalManager.Instance.Exit();
                     FWCMidi.Close();
                 }
             }
@@ -32021,7 +32021,7 @@ namespace PowerSDR
                         if (!fwc_init)
                         {
                             //fwc_init = FWCMidi.Open();
-                            fwc_init = Pal.Init();
+                            fwc_init = PalManager.Instance.Init();
                             if (fwc_init)
                             {
                                 FWCEEPROM.Init();
@@ -32120,7 +32120,7 @@ namespace PowerSDR
                         if (!fwc_init)
                         {
                             //fwc_init = FWCMidi.Open();
-                            fwc_init = Pal.Init();
+                            fwc_init = PalManager.Instance.Init();
                             if (fwc_init)
                             {
                                 FWCEEPROM.Init();
@@ -52783,7 +52783,7 @@ namespace PowerSDR
                 {
                     try
                     {
-                        Pal.SetBufferSize((uint)block_size1);
+                        PalManager.Instance.SetBufferSize((uint)block_size1);
                     }
                     catch (Exception)
                     {

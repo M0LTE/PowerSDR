@@ -20667,7 +20667,7 @@ namespace PowerSDR
             {
                 if (!console.fwc_init)
                 {
-                    console.fwc_init = Pal.Init();
+                    console.fwc_init = PalManager.Instance.Init();
                     if (console.fwc_init)
                     {
                         FWCEEPROM.Init();
@@ -22354,7 +22354,7 @@ namespace PowerSDR
                 
                     try
                     {
-                        Pal.SetBufferSize((uint)new_size);
+                        PalManager.Instance.SetBufferSize((uint)new_size);
                     }
                     catch (Exception)
                     {

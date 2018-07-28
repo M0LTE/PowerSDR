@@ -30,12 +30,119 @@
 // ke9ns  must be a way to send data over Firewire connection???
 
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace PowerSDR
 {
-	public class Pal
+    public delegate void NotificationCallback(uint bitmap);
+
+    /// <summary>
+    /// Allow an alternative IPal instance to be dropped in to all code that preveiously referenced Pal directly, 
+    /// e.g. for testing, for abstraction over a network...
+    /// </summary>
+    public sealed class PalManager
+    {
+        static PalManager()
+        {
+            //TODO: pull the implementation (and any necessary settings) from config
+            Instance = new InteropPal();
+        }
+
+        public static IPal Instance { get; set; }
+    }
+
+    public class InteropPal : IPal
+    {
+        public int GetNumDevices()
+        {
+            return PalInteropMethods.GetNumDevices();
+        }
+
+        public bool GetDeviceInfo(uint index, out uint model, out uint sn)
+        {
+            return PalInteropMethods.GetDeviceInfo(index, out model, out sn);
+        }
+
+        public void Exit()
+        {
+            PalInteropMethods.Exit();
+        }
+
+        public bool Init()
+        {
+            return PalInteropMethods.Init();
+        }
+
+        public int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out uint rtn)
+        {
+            return PalInteropMethods.ReadOp(opcode, data1, data2, out rtn);
+        }
+
+        public int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out float rtn)
+        {
+            return PalInteropMethods.ReadOp(opcode, data1, data2, out rtn);
+        }
+
+        public Radio[] Scan()
+        {
+            return PalInteropMethods.Scan();
+        }
+
+        public bool SelectDevice(uint index)
+        {
+            return PalInteropMethods.SelectDevice(index);
+        }
+
+        public void SetBufferSize(uint val)
+        {
+            PalInteropMethods.SetBufferSize(val);
+        }
+
+        public void SetCallback(NotificationCallback callback)
+        {
+            PalInteropMethods.SetCallback(callback);
+        }
+
+        public int WriteOp(FWC.Opcode opcode, uint data1, uint data2)
+        {
+            return PalInteropMethods.WriteOp(opcode, data1, data2);
+        }
+
+        public int WriteOp(FWC.Opcode opcode, float data1, uint data2)
+        {
+            return PalInteropMethods.WriteOp(opcode, data1, data2);
+        }
+
+        public int WriteOp(FWC.Opcode opcode, int data1, int data2)
+        {
+            return PalInteropMethods.WriteOp(opcode, data1, data2);
+        }
+
+        public int WriteOp(FWC.Opcode opcode, uint data1, float data2)
+        {
+            return PalInteropMethods.WriteOp(opcode, data1, data2);
+        }
+    }
+
+    public interface IPal
+    {
+        int GetNumDevices();
+        bool GetDeviceInfo(uint index, out uint model, out uint sn);
+        void Exit();
+        bool Init();
+        int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out uint rtn);
+        int ReadOp(FWC.Opcode opcode, uint data1, uint data2, out float rtn);
+        Radio[] Scan();
+        bool SelectDevice(uint index);
+        void SetBufferSize(uint val);
+        void SetCallback(NotificationCallback callback);
+        int WriteOp(FWC.Opcode opcode, uint data1, uint data2);
+        int WriteOp(FWC.Opcode opcode, float data1, uint data2);
+        int WriteOp(FWC.Opcode opcode, int data1, int data2);
+        int WriteOp(FWC.Opcode opcode, uint data1, float data2);
+    }
+
+    public class PalInteropMethods
 	{
 
 #if(!NO_PAL)
@@ -103,14 +210,9 @@ namespace PowerSDR
         [DllImport("pal.dll", EntryPoint = "SetBufferSize", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetBufferSize(uint val);
 
-
-
-		public delegate void NotificationCallback(uint bitmap);
-
-
         public static Radio[] Scan()
         {
-            int devs = Pal.GetNumDevices();                 // get numer of radios found 
+            int devs = PalManager.Instance.GetNumDevices();                 // get numer of radios found 
 
         //    System.Diagnostics.Trace.WriteLine("pal=============================");
 
@@ -123,7 +225,7 @@ namespace PowerSDR
                 uint model;
                 uint sn;
 
-                if(!Pal.GetDeviceInfo(i, out model, out sn))   return null;
+                if(!PalManager.Instance.GetDeviceInfo(i, out model, out sn))   return null;
 
                 Model m = Model.FLEX5000;
                 if (model == 3)   m = Model.FLEX3000;

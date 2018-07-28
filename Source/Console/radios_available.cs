@@ -173,7 +173,7 @@ namespace PowerSDR
 
         public static bool ScanPal()
         {
-            Radio[] radios = Pal.Scan();
+            Radio[] radios = PalManager.Instance.Scan();
             if (radios == null)
             {
                 foreach (Radio r in list)
