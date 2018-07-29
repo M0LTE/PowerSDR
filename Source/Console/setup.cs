@@ -20799,7 +20799,7 @@ namespace PowerSDR
                         case 2: lblModel.Text = "Model: D"; break;
                     }
 
-                    lblSerialNum.Text = "S/N: " + FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber);
+                    lblSerialNum.Text = "S/N: " + Misc.SerialToString(FWCEEPROM.SerialNumber);
 
                     uint val;
                     Thread.Sleep(10);
@@ -20807,21 +20807,21 @@ namespace PowerSDR
                     string s = "Firmware: " + Common.RevToString(val);
                     lblFirmwareRev.Text = s;
 
-                    s = "TRX: " + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    s = "TRX: " + Misc.SerialToString(FWCEEPROM.TRXSerial);
                     val = FWCEEPROM.TRXRev;
                     s += "  (" + ((byte)(val >> 0)).ToString();
                     s += ((char)(((byte)(val >> 8)) + 65)).ToString() + ")";
                     lblTRXRev.Text = s;
                     if (!trx_ok) lblTRXRev.ForeColor = Color.Red;
 
-                    s = "PA: " + FWCEEPROM.SerialToString(FWCEEPROM.PASerial);
+                    s = "PA: " + Misc.SerialToString(FWCEEPROM.PASerial);
                     val = FWCEEPROM.PARev;
                     s += "  (" + ((byte)(val >> 0)).ToString();
                     s += ((char)(((byte)(val >> 8)) + 65)).ToString() + ")";
                     lblPARev.Text = s;
                     if (!pa_ok) lblPARev.ForeColor = Color.Red;
 
-                    s = "RFIO: " + FWCEEPROM.SerialToString(FWCEEPROM.RFIOSerial);
+                    s = "RFIO: " + Misc.SerialToString(FWCEEPROM.RFIOSerial);
                     val = FWCEEPROM.RFIORev;
                     s += "  (" + ((byte)(val >> 0)).ToString();
                     s += ((char)(((byte)(val >> 8)) + 65)).ToString() + ")";
@@ -20834,7 +20834,7 @@ namespace PowerSDR
                         if (FWCEEPROM.ATURev > 0 && FWCEEPROM.ATURev < 0xFFFFFFFF)
                         {
                             if (FWCEEPROM.ATUSerial > 0 && FWCEEPROM.ATUSerial < 0xFFFFFFFF)
-                                s = "ATU: " + FWCEEPROM.SerialToString(FWCEEPROM.ATUSerial);
+                                s = "ATU: " + Misc.SerialToString(FWCEEPROM.ATUSerial);
                             else
                                 s = "ATU: Present";
                             val = FWCEEPROM.ATURev;
@@ -20851,7 +20851,7 @@ namespace PowerSDR
                     if (!FWCEEPROM.VUOK) lblVURev.Visible = false;
                     else
                     {
-                        s = "VU: " + FWCEEPROM.SerialToString(FWCEEPROM.VUSerial);
+                        s = "VU: " + Misc.SerialToString(FWCEEPROM.VUSerial);
                         val = FWCEEPROM.VURev;
                         s += "  (" + ((byte)(val >> 0)).ToString();
                         s += ((char)(((byte)(val >> 8)) + 65)).ToString() + ")";
@@ -20860,7 +20860,7 @@ namespace PowerSDR
 
                     if (console.CurrentModel == Model.FLEX5000)
                     {
-                        s = "RX2: " + FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial);
+                        s = "RX2: " + Misc.SerialToString(FWCEEPROM.RX2Serial);
                         val = FWCEEPROM.RX2Rev;
                         s += "  (" + ((byte)(val >> 0)).ToString();
                         s += ((char)(((byte)(val >> 8)) + 65)).ToString() + ")";
@@ -28482,10 +28482,10 @@ namespace PowerSDR
             switch (console.CurrentModel)
             {
                 case Model.FLEX5000:
-                    model_sn = "FLEX-5000_" + FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber);
+                    model_sn = "FLEX-5000_" + Misc.SerialToString(FWCEEPROM.SerialNumber);
                     break;
                 case Model.FLEX3000:
-                    model_sn = "FLEX-3000_" + FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber);
+                    model_sn = "FLEX-3000_" + Misc.SerialToString(FWCEEPROM.SerialNumber);
                     break;
                 case Model.FLEX1500:
                     model_sn = "FLEX-1500_" + HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);

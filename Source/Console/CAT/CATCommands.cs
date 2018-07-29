@@ -22,20 +22,18 @@
 
 
 using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Collections.Generic;
 
 namespace PowerSDR
 {
-	/// <summary>
-	/// Summary description for CATCommands.
-	/// </summary>
-	public class CATCommands
+    /// <summary>
+    /// Summary description for CATCommands.
+    /// </summary>
+    public class CATCommands
 	{
 		#region Variable Definitions
 
@@ -5725,7 +5723,7 @@ namespace PowerSDR
                 case Model.FLEX5000:
                     sn = FWCEEPROM.SerialNumber;
                     if (sn > 0)
-                        ret_val = FWCEEPROM.SerialToString(sn);
+                        ret_val = Misc.SerialToString(sn);
                     else
                         ret_val = parser.Error1;
                     break;

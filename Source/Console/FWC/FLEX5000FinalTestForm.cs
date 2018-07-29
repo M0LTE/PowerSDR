@@ -100,7 +100,7 @@ namespace PowerSDR
 		{
 			InitializeComponent();
 			console = c;
-			this.Text += "  (PA:"+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+")";
+			this.Text += "  (PA:"+Misc.SerialToString(FWCEEPROM.PASerial)+")";
 			
 			if(FWCEEPROM.TRXSerial == 0)
 			{
@@ -998,7 +998,7 @@ namespace PowerSDR
 		private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
 		{
 			int V = 80;
-			string text = "PA Serial Number: "+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)
+			string text = "PA Serial Number: "+Misc.SerialToString(FWCEEPROM.PASerial)
 				+"  Date: "+DateTime.Today.ToShortDateString()
 				+"  Time: "+DateTime.Now.ToString("HH:mm:ss")
 				+"  Tech: "+txtTech.Text+"\n\n";
@@ -1060,7 +1060,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path);
 			StreamWriter writer = new StreamWriter(path, true);
 			if(!file_exists) writer.WriteLine("PA Serial Num, Date/Time, Version, Q2 Coarse, Q2 Fine, Q3 Coarse, Q3 Fine, Q4 Coarse, Q4 Fine, Q1 Coarse, Q1 Fine,");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			
@@ -1496,7 +1496,7 @@ namespace PowerSDR
 								+"12-1, 12-2, 12-5, 12-10, 12-20, 12-30, 12-40, 12-50, 12-60, 12-70, 12-80, 12-90, 12-100,"
 								+"10-1, 10-2, 10-5, 10-10, 10-20, 10-30, 10-40, 10-50, 10-60, 10-70, 10-80, 10-90, 10-100,"
 								+"6-1, 6-2, 6-5, 6-10, 6-20, 6-30, 6-40, 6-50, 6-60, 6-70, 6-80, 6-90, 6-100");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -1510,7 +1510,7 @@ namespace PowerSDR
 
 			path += "\\PA Power";
 			if(!Directory.Exists(path)) Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\pa_power_"+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+".csv");
+			writer = new StreamWriter(path+"\\pa_power_"+Misc.SerialToString(FWCEEPROM.PASerial)+".csv");
 			writer.WriteLine("Band, 1w, 2w, 5w, 10w, 20w, 30w, 40w, 50w, 60w, 70w, 80w, 90w, 100w");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -1776,7 +1776,7 @@ namespace PowerSDR
 			StreamWriter writer = new StreamWriter(path+"\\pa_swr.csv", true);
 			if(!file_exists) writer.WriteLine("PA Serial Num, Date/Time, Version, "
 								 +"160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -2125,7 +2125,7 @@ namespace PowerSDR
 								 +"Bridge 12-10, PM 12-10, Bridge 12-100, PM 12-100,"
 								 +"Bridge 10-10, PM 10-10, Bridge 10-100, PM 10-100,"								 
 								);
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -2141,7 +2141,7 @@ namespace PowerSDR
 
 			path += "\\PA Verify";
 			if(!Directory.Exists(path)) Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\pa_bridge_"+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+".csv");
+			writer = new StreamWriter(path+"\\pa_bridge_"+Misc.SerialToString(FWCEEPROM.PASerial)+".csv");
 			writer.WriteLine("Band, Bridge 10w, PM 10w, Bridge 100w, PM 100w");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -2770,7 +2770,7 @@ namespace PowerSDR
 								 +"15-1, 15-2, 15-5, 15-10, 15-20, 15-90,"
 								 +"12-1, 12-2, 12-5, 12-10, 12-20, 12-90,"
 								 +"10-1, 10-2, 10-5, 10-10, 10-20, 10-90,");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -2783,7 +2783,7 @@ namespace PowerSDR
 
 			path += "\\PA Bridge";
 			if(!Directory.Exists(path)) Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\pa_bridge_"+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+".csv");
+			writer = new StreamWriter(path+"\\pa_bridge_"+Misc.SerialToString(FWCEEPROM.PASerial)+".csv");
 			writer.WriteLine("Band, 1w, 2w, 5w, 10w, 20w, 90w");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -2843,7 +2843,7 @@ namespace PowerSDR
 								 +"15-1, 15-2, 15-5, 15-10, 15-20, 15-30, 15-40, 15-50, 15-60, 15-70, 15-80, 15-90, 15-100,"
 								 +"12-1, 12-2, 12-5, 12-10, 12-20, 12-30, 12-40, 12-50, 12-60, 12-70, 12-80, 12-90, 12-100,"
 								 +"10-1, 10-2, 10-5, 10-10, 10-20, 10-30, 10-40, 10-50, 10-60, 10-70, 10-80, 10-90, 10-100,");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -2857,7 +2857,7 @@ namespace PowerSDR
 
 			path += "\\PA Power";
 			if(!Directory.Exists(path)) Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\pa_power_"+FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+".csv");
+			writer = new StreamWriter(path+"\\pa_power_"+Misc.SerialToString(FWCEEPROM.PASerial)+".csv");
 			writer.WriteLine("Band, 1w, 2w, 5w, 10w, 20w, 30w, 40w, 50w, 60w, 70w, 80w, 90w, 100w");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -2912,7 +2912,7 @@ namespace PowerSDR
 			writer = new StreamWriter(path+"\\pa_swr.csv", true);
 			if(!file_exists) writer.WriteLine("PA Serial Num, Date/Time, Version, "
 								 +"6m, 160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -3109,7 +3109,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path+"\\io_xvrx.csv");
 			StreamWriter writer = new StreamWriter(path+"\\io_xvrx.csv", true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, On, Off, Passed");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			
@@ -3274,7 +3274,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path+"\\io_rx1inout.csv");
 			StreamWriter writer = new StreamWriter(path+"\\io_rx1inout.csv", true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, On, Off, Passed");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			
@@ -3442,7 +3442,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path+"\\io_txmon.csv");
 			StreamWriter writer = new StreamWriter(path+"\\io_txmon.csv", true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Signal, Passed");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -3715,7 +3715,7 @@ namespace PowerSDR
 			StreamWriter writer = new StreamWriter(path+"\\atu_swr.csv", true);
 			if(!file_exists) writer.WriteLine("PA Serial Num, Date/Time, Version, "
 								 +"160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.PASerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.PASerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 
@@ -3763,10 +3763,10 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\sanity.csv");
             StreamWriter writer = new StreamWriter(path + "\\sanity.csv", true);
             if (!file_exists) writer.WriteLine("Radio Serial, TRX Serial, PA Serial, RFIO Serial, Date/Time, PowerSDR Version, Pass, Result");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber) + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + "," 
-                + FWCEEPROM.SerialToString(FWCEEPROM.PASerial) + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.RFIOSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.SerialNumber) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + "," 
+                + Misc.SerialToString(FWCEEPROM.PASerial) + ","
+                + Misc.SerialToString(FWCEEPROM.RFIOSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ","
                 + (!s.Contains("Failed")).ToString() + ","

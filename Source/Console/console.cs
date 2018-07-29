@@ -274,17 +274,6 @@ namespace PowerSDR
 		DIRECT_X,
 	}
 
-	public enum Model
-	{
-		SDR1000 = 0,
-		SOFTROCK40,
-		DEMO,
-		FLEX5000,
-		SDRX,
-		FLEX3000,
-        FLEX1500,
-	}
-
 	public enum BPFBand
 	{
 		NONE = -1,
@@ -8397,8 +8386,9 @@ namespace PowerSDR
         [STAThread]
         static void Main(string[] args)
         {
-
-
+            //TODO: Replace this with, e.g. NetworkPal from config, rather than referencing directly
+            PalManager.Instance = new PowerSDRServer.InteropPal();
+            PalManager.Instance.Configure(null);
 
             string app_data_path = "";
             string app_data_path1 = ""; // ke9ns add for original 2.7.2 folder
@@ -12531,8 +12521,8 @@ namespace PowerSDR
             {
                 if (fwc_serial_num != 0)
                 {
-                    /*string old_s = FWCEEPROM.SerialToString(fwc_serial_num);
-					string new_s = FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber);
+                    /*string old_s = Misc.SerialToString(fwc_serial_num);
+					string new_s = Misc.SerialToString(FWCEEPROM.SerialNumber);
 
 					Splash.HideForm();
 					DialogResult dr = MessageBox.Show("New Radio Detected: Old Serial: "+old_s+"  New Serial: "+new_s+"\n"+
@@ -12556,8 +12546,8 @@ namespace PowerSDR
             }
             else if (fwc_trx_serial_num != FWCEEPROM.TRXSerial)
             {
-                /*string old_s = FWCEEPROM.SerialToString(fwc_trx_serial_num);
-				string new_s = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                /*string old_s = Misc.SerialToString(fwc_trx_serial_num);
+				string new_s = Misc.SerialToString(FWCEEPROM.TRXSerial);
 
 				Splash.HideForm();
 				DialogResult dr = MessageBox.Show("New Radio Detected: Old TRX Serial: "+old_s+"  New Serial: "+new_s+"\n"+
@@ -12627,8 +12617,8 @@ namespace PowerSDR
             {
                 if (rx2_serial_num != 0)
                 {
-                    /*string old_s = FWCEEPROM.SerialToString(rx2_serial_num);
-					string new_s = FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial);
+                    /*string old_s = Misc.SerialToString(rx2_serial_num);
+					string new_s = Misc.SerialToString(FWCEEPROM.RX2Serial);
 
 					Splash.HideForm();
 					DialogResult dr = MessageBox.Show("New RX2 Detected: Old Serial: "+old_s+"  New Serial: "+new_s+"\n"+

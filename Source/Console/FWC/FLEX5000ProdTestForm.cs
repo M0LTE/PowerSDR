@@ -146,7 +146,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    this.Text += "  (TRX: " + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ")";
+                    this.Text += "  (TRX: " + Misc.SerialToString(FWCEEPROM.TRXSerial) + ")";
                     break;
                 case Model.FLEX1500:
                     this.Text += "  (TRX: " + HIDEEPROM.SerialToString(HIDEEPROM.TRXSerial) + ")";
@@ -1523,7 +1523,7 @@ namespace PowerSDR
             StreamWriter writer = new StreamWriter(path, true);
             if (!file_exists) writer.WriteLine("Model, Serial Num, Date/Time, Version, Locked");
             writer.WriteLine(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ","
                 + b.ToString());
@@ -1785,7 +1785,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -1924,7 +1924,7 @@ namespace PowerSDR
             StreamWriter writer = new StreamWriter(path, true);
             if (!file_exists) writer.WriteLine("Model, Serial Num, Date/Time, Version, dBFS, Passed");
             writer.WriteLine(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ","
                 + avg.ToString("f1") + ","
@@ -2082,7 +2082,7 @@ namespace PowerSDR
             StreamWriter writer = new StreamWriter(path, true);
             if (!file_exists) writer.WriteLine("Model, Serial Num, Date/Time, Version, Impulse, Noise, Diff, Passed");
             writer.WriteLine(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ","
                 + sum.ToString("f1") + "," + noise.ToString("f1") + "," + (sum - noise).ToString("f1") + ","
@@ -2268,7 +2268,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -2526,7 +2526,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -2829,7 +2829,7 @@ namespace PowerSDR
                                   + "10m off, 10m on, 10m diff,"
                                   + "6m off, 6m on, 6m diff");
             writer.Write(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
             for (int i = 0; i < bands.Length; i++)
@@ -2849,7 +2849,7 @@ namespace PowerSDR
                 case Model.FLEX3000: model = "F3K"; break;
                 case Model.FLEX5000: model = "F5K"; break;
             }
-            writer = new StreamWriter(path + "\\rx_filter_" + model + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
+            writer = new StreamWriter(path + "\\rx_filter_" + model + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
             writer.WriteLine("Band, Off, On, Diff");
             for (int i = 0; i < bands.Length; i++)
             {
@@ -3413,7 +3413,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ",");
+                    writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ",");
                     break;
                 case Model.FLEX1500:
                     writer.Write(HIDEEPROM.SerialToString(HIDEEPROM.TRXSerial) + ",");
@@ -3439,10 +3439,10 @@ namespace PowerSDR
             switch (console.CurrentModel)
             {
                 case Model.FLEX5000:
-                    filename = path + "\\rx_level_F5K_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv";
+                    filename = path + "\\rx_level_F5K_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv";
                     break;
                 case Model.FLEX3000:
-                    filename = path + "\\rx_level_F3K_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv";
+                    filename = path + "\\rx_level_F3K_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv";
                     break;
                 case Model.FLEX1500:
                     filename = path + "\\rx_level_F1.5K_" + HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber) + ".csv";
@@ -3652,7 +3652,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -3679,10 +3679,10 @@ namespace PowerSDR
             switch (console.CurrentModel)
             {
                 case Model.FLEX5000:
-                    model = "F5K" + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    model = "F5K" + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX3000:
-                    model = "F3K" + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    model = "F3K" + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     model = "F1.5K" + "_" + HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -3833,7 +3833,7 @@ namespace PowerSDR
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, "
 								 +"160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m");
 
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -4191,7 +4191,7 @@ namespace PowerSDR
                                   + "10m off, 10m on, 10m diff,"
                                   + "6m off, 6m on, 6m diff");
             writer.Write(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
             for (int i = 0; i < bands.Length; i++)
@@ -4211,7 +4211,7 @@ namespace PowerSDR
                 case Model.FLEX3000: model = "F3K"; break;
                 case Model.FLEX5000: model = "F5K"; break;
             }
-            writer = new StreamWriter(path + "\\tx_filter_" + model + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
+            writer = new StreamWriter(path + "\\tx_filter_" + model + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
             writer.WriteLine("Band, Off, On, Diff");
             for (int i = 0; i < bands.Length; i++)
             {
@@ -4371,7 +4371,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.SerialNumber);
@@ -4585,7 +4585,7 @@ namespace PowerSDR
                                   + "10m C0, 10m C1, 10m C2, 10m C3, 10m From Noise, "
                                   + "6m C0, 6m C1, 6m C2, 6m C3, 6m From Noise");
             writer.Write(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
             for (int i = 0; i < bands.Length; i++)
@@ -4605,7 +4605,7 @@ namespace PowerSDR
                 case Model.FLEX3000: model = "F3K"; break;
                 case Model.FLEX5000: model = "F5K"; break;
             }
-            writer = new StreamWriter(path + "\\tx_carrier_" + model + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
+            writer = new StreamWriter(path + "\\tx_carrier_" + model + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
             writer.WriteLine("Band, C0, C1, C2, C3, From Noise");
             for (int i = 0; i < bands.Length; i++)
             {
@@ -4873,7 +4873,7 @@ namespace PowerSDR
                                   + "10m,"
                                   + "6m");
             writer.Write(console.CurrentModel.ToString() + ","
-                + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+                + Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
             for (int i = 0; i < bands.Length; i++)
@@ -4891,7 +4891,7 @@ namespace PowerSDR
                 case Model.FLEX3000: model = "F3K"; break;
                 case Model.FLEX5000: model = "F5K"; break;
             }
-            writer = new StreamWriter(path + "\\tx_gain_" + model + "_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
+            writer = new StreamWriter(path + "\\tx_gain_" + model + "_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
             writer.WriteLine("Band, Gain");
             for (int i = 0; i < bands.Length; i++)
             {
@@ -5953,7 +5953,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_pwrspkr.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_pwrspkr.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Off, Out Of Phase, In Phase, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -6149,7 +6149,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_rcainout.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_rcainout.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Off, On, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -6355,7 +6355,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_fwinout.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_fwinout.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Off, On, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -6516,7 +6516,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_fwinout.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_fwinout.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Off, On, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -6747,7 +6747,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_headphone.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_headphone.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Off, Left, Right, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -6900,7 +6900,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.TRXSerial);
@@ -7068,7 +7068,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.TRXSerial);
@@ -7189,7 +7189,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_rcaptt.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_rcaptt.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -7444,7 +7444,7 @@ namespace PowerSDR
             {
                 case Model.FLEX5000:
                 case Model.FLEX3000:
-                    serial = FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial);
+                    serial = Misc.SerialToString(FWCEEPROM.TRXSerial);
                     break;
                 case Model.FLEX1500:
                     serial = HIDEEPROM.SerialToString(HIDEEPROM.TRXSerial);
@@ -7537,7 +7537,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_extref.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_extref.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -7722,7 +7722,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_micup.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_micup.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -7812,7 +7812,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_micdown.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_micdown.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -7902,7 +7902,7 @@ namespace PowerSDR
             bool file_exists = File.Exists(path + "\\io_micfast.csv");
             StreamWriter writer = new StreamWriter(path + "\\io_micfast.csv", true);
             if (!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, Passed");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.TRXSerial) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
 
@@ -8072,7 +8072,7 @@ namespace PowerSDR
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             int V = 80;
-            string text = "TRX Serial Number: " + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial)
+            string text = "TRX Serial Number: " + Misc.SerialToString(FWCEEPROM.TRXSerial)
                 + "  Date: " + DateTime.Today.ToShortDateString()
                 + "  Time: " + DateTime.Now.ToString("HH:mm:ss")
                 + "  Tech: " + txtTech.Text + "\n\n";

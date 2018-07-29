@@ -27,7 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -289,6 +289,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="conrec.cs" />
+    <Compile Include="FWC\NetworkPal.cs" />
     <Compile Include="helpbox1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -447,7 +448,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FWC\fwc_midi.cs" />
-    <Compile Include="FWC\pal.cs" />
     <Compile Include="FWC\powermaster.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -598,7 +598,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="radio.cs" />
     <Compile Include="RadioChoice.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1127,6 +1126,14 @@
     <ProjectReference Include="..\PowerMate\PowerMate.vcxproj">
       <Project>{bbd70852-1a81-4232-b094-c87bede243c9}</Project>
       <Name>PowerMate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PowerSDR.Shared\PowerSDR.Shared.csproj">
+      <Project>{91b304c2-7550-48b1-b4a7-34031a4a71ad}</Project>
+      <Name>PowerSDR.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PowerSDRServer\PowerSDRServer.csproj">
+      <Project>{eaea9303-7e70-4da6-a32a-d256c6ce4fe4}</Project>
+      <Name>PowerSDRServer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

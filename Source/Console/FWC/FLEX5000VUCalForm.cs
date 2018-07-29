@@ -952,7 +952,7 @@ namespace PowerSDR
             StreamWriter writer = new StreamWriter(path + "\\VU5K_PA_Cal.csv", true);
             //if (!file_exists) 
             writer.WriteLine("PA Serial Num, Date/Time, Version,");
-            writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.SerialNumber) + ","
+            writer.Write(Misc.SerialToString(FWCEEPROM.SerialNumber) + ","
                 + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + ","
                 + console.Text + ",");
             writer.WriteLine("");
@@ -1086,7 +1086,7 @@ namespace PowerSDR
             path += "\\TX Carrier";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            StreamWriter writer = new StreamWriter(path + "\\vu_tx_carrier_F5K_" + FWCEEPROM.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
+            StreamWriter writer = new StreamWriter(path + "\\vu_tx_carrier_F5K_" + Misc.SerialToString(FWCEEPROM.TRXSerial) + ".csv");
             writer.WriteLine("Freq, C0, C1, C2, C3, From Noise");
             for (int i = 0; i < band_freqs.Count; i++)
             {

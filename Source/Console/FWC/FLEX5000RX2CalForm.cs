@@ -103,7 +103,7 @@ namespace PowerSDR
 			//
 			InitializeComponent();
 			console = c;
-			this.Text += "  (RX2: "+FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+")";
+			this.Text += "  (RX2: "+Misc.SerialToString(FWCEEPROM.RX2Serial)+")";
 			Common.RestoreForm(this, "FLEX5000RX2CalForm", false);
 
 			if(FWCEEPROM.RX2Serial == 0)
@@ -1277,7 +1277,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path+"\\rx2_genbal.csv");
 			StreamWriter writer = new StreamWriter(path+"\\rx2_genbal.csv", true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, ADC_L, ADC_R, Off_L, Passed");
-			writer.WriteLine(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.WriteLine(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+","
 				+adc_l.ToString("f1")+","+adc_r.ToString("f1")+","+off_l.ToString("f1")+","
@@ -1430,7 +1430,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path);
 			StreamWriter writer = new StreamWriter(path, true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, dBFS, Passed");
-			writer.WriteLine(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.WriteLine(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+","
 				+avg.ToString("f1")+","
@@ -1611,7 +1611,7 @@ namespace PowerSDR
 			bool file_exists = File.Exists(path+"\\rx2_preamp.csv");
 			StreamWriter writer = new StreamWriter(path+"\\rx2_preamp.csv", true);
 			if(!file_exists) writer.WriteLine("Serial Num, Date/Time, Version, On, Off, Diff, Passed");
-			writer.WriteLine(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.WriteLine(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+","
 				+on.ToString("f1")+","+off.ToString("f1")+","+(on-off).ToString("f1")+","
@@ -1949,7 +1949,7 @@ namespace PowerSDR
 								 +"12m off, 12m on, 12m diff,"
 								 +"10m off, 10m on, 10m diff,"
 								 +"6m off, 6m on, 6m diff");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -1963,7 +1963,7 @@ namespace PowerSDR
 
 			path += "\\RX Filter";
 			if(!Directory.Exists(path)) Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\rx_filter_"+FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+".csv");
+			writer = new StreamWriter(path+"\\rx_filter_"+Misc.SerialToString(FWCEEPROM.RX2Serial)+".csv");
 			writer.WriteLine("Band, Off, On, Diff");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -2227,7 +2227,7 @@ namespace PowerSDR
 								 +"15m display offset, 15m preamp offset, 15m multimeter offset, "
 								 +"12m display offset, 12m preamp offset, 12m multimeter offset, "
 								 +"10m display offset, 10m preamp offset, 10m multimeter offset");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -2243,7 +2243,7 @@ namespace PowerSDR
 
 			path += "\\RX2 Level";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\rx2_level_"+FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+".csv");
+			writer = new StreamWriter(path+"\\rx2_level_"+Misc.SerialToString(FWCEEPROM.RX2Serial)+".csv");
 			writer.WriteLine("Band, Display Offset, Preamp Offset, Multimeter Offset");
 			for(int i=0; i<bands.Length; i++)
 			{
@@ -2395,7 +2395,7 @@ namespace PowerSDR
 								 +"12m gain, 12m phase, 12m rejection, 12m noise distance, "
 								 +"10m gain, 10m phase, 10m rejection, 10m noise distance, "
 								 +"6m gain, 6m phase, 6m rejection, 6m noise distance");
-			writer.Write(FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+","
+			writer.Write(Misc.SerialToString(FWCEEPROM.RX2Serial)+","
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+","
 				+console.Text+",");
 			for(int i=0; i<bands.Length; i++)
@@ -2410,7 +2410,7 @@ namespace PowerSDR
 
 			path += "\\RX2 Image";
 			if(!Directory.Exists(path))	Directory.CreateDirectory(path);
-			writer = new StreamWriter(path+"\\rx2_image_"+FWCEEPROM.SerialToString(FWCEEPROM.RX2Serial)+".csv");
+			writer = new StreamWriter(path+"\\rx2_image_"+Misc.SerialToString(FWCEEPROM.RX2Serial)+".csv");
 			writer.WriteLine("Band, Gain, Phase, Rejection, Noise Distance");
 			for(int i=0; i<bands.Length; i++)
 			{

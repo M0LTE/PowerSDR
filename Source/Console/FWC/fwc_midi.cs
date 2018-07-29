@@ -299,7 +299,7 @@ namespace PowerSDR
 
 		// F0 <3 mfc> <2 msgID> <2 protocolID> <4 opcode> <4 data1> <4 data2> F7
 		private static ushort msgID = 0;
-		public static void SendSetMessage(FWC.Opcode opcode, uint data1, uint data2)
+		public static void SendSetMessage(Opcode opcode, uint data1, uint data2)
 		{
 			ushort id = msgID++;
 			byte[] msg = new byte[37];
@@ -339,7 +339,7 @@ namespace PowerSDR
 					Debug.WriteLine("Error in SendLongMessage");
 		}
 
-		public static void SendSetMessage(FWC.Opcode opcode, float data1, uint data2)
+		public static void SendSetMessage(Opcode opcode, float data1, uint data2)
 		{
 			ushort id = msgID++;
 			byte[] msg = new byte[37];
@@ -379,7 +379,7 @@ namespace PowerSDR
 					Debug.WriteLine("Error in SendLongMessage");
 		}
 
-		public static void SendSetMessage(FWC.Opcode opcode, uint data1, float data2)
+		public static void SendSetMessage(Opcode opcode, uint data1, float data2)
 		{
 			ushort id = msgID++;
 			byte[] msg = new byte[37];
@@ -419,7 +419,7 @@ namespace PowerSDR
 					Debug.WriteLine("Error in SendLongMessage");
 		}
 
-		public static uint SendGetMessage(FWC.Opcode opcode, uint data1, uint data2)
+		public static uint SendGetMessage(Opcode opcode, uint data1, uint data2)
 		{
 			ushort id = msgID++;
 			byte[] msg = new byte[37];
@@ -478,7 +478,7 @@ namespace PowerSDR
 			return 0;
 		}
 
-		public static float SendGetMessageFloat(FWC.Opcode opcode, uint data1, uint data2)
+		public static float SendGetMessageFloat(Opcode opcode, uint data1, uint data2)
 		{
 			ushort id = msgID++;
 			byte[] msg = new byte[37];
@@ -678,8 +678,8 @@ namespace PowerSDR
                     (Command)((byte)dwParam1) == Command.NoteOn && 
                     (Note)(byte)(dwParam1>>8) == Note.Dot)
                 {
-                    FWCMidi.SendSetMessage(FWC.Opcode.RDAL_OP_WRITE_GPIO, 0x01, 0);
-                    FWCMidi.SendSetMessage(FWC.Opcode.RDAL_OP_WRITE_GPIO, 0x00, 0);
+                    FWCMidi.SendSetMessage(Opcode.RDAL_OP_WRITE_GPIO, 0x01, 0);
+                    FWCMidi.SendSetMessage(Opcode.RDAL_OP_WRITE_GPIO, 0x00, 0);
                 }
             }
 #else
