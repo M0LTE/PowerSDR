@@ -1,10 +1,12 @@
 ﻿using PowerSDR;
+using PowerSDR.Shared;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PowerSDRServer
 {
-    public class InteropPal : IPal
+    public class InteropPal : CommonPal, IPal
     {
         public int GetNumDevices()
         {
@@ -26,19 +28,14 @@ namespace PowerSDRServer
             return PalInteropMethods.Init();
         }
 
-        public int ReadOp(Opcode opcode, uint data1, uint data2, out uint rtn)
+        public int ReadOp1(Opcode opcode, uint data1, uint data2, out uint rtn)
         {
             return PalInteropMethods.ReadOp(opcode, data1, data2, out rtn);
         }
 
-        public int ReadOp(Opcode opcode, uint data1, uint data2, out float rtn)
+        public int ReadOp2(Opcode opcode, uint data1, uint data2, out float rtn)
         {
             return PalInteropMethods.ReadOp(opcode, data1, data2, out rtn);
-        }
-
-        public Radio[] Scan()
-        {
-            return PalInteropMethods.Scan();
         }
 
         public bool SelectDevice(uint index)
@@ -56,22 +53,22 @@ namespace PowerSDRServer
             PalInteropMethods.SetCallback(callback);
         }
 
-        public int WriteOp(Opcode opcode, uint data1, uint data2)
+        public int WriteOp1(Opcode opcode, uint data1, uint data2)
         {
             return PalInteropMethods.WriteOp(opcode, data1, data2);
         }
 
-        public int WriteOp(Opcode opcode, float data1, uint data2)
+        public int WriteOp2(Opcode opcode, float data1, uint data2)
         {
             return PalInteropMethods.WriteOp(opcode, data1, data2);
         }
 
-        public int WriteOp(Opcode opcode, int data1, int data2)
+        public int WriteOp3(Opcode opcode, int data1, int data2)
         {
             return PalInteropMethods.WriteOp(opcode, data1, data2);
         }
 
-        public int WriteOp(Opcode opcode, uint data1, float data2)
+        public int WriteOp4(Opcode opcode, uint data1, float data2)
         {
             return PalInteropMethods.WriteOp(opcode, data1, data2);
         }

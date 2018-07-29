@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.6.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.6.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,13 +43,43 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonPal.cs" />
+    <Compile Include="ExitMessage.cs" />
+    <Compile Include="GetDeviceInfoMessage.cs" />
+    <Compile Include="GetDeviceInfoResponseMessage.cs" />
+    <Compile Include="GetNumDevicesMessage.cs" />
+    <Compile Include="InitResponse.cs" />
+    <Compile Include="GetNumDevicesResponse.cs" />
+    <Compile Include="InitMessage.cs" />
     <Compile Include="IPal.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="NetworkPalClient.cs" />
     <Compile Include="OpCode.cs" />
     <Compile Include="PalManager.cs" />
+    <Compile Include="PalMessage.cs" />
+    <Compile Include="PalResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="radio.cs" />
+    <Compile Include="ReadOp1Message.cs" />
+    <Compile Include="ReadOp2Response.cs" />
+    <Compile Include="ReadOp1Response.cs" />
+    <Compile Include="ReadOp2Message.cs" />
+    <Compile Include="SelectDeviceMessage.cs" />
+    <Compile Include="SelectDeviceResponse.cs" />
+    <Compile Include="SetBufferSizeMessage.cs" />
+    <Compile Include="SetCallbackMessage.cs" />
+    <Compile Include="SimpleRadio.cs" />
+    <Compile Include="WriteOp1Message.cs" />
+    <Compile Include="WriteOp1Response.cs" />
+    <Compile Include="WriteOp2Message.cs" />
+    <Compile Include="WriteOp2Response.cs" />
+    <Compile Include="WriteOp3Message.cs" />
+    <Compile Include="WriteOp3Response.cs" />
+    <Compile Include="WriteOp4Message.cs" />
+    <Compile Include="WriteOp4Response.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

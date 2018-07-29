@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PowerSDR
+namespace PowerSDR.Shared
 {
     /// <summary>
     /// Allow an alternative IPal instance to be dropped in to all code that preveiously referenced Pal directly, 

@@ -27,6 +27,7 @@
 //=================================================================
 
 using PowerSDR;
+using PowerSDR.Shared;
 using System.Runtime.InteropServices;
 
 namespace PowerSDRServer
@@ -101,36 +102,6 @@ namespace PowerSDRServer
 
         [DllImport("pal.dll", EntryPoint = "SetBufferSize", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetBufferSize(uint val);
-
-        public static Radio[] Scan()
-        {
-            int devs = PalManager.Instance.GetNumDevices();                 // get numer of radios found 
-
-            //    System.Diagnostics.Trace.WriteLine("pal=============================");
-
-            if (devs == 0) return null;
-
-            Radio[] radios = new Radio[devs];
-
-            for (uint i = 0; i < devs; i++)
-            {
-                uint model;
-                uint sn;
-
-                if (!PalManager.Instance.GetDeviceInfo(i, out model, out sn)) return null;
-
-                Model m = Model.FLEX5000;
-                if (model == 3) m = Model.FLEX3000;
-
-                string serial = Misc.SerialToString(sn);   // radios serial#
-
-                radios[i] = new Radio(m, i, serial, true);
-            }
-
-            return radios;
-
-
-        } // Scan()
 
 
 #else

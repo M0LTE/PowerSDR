@@ -26,26 +26,24 @@
 //    USA
 //=================================================================
 
+using Flex.Control;     // ke9ns add
+using FlexCW;           //
+using PowerSDR.Shared;
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO;
-using System.IO.Ports;
-using TDxInput;
 using System.Xml;
-
-using FlexCW;           //
-using Flex.Control;     // ke9ns add
 
 
 namespace PowerSDR
 {
-	public class Setup : System.Windows.Forms.Form
+    public class Setup : System.Windows.Forms.Form
 	{
         #region Variable Declaration
       

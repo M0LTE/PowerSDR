@@ -123,10 +123,8 @@ Class Console
 //#define WRITE_FFT_TEST
 
 using System;
-
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -142,37 +140,14 @@ using System.Runtime.InteropServices;
 using System.Management;
 using System.Threading;
 using System.Text;
-using System.Media; // ke9ns for system Beep
-using System.Net.Http; // ke9ns add
 using System.Xml.Linq;
-
-
-
-//System.Windows.Media.Effects; // ke9ns add
-
+using PowerSDR.Shared;
 using System.Windows.Forms;
-using System.Windows.Forms.Design; // ke9ns add
-
-
-
-using HttpServer; // rn3kk add
-
-//using System.Threading.Tasks; // ke9ns add net 4.5
-
-using System.Speech.Synthesis; // ke9ns add
-
-
-using PortTalk;
-//using System.Object;
-//using System.Windows.Threading.DispatcherObject;
-using System.Windows.Media.Imaging;
-
+using System.Speech.Synthesis;
 using FlexCW;
-using System.Linq; // ke9ns add
-using NAudio.Wave; // ke9ns add
-using NAudio.Lame; // ke9ns add
-
-//using MahApps.Metro.Controls; // ke9ns add
+using System.Linq;
+using NAudio.Wave;
+using NAudio.Lame;
 
 
 #if (!NO_TNF)
@@ -181,14 +156,14 @@ using Flex.TNF;
 
 using Flex.Control;
 
- //using CefSharp;            // ke9ns add to allow embedded chrome browser (for help videos)
- //using CefSharp.WinForms;
+//using CefSharp;            // ke9ns add to allow embedded chrome browser (for help videos)
+//using CefSharp.WinForms;
 
 
 namespace PowerSDR
 {
-  
-        #region Enums
+
+    #region Enums
 
     public enum FWCATUMode
 	{

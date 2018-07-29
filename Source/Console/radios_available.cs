@@ -30,6 +30,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using PowerSDR.Shared;
+using System.Linq;
 
 namespace PowerSDR
 {
@@ -173,7 +175,10 @@ namespace PowerSDR
 
         public static bool ScanPal()
         {
-            Radio[] radios = PalManager.Instance.Scan();
+            Radio[] radios = PalManager.Instance.Scan()
+                                                .Select(sr => new Radio(sr.Model, sr.AccessObject, sr.SerialNumber, sr.Nickname, sr.Present))
+                                                .ToArray();
+
             if (radios == null)
             {
                 foreach (Radio r in list)
