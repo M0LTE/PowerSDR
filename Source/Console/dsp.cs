@@ -102,10 +102,14 @@ namespace PowerSDR
         {
             System.String app_data_path = "";
             Assembly assembly = Assembly.GetExecutingAssembly();
+            Debug.WriteLine($"assembly.Location: {assembly.Location}");
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            Debug.WriteLine($"fvi: {fvi}");
             System.String version = fvi.FileVersion.Substring(0, fvi.FileVersion.LastIndexOf("."));
+            Debug.WriteLine($"version: {version}");
             app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                 + "\\FlexRadio Systems\\PowerSDR v" + version + "\\wisdom";
+            Debug.WriteLine($"app_data_path: {app_data_path}");
 
             DttSP.SetupSDR(app_data_path);
         }

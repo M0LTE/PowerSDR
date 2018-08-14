@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class SetCallbackMessage : PalMessage
+    public class SetCallbackMessage : PalMessage
     {
         public SetCallbackMessage()
         {

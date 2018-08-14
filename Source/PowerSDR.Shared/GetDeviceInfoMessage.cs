@@ -1,12 +1,12 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class GetDeviceInfoMessage : PalMessage
+    public class GetDeviceInfoMessage : PalMessage
     {
-        private uint index;
+        public uint Index;
 
         public GetDeviceInfoMessage(uint index)
         {
-            this.index = index;
+            this.Index = index;
         }
     }
 }

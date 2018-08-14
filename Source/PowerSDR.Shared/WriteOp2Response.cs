@@ -1,7 +1,7 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class WriteOp2Response : PalResponse
+    public class WriteOp2Response : PalResponse
     {
-        public int Result { get; internal set; }
+        public int Result { get; set; }
     }
 }

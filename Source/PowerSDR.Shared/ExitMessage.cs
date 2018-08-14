@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR
 {
-    internal class ExitMessage : PalMessage
+    public class ExitMessage : PalMessage
     {
     }
 }

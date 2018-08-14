@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class GetNumDevicesMessage : PalMessage
+    public class GetNumDevicesMessage : PalMessage
     {
         public GetNumDevicesMessage()
         {

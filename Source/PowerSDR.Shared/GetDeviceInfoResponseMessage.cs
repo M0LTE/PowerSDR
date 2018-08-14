@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace PowerSDR.Shared
 {
-    class GetDeviceInfoResponseMessage : PalResponse
+    public class GetDeviceInfoResponse : PalResponse
     {
         public bool Result { get; set; }
-        public uint Model { get; internal set; }
-        public uint Sn { get; internal set; }
+        public uint Model { get; set; }
+        public uint Sn { get; set; }
     }
 }

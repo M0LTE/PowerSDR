@@ -1107,6 +1107,9 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>copy "$(ProjectDir)CAT\CATStructs.xml" "$(OutDir)";</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)CAT\CATStructs.xml" "$(OutDir)";
+copy /y "$(SolutionDir)deps\*.dll" "$(TargetDir)"
+
+copy /y "$(OutDir)powersdr*" "C:\Program Files (x86)\FlexRadio Systems\PowerSDR v2.8.0\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

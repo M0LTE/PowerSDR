@@ -80,5 +80,10 @@ namespace PowerSDRServer
                 throw new InvalidOperationException($"{nameof(InteropPal)} doesn't need settings, did you configure the wrong {nameof(IPal)} implementation?");
             }
         }
+
+        public void Dispose()
+        {
+            // NOOP
+        }
     }
 }

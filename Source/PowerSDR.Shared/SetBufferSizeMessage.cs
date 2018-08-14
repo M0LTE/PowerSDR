@@ -1,12 +1,12 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class SetBufferSizeMessage : PalMessage
+    public class SetBufferSizeMessage : PalMessage
     {
-        private uint val;
+        public uint Val;
 
         public SetBufferSizeMessage(uint val)
         {
-            this.val = val;
+            this.Val = val;
         }
     }
 }

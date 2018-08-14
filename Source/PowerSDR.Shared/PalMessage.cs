@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR
 {
-    internal class PalMessage
+    public class PalMessage
     {
     }
 }

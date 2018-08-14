@@ -1,12 +1,12 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class SelectDeviceMessage : PalMessage
+    public class SelectDeviceMessage : PalMessage
     {
-        private uint index;
+        public uint Index;
 
         public SelectDeviceMessage(uint index)
         {
-            this.index = index;
+            this.Index = index;
         }
     }
 }

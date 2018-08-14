@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using ZeroMQ;
 
 namespace PowerSDR.Shared
 {
@@ -7,8 +12,14 @@ namespace PowerSDR.Shared
     {
         public string Server { get; set; }
         public int Port { get; set; }
-        public string Key { get; set; }
         bool configured;
+
+        public NetworkPalClient()
+        {
+        }
+
+        ZContext context;
+        ZSocket requester;
 
         public void Configure(Dictionary<string, string> settings)
         {
@@ -30,14 +41,9 @@ namespace PowerSDR.Shared
                 throw new InvalidOperationException($"{nameof(NetworkPalClient)} needs configuration setting \"port\" passing in but it was not supplied or was invalid");
             }
 
-            if (settings.TryGetValue("key", out string key))
-            {
-                Key = key;
-            }
-            else
-            {
-                throw new InvalidOperationException($"{nameof(NetworkPalClient)} needs configuration setting \"key\" passing in but it was not supplied");
-            }
+            context = new ZContext();
+            requester = new ZSocket(context, ZSocketType.REQ);
+            requester.Connect($"tcp://{server}:{port}");
 
             configured = true;
         }
@@ -58,16 +64,38 @@ namespace PowerSDR.Shared
             Send(exitMessage);
         }
 
+        static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+
+        static object lockObj = new object();
         private PalResponse Send(PalMessage message)
         {
-            throw new NotImplementedException();
+            lock (lockObj)
+            {
+                requester.Send(new ZFrame(JsonConvert.SerializeObject(message, jsonSettings)));
+
+                /*if (message is SetCallbackMessage)
+                {
+                    return null;
+                }
+                else*/
+                {
+                    using (ZFrame reply = requester.ReceiveFrame())
+                    {
+                        string replyJson = reply.ReadString();
+
+                        PalResponse deserialised = JsonConvert.DeserializeObject<PalResponse>(replyJson, jsonSettings);
+
+                        return deserialised;
+                    }
+                }
+            }
         }
 
         public bool GetDeviceInfo(uint index, out uint model, out uint sn)
         {
             CheckConfig();
             var msg = new GetDeviceInfoMessage(index);
-            var response = (GetDeviceInfoResponseMessage)Send(msg);
+            var response = (GetDeviceInfoResponse)Send(msg);
             model = response.Model;
             sn = response.Sn;
             return response.Result;
@@ -132,6 +160,36 @@ namespace PowerSDR.Shared
 
             CheckConfig();
 
+            Task.Factory.StartNew(() =>
+            {
+                // wait for callback
+
+                using (var ctx = new ZContext())
+                using (var subscriber = new ZSocket(ctx, ZSocketType.SUB))
+                {
+                    subscriber.Connect("tcp://127.0.0.1:5556");
+                    subscriber.Subscribe("notificationCallback");
+                    while (true)
+                    {
+                        using (var replyFrame = subscriber.ReceiveFrame())
+                        {
+                            string json = replyFrame.ReadString();
+
+                            PalResponse deserialised = JsonConvert.DeserializeObject<PalResponse>(json, jsonSettings);
+
+                            if (deserialised is NotificationResponse msg1)
+                            {
+                                notificationCallback(msg1.Bitmap);
+                            }
+                            else
+                            {
+                                throw new NotImplementedException("Bad notificationCallback");
+                            }
+                        }
+                    }
+                }
+            });
+
             // tell the far side that a callback delegate has been set. Don't actually pass the delegate, since that would be meaningless.
             var msg = new SetCallbackMessage();
             Send(msg);
@@ -172,6 +230,12 @@ namespace PowerSDR.Shared
             var msg = new WriteOp4Message(opcode, data1, data2);
             var response = (WriteOp4Response)Send(msg);
             return response.Result;
+        }
+
+        public void Dispose()
+        {
+            requester.Dispose();
+            context.Dispose();
         }
     }
 }

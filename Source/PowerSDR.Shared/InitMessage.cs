@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class InitMessage : PalMessage
+    public class InitMessage : PalMessage
     {
         public InitMessage()
         {

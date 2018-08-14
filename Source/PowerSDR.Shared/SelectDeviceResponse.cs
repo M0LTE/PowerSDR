@@ -1,7 +1,7 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class SelectDeviceResponse : PalResponse
+    public class SelectDeviceResponse : PalResponse
     {
-        public bool Result { get; internal set; }
+        public bool Result { get; set; }
     }
 }

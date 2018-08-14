@@ -1,16 +1,16 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class WriteOp2Message : PalMessage
+    public class WriteOp2Message : PalMessage
     {
-        private Opcode opcode;
-        private float data1;
-        private uint data2;
+        public Opcode Opcode;
+        public float Data1;
+        public uint Data2;
 
         public WriteOp2Message(Opcode opcode, float data1, uint data2)
         {
-            this.opcode = opcode;
-            this.data1 = data1;
-            this.data2 = data2;
+            this.Opcode = opcode;
+            this.Data1 = data1;
+            this.Data2 = data2;
         }
     }
 }

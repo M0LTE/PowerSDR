@@ -1,7 +1,7 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class GetNumDevicesResponse : PalResponse
+    public class GetNumDevicesResponse : PalResponse
     {
-        public int Result { get; internal set; }
+        public int Result { get; set; }
     }
 }

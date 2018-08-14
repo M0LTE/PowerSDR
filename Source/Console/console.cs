@@ -8362,11 +8362,28 @@ namespace PowerSDR
         static void Main(string[] args)
         {
             //TODO: Replace this with, e.g. NetworkPal from config, rather than referencing directly
-            PalManager.Instance = new PowerSDRServer.InteropPal();
-            PalManager.Instance.Configure(null);
+            
+            //IPal client = new PowerSDRServer.InteropPal();
+            IPal client = new NetworkPalClient();
+
+            PalManager.Instance = new DebugLoggingPalClient(client, (s) => {
+                //File.AppendAllText(@"C:\Users\tomandels\Downloads\pal.log", $"{DateTime.Now} {s}{Environment.NewLine}");
+            });
+
+            PalManager.Instance.Configure(new Dictionary<string, string> {
+                { "server", "127.0.0.1" },
+                { "port", "5555" },
+            });
 
             string app_data_path = "";
             string app_data_path1 = ""; // ke9ns add for original 2.7.2 folder
+
+#if DEBUG
+            if (!Debugger.IsAttached)
+            {
+                MessageBox.Show("Attach now");
+            }
+#endif
 
             foreach (string s in args)
             {
@@ -8419,8 +8436,10 @@ namespace PowerSDR
 #endif
             }
 
+#if !DEBUG
             try
             {
+#endif
                 if (!File.Exists(app_data_path + "wisdom"))  // look for %userprofile%\AppData\Roaming\FlexRadio Systems\PowerSDR v2.8.0\wisdom
                 {
                     // Need to create the directory in %appdata% before we go run wisdom
@@ -8542,19 +8561,23 @@ namespace PowerSDR
                         File.Copy(newPath, newPath.Replace(path + "\\itshfbc", app_data_path + "\\itshfbc"), true);
 
 
-                    //-------------------------------------------------------------------------------------------------
+                //-------------------------------------------------------------------------------------------------
 
-                    Process p = Process.Start(Application.StartupPath + "\\fftw_wisdom.exe", "\"" + app_data_path);  //ke9ns  C:\Program Files (x86)\FlexRadio Systems\PowerSDR v2.8.0
+                    string fn = Application.StartupPath + "\\fftw_wisdom.exe";
+                    if (File.Exists(fn))
+                    {
+                        Process p = Process.Start(fn, "\"" + app_data_path);  //ke9ns  C:\Program Files (x86)\FlexRadio Systems\PowerSDR v2.8.0
 
-                    // ke9ns creates wisdom file. used by sdr.c file
+                        // ke9ns creates wisdom file. used by sdr.c file
 
-                    MessageBox.Show("Running one time optimization.  Please wait patiently for " +
-                        "this process to finish.\nTypically the optimization takes no more than 3-5 minutes.",
-                        "Optimizing...",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBox.Show("Running one time optimization.  Please wait patiently for " +
+                            "this process to finish.\nTypically the optimization takes no more than 3-5 minutes.",
+                            "Optimizing...",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
 
-                    p.WaitForExit();
+                        p.WaitForExit();
+                    }
 
                     /*    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
                             SearchOption.AllDirectories))
@@ -8607,6 +8630,7 @@ namespace PowerSDR
                 theConsole = new Console(args);
 
                 Application.Run(theConsole);
+#if !DEBUG
             }
             catch (Exception ex)
             {
@@ -8615,11 +8639,12 @@ namespace PowerSDR
                 MessageBox.Show(msg, "Fatal Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+#endif
         } // main 
 
-        #endregion
+#endregion
 
-        #region Misc Routines
+#region Misc Routines
         // ======================================================
         // Misc Routines
         // ======================================================
@@ -22488,9 +22513,9 @@ namespace PowerSDR
             get { return tune_step_list[tune_step_index].StepHz * 1e-6; }
         }
 
-        #endregion
+#endregion
 
-        #region Test and Calibration Routines
+#region Test and Calibration Routines
 
         private Progress p;
         public bool CalibratePABias(Progress progress, float driver_target, float final_target, float tol, int index)
@@ -24570,7 +24595,7 @@ namespace PowerSDR
                     //			MessageBox.Show("rx1_meter_cal_offset: "+rx1_meter_cal_offset.ToString()+"\n"+
                     //				"display_cal_offset: "+display_cal_offset.ToString());
                     break;
-                #region SDRX
+#region SDRX
                 /*case Model.SDRX:
 			
 						if(!fwc_init) return false;
@@ -24793,7 +24818,7 @@ namespace PowerSDR
 						//			MessageBox.Show("rx1_meter_cal_offset: "+rx1_meter_cal_offset.ToString()+"\n"+
 						//				"display_cal_offset: "+display_cal_offset.ToString());
 						break;*/
-                #endregion
+#endregion
                 case Model.FLEX5000:
                     //rx_only = SetupForm.RXOnly;						// Save RX Only Setting
                     //SetupForm.RXOnly = true;
@@ -28181,9 +28206,9 @@ namespace PowerSDR
             return true;
         }
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
         // ======================================================
         // Properties
         // ======================================================
@@ -32422,7 +32447,7 @@ namespace PowerSDR
             set { current_ptt_mode = value; }
         }
 
-        #region X2 Properties
+#region X2 Properties
 
         private byte x2_160_rx = 0;
         public byte X2160RX
@@ -32712,7 +32737,7 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
         //==================================================
         // ke9ns add
@@ -33568,7 +33593,7 @@ namespace PowerSDR
 
 
 
-        #region CAT Properties
+#region CAT Properties
 
         // props for cat control 
 
@@ -34533,7 +34558,7 @@ namespace PowerSDR
         }
 
 
-        #endregion
+#endregion
 
         private int tune_power;                             // power setting to use when TUN button is pressed
         public int TunePower
@@ -34586,7 +34611,7 @@ namespace PowerSDR
             }
         }
 
-        #region CAT Properties
+#region CAT Properties
 
 
         //==================================================================
@@ -35949,7 +35974,7 @@ namespace PowerSDR
             set { kw_auto_information = value; }
         }
 
-        #endregion
+#endregion
 
         private DSPMode rx1_dsp_mode = DSPMode.FIRST;
         public DSPMode RX1DSPMode
@@ -38411,9 +38436,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region Display Routines
+#region Display Routines
 
         public void UpdateDisplay()
         {
@@ -38596,9 +38621,9 @@ namespace PowerSDR
 
         } // WaterfallPixelToTime
 
-        #endregion
+#endregion
 
-        #region Paint Event Handlers
+#region Paint Event Handlers
         // ======================================================
         // Paint Event Handlers
         // ======================================================
@@ -38849,7 +38874,7 @@ namespace PowerSDR
                 //=============================================================
 
                 case MultiMeterDisplayMode.Bar:  // lblRX2Meter is the text for RX2 bar graph (lblMultiSMeter is for RX1)
-                    #region Bar
+#region Bar
 
                     if (meter_data_ready)
                     {
@@ -39277,7 +39302,7 @@ namespace PowerSDR
                     }
                     break; // bar meter 
 
-                #endregion 
+#endregion
 
 
 
@@ -39291,7 +39316,7 @@ namespace PowerSDR
 
 
                 case MultiMeterDisplayMode.Original:
-                    #region AnalogTR7
+#region AnalogTR7
 
                     if (meter_data_ready)
                     {
@@ -40423,7 +40448,7 @@ namespace PowerSDR
                         meter_data_ready = false;  //We do NOT want to do this before we have consumed it!!!! so do it here.
                     }
 
-                    #endregion //analogTR7                    
+#endregion //analogTR7                    
 
                     break; // original
 
@@ -40434,7 +40459,7 @@ namespace PowerSDR
                 //=============================================================
 
                 case MultiMeterDisplayMode.Edge:
-                    #region Edges
+#region Edges
 
                     //  string format = "f0";
 
@@ -40986,7 +41011,7 @@ namespace PowerSDR
 
 
 
-                    #endregion // edge
+#endregion // edge
 
                     break; // case edge
 
@@ -40997,7 +41022,7 @@ namespace PowerSDR
                 //=============================================================
 
                 case MultiMeterDisplayMode.Analog:
-                    #region Analog
+#region Analog
 
                     if (meter_data_ready)
                     {
@@ -42498,7 +42523,7 @@ namespace PowerSDR
                     }
 
 
-                    #endregion //analog
+#endregion //analog
                     break; // RX1 analog
 
 
@@ -43033,7 +43058,7 @@ namespace PowerSDR
                 //=============================================================
 
                 case MultiMeterDisplayMode.Bar:   // lblRX2Meter is the text for RX2 bar graph (lblMultiSMeter is for RX1)
-                    #region Bar
+#region Bar
 
                     if (rx2_meter_data_ready)
                     {
@@ -43474,7 +43499,7 @@ namespace PowerSDR
                     break; // BAR RX2
 
 
-                #endregion // BAR
+#endregion // BAR
 
 
                 //=============================================================
@@ -43484,7 +43509,7 @@ namespace PowerSDR
                 //=============================================================
 
                 case MultiMeterDisplayMode.Original:
-                    #region AnalogTR7
+#region AnalogTR7
 
 
                     if (rx2_meter_data_ready)
@@ -44703,7 +44728,7 @@ namespace PowerSDR
                     }
 
 
-                    #endregion
+#endregion
                     break; // RX2 TR7
 
 
@@ -44715,7 +44740,7 @@ namespace PowerSDR
 
                 case MultiMeterDisplayMode.Edge:
 
-                    #region Edge
+#region Edge
 
 
                     if (rx2_meter_data_ready)
@@ -45277,7 +45302,7 @@ namespace PowerSDR
                     }
 
 
-                    #endregion
+#endregion
 
                     break; // RX2 edge
 
@@ -45289,7 +45314,7 @@ namespace PowerSDR
 
 
                 case MultiMeterDisplayMode.Analog:
-                    #region Analog
+#region Analog
 
                     //   Debug.WriteLine(rx2_meter_new_data + " dB MIC-");
 
@@ -46760,7 +46785,7 @@ namespace PowerSDR
                     }
 
 
-                    #endregion
+#endregion
                     break;  //  RX2 Analog
 
 
@@ -47163,9 +47188,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region Thread and Timer Routines
+#region Thread and Timer Routines
         //==============================================================
         //==============================================================
         //==============================================================
@@ -50168,9 +50193,9 @@ namespace PowerSDR
             hid_ptt_in = b;
         }
 
-        #endregion
+#endregion
 
-        #region Event Handlers
+#region Event Handlers
         // ======================================================
         // Event Handlers
         // ======================================================
@@ -57267,9 +57292,9 @@ namespace PowerSDR
             return ret_val;
         }
 
-        #endregion
+#endregion
 
-        #region VFO Events
+#region VFO Events
 
         private enum TuneLocation
         {
@@ -59505,9 +59530,9 @@ namespace PowerSDR
 				new MouseEventArgs(e.Button, e.Clicks, e.X+165, e.Y+25, e.Delta));*/
         }
 
-        #endregion
+#endregion
 
-        #region Display Events
+#region Display Events
 
         private bool rx1_low_filter_drag = false;
         private bool rx1_high_filter_drag = false;
@@ -61169,9 +61194,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region Band Button Events
+#region Band Button Events
         // ======================================================
         // Band Button Events
         // ======================================================
@@ -61678,9 +61703,9 @@ namespace PowerSDR
             UpdateWaterfallLevelValues();
         }
 
-        #endregion
+#endregion
 
-        #region Mode Button Events
+#region Mode Button Events
         // ======================================================
         // Mode Button Events
         // ======================================================
@@ -62732,9 +62757,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region Filter Button Events
+#region Filter Button Events
         // ======================================================
         // Filter Button Events
         // ======================================================
@@ -63449,9 +63474,9 @@ namespace PowerSDR
             }
         }
 
-        #endregion
+#endregion
 
-        #region VFO Button Events
+#region VFO Button Events
         // ======================================================
         // VFO Button Events
         // ======================================================
@@ -64214,9 +64239,9 @@ namespace PowerSDR
             btnFilterShiftReset_Click(this, EventArgs.Empty);
         }
 
-        #endregion
+#endregion
 
-        #region DSP Button Events
+#region DSP Button Events
 
         private void chkNR_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -64256,9 +64281,9 @@ namespace PowerSDR
             cat_nb2_status = Convert.ToInt32(chkDSPNB2.Checked);
         }
 
-        #endregion
+#endregion
 
-        #region Mode Specific Events
+#region Mode Specific Events
 
         private void chkCPDR_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -64314,9 +64339,9 @@ namespace PowerSDR
             if (ptbDX.Focused) btnHidden.Focus();
         }
 
-        #endregion
+#endregion
 
-        #region Memory Events
+#region Memory Events
         // ======================================================
         // Memory Events
         // ======================================================
@@ -64338,9 +64363,9 @@ namespace PowerSDR
             RX1Filter = quick_save_filter;
         }
 
-        #endregion
+#endregion
 
-        #region Menu Events
+#region Menu Events
         // ======================================================
         // Menu Events
         // ======================================================
@@ -64574,9 +64599,9 @@ namespace PowerSDR
                 MessageBox.Show("You must create at least one remote profile first", "No Profiles Available", MessageBoxButtons.OK);
         }
 
-        #endregion
+#endregion
 
-        #region Sub RX Events
+#region Sub RX Events
         // ======================================================
         // Sub RX Events
         // ======================================================
@@ -64705,7 +64730,7 @@ namespace PowerSDR
                 btnHidden.Focus();
         }
 
-        #endregion
+#endregion
 
         /*private void button1_Click(object sender, System.EventArgs e)
 		{

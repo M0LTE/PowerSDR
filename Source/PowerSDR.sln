@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerSDRServer", "PowerSDRS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerSDR.Shared", "PowerSDR.Shared\PowerSDR.Shared.csproj", "{91B304C2-7550-48B1-B4A7-34031A4A71AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "TestClient\TestClient.csproj", "{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -41,8 +43,8 @@ Global
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Interleaved|Win32.Build.0 = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.ActiveCfg = Release|Win32
 		{BBD70852-1A81-4232-B094-C87BEDE243C9}.Release|Win32.Build.0 = Release|Win32
-		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Debug|Win32.Build.0 = Debug|Any CPU
+		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Debug|Win32.ActiveCfg = Debug|x86
+		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Debug|Win32.Build.0 = Debug|x86
 		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Interleaved|Win32.ActiveCfg = Release|Any CPU
 		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Interleaved|Win32.Build.0 = Release|Any CPU
 		{EAEA9303-7E70-4DA6-A32A-D256C6CE4FE4}.Release|Win32.ActiveCfg = Release|Any CPU
@@ -53,6 +55,12 @@ Global
 		{91B304C2-7550-48B1-B4A7-34031A4A71AD}.Interleaved|Win32.Build.0 = Release|Any CPU
 		{91B304C2-7550-48B1-B4A7-34031A4A71AD}.Release|Win32.ActiveCfg = Release|Any CPU
 		{91B304C2-7550-48B1-B4A7-34031A4A71AD}.Release|Win32.Build.0 = Release|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Debug|Win32.Build.0 = Debug|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Interleaved|Win32.ActiveCfg = Release|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Interleaved|Win32.Build.0 = Release|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Release|Win32.ActiveCfg = Release|Any CPU
+		{B6268B74-2A51-4AD2-BB8C-A7A4CAC52CFF}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

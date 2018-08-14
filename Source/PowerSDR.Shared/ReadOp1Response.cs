@@ -1,8 +1,8 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class ReadOp1Response : PalResponse
+    public class ReadOp1Response : PalResponse
     {
-        public uint Rtn { get; internal set; }
-        public int Result { get; internal set; }
+        public uint Rtn { get; set; }
+        public int Result { get; set; }
     }
 }

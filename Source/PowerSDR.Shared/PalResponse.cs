@@ -1,6 +1,6 @@
 ﻿namespace PowerSDR.Shared
 {
-    internal class PalResponse
+    public class PalResponse
     {
     }
 }

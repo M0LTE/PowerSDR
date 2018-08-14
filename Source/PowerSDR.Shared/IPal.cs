@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PowerSDR.Shared
 {
-    public interface IPal
+    public interface IPal : IDisposable
     {
         void Configure(Dictionary<string, string> settings);
         int GetNumDevices();
